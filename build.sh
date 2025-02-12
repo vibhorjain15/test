@@ -61,7 +61,7 @@ if grunt build:app && npm run-script mono-build-many; then
     git add ./src/app2/shared/constants/sentry-release-version.constant.ts
     git add dist/ static/ -A -- ':!*.map'
     git commit -m "app build"
-    git push -u origin test-angular-router
+    git push -u origin main
     echo "Changes pushed successfully."
 else
     echo "Build failed!"
