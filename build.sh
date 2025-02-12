@@ -44,17 +44,17 @@ if grunt build:app && npm run-script mono-build-many; then
     echo "Build completed successfully."
 
     # Handle Sentry CLI commands if SENTRY_AUTH_TOKEN is set
-    if [ -n "$SENTRY_AUTH_TOKEN" ]; then
-        echo "Configuring Sentry..."
-        npm install -g @sentry/cli@2.17.2
-        sentry-cli login --auth-token "$SENTRY_AUTH_TOKEN"
-        sentry-cli releases new "$COMMIT_SHA"
-        sentry-cli releases set-commits "$COMMIT_SHA" --local --ignore-missing --ignore-empty
-        sentry-cli sourcemaps inject ./dist
-        sentry-cli sourcemaps upload --use-artifact-bundle --release="$COMMIT_SHA" ./dist --org "$SENTRY_ORG" --project "$SENTRY_PROJECT"
-        sentry-cli releases finalize "$COMMIT_SHA"
-        echo "Sentry configuration completed."
-    fi
+    # if [ -n "$SENTRY_AUTH_TOKEN" ]; then
+    #     echo "Configuring Sentry..."
+    #     npm install -g @sentry/cli@2.17.2
+    #     sentry-cli login --auth-token "$SENTRY_AUTH_TOKEN"
+    #     sentry-cli releases new "$COMMIT_SHA"
+    #     sentry-cli releases set-commits "$COMMIT_SHA" --local --ignore-missing --ignore-empty
+    #     sentry-cli sourcemaps inject ./dist
+    #     sentry-cli sourcemaps upload --use-artifact-bundle --release="$COMMIT_SHA" ./dist --org "$SENTRY_ORG" --project "$SENTRY_PROJECT"
+    #     sentry-cli releases finalize "$COMMIT_SHA"
+    #     echo "Sentry configuration completed."
+    # fi
 
     # Commit and push changes
     echo "Committing and pushing changes..."
