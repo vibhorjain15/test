@@ -2,7 +2,7 @@ name: Trigger Build Script
 
 on:
   push:
-    branches: ["test-angular-router"]
+    branches: ["main"]
 
 concurrency:
   group: ${{ github.ref }}
