@@ -25,7 +25,7 @@ jobs:
       - name: Checkout latest test-angular-router
         uses: actions/checkout@v4
         with:
-          ref: test-angular-router
+          ref: main
 
   
 
@@ -47,9 +47,9 @@ jobs:
         shell: bash
         env:
           COMMIT_SHA: ${{ github.sha }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: "diligencevault"
-          SENTRY_PROJECT: "test-ui"
+          # SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          # SENTRY_ORG: "diligencevault"
+          # SENTRY_PROJECT: "test-ui"
         run: npm install -g bower && ./build.sh
 
       # Cache Nx build
