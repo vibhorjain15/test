@@ -50,7 +50,7 @@ jobs:
           # SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           # SENTRY_ORG: "diligencevault"
           # SENTRY_PROJECT: "test-ui"
-        run: npm install -g bower && ./build.sh
+        run: sudo npm install -g bower && sudo ./build.sh
 
       # Cache Nx build
       - name: Cache Nx
