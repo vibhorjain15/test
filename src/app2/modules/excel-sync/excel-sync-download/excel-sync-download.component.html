@@ -1,0 +1,382 @@
+<form [formGroup]="excelSyncForm" autocomplete="off">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5
+        class="panel-title"
+        [attr.aria-describedby]="
+          sync_type === 'download' && !products_list?.length
+            ? 'info-info'
+            : null
+        "
+      >
+        <span appIcon name="institution" class="space-on-right"></span>
+        Excel Sync ({{ sync_type }})
+      </h5>
+    </div>
+    <div
+      class="panel-info"
+      *ngIf="sync_type === 'download' && !products_list?.length"
+    >
+      <div class="panel-heading" id="info-info">
+        Select {{ isInvestor ? "manager" : "investor" }}, questionnaire, and
+        projects to {{ sync_type }} excel. Once you are done filling your
+        responses, please go to excel sync > excel upload to directly upload it
+        to the platform.
+      </div>
+    </div>
+    <div
+      class="panel-body excel-sync-download"
+      *ngIf="sync_type === 'download'"
+    >
+      <div class="row clearfix space-on-top-lg clearfix space-on-bottom-lg">
+        <app-spinner *ngIf="loading_prefs"></app-spinner>
+        <div col="12" *ngIf="!loading_prefs">
+          <div class="row">
+            <div col="3" *ngIf="!isInvestor">
+              <dv-form-element
+                [fieldName]="'Investor'"
+                [showRightIcon]="false"
+                [modelController]="excelSyncForm.get('firm')"
+                [removeSpace]="true"
+                [label]="'1. Select an Investor Firm'"
+                [labelPosition]="'top'"
+                [elementCol]="12"
+                [errorMessage]="
+                  excelSyncForm.get('firm').touched &&
+                  excelSyncForm.get('firm').errors?.required
+                    ? 'Investor is required'
+                    : ''
+                "
+              >
+                <dv-select
+                  name="select-investor"
+                  formControlName="firm"
+                  (onSelectChange)="firmSelected($event)"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [readonly]="!active_investors"
+                  [list]="active_investors"
+                  [loading]="active_dds_loading"
+                  [bindValue]="null"
+                  [bindLabel]="'name'"
+                  [id]="'firm'"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+            <div col="3" *ngIf="isInvestor">
+              <dv-form-element
+                [fieldName]="'Manager'"
+                [showRightIcon]="false"
+                [modelController]="excelSyncForm.get('firm')"
+                [removeSpace]="true"
+                [spacing]="'none'"
+                [label]="'1. Select a Manager Firm'"
+                [labelPosition]="'top'"
+                [errorMessage]="
+                  excelSyncForm.get('firm').touched &&
+                  excelSyncForm.get('firm').errors?.required
+                    ? 'Manager is required'
+                    : ''
+                "
+                [elementCol]="12"
+              >
+                <dv-select
+                  name="select-manager"
+                  formControlName="firm"
+                  (onSelectChange)="firmSelected($event)"
+                  [readonly]="!active_managers"
+                  [clearable]="false"
+                  [searchable]="true"
+                  placeholder="Please select a manager firm"
+                  [list]="active_managers"
+                  [loading]="active_dds_loading"
+                  [bindValue]="null"
+                  [bindLabel]="'name'"
+                  [id]="'firm'"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+            <div col="3">
+              <dv-form-element
+                [fieldName]="'Questionnaire'"
+                [showRightIcon]="false"
+                [modelController]="excelSyncForm.get('template')"
+                [removeSpace]="true"
+                [label]="'2. Select a Questionnaire'"
+                [errorMessage]="
+                  excelSyncForm.get('template').touched &&
+                  excelSyncForm.get('template').errors?.required
+                    ? ' Questionnaire is required'
+                    : ''
+                "
+                [spacing]="'none'"
+                [labelPosition]="'top'"
+                [elementCol]="12"
+              >
+                <dv-select
+                  [id]="'template'"
+                  name="select-template"
+                  formControlName="template"
+                  (onSelectChange)="templateSelected()"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [readonly]="!this.excelSyncForm.get('firm').value"
+                  placeholder="Please select a questionnaire"
+                  [list]="templates_list"
+                  [bindValue]="null"
+                  [bindLabel]="'name'"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+            <div col="3" class="excel_sync_date_picker">
+              <dv-form-element
+                [fieldName]="'Date'"
+                [showRightIcon]="false"
+                [removeSpace]="true"
+                [label]="'Select dates:'"
+                [spacing]="'none'"
+                [labelPosition]="'top'"
+                [elementCol]="12"
+              >
+                <app-date-range-picker
+                  [customDate]="dateRange"
+                  (change)="onDateChange($event)"
+                  (clearDateFilter)="onClearDateFilter()"
+                  #dateRangePicker
+                  [id]="'Select dates'"
+                ></app-date-range-picker>
+              </dv-form-element>
+            </div>
+            <div col="3">
+              <div class="text-center space-on-top-lg" col="6" col-type="xs">
+                <dv-button
+                  type="button"
+                  btnType="transparent"
+                  (onClick)="resetFilter()"
+                >
+                  <div>
+                    <span
+                      appIcon
+                      name="refresh"
+                      size="2x"
+                      tooltip="Reset the filters, or options for comparison"
+                      container="body"
+                    ></span>
+                  </div>
+                  <small>Reset Selection/ Filters</small>
+                </dv-button>
+              </div>
+              <div class="text-center space-on-top-lg" col="6" col-type="xs">
+                <dv-button
+                  (onClick)="goBack()"
+                  type="button"
+                  btnType="transparent"
+                >
+                  <div>
+                    <span appIcon name="arrow-back" size="2x"></span>
+                  </div>
+                  <small>Go back</small>
+                </dv-button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="text-center"
+            *ngIf="
+              selected_template &&
+              (!products_list || products_list?.length == 0)
+            "
+          >
+            <br />
+            <small class="text-muted"
+              ><i
+                >No projects found for selected
+                {{ isInvestor ? "manager" : "investor" }}/questionnaire</i
+              ></small
+            >
+          </div>
+          <div
+            col="12"
+            class="clearfix space-on-top-lg"
+            *ngIf="products_list?.length"
+          >
+            <div
+              class="panel panel-default dd-multiselect relative dd-excel-sync"
+              [ngClass]="{ 'semi-transparent': products_disabled }"
+            >
+              <div class="mask transparent" *ngIf="products_disabled"></div>
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="5" class="space-on-top space-on-bottom">
+                    <h5 class="panel-title space-on-top-2 space-on-bottom-2">
+                      Projects ({{ count }})
+                    </h5>
+                  </div>
+                  <div col="3" *ngIf="products_list?.length">
+                    <div class="form-group">
+                      <input
+                        [autofocus]
+                        type="text"
+                        name="product_name"
+                        class="form-control"
+                        placeholder="Search by name"
+                        [(ngModel)]="product_name"
+                        [ngModelOptions]="{ standalone: true }"
+                      />
+                      <span
+                        appIcon
+                        name="close"
+                        *ngIf="product_name"
+                        (click)="product_name = ''"
+                        class="cross"
+                      ></span>
+                    </div>
+                  </div>
+                  <div col="4" *ngIf="products_list?.length">
+                    <dv-button
+                      tooltipText="Select all projects"
+                      container="body"
+                      btnType="default"
+                      size="sm"
+                      btnClass="space-on-top-2 space-on-left"
+                      [disabled]="disable_selected_all_products"
+                      (onClick)="selectedAllProducts()"
+                      type="button"
+                    >
+                      <span class="align-middle">Select All</span>
+                    </dv-button>
+                    <dv-button
+                      tooltipText="Deselect all projects"
+                      container="body"
+                      btnType="default"
+                      size="sm"
+                      btnClass="space-on-top-2 space-on-left"
+                      [disabled]="getSelectedProducts().length == 0"
+                      (onClick)="clearAllProducts()"
+                      type="button"
+                    >
+                      <span class="align-middle"
+                        >Clear ({{
+                          disable_selected_all_products
+                            ? count
+                            : getSelectedProducts().length
+                            ? getSelectedProducts().length
+                            : 0
+                        }})</span
+                      >
+                    </dv-button>
+                  </div>
+                </div>
+              </div>
+              <div class="list-group">
+                <div *ngIf="products_list?.length">
+                  <div
+                    *ngFor="
+                      let product of products_list
+                        | filter : product_name
+                        | orderBy : 'name'
+                    "
+                    class="list-group-item"
+                    [ngClass]="{ 'bg-sky-blue': product.is_selected }"
+                  >
+                    <ng-container #myRef>
+                      <div class="row clearfix">
+                        <span
+                          class="space-on-right"
+                          *ngIf="!product.is_selected"
+                          [tippyTooltip]="'Select ' + product.name"
+                          container="body"
+                        >
+                          <span
+                            appIcon
+                            name="plus-circle"
+                            [attr.aria-label]="'Select ' + product.name"
+                            (click)="toggleProductSelection(product, true)"
+                            size="lg"
+                            class="text-primary"
+                            clickable
+                          ></span>
+                        </span>
+                        <span
+                          class="space-on-right"
+                          *ngIf="product.is_selected"
+                          [tippyTooltip]="'Remove ' + product.name"
+                          container="body"
+                        >
+                          <span
+                            appIcon
+                            name="minus-circle"
+                            class="text-danger"
+                            [attr.aria-label]="'Remove ' + product.name"
+                            size="lg"
+                            (click)="toggleProductSelection(product, false)"
+                            clickable
+                          ></span>
+                        </span>
+                        <span *ngIf="product.tofirm_name"
+                          >{{ product.tofirm_name }} -
+                        </span>
+                        <span *ngIf="isInvestor">{{ product.name }}</span>
+                        <span *ngIf="!isInvestor">{{
+                          product.entity_name
+                        }}</span>
+                        <span *ngIf="product.as_of_date"
+                          >- As of
+                          {{
+                            product.as_of_date | dvDate : ["isLocaleDate"]
+                          }}</span
+                        >
+                        <span *ngIf="product.due_at"
+                          >- Due at
+                          {{ product.due_at | dvDate : ["isLocaleDate"] }}</span
+                        >
+                        <span class="space-on-left badge badge-primary">{{
+                          product.display_name
+                        }}</span>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+                <div class="empty-msg" *ngIf="!products_list?.length">
+                  <app-empty-state
+                    message="Please select an investor and a questionnaire to view the associated projects"
+                  >
+                  </app-empty-state>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="products_list?.length">
+          <div col="12">
+            <hr />
+            <div class="row space-on-top space-on-bottom">
+              <div col="11" class="text-center">
+                <dv-button
+                  btnClass="space-on-left"
+                  (onClick)="processExcelSync()"
+                  btnType="orange-fill"
+                  [loader]="processing_excel"
+                  leftIcon="download3"
+                  [ariaLabel]="'process excel sync'"
+                >
+                  <span class="text-capitalize">{{ sync_type }}</span>
+                </dv-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-failed-upload-details
+      [transactionId]="transaction_id"
+      *ngIf="sync_type === 'upload'"
+    >
+    </app-failed-upload-details>
+  </div>
+</form>

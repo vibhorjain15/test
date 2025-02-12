@@ -1,0 +1,29 @@
+<div class="clickable btn-group d-flex toggleSwitch">
+  <div
+    class="toggleSwitchButton tick-wrapper"
+    [ngClass]="{
+      selectedToggle: item.isSelected,
+      'toggle-border-right': i != items.length - 1
+    }"
+    (click)="handleButtonClick(item)"
+    *ngFor="let item of items; let i = index"
+  >
+    <span
+      *ngIf="item.isSelected && showActiveTick"
+      appIcon
+      name="check-new"
+      [style.color]="labelColor"
+      [style.font-size.px]="12"
+    >
+    </span>
+    <span
+      *ngIf="item.icon"
+      appIcon
+      [name]="item.icon"
+      [style.color]="labelColor"
+      [style.font-size.px]="item.iconSize"
+    >
+    </span>
+    <span *ngIf="item.label">{{ item.label }}</span>
+  </div>
+</div>

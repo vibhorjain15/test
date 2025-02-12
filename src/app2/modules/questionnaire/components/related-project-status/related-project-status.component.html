@@ -1,0 +1,48 @@
+<div class="project-progress">
+  <div class="project-details">
+    <a
+      (click)="handleClick(project)"
+      tabindex="0"
+      [attr.aria-label]="'Project ' + project.entity_name"
+    >
+      {{ project.entity_name }}
+    </a>
+    <span>
+      Last Updated
+      {{ project.lastupdated_at ? (project.lastupdated_at | dvDate) : "Never" }}
+    </span>
+  </div>
+
+  <div class="project-status">
+    <span>Status</span>
+
+    <dv-status-tag
+      [label]="project.status === 'InReview' ? 'In Review' : project.status"
+      [type]="project.status"
+      tabindex="0"
+    ></dv-status-tag>
+  </div>
+
+  <div class="prog">
+    <dv-label
+      [label]="project.percentage_completed + '%'"
+      type="bold"
+      color="primary"
+      tabindex="0"
+      [attr.aria-label]="
+        'Project completion: ' + project.percentage_completed + ' percent'
+      "
+    ></dv-label>
+    <span class="progress">
+      <span
+        class="progress-bar coloradd"
+        role="progressbar"
+        [style.width.%]="project.percentage_completed"
+        [attr.aria-valuenow]="project.percentage_completed"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+      </span>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<ui-grid-cell-contents class="text-left">
+  <div>
+    <span data-ng-show="!row.groupHeader">
+      <a href="" data-ng-click="grid.appScope.vm.getSignedURL(row.entity)" uib-tooltip="{{row.entity.name}}">
+        <span dv-limit-word="row.entity.name" char-limit="34"></span>
+      </a>
+    </span>
+
+    <span data-ng-if="row.groupHeader">
+      <span uib-tooltip="{{grid.appScope.vm.getContextValue(grid, row, col)}}">
+        <span dv-limit-word="grid.appScope.vm.getContextValue(grid, row, col)" char-limit="34"></span>
+      </span>
+    </span>
+  </div>
+</ui-grid-cell-contents>

@@ -1,0 +1,11 @@
+<div class="nested-list-group-container">
+  <a class="list-group-item" role="button" tabindex="0" data-ng-click="toggleStateCollapse()"  id="toggleButton">
+    <span class="state-label">{{state.label}}</span>
+    <span role="text" class="btn btn-xs customTag" data-ng-show="state.customTagLabel">{{state.customTagLabel}}</span>
+
+    <icon name="chevron-right" data-ng-hide="state.expanded"></icon>
+    <icon name="chevron-down" class="text-primary" data-ng-show="state.expanded"></icon>
+  </a>
+
+  <div class="list-group collapse"  data-ng-class="{'in': state.expanded}" data-ng-show="state.expanded" id="{{state.label}}" aria-hidden="{{!state.expanded}}"></div>
+</div>

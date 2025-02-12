@@ -1,0 +1,30 @@
+<side-panel-wrapper
+  [title]="'Review Status'"
+  [isLoading]="buttonLoader"
+  (onCancelClick)="onSidePanelCancel()"
+  [isFirstButtonDisabled]="assignment.is_completed"
+  [firstButtonLabel]="'Update Reviewer' + (isFree ? '' : '(s)')"
+  (onFirstClick)="handleEditReview()"
+>
+  <div class="reviewer-status" aria-label="Review Status">
+    <div class="question">
+      <dv-label
+        label="Question"
+        [align]="'left'"
+        type="bold"
+        aria-label="Question"
+      ></dv-label>
+      <span
+        [innerHTML]="question.text | dvSafeHtml"
+        aria-label="Question text"
+      ></span>
+    </div>
+    <div class="accordion" aria-label="Reviewer Accordion">
+      <multiple-reviewer-accordion
+        [steps]="assignment.steps"
+        [diligence]="diligence"
+        aria-label="Multiple Reviewer Accordion"
+      ></multiple-reviewer-accordion>
+    </div>
+  </div>
+</side-panel-wrapper>

@@ -1,0 +1,535 @@
+<helper-text *ngIf="display_selection_warning">
+  <span *ngIf="!select_all_entities">
+    {{ selection_list.length }} {{ entity_type_plural }} on this page are
+    selected. If you wish to unselect any {{ entity_type_plural }}, you can do
+    it at the panel on the right.
+  </span>
+
+  <span *ngIf="select_all_entities">
+    All {{ data_length }} {{ entity_type_plural }} are selected.
+    <a
+      role="button"
+      tabindex="0"
+      class="link-disguise"
+      (click)="clearSelection()"
+    >
+      <u>Clear Selection</u>
+    </a>
+  </span>
+</helper-text>
+
+<div class="row clearfix">
+  <div class="col-md-5">
+    <div class="panel panel-default dd-multiselect">
+      <div class="panel-heading">
+        <div class="row clearfix">
+          <div col="6">
+            <div class="input-group-rename-this-class-when-filters-are-enabled">
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="filters.name"
+                (ngModelChange)="handleFilterChange()"
+                placeholder="Search {{ entity_type_plural }} by name"
+              />
+            </div>
+          </div>
+
+          <div col="6">
+            <div>
+              <button
+                *ngIf="!loading_entities && isSeachFilterLoaded"
+                class="space-on-top-2 btn-sm btn btn-default entity-selector-button-right-margin"
+                data-toggle="tooltip"
+                [tooltip]="'Apply Filters'"
+                (click)="toggleFiltersSection()"
+                triggers="mouseenter:mouseleave"
+                aria-label="Apply Filters"
+              >
+                <span
+                  appIcon
+                  name="filter"
+                  [ngClass]="{ 'text-orange': filterApplied }"
+                ></span>
+              </button>
+
+              <button
+                class="space-on-top-2 btn-sm btn btn-default"
+                (click)="resetFiltersData()"
+                tooltip="Clear Filters"
+                *ngIf="filterApplied"
+                aria-label="Clear Filters"
+              >
+                <span appIcon name="refresh"></span>
+              </button>
+
+              <button
+                [disabled]="disable_select_all"
+                class="space-on-top-2 space-on-left btn btn-sm btn-default"
+                (click)="selectAll()"
+              >
+                <span class="align-middle">Select All</span>
+              </button>
+              <button
+                class="space-on-top-2 space-on-left btn btn-sm btn-default entity-selector-space-left"
+                tooltip="Add new {{ entity_type_singular }} here"
+                (click)="openNewEntityDialog()"
+                triggers="mouseenter:mouseleave"
+                [attr.aria-label]="
+                  'Add new' + '' + entity_type_singular + '' + 'here'
+                "
+              >
+                <span
+                  appIcon
+                  name="plus"
+                  class="space-on-right align-middle"
+                ></span>
+                <span class="align-middle">New</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="list-group" tabindex="0">
+        <div>
+          <div
+            class="label-list space-on-bottom-lg entity-select-filter-flex"
+            *ngIf="filterApplied"
+          >
+            <div *ngFor="let criterion of search_criterias; let i = index">
+              <span
+                class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                *ngIf="criterion.advance_filter_value"
+              >
+                <small>{{ displayFilter(criterion) }}</small>
+                <a
+                  class="space-on-left clickable link-disguise"
+                  (click)="removeFilterCriterion(i)"
+                  clickable
+                  >&times;</a
+                >
+              </span>
+            </div>
+          </div>
+          <div class="list-group-item" *ngIf="loading_entities">
+            <div class="row clearfix">
+              <div>
+                <app-spinner
+                  [broadSpinner]="true"
+                  [spinnerHeight]="20"
+                ></app-spinner>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!loading_entities">
+            <div
+              class="list-group-item"
+              *ngFor="
+                let strategy of entities
+                  | orderBy : 'name'
+                  | orderBy : 'is_disabled';
+                trackBy: trackById
+              "
+            >
+              <div
+                class="row clearfix"
+                [attr.aria-disabled]="strategy.is_disabled"
+              >
+                <span *ngIf="strategy.is_selected" class="space-on-right">
+                  <i appIcon name="check" size="lg" class="text-success"></i>
+                </span>
+                <span
+                  class="space-on-right"
+                  [tooltip]="
+                    strategy.is_disabled
+                      ? 'Not allowed'
+                      : 'Select ' + strategy.name
+                  "
+                  container="body"
+                  [adaptivePosition]="false"
+                  placement="right"
+                  *ngIf="!strategy.is_selected"
+                >
+                  <i
+                    appIcon
+                    name="plus-circle"
+                    (click)="addToSelection(strategy)"
+                    size="lg"
+                    class="text-primary"
+                    [ngClass]="{ disableField: strategy.is_disabled }"
+                    role="button"
+                    title="Add To Selection"
+                    tabindex="0"
+                    clickable
+                  ></i>
+                </span>
+
+                <span>{{ strategy.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="pull-right" *ngIf="entities.length > 0 && !loading_entities">
+        Total {{ entities.length }} {{ entity_type_plural }} available
+      </h5>
+
+      <div class="panel-body" *ngIf="!loading_entities && !entities.length">
+        <app-empty-state
+          [message]="emptySearchResultMessage"
+          *ngIf="is_admin"
+          actionLabel="Add New {{ entity_type_singular }}"
+          (action)="openNewEntityDialog()"
+        ></app-empty-state>
+        <app-empty-state
+          message="No {{
+            entity_type_plural | lowercase
+          }} available. Please contact your administrator "
+          *ngIf="!is_admin"
+        ></app-empty-state>
+      </div>
+
+      <div
+        class="panel-body"
+        *ngIf="!loading_entities && entities.length > 0 && entities.length == 0"
+      >
+        <app-empty-state
+          message="No {{ entity_type_plural }} match applied filters"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+
+  <div class="dd-multiselect-selection col-md-7">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row clearfix">
+          <div col="8">
+            <p class="form-control-static inline-block">
+              <span
+                *ngIf="entity_type === 'Strategy'"
+                appIcon
+                name="strategy"
+                class="space-on-right strategy-icon-new-request"
+              ></span>
+              <span
+                *ngIf="entity_type === 'Fund'"
+                appIcon
+                name="fund"
+                class="space-on-right strategy-icon-new-request"
+              ></span>
+              <span
+                *ngIf="entity_type === 'Firm' || entity_type === 'Investor'"
+                appIcon
+                name="institution"
+                class="space-on-right strategy-icon-new-request"
+              ></span>
+              <span
+                *ngIf="entity_type === 'Vehicle'"
+                appIcon
+                name="vehicle-car"
+                class="space-on-right entity-selector-postition-space vehicle-icon-new-request"
+              ></span>
+              {{ entity_type_plural }} Selected
+              <span *ngIf="selection_list.length > 0 || select_all_entities"
+                >({{ filteredListMeta.count }})</span
+              >
+            </p>
+            <ng-template #tooltipTemplate
+              >{{
+                selected_list_filters_section.show ? "Hide" : "Apply"
+              }}
+              contact filters</ng-template
+            >
+            <button
+              class="space-on-left btn btn-sm btn-default"
+              *ngIf="
+                (selection_list.length > 0 || select_all_entities) && standalone
+              "
+              [tooltip]="tooltipTemplate"
+              (click)="toggleSelectedListFiltersSection()"
+              [attr.aria-label]="tooltipTemplate"
+            >
+              <span
+                appIcon
+                name="filter"
+                [ngClass]="{
+                  'text-orange':
+                    (selected_list_filters_section.show ||
+                      selected_list_filters_section.contact_id) &&
+                    selected_list_filters_section.contact_id !== null
+                }"
+              ></span>
+            </button>
+          </div>
+
+          <div col="4">
+            <span class="pull-right">
+              <button
+                class="space-on-left btn btn-default btn-sm space-on-right"
+                *ngIf="checkIfAnyBouncedEmail()"
+                (click)="deleteAllBouncedEmails()"
+                tooltip="Remove All Bounced Emails"
+                aria-label="Remove All Bounced Emails"
+              >
+                <span appIcon name="trashcan" class="text-danger"></span>
+              </button>
+              <button
+                [disabled]="!selection_list.length && !select_all_entities"
+                class="btn btn-sm btn-default"
+                (click)="clearSelection()"
+              >
+                Clear Selection
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body has-notes-form clear-padding">
+        <div
+          class="panel-body padded-top-lg bg-sky-blue"
+          *ngIf="selected_list_filters_section.show"
+        >
+          <div class="row clearfix">
+            <div col="6">
+              <div class="form-group clear-margin-bottom">
+                <div>
+                  <dv-select
+                    [list]="contact_tags"
+                    (ngModelChange)="watchForContactTagSelection($event)"
+                    [(ngModel)]="selected_list_filters_section.contact_id"
+                    bindLabel="name"
+                    bindValue="id"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Filter by contact type"
+                    id="tags"
+                    [aria-label]="'Filter by contact type dropdown'"
+                  ></dv-select>
+                </div>
+              </div>
+            </div>
+            <div class="pull-right space-on-right-xl">
+              <span>
+                <strong> Filters </strong>
+              </span>
+              <a
+                role="button"
+                class="link-disguise space-on-left"
+                tooltip="Clear Filters"
+                (click)="resetSelectedListFilters()"
+                tabindex="0"
+                aria-label="Clear Filters"
+              >
+                <u>Clear</u>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <ul class="list-group clear-margin-bottom tasks-list" tabindex="0">
+          <li
+            class="list-group-item pa-tb-xl pa-lr-xl task-item"
+            *ngFor="
+              let strategy of selection_list
+                | entitiesWithContactTag
+                  : selected_list_filters_section.contact_id
+                  : filteredListMeta;
+              trackBy: trackById
+            "
+            [ngClass]="{ 'active-item': strategy.hoverState }"
+            (mouseenter)="strategy.hoverState = true"
+            (mouseleave)="strategy.hoverState = false"
+          >
+            <div class="media">
+              <div class="media-body">
+                <div class="dv-table full-width">
+                  <div class="cell align-middle">
+                    <div class="clearfix">
+                      <div
+                        class="inline-block space-on-bottom"
+                        [ngClass]="{ 'entity-name': is_investor }"
+                      >
+                        <span
+                          tooltip="Remove {{ strategy.name }}"
+                          container="body"
+                          [adaptivePosition]="false"
+                          class="space-on-right"
+                          (click)="removeFromSelection(strategy)"
+                          clickable
+                          [attr.aria-label]="'Remove' + ' ' + strategy.name"
+                        >
+                          <i
+                            appIcon
+                            name="minus-circle"
+                            class="text-danger"
+                            size="lg"
+                          ></i>
+                        </span>
+                        <span class="space-on-right entity-name">{{
+                          strategy.name
+                        }}</span>
+                        <span
+                          *ngIf="strategy?.notification_contacts?.length > 0"
+                          class="space-on-right"
+                          >({{
+                            strategy.total_recipients_count
+                          }}
+                          recipients)</span
+                        >
+                      </div>
+
+                      <div *ngIf="standalone">
+                        <div
+                          class="entity-contacts"
+                          *ngIf="strategy.notification_contacts?.length > 0"
+                        >
+                          <ul>
+                            <li
+                              *ngFor="
+                                let contact of strategy.notification_contacts
+                                  | contactsWithContactTag
+                                    : selected_list_filters_section.contact_id;
+                                trackBy: trackById
+                              "
+                            >
+                              <div class="inline-block">
+                                <small
+                                  [ngClass]="{
+                                    'text-striken': contact.is_removed
+                                  }"
+                                  >{{ contact.name }} ({{
+                                    contact.email
+                                  }})</small
+                                >
+                                <small
+                                  *ngIf="contact?.has_bounce_history"
+                                  class="text-danger entity-selector-space-left-warning"
+                                  tooltip="Emails to this contact have bounced in the past."
+                                  aria-label="Emails to this contact have bounced in the past."
+                                >
+                                  <span appIcon name="warning"></span>
+                                </small>
+                                <button
+                                  class="btn-close space-on-left danger btn btn-sm btn-default"
+                                  *ngIf="
+                                    strategy.hoverState &&
+                                    !contact.is_removed &&
+                                    !contact.is_primary
+                                  "
+                                  tooltip="Remove contact from this diligence request"
+                                  (click)="
+                                    setContactRemovalState(
+                                      strategy,
+                                      contact,
+                                      true
+                                    )
+                                  "
+                                  aria-label="Remove contact from this diligence request"
+                                  clickable
+                                >
+                                  <span
+                                    appIcon
+                                    name="minus"
+                                    class="align-middle"
+                                  ></span>
+                                </button>
+                                <button
+                                  class="btn-close space-on-left btn btn-sm btn-default"
+                                  *ngIf="
+                                    strategy.hoverState && contact.is_removed
+                                  "
+                                  tooltip="Add contact to this diligence request"
+                                  (click)="
+                                    setContactRemovalState(
+                                      strategy,
+                                      contact,
+                                      false
+                                    )
+                                  "
+                                  [attr.aria-label]="
+                                    'Add contact to this diligence request'
+                                  "
+                                >
+                                  <span
+                                    appIcon
+                                    name="plus"
+                                    class="align-middle text-info"
+                                  ></span>
+                                </button>
+                              </div>
+                            </li>
+                          </ul>
+                          <div>
+                            <small class="space-on-left text-muted">
+                              <a
+                                class="link-disguise link-underline clickable"
+                                (click)="addNewContact(strategy)"
+                                >Click here</a
+                              >
+                              to add more contacts to this
+                              {{ entity_type_singular }}.
+                            </small>
+                          </div>
+                        </div>
+                        <div *ngIf="!strategy.notification_contacts?.length">
+                          <small class="space-on-left text-muted">
+                            No active contacts available for this
+                            {{ entity_type_singular }},
+                            <a
+                              class="link-disguise link-underline clickable"
+                              (click)="addNewContact(strategy)"
+                              >click here</a
+                            >
+                            to add a new one.
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel-body text-center" *ngIf="select_all_entities">
+        All {{ data_length }} {{ entity_type_plural }} are selected.
+      </div>
+
+      <div
+        class="panel-body"
+        *ngIf="!selection_list.length && !select_all_entities"
+      >
+        <app-empty-state
+          message="You have not selected any {{
+            entity_type_plural
+          }}. Please select them from the panel in the left"
+        ></app-empty-state>
+      </div>
+
+      <div
+        class="panel-body"
+        *ngIf="
+          selection_list.length &&
+          !select_all_entities &&
+          !(
+            selection_list
+            | entitiesWithContactTag : selected_list_filters_section.contact_id
+          ).length
+        "
+      >
+        <app-empty-state
+          message="No {{
+            entity_type_singular
+          }} available with the selected contact tag"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>

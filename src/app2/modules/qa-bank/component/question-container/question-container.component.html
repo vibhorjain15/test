@@ -1,0 +1,363 @@
+<div
+  class="qa-bank-question-wrapper"
+  [ngClass]="{
+    expiredContent: question.isExpired,
+  }"
+  role="article"
+>
+  <div class="question-action-wrapper" role="region" aria-label="Question">
+    <div class="question-text" role="region" aria-label="Question Text">
+      <dv-checkbox
+        [label]="question.question_text"
+        *ngIf="isCheckBox"
+        [isBold]="true"
+        name="question_{{ question.response_id }}"
+        id="question_{{ question.response_id }}"
+        [(ngModel)]="question.isSelected"
+        (onValChange)="handleSelection()"
+      >
+      </dv-checkbox>
+
+      <span class="space-on-left text-bold" *ngIf="!isCheckBox">
+        <span
+          [innerHtml]="question.question_text | cleanHtml | dvSafeHtml"
+        ></span>
+      </span>
+
+      <span
+        appIcon
+        *ngIf="
+          question.response_status ===
+            diligenceStatus.ReviewPassed.toLowerCase() &&
+          question.last_reviewed_by_name &&
+          question.last_reviewed_at &&
+          !question.is_archived
+        "
+        tooltip="Approved"
+        name="check-circle"
+        class="align-middle font-size-14 text-success"
+      ></span>
+    </div>
+
+    <div class="question-action" role="toolbar" aria-label="Question Actions">
+      <ng-container *ngIf="rightIconList?.length">
+        <ng-container *ngFor="let button of rightIconList">
+          <dv-button
+            *ngIf="!button.isLink"
+            [btnType]="button.type"
+            [disabled]="button.disabled"
+            (onClick)="handleAction(button)"
+            [ngClass]="{
+              'icon-hover': !button.disabled && !button.hoverColor && !button.noHoverColor,
+              'icon-hover-red': !button.disabled && button.hoverColor === 'red',
+              'icon-hover-green' : !button.disabled && button.hoverColor === 'green',
+    
+            }"
+            [style.color]="button.color"
+            [ariaLabel]="button.tooltip"
+          >
+            <span
+              [tooltip]="button.tooltip"
+              container="body"
+              [adaptivePosition]="true"
+              [placement]="button.placement"
+              *ngIf="!button.icon"
+              [style.color]="button.color"
+              >{{ button.name }}</span
+            >
+
+            <a
+              *ngIf="button.icon"
+              appIcon
+              [style.color]="button.color"
+              [name]="button.name"
+              [tooltip]="button.tooltip"
+              [adaptivePosition]="true"
+              container="body"
+              [style.font-size.px]="button.fontSize"
+              [style.margin-top.px]="button.marginTop"
+              tabindex="-1"
+              class="iconTag"
+            >
+              <span class="sr-only">{{ button.tooltip }}</span>
+              <span
+                *ngIf="button.count"
+                class="count-bubble relative align-top custom-count-margin"
+                >{{ button.count }}</span
+              ></a
+            >
+          </dv-button>
+          <a
+            *ngIf="button.icon && button.isLink"
+            appIcon
+            [style.color]="button.color"
+            [name]="button.name"
+            [tooltip]="button.tooltip"
+            [adaptivePosition]="true"
+            container="body"
+            [style.font-size.px]="button.fontSize"
+            [style.margin-top.px]="button.marginTop"
+            [attr.href]="button.isLink ? button.link : null"
+            class="iconTag btn button-component btn-transparent"
+          >
+            <span class="sr-only">{{ button.tooltip }}</span>
+            <span
+              *ngIf="button.count"
+              class="count-bubble relative align-top custom-count-margin"
+              >{{ button.count }}</span
+            ></a
+          >
+        </ng-container>
+      </ng-container>
+
+      <dv-dropdown
+        class="clickable qa-dropdown-more"
+        dropdownPlacement="right"
+        *ngIf="rightIconsDropdown.length"
+        [dropDownList]="rightIconsDropdown"
+        iconSize="small"
+        type="default"
+        inpToolTip="More"
+        (onDropdownClick)="handleAction($event)"
+        iconName="dots-three-vertical"
+      >
+      </dv-dropdown>
+      <div
+        *ngIf="type === 'duplicatesMain'"
+        class="exact-semi clickable"
+        (click)="handleDuplicateClick($event)"
+        tooltip="Select here to view and manage its duplicates."
+        container="body"
+        placement="left"
+      >
+        <div>
+          <span *ngIf="question.exact_duplicates.length">
+            {{ question.exact_duplicates.length }} Exact
+          </span>
+          <span
+            *ngIf="
+              question.exact_duplicates.length &&
+              question.semi_duplicates.length
+            "
+          >
+            and
+          </span>
+          <span *ngIf="question.semi_duplicates.length">
+            {{ question.semi_duplicates.length }} Semi
+          </span>
+        </div>
+        <span appIcon customSize="medium" name="chevron-right"></span>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="answer dv-scroll-bar"
+    *ngIf="question.showAnswer || type !== 'qaBank'"
+    role="region"
+    aria-label="Answer"
+  >
+    <ng-container *ngIf="question.response_text && !question.response_is_na">
+      <dv-show-more
+        maxHeight="250"
+        *ngIf="
+          question.response_type != 'Grid' &&
+          question.response_type != 'DynamicGrid' &&
+          question.response_type != responseTypes.Date
+        "
+        [text]="question.response_text"
+      >
+      </dv-show-more>
+      <div *ngIf="question.response_type === responseTypes.Date">
+        {{ getDate(question.response_text) | dvDate : ["isLocaleDate"] }}
+      </div>
+
+      <div
+        *ngIf="
+          question.response_text != null &&
+          (question.response_type == 'DynamicGrid' ||
+            question.response_type == 'Grid')
+        "
+        class="maxHeight"
+      >
+        <div *ngIf="(question.grid_response | json) != '{}'" class="ng-scope">
+          <table class="table table-bordered table-condensed">
+            <tbody>
+              <tr>
+                <th></th>
+                <th *ngFor="let column of question.grid_response.Columns">
+                  {{ column.name }}
+                </th>
+              </tr>
+              <tr *ngFor="let row of question.grid_response.Rows">
+                <td>
+                  <b>{{ row.name }}</b>
+                </td>
+                <td *ngFor="let response of row.responses">
+                  {{ response }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+
+    <div *ngIf="question.response_is_na">
+      <i class="text-info">
+        <small>*This question has been marked as N/A*</small>
+      </i>
+    </div>
+    <div *ngIf="!question.response_is_na && question.response_text == null">
+      <i class="text-info">
+        <small>*No response available*</small>
+      </i>
+    </div>
+  </div>
+
+  <div
+    *ngIf="question.comments?.length > 0"
+    class="qa-comments"
+    role="region"
+    aria-label="Comments"
+  >
+    <p>
+      <span>
+        Comment :
+        <span
+          [innerHtml]="
+            question.comments[0].comment_text | cleanHtml | dvSafeHtml
+          "
+        ></span>
+      </span>
+    </p>
+  </div>
+
+  <div class="meta-data text-align-right" role="region" aria-label="Metadata">
+    <div *ngIf="showMetaData">
+      <span *ngIf="question.tags && question.tags.length > 0">
+        Tag(s):
+        <!-- | limitTo : question.limitTo?question.limitTo : 2 -->
+        <span
+          class="space-on-left-2"
+          *ngFor="
+            let tag of question.tags
+              | limitTo : (question.limitTo ? question.limitTo : 2);
+            let ind = index;
+            let last = last
+          "
+          [tooltip]="tag.value"
+          >{{ tag.value | truncate : 20 }}
+          <span *ngIf="!last">,</span>
+        </span>
+        <a
+          class="clickable expandable"
+          (click)="question.limitTo = question.tags.length"
+          *ngIf="
+            question.tags.length > 2 && question.limitTo != question.tags.length
+          "
+        >
+          + {{ question.tags.length - 2 }} more
+        </a>
+        |
+      </span>
+      <span *ngIf="question.associated_entity">
+        {{
+          question.associated_entity_type == "Fund"
+            ? "Product"
+            : question.associated_entity_type
+        }}: {{ question.associated_entity | truncate : 20 }} |
+      </span>
+      <span *ngIf="question.question_sme && question.question_sme.length > 0">
+        SME(s):
+        <span
+          class="space-on-left-2"
+          *ngFor="
+            let sme of question.question_sme
+              | limitTo : (question.limitToSme ? question.limitToSme : 2);
+            let smeIndex = index;
+            let last = last
+          "
+          [tooltip]="sme.value"
+          >{{ sme.value | truncate : 20 }}
+          <span *ngIf="!last">,</span>
+        </span>
+        <a
+          class="clickable expandable"
+          (click)="question.limitToSme = question.question_sme.length"
+          *ngIf="
+            question.question_sme.length > 2 &&
+            question.limitToSme != question.question_sme.length
+          "
+        >
+          + {{ question.question_sme.length - 2 }} more
+        </a>
+        |
+      </span>
+      <span *ngIf="question.expiry_date">
+        Expiry date: {{ question.expiry_date | dvDate : ["isLocaleDate"] }} |
+      </span>
+      <span>
+        Response date:
+        {{ question.response_created_at | dvDate }}
+      </span>
+      <span *ngIf="type !== 'qaBank'">
+        | Response type:
+        {{ responseTypeExplanation[question.response_type] }}
+      </span>
+    </div>
+
+    <div *ngIf="question.is_archived">
+      <span
+        >Archive type :
+        {{ question.is_merged ? " Marked as duplicate" : " Manually archived" }}
+        by {{ question.archived_by_name }} on
+        {{ question.archived_date | dvDate }}</span
+      >
+    </div>
+
+    <div
+      class="inline-block width-100-pct"
+      *ngIf="
+        question.response_status &&
+        question.response_status !== diligenceStatus.Started &&
+        !question.is_archived &&
+        !question.is_merged
+      "
+    >
+      <p class="space-on-top-lg last-verified text-align-right">
+        <span
+          *ngIf="
+            question.response_status ===
+              diligenceStatus.ReviewPassed.toLowerCase() &&
+            question.last_reviewed_by_name &&
+            question.last_reviewed_at
+          "
+          [style.color]="colorTheme.success"
+        >
+          Last approved by {{ question.last_reviewed_by_name }} on
+          {{ question.last_reviewed_at | dvDate : ["isLocaleDate"] }}
+        </span>
+        <span
+          *ngIf="
+            question.response_status ===
+            diligenceStatus.ReviewFailed.toLowerCase()
+          "
+          [style.color]="colorTheme.danger"
+        >
+          Revision Requested by {{ question.last_reviewed_by_name }} on
+          {{ question.last_reviewed_at | dvDate : ["isLocaleDate"] }}
+        </span>
+        <span
+          *ngIf="
+            question.response_status?.toLowerCase() ===
+            diligenceStatus.InReview.toLowerCase()
+          "
+          [style.color]="colorTheme.primary"
+        >
+          Response is In Review
+        </span>
+      </p>
+    </div>
+  </div>
+</div>

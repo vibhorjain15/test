@@ -1,0 +1,394 @@
+<app-modal
+  [title]="(edit_mode ? 'Editing ' : 'Create New ') + 'Firm'"
+  [firstButtonLabel]="
+    showFirmForm && errorMessageList.length == 0 ? firstbtnLabel : ''
+  "
+  [secondButtonLabel]="
+    !isDDqCloseModel &&
+    showFirmForm &&
+    !hideAddAnother &&
+    errorMessageList.length == 0
+      ? secondbtnLabel
+      : ''
+  "
+  [thirdButtonLabel]="errorMessageList.length > 0 ? thirdbtnLabel : ''"
+  [isNewCreateButton]="backButtonClicked"
+  [isLoading]="loading"
+  [isSecondaryLoading]="secondaryLoading"
+  [isThirdLoading]="loading"
+  newCreateButtonLabel="No, Create a New Firm"
+  [isbackButton]="showBackButton"
+  (onBackClick)="backToSearch()"
+  (onFirstClick)="submit()"
+  (onSecondClick)="submit(true)"
+  (onThirdClick)="saveNewFirm()"
+  (onNewCreateClick)="createNewFirmClick()"
+  [newCreateTooltip]="createFirmTooltip"
+  [initialTemplate]="firmRef"
+  [isAngularJs]="isAngularJs"
+  #firmModal
+>
+</app-modal>
+<ng-template #firmRef>
+  <form class="form-horizontal" [formGroup]="firmForm" autocomplete="off">
+    <div class="modal-body" [ngClass]="showFirmForm ? '' : 'manage-firm-modal'">
+      <div *ngIf="!showFirmForm">
+        <dv-form-element
+          [fieldName]="'Search'"
+          [modelController]="firmForm.get('search')"
+          [showRightIcon]="false"
+          label="Name or Website"
+          labelCol="4"
+          elementCol="8"
+          [isRequired]="true"
+        >
+          <div col="10" col-type="sm">
+            <input
+              type="text"
+              formControlName="search"
+              id="search"
+              class="form-control"
+              (onkeyup)="backButtonClicked = false"
+              placeholder="Example: DV Capitals or www.dvcapitals.com"
+              dvTrimValue
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                firmForm.get('search').touched &&
+                firmForm.get('search').errors?.required
+              "
+            >
+              Name or Website is required
+            </div>
+          </div>
+
+          <div col="2" class="text-center space-on-top">
+            <button
+              appButton
+              btnType="default"
+              class="btn-close"
+              size="sm"
+              type="button"
+              tooltip="Reset Search"
+              *ngIf="firmForm.get('search').value && !loadingFirms"
+              (click)="clearSearchInput()"
+            >
+              &times;
+            </button>
+
+            <span *ngIf="loadingFirms">
+              <span appIcon class="dvi dvi-spinner fa-spin"></span>
+            </span>
+          </div>
+        </dv-form-element>
+
+        <div *ngIf="!loadingFirms && filteredFirmList.length">
+          <div class="text-center text-orange space-on-bottom-lg">
+            <i>
+              We found {{ filteredFirmList.length }} possible firm(s). How about
+              adding
+              {{ filteredFirmList.length === 1 ? "this" : "one of these?" }}
+            </i>
+          </div>
+          <div *ngFor="let firm of filteredFirmList">
+            <div class="panel panel-default firm-list-container">
+              <div class="panel-body">
+                <div class="dv-table dv-table-middle full-width">
+                  <div class="cell text-center" col="5">
+                    <div class="max-w-360 lh15 word-break-break-all">
+                      <span
+                        class="text-primary"
+                        [ngClass]="{ 'text-gray': !firm.is_tracking }"
+                        [tooltip]="firm.name"
+                      >
+                        {{ firm.name | slice : 0 : 40 }}
+                        {{ firm.name.length > 40 ? "..." : "" }}
+                      </span>
+                      <br />
+                      <small
+                        class="text-muted"
+                        tooltip="Firm Type: {{ firm?.firm_type }}"
+                      >
+                        {{ firm?.firm_type | slice : 0 : 40 }}
+                        {{ firm?.firm_type?.length > 40 ? "..." : "" }}
+                      </small>
+                    </div>
+                  </div>
+                  <div class="cell" col="4">
+                    <a
+                      class="max-w-250 inline-block clickable overflow-ellipsis"
+                      href="#"
+                      target="_blank"
+                      >{{ firm.website }}
+                    </a>
+                  </div>
+                  <div class="cell bordered-left text-center" col="3">
+                    <button
+                      appButton
+                      class="btn-primary btn btn-default"
+                      btnType="default"
+                      tooltip="This firm exists on DiligenceVault. Click to add to your portfolio"
+                      *ngIf="!firm.is_tracking"
+                      (click)="prePopulateFirmForm(firm)"
+                    >
+                      <!-- <span appIcon name="plus"></span> -->
+                      Add to Portfolio
+                    </button>
+
+                    <a
+                      class="btn btn-default text-primary clickable"
+                      tooltip="This firm is in your portfolio. Go to detail"
+                      *ngIf="firm.is_tracking"
+                      (click)="redirectToFirmMonitor(firm.id, true)"
+                      target="_blank"
+                      role="link"
+                      tabindex="0"
+                    >
+                      View Firm
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="
+            showEmptyState &&
+            !loadingFirms &&
+            !filteredFirmList.length &&
+            firmForm.get('search').value &&
+            backButtonClicked
+          "
+        >
+          <app-empty-state
+            iconName="na"
+            message="No related firms found. Please use the 'Create New Firm' button."
+          >
+          </app-empty-state>
+        </div>
+      </div>
+
+      <div *ngIf="showFirmForm">
+        <dv-form-element
+          [fieldName]="'Name'"
+          [modelController]="firmForm.get('name')"
+          label="{{ is_investor ? 'Firm Name' : 'Investor Name' }}"
+          labelCol="4"
+          elementCol="8"
+          [isRequired]="true"
+          [errorMessage]="
+            firmForm.get('name').touched &&
+            firmForm.get('name').errors?.required
+              ? (errorMessageMap.required | interpolate : 'Name')
+              : (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Name')
+          "
+        >
+          <input
+            type="text"
+            formControlName="name"
+            id="name"
+            class="form-control"
+            [readonly]="disableSpecificFormControls"
+            placeholder="Enter firm name"
+            dvTrimValue
+          />
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="'Alias'"
+          [modelController]="firmForm.get('alternate_name')"
+          label="Alias"
+          labelCol="4"
+          elementCol="8"
+          [errorMessage]="
+            firmForm.get('alternate_name').touched &&
+            firmForm.get('alternate_name').errors?.pattern
+              ? (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Alias')
+              : ''
+          "
+        >
+          <input
+            type="text"
+            class="form-control"
+            id="alternate_name"
+            formControlName="alternate_name"
+            placeholder="Your internal alias for this firm"
+            dvTrimValue
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              firmForm.get('alternate_name').touched &&
+              firmForm.get('alternate_name').errors?.pattern
+            "
+          >
+            {{ errorMessageMap.avoidFirstSplCharacter | interpolate : "Alias" }}
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="'Firm Domain'"
+          [modelController]="firmForm.get('website')"
+          label="Firm domain"
+          labelCol="4"
+          elementCol="8"
+          [isRequired]="true"
+          [errorMessage]="
+            firmForm.get('website').touched &&
+            firmForm.get('website').errors?.pattern
+              ? 'Please add a valid domain or website'
+              : 'Firm domain is required'
+          "
+        >
+          <input
+            type="text"
+            class="form-control"
+            formControlName="website"
+            id="website"
+            [readonly]="disableSpecificFormControls"
+            placeholder="Example: www.arthance.com"
+            dvTrimValue
+          />
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="'Firm Type'"
+          [modelController]="firmForm.get('firm_type_id')"
+          [showRightIcon]="false"
+          label="Firm Type"
+          labelCol="4"
+          elementCol="8"
+        >
+          <dv-select
+            [clearable]="false"
+            chosen
+            [disabled]="disableSpecificFormControls"
+            formControlName="firm_type_id"
+            placeholder="--Select--"
+            [list]="firm_types"
+            [bindLabel]="'description'"
+            [id]="'firm_type_id'"
+            [aria-label]="'Firm Type'"
+          >
+          </dv-select>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="'Internal Key'"
+          [modelController]="firmForm.get('key')"
+          label="Internal Key"
+          labelCol="4"
+          elementCol="8"
+          [errorMessage]="
+            firmForm.get('key').touched && firmForm.get('key').errors?.pattern
+              ? (errorMessageMap.avoidFirstSplCharacter
+                | interpolate : 'Internal Key')
+              : ''
+          "
+        >
+          <input
+            type="text"
+            class="form-control"
+            formControlName="key"
+            id="key"
+            placeholder="Example: HG36FG"
+            dvTrimValue
+          />
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="'Relationship Status'"
+          [modelController]="firmForm.get('relationship_status_id')"
+          [showRightIcon]="false"
+          label="Relationship Status"
+          labelCol="4"
+          elementCol="8"
+        >
+          <dv-select
+            [clearable]="false"
+            chosen
+            [readonly]="statuses?.length === 0"
+            formControlName="relationship_status_id"
+            [id]="'relationship_status_id'"
+            placeholder="--Select--"
+            [list]="statuses"
+          >
+          </dv-select>
+        </dv-form-element>
+
+        <div>
+          <app-entity-contacts
+            *ngIf="!edit_mode"
+            #contacts
+          ></app-entity-contacts>
+        </div>
+        <div *ngIf="showAddOwners">
+          <app-dv-owners
+            [entity]="firm"
+            [entityType]="'Firm'"
+            #owners
+          ></app-dv-owners>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading bordered-top" *ngIf="!edit_mode">
+            <h5 class="panel-title">Add Custom Fields</h5>
+          </div>
+
+          <div class="panel-body" *ngIf="!edit_mode">
+            <div class="form-group firm-custom-field">
+              <app-custom-field-selection
+                [customUrl]="'firm_tags'"
+                [splitMandatory]="true"
+                [disabled]="false"
+                [fields]="fields"
+                #customFields
+              ></app-custom-field-selection>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="form-group space-on-top-lg"
+          *ngIf="!edit_mode && permissions_enabled"
+        >
+          <a
+            class="link clickable pull-right"
+            (click)="showAdvanceOptions = !showAdvanceOptions"
+          >
+            Add Team Permissioning
+          </a>
+        </div>
+        <div
+          class="form-group"
+          *ngIf="!edit_mode && permissions_enabled && showAdvanceOptions"
+        >
+          <app-team-selection
+            [type]="'Resource'"
+            [disabled]="!permissions_enabled"
+            [teams]="teams"
+            [entityType]="'Firm'"
+            #permissions
+          ></app-team-selection>
+        </div>
+        <div class="form-group">
+          <div col="8" offset="2">
+            <small
+              ><span class="font-size-10 text-orange align-top">*</span
+              ><i>Required field</i></small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <div *ngIf="errorMessageList.length > 0" class="alert alert-danger margin-20">
+    <p *ngFor="let error of errorMessageList; let $index = index">
+      <span *ngIf="errorMessageList.length > 1">{{ $index + 1 }}.</span>
+      <span [innerHTML]="error"></span>
+    </p>
+  </div>
+</ng-template>

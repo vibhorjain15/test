@@ -1,0 +1,69 @@
+<div *ngIf="params.data">
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right space-on-bottom"
+    (click)="edit()"
+    [ngClass]="{
+      'active disabled': !params.data.firm_id
+    }"
+    [tooltip]="
+      params.data.firm_id
+        ? 'Edit'
+        : 'You can not modify system defined access level'
+    "
+    triggers="mouseenter:mouseleave"
+    container="body"
+    [adaptivePosition]="false"
+    placement="left"
+    [attr.aria-label]="params.data.firm_id
+    ? 'Edit'
+    : 'You can not modify system defined access level'"
+  >
+    <span appIcon name="pencil"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right space-on-bottom"
+    [ngClass]="{
+      'active disabled': !params.data.firm_id || params.data.users > 0
+    }"
+    [tooltip]="
+      params.data.users > 0
+        ? 'You can not delete as there are user(s) associated with this access level'
+        : params.data.firm_id
+        ? 'Delete'
+        : 'You can not delete system defined access level'
+    "
+    triggers="mouseenter:mouseleave"
+    container="body"
+    (click)="delete()"
+    [adaptivePosition]="false"
+    placement="left"
+    [attr.aria-label]="params.data.users > 0
+    ? 'You can not delete as there are user(s) associated with this access level'
+    : params.data.firm_id
+    ? 'Delete'
+    : 'You can not delete system defined access level'"
+  >
+    <span appIcon name="trashcan"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right space-on-bottom"
+    tooltip="Assign Users"
+    triggers="mouseenter:mouseleave"
+    container="body"
+    (click)="assign()"
+    [adaptivePosition]="false"
+    placement="left"
+    aria-label="Assign Users"
+  >
+    <span appIcon name="assign-user"></span>
+  </button>
+</div>

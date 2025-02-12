@@ -1,0 +1,83 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel=""
+  [initialTemplate]="template"
+  [isLoading]="loader"
+  [isCancelButton]="false"
+  role="dialog"
+  [attr.aria-label]="title"
+  aria-describedby="modalTitle"
+>
+  <ng-template #template>
+    <div *ngIf="is_internal_notes" class="panel panel-info" role="note">
+      <div class="panel-heading" id="modalTitle">
+        These notes are for internal use by you and your team.
+      </div>
+    </div>
+    <div class="space-on-bottom-lg">
+      <div class="space-on-bottom-lg">
+        <dv-editor
+          [configObj]="tinyMceInit"
+          [literVersion]="true"
+          [value]="newNoteText"
+          [isMentions]="true"
+          (onChange)="handleEditorChange($event)"
+        ></dv-editor>
+      </div>
+      <div class="edit-button">
+        <dv-button
+          (onClick)="onSaveNotes()"
+          [loader]="loader"
+          [disabled]="!newNoteText"
+          ariaLabel="Save notes"
+        >
+          Save
+        </dv-button>
+        <dv-button
+          btnType="default"
+          class="space-on-left"
+          [disabled]="loader"
+          (onClick)="cancel()"
+        >
+          Cancel
+        </dv-button>
+      </div>
+    </div>
+    <div class="notes" *ngIf="!loadingNotes" role="list">
+      <ng-container *ngFor="let note of loadedNotes; let i = index">
+        <div class="space-on-bottom-lg" role="listitem">
+          <note
+            class="dv-notes"
+            [note]="note.text"
+            [firstName]="note.first_name"
+            [lastName]="note.last_name"
+            [userId]="note.created_by"
+            [showNumber]="true"
+            [index]="i"
+            [lastEdited]="note.updated_at"
+            [isSaving]="note.saving"
+            [editMode]="note.editMode"
+            (onDeleteEvent)="handleDelete($event)"
+            (onEditNote)="handleEditNote($event)"
+            [readOnly]="readOnly"
+          ></note>
+        </div>
+      </ng-container>
+      <div class="load-notes">
+        <span
+          *ngIf="notes.length && loadedNotes.length != notes.length"
+          (click)="loadMoreNotes()"
+          role="button"
+          tabindex="0"
+          aria-label="Load more notes"
+        >
+          More Notes
+        </span>
+      </div>
+      <ng-container *ngIf="!notes.length && !loadedNotes.length">
+        <app-empty-state [message]="empty_notes_message" class="In-empty-state">
+        </app-empty-state>
+      </ng-container>
+    </div>
+  </ng-template>
+</app-modal>

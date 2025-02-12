@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    Instructions
+  </h3>
+</div>
+
+<div class="modal-body">
+  <div class="instructionsDiv">
+    <div class="slider" ng-repeat="step in vm.slides">
+      <div class="slide slide{{$index}}" ng-show="step.step_no == vm.currentStep">
+        <h4>Mark {{step.name}}</h4>
+        <p><strong>Right-Click</strong> in any cell and  mark {{step.name}}</p>
+        <img class="img-responsive" src="{{step.stepImg}}">
+      </div>
+    </div>
+
+    <div class="actionBar text-center space-on-top-lg">
+      <button ng-show="vm.currentStep > 1 && vm.currentStep < vm.lastStep" class="btn btn-default" ng-click="vm.currentStep--">Previous</button>
+      <button ng-show="vm.currentStep < vm.lastStep" class="btn btn-default" ng-click="vm.currentStep++">Next</button>
+      <button ng-show="vm.currentStep == vm.lastStep" class="btn btn-default" ng-click="vm.cancel()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button btn-type="default" data-ng-click="vm.cancel()">Close</button>
+</div>

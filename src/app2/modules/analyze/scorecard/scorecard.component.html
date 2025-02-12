@@ -1,0 +1,338 @@
+<div class="list-group" *ngIf="loading_prefs">
+  <app-spinner></app-spinner>
+</div>
+<ng-container *ngIf="!loading_prefs">
+  <div class="panel panel-default border-rounded-4 space-on-bottom-xl">
+    <div class="panel-heading borderless border-rounded-4">
+      <h5 class="panel-title"><b>Rating/Score</b></h5>
+    </div>
+  </div>
+  <div class="analyze-rating--container">
+    <div
+      class="analyze-rating--left-container border-rounded-4 space-on-bottom-lg"
+    >
+      <div class="left-container--body">
+        <div class="display-flex btn-group space-on-bottom-xxl">
+          <span
+            class="btn btn-default font-size-12"
+            *ngFor="let type of entityTypes"
+            [ngClass]="{
+              'btn-primary': type.name == entity_type?.name
+            }"
+            (click)="setEntityType(type)"
+            clickable
+          >
+            <span
+              appIcon
+              [name]="type.icon"
+              [size]="type.size"
+              class="space-on-right"
+            ></span>
+            {{ type.label }}
+          </span>
+        </div>
+        <form
+          class="form-horizontal"
+          [formGroup]="scorecardForm"
+          autocomplete="off"
+        >
+          <dv-form-element
+            fieldName="rating_scheme"
+            [modelController]="scorecardForm.get('rating_scheme')"
+            [showRightIcon]="false"
+            [label]="headerConstants.RATINGDEFINITION"
+            labelPosition="top"
+            errorMessage="Rating scheme is required"
+            elementCol="12"
+          >
+            <dv-select
+              [id]="'rating_scheme'"
+              [list]="rating_types"
+              formControlName="rating_scheme"
+              [ngClass]="{
+                'is-invalid':
+                  form.rating_scheme.touched && form.rating_scheme.errors
+              }"
+              [aria-label]="'Rating scheme'"
+            ></dv-select>
+          </dv-form-element>
+          <dv-form-element
+            [showRightIcon]="false"
+            label="As of Date Range"
+            labelPosition="top"
+            elementCol="12"
+          >
+            <app-date-range-picker
+              #dateRangePicker
+              [customDate]="dateRangeRatingScheme"
+              (change)="onDateRangeRatingSchemeChange($event)"
+              (clearDateFilter)="onClearDateFilter()"
+              [id]="'AsofDateRange'"
+              [ariaLabel]="'As of Date Range'"
+            ></app-date-range-picker>
+          </dv-form-element>
+          <div class="control-label display-flex space-on-bottom-xl">
+            <ui-switch size="small" formControlName="fetch_latest">
+              <div class="sr-only">Include Only Latest Projects</div>
+            </ui-switch>
+            <div class="space-on-top space-on-left-lg">
+              <strong>Include Only Latest Projects</strong>
+              <span
+                appIcon
+                name="info"
+                class="ml-4"
+                tooltip="View latest project for your selected filters"
+              >
+              </span>
+            </div>
+          </div>
+          <div class="padding-top-7 display-flex justify-space-between">
+            <dv-button
+              btnType="default"
+              [btnClass]="showAdvanceOptions ? 'advance-option--active' : ''"
+              (onClick)="showAdvanceOptions = !showAdvanceOptions"
+            >
+              <span class="font-weight-600">
+                Advanced Options
+                <span
+                  appIcon
+                  [name]="showAdvanceOptions ? 'chevron-up' : 'chevron-down'"
+                  [style.color]="showAdvanceOptions ? colorTheme.primary : null"
+                  class="space-on-left"
+                ></span>
+              </span>
+            </dv-button>
+            <dv-button
+              [btnType]="filterApplied ? 'orange' : 'default'"
+              (onClick)="!loading_entities && filterEntities()"
+            >
+              <span class="font-weight-600">
+                <span
+                  appIcon
+                  name="filter"
+                  *ngIf="!loading_entities"
+                  class="space-on-right"
+                ></span>
+                <app-spinner *ngIf="loading_entities"></app-spinner>
+                <span>Filter {{ entity_type?.label }}(s)</span>
+              </span>
+            </dv-button>
+          </div>
+          <p class="text-align-right" *ngIf="!loading_entities">
+            <small>
+              {{ entityList?.length }} {{ entity_type?.label }}(s) selected
+            </small>
+          </p>
+          <div
+            class="advance-option--container font-size-14 space-on-top-lg"
+            [class.active]="showAdvanceOptions"
+          >
+            <div>
+              <div class="display-flex justify-space-between">
+                <p class="font-weight-600">
+                  Expand Your Analysis to Include Peer Group & Portfolio
+                  Averages
+                </p>
+                <dv-button
+                  btnType="default"
+                  class="space-on-left-lg"
+                  tooltip="Reset Advanced Options"
+                  (onClick)="resetAdvancedFiltersOnly()"
+                  [ariaLabel]="'Reset Advanced Options'"
+                >
+                  <span appIcon name="refresh"></span>
+                </dv-button>
+              </div>
+              <dv-form-element
+                fieldName="include_portfolio_as_of_date"
+                [modelController]="
+                  scorecardForm.get('include_portfolio_as_of_date')
+                "
+                [label]="includePortfolioAverageLabel"
+                labelPosition="top"
+                infoText="Showing average across all {{
+                  entity_type?.label.toLowerCase() | standardPluralize
+                }} where the selected template was used for rating/score. For average the latest project of each {{
+                  entity_type?.label.toLowerCase()
+                }} is selected."
+                [showRightIcon]="false"
+                elementCol="12"
+              >
+                <dv-radio
+                  class="width-radio"
+                  formControlName="include_portfolio_as_of_date"
+                  groupName="include_portfolio_as_of_date"
+                  valueName="allDates"
+                  [label]="portfolioDateLabel"
+                ></dv-radio>
+                <dv-radio
+                  formControlName="include_portfolio_as_of_date"
+                  groupName="include_portfolio_as_of_date"
+                  label="Pick a Specific As of Date"
+                  valueName="specificDate"
+                ></dv-radio>
+                <div
+                  class="space-on-top-lg bg-white border-rounded-4"
+                  *ngIf="
+                    scorecardForm.value.include_portfolio_as_of_date ===
+                    'specificDate'
+                  "
+                >
+                  <app-date-picker
+                    (change)="onChangePortfolioAverage($event)"
+                    [value]="scorecardForm.value.as_of_date"
+                    placement="right"
+                  >
+                  </app-date-picker>
+                </div>
+              </dv-form-element>
+              <hr class="hr-lg hr-darker space-on-bottom" />
+              <dv-form-element
+                fieldName="include_peer_average"
+                [modelController]="scorecardForm.get('include_peer_average')"
+                [label]="includePeerAverageLabel"
+                labelPosition="top"
+                infoText="Showing average across all selected peer where the selected template was used for rating/score. Click on the filter to define your peer."
+                [showRightIcon]="false"
+                [errorMessage]="
+                  scorecardForm.get('include_peer_average').errors
+                    ?.include_peer_entities
+                "
+                elementCol="12"
+              >
+                <dv-radio
+                  formControlName="include_peer_average"
+                  label="Select Peer Group"
+                  [valueName]="true"
+                  groupName="include_peer_average"
+                ></dv-radio>
+                <div
+                  class="space-on-top-lg"
+                  *ngIf="scorecardForm.value.include_peer_average"
+                >
+                  <dv-button
+                    [btnType]="filterAppliedPeer ? 'orange' : 'default'"
+                    (onClick)="filterPeerEntities()"
+                    [loader]="loading_peer_entities"
+                    btnWidth="100"
+                  >
+                    <span appIcon name="filter" class="space-on-right"></span>
+                    Select Entities
+                  </dv-button>
+                  <p *ngIf="!loading_peer_entities">
+                    <small>
+                      {{ peerEntityList.length }} {{ entity_type?.label }}(s)
+                      selected
+                    </small>
+                  </p>
+                </div>
+              </dv-form-element>
+              <hr class="hr-lg hr-darker space-on-bottom" />
+              <div class="control-label display-flex">
+                <dv-form-element
+                  fieldName="include_average"
+                  [modelController]="scorecardForm.get('include_average')"
+                  [label]="includeAverageLabel"
+                  labelPosition="top"
+                  [infoText]="
+                    'Showing average across all the projects for the selected ' +
+                    entity_type?.label.toLowerCase() +
+                    '(s) shown on heatmap'
+                  "
+                  [showRightIcon]="false"
+                  spacing="none"
+                  elementCol="12"
+                  [for]="'inlcude_average'"
+                >
+                  <div class="display-flex">
+                    <ui-switch size="small" formControlName="include_average">
+                      <div class="sr-only">Show Average Across All Firms</div>
+                    </ui-switch>
+                    <div class="space-on-top space-on-left-lg">
+                      Show Average Across All Firms
+                    </div>
+                  </div>
+                </dv-form-element>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="left-container--footer">
+        <dv-button
+          btnType="default"
+          btnClass="font-weight-600"
+          (onClick)="clearFilters()"
+          tooltip="Reset the filters"
+        >
+          <span appIcon name="refresh"></span>
+          Reset Filters
+        </dv-button>
+        <dv-button
+          btnType="primary"
+          btnClass="font-weight-600"
+          (onClick)="getRatingsData()"
+          [disabled]="loading_entities || loading_peer_entities"
+          [loader]="loading_heatmap"
+        >
+          <span appIcon name="search"></span>
+          Show Results
+        </dv-button>
+      </div>
+    </div>
+    <div
+      class="panel panel-default border-rounded-4"
+      [class.analyze-rating--right-container]="!isFullScreenMode"
+    >
+      <div class="panel-body height-100-pct">
+        <div
+          *ngIf="isInitialLoad || loading_heatmap"
+          class="align-items-center justify-center flex-direction-column height-100-pct"
+        >
+          <ng-container *ngIf="isInitialLoad">
+            <img
+              src="/assets/images/search.svg"
+              alt="Search"
+              width="187"
+              height="185"
+            />
+            <p class="font-size-16 font-weight-600 secondary-text-color">
+              Fill in your parameters to populate results.
+            </p>
+          </ng-container>
+          <ng-container *ngIf="loading_heatmap">
+            <app-spinner></app-spinner>
+          </ng-container>
+        </div>
+        <div
+          class="rating-container"
+          *ngIf="!isInitialLoad && !loading_heatmap && heatmapResponse"
+        >
+          <div id="chartWidthDiv" class="visibility-hidden"></div>
+          <heatmap
+            *ngIf="heatmapColor"
+            [heatmapCompleteDataResponse]="heatmapResponse"
+            [heatmapColor]="heatmapColor"
+            [rating]="currentRatingType"
+            [filterConfig]="heatmapFilterConfig"
+            (fullScreenMode)="onFullScreenModeToggle($event)"
+          >
+          </heatmap>
+        </div>
+        <div *ngIf="!loading_heatmap && diligencesToRefresh.length">
+          <hr class="hr-sm hr-lighter" />
+          <dv-button
+            btnType="default"
+            btnClass="font-weight-600"
+            (onClick)="recalculate()"
+            [loader]="recalculating"
+            tooltipText="Click on this button if you want to recalculate rating/scores for the below diligences."
+          >
+            <span appIcon name="refresh"></span>
+            Recalculate
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

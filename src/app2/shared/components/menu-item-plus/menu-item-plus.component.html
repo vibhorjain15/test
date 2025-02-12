@@ -1,0 +1,35 @@
+<li>
+  <span dropdown>
+    <span>
+      <a
+        href
+        id="basic-link"
+        dropdownToggle
+        (click)="(false)"
+        aria-controls="basic-link-dropdown"
+      >
+        <span class="menu-label">{{ menu_item.label }}</span>
+        <span class="caret"></span
+      ></a>
+    </span>
+    <ul
+      id="basic-link-dropdown"
+      *dropdownMenu
+      class="dropdown-menu"
+      aria-labelledby="basic-link"
+      role="menu"
+    >
+      <li role="menuitem" *ngFor="let item of menu_item.submenu_items">
+        <!-- <a class="dropdown-item" href="#">{{ item.label }}</a> -->
+        <app-menu-item
+          [menu_item]="item"
+          [stateName]="item.stateName"
+          [stateParams]="item.stateParams"
+          [modalName]="item.modal_name"
+          [modal_options]="item.modal_options"
+          [customClass]="item.custom_class"
+        ></app-menu-item>
+      </li>
+    </ul>
+  </span>
+</li>

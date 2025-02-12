@@ -1,0 +1,21 @@
+<dv-checkbox
+  data-ng-repeat="item in ::vm.list"
+  checklist-model="vm.response.attributes.listValueID"
+  checklist-change="vm.onResponseChange()"
+  checklist-value="item.id"
+  label="{{::item.value}}"
+  disabled>
+</dv-checkbox>
+
+<div data-ng-show="(vm.otherOption && vm.is_other_option_selected)" class="space-on-top">
+  <textarea class="form-control"
+            placeholder="Please provide other value(s)"
+            data-ng-change="vm.onResponseChange('textResponse')"
+            data-ng-model-options="{ debounce: { 'default': 500 } }"
+            msd-elastic="\n"
+            data-ng-model="vm.response.attributes.textResponse"
+            disabled></textarea>
+</div>
+
+<p data-ng-show="!(vm.otherOption && vm.is_other_option_selected) && vm.response.attributes.textResponse" class="space-on-top-lg comments-border" data-ng-bind-html="::response.attributes.textResponse">
+</p>

@@ -1,0 +1,35 @@
+<dv-segment
+  [title]="'Define rules for creating flags, setting scores, or both'"
+  [actionIconsList]="scoringActionIcons"
+  (handleIconClick)="handleOnIconClick($event)"
+  role="region"
+  aria-label="Rules Definition Segment"
+>
+  <div
+    class="text-center spinner-display"
+    *ngIf="loading"
+    role="status"
+    aria-busy="true"
+  >
+    <app-spinner spinnerHeight="300"></app-spinner>
+  </div>
+  <ng-container *ngIf="!loading">
+    <app-empty-state
+      message="No rules defined for this template"
+      actionLabel="Add Rule"
+      (action)="handleAddRuleClick()"
+      *ngIf="!row.length"
+      role="note"
+    ></app-empty-state>
+
+    <dv-table
+      *ngIf="row.length"
+      [cols]="cols"
+      [rows]="row"
+      [isAccordion]="true"
+      headersAlignment="center"
+      (handleEdit)="handleEdit($event)"
+      (handleDelete)="handleDelete($event)"
+    ></dv-table>
+  </ng-container>
+</dv-segment>

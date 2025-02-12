@@ -1,0 +1,21 @@
+.ratingClass {
+  width: 75%;
+}
+.review-updates {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 10px;
+}
+.rating-modal {
+  display: flex;
+  gap: 20px;
+}
+.review-status-panel {
+  flex-grow: 0.7;
+}
+.form-horizontal {
+  flex-grow: 1;
+}
+.icon-brand-color {
+  color: #126b82;
+}

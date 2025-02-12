@@ -1,0 +1,20 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-workflow-list></ng2-workflow-list> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Workflow Definitions</h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control" data-ng-if="!vm.is_freeSubscription"
+          data-ng-click="vm.openAddWorkflowModal()"
+          uib-tooltip="Define New Workflow">
+          <icon name="plus"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <dv-grid grid-resource="vm.workflows" grid-name="'workflows'"></dv-grid>
+  </div>
+</div>

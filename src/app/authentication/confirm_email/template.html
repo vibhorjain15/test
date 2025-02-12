@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="row clearfix">
+    <div class="authentication-form-wrapper">
+      <spinner data-ng-hide="!vm.loading"></spinner>
+
+      <p class="alert alert-danger clear-margin" data-ng-show="vm.token_expired">
+        Your token is invalid or expired
+      </p>
+    </div>
+  </div>
+</div>

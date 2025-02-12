@@ -1,0 +1,24 @@
+<div class="text-center clickable" *ngIf="params.data">
+  <button
+    appButton
+    btnType="secondary"
+    size="xs"
+    class="label"
+    [ngClass]="{
+      'label-primary': params.data.entity_type == 'Report',
+      'label-warning': !(params.data.entity_type == 'Report')
+    }"
+    [adaptivePosition]="false"
+    [tooltip]="
+      params.data.entity_type == 'Report'
+        ? 'This is word report'
+        : 'This is DV Report'
+    "
+    container="body"
+    [attr.aria-label]="
+      params.data.entity_type == 'Report' ? 'Word report' : 'DV report'
+    "
+  >
+    {{ params.data.entity_type == "Report" ? "WORD REPORT" : "DV REPORT" }}
+  </button>
+</div>

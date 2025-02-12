@@ -1,0 +1,63 @@
+name: Trigger Build Script
+
+on:
+  push:
+    branches: ["test-angular-router"]
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux, x64]
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout latest master
+        uses: actions/checkout@v4
+      #   with:
+      #     ref: master
+          
+      - name: Checkout latest test-angular-router
+        uses: actions/checkout@v4
+        with:
+          ref: test-angular-router
+
+  
+
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: List branches
+        run: git branch -a
+
+      - name: Run build script
+        shell: bash
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: "diligencevault"
+          SENTRY_PROJECT: "test-ui"
+        run: npm install -g bower && ./build.sh
+
+      # Cache Nx build
+      - name: Cache Nx
+        uses: actions/cache@v3
+        id: nx-cache
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-${{ hashFiles('nx.json') }}
+          restore-keys: |
+            nx-${{ runner.os }}-

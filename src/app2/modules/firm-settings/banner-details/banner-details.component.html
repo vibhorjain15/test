@@ -1,0 +1,229 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Banner Details</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      Caution: The changes applied will be universal for all users.
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <ng-container *ngIf="bannerForm">
+        <form class="form-horizontal" [formGroup]="bannerForm">
+          <dv-form-element
+            [fieldName]="'Banner Title'"
+            [modelController]="bannerForm.get('banner_title')"
+            [label]="'Banner Title'"
+            [errorMessage]="getErrorMessage('banner_title', 'Banner Title')"
+            [isRequired]="true"
+          >
+            <input
+              type="text"
+              class="form-control"
+              id="banner_title"
+              formControlName="banner_title"
+              placeholder="Banner Title"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'banner_url'"
+            [isRequired]="true"
+            [modelController]="bannerForm.get('banner_url')"
+            [label]="'Banner Image URL'"
+            [errorMessage]="getErrorMessage('banner_url', 'Image URL')"
+          >
+            <input
+              type="text"
+              id="banner_url"
+              class="form-control"
+              formControlName="banner_url"
+              placeholder="Banner URL"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'redirect_url'"
+            [modelController]="bannerForm.get('redirect_url')"
+            [label]="'Redirect URL'"
+            [errorMessage]="getErrorMessage('redirect_url', 'Redirect URL')"
+          >
+            <input
+              type="text"
+              id="redirect_url"
+              class="form-control"
+              formControlName="redirect_url"
+              placeholder="Redirect URL"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'button_asset_url'"
+            [modelController]="bannerForm.get('button_asset_url')"
+            [label]="'Background Image URL'"
+            [errorMessage]="
+              getErrorMessage('button_asset_url', 'Button Asset URL')
+            "
+          >
+            <input
+              type="text"
+              id="button_asset_url"
+              class="form-control"
+              formControlName="button_asset_url"
+              placeholder="Background Image URL"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Button Label'"
+            [modelController]="bannerForm.get('button_label')"
+            [label]="'Button Label'"
+            [errorMessage]="getErrorMessage('button_label', 'Button Label')"
+            [isRequired]="!!bannerForm.get('redirect_url')?.value"
+          >
+            <input
+              type="text"
+              class="form-control"
+              id="button_label"
+              formControlName="button_label"
+              placeholder="Button Label"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Button Color'"
+            [modelController]="bannerForm.get('button_color')"
+            [label]="'Button Color'"
+            [errorMessage]="getErrorMessage('button_color', 'Button Color')"
+            [isRequired]="!!bannerForm.get('redirect_url')?.value"
+          >
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              id="button_color"
+              formControlName="button_color"
+              [colorPicker]="bannerForm.get('button_color')?.value"
+              [cpOKButton]="true"
+              [cpOKButtonClass]="'btn btn-primary btn-xs'"
+              (colorPickerChange)="onColorPickerChange($event, 'button_color')"
+              [style.background]="bannerForm.get('button_color')?.value"
+              [style.color]="getColor(bannerForm.get('button_color')?.value)"
+              [cpOutputFormat]="'hex'"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Button Text Color'"
+            [modelController]="bannerForm.get('button_label_color')"
+            [label]="'Button Text Color'"
+            [errorMessage]="
+              getErrorMessage('button_label_color', 'Button Text Color')
+            "
+            [isRequired]="!!bannerForm.get('redirect_url')?.value"
+          >
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              id="button_label_color"
+              formControlName="button_label_color"
+              [colorPicker]="bannerForm.get('button_label_color')?.value"
+              [cpOKButton]="true"
+              [cpOKButtonClass]="'btn btn-primary btn-xs'"
+              (colorPickerChange)="
+                onColorPickerChange($event, 'button_label_color')
+              "
+              [style.background]="bannerForm.get('button_label_color')?.value"
+              [style.color]="
+                getColor(bannerForm.get('button_label_color')?.value)
+              "
+              [cpOutputFormat]="'hex'"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Background Color'"
+            [modelController]="bannerForm.get('background_color')"
+            [label]="'Background Color'"
+            [errorMessage]="
+              getErrorMessage('background_color', 'Background Color')
+            "
+          >
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              id="background_color"
+              formControlName="background_color"
+              [colorPicker]="bannerForm.get('background_color')?.value"
+              [cpOKButton]="true"
+              [cpOKButtonClass]="'btn btn-primary btn-xs'"
+              (colorPickerChange)="
+                onColorPickerChange($event, 'background_color')
+              "
+              [style.background]="bannerForm.get('background_color')?.value"
+              [style.color]="
+                getColor(bannerForm.get('background_color')?.value)
+              "
+              [cpOutputFormat]="'hex'"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [showRightIcon]="false"
+            [fieldName]="'probability'"
+            [modelController]="bannerForm.get('probability')"
+            [label]="'Probability'"
+            infoText="Enter a weightage (0-100) to prioritize this banner. 
+            Higher weightage increases the chance of this banner being displayed compared to other banners."
+            [errorMessage]="
+              bannerForm.get('probability').touched &&
+              (bannerForm.get('probability').errors?.min ||
+                bannerForm.get('probability').errors?.max)
+                ? 'Enter a numeric value between 0 - 100'
+                : null
+            "
+          >
+            <input
+              type="number"
+              min="0"
+              max="100"
+              id="probability"
+              class="form-control"
+              formControlName="probability"
+              autocomplete="off"
+              placeholder="Type a numeric value between 0 - 100"
+            />
+          </dv-form-element>
+          <dv-form-element elementCol="12">
+            <label class="control-label" col="3" col-type="sm"></label>
+            <div col="8" col-type="sm">
+              <dv-checkbox
+                label="Draft"
+                formControlName="is_draft"
+              ></dv-checkbox>
+              <span class="space-on-top infoIconEmailTemplate">
+                <span
+                  appIcon
+                  name="info"
+                  placement="right"
+                  container="body"
+                  tooltip="This banner will not be published until the content is marked as Draft."
+                ></span>
+              </span>
+            </div>
+          </dv-form-element>
+          <div class="form-group">
+            <div col="8" offset="3">
+              <dv-button
+                btnType="default"
+                btnClass="space-on-right"
+                (onClick)="cancel()"
+              >
+                Cancel
+              </dv-button>
+              <dv-button
+                [disabled]="bannerForm.invalid"
+                [loader]="saving"
+                (onClick)="save()"
+              >
+                {{ activeBanner ? "Update" : "Add" }} Banner
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

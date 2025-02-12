@@ -1,0 +1,38 @@
+<ui-grid-cell-contents class="text-left">
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+<div ng-controller="DueDiligenceActionController as vm">
+  <div data-ng-if="row.entity.status != 'Sent'">
+    <p data-ng-class="{'text-bold': row.entity.status == 'Invited'}">
+      <a class="js-projects-dd-name" data-ng-if="row.entity.entity_type == 'Fund'"
+          ui-sref="app.diligence.firms.funds.project.questionnaire({fromfirmId: row.entity.fromfirm_id, tofirmId:row.entity.tofirm_id, fundId: row.entity.entity_id, diligenceId: row.entity.id})"
+          uib-tooltip="{{row.entity.investor_firm_name}}"
+          tooltip-placement="top">
+        {{row.entity.investor_firm_name}}
+      </a>
+      <a class="js-projects-dd-name" data-ng-if="row.entity.entity_type == 'Firm'"
+          ui-sref="app.diligence.firms.project.questionnaire({fromfirmId: row.entity.fromfirm_id, tofirmId:row.entity.entity_id, diligenceId: row.entity.id})"
+          uib-tooltip="{{row.entity.investor_firm_name}}"
+          tooltip-placement="top">
+        {{row.entity.investor_firm_name}}
+      </a>
+      <a class="js-projects-dd-name" data-ng-if="row.entity.entity_type == 'Vehicle'"
+          ui-sref="app.diligence.project.questionnaire({diligenceId: row.entity.id})"
+          uib-tooltip="{{row.entity.investor_firm_name}}"
+          tooltip-placement="top">
+        {{row.entity.investor_firm_name}}
+      </a>
+      <a class="js-projects-dd-name" data-ng-if="row.entity.entity_type == 'Strategy'"
+          ui-sref="app.diligence.project.questionnaire({diligenceId: row.entity.id})"
+          uib-tooltip="{{row.entity.investor_firm_name}}"
+          tooltip-placement="top">
+        {{row.entity.investor_firm_name}}
+      </a>
+    </p>
+  </div>
+  <div data-ng-if="row.entity.status == 'Sent'">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+</div>
+</ui-grid-cell-contents>

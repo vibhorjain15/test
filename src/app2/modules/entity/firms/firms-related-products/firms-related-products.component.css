@@ -1,0 +1,6 @@
+/* .due-diligence-grid {
+  max-width: 940px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 10px;
+} */

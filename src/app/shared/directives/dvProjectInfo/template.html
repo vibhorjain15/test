@@ -1,0 +1,83 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+      <ul class="list-unstyled due-diligence-history">
+          <li data-ng-hide="!vm.is_due"
+              data-ng-class="{'text-muted': !vm.daysDue || vm.completedDueDiff > 0, 'text-orange': vm.daysDue == 1 || vm.daysDue == 0, 'text-danger': vm.daysDue < 0 || vm.completedDueDiff < 0}">
+            <small class="text-uppercase" >Due Date:</small>
+            <span data-ng-if="vm.completedDueDiff || vm.completedDueDiff == 0">
+              <span data-ng-if="vm.completedDueDiff < 0">{{vm.diligence.due_at|date}} (Submitted {{vm.completedDueDiff | absoluteNumber}} days late)</span>
+              <span data-ng-if="vm.completedDueDiff > 0">{{vm.diligence.due_at|date}} (Submitted {{vm.completedDueDiff | absoluteNumber}} days early)</span>
+              <span data-ng-if="vm.completedDueDiff == 0">{{vm.diligence.due_at|date}} (Just in time submission)</span>
+            </span>
+            <span data-ng-if="!vm.completedDueDiff && vm.completedDueDiff != 0">
+              <span data-ng-if="vm.daysDue < 0">Overdue ({{vm.diligence.due_at|date}})</span>
+              <span data-ng-if="vm.daysDue == 0">Due today</span>
+              <span data-ng-if="vm.daysDue == 1">Due tomorrow</span>
+              <span data-ng-if="vm.daysDue > 1">Due in {{vm.daysDue}} days ({{vm.diligence.due_at|date}})</span>
+              <span data-ng-if="!vm.daysDue && vm.daysDue != 0">Not Set</span>
+            </span>
+          </li>
+          <li data-ng-if="vm.diligence.as_of_date">
+            <small class="text-muted text-uppercase">
+              As of Date: </small>{{vm.diligence.as_of_date | date}}
+          </li>
+          <li data-ng-if="vm.diligence.last_updated_at">
+            <small class="text-muted text-uppercase">
+              Last Updated: </small>{{::vm.Utils.getLocalDateTimeGeneric(vm.diligence.last_updated_at)|date}}
+          </li>
+          <li data-ng-if="!vm.diligence.last_updated_at">
+            <small class="text-muted text-uppercase">
+              Last Updated: </small>None Yet
+          </li>
+          <li>
+            <small class="text-muted text-uppercase">Request Type: </small>
+            <span data-ng-if="vm.diligence.is_internal && vm.diligence.diligence_type != 'dd_review' && vm.diligence.diligence_type != 'inbound'" class="label label-primary" uib-tooltip="This is internal DDQ">Internal DDQ / Project</span>
+            <span data-ng-if="vm.diligence.diligence_type == 'dd_review'" class="label label-primary" uib-tooltip="This is an analyst evaluation project"><icon name="notepad" ></icon> Analyst Evaluation</span>
+            <span data-ng-if="!vm.diligence.is_internal && !vm.is_investor && vm.diligence.diligence_type != 'inbound'"">External  Request</span>
+            <span data-ng-if="!vm.diligence.is_internal && vm.is_investor && vm.diligence.diligence_type != 'inbound'">Data Collection</span>
+            <span data-ng-if="vm.diligence.diligence_type == 'inbound'">Opportunity</span>
+          </li>
+          <li data-ng-if="!vm.is_investor && vm.is_freeSubscription">
+            <small class="text-muted text-uppercase">{{(vm.entity_type == 'Product' ? 'Investor' : 'Client')}}:</small>{{vm.diligence.investorfirm_name}}
+          </li>
+          <li data-ng-if="!vm.is_investor && !vm.is_freeSubscription">
+            <small class="text-muted text-uppercase">{{(vm.entity_type == 'Product' ? 'Investor' : 'Client')}}:</small>  <a ui-sref="app.firms.profile.monitor({firmId: vm.diligence.investorfirm_id})">{{vm.diligence.investorfirm_name}}</a>
+          </li>
+          <li data-ng-if="vm.is_investor && vm.diligence.managerfirm_name">
+            <small class="text-muted text-uppercase">Firm:</small> <a ui-sref="app.firms.profile.monitor({firmId: vm.diligence.managerfirm_id})">{{vm.diligence.managerfirm_name}}</a>
+          </li>
+          <li>
+            <small class="text-muted text-uppercase">Questionnaire: </small> <a ui-sref="app.diligence.project.questionnaire({diligenceId: vm.diligence.id})">{{vm.diligence.template_name}}</a>
+          </li>
+          <li data-ng-show="vm.diligence.created_by">
+            <small class="text-muted text-uppercase">Created By:</small>
+            <span class="space-on-right">
+              {{vm.diligence.created_by.fullName}}
+            </span>
+          </li>
+          <li data-ng-show="!vm.is_investor">
+            <span data-ng-hide="vm.diligence.diligence_type == 'inbound'">
+              <small class="text-muted text-uppercase"># of Views: </small> {{::vm.diligence.view_count}}
+            </span>
+            <span data-ng-show="vm.diligence.last_viewed_at"><small> (Last viewed {{::vm.diligence.last_viewed_at|date}})</small></span>
+          </li>
+          <li data-ng-show="vm.is_investor && !vm.diligence.is_internal">
+            <small class="text-muted text-uppercase">Sent To:</small>
+            <span class="text-muted font-size-10" data-ng-if="vm.sentToContactsList.length == 0">
+              No Subscribers Found
+            </span>
+            <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top space-on-bottom max-w-100-p"
+              data-ng-if="vm.sentToContactsList.length>0" data-ng-repeat="recipient in vm.sentToContactsList"  uib-tooltip="{{recipient.fullName}}">
+              <small class="recipient-name">{{recipient.fullName}}</small>
+              <a class="space-on-left clickable link-disguise"
+                data-ng-click="vm.displaySubscriberRemovalConfirmation(recipient)">&times;</a>
+            </span>
+            <dv-sent-to-contact-selector data-ng-show="!vm.saving_contact" on-change="vm.addSubscriber(user)" diligence="vm.diligence"
+              sent-to-contacts-list="vm.sentToContactsList">
+            </dv-sent-to-contact-selector>
+            <spinner data-ng-show="vm.saving_contact"></spinner>
+ 
+          </li>
+        </ul>
+  </div>
+</div>

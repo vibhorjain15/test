@@ -1,0 +1,244 @@
+<form class="form-horizontal" name="vm.contact_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Select Questions
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+    <div class="panel panel-info" ng-show="vm.questions && vm.questions.length">
+      <div class="panel-heading">Showing {{vm.questions.length}} questions only. You can apply filters to narrow your search.</div>
+    </div>
+
+    <div class="modal-body">
+      <div ng-if="vm.loading" class="text-center padding-10">
+        <spinner broad-spinner spinner-height='60'></spinner>
+      </div>
+      <div class="panel panel-default"  ng-if="!vm.loading">
+        <div class="panel-heading pa-lr-3-px">
+          <div class="row clearfix">
+            <!-- <div col="4">
+              <div class="input-group-rename-this-class-when-filters-are-enabled space-on-left">
+                <input type="text" data-ng-model="vm.searchText" class="form-control padded-left-sm font-size-12"
+                  placeholder="Search by question text" />
+              </div>
+            </div> -->
+            <div col="12">
+              <div col="6">
+                <button btn-type="default" class="space-on-top-2" size="sm" data-ng-if="vm.filters_data_loaded"
+                  uib-tooltip="{{vm.showFilters ? 'Hide' : 'Apply' }} Filters"
+                  data-ng-click="vm.toggleFiltersSection()">
+                  <icon name="filter" data-ng-class="{'text-orange': vm.filterApplied}"></icon>
+                </button>
+                <button btn-type="default" size="sm" data-ng-disabled="vm.disable_select_all"
+                  class="space-on-top-2 space-on-left" data-ng-click="vm.toggleSelectAll(true)">
+                  <span class="align-middle">Select All</span>
+                </button>
+                <button btn-type="default" size="sm" data-ng-disabled="vm.disable_select_all"
+                  class="space-on-top-2 space-on-left" data-ng-click="vm.toggleSelectAll(false)">
+                  <span class="align-middle">Remove All</span>
+                </button>
+              </div>
+              <div col="6" class="no-margin">
+                <select class="form-control" id="criteria_sort_filter" name="criteria_sort_filter" chosen
+                  data-placeholder="Select a filter" data-ng-model="vm.currentSortFilterSelected"
+                  data-ng-change="vm.selectSortCriteriaFilter()">
+                  <option value=""></option>
+                  <option value="ma-false">
+                    <span>
+                      Sort by: most answered ↑
+                    </span>
+                  </option>
+                  <option value="ma-true">
+                    <span>
+                      Sort by: most answered ↓
+                    </span>
+                  </option>
+                  <option value="fu-false">
+                    <span>
+                      Sort by: frequently used ↑
+                    </span>
+                  </option>
+                  <option value="fu-true">
+                    <span>
+                      Sort by: frequently used ↓
+                    </span>
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="space-on-top-lg" data-ng-if="vm.showFilters">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="space-on-left-lg">
+                <small><label class="control-label clear-margin-bottom inline-block space-on-right">Questions matching</label></small>
+                <select class="form-control inline-block w-80"
+                        required
+                        data-ng-model="vm.global_ternary_operator">
+                    <option value="{{vm.FILTER_TERNARY_OPERATORS.OR}}">ANY</option>
+                    <option value="{{vm.FILTER_TERNARY_OPERATORS.AND}}">ALL</option>
+                </select>
+                <small><label class="control-label clear-margin-bottom inline-block space-on-left">of the following criteria</label></small>
+              </div>
+            </div>
+            <div col="12">
+              <form class="form-horizontal" name="vm.custom_search_form" novalidate>
+                <div class=" space-on-bottom-lg space-on-top-lg" col="12">
+                  <div col="12" class="space-on-top-xl"
+                    data-ng-repeat="criteria in vm.search_criterias track by $index">
+                    <div col="4" class="padding-right-lg">
+                      <form-group field-name="Criteria" tooltip-placement="left">
+                        <label for="criteria_{{$index}}" class="control-label text-capitalize"
+                          data-ng-if="$index==0">Filters</label>
+                        <select class="form-control" id="criteria_{{$index}}" name="criteria_{{$index}}" chosen
+                          data-ng-model="criteria.criteria_obj" data-placeholder="Select a criteria"
+                          data-ng-change="vm.selectCriteria(criteria, $index)"
+                          data-ng-options="option as option.filter_label for option in vm.allSearchFilterOptions">
+                          <option value=""></option>
+                        </select>
+                      </form-group>
+                    </div>
+                    <div col="3" class="padding-right-lg">
+                      <label class="control-label" data-ng-if="$index == 0">Condition</label>
+                      <form-group field-name="condition" tooltip-placement="left">
+                        <select class="form-control" data-ng-model="criteria.condition"
+                          data-ng-init="vm.setOptionsDefaultValue(criteria, $index)">
+                          <option data-ng-repeat="operation in criteria.criteria_obj.search_type track by $index"
+                            value="{{operation.value}}">
+                            {{operation.label}}
+                          </option>
+                        </select>
+                      </form-group>
+                    </div>
+                    <div col="5">
+                      <div class="width-90-pct inline-block padding-right-lg">
+                        <form-group field-name="Value" tooltip-placement="left"
+                          data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.BOOLEAN">
+                          <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                          <select allow-single-deselect="true" class="form-control" id="value_{{$index}}" chosen
+                            data-ng-init="criteria.advance_filter_value = true"
+                            data-ng-model="criteria.advance_filter_value" disabled>
+                            <option ng-value="true">Yes</option>
+                          </select>
+                        </form-group>
+                        <form-group field-name="Value"
+                          data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.NUMBER || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.INT || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.NUMERIC || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.INTEGER"
+                          tooltip-placement="left">
+                          <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                          <input type="number" data-ng-model="criteria.advance_filter_value" class="form-control" />
+                        </form-group>
+                        <form-group field-name="Value"
+                          data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.STRING || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.TEXT || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.PARAGRAPH || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.MULTILINE || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.LINK"
+                          tooltip-placement="left">
+                          <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                          <input type="text" id="value_{{$index}}" data-ng-model="criteria.advance_filter_value"
+                            placeholder="Type a value" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                            class="form-control" />
+                        </form-group>
+                        <form-group field-name="Value"
+                          data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DYNAMIC || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.RANGE || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DROPDOWN || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.CHECKBOX || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DROP"
+                          tooltip-placement="left">
+                          <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                          <select allow-single-deselect="true" class="form-control" id="value_{{$index}}" chosen
+                            data-ng-model="criteria.advance_filter_value"
+                            data-ng-options="option.id as option.value for option in criteria.criteria_obj.options">
+                            <option value=""></option>
+                          </select>
+                        </form-group>
+                        <form-group field-name="Value"
+                          data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DATE && criteria.condition == 'between'"
+                          control-selector="dv-daterangepicker">
+                          <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                          <div col="12">
+                            <dv-daterangepicker data-ng-model="criteria.advance_filter_value"
+                              name="daterangefilter_{{$index}}" min-date="vm.minDate" max-date="vm.maxDate"
+                              apply-method="vm.applyMethod">
+                            </dv-daterangepicker>
+                          </div>
+                        </form-group>
+                        <form-group field-name="Value"
+                          data-ng-if="(criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DATE || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DATETIME) && criteria.condition != 'between'"
+                          control-selector="dv-datepicker">
+                          <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                          <dv-datepicker data-ng-model="criteria.advance_filter_value" name="datefilter_{{$index}}"
+                            data-ng-change="vm.setModelValidity()">
+                          </dv-datepicker>
+                        </form-group>
+                      </div>
+                      <a data-ng-style="$index == 0 && {'top':'33px'}"
+                        data-ng-if="criteria.advance_filter_value.toString() != '' && (criteria.advance_filter_value || criteria.advance_filter_value.toString() == '0')"
+                        data-ng-click="vm.removeCurrentFilter(criteria,$index)" class="clickable clear-filter-btn">
+                        <icon name="close" class="color-danger"></icon>
+                      </a>
+                    </div>
+                  </div>
+                  <div col="12" class="space-on-top-xxl">
+                    <div offset="10" col="2" class="">
+                      <div class="pull-right ">
+                        <button btn-type="default" size="sm" class="space-on-right" uib-tooltip="Add Criteria"
+                          data-ng-click="vm.addNewCriteria()">
+                          <icon name="plus"></icon>
+                        </button>
+                      </div>
+                      <div class="space-on-bottom-lg space-on-top-lg pull-right" style="width: 253px;">
+                        <button block="true" button-loader="vm.processing_data" class="btn btn-primary btn-block-overwrite"
+                          data-ng-click="vm.searchByFilters()">
+                          Start Searching
+                        </button>
+                        <button btn-type="default" data-ng-click="vm.resetFilters()">
+                          Reset & Search
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <spinner broad-spinner spinner-height='60' data-ng-show="vm.processing_data"></spinner>
+        <div data-ng-show="!vm.processing_data && vm.questions.length > 0" class="questions_container">
+          <table class="table table-condensed">
+            <tbody>
+              <tr data-ng-repeat="question in vm.questions | filter: vm.searchText"">
+                <td width="10%">
+                  <dv-checkbox
+                      data-ng-model="question.is_selected">
+                  </dv-checkbox>
+                </td>
+                <td width="90%">
+                  <div ng-bind-html="question.question_text | cleanhtml"></div>
+                  <div class="info_div">
+                    <span>
+                      <strong>Response Type</strong> : {{vm.getResponseTypeById(question.response_type).description}}
+                      |
+                      <strong>Response(s)</strong> : {{question.response_count}}
+                      |
+                      <span uib-tooltip="{{vm.formatTemplatesTooltip(question)}}" class="clickable">
+                        <strong>Template(s)</strong> : {{question.template_count}}
+                      </span>
+                    </span>
+                  </div>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="panel-body" data-ng-show="!vm.questions.length && !vm.processing_data">
+          <empty-state message="No questions available.">
+          </empty-state>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" data-ng-click="vm.save()" >Save Selection</button>
+      <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,9 @@
+.doc-filters {
+  display: flex;
+  justify-content: space-between;
+}
+.use-existing-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

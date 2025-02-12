@@ -1,0 +1,10 @@
+<ui-grid-cell-contents>
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <span ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)"
+        class="label text-uppercase" 
+        data-ng-class="{'label-success': row.entity.status == 'success', 'label-danger': row.entity.status == 'failed'}"
+        uib-tooltip="{{row.entity.status == 'success'? 'You are all set!': 'Click file name to review errors and re-upload the file'}}">{{row.entity.status}}</span>
+</ui-grid-cell-contents>

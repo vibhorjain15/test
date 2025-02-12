@@ -1,0 +1,157 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-new-vehicle is-angular-js="true"></ng2-new-vehicle>
+  </div>
+<form class="form-horizontal" name="vm.vehicle_form" data-ng-if="vm.Utils.isAngularJS()" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Vehicle' : 'Create New Vehicle'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+
+  <div class="modal-body" >
+
+      <form-group field-name="Vehicle Name">
+        <label for="firm-name" class="control-label" col="3" col-type="sm">Vehicle Name<span class="font-size-10 text-orange align-top">*</span></label>
+
+        <div col="8" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="firm-name"
+                 name="firm_name"
+                 data-ng-model="vm.params.name"
+                 data-ng-readonly="vm.disableSpecificFormControls"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 data-ng-disabled="vm.edit_disabled"
+                 placeholder=" Name for this vehicle"
+                 required>
+        </div>
+      </form-group>
+
+      <form-group field-name="Alias" data-ng-if="vm.is_investor">
+        <label for="alternate-name" class="control-label" col="3" col-type="sm">Alias</label>
+
+        <div col="8" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="alternate-name"
+                 name="firm_name"
+                 data-ng-model="vm.params.alternate_name"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Your internal alias for this vehicle">
+        </div>
+      </form-group>
+
+      <form-group field-name="Internal Key">
+        <label for="internal-key" class="control-label" col="3" col-type="sm">Internal Key</label>
+
+        <div col="8" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="internal-key"
+                 name="firm_name"
+                 data-ng-model="vm.params.key"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Example: HG36FG">
+        </div>
+      </form-group>
+
+      <form-group field-name="Currency">
+        <label for="currency" class="control-label" col="3" col-type="sm">Currency <span class="font-size-10 text-orange align-top">*</span></label>
+
+        <div col="8" col-type="sm">
+          <select name="currency"
+                  id="currency"
+                  class="form-control"
+                  chosen
+                  data-ng-disabled="!vm.currency || vm.edit_disabled"
+                  data-ng-options="currency.id as currency.value for currency in vm.currency"
+                  data-ng-model="vm.params.currency_id"
+                  required>
+            <option value="">--Select--</option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group field-name="Inception Date" control-selector="dv-datepicker">
+        <label class="control-label" col="3" col-type="sm">
+        Inception Date
+        </label>
+        <div col="8" col-type="sm">
+          <dv-datepicker
+            id="inception-date"
+            data-ng-model="vm.params.inception_at"
+            ng-disabled="vm.edit_disabled">
+          </dv-datepicker>
+        </div>
+      </form-group>
+      <div class="panel panel-default">
+
+        <div class="panel-body">
+
+          <form-group field-name="Parent Product">
+            <label class="control-label" col="3" col-type="sm">Parent Product <span class="font-size-10 text-orange align-top">*</span></label>
+
+            <div col="8" col-type="sm">
+              <select name="parent_firm"
+                      id="parent-fund"
+                      class="form-control"
+                      chosen
+                      data-ng-disabled="!vm.funds || vm.edit_mode || vm.edit_disabled"
+                      data-ng-options="fund.id as fund.name for fund in vm.funds"
+                      data-ng-model="vm.params.fund_id"
+                      required>
+                <option value="">--Select--</option>
+              </select>
+            </div>
+          </form-group>
+
+          <form-group field-name="Relationship Status" data-ng-if="vm.is_investor">
+            <label class="control-label" col="3" col-type="sm">Relationship Status</label>
+
+            <div col="8" col-type="sm">
+              <select name="relationship_status"
+                      id="relationship-status"
+                      class="form-control"
+                      chosen
+                      data-ng-disabled="!vm.statuses"
+                      data-ng-options="status.id as status.name for status in vm.statuses"
+                      data-ng-model="vm.params.relationship_status_id">
+                <option value="">--Select--</option>
+              </select>
+            </div>
+          </form-group>
+        </div>
+      </div>
+      <div ng-if="vm.showAddOwners">
+        <dv-owners entity="vm.vehicle" entity-type="'Vehicle'" params="vm.params" owners="vm.ownerList"></dv-owners>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading bordered-top" data-ng-if="!vm.edit_mode">
+          <h5 class="panel-title">Add Custom Fields</h5>
+        </div>
+
+        <div class="panel-body" data-ng-if="!vm.edit_mode">
+          <div class="form-group">
+            <field-selection custom-url="'vehicle_tags'" fieldselection-form="vm.fieldselectionForm" split-mandatory="true" on-close="vm.cancel()" disabled="false" fields="vm.fields"></field-selection>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div col="8" offset="2">
+          <small><span class="font-size-10 text-orange align-top">*</span><i>Required field</i></small>
+        </div>
+      </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving">{{vm.edit_mode ? 'Update Vehicle' : 'Create Vehicle'}}</button>
+    <button btn-type="default" button-loader="vm.savingAnother" data-ng-click="vm.addAnotherNewVehicle()">{{vm.edit_mode ? 'Update' : 'Create'}} & Add Another</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

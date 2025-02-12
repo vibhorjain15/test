@@ -1,0 +1,12 @@
+.label-disable {
+  opacity: 0.5;
+  font-weight: 500;
+}
+
+.label-bold {
+  font-weight: bold;
+}
+
+.dv-label {
+  word-break: break-word;
+}

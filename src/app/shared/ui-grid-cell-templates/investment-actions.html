@@ -1,0 +1,41 @@
+<ui-grid-cell-contents>
+  <div>
+    <a ui-sref="app.monitor.investments_actions.add_notes({fundId: row.entity.id})"
+       class="btn btn-xs btn-default"
+       uib-tooltip="Add a note">
+      <icon name="pencil"></icon>
+    </a>
+
+    <button btn-type="default"
+            size="xs"
+            data-ng-click=""
+            class="hidden"
+            uib-tooltip="Follow">
+      <icon name="mail-forward"></icon>
+    </button>
+
+    <a ui-sref="app.diligence.invite"
+       class="btn btn-xs btn-default"
+       uib-tooltip="Start diligence">
+      <icon name="search"></icon>
+    </a>
+
+    <a ui-sref="app.monitor.investments_actions.tag({fundId: row.entity.id})"
+       class="btn btn-xs btn-default"
+       uib-tooltip="Add a tag">
+      <icon name="tag"></icon>
+    </a>
+
+    <a ui-sref="app.monitor.investments_actions.set_monitoring({fundId: row.entity.id})"
+       class="btn btn-xs btn-default"
+       uib-tooltip="Set Schedule">
+      <icon name="clock-o"></icon>
+    </a>
+
+    <a ui-sref="app.monitor.investments_actions.record({fundId: row.entity.id})"
+       class="btn btn-xs btn-default"
+       uib-tooltip="Invest">
+      <icon name="plus"></icon>
+    </a>
+  </div>
+</ui-grid-cell-contents>

@@ -1,0 +1,13 @@
+<div class="btn-group">
+  <dv-button
+    btnType="{{ item.id == value ? 'primary' : 'default' }}"
+    btnClass="btn-transparent"
+    (onClick)="setValue(item.id)"
+    [disabled]="item.disabled"
+    [tooltip]="item.tooltip"
+    placement="top"
+    borderRadius="0"
+    *ngFor="let item of items"
+    >{{ item.name }}</dv-button
+  >
+</div>

@@ -1,0 +1,125 @@
+<side-panel-wrapper
+  [title]="
+    isFooter ? 'Add Mapping Questions' : 'Configure Review Question Mapping '
+  "
+  firstButtonLabel="Save"
+  [isFooter]="isFooter"
+  [backIcon]="isFooter"
+  [isLoading]="loading"
+  (onFirstClick)="handleSaveClick()"
+  (onCancelClick)="handleOnCancelClick()"
+  (onBackClick)="handleOnBackClick()"
+  role="dialog"
+  [attr.aria-label]="
+    isFooter ? 'Add Mapping Questions' : 'Configure Review Question Mapping '
+  "
+>
+  <div class="text-center spinner-display" *ngIf="loader" role="alert">
+    <app-spinner spinnerHeight="300" aria-hidden="true"></app-spinner>
+  </div>
+  <form
+    *ngIf="!loader"
+    class="form-horizontal"
+    [formGroup]="mappingForm"
+    autocomplete="off"
+  >
+    <div *ngIf="!isFooter">
+      <dv-form-element
+        elementCol="12"
+        spacing="small"
+        [elementClass]="'alert alert-info'"
+        role="alert"
+      >
+        Choose your source template to add questions. Click on the + icon next
+        to the questions to select multiple and map them using the save button
+        at the bottom.
+      </dv-form-element>
+      <dv-form-element
+        elementCol="12"
+        spacing="small"
+        [elementClass]="'space-on-bottom-xxl'"
+      >
+        <app-empty-state
+          iconName="linked-items"
+          message="No mapping found for the selected question"
+          *ngIf="!mappedQuestions.length"
+          role="status"
+        ></app-empty-state>
+      </dv-form-element>
+
+      <question-mapping-accordion
+        *ngIf="mappedQuestions.length"
+        [questionMapperList]="mappedQuestions"
+        (onMappingDelete)="handleMappingDelete($event)"
+        (onQuestionDelete)="handleQuestionDelete($event)"
+      ></question-mapping-accordion>
+    </div>
+
+    <dv-form-element elementCol="12" spacing="small" *ngIf="!isFooter">
+      <div class="justify-center">
+        <dv-button (onClick)="handleAddMapping()"> Add Mapping </dv-button>
+      </div>
+    </dv-form-element>
+    <ng-container *ngIf="isFooter">
+      <dv-form-element
+        label="Select Source Template"
+        labelPosition="top"
+        elementCol="12"
+        [showRightIcon]="false"
+        spacing="small"
+        [for]="'sourceTemplate'"
+      >
+        <div class="space-on-bottom-xl">
+          <dv-select
+            [id]="'sourceTemplate'"
+            [contoller]="mappingForm.get('sourceTemplate')"
+            [error]=""
+            [list]="sourceTemplates"
+            [appendTo]="'body'"
+            bindLabel="name"
+            bindValue=""
+            formControlName="sourceTemplate"
+            (onSelectChange)="handleSourceTemplateChange($event)"
+          ></dv-select>
+        </div>
+      </dv-form-element>
+      <dv-form-element elementCol="12" spacing="small">
+        <app-dv-selector-list
+          [reloading]="questionListLoader"
+          [name]="'resource_list'"
+          [entity_type]="'Question'"
+          [entities]="templateQuestions"
+          [filter_params]="filterParams"
+          [KeepSelectionAfterOnChange]="true"
+          [displayParams]="QuestionSelectorDisplayParams"
+          (onChangeEntity)="handleQuestionChange($event)"
+          [sectionFilterSource]="sectionFilterSource"
+          [emptyStateMessage]="emptyStateMessage"
+          [canSort]="false"
+        ></app-dv-selector-list>
+      </dv-form-element>
+      <dv-form-element elementCol="12" spacing="small">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              Preview of selected questions for mapping
+            </h5>
+          </div>
+          <div class="panel-body">
+            <preview-question
+              [editable]="false"
+              (onDelete)="handleDeleteClick($event)"
+              [questions]="questionList"
+            ></preview-question>
+            <app-empty-state
+              iconName="document-question"
+              message="Hola! Select questions from the above panel, you can preview them here. You can also add multiple questions & save all at once using the save button at the bottom"
+              *ngIf="!questionList.length"
+              role="status"
+            ></app-empty-state>
+          </div>
+        </div>
+      </dv-form-element>
+    </ng-container>
+  </form>
+</side-panel-wrapper>

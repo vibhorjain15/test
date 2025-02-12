@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "noFallthroughCasesInSwitch": true,
+    "downlevelIteration": true,
+    "noImplicitReturns": false,
+    "useDefineForClassFields": false
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": false
+  },
+  "extends": "./tsconfig.base.json"
+}

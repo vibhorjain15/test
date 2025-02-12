@@ -1,0 +1,241 @@
+<div class="parser-main wp_container">
+  <div class="parser-heading">
+    <h5 class="parser-title">
+      {{
+        templateParams.sourceType == "questionnaire"
+          ? "Build Questionnaire"
+          : parser_source == "QA"
+          ? "Import Q/A Library Content"
+          : "Build Template from word"
+      }}
+
+      <span
+        class="text-primary"
+        style="margin-left: 4px"
+        [tippyTooltip]="templateParams.name"
+      >
+        <strong>{{ templateParams.name | truncate : 100 }}</strong>
+      </span>
+    </h5>
+    <div class="parser-file-controls">
+      <dv-button
+        btnType="default"
+        btnClass="space-on-right btn-icon-text"
+        (onClick)="resetFile()"
+      >
+        <span appIcon name="refresh" class="btn-icon"></span>
+        Reset
+      </dv-button>
+
+      <dv-button
+        (onClick)="changeWordFile()"
+        [tippyTooltip]="'Import a different Word file'"
+        btnType="default"
+        btnClass="btn-icon-text"
+      >
+        <span appIcon name="file-add" class="btn-icon"></span>
+        Import New
+      </dv-button>
+    </div>
+  </div>
+
+  <div class="parser-container">
+    <div *ngIf="wordFileHtml" #wordCountBar class="count-bar">
+      <div class="type-count">
+        <div class="elem-type" *ngFor="let step of selectionSteps">
+          <span class="list_icon list_icon_{{ step.name }}"></span>
+          {{ step.alias }}:
+          <b>{{ getStepCount(step) }}</b>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="wordFileContainer"
+      class="excel_sheet_container"
+      *ngIf="wordFileHtml"
+    >
+      <div class="row clearfix">
+        <div class="col-sm-12">
+          <div
+            class="col-sm-12"
+            [ngStyle]="{ overflow: auto, position: relative }"
+          >
+            <!-- dvSafeHTML pipe is removing some style tags from apsose which is causing the issues in format and indentation calculation -->
+            <div
+              [innerHtml]="wordFileHtml | trustHtml"
+              id="elementWP"
+              contextmenu="html5polyfill"
+              (contextmenu)="saveClickedElement($event)"
+              (click)="selectMultipleItemsWithCtrl($event)"
+              (mouseover)="mouseOverElement($event)"
+            ></div>
+          </div>
+        </div>
+        <div class="col-sm-12" *ngIf="loading" class="text-center space-on-top">
+          <app-spinner spinnerHeight="65" broadSpinner="true"></app-spinner>
+        </div>
+      </div>
+      <span class="context-menu-one"></span>
+    </div>
+
+    <div
+      class="unmarked-actions"
+      *ngIf="showSeeUnmarkedNavButtons"
+      [ngClass]="{ 'unmarked-actions-qa-flow': parser_source == 'QA' }"
+    >
+      <button
+        (click)="hideSeeUnmarkedNavButtons()"
+        class="btn btn-transparent unmarked-nav-btn-close"
+        appButton
+        id="hideSeeUnmarkedNavButtons"
+        title="hide See Unmarked Nav Buttons"
+      >
+        <span appIcon name="close"></span>
+      </button>
+
+      <div class="unmarked-nav-btns">
+        <div class="nav-btns" *ngIf="unmarkedItemsAtPreview.length != 0">
+          <button
+            appButton
+            class="btn btn-primary"
+            (click)="scrollToPreviousUnmarkedItem()"
+            [disabled]="currUnmarkedItemIdx === 0"
+            title="Scroll to Previous unmark item"
+          >
+            <span appIcon name="angle-left"></span>
+          </button>
+          <span class="text-bold">
+            {{ currUnmarkedItemIdx + 1 }}/{{ unmarkedItemsAtPreview.length }}
+          </span>
+          <button
+            appButton
+            class="btn btn-primary"
+            (click)="scrollToNextUnmarkedItem()"
+            [disabled]="
+              currUnmarkedItemIdx + 1 === unmarkedItemsAtPreview.length
+            "
+            title="Scroll to next unmark item"
+          >
+            <span appIcon name="angle-right"></span>
+          </button>
+        </div>
+        <div class="nav-text" *ngIf="unmarkedItemsAtPreview.length == 0">
+          <span> You have marked all the text items in this File. </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showInstructions" class="parser-help-text-container">
+  <parser-instructions [tabsList]="tabsList" (close)="toggleInstructions()">
+  </parser-instructions>
+</div>
+
+<div class="fixed-bottom-panel panel" style="background: #fff">
+  <div class="panel-body">
+    <div class="col-sm-12 parser-control-btns">
+      <div class="control-btns-pan">
+        <dv-button
+          btnType="primary"
+          class="space-on-right"
+          (onClick)="checkForSimilarDocumentPopup()"
+          [loader]="isCheckingForSimilarDocument"
+          [tippyTooltip]="!disableCheckForSimilarDocument ? '' : 'We’ve already checked for similar docs.'"
+          [disabled]="disableCheckForSimilarDocument || isCheckingForSimilarDocument"
+        >
+          Check for Similar Docs
+        </dv-button>
+
+        <dv-button
+          btnType="default"
+          btnClass="space-on-right btn-icon-text"
+          (onClick)="executeUndo()"
+          [disabled]="!(wp && wp?.undo_states?.length)"
+        >
+          <span appIcon aria-hidden="true" name="undo"></span>
+          Undo
+        </dv-button>
+
+        <dv-button
+          btnType="default"
+          btnClass="space-on-right btn-icon-text"
+          (onClick)="executeRedo()"
+          [disabled]="!(wp && wp?.redo_states?.length)"
+        >
+          <span
+            appIcon
+            aria-hidden="true"
+            name="undo"
+            style="transform: scaleX(-1)"
+          ></span>
+          Redo
+        </dv-button>
+
+        <dv-button
+          btnType="default"
+          btnClass="space-on-right"
+          (onClick)="autoMarkAnswers()"
+          *ngIf="isCreateProjectFlow || parser_source == 'QA'"
+          id="autoIdentityResponse"
+          name="autoIdentityResponse"
+          title="autoIdentityResponse"
+        >
+          Auto Identify Responses
+        </dv-button>
+      </div>
+
+      <div class="control-btns-pan">
+        <div class="unmarked-toggle">
+          <ui-switch
+            size="small"
+            color="#126b82"
+            defaultBgColor="#0000004D"
+            [(ngModel)]="showSeeUnmarkedNavButtons"
+            (change)="showUnmarkedItems($event)"
+            title="See Unmarked Nav Button"
+            UiSwitchButton
+          ></ui-switch>
+          <span class="text-bold"> View Unmarked Items </span>
+          <span
+            appIcon
+            name="info"
+            tooltip="Highlight and step through all unmarked items"
+          ></span>
+        </div>
+
+        <dv-button btnType="primary" (onClick)="openImportModal()">
+          <span appIcon name="eye" aria-hidden="true"></span>
+          Preview
+        </dv-button>
+      </div>
+
+      <dv-button
+        btnType="danger"
+        class="error-button"
+        *ngIf="unmarkableCells.length > 0"
+        (onClick)="scrollToErrorElement()"
+      >
+        <span>{{ (showErrorCells ? "Hide" : "View") + " Errors" }}</span>
+        <span class="badge space-on-left">{{ unmarkableCells.length }}</span>
+      </dv-button>
+
+      <dv-button
+        btnType="default"
+        class="btn-icon-text instructions-button"
+        (onClick)="toggleInstructions()"
+      >
+        <span appIcon name="info" aria-hidden="true"></span>
+        Instructions
+      </dv-button>
+    </div>
+  </div>
+</div>
+
+<app-dv-context-menu
+  #contextMenu
+  (itemClick)="onItemClick($event)"
+  [items]="contextMenuConfig.items"
+  [selector]="contextMenuConfig.selector"
+></app-dv-context-menu>

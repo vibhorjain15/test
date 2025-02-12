@@ -1,0 +1,856 @@
+<app-modal
+  [title]="
+    (edit_mode ? 'Editing ' + contactLabel : 'Create New ' + contactLabel) +
+    ' Contact'
+  "
+  [firstButtonLabel]="
+    contactForm?.get('userName').value &&
+    !user_exists_in_current_firm &&
+    !checking_user_existence
+      ? firstbtnLabel
+      : ''
+  "
+  [secondButtonLabel]="
+    !isDDqCloseModel &&
+    contactForm?.get('userName').value &&
+    !user_exists_in_current_firm &&
+    !checking_user_existence
+      ? secondbtnLabel
+      : ''
+  "
+  newCreateButtonLabel="No, Create a new contact"
+  [isLoading]="loading"
+  [isSecondaryLoading]="secondaryLoading"
+  [isNewCreateButton]="user_check_obj.length"
+  (onFirstClick)="submit()"
+  (onSecondClick)="submit(true)"
+  [initialTemplate]="contactRef"
+  (onNewCreateClick)="createNewContactClick()"
+  [isAngularJs]="isAngularJs"
+  #contactModal
+>
+</app-modal>
+<ng-template #contactRef>
+  <form class="form-horizontal" [formGroup]="contactForm" autocomplete="off">
+    <div class="modal-body">
+      <p class="alert alert-info">
+        You can add your external contacts in this form.
+      </p>
+      <div *ngIf="loading_data">
+        <app-spinner [broadSpinner]="true" [spinnerHeight]="25"></app-spinner>
+      </div>
+      <div *ngIf="!loading_data">
+        <dv-form-element
+          [fieldName]="'username'"
+          [modelController]="contactForm.get('userName')"
+          label="Email"
+          labelCol="4"
+          elementCol="8"
+          [isRequired]="true"
+          [errorMessage]="
+            !contactForm.get('userName').value
+              ? 'Email is required'
+              : 'Please enter a valid Email'
+          "
+        >
+          <div
+            class="input-group"
+            [tooltip]="
+              conversionDateTime
+                ? 'Cannot edit email for active user on DiligenceVault. To edit this, please contact us at support@diligencevault.com'
+                : ''
+            "
+          >
+            <span class="input-group-addon">
+              <span appIcon name="mail"></span>
+            </span>
+            <input
+              type="email"
+              class="form-control"
+              id="userName"
+              name="userName"
+              formControlName="userName"
+              [readonly]="conversionDateTime || edit_mode"
+              dvTrimValue
+            />
+          </div>
+        </dv-form-element>
+
+        <div
+          class="text-center text-orange space-on-bottom-lg"
+          *ngIf="user_check_obj.length"
+        >
+          <i>
+            We found {{ user_check_obj.length }} associated firm(s) for this
+            contact. How about adding
+            {{ user_check_obj.length === 1 ? "this" : "one of these?" }}
+          </i>
+        </div>
+        <div *ngIf="user_check_obj.length">
+          <div *ngFor="let contact of user_check_obj">
+            <div class="panel panel-default firm-list-container">
+              <div class="panel-body">
+                <div class="dv-table dv-table-middle full-width">
+                  <div class="cell bordered-right text-center" col="10">
+                    <div class="max-w-360 lh15 word-break-break-all">
+                      <span
+                        class="text-primary"
+                        [ngClass]="{ 'text-gray': !contact.is_tracking }"
+                        [tooltip]="contact.fullName"
+                      >
+                        {{ contact.fullName | slice : 0 : 40 }}
+                        {{ contact.fullName.length > 40 ? "..." : "" }}
+                      </span>
+                      <br />
+                      <small
+                        class="text-muted"
+                        [tooltip]="contact.firmInfo.display_name"
+                      >
+                        {{ contact.firmInfo.display_name | slice : 0 : 40 }}
+                        {{
+                          contact.firmInfo.display_name.length > 40 ? "..." : ""
+                        }}
+                      </small>
+                    </div>
+                  </div>
+                  <div class="cell bordered-left text-center" col="2">
+                    <button
+                      appButton
+                      btnType="default"
+                      size="sm"
+                      tooltip="This contact already exists on Diligence Vault. Click to add to your portfolio."
+                      aria-label="This contact already exists on Diligence Vault. Click to add to your portfolio."
+                      *ngIf="
+                        !contact.is_tracking && contact.firmInfo.is_tracking
+                      "
+                      (click)="prePopulateContactForm(contact)"
+                    >
+                      <span appIcon name="plus"></span>
+                    </button>
+
+                    <a
+                      class="text-primary clickable"
+                      tooltip="This contact is already in your portfolio, click to view details"
+                      *ngIf="
+                        contact.is_tracking && contact.firmInfo.is_tracking
+                      "
+                      (click)="redirectToContactDetail(contact.id)"
+                    >
+                      View Contact
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <app-form-group
+          [fieldName]="'Invite'"
+          [modelController]="contactForm.get('send_invitation')"
+          [showRightIcon]="false"
+          *ngIf="edit_mode && !conversionDateTime && !hideInviteContact"
+        >
+          <div col="8" offset="4">
+            <app-checkbox
+              (change)="onInviteValueChange($event)"
+              name="send_invitation"
+              formControlName="send_invitation"
+              label="Invite contact to join DiligenceVault"
+            >
+            </app-checkbox>
+          </div>
+        </app-form-group>
+
+        <div *ngIf="!user_exists_in_current_firm">
+          <app-form-group
+            [fieldName]="'Invite'"
+            [modelController]="contactForm.get('send_invitation')"
+            [showRightIcon]="false"
+            *ngIf="!edit_mode && !conversionDateTime && !hideInviteContact"
+          >
+            <div col="8" offset="4">
+              <dv-checkbox
+                (change)="onInviteValueChange($event)"
+                name="send_invitation"
+                formControlName="send_invitation"
+                label="Invite contact to join DiligenceVault"
+              >
+              </dv-checkbox>
+            </div>
+          </app-form-group>
+
+          <dv-form-element
+            [modelController]="contactForm.get('key')"
+            label="Internal Key"
+            labelCol="4"
+            elementCol="8"
+          >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="key"
+              placeholder="Example: HG36FG"
+              dvTrimValue
+              id="key"
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                contactForm.get('key').touched &&
+                contactForm.get('key').errors?.pattern
+              "
+            >
+              {{
+                errorMessageMap.avoidFirstSplCharacter
+                  | interpolate : "Internal Key"
+              }}
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('firstName')"
+            label="First Name"
+            labelCol="4"
+            elementCol="8"
+            [isRequired]="true"
+          >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firstName"
+              id="firstName"
+              dvTrimValue
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                contactForm.get('firstName').touched &&
+                contactForm.get('firstName').errors?.required
+              "
+            >
+              First Name is required
+            </div>
+            <div
+              class="text-danger"
+              *ngIf="
+                contactForm.get('firstName').touched &&
+                contactForm.get('firstName').errors?.pattern
+              "
+            >
+              Please enter a valid first name
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('lastName')"
+            label="Last Name"
+            labelCol="4"
+            elementCol="8"
+            [isRequired]="true"
+          >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastName"
+              id="lastName"
+              dvTrimValue
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                contactForm.get('lastName').touched &&
+                contactForm.get('lastName').errors?.required
+              "
+            >
+              Last Name is required
+            </div>
+            <div
+              class="text-danger"
+              *ngIf="
+                contactForm.get('lastName').touched &&
+                contactForm.get('lastName').errors?.pattern
+              "
+            >
+              Please enter a valid last name
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('title')"
+            label="Title"
+            labelCol="4"
+            elementCol="8"
+          >
+            <input
+              type="text"
+              class="form-control"
+              formControlName="title"
+              id="title"
+              dvTrimValue
+            />
+            <div
+              class="text-danger"
+              *ngIf="
+                contactForm.get('title').touched &&
+                contactForm.get('title').errors?.pattern
+              "
+            >
+              {{
+                errorMessageMap.avoidFirstSplCharacter
+                  | interpolate : "Internal Key"
+              }}
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('firmId')"
+            [showRightIcon]="false"
+            label="Parent Firm"
+            labelCol="4"
+            [isRequired]="true"
+            elementCol="8"
+          >
+            <div
+              [tooltip]="
+                disableParentFirm
+                  ? 'Cannot edit parent firm for active user on DiligenceVault. To edit this, please contact us at support@diligencevault.com'
+                  : ''
+              "
+            >
+              <dv-select
+                name="parent_firm"
+                [id]="'firmId'"
+                [aria-label]="'Parent Firm'"
+                chosen
+                formControlName="firmId"
+                [disabled]="
+                  !firms || (!is_owner && edit_mode) || disableParentFirm
+                "
+                (onSelectChange)="filterAssociatedFunds($event)"
+                [clearable]="false"
+                [list]="firms"
+                [bindLabel]="'display_name'"
+                [bindValue]="'id'"
+              >
+              </dv-select>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('firmId').touched &&
+                  contactForm.get('firmId').errors?.required
+                "
+              >
+                Parent Firm is required
+              </div>
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('associated_funds')"
+            [showRightIcon]="false"
+            label="Associated Product"
+            labelCol="4"
+            elementCol="8"
+            *ngIf="isInvestor"
+          >
+            <div *ngIf="funds && funds.length && fundsCopy.length">
+              <dv-select
+                class="padded-top"
+                [readonly]="!contactForm.get('firmId').value"
+                [multiple]="true"
+                [clearable]="false"
+                [maxSelectedItems]="funds.length"
+                [tooltip]="
+                  contactForm.get('associated_funds').value?.length > 0
+                    ? ''
+                    : 'Please select a product'
+                "
+                formControlName="associated_funds"
+                placeholder="Select product(s)"
+                bindValue="id"
+                bindLabel="display_name"
+                [list]="funds"
+                [aria-label]="'Associated Product'"
+                [id]="'associated_funds'"
+              >
+              </dv-select>
+            </div>
+            <div *ngIf="!funds || !funds.length" class="text-muted">
+              <small><i>*No products found*</i></small>
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('associated_strategies')"
+            [showRightIcon]="false"
+            label="Associated Strategy"
+            labelCol="4"
+            elementCol="8"
+            *ngIf="isInvestor"
+          >
+            <div *ngIf="strategies && strategies.length">
+              <dv-select
+                [id]="'associated_strategies'"
+                [aria-label]="'Associated Strategy'"
+                class="padded-top"
+                [readonly]="!contactForm.get('firmId').value"
+                [multiple]="true"
+                [clearable]="false"
+                [maxSelectedItems]="strategies.length"
+                [tooltip]="
+                  contactForm.get('associated_strategies').value?.length > 0
+                    ? ''
+                    : 'Please select a strategy'
+                "
+                formControlName="associated_strategies"
+                placeholder="Select strategy(s)"
+                bindValue="id"
+                bindLabel="display_name"
+                [list]="strategies"
+              >
+              </dv-select>
+            </div>
+            <div *ngIf="!strategies || !strategies.length" class="text-muted">
+              <small><i>*No strategies found*</i></small>
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('owner_user_id')"
+            [showRightIcon]="false"
+            label="DiligenceVault Owner"
+            labelCol="4"
+            elementCol="8"
+          >
+            <dv-select
+              name="owner_user_id"
+              [id]="'owner_user_id'"
+              [aria-label]="'DiligenceVault Owner'"
+              chosen
+              formControlName="owner_user_id"
+              [readonly]="!teamMembers"
+              [clearable]="false"
+              placeholder="-- Select --"
+              [list]="teamMembers"
+              [bindLabel]="'fullname'"
+              [bindValue]="'id'"
+            >
+            </dv-select>
+          </dv-form-element>
+
+          <dv-form-element
+            [modelController]="contactForm.get('contact_type_ids')"
+            [showRightIcon]="false"
+            label="Contact Type"
+            labelCol="4"
+            elementCol="8"
+          >
+            <div *ngIf="tags && tags.length">
+              <dv-select
+                [id]="'contact_type_ids'"
+                [aria-label]="'Contact Type'"
+                class="padded-top"
+                [multiple]="true"
+                [clearable]="false"
+                [tooltip]="
+                  contactForm.get('contact_type_ids').value?.length > 0
+                    ? ''
+                    : tags?.length
+                    ? 'Please select a tag'
+                    : ''
+                "
+                formControlName="contact_type_ids"
+                placeholder="Select tag(s)"
+                bindValue="id"
+                bindLabel="name"
+                [list]="tags"
+              >
+              </dv-select>
+            </div>
+            <div class="space padded-top-7px" *ngIf="tags && !tags.length">
+              To assign tags to this contact, please set it
+              <a class="clickable" (click)="redirectToContactTags()">here.</a>
+            </div>
+
+            <div *ngIf="!tags">
+              <app-spinner
+                [broadSpinner]="true"
+                [spinnerHeight]="25"
+              ></app-spinner>
+            </div>
+          </dv-form-element>
+
+          <div class="panel panel-default">
+            <div class="panel-heading bordered-top" *ngIf="!edit_mode">
+              <h5 class="panel-title">Add Custom Fields</h5>
+            </div>
+
+            <div class="panel-body" *ngIf="!edit_mode">
+              <div class="form-group contacts-custom-field">
+                <app-custom-field-selection
+                  [customUrl]="'contact_tags'"
+                  [splitMandatory]="true"
+                  [disabled]="false"
+                  [fields]="fields"
+                  #customFields
+                ></app-custom-field-selection>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div col="3" offset="1" class="text-left clear-padding">
+              <small>
+                <a
+                  class="clickable link-underline"
+                  (click)="show_address_details = !show_address_details"
+                >
+                  <span appIcon name="plus" class="link-underline"></span>
+                  {{
+                    show_address_details ? "Hide" : edit_mode ? "Show" : "Add"
+                  }}
+                  Address Details
+                </a>
+              </small>
+            </div>
+          </div>
+
+          <span *ngIf="show_address_details">
+            <hr class="space-on-top" />
+
+            <dv-form-element
+              [fieldName]="'Street Address 1'"
+              [modelController]="contactForm.get('street_address_1')"
+              label="Street Address 1"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="street_address_1"
+                name="street_address_1"
+                formControlName="street_address_1"
+                dvTrimValue
+                placeholder="Please enter street address 1 here"
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('street_address_1').touched &&
+                  contactForm.get('street_address_1').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "Street Address" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('street_address_1').touched &&
+                  contactForm.get('street_address_1').errors?.pattern
+                "
+              >
+                {{
+                  errorMessageMap.avoidFirstSplCharacter
+                    | interpolate : "Street Address"
+                }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="'Street Address 2'"
+              [modelController]="contactForm.get('street_address_2')"
+              label="Street Address 2"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="street_address_2"
+                name="street_address_2"
+                formControlName="street_address_2"
+                placeholder="Please enter street address 2 here"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('street_address_2').touched &&
+                  contactForm.get('street_address_2').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "Street Address" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('street_address_2').touched &&
+                  contactForm.get('street_address_2').errors?.pattern
+                "
+              >
+                {{
+                  errorMessageMap.avoidFirstSplCharacter
+                    | interpolate : "Street Address"
+                }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="'City'"
+              [modelController]="contactForm.get('city')"
+              label="City"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                id="city"
+                class="form-control"
+                placeholder="Please enter city here"
+                formControlName="city"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('city').touched &&
+                  contactForm.get('city').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "City" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('city').touched &&
+                  contactForm.get('city').errors?.pattern
+                "
+              >
+                {{ errorMessageMap.validCityName | interpolate : "City" }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="'State'"
+              [modelController]="contactForm.get('state')"
+              label="State"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                placeholder="Please enter state here"
+                class="form-control"
+                formControlName="state"
+                id="state"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('state').touched &&
+                  contactForm.get('state').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "State" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('state').touched &&
+                  contactForm.get('state').errors?.pattern
+                "
+              >
+                {{ errorMessageMap.validCityName | interpolate : "State" }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="Zipcode"
+              [modelController]="contactForm.get('zipcode')"
+              label="Zipcode"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="zipcode"
+                name="zipcode"
+                formControlName="zipcode"
+                placeholder="Please enter zipcode here"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('zipcode').touched &&
+                  contactForm.get('zipcode').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "Zip code" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('zipcode').touched &&
+                  contactForm.get('zipcode').errors?.pattern
+                "
+              >
+                {{ errorMessageMap.validZipcode | interpolate : "Zip code" }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="Country"
+              [modelController]="contactForm.get('country_id')"
+              [showRightIcon]="false"
+              label="Country"
+              labelCol="4"
+              elementCol="8"
+            >
+              <dv-select
+                [id]="'country_id'"
+                [aria-label]="'country'"
+                name="country"
+                chosen
+                placeholder="Select Country"
+                formControlName="country_id"
+                [readonly]="!countries"
+                [clearable]="true"
+                [list]="countries"
+                [bindLabel]="'value'"
+                [bindValue]="'id'"
+                placeholder="-- Select Country --"
+              >
+              </dv-select>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="Phone"
+              [modelController]="contactForm.get('phone_1')"
+              label="Primary Phone"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="phone_1"
+                name="phone"
+                placeholder="Please enter primary phone here"
+                formControlName="phone_1"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('phone_1').touched &&
+                  contactForm.get('phone_1').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "Phone" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('phone_1').touched &&
+                  contactForm.get('phone_1').errors?.pattern
+                "
+              >
+                {{
+                  errorMessageMap.validPhoneCharsOnly | interpolate : "Phone"
+                }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="Phone2"
+              [modelController]="contactForm.get('phone_2')"
+              label="Secondary Phone"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="phone_2"
+                name="phone2"
+                placeholder="Please enter secondary phone here"
+                formControlName="phone_2"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('phone_2').touched &&
+                  contactForm.get('phone_2').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "Phone" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('phone_2').touched &&
+                  contactForm.get('phone_2').errors?.pattern
+                "
+              >
+                {{
+                  errorMessageMap.validPhoneCharsOnly | interpolate : "Phone"
+                }}
+              </div>
+            </dv-form-element>
+
+            <dv-form-element
+              [fieldName]="Fax"
+              [modelController]="contactForm.get('fax')"
+              label="Fax"
+              labelCol="4"
+              elementCol="8"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="fax"
+                name="fax"
+                placeholder="Please enter fax here"
+                formControlName="fax"
+                dvTrimValue
+              />
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('fax').touched &&
+                  contactForm.get('fax').errors?.maxLength
+                "
+              >
+                {{ errorMessageMap.maxLength | interpolate : "Fax" }}
+              </div>
+              <div
+                class="text-danger"
+                *ngIf="
+                  contactForm.get('fax').touched &&
+                  contactForm.get('fax').errors?.pattern
+                "
+              >
+                {{ errorMessageMap.validPhoneCharsOnly | interpolate : "Fax" }}
+              </div>
+            </dv-form-element>
+          </span>
+
+          <div class="form-group">
+            <div>
+              <small
+                ><span class="font-size-10 text-orange align-top">*</span
+                ><i>Required field</i></small
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

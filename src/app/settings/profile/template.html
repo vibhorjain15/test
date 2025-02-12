@@ -1,0 +1,20 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-my-profile></ng2-my-profile> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">My Profile</h5>
+
+    <div class="panel-controls" data-ng-if="!vm.loading">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control" data-ng-click="vm.toggleMode()">
+          <icon name="pencil" data-ng-show="vm.mode == 'readonly'"></icon>
+          <icon name="times" data-ng-show="vm.mode == 'edit'"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body settings">
+    <spinner data-ng-show="vm.loading"></spinner>
+    <div data-ng-include="vm.templateName" data-ng-hide="vm.loading"></div>
+  </div>
+</div>

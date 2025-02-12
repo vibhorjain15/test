@@ -1,0 +1,20 @@
+<div *ngIf="params.data && !params?.node?.group && params.data.document.type">
+  <div>
+    <span class="label label-default space-on-right" *ngIf="firstLabel">
+      {{ firstLabel }}
+    </span>
+    <span *ngIf="otherLabels.length > 1">and </span>
+    <span
+      class="link-underline clickable space-on-right"
+      *ngIf="otherLabels.length > 1"
+      [adaptivePosition]="false"
+      [tooltip]="otherLabels.toString()"
+      container="body"
+      >{{ otherLabels.length - 1 }} more</span
+    >
+  </div>
+</div>
+
+<ng-container *ngIf="params?.node?.group">
+  <span>{{ firstLabel }}</span>
+</ng-container>

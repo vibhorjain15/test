@@ -1,0 +1,8 @@
+<ui-grid-cell-contents>
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+       class="ui-grid-cell-contents" title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <span class="label label-default space-on-right" dv-limit-word="grid.appScope.vm.displayDocumentGroupName(grid, row, col)" char-limit="34"></span>
+  </div>
+</ui-grid-cell-contents>

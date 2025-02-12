@@ -1,0 +1,127 @@
+<div class="dv-wizard">
+  <div class="dv-wizard-header steps-{{vm.diligence_templates.length}}">
+    <span class="dv-step-title"
+          data-ng-repeat="template in vm.diligence_templates"
+          data-ng-class="{'active': vm.active_step.id == template.id, 'done': template.done}">
+      <span data-ng-hide="template.done">{{$index + 1}}.</span>
+      <span data-ng-show="template.done"><icon name="check"></icon></span>
+      {{template.name}}
+    </span>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-body clearfix">
+
+    <!-- <div class="dv-table dv-table-middle full-width dd-info-panel">
+      <div class="cell bordered-right text-center" col="4">
+        <h4 class="clear-margin">
+          <b>Create New Report</b>
+        </h4>
+      </div>
+
+      <div class="cell bordered-right text-center" col="4">
+
+      </div>
+
+      <div class="cell text-center" col="4">
+        <a class="btn btn-transparent clickable"
+           data-ng-click="vm.resetSelection()">
+          <div><icon name="refresh" size="2x"></icon></div>
+          <small>Reset</small>
+        </a>
+      </div>
+    </div> -->
+    <div class="text-center space-on-top space-on-bottom">
+      <div class="btn-group">
+          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Fund'}" data-ng-click="vm.setEntityType('Fund')"><icon name="fund" class="space-on-right"></icon> Product</label>
+          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Firm'}" data-ng-click="vm.setEntityType('Firm')"><icon name="institution" class="space-on-right"></icon> Firm</label>
+      </div>
+    </div>
+
+    <div class="dv-table dv-table-middle full-width dd-info-panel">
+      <div class="cell bordered-right" col="3">
+        <div data-ng-if="vm.entity_type == 'Fund'">
+          <label for="fund-selection" class="control-label">
+            Select a Product
+          </label>
+
+          <select id="fund-selection"
+                  class="form-control"
+                  chosen
+                  data-ng-model="vm.selected_entity"
+                  data-ng-change="vm.composeOptions()"
+                  no-results-text="'Could not find any funds'"
+                  data-placeholder="Filter by Fund"
+                  data-ng-options="fund as fund.name for fund in vm.funds">
+            <option value=""></option>
+          </select>
+        </div>
+        <div data-ng-if="vm.entity_type == 'Firm'">
+          <label for="fund-selection" class="control-label">
+            Select a Firm
+          </label>
+
+          <select id="fund-selection"
+                  class="form-control"
+                  chosen
+                  data-ng-model="vm.selected_entity"
+                  data-ng-change="vm.composeOptions()"
+                  no-results-text="'Could not find any firms'"
+                  data-placeholder="Filter by Fund"
+                  data-ng-options="firm as firm.name for firm in vm.firms">
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cell bordered-right" col="3">
+        <label for="date-selection" class="control-label">
+          As of Date
+        </label>
+
+        <dv-datepicker id="date-selection" data-ng-model="vm.asofDate" data-ng-change="vm.composeOptions()"
+                       ng-required="true" max-date="vm.maxAsOfDate"></dv-datepicker>
+      </div>
+
+      <div class="cell bordered-right" col="3">
+        <label for="template-selection" class="control-label">
+          Select a Template
+        </label>
+
+        <select id="template-selection"
+                class="form-control"
+                chosen
+                data-ng-model="vm.selected_template"
+                no-results-text="'Could not find any templates'"
+                data-placeholder="Filter by Templates"
+                data-ng-options="template as template.name for template in vm.templates">
+          <option value=""></option>
+        </select>
+      </div>
+
+      <div class="cell text-center" col="3">
+        <a class="btn btn-transparent clickable"
+           data-ng-class="{'disabled' : (!vm.selected_template.id || !vm.selected_entity.id)}"
+           data-ng-click="vm.generateReport()">
+          <div><icon name="pencil" size="2x"></icon></div>
+          <small>Generate Report</small>
+        </a>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!-- <div class="panel panel-default">
+    <div class="panel-body clearfix">
+
+    </div>
+  </div> -->
+
+<div class="row clearfix">
+  <div col="8" offset="2">
+    <div class="panel panel-default"
+         data-ng-if="vm.selected_entity.id && vm.selected_template.id && vm.options">
+      <report-preview template="vm.selected_template" options="vm.options">
+      </report-preview>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<app-modal
+  [title]="'Manage Rating scale for ' + category.name"
+  firstButtonLabel="Save"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="ManageRatingScaleModelref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #ManageRatingScaleModelref>
+  <form
+    class="form-horizontal"
+    [formGroup]="manRatingScaleForm"
+    autocomplete="off"
+  >
+    <div formArrayName="def">
+      <div class="list-group spinner" *ngIf="loading_scale">
+        <app-spinner></app-spinner>
+      </div>
+      <table
+        class="table-transparent table clear-margin"
+        *ngIf="!loading_scale && ratingDefList.length > 0"
+      >
+        <thead>
+          <tr>
+            <th style="width: 30%">
+              {{
+                selectedRating?.scale_mode == ratingConstants.ScoreBand
+                  ? "Band Name"
+                  : "Scale Name"
+              }}
+            </th>
+            <th style="width: 40%" colspan="2">Score Range</th>
+            <th style="width: 30%">
+              {{
+                selectedRating?.scale_mode == ratingConstants.ScoreBand
+                  ? "Band Color"
+                  : "Scale Color"
+              }}
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="
+              let x of manRatingScaleForm.get('def').controls;
+              let index = index;
+              trackBy: track
+            "
+            [formGroupName]="index"
+          >
+            <td>
+              <dv-form-element
+                [fieldName]="'name'"
+                [modelController]="name"
+                elementCol="16"
+              >
+                <input
+                  type="text"
+                  maxlength="200"
+                  class="form-control"
+                  formControlName="name"
+                  input-preselect
+                  required
+                  id="name"
+                  aria-label="name"
+                  autocomplete="off"
+                />
+              </dv-form-element>
+            </td>
+            <td>
+              <dv-form-element
+                [fieldName]="'range_min_value'"
+                [modelController]="range_min_value"
+                elementCol="16"
+              >
+                <input
+                  type="number"
+                  class="form-control"
+                  input-preselect
+                  placeholder="Minimum Value"
+                  name="range-min-value-{{ $index }}"
+                  formControlName="range_min_value"
+                  required
+                  id="Minimum Value"
+                  aria-label="Minimum Value"
+                  autocomplete="off"
+                />
+                <div
+                  *ngIf="
+                    manRatingScaleForm.get('def').controls[index].controls
+                      .range_min_value.touched &&
+                    manRatingScaleForm.get('def').controls[index].controls
+                      .range_min_value.invalid
+                  "
+                  class="text-danger width"
+                >
+                  {{
+                    manRatingScaleForm.get("def").controls[index].controls
+                      .range_min_value.errors.minError
+                  }}
+                </div>
+              </dv-form-element>
+            </td>
+            <td>
+              <dv-form-element
+                [fieldName]="'range_max_value'"
+                [modelController]="range_max_value"
+                elementCol="16"
+              >
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="range_max_value"
+                  input-preselect
+                  placeholder="Maximum Value"
+                  required
+                  autocomplete="off"
+                  id="range_max_value"
+                />
+                <div
+                  *ngIf="
+                    manRatingScaleForm.get('def').controls[index].controls
+                      .range_max_value.touched &&
+                    manRatingScaleForm.get('def').controls[index].controls
+                      .range_max_value.invalid
+                  "
+                  class="text-danger width"
+                >
+                  {{
+                    manRatingScaleForm.get("def").controls[index].controls
+                      .range_max_value.errors.maxError
+                  }}
+                </div>
+              </dv-form-element>
+            </td>
+            <td>
+              <dv-form-element
+                [fieldName]="'color_code'"
+                [modelController]="color_code"
+                elementCol="16"
+              >
+                <input
+                  name="color-{{ $index }}"
+                  id="color-{{ $index }}"
+                  aria-label="color-{{ $index }}"
+                  class="form-control"
+                  type="text"
+                  ng-pattern="/#?[0-9A-Fa-f]{6}/"
+                  formControlName="color_code"
+                  [style.background]="
+                    manRatingScaleForm.get('def').controls[index].controls
+                      .color_code.value
+                  "
+                  custom-pattern-message="Please enter a valid 6-digit color code starting with a #."
+                />
+              </dv-form-element>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div></form
+></ng-template>

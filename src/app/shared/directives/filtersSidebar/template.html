@@ -1,0 +1,180 @@
+<div class="filtersContainer">
+  <div id="mySidenav" class="sidenav">
+    <div class="panel panel-default" style="height: calc(100vh - 40px)">
+      <div class="panel-heading" data-ng-if="vm.searchQaBank && vm.showExpandedMenu">
+          <h5 class="panel-title text-center">
+            <div class="btn-group">
+                <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedTab == vm.AllContent}" data-ng-click="vm.setSearchType(vm.AllContent)">All content</label>
+                <label  data-ng-if="vm.isManager" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedTab == vm.PreApprovedContent}" data-ng-click="vm.setSearchType(vm.PreApprovedContent)">Pre Approved</label>
+            </div>
+          </h5>
+
+          <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                  <a class="panel-control"
+                     data-ng-click="vm.collapseMenu()">
+                      <icon name="close"></icon>
+                  </a>
+              </div>
+          </div>
+      </div>
+      <div class="panel-body white-bg">
+        <div class="collapsed_menu" data-ng-if="!vm.showExpandedMenu">
+          <div class="menu_item">
+            <a class="btn btn-transparent qa_button_icon"
+               data-ng-click="vm.searchInQa()"
+               tooltip-placement="left"
+               uib-tooltip="Search in Q/A">
+              <!-- <div><icon name="search"></icon></div> -->
+              <!-- <small>Search</small> -->
+            </a>
+          </div>
+        </div>
+        <div class="expanded_menu" data-ng-if="vm.showExpandedMenu">
+          <div data-ng-if="vm.searchQaBank">
+            <form autocomplete="off" novalidate name="vm.searchQaForm" data-ng-submit="vm.getGeneralSearchResult()">
+              <form-group field-name="Text" tooltip-placement="left">
+                <div class="input-group" uib-tooltip="{{vm.is_freeSubscription?vm.errorMessageMap.freeUserMessage:''}}">
+                  <input type="text" required class="form-control"
+                    data-ng-model="vm.searchText">
+                  <div class="input-group-btn">
+                    <button class="btn btn-default" data-ng-click="vm.clearSearchText()"
+                      data-ng-show="vm.searchText">
+                      <icon name="close"></icon>
+                    </button>
+                  </div>
+                </div>
+                  <!-- <input type="text"
+                       class="form-control"
+                       name="search_text"
+                       id="search_text"
+                       required
+                       data-ng-model="vm.searchText"> -->
+              </form-group>
+              <small>
+                <a class="pull-right clickable" data-ng-if="vm.isSearchPanelCollapsed" data-ng-click="vm.toggleSearchPanel()">Search with Filters</a>
+              </small>
+              <div data-ng-if="!vm.isSearchPanelCollapsed">
+                <div col="12">
+                  <h5 class="text-muted">Search within:</h5>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-xs" button-loader="vm.loading" data-ng-if="vm.isSearchPanelCollapsed">Search</button>
+            </form>
+          </div>
+          <div data-ng-if="!vm.isSearchPanelCollapsed" class="min-h-170">
+            <form class="form-horizontal" name="vm.search_form" novalidate data-ng-submit="vm.searchByFilters()">
+                <div col="4">
+                  <form-group field-name="Question" tooltip-placement="left" >
+                      <dv-checkbox
+                        data-ng-model="vm.selectedEntities.question"
+                        label="Question">
+                    </dv-checkbox>
+                  </form-group>
+                </div>
+                <div col="4">
+                  <form-group field-name="Answer" tooltip-placement="left" >
+                      <dv-checkbox
+                        data-ng-model="vm.selectedEntities.answer"
+                        label="Answer">
+                    </dv-checkbox>
+                  </form-group>
+                </div>
+                <div col="3">
+                  <form-group field-name="Tag" tooltip-placement="left" >
+                        <dv-checkbox
+                          data-ng-model="vm.selectedEntities.tag"
+                          label="Tags">
+                    </dv-checkbox>
+                  </form-group>
+                </div>
+                <div col="12" class="upperSeparator">
+                  <form-group field-name="Entity specific" tooltip-placement="left" >
+                      <dv-checkbox
+                        uib-tooltip="By default, All {{vm.diligence.entity_type == 'Fund'? 'products' : vm.diligence.entity_type}} are searched"
+                        data-ng-model="vm.selectedEntities.entity"
+                        label="For {{vm.diligence.entity_name}}">
+                    </dv-checkbox>
+                  </form-group>
+                </div>
+                <div col="12" data-ng-if="vm.selectedTab != vm.PreApprovedContent && vm.isManager">
+                  <form-group field-name="Search diligence" tooltip-placement="left">
+                      <dv-checkbox
+                        uib-tooltip="By default, All past investors Q/A data is searched"
+                        data-ng-model="vm.selectedEntities.investor"
+                        label="From {{vm.diligence.investorfirm_name}}">
+                    </dv-checkbox>
+                  </form-group>
+                </div>
+                <div col="12" class="text-right">
+                  <button uib-tooltip="Hide Search with Filters" btn-type="default" class="clickable" data-ng-click="vm.toggleSearchPanel()">
+                    <icon name="chevron-up"></icon>
+                  </button>
+                </div>
+                <div col="12">
+                  <br>
+                  <button type="submit" class="btn btn-primary btn-block" button-loader="vm.loading">Search</button>
+                </div>
+                <br>
+              </form>
+          </div>
+          <p class="text-muted text-center" data-ng-if="vm.searchResults && !vm.searchResults.length">No Results Found</p>
+            <div class="searchResults space-on-top-lg" data-ng-if="vm.searchResults">
+              <p data-ng-if="vm.searchResults.length" class="text-muted result_count">Showing <b>{{vm.exactCount}}</b> of <b>{{vm.totalCount}}</b> recommended results</p>
+              <div class="search_result" data-ng-repeat="entry in vm.searchResults" ng-mouseover="entry.hoverState = true;" ng-mouseleave="entry.hoverState = false;" data-ng-class="{'expired_result': vm.isResponseExpired(entry.expiry_date)}">
+                <!-- <div class="space-on-top"><small data-ng-bind-html="entry.response_text_short" truncate-text="25"></small> <a class="clickable" data-ng-click="vm.viewResponse(entry)">View Full Response</a></div> -->
+                <div col="1">
+                  <button  btn-type="default"
+                          size="sm"
+                          tooltip-placement="left"
+                          class="copyBtn space-on-top-lg"
+                          uib-tooltip="{{entry.response_text?'Copy this response': 'No Response Found'}}"
+                          data-ng-disabled="!entry.response_text"
+                          data-ng-click="vm.copyResponse(entry.response_text)">
+                      <icon name="copy"></icon>
+                  </button>
+                  <button  btn-type="default"
+                          size="sm"
+                          tooltip-placement="left"
+                          class="viewBtn space-on-top-lg"
+                          uib-tooltip="{{entry.response_text?'View Full Response': 'No Response Found'}}"
+                          data-ng-disabled="!entry.response_text"
+                          data-ng-click="vm.viewResponse(entry)">
+                      <icon name="expand"></icon>
+                  </button>
+
+                </div>
+                <div col="11">
+                  <div class="info_div">
+                    <span ng-bind-html="entry.author_name"></span>
+                    <span>added</span>
+                    <span >{{entry.response_created_at|fromNow}}</span>
+                    <span> for </span>
+                    <span ng-bind-html="entry.associated_entity">{{entry.associated_entity}}</span>
+                    <!-- <span>({{entry.associated_template}})</span> -->
+                  </div>
+                  <!-- <div class="questionName"><span class="questionIcon">Q:</span><small data-ng-bind-html="vm.useTrustAsHtml(entry.question_text, vm.charLimitForResponse)"></small></div> -->
+                  <!-- <div class="responseText"><span class="answerIcon">A:</span><small data-ng-bind-html="vm.useTrustAsHtml(entry.response_text_short, vm.charLimitForResponse)" ></small></div> -->
+                  <div class="questionName"><strong class="space-on-right">{{$index + 1}}. </strong><small data-ng-bind-html="vm.useTrustAsHtml(entry.question_text, vm.charLimitForResponse)"></small></div>
+                  <div class="responseText"><small data-ng-bind-html="vm.useTrustAsHtml(entry.response_text, vm.charLimitForResponse)" ></small></div>
+
+                </div>
+                <!-- <div class="tagsDiv">
+                  <small class="label label-default space-on-left"><span class="investorBadge" uib-tooltip="Investor">I</span><span ng-bind-html="vm.useTrustAsHtml(entry.associated_investor, vm.charLimitForLabel)" class="break_word" uib-tooltip="{{vm.extractContent(entry.associated_investor)}}" tooltip-placement="left"></span></small>
+                  <small class="label label-default space-on-left"><span class="entityBadge"  uib-tooltip="{{entry.associated_entity_type == 'Firm'? 'Firm': 'Product'}}">{{entry.associated_entity_type == 'Firm'? 'F': 'P'}}</span><span ng-bind-html="vm.useTrustAsHtml(entry.associated_entity, vm.charLimitForLabel)" class="break_word" uib-tooltip="{{vm.extractContent(entry.associated_entity)}}" tooltip-placement="left"></span></small>
+                  <small class="label label-default space-on-left"><span class="authorBadge" uib-tooltip="Author">A</span>{{entry.author_name}}</small>
+                  <small class="label labe-warning space-on-left expiry_label" data-ng-show="vm.isResponseExpired(entry.expiry_date)" uib-tooltip="{{entry.expiry_date | date}}">Expired : {{entry.expiry_date | fromNow}}</small>
+                  <small data-ng-if="vm.selectedTab != vm.PreApprovedContent" class="label label-default space-on-left">Responded on : {{entry.response_created_at | date}}</small>
+
+                </div> -->
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span id="filterArrow" class="clickable filterArrow" data-ng-click="vm.toggleNav()" data-ng-show="!vm.showExpandedMenu">
+    <icon data-ng-if="vm.navIsOpen" name="arrow-right"></icon>
+    <icon data-ng-if="!vm.navIsOpen" name="arrow-left"></icon>
+  </span>
+</div>

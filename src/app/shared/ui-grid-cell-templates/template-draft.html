@@ -1,0 +1,12 @@
+<ui-grid-cell-contents class="unstyledLink">
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{grid.appScope.vm.getActiveStatus(row, grid)}}">
+    <span>{{grid.appScope.vm.getActiveStatus(row, grid)}}</span>
+  </div>
+  <a ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)"
+     uib-tooltip="{{row.entity.templateInfo.is_draft? 'DRAFT template' : 'ACTIVE'}}"
+     tooltip-placement="right">
+     <span data-ng-if="row.entity.templateInfo.is_draft" class="label label-warning">DRAFT</span>
+     <span data-ng-if="!row.entity.templateInfo.is_draft" class="label label-default">ACTIVE</span>
+  </a>
+</ui-grid-cell-contents>

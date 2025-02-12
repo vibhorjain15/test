@@ -1,0 +1,500 @@
+<div class="row clearfix" role="region" aria-label="Diligence Panel">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="40"
+          *ngIf="!diligence"
+        >
+        </app-spinner>
+
+        <div class="header" *ngIf="diligence">
+          <div class="info">
+            <div>
+              <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                {{ diligence.entity_name }}
+              </h4>
+              <div>
+                <small class="text-muted" *ngIf="diligence.last_updated_at">
+                  Last updated
+                  {{ diligence.last_updated_at | dvDate : ["isLocaleDate"] }}
+                </small>
+              </div>
+            </div>
+
+            <dv-divider type="vertical"></dv-divider>
+
+            <div class="text-center">
+              <span class="align-middle display-block">Status</span>
+              <span diligenceStatus [status]="diligence.status"></span>
+            </div>
+
+            <dv-divider type="vertical"></dv-divider>
+
+            <div *ngIf="responses_count">
+              Showing {{ responses_count }} Responses with Revisions
+            </div>
+          </div>
+
+          <div class="export">
+            <dv-logo-label
+              label="Export {{ isFree ? '(beta)' : '' }}"
+              icon="upload"
+              [isEnabled]="responseHistory?.length"
+              [iconColor]="!responseHistory?.length ? 'disabled' : 'default'"
+              [type]="!responseHistory?.length ? 'normal' : 'button'"
+              (onClick)="handleExport()"
+              [isLoading]="downloading"
+            ></dv-logo-label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-notes-list-panel">
+      <app-spinner [broadSpinner]="true" [spinnerHeight]="40" *ngIf="loading">
+      </app-spinner>
+
+      <div
+        class="panel panel-default"
+        *ngIf="!loading && !responseHistory.length"
+      >
+        <div class="panel-body">
+          <div col="6" offset="3">
+            <app-empty-state
+              iconName="compare"
+              message="No revision history is available for this project"
+              (action)="redirectToQuestionnaire()"
+              [actionLabel]="'Back to Questionnaire'"
+            >
+            </app-empty-state>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!loading">
+        <div
+          *ngFor="let response of responseHistory; let parentIndex = index"
+          class="panel panel-default"
+          role="region"
+          aria-label="Response History"
+        >
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              <span *ngIf="response.parent_section_name">
+                <a (click)="handleSectionRoute(response)" tabindex="0">{{
+                  response.parent_section_name
+                }}</a>
+                >
+              </span>
+              <span *ngIf="response.section_name">
+                <a (click)="handleSubSectionRoute(response)" tabindex="0">{{
+                  response.section_name
+                }}</a>
+                >
+              </span>
+              <span>
+                <a
+                  [innerHtml]="response.question_text"
+                  (click)="handleQuestionRoute(response)"
+                  tabindex="0"
+                ></a>
+              </span>
+            </h5>
+          </div>
+
+          <div
+            class="panel-body has-notes-form"
+            role="region"
+            aria-label="Response Details"
+          >
+            <ul class="list-unstyled clear-margin-bottom list-bordered-bottom">
+              <li class="overflow-auto">
+                <div class="media-body">
+                  <response-history-display
+                    [currentResponse]="
+                      response.showFollowupLabel && response.hide_response
+                        ? response.audits[0]
+                        : response
+                    "
+                    [prevResponse]="
+                      response.audits?.length ? response.audits[0] : null
+                    "
+                    [response_type]="response.response_type"
+                    [grid_id]="response.grid_id"
+                    *ngIf="!response?.deleted"
+                    [grid_version]="response.grid_version"
+                  ></response-history-display>
+
+                  <div
+                    class="response-info"
+                    [style.margin-top.px]="response.deleted ? 6 : 10"
+                  >
+                    <span
+                      diligenceStatus
+                      [status]="
+                        reviewStatus[
+                          response.review?.status ?? response.review_status
+                        ]
+                      "
+                      class="small-label space-on-left"
+                      *ngIf="
+                        !response.showFollowupLabel &&
+                        !response.is_submitted_by_investor &&
+                        (response.review?.status ?? response.review_status) &&
+                        (response.review?.status ?? response.review_status) !==
+                          diligenceConstants.UnAssigned
+                      "
+                    ></span>
+                    <span
+                      *ngIf="response.showFollowupLabel"
+                      diligenceStatus
+                      [status]="'Follow-up'"
+                      class="small-label space-on-left"
+                    ></span>
+
+                    {{
+                      !response.is_submitted_by_investor &&
+                      (((response.review?.status ?? response.review_status) &&
+                        (response.review?.status ?? response.review_status) !==
+                          diligenceConstants.UnAssigned) ||
+                        response.showFollowupLabel)
+                        ? "by "
+                        : response?.deleted
+                        ? "Deleted by"
+                        : response?.response_source === responseSource.AutoFill
+                        ? "Auto-filled by"
+                        : response?.response_source === responseSource.ExcelSync
+                        ? "Added via Excel Sync by"
+                        : response?.is_submitted_by_investor
+                        ? current_user.isInvestor
+                          ? "You or your team member has cancelled any pending revisions and resolved the follow-up"
+                          : "The requestor has resolved this follow-up and cancelled any pending revisions"
+                        : response.audits?.length
+                        ? "Revised by"
+                        : "Added by"
+                    }}
+                    {{
+                      response.showFollowupLabel
+                        ? response.audits[0].followup?.created_by_name
+                        : getMetaData(response)
+                    }}
+                    <small
+                      class="text-muted"
+                      *ngIf="!response.showFollowupLabel"
+                    >
+                      on
+
+                      {{
+                        getDisplayDate(response) + "Z" | dvDate : ["dvDateTime"]
+                      }}
+                    </small>
+
+                    <small
+                      class="text-muted"
+                      *ngIf="response.showFollowupLabel"
+                    >
+                      on
+
+                      {{
+                        response.audits[0].followup?.created_at + "Z"
+                          | dvDate : ["dvDateTime"]
+                      }}
+                    </small>
+
+                    <!-- followup audit will be separate audit under details unless response is unsubmitted so show details even for 1 audit in this case -->
+                    <small
+                      class="text-muted"
+                      *ngIf="
+                        response?.audits?.length >= 1 ||
+                        (response?.audits?.length === 1 &&
+                          current_user.isInvestor &&
+                          response.is_submitted &&
+                          response.audits[0].followup_id)
+                      "
+                    >
+                      <a
+                        class="clickable"
+                        (click)="toggleHistoryDetails(response, parentIndex)"
+                        tabindex="0"
+                      >
+                        <span>
+                          {{
+                            response.showDetails
+                              ? "Hide History"
+                              : "Show History"
+                          }}</span
+                        >
+                      </a>
+                    </small>
+                    <small
+                      *ngIf="
+                        (response.review?.status ?? response.review_status) ==
+                          diligenceConstants.ReviewFailed &&
+                        response.review?.note
+                      "
+                      ><strong>Note: </strong>
+                      {{ response.review?.note }}</small
+                    >
+                  </div>
+                  <!-- Dont show source history if the audit is for review or for followup  -->
+                  <ng-container
+                    *ngIf="!response.showFollowupLabel && !response.review"
+                  >
+                    <ng-container
+                      *ngTemplateOutlet="
+                        sourceInputInfo;
+                        context: { revision: response }
+                      "
+                    ></ng-container>
+                  </ng-container>
+                </div>
+              </li>
+
+              <div
+                *ngIf="response.showDetails"
+                id="{{ parentIndex }}_parentDiv"
+              >
+                <ng-container
+                  *ngFor="
+                    let audit of response.audits;
+                    let index = index;
+                    let last = last
+                  "
+                >
+                  <!-- followup audit -->
+                  <li
+                    *ngIf="
+                      (response.is_submitted || index > 0) &&
+                      current_user.isInvestor &&
+                      audit.followup_id
+                    "
+                    id="{{ parentIndex }}_followup_history_{{ index }}"
+                    role="group"
+                    aria-label="Response Audit"
+                  >
+                    <div class="media overflow-auto">
+                      <div class="media-left padded-top">
+                        <span class="circled-initials">
+                          {{
+                            indexObj[parentIndex + "_followup_history_" + index]
+                          }}
+                        </span>
+                      </div>
+
+                      <div class="media-body">
+                        <response-history-display
+                          [currentResponse]="audit"
+                          [prevResponse]="audit"
+                          [response_type]="response.response_type"
+                          [grid_id]="response.grid_id"
+                          [grid_version]="response.grid_version"
+                        ></response-history-display>
+                        <div class="response-info">
+                          <span
+                            *ngIf="audit.followup_id"
+                            diligenceStatus
+                            [status]="'Follow-up'"
+                            class="small-label space-on-left"
+                          ></span>
+                          by
+
+                          {{ audit.followup?.created_by_name }}
+                          <small class="text-muted">
+                            on
+
+                            {{
+                              audit.followup?.created_at + "Z"
+                                | dvDate : ["dvDateTime"]
+                            }}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+
+                  <!-- response/review audit -->
+                  <li id="{{ parentIndex }}_history_{{ index }}">
+                    <div class="media overflow-auto">
+                      <div class="media-left padded-top">
+                        <span class="circled-initials">
+                          {{ indexObj[parentIndex + "_history_" + index] }}
+                        </span>
+                      </div>
+
+                      <div class="media-body">
+                        <response-history-display
+                          [currentResponse]="audit"
+                          [prevResponse]="
+                            response.audits[index + 1]
+                              ? response.audits[index + 1]
+                              : null
+                          "
+                          *ngIf="!audit?.deleted"
+                          [response_type]="response.response_type"
+                          [grid_id]="response.grid_id"
+                          [grid_version]="response.grid_version"
+                        ></response-history-display>
+
+                        <div
+                          class="response-info"
+                          [style.margin-top.px]="audit.deleted ? 6 : 10"
+                        >
+                          <span
+                            *ngIf="
+                              !(
+                                (current_user.isInvestor &&
+                                  audit?.is_submitted_by_investor) ||
+                                response.audits[index + 1]
+                                  ?.is_submitted_by_investor
+                              ) &&
+                              (audit.review?.status ?? audit.review_status) &&
+                              (audit.review?.status ?? audit.review_status) !==
+                                diligenceConstants.UnAssigned &&
+                              (audit.review?.status ?? audit.review_status) !==
+                                diligenceConstants.Started
+                            "
+                            diligenceStatus
+                            [status]="
+                              reviewStatus[
+                                audit.review?.status ?? audit.review_status
+                              ]
+                            "
+                          ></span>
+                          {{
+                            !(
+                              (current_user.isInvestor &&
+                                audit?.is_submitted_by_investor) ||
+                              response.audits[index + 1]
+                                ?.is_submitted_by_investor
+                            ) &&
+                            (audit.review?.status ?? audit.review_status) &&
+                              (audit.review?.status ?? audit.review_status) !==
+                                diligenceConstants.UnAssigned &&
+                              (audit.review?.status ?? audit.review_status) !==
+                                diligenceConstants.Started
+                              ? "by "
+                              : audit?.deleted
+                              ? "Deleted by"
+                              : (current_user.isInvestor &&
+                                  audit?.is_submitted_by_investor) ||
+                                response.audits[index + 1]
+                                  ?.is_submitted_by_investor
+                              ? current_user.isInvestor
+                                ? "You or your team member has cancelled any pending revisions and resolved the follow-up"
+                                : "The requestor has resolved this follow-up and cancelled any pending revisions"
+                              : audit?.response_source ===
+                                responseSource.AutoFill
+                              ? "Auto-filled by"
+                              : audit?.response_source ===
+                                responseSource.ExcelSync
+                              ? "Added via Excel Sync by"
+                              : last
+                              ? "Added by"
+                              : "Revised by"
+                          }}
+
+                          {{ getMetaData(audit, response.audits[index + 1]) }}
+                          <small class="text-muted">
+                            on
+
+                            {{
+                              getDisplayDate(response.audits[index]) + "Z"
+                                | dvDate : ["dvDateTime"]
+                            }}
+                          </small>
+
+                          <small
+                            *ngIf="
+                              (audit.review?.status ?? audit.review_status) ==
+                                diligenceConstants.ReviewFailed &&
+                              audit.review?.note
+                            "
+                            ><strong>Note: </strong>
+                            {{ audit.review?.note }}</small
+                          >
+                        </div>
+                        <ng-container *ngIf="!audit.review">
+                          <ng-container
+                            *ngTemplateOutlet="
+                              sourceInputInfo;
+                              context: {
+                                revision: audit,
+                                prevRevision: response.audits[index + 1]
+                              }
+                            "
+                          ></ng-container>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </li>
+                </ng-container>
+              </div>
+            </ul>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+<ng-template
+  #sourceInputInfo
+  let-revision="revision"
+  let-prevRevision="prevRevision"
+>
+  <div
+    class="source-info"
+    *ngIf="
+      revision.response_source === responseSource.AutoFill &&
+      !revision.deleted &&
+      !(
+        (current_user.isInvestor && revision?.is_submitted_by_investor) ||
+        prevRevision?.is_submitted_by_investor
+      )
+    "
+  >
+    <div
+      class="source-heading clickable"
+      (click)="revision.showSourceResponse = !revision.showSourceResponse"
+    >
+      Source History
+      <span
+        appIcon
+        name="chevron-down"
+        [style.margin-top.px]="3"
+        *ngIf="revision.showSourceResponse"
+      ></span>
+      <span
+        appIcon
+        name="chevron-right"
+        [style.margin-top.px]="3"
+        *ngIf="!revision.showSourceResponse"
+      ></span>
+    </div>
+    <ng-container *ngIf="revision.showSourceResponse">
+      <span class="source-field-wrapper"
+        ><span class="source-field">Entity Name: </span>
+        <b> {{ revision.base_response_entity_name }}</b>
+      </span>
+      <span class="source-field-wrapper"
+        ><span class="source-field">Associated Firm: </span>
+        <b> {{ revision.base_response_associated_firm }}</b>
+      </span>
+      <span class="source-field-wrapper"
+        ><span class="source-field">Last Updated By: </span>
+        <b> {{ revision.base_response_created_by }}</b>
+      </span>
+      <span class="source-field-wrapper"
+        ><span class="source-field">Last Updated At: </span>
+        <b> {{ revision.base_response_created_at + "Z" | dvDate }}</b>
+      </span>
+      <span
+        class="source-field-wrapper"
+        *ngIf="!current_user.isInvestor && firmPref.enable_es_autofill"
+        ><span class="source-field">% Similarity Match: </span>
+        <b> {{ revision.es_matching_score }}%</b>
+      </span>
+    </ng-container>
+  </div>
+</ng-template>

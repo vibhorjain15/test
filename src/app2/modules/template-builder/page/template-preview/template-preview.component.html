@@ -1,0 +1,266 @@
+<div class="row" role="main">
+  <div
+    class="col-md-3"
+    StickyDiv
+    role="region"
+    aria-label="Category Navigation"
+  >
+    <dv-category-accordion-list
+      #accordionList
+      [categoryData]="categoryData"
+      [currentActiveId]="activeSectionId"
+      (onSubCatClick)="handleSubCatClick($event)"
+      [showQuestionCount]="true"
+      [ngClass]="{ disabled: disabled }"
+    ></dv-category-accordion-list>
+  </div>
+
+  <div class="col-md-9">
+    <div
+      class="diligence-text-center group-wrapper"
+      *ngIf="questionsLoading"
+      role="status"
+    >
+      <app-spinner
+        spinnerText="Populating the template"
+        aria-live="polite"
+      ></app-spinner>
+    </div>
+    <div
+      class="container-wrapper"
+      role="region"
+      aria-label="Questions Container"
+    >
+      <div *ngIf="!questionsLoading && subCatTitle" class="container-header">
+        <dv-label
+          size="heading"
+          label=" <strong> {{ subCatTitle }}</strong>"
+        ></dv-label>
+        <dv-button
+          *ngIf="sequenceDropdown.length && sequenceDropdown[0].key === 'none'"
+          btnType="transparent"
+          borderRadius="0px"
+          tippyTooltip="Repeat this section"
+          (onClick)="handleSequenceClick(sequenceDropdown[1])"
+        >
+          <span class="text-primary">+ Add More</span>
+        </dv-button>
+        <dv-button
+          *ngIf="sequenceDropdown.length && sequenceDropdown[0].key !== 'none'"
+          btnType="transparent"
+          borderRadius="0px"
+          ariaLabel="More Dropdown"
+        >
+          <dv-dropdown
+            label="+ Add More"
+            tippyTooltip="Repeat this section"
+            [dropDownList]="sequenceDropdown"
+            iconName="caret-down"
+            dropdownPlacement="right"
+            iconSize="small"
+            (onDropdownClick)="handleSequenceClick($event)"
+            (onIconClick)="handleSequenceIconClick($event)"
+          ></dv-dropdown>
+        </dv-button>
+      </div>
+
+      <p
+        *ngIf="!questionsLoading && subCatHintText"
+        class="alert alert-info js-header-text clear-margin clear-border-radius borderless"
+        role="alert"
+      >
+        <span
+          class="word-break-break-word"
+          [innerHtml]="subCatHintText | dvSafeHtml"
+        ></span>
+      </p>
+
+      <dv-question-card-group *ngIf="!questionsLoading && questionData?.length">
+        <ul
+          class="tree"
+          dvScroll
+          [items]="questionData"
+          (onChange)="handleScrollChange($event)"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              Recursion;
+              context: { questions: questionDuplicate, isNested: false }
+            "
+          ></ng-container>
+        </ul>
+
+        <ng-template
+          #Recursion
+          let-questions="questions"
+          let-isNested="isNested"
+        >
+          <ng-container *ngIf="isNested">
+            <ng-container *ngFor="let question of questions; let index = index">
+              <ng-container *ngIf="question?.nestedID?.isValid">
+                <li
+                  [class.active-question]="
+                    activeQuestion && activeQuestion == question.id
+                  "
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      node;
+                      context: {
+                        question: question.nestedID,
+                        index: index,
+                        questionNumber: index + 1,
+                        isNested: true,
+                        questionsLength: questions.length
+                      }
+                    "
+                  ></ng-container>
+                </li>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="!isNested">
+            <li
+              [id]="question.id"
+              *ngFor="let question of questions; let index = index"
+              [class.active-question]="
+                activeQuestion && activeQuestion == question.id
+              "
+            >
+              <ng-container
+                *ngTemplateOutlet="
+                  node;
+                  context: {
+                    question: question,
+                    index: index,
+                    questionNumber: parentQuestionCount
+                      ? (question.index % parentQuestionCount) + 1
+                      : question.index + 1,
+                    isNested: false,
+                    questionsLength: questions.length
+                  }
+                "
+              ></ng-container>
+              <ng-container
+                [autoScroll]="duplicateId"
+                [autoScrollDelayTime]="0"
+                *ngIf="
+                  questions.length - 1 !== index &&
+                  (parentQuestionCount ?? 0 > 0) &&
+                  (question.index + 1) % parentQuestionCount == 0
+                "
+              >
+                <div class="space-on-top-xl space-on-bottom-xl">
+                  <dv-label
+                    [id]="question?.sequenceIndex"
+                    [label]="
+                      activeSection?.label +
+                      ' (#' +
+                      question.sequenceIndex +
+                      ')'
+                    "
+                    type="bold"
+                  ></dv-label>
+                </div>
+              </ng-container>
+            </li>
+          </ng-container>
+        </ng-template>
+
+        <ng-template
+          #node
+          let-question="question"
+          let-index="index"
+          let-isNested="isNested"
+          let-questionsLength="questionsLength"
+          let-questionNumber="questionNumber"
+        >
+          <dv-question-card
+            [question]="question"
+            [title]="
+              firmPreferences?.enable_questionnaire_numbering && !isNested
+                ? questionNumber +
+                  (activeSection?.previous_question_count ?? 0) +
+                  '.  ' +
+                  question.text
+                : question.text
+            "
+            [hintText]="question?.hint_text"
+            [leftIcons]="{}"
+            [ngClass]="{
+              'parent-active-question':
+                !isNested && activeQuestion && activeQuestion == question.id,
+              'child-active-question':
+                activeQuestion && activeQuestion == question.id,
+              'parent-question': !isNested,
+              bottomborder: questionsLength - 1 !== index
+            }"
+          >
+            <question-response
+              *ngIf="
+                question.responseType != 'ReturnTable' &&
+                question.responseType != 'aumTable'
+              "
+              [question]="question"
+              [isPreview]="true"
+              (onChange)="handleOnChange($event, question)"
+            >
+            </question-response>
+            <return-table-preview
+              *ngIf="question.responseType == 'ReturnTable'"
+            ></return-table-preview>
+            <aum-preview
+              *ngIf="question.responseType == 'aumTable'"
+            ></aum-preview>
+          </dv-question-card>
+
+          <ul *ngIf="question?.nestedQuestions?.length">
+            <ng-container
+              *ngTemplateOutlet="
+                Recursion;
+                context: { questions: question.nestedQuestions, isNested: true }
+              "
+            ></ng-container>
+          </ul>
+        </ng-template>
+      </dv-question-card-group>
+      <app-empty-state
+        *ngIf="
+          !catLoading &&
+          !questionsLoading &&
+          activeSection &&
+          !questionData?.length
+        "
+        message="No questions were added in this sub category. Edit this template to add few"
+        (action)="goToAddQuestions()"
+        actionLabel="Add Questions in this Category"
+        role="alert"
+      >
+      </app-empty-state>
+      <app-empty-state
+        *ngIf="
+          !catLoading &&
+          activeCategory &&
+          !activeSection &&
+          !questionData?.length
+        "
+        message="No sub categories were found for the selected category"
+        (action)="goToAddSubCategory()"
+        actionLabel="Add Subcategories in this category"
+        role="alert"
+      ></app-empty-state>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-offset-3 width-50" role="complementary">
+  <app-empty-state
+    *ngIf="!catLoading && !activeCategory"
+    message="No categories were added in this template"
+    (action)="gotoAddCategory()"
+    actionLabel="Add Category"
+    role="alert"
+  >
+  </app-empty-state>
+</div>
+<scroll-top-button aria-hidden="true"></scroll-top-button>

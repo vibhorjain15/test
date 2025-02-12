@@ -1,0 +1,112 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Manage Product Tags and Custom Fields</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      Manage all product tags and custom fields that are relevant to your
+      organization under this section.
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="60"
+      *ngIf="loading"
+    ></app-spinner>
+    <div *ngIf="!loading">
+      <div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">System Classification Tags</h5>
+          </div>
+          <div class="panel-body">
+            <div class="label-list" role="list" tabindex="0">
+              <span
+                class="label label-default text-uppercase space-on-right"
+                *ngFor="let strategy of systemStrategies"
+                role="listitem"
+                tabindex="0"
+                [attr.aria-label]="
+                  strategy.name + ' - This is a system generated classification'
+                "
+              >
+                <small
+                  tooltip="This is a system generated classification"
+                  container="body"
+                  >{{ strategy.name }}</small
+                >
+              </span>
+            </div>
+            <helper-text *ngIf="!systemStrategies.length" class="text-center">
+              To enable system classification tags go to Firm settings >
+              Preferences > Firm Preferences
+            </helper-text>
+          </div>
+        </div>
+        <div class="panel panel-default space-on-top-xxl">
+          <div class="panel-heading">
+            <h5 class="panel-title">Custom Classification Tags</h5>
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a
+                  tooltip="Add new custom classification"
+                  container="body"
+                  class="panel-control"
+                  (click)="addNewStrategy()"
+                  placement="left"
+                  tabindex="0"
+                  role="button"
+                  aria-label="Add new custom classification"
+                >
+                  <span appIcon name="plus"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="label-list">
+              <span *ngIf="strategies.length">
+                <span
+                  class="label label-default text-uppercase space-on-right"
+                  *ngFor="let strategy of strategies; let $index = index"
+                >
+                  <small>{{ strategy.name }}</small>
+                  <a
+                    class="space-on-left clickable link-disguise"
+                    (click)="editStrategy(strategy, $index)"
+                    *ngIf="is_admin"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="'Edit ' + strategy.name"
+                  >
+                    <span appIcon name="pencil"></span>
+                  </a>
+                  <a
+                    tooltip="Remove classification"
+                    container="body"
+                    class="space-on-left clickable link-disguise"
+                    *ngIf="is_admin"
+                    (click)="displayTagRemovalConfirmation(strategy, $index)"
+                    tabindex="0"
+                    role="button"
+                    [attr.aria-label]="'Remove ' + strategy.name"
+                    >&times;</a
+                  ></span
+                >
+              </span>
+              <helper-text *ngIf="!strategies.length" class="text-center">
+                No custom classification tags available.
+              </helper-text>
+            </div>
+          </div>
+        </div>
+        <app-custom-field-viewer
+          [entityType]="'fund'"
+          [entityTypeId]="1219"
+          [source]="'fund'"
+        ></app-custom-field-viewer>
+      </div>
+    </div>
+  </div>
+</div>

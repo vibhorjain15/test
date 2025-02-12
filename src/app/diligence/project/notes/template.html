@@ -1,0 +1,132 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-project-notes></ng2-project-notes>
+</div>
+<div class="row clearfix" data-ng-if="vm.Utils.isAngularJS()">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+
+        <spinner broad-spinner spinner-height='40' data-ng-if="!vm.diligence"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel" data-ng-if="vm.diligence">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{::vm.diligence.entity_name}}
+            </h4>
+            <div>
+                <small class="text-muted" data-ng-if="vm.diligence.last_updated_at">
+                 Last Updated {{::vm.diligence.last_updated_at|date}}
+                </small>
+            </div>
+          </div>
+
+          <div class="bordered-right text-center cell">
+            <span class="align-middle">Status:</span>
+            <span diligence-status="vm.diligence.status"></span>
+
+          </div>
+
+          <div class="cell" data-ng-show="vm.note_count">
+            Showing {{vm.note_count}} Internal Note(s)
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-notes-list-panel">
+
+      <spinner broad-spinner spinner-height='40' data-ng-if="!vm.grouped_notes"></spinner>
+
+      <div class="panel panel-default" data-ng-show="vm.grouped_notes && !vm.grouped_notes.length">
+        <div class="panel-body">
+          <div col="6" offset="3">
+            <empty-state icon-name="compare"
+                         message="No notes associated with the questions for this due diligence"
+                         action="vm.redirectToSummary()"
+                         action-label="Back to Summary"></empty-state>
+          </div>
+        </div>
+      </div>
+
+      <div data-ng-repeat="group in vm.grouped_notes" class="panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title"><span ng-bind-html="group.child_entity_name"></span></h5>
+        </div>
+
+        <div class="panel-body has-notes-form">
+          <ul class="list-unstyled clear-margin-bottom list-bordered-bottom">
+            <li data-ng-repeat="note in group.notes" data-ng-controller="ProjectAddNotesController as notes_ctrl">
+              <div class="media">
+                <div class="media-left padded-top">
+                  <span class="circled-initials">
+                    {{$index+1}}
+                  </span>
+                </div>
+
+                <div class="media-body">
+                  <p class="space-on-bottom">
+                    <small class="text-muted">
+                      {{::note.first_name}} {{::note.last_name}} added {{note.updated_at|fromNow}}
+                    </small>
+                    <span class="pull-right space-on-right-xxl" data-ng-show="!notes_ctrl.editing && notes_ctrl.can_edit && !vm.diligence.isLocked">
+                          <small class="text-muted v-align-text-top space-on-right" uib-tooltip="Edit this note">
+                            <a class="link-disguise clickable"
+                               data-ng-click="notes_ctrl.editNote(note)">edit</a>
+                          </small>
+                          <small class="text-muted v-align-text-top" uib-tooltip="Delete this note">
+                            <a class="link-disguise clickable"
+                               data-ng-click="notes_ctrl.deleteNote(note)">delete</a>
+                          </small>
+                    </span>
+                  </p>
+
+                  <p data-ng-if="!notes_ctrl.editing" class="clear-margin">
+                    <span ng-bind-html="note.text | cleanhtml"></span>
+                  </p>
+
+                  <div data-ng-if="notes_ctrl.editing" class="padded-right-sm">
+                    <textarea ng-model="note.text"
+                              ui-tinymce="notes_ctrl.tinymceOptionsEdit"
+                              ng-required="true"
+                              placeholder="{{notes_ctrl.tinymceOptionsEdit.placeholderTextContent}}"
+                              dv-input-change-alert
+                              dv-on-input-save="notes_ctrl.updateNote(note)"
+                              mentio
+                              mentio-id="'tinyMceNotesEditArea'"
+                              mentio-typed-text="notes_ctrl.typedTerm"
+                              mentio-iframe-element="notes_ctrl.tinymceEditEditor.iframeElement"
+                              mentio-require-leading-space="true"></textarea>
+
+                    <mentio-menu
+                            class="mention-menu-fixed"
+                            data-ng-if="notes_ctrl.tinymceEditEditor.iframeElement"
+                            mentio-for="'tinyMceNotesEditArea'"
+                            mentio-trigger-char="'@'"
+                            mentio-items="notes_ctrl.filteredTeamMembers"
+                            mentio-template-url="shared/directives/dvMention/template.html"
+                            mentio-select="notes_ctrl.getDisplayName(item)"
+                            mentio-search="notes_ctrl.filterTeamMembers(term)"
+                            ></mentio-menu>
+
+                    <div class="space-on-top">
+                      <button btn-type="primary"
+                              size="sm"
+                              button-loader="notes_ctrl.updating_note"
+                              data-ng-click="notes_ctrl.updateNote(note)">Update</button>
+                      <button btn-type="default"
+                              size="sm"
+                              data-ng-disabled="notes_ctrl.updating_note"
+                              data-ng-click="notes_ctrl.cancel(note)">Cancel</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

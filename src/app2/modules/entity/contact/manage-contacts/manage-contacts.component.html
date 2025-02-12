@@ -1,0 +1,46 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Monitor {{ contactLabel }} Contacts"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-body">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="50"
+      *ngIf="!render_grid"
+    ></app-spinner>
+    <div *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="contacts"
+        [name]="gridName"
+        [showCharacterFilter]="true"
+        [onRowClicked]="onRowClicked"
+        [noRowsTemplate]="
+          !initGridSection && !contacts.length
+            ? 'Loading...'
+            : 'No results found'
+        "
+        [filterData]="filterData"
+        [customFilterInitValue]="filterInitValue"
+        (onLoadView)="loadView($event)"
+      >
+        <div class="label-list" *ngIf="filterApplied">
+          <span *ngFor="let criterion of search_criterias; let $index = index">
+            <span
+              class="btn btn-primary-outline text-uppercase space-on-right space-on-bottom"
+              *ngIf="criterion.advance_filter_value"
+            >
+              <small>{{ displayFilter(criterion) }}</small>
+              <a
+                class="space-on-left clickable link-disguise"
+                (click)="removeFilterCriterion($index)"
+                >&times;</a
+              >
+            </span>
+          </span>
+        </div>
+      </app-dv-grid>
+    </div>
+  </div>
+</div>

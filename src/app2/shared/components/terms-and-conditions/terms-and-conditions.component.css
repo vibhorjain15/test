@@ -1,0 +1,19 @@
+.templateWidth {
+  width: 80%;
+  margin: auto;
+}
+.bodyContent {
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+li,
+p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

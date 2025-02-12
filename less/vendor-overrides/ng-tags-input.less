@@ -1,0 +1,40 @@
+tags-input[disabled="disabled"]{
+  .tag-item {
+    @background: #dfdfdf;
+    @text-color: #333;
+    @border-color: darken(@background, 15%);
+    background: @background;
+    color: #fff !important;
+  }
+}
+
+tags-input {
+  .tags {
+    &.focused {
+      .box-shadow(none);
+      border: 1px solid @input-border-focus;
+    }
+
+    .tag-item {
+      @background: #dfdfdf;
+      @text-color: #333;
+      @border-color: darken(@background, 15%);
+      background: @background;
+      color: @text-color;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      border-color: @border-color;
+
+
+      .remove-button {
+        color: lighten(@text-color, 25%);
+      }
+
+      &.selected {
+        background: @border-color;
+        border-color: @border-color;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h3 class="modal-title">Edit Question
+   <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+  </h3>
+</div>
+
+<div class="modal-body multiple-questions-mode">
+    <div class="space-on-bottom-xxl">
+
+        <div class="panel panel-default borderless">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    {{vm.question.extracted_text}}
+                </h5>
+            </div>
+            <div>
+                <offline-d-d-question-builder on-save="vm.onSave(vm.question)"
+                                           template-id="vm.templateId"
+                                           question-params="vm.question"
+                                           edit-multiple-questions
+                                           on-cancel="vm.onCancel(vm.question)">
+                </offline-d-d-question-builder>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--<div class="modal-footer">
+    <button btn-type="default" data-ng-click="vm.cancel()">Close</button>
+</div>-->

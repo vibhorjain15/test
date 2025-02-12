@@ -1,0 +1,15 @@
+.cross {
+  position: absolute;
+  top: 18px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.pt-8 {
+  padding-top: 8px;
+}

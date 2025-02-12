@@ -1,0 +1,483 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div>
+      <div>
+        <helper-text *ngIf="freeSubscription">
+          <span
+            >This is your centralized document library that houses all documents
+            shared by you or with you. These documents are associated with Firm,
+            Strategy, Product or Vehicle projects. You can reuse these documents
+            across multiple diligence requests.</span
+          ></helper-text
+        >
+        <div class="content-wrapper">
+          <dv-tabs
+            [list]="tabs"
+            [loading]="false"
+            size="large"
+            [showArrows]="false"
+            [style.flex]="1"
+            (onTabClick)="handleTabChange($event)"
+            id="document-tabs"
+          >
+          </dv-tabs>
+          <div class="document-grid-actions">
+            <toggle-button-switch
+              firstIcon="list"
+              secondIcon="folder"
+              [labelColor]="colorTheme.primary"
+              [style.width.px]="120"
+              *ngIf="!freeSubscription"
+              [firstIconSize]="15"
+              [secondIconSize]="15"
+              [style.height.px]="34"
+              [selectedSwitch]="selectedViewType == 1 ? 'list' : 'folder'"
+              #viewToggler
+              [showActiveTick]="true"
+              (onButtonClick)="handleViewChange($event)"
+            ></toggle-button-switch>
+            <dv-button
+              *ngIf="
+                gridType == 'entity' &&
+                (currentUser?.isAdmin || currentUser?.isOwner) &&
+                !currentUser?.isSecurityAdmin &&
+                ['MyAttachments', 'Received'].includes(selectedTab?.link) &&
+                selectedViewType === 2 &&
+                !freeSubscription
+              "
+              btnType="default"
+              (onClick)="flattenAttachments(true)"
+              class="space-on-left-lg"
+              >Flatten Folders</dv-button
+            >
+            <dv-dropdown
+              [dropDownList]="bulkFolderOperationOptions"
+              class="document-add-dropdown space-on-left-lg"
+              dropdownPlacement="bottom"
+              (onDropdownClick)="handleBulkFolderOperationDropdownClick($event)"
+              *ngIf="
+                gridType === 'content' &&
+                selectedViewType == 2 &&
+                ['MyAttachments', 'Received'].includes(selectedTab?.link) &&
+                (currentUser?.isAdmin || currentUser?.isOwner) &&
+                !currentUser?.isSecurityAdmin &&
+                !freeSubscription &&
+                bulkFolderOperationOptions?.length
+              "
+            >
+              <span dropdownLabelContent class="btn btn-default">
+                Bulk Folder Actions
+              </span>
+            </dv-dropdown>
+            <app-date-range-picker
+              class="w-260 rangePicker space-on-left-lg"
+              [format]="dateDisplayFormat"
+              [customDate]="customDateFilter"
+              (change)="onChange($event)"
+              (clearDateFilter)="onClearDateFilter()"
+              [containerClass]="'range-picker-grid-placement'"
+              helpText='Filters by "Last Updated On"'
+              *ngIf="initDateSection && gridType === 'content'"
+            ></app-date-range-picker>
+            <div
+              class="space-on-left-lg"
+              [tooltip]="
+                subscription === 'Free'
+                  ? 'Available for premium subscribers'
+                  : ''
+              "
+              container="body"
+              *ngIf="selectedTab?.link === 'MyAttachments'"
+            >
+              <dv-dropdown
+                [dropDownList]="newOptions"
+                [disabled]="freeSubscription"
+                [showCursorIfDisabled]="freeManager"
+                (click)="handleDisabledClick(freeSubscription)"
+                class="document-add-dropdown"
+                customClass="document-dropdown-class"
+                dropdownPlacement="bottom"
+                (onDropdownClick)="handleNewDropdownClick($event)"
+              >
+                <span
+                  dropdownLabelContent
+                  class="btn btn-primary class-primary"
+                >
+                  <span appIcon name="plus"></span> New
+                </span>
+              </dv-dropdown>
+            </div>
+            <dv-button
+              class="space-on-left-lg"
+              *ngIf="selectedTab?.link === 'Received'"
+              (onClick)="handleNewDropdownClick({ key: 1 })"
+              [disabledClass]="freeSubscription"
+              [tooltip]="
+                freeSubscription ? 'Available for premium subscribers' : ''
+              "
+              ><span appIcon name="plus"></span> New Folder</dv-button
+            >
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="panel panel-default selection-header-wrapper"
+        *ngIf="show_bulk_actions"
+      >
+        <div class="panel-body padded-lg selection-header">
+          <h5 class="inline space-on-right-lg">
+            <strong class="selection-header"
+              >Items Selected:
+              <span class="badge space-on-left-lg">{{
+                totalSelectedRecords
+              }}</span></strong
+            >
+          </h5>
+          <dv-button
+            btnType="default"
+            leftIcon="pencil"
+            class="space-on-right-lg"
+            [disabled]="emptyFolderSelected"
+            [tooltipText]="
+              emptyFolderSelected
+                ? 'Please Select Folders with Documents'
+                : 'Edit Selected Documents'
+            "
+            (onClick)="bulkEditDocuments()"
+            *ngIf="selectedTab?.link !== 'All'"
+            >Edit</dv-button
+          >
+
+          <dv-button
+            *ngIf="selectedViewType === 2 && selectedTab?.link != 'All'"
+            btnType="default"
+            leftIcon="move1"
+            class="space-on-right-lg"
+            tippyTooltip="Move Selected Folders and Documents"
+            (onClick)="moveOrCopySelectedDocuments('move')"
+            >Move</dv-button
+          >
+
+          <dv-button
+            *ngIf="
+              selectedViewType === 2 && selectedTab?.link == 'MyAttachments'
+            "
+            btnType="default"
+            class="space-on-right-lg"
+            leftIcon="copy-2"
+            (onClick)="moveOrCopySelectedDocuments('copy')"
+            tippyTooltip="Copy Selected Folders and Documents"
+            >Copy</dv-button
+          >
+
+          <dv-button
+            *ngIf="['MyAttachments'].includes(selectedTab?.link)"
+            [tippyTooltip]="
+              (gridType == 'content' ? 'Delete' : 'Remove') +
+              (selectedViewType === 2
+                ? ' Selected Folders and Documents'
+                : ' Selected Documents')
+            "
+            btnType="default"
+            class="space-on-right-lg"
+            leftIcon="trashcan"
+            (onClick)="bulkDeleteFoldersAndAttachments()"
+            >{{ gridType == "content" ? "Delete" : "Remove" }}</dv-button
+          >
+          <dv-button
+            *ngIf="
+              ['MyAttachments', 'Received'].includes(selectedTab?.link) &&
+              selectedViewType === 2 &&
+              (currentUser?.isAdmin || currentUser?.isOwner) &&
+              !currentUser?.isSecurityAdmin &&
+              isFolderSelected
+            "
+            [tippyTooltip]="'Flatten the documents in the selected folders'"
+            btnType="default"
+            class="space-on-right-lg"
+            leftIcon="flatten-folder"
+            (onClick)="flattenAttachments(false)"
+            >Flatten Folders</dv-button
+          >
+          <dv-button
+            [tippyTooltip]="
+              !freeManager
+                ? 'Download All (select up to 1000 documents)'
+                : 'Available for premium subscribers'
+            "
+            btnType="default"
+            class="space-on-right-lg"
+            leftIcon="download-install-line"
+            (onClick)="downloadDocuments()"
+            [disabled]="
+              totalSelectedRecords > 1000 ||
+              freeManager ||
+              totalSelectedRecords === 0
+            "
+            >Download</dv-button
+          >
+          <a
+            tippyTooltip="Close"
+            container="body"
+            class="btn pull-right text-black"
+            [style.margin-left]="'auto'"
+            (click)="closeQuickActions()"
+          >
+            <strong><span appIcon name="close"></span></strong>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <app-spinner
+        *ngIf="!render_grid"
+        class="display-flex justify-center"
+      ></app-spinner>
+      <div *ngIf="render_grid">
+        <dv-tree-grid
+          #documentsTreeGrid
+          [columnDefs]="columnDefs"
+          [defaultAutoGroupColumnDef]="autoGroupColDef"
+          [rowData]="selectedViewType == 2 && initGridSection ? documents : []"
+          [getDataPath]="getDataPath"
+          [onRowSelected]="onRowSelected"
+          [onSelectionChanged]="onSelectionChanged"
+          [onCellClicked]="onCellClicked"
+          [groupDefaultExpanded]="false"
+          class="doc-grid"
+          (gridReady)="handleOnTreeGridReady($event)"
+          [noRowsOverlayComponent]="
+            !initGridSection
+              ? loadingOverlayComponent
+              : !documents?.length
+              ? noRowsOverlayComponent
+              : null
+          "
+          [noRowsOverlayComponentParams]="noRowsOverlayComponentParams"
+          [name]="gridName"
+          *ngIf="selectedViewType == 2"
+          [filterData]="filterData"
+          [customFilterInitValue]="filterInitValue"
+          (onLoadView)="loadView($event)"
+          [hideExportOptions]="true"
+        >
+          <div class="padded-bottom display-flex flex-wrap">
+            <div
+              class="search-panel-box clickable"
+              *ngIf="isSearchPanelCollapsed && subscription !== 'Free'"
+            >
+              <app-search-input
+                [searchText]="searchText"
+                placeholder="Keyword Search"
+                (onSearch)="handleOnSearch($event)"
+                (onClear)="handleOnClear()"
+                [searchOnType]="false"
+              ></app-search-input>
+            </div>
+            <dv-button
+              btnType="default"
+              *ngIf="subscription !== 'Free' && gridType === 'content'"
+              class="space-on-right-lg"
+              [btnClass]="isFilterApplied ? 'filter-applied' : ''"
+              (onClick)="toggleSearchPanel()"
+              ariaLabel="Filter"
+              tooltipText="Filter"
+            >
+              <span
+                appIcon
+                name="filter"
+                [style.color]="isFilterApplied ? colorTheme.primary : null"
+              ></span>
+            </dv-button>
+            <div
+              *ngIf="showFilters()"
+              class="label-list space-on-bottom-lg display-contents"
+            >
+              <span
+                class="text-uppercase space-on-right space-on-bottom filter-chip"
+                *ngFor="let criterion of searchCriteria; let index = index"
+              >
+                <span
+                  *ngIf="criterion.value && criterion.value !== ''"
+                  class="filter-label"
+                  ><span>{{ displayFilter(criterion) }}</span>
+                  <span
+                    class="space-on-left clickable link-disguise closeIcon"
+                    appIcon
+                    name="close"
+                    (click)="removeFilterCriterion(criterion, index)"
+                  ></span
+                ></span>
+              </span>
+            </div>
+            <div class="display-flex space-on-left-lg">
+              <dv-checkbox
+                name="hideEmptyFolders"
+                label="Hide empty folders"
+                [ngModel]="hideEmptyFolders"
+                [ngModelOptions]="{ standalone: true }"
+                (onValChange)="handleHideEmptyFolderChange($event)"
+                *ngIf="selectedViewType == 2"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div
+            bottomPanel
+            class="panel panel-default"
+            [ngStyle]="{
+              display: isSearchPanelCollapsed ? 'none' : 'block'
+            }"
+          >
+            <div
+              class="clickable space-on-left-xxl pull-right col-xs-10 hide-filter-toggle space-on-top-lg"
+              col="1"
+              *ngIf="!isSearchPanelCollapsed"
+            >
+              <dv-button
+                tooltipText="Hide Search with Filters"
+                container="body"
+                [btnType]="'default'"
+                (onClick)="toggleSearchPanel()"
+              >
+                <span appIcon name="chevron-up"></span>
+              </dv-button>
+            </div>
+            <app-global-grid-filter
+              [isDisplay]="!isSearchPanelCollapsed"
+              (onFilterApply)="onFilterApplyAction($event)"
+              [removeEvent]="removeItemEvt"
+              [isInvestor]="currentUser?.isInvestor"
+              [tab]="selectedTab?.link"
+              [filterData]="appliedFilterData"
+              #documentsFilter
+              *ngIf="gridType === 'content' && initTabAndView"
+            ></app-global-grid-filter>
+          </div>
+        </dv-tree-grid>
+        <app-dv-grid
+          [rowData]="
+            lastGroupedCol && isMultivaluedColumnGrouping
+              ? groupedDocuments
+              : initGridSection
+              ? documents
+              : []
+          "
+          [name]="gridName"
+          [onSelectionChanged]="onSelectionChanged"
+          [onRowSelected]="onRowSelected"
+          [onCellClicked]="onCellClicked"
+          (gridReady)="handleOnGridReady($event)"
+          [noRowsOverlayComponent]="
+            !initGridSection
+              ? loadingOverlayComponent
+              : !documents?.length
+              ? noRowsOverlayComponent
+              : null
+          "
+          [noRowsOverlayComponentParams]="noRowsOverlayComponentParams"
+          #documentsGrid
+          class="doc-grid"
+          *ngIf="selectedViewType == 1"
+          [filterData]="filterData"
+          [customFilterInitValue]="filterInitValue"
+          (onLoadView)="loadView($event)"
+        >
+          <div class="padded-bottom display-flex flex-wrap">
+            <div
+              class="search-panel-box clickable"
+              *ngIf="isSearchPanelCollapsed && subscription !== 'Free'"
+            >
+              <app-search-input
+                [searchText]="searchText"
+                placeholder="Keyword Search"
+                (onSearch)="handleOnSearch($event)"
+                (onClear)="handleOnClear()"
+                [searchOnType]="false"
+              ></app-search-input>
+            </div>
+            <dv-button
+              btnType="default"
+              *ngIf="subscription !== 'Free' && gridType === 'content'"
+              class="space-on-right-lg"
+              [btnClass]="isFilterApplied ? 'filter-applied' : ''"
+              (onClick)="toggleSearchPanel()"
+              ariaLabel="Filter"
+              tooltipText="Filter"
+            >
+              <span
+                appIcon
+                name="filter"
+                [style.color]="isFilterApplied ? colorTheme.primary : null"
+              ></span>
+            </dv-button>
+            <div
+              *ngIf="showFilters()"
+              class="label-list space-on-bottom-lg display-contents"
+            >
+              <span
+                class="text-uppercase space-on-right space-on-bottom filter-chip"
+                *ngFor="let criterion of searchCriteria; let index = index"
+              >
+                <span
+                  *ngIf="criterion.value && criterion.value !== ''"
+                  class="filter-label"
+                  ><span>{{ displayFilter(criterion) }}</span>
+                  <span
+                    class="space-on-left clickable link-disguise closeIcon"
+                    appIcon
+                    name="close"
+                    (click)="removeFilterCriterion(criterion, index)"
+                  ></span
+                ></span>
+              </span>
+            </div>
+            <div class="display-flex space-on-left-lg">
+              <dv-checkbox
+                name="hideEmptyFolders"
+                label="Hide empty folders"
+                [ngModel]="hideEmptyFolders"
+                [ngModelOptions]="{ standalone: true }"
+                (onValChange)="handleHideEmptyFolderChange($event)"
+                *ngIf="selectedViewType == 2"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div
+            bottomPanel
+            class="panel panel-default"
+            [ngStyle]="{
+              display: isSearchPanelCollapsed ? 'none' : 'block'
+            }"
+          >
+            <div
+              class="clickable space-on-left-xxl pull-right col-xs-10 hide-filter-toggle space-on-top-lg"
+              col="1"
+              *ngIf="!isSearchPanelCollapsed"
+            >
+              <dv-button
+                tooltipText="Hide Search with Filters"
+                container="body"
+                [btnType]="'default'"
+                (onClick)="toggleSearchPanel()"
+              >
+                <span appIcon name="chevron-up"></span>
+              </dv-button>
+            </div>
+            <app-global-grid-filter
+              [isDisplay]="!isSearchPanelCollapsed"
+              (onFilterApply)="onFilterApplyAction($event)"
+              [removeEvent]="removeItemEvt"
+              [isInvestor]="currentUser?.isInvestor"
+              [tab]="selectedTab?.link"
+              #documentsFilter
+              *ngIf="gridType === 'content' && initTabAndView"
+            ></app-global-grid-filter>
+          </div>
+        </app-dv-grid>
+      </div>
+    </div>
+  </div>
+</div>

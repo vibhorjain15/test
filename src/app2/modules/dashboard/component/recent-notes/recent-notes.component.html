@@ -1,0 +1,153 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">Recent Notes</h5>
+  </div>
+  <div class="panel-body dash-notes-panel">
+    <div class="full-width full-height">
+      <div class="">
+        <app-spinner
+          *ngIf="isLoading"
+          broadSpinner="true"
+          spinnerHeight="250"
+        ></app-spinner>
+        <app-empty-state
+          [iconName]="notepad"
+          message="No notes available"
+          *ngIf="dataSource && dataSource.length == 0 && !isLoading"
+        >
+        </app-empty-state>
+        <!-- <app-spinner [broadSpinner]="true" [spinnerHeight]="20" *ngIf="dataSource && dataSource.length == 0"></app-spinner> -->
+        <ul
+          class="list-unstyled due-diligence-history notes-activity"
+          tabindex="0"
+          *ngIf="dataSource.length > 0"
+        >
+          <li
+            class="clickable"
+            *ngFor="let note of dataSource"
+            (click)="redirectToDetail(note)"
+          >
+            <div class="dv-table">
+              <div class="cell padded icon-wrapper text-center">
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Phone or conference call"
+                  container="body"
+                  name="phone"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'PhoneCall'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Coffee meeting"
+                  container="body"
+                  name="coffee"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'Coffee'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Onsite / conference"
+                  container="body"
+                  nam="meeting"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'Meeting' || note.type == 'Conference'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Non Approval Reasons"
+                  container="body"
+                  name="thumbs-o-down"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'NotApproved'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="General notes"
+                  container="body"
+                  name="pencil"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="
+                    note.type == 'General' && note.entity_type != 'Attachment'
+                  "
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Document review notes"
+                  container="body"
+                  name="file"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.entity_type == 'Attachment'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="FormADV review notes"
+                  container="body"
+                  name="institution"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'FormADV'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Reason for Declining DD Invitation"
+                  container="body"
+                  name="ban"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'Declined'"
+                ></span>
+
+                <span
+                  appIcon
+                  [adaptivePosition]="false"
+                  tooltip="Event trigger for due-diligence"
+                  container="body"
+                  name="thunder"
+                  size="lg"
+                  class="text-muted"
+                  *ngIf="note.type == 'Invitation'"
+                ></span>
+              </div>
+
+              <div class="cell align-middle">
+                <small class="text-muted">
+                  <span>{{ note.first_name }} {{ note.last_name }}</span>
+                  <span> added on</span>
+                  <span> {{ note.updated_at | dvDate : ["dvDateTime"] }}</span>
+                  <span> for</span>
+                  <span> {{ note.entity_name }}</span>
+                </small>
+
+                <p class="clear-margin-bottom space-on-top responsive-image">
+                  <span [innerHTML]="note.text | cleanHtml"></span>
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

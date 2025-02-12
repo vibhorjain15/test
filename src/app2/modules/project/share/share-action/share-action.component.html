@@ -1,0 +1,34 @@
+<ng-container *ngIf="!params.node.group">
+  <dv-button
+    [loader]="false"
+    [btnType]="'default'"
+    (onClick)="openFollowupDialog()"
+    [btnClass]="'space-on-right'"
+    tooltip="Follow-up"
+    placement="right"
+    [size]="'sm'"
+    [fontSizeType]="'medium'"
+    [adaptivePosition]="false"
+    ariaLabel="Open Follow-up Modal"
+  >
+    <span appIcon name="doubt" aria-hidden="true"></span>
+  </dv-button>
+  <dv-button
+    tooltip="{{
+      params.data.acknowledged_at != 'Never'
+        ? 'Acknowledged diligences can not be un-shared'
+        : 'Revoke Access'
+    }}"
+    [btnType]="'default'"
+    (onClick)="revokeAccessModal()"
+    [disabled]="params.data.acknowledged_at != 'Never'"
+    [size]="'sm'"
+    [fontSizeType]="'medium'"
+    [adaptivePosition]="false"
+    container="body"
+    placement="right"
+    ariaLabel="Revoke Access"
+  >
+    <span appIcon name="close"></span>
+  </dv-button>
+</ng-container>

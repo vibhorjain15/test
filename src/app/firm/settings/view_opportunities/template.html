@@ -1,0 +1,43 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-view-inbound></ng2-view-inbound>
+</div>
+<div class="panel panel-default" data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel-heading">
+    <h5 class="panel-title">Manage Opportunity Configurations</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control" ui-sref="app.firm.settings.configure_opportunity">
+          <icon name="plus"></icon>&nbsp; Add New Opportunity
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div data-ng-if="vm.loading">
+        <spinner></spinner>
+      </div>
+      <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+        <div class="panel-body padded-lg">
+          <h5 class="inline space-on-right-lg">
+            <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+          </h5>
+          <a class="btn btn-default danger space-on-right-lg"
+             uib-tooltip="Delete Selected"
+             data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+             data-ng-click="vm.confirmBulkOpportunityDeletion()">
+            <strong><icon name="trashcan"></icon>  </strong>
+          </a>
+
+          <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions('assignments_grid')">
+            <strong><icon name="close"></icon></strong>
+          </a>
+        </div>
+      </div>
+      <div  data-ng-if="vm.render_grid">
+        <!-- <app-inbound-grid [rowData]="gridData"></app-inbound-grid> -->
+        <dv-grid grid-resource="vm.opportunities" name="vm.opportunities_grid" grid-name="'opportunities'"></dv-grid>
+      </div>
+    </div>
+  </div>
+</div>

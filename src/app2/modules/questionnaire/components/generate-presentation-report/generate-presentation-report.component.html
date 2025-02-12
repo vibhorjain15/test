@@ -1,0 +1,108 @@
+<ng-container>
+  <form
+    class="form-horizontal"
+    [formGroup]="presentationReportConfigurationForm"
+    *ngIf="
+      !loading &&
+      current_user &&
+      !current_user.isFreeSubscription &&
+      show_presentation_module
+    "
+    autocomplete="off"
+  >
+    <div class="modal-body">
+      <div class="text-center" *ngIf="!templates?.length">
+        <span
+          class="control-label text-muted fw-bolder"
+          aria-label="No reporting definition available"
+        >
+          No reporting definition available,
+          <a
+            class="clickable"
+            (click)="redirectToTemplateDefinitions()"
+            aria-label="Click here to add new reporting definition"
+            >click here</a
+          >
+          to add one
+        </span>
+      </div>
+      <dv-form-element
+        [modelController]="
+          presentationReportConfigurationForm.get('templateControl')
+        "
+        label="Select Reporting Definition"
+        labelPosition="left"
+        [showRightIcon]="false"
+        [isRequired]="true"
+        labelCol="5"
+        elementCol="7"
+        errorMessage="Reporting Definition is required"
+        *ngIf="templates?.length > 0"
+      >
+        <dv-select
+          [id]="'templateControl'"
+          [contoller]="
+            presentationReportConfigurationForm.get('templateControl')
+          "
+          placeholder="Reporting Definition"
+          [list]="templates"
+          bindLabel="report_definition_name"
+          formControlName="templateControl"
+          (onSelectChange)="handleTemplateValueChange($event)"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-form-element
+        [modelController]="
+          presentationReportConfigurationForm.get('nameControl')
+        "
+        label="Report Name"
+        labelPosition="left"
+        [showRightIcon]="false"
+        [isRequired]="true"
+        labelCol="5"
+        elementCol="7"
+        errorMessage="Report Name is required"
+        *ngIf="templates?.length > 0"
+      >
+        <input
+          [id]="'nameControl'"
+          formControlName="nameControl"
+          type="text"
+          class="form-control"
+          placeholder="Report Name"
+          aria-label="Report Name required input"
+        />
+      </dv-form-element>
+    </div>
+  </form>
+  <app-spinner
+    broadSpinner="true"
+    spinnerHeight="100"
+  ></app-spinner>
+  <helper-text
+    *ngIf="
+      !loading &&
+      (current_user?.isFreeSubscription || !show_presentation_module)
+    "
+    aria-label="{{
+      current_user?.isFreeSubscription
+        ? 'This is available with a premium subscription. Please write to us to learn about digitizing your due diligence workflows.'
+        : 'Please write to us to learn about generating custom presentation reports.'
+    }}"
+  >
+    {{
+      current_user?.isFreeSubscription
+        ? "This is available with a premium subscription. Please "
+        : "Please "
+    }}
+    <!-- <a (click)="openWriteToUs()"> -->
+    write to us
+    <!-- </a> -->
+    {{
+      current_user?.isFreeSubscription
+        ? " to learn about digitizing your due diligence workflows."
+        : " to learn about generating custom presentation reports."
+    }}
+  </helper-text>
+</ng-container>

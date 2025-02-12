@@ -1,0 +1,76 @@
+.duplicate-entries-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qa-bank-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1%;
+  padding-top: 10px;
+}
+
+.header-wrapper {
+  padding: 0px 1% 0px 1%;
+}
+.question-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.entity-detail {
+  display: flex;
+  flex: 1;
+  gap: 30px;
+}
+
+.actions {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  gap: 40px;
+  align-self: flex-end;
+}
+
+.header {
+  padding: 1% 1% 0px 1%;
+}
+.question-answer-container {
+  padding: 0px 1% 1% 1%;
+}
+
+.entity-type {
+  width: 50%;
+}
+.entity-name {
+  width: 50%;
+}
+
+.duplicate-logo ::ng-deep span.label-custom {
+  margin-top: 10px;
+}
+
+.my-firm-label {
+  display: flex;
+  width: fit-content;
+  margin-top: 5px;
+  font-size: 12px !important;
+  color: #555555 !important;
+  background: #f1f1f1 !important;
+  padding: 5px 10px 7px !important;
+}
+
+.qa-bank-nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: end;
+  padding-right: 5px;
+}
+
+.loaderState {
+  padding: 0px 1% 1% 1%;
+}

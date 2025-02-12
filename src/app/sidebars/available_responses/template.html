@@ -1,0 +1,126 @@
+<spinner data-ng-show="vm.loading_available_responses"></spinner>
+
+<div class="text-center">
+    <div class="btn-group">
+        <!-- <label uib-tooltip="{{vm.freeSubscription?'Available in premium subscription':'Answers for this specific fund or firm'}}" class="btn btn-default" data-ng-class="{'btn-primary':vm.selectedType == 'entity','disabled':vm.freeSubscription}" data-ng-click="vm.setSelectedType('entity')">Entity</label> -->
+        <label class="btn btn-default" data-ng-class="{'btn-primary':vm.selectedType == 'all'}" data-ng-click="vm.setSelectedType('all')">All Content</label>
+        <label uib-tooltip="{{vm.freeSubscription?'Available in premium subscription':'Suggestions will be restricted to pre-approved answers'}}" class="btn btn-default" data-ng-class="{'btn-primary':vm.selectedType == 'profile','disabled':vm.freeSubscription}" data-ng-click="vm.setSelectedType('profile')">{{vm.is_manager?'Q/A Library Content':'Profile Content'}}</label>
+    </div>
+</div>
+
+<div class="space-on-top" data-ng-if="!vm.isQaSearchEnabled">
+
+    <p class="text-muted text-center"
+    data-ng-if="!vm.loading_available_responses && !vm.available_responses.length">
+        <i>
+            No responses available for this question!
+        </i>
+    </p>
+
+    <div col="12">
+        <div col="5" class="space-on-top space-on-bottom-lg center-block no-float" data-ng-show="vm.available_responses.length">
+            <input type="text" class="form-control" placeholder="Search" data-ng-model="vm.searchResponses" />
+        </div>
+    </div>
+
+    <div col="12" class="padded-bottom-xxxl">
+        <ul col="12" class="list-unstyled padded-top padded-bottom bordered-bottom" data-ng-show="vm.available_responses.length" data-ng-repeat="question in vm.available_responses | filter:vm.searchResponses track by $index">
+            <p><b>{{$index+1}}. </b><b data-ng-bind-html="question.text"></b></p>
+            <li class="padded-top padded-bottom" col="12" data-ng-repeat="response in question.responses track by $index">
+                <div>
+                    <div col="1" class="padded icon-wrapper align-top text-center row">
+                        <button uib-tooltip="{{response.isAdded ? 'Remove this response' : 'Add this response'}}"
+                                data-ng-click="vm.toggleResponseSelection(response)"
+                                class="row space-on-right btn" type="button"
+                                data-ng-class="{'btn-primary': response.isAdded, 'btn-default': !response.isAdded}"
+                                data-ng-disabled="!response.responseDisplay">
+                            <icon name="plus" data-ng-if="!response.isAdded"></icon>
+                            <icon name="check" data-ng-if="response.isAdded"></icon>
+                        </button>
+                    </div>
+
+                    <div col="11" class="notes-content align-middle inline-block">
+                        <small class="text-muted">
+                            <span>{{response.responseAuthor.fullName}}</span>
+                            <span>added</span>
+                            <span>{{response.responseTimeStamp|fromNow}}</span>
+                            <span> for </span>
+                            <span>{{response.entityName}}</span>
+                            <span>({{response.templateName}})</span>
+                        </small>
+
+                        <p class="clear-margin-bottom space-on-top">
+                            <div dv-show-more show-more-height='80'>
+                                <span class="word-break-break-all" ng-bind-html="response.responseDisplay"></span>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="space-on-top" data-ng-if="vm.isQaSearchEnabled">
+
+    <p class="text-muted text-center"
+    data-ng-if="!vm.loading_available_responses && !vm.available_responses.length">
+        <i>
+            No responses available for this question!
+        </i>
+    </p>
+
+    <div col="12">
+        <div col="5" class="space-on-top space-on-bottom-lg center-block no-float" data-ng-show="vm.available_responses.length">
+            <input type="text" class="form-control" placeholder="Search" data-ng-model="vm.searchResponses" />
+        </div>
+    </div>
+
+    <div col="12" class="padded-bottom-xxxl">
+        <ul col="12" class="list-unstyled padded-top padded-bottom bordered-bottom" data-ng-show="vm.available_responses.length" data-ng-repeat="question in vm.available_responses | filter:vm.searchResponses track by $index">
+            <p><b>{{$index+1}}. <b data-ng-bind-html="question.question_text"></b></p>
+            <li class="padded-top padded-bottom" col="12" data-ng-repeat="response in question.responses track by $index">
+                <div>
+                    <div col="1" class="padded icon-wrapper align-top text-center row">
+                        <button uib-tooltip="{{response.isAdded ? 'Remove this response' : 'Add this response'}}"
+                                data-ng-click="vm.toggleResponseSelection(response)"
+                                class="row space-on-right btn" type="button"
+                                data-ng-class="{'btn-primary': response.isAdded, 'btn-default': !response.isAdded}"
+                                data-ng-disabled="!response.response_text">
+                            <icon name="plus" data-ng-if="!response.isAdded"></icon>
+                            <icon name="check" data-ng-if="response.isAdded"></icon>
+                        </button>
+                    </div>
+
+                    <div col="11" class="notes-content align-middle inline-block">
+                        <small class="text-muted">
+                            <span>{{response.response_created_by_name}}</span>
+                            <span>added</span>
+                            <span>{{response.response_created_at|fromNow}}</span>
+                            <span> for </span>
+                            <span>{{response.associated_entity}}</span>
+                            <span>({{response.associated_template}})</span>
+                        </small>
+
+                        <p class="clear-margin-bottom space-on-top">
+                            <div dv-show-more show-more-height='80'>
+                                <span class="word-break-break-all" ng-bind-html="response.response_text"></span>
+                            </div>
+                        </p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<form novalidate
+      name="vm.add_responses_form"
+      class="sidebar-form fixed-bottom"
+      data-ng-submit="vm.saveSelectedResponses()" data-ng-if="vm.available_responses.length">
+
+    <button type="submit" block button-loader="vm.saving_responses">
+        Add Selected Responses
+    </button>
+</form>

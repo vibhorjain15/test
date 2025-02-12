@@ -1,0 +1,488 @@
+.infoTextModal {
+  background: #f5f5f5;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+// .infoTextModal{
+//   p{
+//     color: @dv-blue;
+//   }
+// }
+.todo-list {
+  list-style-type: none;
+  margin-left: -4px;
+}
+.todo-list {
+  input[type="checkbox"] {
+    position: absolute;
+    right: 10px;
+    padding: 10px;
+    outline: none;
+  }
+}
+.todo-list-item {
+  padding: 5px 10px;
+  text-align: start;
+  background: #e6e6e6;
+  margin-top: 5px;
+  position: relative;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.removeTaskBtn {
+  cursor: pointer;
+  background: #f1f1f1;
+  padding: 5px 10px;
+  position: absolute;
+  right: 0;
+  border-left: 1px solid #e0e0e0;
+  top: 0;
+}
+.workflow-panel {
+  .btn-select-entity.active {
+    button {
+      background: @dv-blue;
+
+      i {
+        color: white;
+      }
+    }
+
+    h6 {
+      color: @dv-blue;
+    }
+  }
+
+  .number-box {
+    margin: auto;
+    text-align: center;
+    border-radius: 2px;
+    border: 1px solid @dv-gray;
+    /*margin-bottom: 10px;*/
+  }
+
+  .number-box.priority {
+    background-color: lighten(@dv-light-gray, 15%);
+  }
+
+  .btn-add-new-step {
+    background-color: @brand-primary;
+    color: white;
+    font-weight: bold;
+  }
+
+  .btn-add-new-step:hover,
+  .btn-add-new-step:active {
+    background-color: lighten(@brand-primary, 15%);
+    color: white;
+    i {
+      color: white;
+    }
+  }
+
+  .btn-add-new-action {
+    background-color: lighten(@dv-light-gray, 15%);
+    color: #000000;
+    font-weight: bold;
+  }
+
+  .btn-add-new-action:hover,
+  .btn-add-new-action:active {
+    background-color: lighten(@dv-light-gray, 10%);
+    color: #000000;
+    i {
+      color: #000000;
+    }
+  }
+
+  .vertical-line-outbound-one {
+    min-height: 54px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+    margin-left: 94px;
+    border-left: 1px dashed @dv-gray;
+  }
+
+  .vertical-line-outbound-two {
+    min-height: 190px;
+    margin-top: -4px;
+    margin-bottom: -10px;
+    margin-left: 94px;
+    border-left: 1px dashed @dv-gray;
+  }
+
+  .vertical-line-outbound-three {
+    min-height: 150px;
+    margin-bottom: 5px;
+    margin-left: 102px;
+    border-left: 1px dashed @dv-gray;
+  }
+
+  // remove blue outlines
+  .panel-title * {
+    outline: 0 !important;
+  }
+
+  .unsavedAction {
+    position: absolute;
+    right: 3em;
+
+    .dvi {
+      font-size: 14px !important;
+    }
+  }
+}
+
+.audit-timeline {
+  .status-tracker {
+    .overflow-container {
+      min-height: 150px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      margin-top: 15px;
+    }
+    .progress-meter {
+      margin-top: 50px;
+      margin-bottom: 30px;
+
+      li {
+        min-width: 160px;
+
+        &.legend {
+          min-width: 105px;
+          max-width: 105px;
+        }
+
+        &.legend-gap {
+          min-width: 10px;
+          max-width: 10px;
+          color: transparent;
+        }
+
+        .action-item {
+          position: absolute;
+          width: 100%;
+          left: 0;
+          top: -50px;
+          text-transform: capitalize;
+        }
+
+        .description.action-owner {
+          top: -23px;
+        }
+
+        .description.current-status {
+          top: 32px;
+          text-transform: uppercase;
+        }
+
+        .bubble {
+          bottom: -24px;
+          width: 25px;
+          height: 25px;
+          &:before {
+            position: relative;
+            top: 2px;
+            font-size: 15px;
+          }
+        }
+
+        &.in-progress {
+          color: #AD2B00;
+
+          .bubble {
+            background-color: @dv-orange;
+            border: none;
+            &:before {
+              content: "\00b0";
+              position: relative;
+              top: -12px;
+              color: #fff;
+              font-size: 46px;
+            }
+          }
+        }
+
+        &.upcoming {
+          color: @dv-gray;
+          border-bottom-color: @dv-gray;
+
+          .bubble {
+            border: 3px solid @dv-gray;
+            background-color: #fff;
+          }
+        }
+
+        &.active {
+          color: @dv-blue !important;
+          border-bottom-color: @dv-blue !important;
+          .bubble {
+            border: 3px solid @dv-blue !important;
+            background-color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+.workflows_table {
+  table-layout: fixed;
+  margin-bottom: 0;
+}
+
+.accordion-selected {
+  .panel-heading {
+    background-color: #126b82;
+
+    .panel-controls {
+      .panel-control {
+        background-color: #126b82 !important;
+
+        &:hover {
+          color: #d75c5c !important;
+        }
+      }
+    }
+  }
+}
+
+.workflow_modal {
+  .entity_type {
+    .active {
+      color: #16a1ab;
+      .btn {
+        i {
+          color: #16a1ab;
+        }
+      }
+    }
+  }
+}
+
+.accordion-selected {
+  .panel-title {
+    color: #fff;
+  }
+}
+
+// remove underline on hover
+.accordion-toggle {
+  text-decoration: none !important;
+  border: none !important;
+}
+.accordion-toggle:hover {
+  text-decoration: none !important;
+  border: none !important;
+}
+.accordion-toggle:visited {
+  text-decoration: none !important;
+  border: none !important;
+}
+.accordion-toggle:active {
+  text-decoration: none !important;
+  border: none !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.todo-list-container-center {
+  width: 350px;
+  margin: 0 auto;
+}
+
+.workflowDetailsLeftCol {
+  overflow-y: auto;
+  min-height: 300px;
+  max-height: 400px;
+  direction: rtl;
+}
+
+.workflowDetailsLeftCol {
+  .eachActionRow {
+    overflow-x: hidden;
+    direction: ltr;
+  }
+  .row {
+    margin-left: 15px;
+    border-left: 4px solid #fff;
+  }
+}
+
+.activeActionRow {
+  border-left: 4px solid @dv-blue !important;
+}
+
+.workfloChecklistDiv {
+  min-height: 300px;
+  max-height: 400px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.activeStepLi {
+  .border_bottom {
+    width: 50px;
+    clear: both;
+    position: relative;
+    margin: 0 auto;
+  }
+  // .action-item::after{
+  //   content: "";
+  //   position: absolute;
+  //   width: 100%;
+  //   height: 120px;
+  //   background: #31292914;
+  //   left: 0;
+  //   top: 0;
+  // }
+  .border_bottom::after {
+    content: "";
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    position: absolute;
+    top: -8px;
+    left: 5px;
+    border: 4px solid @dv-blue;
+    border-radius: 50%;
+  }
+}
+
+.borderBottom {
+  border-bottom: 1px solid #e4e4e4;
+}
+.statusTrackerLagend {
+  position: absolute;
+  top: -35px;
+  right: 0;
+  margin: 0;
+}
+
+.border-none {
+  td {
+    border: none !important;
+  }
+}
+.space-on-top-60 {
+  margin-top: 60px;
+}
+
+.workfloChecklistDiv {
+  .todo-list-container-center {
+    width: 100% !important;
+  }
+  .todo-list-item {
+    padding: 2px 10px !important;
+  }
+}
+.workflow-preview-table {
+  text-align: center;
+  table-layout: fixed;
+}
+.workflow-preview-table {
+  td,
+  th {
+    text-align: center;
+  }
+  .btn-primary-outline {
+    display: block;
+    width: 80%;
+    margin: 5px auto;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #ccc;
+  z-index: 999;
+}
+.vertical-border-td {
+  position: relative;
+}
+.vertical-border-td::after {
+  content: "";
+  width: 3px;
+  height: 100%;
+  border-left: 1px dashed #bfbfbf;
+  position: absolute;
+  left: 50%;
+}
+
+.wordflow-step-action {
+  background: #eee;
+  border-radius: 30px;
+  padding: 5px;
+}
+
+.preview-footer {
+  border-top: 1px solid #ccc;
+  z-index: 999;
+  padding: 18px;
+  background: #fff;
+}
+.box {
+  text-align: center;
+  padding: 30px 0px;
+}
+.box1 {
+  cursor: pointer;
+}
+.stepDesc {
+  width: 55%;
+}
+.box1 {
+  .dateHeader {
+    position: relative;
+    left: -50px;
+    top: -20px;
+    color: #777;
+  }
+  .dateText {
+    font-weight: 600;
+    color: #af5f0d;
+    margin-top: 25px;
+  }
+}
+.text-dv-green {
+  color: @dv-green;
+}
+
+.activeBox {
+  background: #f5f5f5;
+}
+.ownerLabel {
+  margin-right: 3px;
+  display: inline-block;
+}
+.ownerDiv .label {
+  margin-right: 5px;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.actionsTable {
+  table-layout: fixed;
+  max-width: 250px;
+}
+
+.min-height-70 {
+  min-height: 70px;
+  padding: 0;
+  margin: 0;
+}
+.overflow-x-hidden {
+  overflow-x: hidden;
+}
+.actionName {
+  text-transform: uppercase;
+  font-size: 14px;
+}

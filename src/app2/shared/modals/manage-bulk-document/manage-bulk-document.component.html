@@ -1,0 +1,163 @@
+<app-modal
+  [title]="
+    (actionType == 'remove'
+      ? 'Remove'
+      : actionType == 'copy'
+      ? 'Copy'
+      : 'Move') + ' Document(s) to:'
+  "
+  [firstButtonLabel]="
+    actionType == 'remove' ? 'Remove' : actionType == 'copy' ? 'Copy' : 'Move'
+  "
+  (onFirstClick)="submit()"
+  [initialTemplate]="bulkDocument"
+  [isLoading]="saving"
+  [isFirstButtonDisabled]="documentForm.invalid"
+>
+</app-modal>
+
+<ng-template #bulkDocument>
+  <form [formGroup]="documentForm" class="form-horizontal" autocomplete="off">
+    <!-- entity type -->
+    <dv-form-element
+      [fieldName]="'destinationEntityType'"
+      [elementCol]="'7'"
+      [labelCol]="4"
+      [label]="'Entity Type'"
+      [for]="'destinationEntityType'"
+    >
+      <dv-select
+        [list]="entityTypes"
+        formControlName="destinationEntityType"
+        [id]="'destinationEntityType'"
+        bindLabel="name"
+        bindValue="id"
+        [clearable]="false"
+        [searchable]="true"
+        [virtualScroll]="true"
+        (onSelectChange)="handleOnSelectChange($event)"
+      ></dv-select>
+    </dv-form-element>
+    <!-- entity type -->
+
+    <!--  Associated Firm -->
+    <dv-form-element
+      fieldName="associated-firm"
+      [modelController]="documentForm.get('destinationEntityId')"
+      [elementCol]="'7'"
+      [label]="'Associated ' + firmLabel"
+      [isRequired]="true"
+      [showRightIcon]="false"
+      [labelCol]="4"
+      *ngIf="documentForm.value.destinationEntityType == 'Firm'"
+      [errorMessage]="
+        documentForm.get('destinationEntityId').invalid
+          ? 'Associated ' + firmLabel + ' is required'
+          : ''
+      "
+    >
+      <dv-select
+        [id]="'destinationEntityId'"
+        [list]="firms"
+        formControlName="destinationEntityId"
+        bindLabel="display_name"
+        bindValue="id"
+        [loading]="loading"
+        [clearable]="false"
+        [searchable]="true"
+        [virtualScroll]="true"
+      ></dv-select>
+    </dv-form-element>
+    <!--  Associated Firm -->
+
+    <!--  Associated Product -->
+    <dv-form-element
+      [modelController]="documentForm.get('destinationEntityId')"
+      fieldName="Associated product"
+      [elementCol]="'7'"
+      [labelCol]="4"
+      [label]="'Associated Product'"
+      [isRequired]="true"
+      [showRightIcon]="false"
+      *ngIf="documentForm.value.destinationEntityType == 'Fund'"
+      [errorMessage]="
+        documentForm.get('destinationEntityId').invalid
+          ? 'Associated Product is required'
+          : ''
+      "
+    >
+      <dv-select
+        [id]="'destinationEntityId'"
+        [list]="funds"
+        formControlName="destinationEntityId"
+        bindLabel="name"
+        bindValue="id"
+        [loading]="loading"
+        [clearable]="false"
+        [searchable]="true"
+        [virtualScroll]="true"
+      ></dv-select>
+    </dv-form-element>
+    <!--  Associated Product -->
+
+    <!--  Associated Vehicle -->
+    <dv-form-element
+      [modelController]="documentForm.get('destinationEntityId')"
+      fieldName="Associated Vehicle"
+      [elementCol]="'7'"
+      [labelCol]="4"
+      [label]="'Associated Vehicle'"
+      [isRequired]="true"
+      [showRightIcon]="false"
+      *ngIf="documentForm.value.destinationEntityType == 'Vehicle'"
+      [errorMessage]="
+        documentForm.get('destinationEntityId').invalid
+          ? 'Associated Vehicle is required'
+          : ''
+      "
+    >
+      <dv-select
+        [id]="'destinationEntityId'"
+        [list]="vehicles"
+        formControlName="destinationEntityId"
+        bindLabel="display_name"
+        bindValue="id"
+        [loading]="loading"
+        [clearable]="false"
+        [searchable]="true"
+        [virtualScroll]="true"
+      ></dv-select>
+    </dv-form-element>
+    <!--  Associated Vehicle -->
+
+    <!--  Associated Strategy -->
+    <dv-form-element
+      [modelController]="documentForm.get('destinationEntityId')"
+      fieldName="Associated Strategy"
+      [elementCol]="'7'"
+      [labelCol]="4"
+      [label]="'Associated Strategy'"
+      [isRequired]="true"
+      [showRightIcon]="false"
+      *ngIf="documentForm.value.destinationEntityType == 'Strategy'"
+      [errorMessage]="
+        documentForm.get('destinationEntityId').invalid
+          ? 'Associated Strategy is required'
+          : ''
+      "
+    >
+      <dv-select
+        [id]="'destinationEntityId'"
+        [list]="strategies"
+        formControlName="destinationEntityId"
+        bindLabel="name"
+        bindValue="id"
+        [loading]="loading"
+        [clearable]="false"
+        [searchable]="true"
+        [virtualScroll]="true"
+      ></dv-select>
+    </dv-form-element>
+    <!--  Associated Strategy -->
+  </form>
+</ng-template>

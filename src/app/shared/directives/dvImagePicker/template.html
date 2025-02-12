@@ -1,0 +1,83 @@
+<div>
+  <div class="file-selection-wrapper">
+    <div class="panel panel-default file-drop-panel"
+         dv-file-handler
+         dv-droppable
+         ngf-select-disabled="true"
+         dv-on-upload="vm.onImageUpload(response)"
+         dv-accept="'.png,.jpg,.jpeg'"
+         dv-pattern="'.png,.jpg,.jpeg'"
+         dv-max-file-size="::vm.maxFileSize"
+         dv-upload-url="/images"
+         ngf-drag-over-class="'panel-primary'">
+      <div class="panel-body">
+        <p class="text-muted text-center">
+          <strong>Drop your Image here</strong>
+        </p>
+
+        <p class="text-muted text-center">
+          <icon name="upload" size="2x"></icon>
+        </p>
+      </div>
+    </div>
+
+    <div class="file-select-button-container">
+      <button btn-type="default"
+              dv-accept="'.png,.jpg,.jpeg'"
+              dv-pattern="'.png,.jpg,.jpeg'"
+              dv-max-file-size="::vm.maxFileSize"
+              dv-file-handler
+              ngf-drop-disabled="true"
+              dv-on-upload="vm.onImageUpload(response)"
+              dv-upload-url="/images">
+        Select File
+      </button>
+    </div>
+  </div>
+
+  <hr>
+
+  <legend><b>Select from existing images</b></legend>
+
+  <empty-state icon-name="picture"
+               data-ng-show="!vm.loading_images && vm.images.length == 0"
+               message="No images available to pick from. Upload a new one to proceed">
+  </empty-state>
+
+  <ul class="list-unstyled dv-image-picker"
+      infinite-scroll="vm.getImages()"
+      infinite-scroll-parent
+      infinite-scroll-disabled="vm.loading_images || vm.current_page >= vm.total_pages">
+    <li data-ng-repeat="image in vm.images"
+        class="inline-block relative"
+        data-ng-class="{'selected-image': vm.selected_image == image}"
+        data-ng-mouseenter="showImageControls = true"
+        data-ng-mouseleave="showImageControls = false">
+      <div class="image-container">
+        <img ng-src="{{image.thumbnailUrl}}" class="img-thumbnail" alt="">
+        <div class="rb-image-controls" data-ng-if="showImageControls">
+          <span class="icon-wrapper clickable space-on-right"
+                uib-tooltip="Select Image"
+                tooltip-placement="top"
+                data-ng-click="vm.toggleSelection(image)">
+            <icon name="check2"
+                  class="text-success">
+            </icon>
+          </span>
+          <span class="icon-wrapper clickable"
+                uib-tooltip="Delete Image"
+                tooltip-placement="top"
+                ng-click="vm.confirmImageDelete(image, $event)">
+            <icon name="trashcan"
+                  class="text-danger">
+            </icon>
+          </span>
+        </div>
+      </div>
+    </li>
+
+    <li data-ng-show="vm.loading_images">
+      <spinner></spinner>
+    </li>
+  </ul>
+</div>

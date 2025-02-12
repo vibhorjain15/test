@@ -1,0 +1,382 @@
+<div class="clearfix">
+  <div class="panel panel-default">
+    <div class="panel-body" *ngIf="!formadv_firm">
+      <app-spinner [broadSpinner]="true" [spinnerHeight]="560"></app-spinner>
+    </div>
+
+    <div class="panel-body" *ngIf="formadv_firm">
+      <div class="dv-table dv-table-middle dd-info-panel">
+        <div class="cell bordered-right">
+          <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+            {{ formadv_firm.businessName }}
+          </h4>
+          <small class="text-muted"> (CRD #: {{ formadv_firm.id }}) </small>
+        </div>
+        <div
+          class="cell bordered-right"
+          authorized-view
+          hiddenFrom="FreeSubscription"
+        >
+          <div class="space-on-top space-on-left-lg">
+            <div
+              col="12"
+              class="clear-padding-left clear-padding-right text-center"
+            >
+              <div class="btn-group space-on-bottom-sm">
+                <span
+                  class="btn btn-default font-size-12"
+                  [ngClass]="{ 'btn-primary': !has_threshold }"
+                  (click)="toggleMaterialChanges()"
+                  >ALL CHANGES</span
+                >
+                <span
+                  class="btn btn-default font-size-12"
+                  [ngClass]="{ 'btn-primary': has_threshold }"
+                  (click)="toggleMaterialChanges()"
+                  >MATERIAL ONLY</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="cell bordered-right"
+          *ngIf="formadv_firm && formadv_firm.brochure_date"
+        >
+          <a
+            class="btn btn-transparent"
+            target="_blank"
+            href="{{ formadv_firm.brochure_url }}"
+            tooltip="as of {{
+              formadv_firm.brochure_date | dvDate : ['isLocaleDate']
+            }}"
+            container="body"
+          >
+            <span class="inline-block relative">
+              <span appIcon name="file-pdf-o" size="2x"></span>
+            </span>
+            <div>
+              <small>Part 2 Brochure</small>
+            </div>
+          </a>
+        </div>
+
+        <div class="cell bordered-right" *ngIf="!formadv_firm.brochure_date">
+          <button
+            disabled
+            appButton
+            btnType="transparent"
+            aria-label="No Part 2 Brochure"
+          >
+            <span class="inline-block relative">
+              <span appIcon name="file-pdf-o" size="2x"></span>
+            </span>
+            <div>
+              <small>No Part 2 Brochure</small>
+            </div>
+          </button>
+        </div>
+
+        <div class="cell bordered-right">
+          <a (click)="displayNotes()" class="btn btn-transparent">
+            <div>
+              <span appIcon name="notepad" size="2x"></span
+              ><span
+                style="margin-top: -48px; margin-left: -1px; padding-left: 0px"
+                class="count-bubble count relative align-middle"
+                >{{ notesList.length }}</span
+              >
+            </div>
+            <small>View/Add Notes</small>
+          </a>
+
+          <dv-note-side-bar
+            (onClose)="onSideBarClose()"
+            [displaySidebarPanel]="displaySidebarPanel"
+            sidebarTitle="Add Notes for {{ formadv_firm.businessName }}"
+            [params]="{
+              entity_type: 'FormADV',
+              entity_id: this.formadv_firm.id
+            }"
+          ></dv-note-side-bar>
+        </div>
+        <div
+          class="cell bordered-right"
+          authorized-view
+          hiddenFrom="FreeSubscription"
+        >
+          <button
+            appButton
+            btnType="transparent"
+            (click)="edit_timeline = true"
+            [disabled]="edit_timeline"
+          >
+            <div>
+              <span appIcon name="pencil" size="2x"></span>
+            </div>
+            <small>Change Dates</small>
+          </button>
+        </div>
+
+        <div class="cell">
+          <div class="btn-group" dropdown>
+            <button
+              id="button-basic"
+              dropdownToggle
+              type="button"
+              class="btn btn-transparent dropdown-toggle"
+              aria-controls="dropdown-basic"
+              tooltip="Start a Workflow / Export / Go to SEC's Website"
+              container="body"
+              aria-label="More Actions"
+            >
+              <div appIcon name="ellipsis-h" size="2x"></div>
+              <div>More Actions</div>
+            </button>
+            <ul
+              id="dropdown-basic"
+              *dropdownMenu
+              class="dropdown-menu"
+              role="menu"
+              aria-labelledby="button-basic"
+            >
+              <li role="menuitem">
+                <a
+                  tabindex="0"
+                  role="button"
+                  class="dropdown-item"
+                  hiddenFrom="FreeSubscription"
+                  tooltip="{{
+                    !formadv_questions.length
+                      ? 'No data available to export'
+                      : ''
+                  }}"
+                  [disabled]="!formadv_questions.length"
+                  (click)="downloadExcel(formadv_firm.id)"
+                  authorized-view
+                  [ngClass]="{ disabledAnchor: !formadv_questions.length }"
+                  [ngStyle]="{
+                    'margin-right': !formadv_questions.length ? '15px' : '0'
+                  }"
+                  container="body"
+                >
+                  <span
+                    appIcon
+                    name="file-excel"
+                    class="space-on-right-lg"
+                  ></span>
+                  Excel export</a
+                >
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  tabindex="0"
+                  role="button"
+                  (click)="triggerWorkflow()"
+                >
+                  <span appIcon name="cogs" class="space-on-right-lg"></span>
+                  Start workflow process
+                </a>
+              </li>
+              <li
+                aria-hidden="true"
+                class="divider js-delete-button"
+                authorized-view
+                hiddenFrom="FreeSubscription"
+                aria-label="divider"
+              ></li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item btn btn-transparent"
+                  target="_blank"
+                  href="https://adviserinfo.sec.gov/firm/summary/{{
+                    formadv_firm.firmCRD
+                  }}"
+                  ><span
+                    appIcon
+                    name="external-link"
+                    class="space-on-right-lg"
+                  ></span>
+                  View on SEC's website
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default" *ngIf="filings && filings.length > 0">
+    <div class="panel-body" [ngClass]="{ 'edit-timeline': edit_timeline }">
+      <h5
+        *ngIf="edit_timeline"
+        class="pull-left space-on-left-lg clear-margin-top space-on-bottom text-primary text-uppercase"
+      >
+        <b>Select Dates</b>
+      </h5>
+      <div class="status-tracker full-width padded-lg">
+        <div class="full-width">
+          <div class="row">
+            <div
+              col="12"
+              [ngClass]="{ 'overflow-container': filings.length > 8 }"
+              [attr.tabindex]="filings.length > 8 ? 0 : null"
+            >
+              <div class="tracker-container full-width">
+                <ul
+                  class="progress-meter full-width space-on-bottom-xxxl"
+                  *ngIf="!edit_timeline"
+                >
+                  <li
+                    class="datepicker-inactive"
+                    *ngFor="let filing of filings"
+                    [ngClass]="{
+                      'datepicker-active':
+                        filing.filingDate == dateRange.start_at ||
+                        filing.filingDate == dateRange.end_at,
+                      'datepicker-inactive': !(
+                        filing.filingDate == dateRange.start_at ||
+                        filing.filingDate == dateRange.end_at
+                      )
+                    }"
+                  >
+                    <div class="single-tracker">
+                      <div class="bubble-parent">
+                        <div class="bubble"></div>
+                      </div>
+                      <span>{{ filing.filingDate }}</span>
+                      <div class="description">
+                        Changes: {{ filing.changeCount }}
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <ul class="progress-meter full-width" *ngIf="edit_timeline">
+                  <li
+                    class="datepicker-inactive"
+                    *ngFor="let filing of filings"
+                    [ngClass]="{
+                      'datepicker-active':
+                        filing.filingDate == editDateRange[0] ||
+                        filing.filingDate == editDateRange[1],
+                      'datepicker-inactive': !(
+                        filing.filingDate == editDateRange[0] ||
+                        filing.filingDate == editDateRange[1]
+                      )
+                    }"
+                  >
+                    <div class="single-tracker">
+                      <div class="bubble-parent">
+                        <div
+                          class="bubble"
+                          (click)="selectCustomDates(filing)"
+                        ></div>
+                      </div>
+                      <span>{{ filing.filingDate }}</span>
+                      <div class="description">
+                        Changes: {{ filing.changeCount }}
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="pull-right space-on-top-xxl" *ngIf="edit_timeline">
+              <button
+                appButton
+                btnType="primary"
+                class="space-on-right"
+                (click)="getFilingData()"
+              >
+                Get filings data
+              </button>
+              <button
+                appButton
+                btnType="default"
+                (click)="edit_timeline = false"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-spinner
+    [broadSpinner]="true"
+    [spinnerHeight]="560"
+    *ngIf="!loading_grid"
+  ></app-spinner>
+
+  <div
+    col="6"
+    offset="3"
+    authorized-view
+    hiddenFrom="InstitutionalSubscription, ProductiveSubscription, FormADVSubscription, FormADVAnalyticsSubscription, SmartSubscription, FullSubscription"
+  >
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <app-empty-state
+          iconName="ban"
+          message="This analysis is available for premium subscribers of ADV Module. To learn more, or to unlock this analysis, please get in touch with us at subscriptions@diligencevault.com"
+          (action)="returnToList()"
+          actionLabel="Back to list"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="history-table"
+    col="12"
+    class="clear-padding-left"
+    authorized-view
+    hiddenFrom="FreeSubscription"
+  >
+    <app-formadv-filing-comparison
+      *ngFor="let question of formadv_questions trackBy:trackBy"
+      [question]="question"
+      id="formadv-comparison-section-{{ question.id }}"
+      [firmCrd]="firmCRD"
+      [dateRange]="dateRange"
+      [thresholds]="thresholds"
+      [thresholdTypes]="thresholdTypes"
+      changes-visible-inline
+    >
+    </app-formadv-filing-comparison>
+    <app-spinner
+      [spinnerText]="'Loading Please Wait'"
+      [includePanel]="false"
+      [broadSpinner]="true"
+      *ngIf="showLoadingIndicator"
+    >
+    </app-spinner>
+    <app-empty-state
+      message="No history found"
+      *ngIf="filings && formadv_questions && !formadv_questions.length"
+    >
+    </app-empty-state>
+
+    <div
+      class="panel panel-default"
+      *ngIf="
+        formadv_questions &&
+        formadv_questions.length > 0 &&
+        current_page == total_pages
+      "
+    >
+      <div class="panel-body text-center">No more changes to show</div>
+    </div>
+  </div>
+</div>
+
+<dv-infinite-scroll
+  [isServerSide]="true"
+  (handleQuestionListScroll)="handleQuestionListScroll($event)"
+>
+</dv-infinite-scroll>

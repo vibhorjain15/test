@@ -1,0 +1,115 @@
+<ng2-manage-categories data-ng-if="vm.Utils.isTemplateAngular()" type="category" ></ng2-manage-categories>
+<form novalidate data-ng-if="!vm.Utils.isTemplateAngular()"
+      class="form-horizontal"
+      name="vm.section_form"
+      data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title" data-ng-hide="vm.edit_mode">
+      <span data-ng-show="!vm.addingSubcategory">New Category</span>
+      <span data-ng-show="vm.addingSubcategory">New SubCategory</span>
+      <span data-ng-show="!vm.addingSubcategory && vm.isLoaded"> in Template: {{vm.template.templateInfo.name}}</span>
+      <span data-ng-show="vm.addingSubcategory && vm.parentSection"> under: {{vm.parentSection.name}}</span>
+       <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+
+    <h3 class="modal-title" data-ng-show="vm.edit_mode">
+      Edit {{vm.addingSubcategory? 'SubCategory' : 'Category'}} : {{vm.section.name}}
+    </h3>
+
+    <h4 data-ng-show="vm.parentName" class="text-dv-blue"><small class="text-uppercase" truncate-text="60" uib-tooltip="{{vm.parentName}}"> {{vm.parentName}}</small></h4>
+  </div>
+
+  <div class="modal-body">
+    <spinner data-ng-hide="vm.isLoaded"></spinner>
+
+    <div data-ng-show="vm.isLoaded && vm.useSingleMode">
+      <form-group field-name="Section Name" tooltip-placement="left">
+        <label for="section-name" class="control-label col-sm-3">
+          Name
+        </label>
+
+        <div class="col-sm-8">
+          <input type="text"
+                 id="section-name"
+                 class="form-control"
+                 data-ng-model="vm.section.name"
+                 required
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Example: Operations" />
+        </div>
+      </form-group>
+
+      <div class="form-group" data-ng-if="vm.addingSubcategory">
+        <label for="section-description" class="control-label col-sm-3">
+          Instructions for the user
+          <small>(Optional)</small>
+        </label>
+
+        <div class="col-sm-8">
+          <textarea id="section-description"
+                    ui-tinymce="vm.tinymceOptions"
+                    class="form-control"
+                    data-ng-model="vm.section.headerText"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group" data-ng-if="vm.addingSubcategory">
+        <div class="col-sm-8 col-sm-offset-3">
+          <dv-checkbox
+            data-ng-model="vm.section.isMultiple"
+            label="Allow user to add more than one response. Eg. Multiple office locations">
+          </dv-checkbox>
+        </div>
+      </div>
+    </div>
+    <div data-ng-show="!vm.useSingleMode">
+      <p class="alert alert-info">Please add one or more <span data-ng-show="!vm.addingSubcategory">categories</span><span data-ng-show="vm.addingSubcategory">subcategories</span> here - <b>one <span data-ng-show="!vm.addingSubcategory">category</span><span data-ng-show="vm.addingSubcategory">subcategory</span> per line</b></p>
+      <form-group field-name="Bulk category Addition">
+          <dv-bulk-list-builder ng-model="vm.newCategories" id-key="'id'" text-key="'name'" current-length="vm.existingCategories.length" main-id="vm.categoryId" type="vm.listType" value-required="false"></dv-bulk-list-builder>
+          <!-- <dv-category-builder ng-model="vm.newCategories" current-length="vm.existingCategories.length" category-id="vm.categoryId" value-required="vm.useSingleMode"></dv-category-builder> -->
+      </form-group>
+    </div>
+  <div data-ng-show="!vm.edit_mode">
+    <br>
+    <br>
+    <div class="row clearfix" ng-if="vm.useSingleMode">
+      <div class="col-sm-3"></div>
+      <div class="col-sm-8">
+        <dv-checkbox
+            data-ng-model="vm.useSingleMode"
+            data-ng-click="vm.checkBoxClicked()">
+            <dv-checkbox-label>
+                <p>Add one <span data-ng-show="!vm.addingSubcategory">category</span><span data-ng-show="vm.addingSubcategory">subcategory</span> at a time instead</p>
+            </dv-checkbox-label>
+        </dv-checkbox>
+      </div>
+    </div>
+    <div class="row clearfix" ng-if="!vm.useSingleMode">
+      <div class="col-sm-12">
+        <dv-checkbox
+            data-ng-model="vm.useSingleMode"
+            data-ng-click="vm.checkBoxClicked()">
+            <dv-checkbox-label>
+                <p>Add one <span data-ng-show="!vm.addingSubcategory">category</span><span data-ng-show="vm.addingSubcategory">subcategory</span> at a time instead</p>
+            </dv-checkbox-label>
+        </dv-checkbox>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="modal-footer" data-ng-show="vm.isLoaded">
+    <div data-ng-if="!vm.useSingleMode">
+      <button type="submit"
+              button-loader="vm.saving_section" data-ng-disabled="!vm.newCategories || !vm.newCategories.length">Save</button>
+      <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+    <div data-ng-if="vm.useSingleMode">
+      <button type="submit"
+              button-loader="vm.saving_section">Save</button>
+      <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+
+  </div>
+</form>

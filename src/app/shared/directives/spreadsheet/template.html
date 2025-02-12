@@ -1,0 +1,6 @@
+<span data-ng-if="!datarows">
+    <spinner></spinner>
+</span>
+<span data-ng-if="datarows" style="overflow-x: hidden;">
+    <handsontable-grid grid-id="instance_id" settings="handsontable_settings" datarows="datarows" instance="vm.hotInstance"></handsontable-grid>
+</span>

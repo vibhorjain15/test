@@ -1,0 +1,70 @@
+.list-box-move {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px;
+  cursor: pointer;
+  background-color: inherit;
+}
+.box-hover:hover {
+  background-color: rgba(56, 145, 166, 0.1);
+}
+.active-row {
+  background-color: rgba(56, 145, 166, 0.1);
+}
+
+.row-text-hover {
+  color: black;
+  overflow-wrap: anywhere;
+}
+.icon-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+}
+
+.move-icon-color {
+  color: #bfbfbf;
+}
+
+.icon-wrapper > span:hover {
+  text-decoration: none;
+  color: #16a1ab !important;
+}
+
+.icon-link:hover {
+  cursor: pointer;
+  color: #16a1ab !important;
+}
+.move-right-margin {
+  margin-right: 5px;
+}
+
+.list-box-move:hover + .hide {
+  visibility: visible !important;
+}
+
+.move-lable-wrapper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.icon-active {
+  color: #16a1ab;
+}
+
+.icon-disable {
+  pointer-events: none;
+}
+.icon-span {
+  cursor: no-drop;
+}
+.customIconSize {
+  font-size: 22px !important;
+}
+.boldTitleText {
+  font-weight: 600 !important;
+}
+
+.icon-highlighted {
+  color: #27b098 !important;
+}

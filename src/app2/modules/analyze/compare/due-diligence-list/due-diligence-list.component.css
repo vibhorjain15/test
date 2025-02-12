@@ -1,0 +1,25 @@
+.ddl-button-transparent {
+  border: none;
+  background: none;
+}
+
+.due-diligence-grid {
+  max-width: 1999px;
+  display: inline-block;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.modalZindex{
+  position: relative;
+  z-index: 1;
+}
+.disabled:hover{
+  color: #16a1ab !important;
+}
+.btn-transparent-cta{
+  color:var(--dark-orange) !important;
+}
+.dv-compare.disabled{
+  opacity: 0.8 !important;
+}

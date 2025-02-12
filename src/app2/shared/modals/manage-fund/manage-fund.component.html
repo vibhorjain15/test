@@ -1,0 +1,346 @@
+<app-modal
+  [title]="
+    (edit_mode ? 'Editing ' : 'Create ') +
+    (entity_type_label == 'Strategy' ? '' : 'New ') +
+    entity_type_label
+  "
+  [firstButtonLabel]="(edit_mode ? 'Update ' : 'Create ') + entity_type_label"
+  [secondButtonLabel]="
+    !isDDqCloseModel
+      ? (edit_mode ? 'Update ' : 'Create ') + '& Add Another'
+      : ''
+  "
+  [isSecondaryLoading]="secondaryLoading"
+  (onFirstClick)="submit($event)"
+  (onSecondClick)="submit($event, true)"
+  [initialTemplate]="fundRef"
+  [isLoading]="loading"
+  [isAngularJs]="isAngularJs"
+>
+</app-modal>
+
+<ng-template #fundRef>
+  <form class="form-horizontal" [formGroup]="fundForm" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [fieldName]="'classification'"
+        [showRightIcon]="false"
+        [modelController]="fundForm.get('classification')"
+        *ngIf="fund_type === 'fund'"
+        [label]="entity_sub_type"
+        labelCol="4"
+        elementCol="8"
+        [isRequired]="true"
+        infoText="Use this to tag your product. You can create custom tags from Firm settings> Manage tag> Products"
+        errorMessage=" Classification is required"
+      >
+        <dv-select
+          [list]="classifications"
+          formControlName="classification"
+          bindLabel="name"
+          bindValue="id"
+          [disabled]="!classifications"
+          [clearable]="false"
+          [searchable]="true"
+          [placeholder]="'--Select--'"
+          [loading]="classificationsLoading"
+          [id]="'classification'"
+          [aria-label]="entity_sub_type"
+        ></dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Name'"
+        [modelController]="fundForm?.get('name')"
+        label="{{ entity_type_label }} Name"
+        labelCol="4"
+        elementCol="8"
+        infoText="{{
+          entity_type_label == 'Strategy'
+            ? ''
+            : 'Once created, only managers can edit the product name.'
+        }}"
+        [isRequired]="true"
+        [showRightIcon]="!(!isUserFirmOwner && edit_mode)"
+        [errorMessage]="
+          fundForm.get('name').touched && fundForm.get('name').errors?.required
+            ? (errorMessageMap.required | interpolate : 'Name')
+            : fundForm.get('name').touched &&
+              fundForm.get('name').errors?.containsHtml
+            ? (errorMessageMap.containsHtml | interpolate : 'Name')
+            : (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Name')
+        "
+      >
+        <input
+          type="text"
+          formControlName="name"
+          id="name"
+          class="form-control"
+          [readonly]="!isUserFirmOwner && edit_mode"
+          [placeholder]="'Example: Arthance Capital Offshore ' + entity_type"
+          dvTrimValue
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Alias'"
+        *ngIf="is_investor"
+        [modelController]="fundForm.get('alternate_name')"
+        label="Alias"
+        labelCol="4"
+        elementCol="8"
+        [errorMessage]="
+          fundForm.get('alternate_name').touched &&
+          fundForm.get('alternate_name').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Alias')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="alternate_name"
+          id="alternate_name"
+          [placeholder]="'Your internal alias for this ' + entity_type_label"
+          dvTrimValue
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Internal Key'"
+        [modelController]="fundForm.get('key')"
+        label="Internal Key"
+        labelCol="4"
+        elementCol="8"
+        [errorMessage]="
+          fundForm.get('key').touched && fundForm.get('key').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter
+              | interpolate : 'Internal Key')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="key"
+          id="key"
+          placeholder="Example: HG36FG"
+          dvTrimValue
+        />
+      </dv-form-element>
+
+      <div class="panel panel-default" *ngIf="fund_type === 'strategy'">
+        <div class="panel-heading bordered-top">
+          <h5 class="panel-title">Associated Product(s)</h5>
+        </div>
+        <div class="panel-body">
+          <dv-form-element
+            [fieldName]="'Parent Firm'"
+            *ngIf="is_investor"
+            [modelController]="fundForm.get('parentFirm')"
+            [showRightIcon]="false"
+            label="Parent Firm"
+            labelCol="4"
+            elementCol="8"
+            [isRequired]="true"
+            errorMessage="Parent Firm is required"
+          >
+            <dv-select
+              [list]="firms"
+              formControlName="parentFirm"
+              bindLabel="display_name"
+              bindValue="id"
+              [disabled]="
+                !firms ||
+                !productSearchAPIDataLoaded ||
+                (!isUserFirmOwner && edit_mode)
+              "
+              [clearable]="false"
+              [searchable]="true"
+              [placeholder]="'-- Select --'"
+              (onSelectChange)="getAllProductsListByFirmId($event)"
+              [id]="'parentFirm'"
+              [aria-label]="'Parent Firm'"
+            ></dv-select>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Associated Products'"
+            [modelController]="fundForm.get('associated_products')"
+            [showRightIcon]="false"
+            label="Associated Products"
+            labelCol="4"
+            elementCol="8"
+          >
+            <dv-select
+              [multiple]="true"
+              [list]="getAllProductsListData"
+              formControlName="associated_products"
+              bindLabel="description"
+              bindValue=""
+              [placeholder]="
+                getAllProductsListData?.length == 0
+                  ? 'No results match'
+                  : 'Select some options'
+              "
+              [id]="'associated_products'"
+              [aria-label]="'Associated Products'"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+      </div>
+
+      <div
+        class="panel panel-default"
+        *ngIf="is_investor || fund_type === 'fund'"
+      >
+        <div class="panel-body">
+          <dv-form-element
+            [fieldName]="'Parent Firm'"
+            *ngIf="is_investor && fund_type === 'fund'"
+            [modelController]="fundForm.get('parentFirm')"
+            [showRightIcon]="false"
+            label="Parent Firm"
+            labelCol="4"
+            elementCol="8"
+            [isRequired]="true"
+            errorMessage="Firm is required"
+          >
+            <dv-select
+              [list]="firms"
+              (onSelectChange)="parentFirmSelected($event)"
+              formControlName="parentFirm"
+              [id]="'parentFirm'"
+              bindLabel="display_name"
+              [placeholder]="'--Select--'"
+              [loading]="firmsLoading"
+              [disabled]="
+                !firms || (!isUserFirmOwner && edit_mode) || parent_strategy
+              "
+            ></dv-select>
+          </dv-form-element>
+
+          <dv-form-element
+            [fieldName]="'parent_id'"
+            [modelController]="fundForm.get('parent_id')"
+            *ngIf="fund_type === 'fund'"
+            [showRightIcon]="false"
+            label="Strategy"
+            labelCol="4"
+            elementCol="8"
+            infoText="Choose this to assign strategy to a product."
+          >
+            <dv-select
+              [list]="getAllStrategiesData"
+              formControlName="parent_id"
+              [disabled]="
+                !getAllStrategiesData ||
+                !getAllStrategiesData.length ||
+                (!isUserFirmOwner && edit_mode)
+              "
+              [placeholder]="'--Select--'"
+              [loading]="strategiesLoading"
+              [id]="'parent_id'"
+              [aria-label]="'Strategy'"
+            ></dv-select>
+          </dv-form-element>
+
+          <dv-form-element
+            [fieldName]="'Relationship Status'"
+            *ngIf="is_investor"
+            [modelController]="fundForm.get('relationship_status_id')"
+            [showRightIcon]="false"
+            label="Relationship Status"
+            labelCol="4"
+            elementCol="8"
+          >
+            <dv-select
+              [list]="statuses"
+              formControlName="relationship_status_id"
+              [disabled]="false"
+              [clearable]="false"
+              [searchable]="true"
+              [placeholder]="'--Select--'"
+              [loading]="statusesLoading"
+              [id]="'relationship_status_id'"
+              [aria-label]="'Relationship Status'"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+        <div class="fund-entity-contacts">
+          <app-entity-contacts
+            *ngIf="!edit_mode && is_investor"
+            #contacts
+          ></app-entity-contacts>
+        </div>
+      </div>
+      <div *ngIf="showAddOwners">
+        <app-dv-owners
+          [entity]="fund"
+          [entityType]="entity_type"
+          #owners
+        ></app-dv-owners>
+      </div>
+
+      <div class="panel panel-default" *ngIf="!edit_mode">
+        <div class="panel-heading bordered-top">
+          <h5 class="panel-title">Add Custom Fields</h5>
+        </div>
+
+        <div class="panel-body">
+          <div class="form-group fund-custom-field">
+            <app-custom-field-selection
+              [customUrl]="
+                entity_type_label == 'Strategy'
+                  ? 'strategy_tags'
+                  : 'product_tags'
+              "
+              [splitMandatory]="true"
+              [disabled]="false"
+              [fields]="fields"
+              #customFields
+            ></app-custom-field-selection>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="space-on-top form-group"
+        *ngIf="!edit_mode && permissions_enabled && fund_type === 'fund'"
+      >
+        <a
+          class="link clickable pull-right"
+          (click)="showTeamsToAdd = !showTeamsToAdd"
+        >
+          Add Team Permissioning
+        </a>
+      </div>
+
+      <div
+        class="form-group"
+        *ngIf="
+          showTeamsToAdd &&
+          !edit_mode &&
+          permissions_enabled &&
+          fund_type === 'fund'
+        "
+      >
+        <app-team-selection
+          [type]="'Resource'"
+          [disabled]="!permissions_enabled"
+          [teams]="teams"
+          [entityType]="entity_type"
+          #permissions
+        ></app-team-selection>
+      </div>
+
+      <div class="form-group">
+        <div col="8" offset="2">
+          <small
+            ><span class="font-size-10 text-orange align-top">*</span
+            ><i>Required field</i></small
+          >
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

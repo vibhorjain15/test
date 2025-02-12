@@ -1,0 +1,41 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-entity-documents></ng2-entity-documents>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.vehicle"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-if="vm.vehicle">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{::vm.vehicle.display_name}}
+            </h4>
+            <small class="text-muted">
+              Vehicle | <ng-pluralize count="vm.documentCount"
+                                   data-ng-show="vm.documentCount"
+                                   when="{'1': '1 document', 'other': '{} documents'}"></ng-pluralize>
+            </small>
+          </div>
+
+          <div class="cell bordered-left" data-ng-if="vm.subscription != 'Free'">
+            <button btn-type="transparent"
+                    data-ng-click="vm.openUploadDocumentModal()">
+              <div><icon name="file-add" size="2x"></icon></div>
+              <small>Add Document</small>
+            </button>
+          </div>
+
+          <div class="cell cell-right" data-ng-if="vm.subscription != 'Free'">
+            <search-input router-state="app.firms.funds.vehicles.profile.documents.list"></search-input>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <ui-view />
+  </div>
+</div>

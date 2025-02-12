@@ -1,0 +1,13 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div class="dv-table full-width full-height">
+    <div class="cell align-left">
+      <uib-progressbar value="row.entity.pct_complete"
+                       type="success"
+                       class="bs-progress">
+        <small data-ng-class="{'text-black': row.entity.pct_complete == 0}">
+          {{row.entity.pct_complete}} %
+        </small>
+      </uib-progressbar>
+    </div>
+  </div>
+</ui-grid-cell-contents>

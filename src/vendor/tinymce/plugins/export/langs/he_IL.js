@@ -1,0 +1,6 @@
+tinymce.addI18n("he_IL", {
+  "Export": "\u05d9\u05d9\u05e6\u05d0",
+  "PDF": "PDF",
+  'Failed to load the "{0}" exporter': '\u05e0\u05db\u05e9\u05dc\u05d4 \u05d8\u05e2\u05d9\u05e0\u05ea \u05d4\u05de\u05d9\u05d9\u05e6\u05d0 "{0}"',
+  "Failed to export to PDF due to browser limitations": "\u05e0\u05db\u05e9\u05dc \u05d9\u05d9\u05e6\u05d5\u05d0 \u05e7\u05d5\u05d1\u05e5 PDF \u05e2\u05e7\u05d1 \u05d4\u05d2\u05d1\u05dc\u05d5\u05ea \u05d4\u05d3\u05e4\u05d3\u05e4\u05df"
+});

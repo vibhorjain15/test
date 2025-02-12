@@ -1,0 +1,26 @@
+<div class="dd-editable-score"
+        uib-tooltip="{{vm.selection.attributes.score_value <= vm.maxScore?vm.score_tooltip:''}}" data-ng-if="!vm.reviewEnabled && (vm.customFields && vm.customFields.length == 0)">
+        <div class="input-group input-group-sm">
+            <input type="number" class="form-control" data-ng-model="vm.selection.attributes.score_value" 
+                data-ng-style="{'background-color': vm.score_class, 'color': vm.font_color}"
+                data-ng-blur="vm.onScoreChanged(vm.selection)"
+                data-ng-disabled="vm.readonly"
+                min="0"/>
+            <div class="input-group-btn">
+                <button class="btn btn-default btn-xs"><icon name="pencil"></icon></button>
+            </div>
+        </div>
+</div>
+<div class="dd-editable-score"
+        uib-tooltip="{{vm.score_tooltip}}" data-ng-if="vm.reviewEnabled || (vm.customFields && vm.customFields.length > 0)">
+        <div class="input-group input-group-sm">
+            <input type="number" class="form-control" data-ng-model="vm.selection.attributes.score_value" 
+                data-ng-style="{'background-color': vm.score_class, 'color': vm.font_color}"
+                data-ng-blur="vm.onScoreChanged(vm.selection)"
+                min="0" 
+                disabled />
+            <div class="input-group-btn">
+                <button class="btn btn-default btn-xs" data-ng-click="vm.openCustomFieldsModal(vm.selection)"><icon name="customize"></icon></button>
+            </div>
+        </div>
+</div>

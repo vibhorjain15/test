@@ -1,0 +1,485 @@
+<nav
+  class="navbar navbar-default navbar-fixed-top js-navbar-default hide-in-print-view"
+  id="dv-navbar"
+>
+  <div class="container-fluid relative">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#/app/">
+        <img
+          src="assets/images/DV_logo.png"
+          alt="DiligenceVault"
+          class="logo"
+        />
+      </a>
+
+      <button
+        type="button"
+        class="navbar-toggle bg-white"
+        data-toggle="collapse"
+        data-target="#js-navbar"
+        (click)="toggleNavbar()"
+      >
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav
+      #navbar
+      *ngIf="!loading"
+      class="collapse navbar-collapse"
+      id="js-navbar"
+    >
+      <ul class="nav navbar-nav menu-items navbar-menu">
+        <ng-container *ngFor="let menu_item of localMenu">
+          <li class="dropdown dropdown-toggle js-menu-new-action menu-li">
+            <span
+              dropdown
+              [isOpen]="toggleDropDown[menu_item.label]"
+              (mouseover)="toggleDropDown[menu_item.label] = true"
+              (mouseleave)="toggleDropDown[menu_item.label] = false"
+            >
+              <span class="menu-li">
+                <a
+                  *ngIf="menu_item?.stateName"
+                  class="menuitem-box active"
+                  [ngClass]="{
+                    active: currentActive == menu_item.label,
+                    'nav-bar-highlight': currentActive == menu_item.label
+                  }"
+                  id="basic-link"
+                  dropdownToggle
+                  [routerLink]="'/' + (menu_item?.stateName || '')"
+                  aria-controls="basic-link-dropdown"
+                  tabindex="0"
+                >
+                  <span class="menu-label">{{ menu_item.label }}</span>
+                  <span
+                    *ngIf="menu_item?.submenu_items?.length"
+                    class="caret"
+                  ></span>
+                </a>
+                <a
+                  *ngIf="!menu_item?.stateName"
+                  class="menuitem-box active"
+                  [ngClass]="{
+                    active: currentActive == menu_item.label,
+                    'nav-bar-highlight': currentActive == menu_item.label
+                  }"
+                  id="basic-link"
+                  dropdownToggle
+                  aria-controls="basic-link-dropdown"
+                  tabindex="0"
+                >
+                  <span class="menu-label">{{ menu_item.label }}</span>
+                  <span
+                    *ngIf="menu_item?.submenu_items?.length"
+                    class="caret"
+                  ></span>
+                </a>
+              </span>
+              <ng-container *ngIf="menu_item?.submenu_items?.length">
+                <ul
+                  id="basic-link-dropdown"
+                  *dropdownMenu
+                  class="dropdown-menu"
+                  role="menu"
+                  aria-labelledby="basic-link"
+                >
+                  <li
+                    [ngClass]="{
+                      'sub-active': currentActiveSubMenu == item.label
+                    }"
+                    *ngFor="let item of menu_item?.submenu_items"
+                  >
+                    <a
+                      *ngIf="!item?.upgrade && !item?.modal_name"
+                      [routerLink]="['/' + item?.stateName]"
+                      [queryParams]="item?.stateParams || {}"
+                      class="sub-menu-item justify-between"
+                      tabindex="0"
+                    >
+                      <span
+                        >{{ item.label }}
+
+                        <label
+                          class="btn btn-xs customTag"
+                          *ngIf="item?.customTagLabel"
+                          >{{ item.customTagLabel }}</label
+                        ></span
+                      >
+                    </a>
+                    <a
+                      *ngIf="item?.upgrade || item.modal_name"
+                      (click)="handleLinkSubClick(menu_item, item)"
+                      class="sub-menu-item justify-between"
+                      tabindex="0"
+                    >
+                      <span
+                        >{{ item.label }}
+
+                        <label
+                          class="btn btn-xs customTag"
+                          *ngIf="item?.customTagLabel"
+                          >{{ item.customTagLabel }}</label
+                        ></span
+                      >
+
+                      <ng-container *ngIf="item?.upgrade">
+                        <span
+                          class="upgradeIcon"
+                          appIcon
+                          name="dv-crown"
+                        ></span> </ng-container
+                    ></a>
+                  </li>
+                </ul>
+              </ng-container>
+            </span>
+          </li>
+        </ng-container>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-menu navbar-right">
+        <li
+          class="dropdown notification-dropdown"
+          #dropdown="bs-dropdown"
+          dropdown
+        >
+          <a
+            role="button"
+            dropdownToggle
+            tippyTooltip="Discover What's New"
+            placement="bottom"
+            class="clear-padding"
+            tabindex="0"
+          >
+            <span
+              appIcon
+              class="dvi-shine nav-icon"
+              name="announcements"
+              size="lg"
+            ></span>
+          </a>
+          <div class="dropdown-menu" *dropdownMenu role="menu">
+            <app-release-note-panel
+              (close)="dropdown.hide()"
+            ></app-release-note-panel>
+          </div>
+        </li>
+
+        <li
+          class="dropdown notification-dropdown hidden-xs"
+          *ngIf="!currentUser.isSecurityAdmin"
+          dropdown
+        >
+          <a
+            role="button"
+            dropdownToggle
+            tippyTooltip="Notifications"
+            placement="bottom"
+            (click)="getUnreadNotifications()"
+            tabindex="0"
+          >
+            <i
+              class="dvi ng-isolate-scope dvi-bell fa-lg"
+              name="bell"
+              size="lg"
+            ></i>
+            <span class="notification-badge" *ngIf="unreadNotification"
+              >{{ unreadNotification }}
+            </span>
+          </a>
+
+          <div
+            placement="bottom-left"
+            class="dropdown-menu dropdown-menu-right"
+            *dropdownMenu
+            role="menu"
+          >
+            <app-platform-activity-panel [preview]="true" *ngIf="showPlatfromActivity">
+            </app-platform-activity-panel>
+          </div>
+        </li>
+        <li
+          *ngIf="currentUser.isAdmin || currentUser.isSecurityAdmin"
+          (click)="addTeamMembers()"
+          class="new-nav-icon"
+        >
+          <a
+            role="button"
+            dropdownToggles
+            tippyTooltip="Invite a User"
+            container="body"
+            placement="bottom"
+            tabindex="0"
+          >
+            <span appIcon name="add-team-member"></span>
+          </a>
+        </li>
+        <li [routerLink]="'/app/my_downloads'" class="new-nav-icon">
+          <a
+            role="button"
+            dropdownToggles
+            tippyTooltip="My Downloads"
+            placement="bottom"
+          >
+            <span appIcon name="download-install-line"></span>
+          </a>
+        </li>
+        <hr class="clear-margin-top space-on-bottom-xl visible-xs" />
+
+        <li
+          class="dropdown js-settings-toggle"
+          dropdown
+          [isOpen]="dropdownOpen == 'profile'"
+          (mouseover)="dropdownOpen = 'profile'"
+          (mouseleave)="dropdownOpen = 'null'"
+        >
+          <a
+            dropdownToggle
+            id="settings-toggle"
+            class="clear-vertical-padding link-unstyled dropdown-toggle pa-lr-lg"
+            role="button"
+            tabindex="0"
+          >
+            <div class="profile-box">
+              <div class="profile-picture-wrapper">
+                <app-user-avatar
+                  [avatarIconSize]="'2x'"
+                  [avatarIconClass]="'avatar'"
+                  [avatarImgClass]="'img-responsive img-circle'"
+                  [user]="userProfilePic"
+                ></app-user-avatar>
+              </div>
+
+              <div class="user-info">
+                <b
+                  tippyTooltip="{{ currentUser.firstName }} {{
+                    currentUser.lastName
+                  }}"
+                  placement="bottom"
+                  container="body"
+                  >{{ currentUser.firstName }} {{ currentUser.lastName }}</b
+                >
+                <br />
+                <small
+                  tippyTooltip="{{ currentUser.firmInfo.name }}"
+                  placement="bottom"
+                  >{{ currentUser.firmInfo.name }}</small
+                >
+              </div>
+
+              <div class="cell align-middle padded">
+                <span appIcon name="angle-down" size="lg"></span>
+              </div>
+            </div>
+          </a>
+
+          <ul class="dropdown-menu" *dropdownMenu role="menu">
+            <li
+              [ngClass]="{
+                'sub-active': currentActiveSubMenu == 'mySetting'
+              }"
+            >
+              <a class="sub-menu-item" [routerLink]="routeMap['mySetting']">
+                <span appIcon name="cogs" class="space-on-right"></span>
+                My Settings
+              </a>
+            </li>
+            <li
+              class="no-space-divider"
+              *ngIf="currentUser.hasMultipleAccounts"
+            ></li>
+            <li
+              *ngIf="currentUser.hasMultipleAccounts"
+              [ngClass]="{
+                'sub-active': currentActiveSubMenu == 'switchAccounts'
+              }"
+            >
+              <a
+                class="sub-menu-item"
+                [routerLink]="routeMap['switchAccounts']"
+              >
+                <span appIcon name="institution" class="space-on-right"></span>
+                Switch Accounts
+              </a>
+            </li>
+
+            <li class="no-space-divider" *ngIf="currentUser.isAdmin"></li>
+            <li
+              id="js-team-member-settings"
+              *ngIf="currentUser.isAdmin"
+              [ngClass]="{
+                'sub-active': currentActiveSubMenu == 'usersTeams'
+              }"
+            >
+              <a class="sub-menu-item" [routerLink]="routeMap['usersTeams']">
+                <span appIcon name="meeting" class="space-on-right"></span>
+                Users & Teams
+              </a>
+            </li>
+
+            <li
+              id="js-firm-settings"
+              *ngIf="currentUser.isAdmin && !currentUser.isSecurityAdmin"
+              [ngClass]="{
+                'sub-active': currentActiveSubMenu == 'firmSetting'
+              }"
+            >
+              <a class="sub-menu-item" [routerLink]="routeMap['firmSetting']">
+                <span appIcon name="institution" class="space-on-right"></span>
+                Firm Settings
+              </a>
+            </li>
+
+            <li
+              id="js-firm-settings"
+              *ngIf="currentUser.isAdmin && currentUser.isSecurityAdmin"
+              [ngClass]="{
+                'sub-active': currentActiveSubMenu == 'firmSetting'
+              }"
+            >
+              <a class="sub-menu-item" [routerLink]="routeMap['firmSetting']">
+                <span appIcon name="institution" class="space-on-right"></span>
+                Firm Settings
+              </a>
+            </li>
+
+            <li id="js-privacy-policy-settings" *ngIf="currentUser.isAdmin">
+              <a
+                target="_blank"
+                href="https://diligencevault.com/privacy-policy/"
+                class="sub-menu-item"
+              >
+                <span appIcon name="secure" class="space-on-right"></span>
+                Privacy Policy
+              </a>
+            </li>
+            <li
+              id="js-terms-and-conditions"
+              [ngClass]="{
+                'sub-active': currentActiveSubMenu == 'termsConditions'
+              }"
+            >
+              <a
+                class="sub-menu-item"
+                [routerLink]="routeMap['termsConditions']"
+              >
+                <span
+                  appIcon
+                  name="terms-and-conditions"
+                  class="space-on-right"
+                ></span>
+                Terms and Conditions
+              </a>
+            </li>
+
+            <li id="js-ai-terms-of-use" role="menuitem" tabindex="0">
+              <a
+                class="sub-menu-item"
+                [routerLink]="routeMap['AItermsConditions']"
+              >
+                <span
+                  appIcon
+                  name="terms-and-conditions"
+                  class="space-on-right"
+                ></span>
+                AI Terms of Use
+              </a>
+            </li>
+
+            <li class="no-space-divider"></li>
+
+            <li>
+              <a (click)="logout()" class="clickable sub-menu-item">
+                <span appIcon name="sign-out" class="space-on-right"></span>
+                Sign out
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown notification-dropdown visible-xs">
+          <a role="button">
+            <i
+              class="dvi ng-isolate-scope dvi-bell fa-lg"
+              name="bell"
+              size="lg"
+            ></i>
+            <span class="notification-badge" *ngIf="unreadNotification"
+              >{{ unreadNotification }}
+            </span>
+          </a>
+
+          <div class="dropdown-menu padded-xl" role="menu" *ngIf="showPlatfromActivity">
+            <app-platform-activity-panel [preview]="true">
+            </app-platform-activity-panel>
+          </div>
+        </li>
+
+        <li
+          class="dropdown js-help-toggle"
+          dropdown
+          [isOpen]="dropdownOpen == 'help'"
+          (mouseover)="dropdownOpen = 'help'"
+          (mouseleave)="dropdownOpen = 'null'"
+        >
+          <a id="js-help-nav-btn" tabindex="0" dropdownToggle role="button">
+            <span
+              appIcon
+              name="question-circle"
+              size="lg"
+              [ngClass]="{ 'text-orange': showPageHelp }"
+              placement="left"
+            ></span>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <li *ngIf="showPageHelp">
+              <a role="button" (click)="triggerHelp()" class="sub-menu-item">
+                View Help on this Page
+              </a>
+            </li>
+
+            <li id="js-feedback-li">
+              <a
+                role="button"
+                (click)="handleFeedbackPanel()"
+                class="sub-menu-item"
+              >
+                Write to us
+              </a>
+            </li>
+            <li
+              *ngIf="!currentUser.isManager || !currentUser.isFreeSubscription"
+            >
+              <a
+                target="_blank"
+                href="https://faq.diligencevault.com/hc/en-us"
+                class="sub-menu-item"
+              >
+                FAQs
+              </a>
+            </li>
+            <li *ngIf="currentUser.isManager && currentUser.isFreeSubscription">
+              <a
+                target="_blank"
+                href="https://faq.diligencevault.com"
+                class="sub-menu-item"
+              >
+                FAQs
+              </a>
+            </li>
+
+            <li id="js-product-tour" *ngIf="currentUser.isManager">
+              <a class="sub-menu-item clickable" (click)="productTour()">
+                Product Tour
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</nav>

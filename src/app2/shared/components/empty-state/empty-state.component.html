@@ -1,0 +1,17 @@
+<div class="empty-state">
+  <div class="es-icon-wrapper" *ngIf="iconName">
+    <span appIcon [name]="iconName"></span>
+  </div>
+  <div class="es-message-wrapper">
+    <p class="es-message">{{ message }}</p>
+    <button
+      appButton
+      [btnType]="'default'"
+      size="sm"
+      *ngIf="actionLabel"
+      (click)="onActionClicked()"
+    >
+      {{ actionLabel }}
+    </button>
+  </div>
+</div>

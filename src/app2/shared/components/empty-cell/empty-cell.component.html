@@ -1,0 +1,14 @@
+<ng-container *ngIf="!params.node.group">
+  <span
+    *ngIf="params.data"
+    class="space-on-right"
+    [adaptivePosition]="false"
+    [tooltip]="params.data[field]"
+    container="body"
+    >{{ params.data[field] }}
+  </span>
+</ng-container>
+
+<ng-container *ngIf="params.node.group">
+  <span class="space-on-right" container="body">{{ params.value }} </span>
+</ng-container>

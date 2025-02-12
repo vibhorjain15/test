@@ -1,0 +1,46 @@
+.panel-body {
+  padding: 6px !important;
+}
+.tab-main {
+  display: flex;
+}
+.tab-button {
+  margin-left: 5px;
+}
+.tab-bar {
+  flex-basis: 100%;
+}
+.tab-label {
+  margin-left: 20px;
+}
+.dv-tab {
+  display: flex;
+  flex-direction: row;
+}
+.dv-border {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
+}
+.border {
+  position: absolute;
+  border: 1px solid #126b82;
+  bottom: -7px;
+  width: 60px;
+  margin-left: 20px;
+  background: #126b82;
+}
+.tab-spinner {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.tab-space {
+  margin: 15px;
+}
+
+.disabled-tab {
+  pointer-events: ban;
+}

@@ -1,0 +1,94 @@
+<ng-select
+  #select
+  [clearable]="clearable"
+  [labelForId]="id"
+  [searchable]="searchable"
+  [multiple]="multiple"
+  [maxSelectedItems]="maxSelectedItems"
+  [placeholder]="loading ? '' : placeholder"
+  (ngModelChange)="handleSelectChange($event)"
+  [items]="list"
+  [bindValue]="bindValue"
+  [bindLabel]="bindLabel"
+  [virtualScroll]="virtualScroll"
+  (blur)="onBlur()"
+  [(ngModel)]="value"
+  [ngClass]="{
+    'has-success': contoller && contoller?.touched && contoller?.valid,
+    'has-error': contoller && contoller?.touched && contoller?.invalid
+  }"
+  [groupBy]="groupBy"
+  [disabled]="disabled || !list?.length"
+  [addTagText]="addTagText"
+  [addTag]="addTag"
+  [loading]="loading"
+  [notFoundText]="notFoundText"
+  [hideSelected]="hideSelected"
+  (remove)="handleRemove($event)"
+  [searchFn]="searchFn"
+  [appendTo]="appendTo"
+  [readonly]="readonly"
+  (clear)="handleClear()"
+  (open)="onDropdownOpen()"
+  (close)="onDropdownClose()"
+  [class.open]="isDropdownOpen"
+  [inputAttrs]="{
+    'aria-label': ariaLabel || placeholder,
+    autocomplete: 'off',
+    title: title,
+  }"
+>
+  <ng-container *ngIf="useTemplates">
+    <ng-template ng-label-tmp let-item="item" let-clear="clear">
+      <span class="ng-value-icon right" (click)="clear(item)">×</span>
+      <span
+        appIcon
+        [name]="item.leftIcon"
+        *ngIf="item.leftIcon"
+        [class]="item.leftIconClass"
+        customSize="medium"
+        class="space-on-right-lg"
+      ></span>
+      <span class="padding-5" [ngClass]="{ 'white-space-normal': multiple }" [innerHTML]="item[bindLabel]"></span>
+    </ng-template>
+  </ng-container>
+
+  <ng-template ng-option-tmp let-item="item">
+    <div class="item-class" tabindex="0">
+      <span
+        appIcon
+        [name]="item.leftIcon"
+        class="space-on-right-lg"
+        [class]="item.leftIconClass"
+        *ngIf="item.leftIcon"
+        customSize="medium"
+      ></span>
+      <span [innerHTML]="item[bindLabel] | dvSafeHtml"></span>
+      <span
+        appIcon
+        name="info"
+        [tooltip]="item.tooltip"
+        container="body"
+        placement="right"
+        *ngIf="item.tooltip && !item.premiumOnly"
+        class="space-on-left"
+      ></span>
+      <span
+        *ngIf="item.premiumOnly"
+        appIcon
+        (click)="handleGoToPremiumPage($event)"
+        [tooltip]="item.tooltip"
+        placement="top"
+        container="body"
+        name="dv-crown"
+        class="premium-icon"
+      ></span>
+    </div>
+  </ng-template>
+</ng-select>
+<div
+  *ngIf="contoller && contoller?.touched && contoller?.invalid"
+  class="text-danger"
+>
+  {{ error }}
+</div>

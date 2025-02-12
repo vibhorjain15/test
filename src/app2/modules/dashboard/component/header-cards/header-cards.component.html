@@ -1,0 +1,31 @@
+<div
+  class="card-wrapper"
+  [ngClass]="{ 'header-color-update': isActive }"
+  role="button"
+  tabindex="0"
+  (click)="onClick.emit()"
+  (keydown.enter)="onClick.emit()"
+  (keydown.space)="onClick.emit()"
+>
+  <div class="for-icon">
+    <span
+      appIcon
+      [name]="icon"
+      customSize="huge"
+      [color]="icon == 'hour-glass' ? 'newPink' : ''"
+    ></span>
+  </div>
+
+  <div class="for-data">
+    <div class="title-wrapper">
+      <span class="title">{{ count }}</span>
+      <dv-badge
+        *ngIf="newCount"
+        status="info"
+        spacingType="small"
+        label="{{ newCount }} New"
+      ></dv-badge>
+    </div>
+    <div class="description">{{ title }}</div>
+  </div>
+</div>

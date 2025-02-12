@@ -1,0 +1,470 @@
+<app-modal
+  [title]="'Export in Word or Excel'"
+  [firstButtonLabel]="exportButtonLabel"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="exportPreferencesRef"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="
+    (selected_export_type == 0 && !selected_template) ||
+    (selected_export_type == 2 &&
+      current_user?.isFreeSubscription &&
+      (replaceBetweenQuestions || exportToOriginalWithoutReplacing)) ||
+    (selected_export_type == 3 &&
+      (current_user?.isFreeSubscription ||
+        !firm_preferences?.show_presentation_module))
+  "
+>
+</app-modal>
+
+<ng-template #exportPreferencesRef>
+  <div class="space-on-bottom-lg">
+    <app-spinner
+      broadSpinner="true"
+      spinnerHeight="100"
+      *ngIf="!firm_preferences || !templates"
+    ></app-spinner>
+    <div *ngIf="firm_preferences && templates" class="space-on-top-lg">
+      <dv-tabs
+        [list]="exportTabList"
+        class="space-on-top-lg justify-center export-tab"
+        (onTabClick)="setSelectedExportType(exportTabList[$event].link)"
+        (onDisabledTabClick)="handleDisabledTabClick($event)"
+        [loading]="loading_data"
+        size="large"
+      ></dv-tabs>
+      <div *ngIf="selected_export_type == 0" class="space-on-bottom-lg">
+        <helper-text>
+          {{
+            current_user?.isFreeSubscription
+              ? "Select your export preferences below and download this project in Word."
+              : "Add new or edit an existing Export Design Template under Firm Settings > Preferences > Export Preferences."
+          }}
+        </helper-text>
+        <div class="form-horizontal" name="word_preferences">
+          <div
+            col="10"
+            offset="1"
+            *ngIf="
+              templates?.length > 0 ||
+              !(current_user?.isFreeSubscription ?? true)
+            "
+          >
+            <dv-form-element elementCol="12" *ngIf="templates?.length > 0">
+              <label for="selectDesign">Select Export Design Template</label>
+              <span
+                appIcon
+                name="info"
+                (click)="navigateToPremium()"
+                class="space-on-left clickable"
+                tooltip="Customize Word exports in your company colors and branding with a premium subscription. Click this icon to {{
+                  is_investor
+                    ? 'write to us to learn more.'
+                    : 'visit our upgrade page.'
+                }}"
+                *ngIf="current_user?.isFreeSubscription"
+              >
+              </span>
+              <dv-select
+                placeholder="Select design"
+                [list]="templates"
+                [disabled]="current_user?.isFreeSubscription"
+                [(ngModel)]="selected_template"
+                bindValue=""
+                [aria-label]="'Design template selection'"
+                [id]="'selectDesign'"
+                name="selectDesign"
+              ></dv-select>
+            </dv-form-element>
+            <div
+              col="12"
+              col-type="sm"
+              class="text-center"
+              *ngIf="
+                templates &&
+                !templates.length &&
+                !(current_user?.isFreeSubscription ?? true)
+              "
+            >
+              <span class="control-label text-muted fw-bolder">
+                No export design template available,
+                <a class="clickable" (click)="redirectToTemplateDefinitions()"
+                  >click here</a
+                >
+                to add one
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                class="inline-block"
+                [(ngModel)]="firm_preferences_copy.include_question_only_export"
+                name="include_question_only_export"
+                label="Export empty questionnaire with all conditional questions"
+                (onValChange)="
+                  handleExportPreferenceChange('include_question_only_export')
+                "
+              >
+              </dv-checkbox>
+              <span
+                appIcon
+                name="info"
+                class="align-middle space-on-left"
+                tooltip="This will export all questions, and no responses."
+                container="body"
+              >
+              </span>
+            </div>
+          </div>
+          <dv-divider type="horizontal" aria-hidden="true"></dv-divider>
+          <div col="10" offset="1">
+            <span class="control-label space-on-bottom-lg fw-bolder">
+              Export filled questionnaire with below preferences:
+            </span>
+          </div>
+
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_project_documents"
+                name="include_project_documents"
+                label="Include attachments in a ZIP file"
+                (onValChange)="
+                  handleExportPreferenceChange('include_project_documents')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_internal_notes_export"
+                name="enable_internal_notes_export"
+                label="Include internal notes"
+                (onValChange)="
+                  handleExportPreferenceChange('enable_internal_notes_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_followups_export"
+                name="enable_followups_export"
+                label="Include follow-ups"
+                (onValChange)="
+                  handleExportPreferenceChange('enable_followups_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_flags_word_export"
+                name="include_flags_word_export"
+                label="Include flags"
+                (onValChange)="
+                  handleExportPreferenceChange('include_flags_word_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_ratings_word_export"
+                name="include_ratings_word_export"
+                label="Include ratings/scores"
+                (onValChange)="
+                  handleExportPreferenceChange('include_ratings_word_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_grid_numbering"
+                label="Number the rows in custom grids"
+                name="enable_grid_numbering"
+                (onValChange)="
+                  handleExportPreferenceChange('enable_grid_numbering')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_question_instructions_export
+                "
+                label="Include question instructions"
+                name="enable_question_instructions_export"
+                (onValChange)="
+                  handleExportPreferenceChange(
+                    'enable_question_instructions_export'
+                  )
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_category_instructions_export
+                "
+                label="Include sub-category instructions"
+                name="enable_category_instructions_export"
+                (onValChange)="
+                  handleExportPreferenceChange(
+                    'enable_category_instructions_export'
+                  )
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.exclude_comments"
+                label="Exclude comments"
+                name="exclude_comments"
+                (onValChange)="handleExportPreferenceChange('exclude_comments')"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="1" class="padding-left-10">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.exclude_empty_response"
+                label="Exclude unanswered questions"
+                name="exclude_empty_response"
+                (onValChange)="
+                  handleExportPreferenceChange('exclude_empty_response')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="space-on-bottom-lg space-on-top-lg"
+        *ngIf="selected_export_type == 1"
+      >
+        <div class="form-horizontal" name="excel_preferences">
+          <div class="form-group">
+            <div col="10" offset="1">
+              <dv-checkbox
+                class="inline-block"
+                [(ngModel)]="is_question_selection_enabled"
+                label="Download selected questions"
+              >
+              </dv-checkbox>
+              <span
+                appIcon
+                name="info"
+                class="align-middle"
+                tooltip="Keep this unchecked to download the entire questionnaire"
+                container="body"
+              >
+              </span>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_question_selection_enabled">
+            <div col="10" offset="1">
+              <app-dv-selector-list
+                name="question_list"
+                entity_type="Question"
+                [entities]="questions"
+                [filter_params]="{}"
+                [displayParams]="selector_params"
+                (onChangeEntity)="handleQuestionSelectionChange($event)"
+                role="region"
+                aria-label="Question list selection"
+              ></app-dv-selector-list>
+            </div>
+          </div>
+          <dv-divider
+            type="horizontal"
+            *ngIf="!is_question_selection_enabled"
+            aria-hidden="true"
+          ></dv-divider>
+          <div *ngIf="!is_question_selection_enabled">
+            <div class="form-group">
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.include_responses_excel_export
+                  "
+                  name="include_responses_excel_export"
+                  label="Include responses"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.include_comments_excel_export
+                  "
+                  name="include_comments_excel_export"
+                  label="Include comments"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div
+              class="form-group"
+              *ngIf="firm_preferences_copy?.include_comments_excel_export"
+            >
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.split_comments"
+                  name="split_comments"
+                  label="Split comments"
+                  class="inline-block"
+                >
+                </dv-checkbox>
+                <span
+                  appIcon
+                  name="info"
+                  class="align-middle"
+                  tooltip="Split comments associated with responses in another cell"
+                  container="body"
+                >
+                </span>
+              </div>
+            </div>
+            <div class="form-group" *ngIf="is_investor">
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.include_ratings_excel_export
+                  "
+                  name="include_ratings_excel_export"
+                  label="Include ratings/scores"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group" *ngIf="is_investor">
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.include_flags_excel_export"
+                  name="include_flags_excel_export"
+                  label="Include flags"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group" *ngIf="is_investor">
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.include_internal_key"
+                  label="Include internal key column"
+                  name="include_internal_key"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="1">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.transpose_excel_columns"
+                  label="Transpose export to show questions in columns"
+                  name="transpose_excel_columns"
+                  class="inline-block"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="space-on-bottom-lg space-on-top-lg"
+        *ngIf="selected_export_type == 2"
+      >
+        <helper-text>
+          {{
+            current_user?.isFreeSubscription
+              ? "This is available with a premium subscription. Please write to us to learn about digitizing your due diligence workflows."
+              : "You can export this project in the original parsed document format."
+          }}
+        </helper-text>
+        <div
+          class="space-on-bottom-lg space-on-top-lg export-original-conatiner"
+        >
+          <div class="export-option">
+            <ui-switch
+              size="small"
+              [(ngModel)]="replaceBetweenQuestions"
+              title="Export platform responses and replace any imported responses."
+              (change)="handleReplaceBetweenQuestions($event)"
+              UiSwitchButton
+            ></ui-switch>
+            <span>
+              Export platform responses and replace any imported responses.
+            </span>
+            <span
+              appIcon
+              name="info"
+              tooltip="Use this option if you imported responses, then revised them in the platform and want to replace them."
+              container="body"
+              aria-label="Use this option if you imported responses, then revised them in the platform and want to replace them."
+            >
+            </span>
+          </div>
+          <div class="export-option">
+            <ui-switch
+              size="small"
+              [(ngModel)]="exportToOriginalWithoutReplacing"
+              (change)="handleExportToOriginalWithoutReplacing($event)"
+              title="Export platform responses to the original file."
+              UiSwitchButton
+            ></ui-switch>
+            <span>Export platform responses to the original file.</span>
+            <span
+              appIcon
+              name="info"
+              tooltip="Use this option if you only imported questions and do not need to replace any responses in the file."
+              container="body"
+              aria-label="Use this option if you only imported questions and do not need to replace any responses in the file."
+            >
+            </span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="space-on-bottom-lg space-on-top-lg"
+        *ngIf="selected_export_type == 3"
+      >
+        <generate-presentation-report-component
+          [diligence]="diligence"
+          [current_user]="current_user"
+          [show_presentation_module]="
+            firm_preferences?.show_presentation_module
+          "
+          (isLoading)="loading = $event"
+          (isExporting)="loading = $event"
+          #presentationReport
+        ></generate-presentation-report-component>
+      </div>
+    </div>
+  </div>
+</ng-template>

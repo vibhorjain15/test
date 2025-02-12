@@ -1,0 +1,25 @@
+<div class="qa-form-control avoid-page-break-inside full-width">
+    <div class="full-width">
+        <div class="row clearfix space-on-bottom">
+            <div col="12">
+                <div class="qa-question js-qa-question">
+                    <span data-ng-if="is_numbered && !vm.response.question.isNested">{{::vm.response.question.attributes.indexCount}}. </span>
+                    <span ng-bind-html="vm.response.question.attributes.text"></span>
+                    <!-- <icon name="info"
+                          class="text-info"
+                          data-ng-if="vm.response.question.attributes.hint_text"
+                          uib-tooltip="{{vm.response.question.attributes.hint_text}}">
+                    </icon> -->
+                    <div class="alert alert-info clear-border-radius borderless" data-ng-if="vm.response.question.attributes.hint_text">
+                        <div>
+                            <span class="break_word" ng-bind-html="vm.response.question.attributes.hint_text | cleanhtml"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="js-qa-widget qa-widget-container"></div>
+    </div>
+
+    <div class="qa-conditional-responses js-conditional-responses"></div>
+</div>

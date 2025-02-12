@@ -1,0 +1,81 @@
+<!-- This cell renderer is not being used currently.
+  The document actions have been moved to document-name-cell-renderer and folder-cell-renderer -->
+<div
+  *ngIf="params.data && params.data.document?.type == 1 && actions.length"
+  class="text-center"
+>
+  <dv-dropdown
+    type="default"
+    (onDropdownClick)="handleActionClick($event)"
+    (onIconClick)="handleActionClick($event)"
+    [dropDownList]="actions"
+    iconName="ellipsis-h"
+    [isIconLabel]="false"
+    iconSize="large"
+    dropdownPlacement="left"
+    tippyTooltip="Perform Actions"
+  >
+  </dv-dropdown>
+  <!-- <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right"
+    tooltip="Update"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    (click)="openDocumentUpdateDialog()"
+    [disabled]="disableButtons"
+    aria-label="Update"
+  >
+    <span appIcon name="pencil"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right"
+    tooltip="Add/View Notes"
+    container="body"
+    *ngIf="showNotes"
+    triggers="mouseenter:mouseleave"
+    (click)="openNotesSidebar()"
+    [disabled]="disableButtons"
+    aria-label="Add/View Notes"
+  >
+    <span appIcon name="notepad"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right"
+    tooltip="Share"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    *ngIf="showDocumentAction(params.data.document) && !freeSubscription"
+    (click)="openDocumentShareDialog()"
+    [disabled]="disableButtons"
+    aria-label="Share"
+  >
+    <span appIcon name="share"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Delete"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    (click)="confirmDocumentDeletion()"
+    *ngIf="showDocumentAction(params.data.document)"
+    [disabled]="disableButtons"
+    aria-label="Delete"
+    *ngIf="showDocumentAction(params.data.document)"
+  >
+    <span appIcon name="trashcan"></span>
+  </button> -->
+</div>

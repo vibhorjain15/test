@@ -1,0 +1,55 @@
+<span>
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">Attachments</h5>
+            </div>
+            <div class="panel-body">
+                <div class="dd-doc-selection-wrapper padded-right">
+                    <div class="panel panel-default dd-doc-drop-panel">
+                        
+                    </div>
+
+                    <div class="dd-doc-select-button-container">
+                       
+                        <button btn-type="primary"
+                            data-ng-click="vm.openUseExistingModal()">
+                            Use Existing
+                        </button>
+                        <button btn-type="default"
+                            data-ng-click="vm.addDocument()">
+                            New Upload
+                        </button>
+                        <div class="text-center" data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <ul class="list-group dd-attachments-selector" >
+                <li data-ng-repeat="attachment in vm.response.attachments" class="list-group-item clearfix">
+                    <div class="pull-left">
+                        <a document-viewer="attachment" target="_blank">
+                            <attachment-icon filename="attachment.file_name"></attachment-icon>
+
+                            <span dv-limit-word="attachment.name" char-limit="32"></span>
+                        </a>
+                    </div>
+
+                    <div class="pull-right">
+                        <button btn-type="default"
+                                size="sm"
+                                data-ng-click="vm.removeAttachment(attachment)"
+                                uib-tooltip="Remove Attachment"
+                                class="btn-attachment-selector">
+                            <icon name="trashcan" class="text-danger"></icon>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</span>

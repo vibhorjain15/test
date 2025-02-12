@@ -1,0 +1,184 @@
+<form #myForm="ngForm" autocomplete="off">
+  <div class="form-elements">
+    <dv-form-element
+      [label]="mandatoryReviews ? '' : 'Select Reviewer' + freeUserLabel"
+      [isRequired]="true"
+      [elementCol]="type == 'firm' ? (mandatoryReviews ? 9 : 6) : 12"
+      [labelPosition]="type == 'firm' ? 'left' : 'top'"
+      labelCol="4"
+      [infoText]="
+        isFree
+          ? 'Assign multiple reviewers with a premium subscription'
+          : !mandatoryReviews
+          ? 'All reviewers shown here are mandatory'
+          : ''
+      "
+      [for]="'teamRoleList_' + index"
+    >
+      <ng-container *ngIf="!mandatoryReviews">
+        <dv-select
+          [list]="teamRoleList"
+          [id]="'teamRoleList_' + index"
+          [multiple]="true"
+          groupBy="type"
+          [maxSelectedItems]="isFree ? 1 : 100"
+          [(ngModel)]="reviewerList"
+          (onSelectChange)="handleReviewerChange($event)"
+          bindValue=""
+          name="teamMembers"
+          #reviewerModel="ngModel"
+          [disabled]="disabled"
+        ></dv-select>
+        <div
+          class="text-danger"
+          *ngIf="
+            (myForm.submitted || reviewerModel.control.touched) &&
+            !reviewerList?.length
+          "
+        >
+          Please select {{ isFree ? " a reviewer" : "reviewer(s)" }}
+        </div>
+      </ng-container>
+
+      <div class="review-mandatory">
+        <review-definition-mandatory
+          [reviewerList]="reviewerList"
+          [formSubmitted]="myForm.submitted"
+          [teamRoleList]="teamRoleList"
+          *ngIf="mandatoryReviews"
+          [numberOfReviewerRequired]="numberOfReviewerRequired"
+          [type]="type"
+          [disabled]="disabled"
+          (onReviewerDataChange)="handleReviewerDataChange($event)"
+        ></review-definition-mandatory>
+      </div>
+
+      <dv-checkbox
+        label="Set individual due dates and optional reviewer(s)"
+        [(ngModel)]="mandatoryReviews"
+        [disabled]="reviewerList.length < 2 || disabled"
+        name="mandatoryCheck"
+        (onValChange)="handleMandatoryChange($event)"
+        [id]="index"
+      ></dv-checkbox>
+    </dv-form-element>
+
+    <dv-form-element
+      label="Set Timeline in Days"
+      [labelPosition]="type == 'firm' ? 'left' : 'top'"
+      [elementCol]="type == 'firm' ? 2 : 6"
+      *ngIf="!mandatoryReviews && type === 'firm'"
+      [isRequired]="true"
+      [centerAligned]="true"
+      [showRightIcon]="false"
+      labelCol="4"
+    >
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Enter the count"
+        [(ngModel)]="timeLine"
+        required
+        #timeLineModel="ngModel"
+        name="timeLineModel"
+        [min]="1"
+        [max]="365"
+        [disabled]="disabled"
+        pattern="^\d+$"
+        autocomplete="off"
+      />
+      <div
+        class="text-danger"
+        *ngIf="
+          (myForm.submitted || timeLineModel.control.touched) &&
+          timeLineModel.control.invalid
+        "
+      >
+        Please enter valid number of days
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      label="Due Date"
+      elementCol="6"
+      labelPosition="top"
+      [isRequired]="true"
+      *ngIf="type == 'modal' && !mandatoryReviews"
+      labelCol="4"
+    >
+      <app-date-picker
+        [id]="'due-date'"
+        (change)="handleDateChange($event)"
+        [value]="dueDate"
+        [minDate]="minDate"
+        format="DD-MMM-YYYY"
+        [disabled]="disabled"
+      ></app-date-picker>
+      <dv-label
+        *ngIf="diligence && diligence?.due_at"
+        type="disable"
+        [align]="'left'"
+        size="medium"
+        [label]="
+          'Project Due Date: ' + (diligence?.due_at | dvDate : ['isLocaleDate'])
+        "
+      ></dv-label>
+    </dv-form-element>
+    <dv-form-element
+      label="Minimum Reviewers Required"
+      [labelPosition]="type == 'firm' ? 'left' : 'top'"
+      [centerAligned]="type == 'firm'"
+      [showRightIcon]="false"
+      [disabled]="isFree"
+      [elementCol]="2"
+      labelCol="4"
+      infoText="Minimum reviewer(s) cannot be less than mandatory reviewer(s) or greater than total reviewer(s)."
+    >
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Enter the count"
+        required
+        name="minReviewer"
+        [disabled]="isFree || disabled"
+        #minReviewer="ngModel"
+        [max]="reviewerList?.length"
+        [min]="
+          mandatoryReviews
+            ? getMandatoryReviews(reviewerList)
+            : reviewerList?.length
+        "
+        [(ngModel)]="numberOfReviewerRequired"
+        autocomplete="off"
+      />
+      <div
+        class="text-danger"
+        *ngIf="
+          (myForm.submitted || minReviewer.control.touched) &&
+          minReviewer.control.invalid
+        "
+      >
+        <span *ngIf="numberOfReviewerRequired == 0">
+          Minimum reviewer(s) cannot be 0
+        </span>
+        <span
+          *ngIf="
+            numberOfReviewerRequired > reviewerList.length &&
+            numberOfReviewerRequired !== 0
+          "
+        >
+          Minimum reviewer(s) cannot be greater than the number of total
+          reviewer(s)
+        </span>
+        <span
+          *ngIf="
+            numberOfReviewerRequired < reviewerList.length &&
+            numberOfReviewerRequired !== 0
+          "
+        >
+          Minimum reviewer(s) cannot be less than the number of mandatory
+          reviewer(s)
+        </span>
+      </div>
+    </dv-form-element>
+  </div>
+</form>

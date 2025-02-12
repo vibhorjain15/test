@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-md-11" style="overflow: hidden" #parentEle>
+    <hot-table
+      [settings]="hotSettings"
+      [hotId]="id"
+      [data]="dataset"
+      #tagsTable
+    ></hot-table>
+  </div>
+  <div class="col-md-1">
+    <button
+      appButton
+      btnType="default"
+      container="body"
+      tooltip="Copy Table"
+      aria-label="Copy Table"
+      (click)="copyTable()"
+    >
+      <span class="copy-cursor" appIcon name="copy"></span>
+    </button>
+  </div>
+</div>

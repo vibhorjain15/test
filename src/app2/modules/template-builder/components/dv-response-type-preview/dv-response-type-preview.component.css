@@ -1,0 +1,43 @@
+.attachment-achor {
+  display: flex;
+  justify-content: center;
+}
+.file-upload-btn {
+  padding: 18px;
+  width: 100%;
+  font-weight: bold;
+  font-size: 14px;
+  border: 2px dashed #126b82 !important;
+  color: #126b82;
+}
+.file-upload-btn:hover {
+  color: #f0592b;
+}
+.btn-highlight {
+  border: 2px dashed #f0592b !important;
+  color: #f0592b;
+  background-color: #f0592b0f !important;
+}
+.btns {
+  display: flex;
+  justify-content: space-between;
+}
+.well {
+  background-color: transparent !important;
+}
+.more-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.flex-space-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+input {
+  border-color: #43c59e;
+}
+textarea {
+  border-color: #43c59e;
+}

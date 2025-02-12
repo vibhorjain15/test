@@ -1,0 +1,41 @@
+<div *ngIf="params.data">
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    [disabled]="params?.data?.disclaimers_type === 'inactive'"
+    [adaptivePosition]="false"
+    [tooltip]="
+      !params?.data?.usage || params?.data?.usage <= 0
+        ? 'Edit Disclaimer'
+        : 'This is already in use '
+    "
+    [ngClass]="{ disabled: params?.data?.usage > 0 }"
+    (click)="editDisclaimer()"
+    container="body"
+    triggers="mouseenter:mouseleave"
+    class="space-on-right"
+    [attr.aria-label]="
+      !params?.data?.usage || params?.data?.usage <= 0
+        ? 'Edit Disclaimer'
+        : 'This is already in use '
+    "
+  >
+    <span appIcon name="pencil" aria-hidden="true" tabindex="-1"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="danger"
+    [adaptivePosition]="false"
+    tooltip="Delete Disclaimer"
+    [disabled]="params?.data?.disclaimers_type === 'inactive'"
+    (click)="confirmDisclaimerDeletion()"
+    container="body"
+    triggers="mouseenter:mouseleave"
+    [attr.aria-label]="'Delete Disclaimer'"
+  >
+    <span appIcon name="trashcan" aria-hidden="true" tabindex="-1"></span>
+  </button>
+</div>

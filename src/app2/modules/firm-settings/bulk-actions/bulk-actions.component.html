@@ -1,0 +1,613 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 id="panel-title" class="panel-title text-bold">
+      Upload Your Data into DiligenceVault
+    </h5>
+  </div>
+  <app-tab
+    [items]="tabList"
+    [loading]="loading"
+    [switchTabInParentComponent]="true"
+    (switchEvent)="switchTab($event)"
+    [spaceAroundTab]="false"
+  ></app-tab>
+  <div class="panel-info" *ngIf="currentTab == 1">
+    <div class="panel-heading">
+      <span class="block-display" role="alert">
+        Download example Excel file by clicking
+        <a
+          class="clickable link-underline"
+          (click)="downloadEmptySampleFile()"
+          aria-label="Download empty sample file"
+          clickable
+        >
+          here</a
+        ></span
+      >
+      <span class="block-display" role="alert">
+        Download example Excel file with all your existing data related to
+        Firms/Products/Vehicles/Contacts/Strategies and Team Members. Click
+        <a
+          class="clickable link-underline"
+          (click)="downloadSampleFile()"
+          tabindex="0"
+          role="button"
+          aria-label="Download sample file"
+          clickable
+          >here</a
+        >
+      </span>
+    </div>
+  </div>
+  <div class="panel-info" *ngIf="currentTab == 2">
+    <div class="panel-heading">
+      <small>
+        <ul>
+          <li>
+            Only the columns in the uploaded Excel file that match the mapped
+            fields on DiligenceVault, will have records created or updated
+            during the Custom Bulk Upload process.
+          </li>
+          <li>
+            The "DV Action" column in the Example Excel file exported from the
+            Pre-defined section, containing values such as UPDATE and DON'T
+            UPDATE, does not influence the action taken for corresponding
+            records. In other words, all records associated with mapped fields
+            will be synchronized, and individual field values cannot be
+            restricted from being updated.
+          </li>
+          <li>
+            To view additional instructions related to custom bulk upload please
+            click
+            <a
+              class="clickable link-underline"
+              (click)="downloadInstructionFile()"
+              tabindex="0"
+              role="button"
+              aria-label="Download instruction file"
+              clickable
+            >
+              here
+            </a>
+          </li>
+        </ul>
+      </small>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div *ngIf="currentTab == 1">
+      <div col="12">
+        <div class="dd-doc-selection-wrapper">
+          <dv-uploader
+            [accept]="allowed_file_extensions_str"
+            dragLabel="Drag & Drop your bulk upload Excel here"
+            [isMultiple]="false"
+            (onFileUpload)="dropped($event)"
+            [buttonLabel]="this.files?.length ? 'Change File' : 'Select File'"
+            loaderText="File is being processed..."
+          ></dv-uploader>
+        </div>
+      </div>
+      <br />
+      <div class="form-group">
+        <span class="bulk-actions-label-margin inline-block fw-bolder"
+          >Select entity type(s) included:</span
+        >
+        <ul class="list-inline">
+          <li *ngIf="!isBusinessAdmin">
+            <dv-checkbox
+              [(ngModel)]="uploadType.team_members"
+              (onValChange)="checkSelectedEntityCount($event)"
+              [label]="'Team Members/User Roles'"
+              name="team_members"
+              [disabled]="!this.files?.length"
+            ></dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+              [(ngModel)]="uploadType.firms"
+              (onValChange)="checkSelectedEntityCount($event)"
+              [label]="'Firms'"
+              [tooltip]="
+                isFreeInvestor || isFreeManager
+                  ? 'Available for premium users'
+                  : ''
+              "
+              name="firms"
+              [disabled]="
+                !this.files?.length || isFreeInvestor || isFreeManager
+              "
+            >
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+              [(ngModel)]="uploadType.strategy"
+              (onValChange)="checkSelectedEntityCount($event)"
+              [label]="'Strategies'"
+              name="strategy"
+              [tooltip]="isFreeInvestor ? 'Available for premium users' : ''"
+              [disabled]="!this.files?.length || isFreeInvestor"
+            >
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+              [(ngModel)]="uploadType.funds"
+              (onValChange)="checkSelectedEntityCount($event)"
+              [label]="'Products'"
+              name="funds"
+              [tooltip]="isFreeInvestor ? 'Available for premium users' : ''"
+              [disabled]="!this.files?.length || isFreeInvestor"
+            >
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+              [(ngModel)]="uploadType.vehicles"
+              (onValChange)="checkSelectedEntityCount($event)"
+              [label]="'Vehicles'"
+              name="vehicles"
+              [tooltip]="isFreeInvestor ? 'Available for premium users' : ''"
+              [disabled]="!this.files?.length || isFreeInvestor"
+            >
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+              [(ngModel)]="uploadType.contacts"
+              (onValChange)="checkSelectedEntityCount($event)"
+              [label]="'Contacts'"
+              name="contacts"
+              [tooltip]="
+                isFreeInvestor || isFreeManager
+                  ? 'Available for premium users'
+                  : ''
+              "
+              [disabled]="
+                !this.files?.length || isFreeInvestor || isFreeManager
+              "
+            >
+            </dv-checkbox>
+          </li>
+        </ul>
+      </div>
+      <div class="form-group text-center">
+        <dv-button
+          btnType="primary"
+          btnClass="space-on-left"
+          (onClick)="addDocumentSubmit()"
+          [loader]="uploading_excel"
+          [disabled]="!this.files?.length || selectedCheckboxCount < 1"
+        >
+          Process Upload
+        </dv-button>
+      </div>
+    </div>
+    <div *ngIf="currentTab == 2">
+      <dv-stepper #dvStepper>
+        <dv-step
+          label="Upload"
+          nextLabel="Next"
+          (onNextClick)="canProceedToNextStep(dvStepper)"
+          [showDescription]="false"
+        >
+          <div col="12">
+            <div class="dd-doc-selection-wrapper">
+              <dv-uploader
+                [accept]="allowed_file_extensions_str"
+                [loader]="uploading"
+                dragLabel="Drag & Drop your bulk upload Excel here"
+                [isMultiple]="false"
+                (onFileUpload)="dropped($event)"
+                [showUploadedFiles]="this.files?.length"
+                [truncateNameCharTo]="40"
+                [buttonLabel]="
+                  this.files?.length ? 'Change File' : 'Select File'
+                "
+                loaderText="File is being processed..."
+              ></dv-uploader>
+            </div>
+          </div>
+          <br />
+          <div class="form-group">
+            <span class="bulk-actions-label-margin inline-block fw-bolder"
+              >Select entity type(s) included:</span
+            >
+            <ul class="list-inline">
+              <li *ngIf="!isBusinessAdmin">
+                <dv-checkbox
+                  [(ngModel)]="uploadType.team_members"
+                  [label]="'Team Members/User Roles'"
+                  name="team_members"
+                  (onValChange)="checkSelectedEntityCount($event)"
+                  [disabled]="!this.files?.length"
+                ></dv-checkbox>
+              </li>
+              <li>
+                <dv-checkbox
+                  [(ngModel)]="uploadType.firms"
+                  [label]="'Firms'"
+                  name="firms"
+                  (onValChange)="checkSelectedEntityCount($event)"
+                  [disabled]="!this.files?.length"
+                ></dv-checkbox>
+              </li>
+              <li>
+                <dv-checkbox
+                  [(ngModel)]="uploadType.strategy"
+                  [label]="'Strategies'"
+                  name="strategy"
+                  (onValChange)="checkSelectedEntityCount($event)"
+                  [disabled]="!this.files?.length"
+                ></dv-checkbox>
+              </li>
+              <li>
+                <dv-checkbox
+                  [(ngModel)]="uploadType.funds"
+                  [label]="'Products'"
+                  name="funds"
+                  (onValChange)="checkSelectedEntityCount($event)"
+                  [disabled]="!this.files?.length"
+                ></dv-checkbox>
+              </li>
+              <li>
+                <dv-checkbox
+                  [(ngModel)]="uploadType.vehicles"
+                  [label]="'Vehicles'"
+                  name="vehicles"
+                  (onValChange)="checkSelectedEntityCount($event)"
+                  [disabled]="!this.files?.length"
+                ></dv-checkbox>
+              </li>
+              <li>
+                <dv-checkbox
+                  [(ngModel)]="uploadType.contacts"
+                  [label]="'Contacts'"
+                  name="contacts"
+                  (onValChange)="checkSelectedEntityCount($event)"
+                  [disabled]="!this.files?.length"
+                ></dv-checkbox>
+              </li>
+            </ul>
+          </div>
+          <div class="alert alert-danger" *ngIf="showSheetError">
+            The number of chosen entities does not align with the number of
+            sheets in the uploaded file. Please ensure accurate entity selection
+            or consider making adjustments to the file and try again.
+          </div>
+        </dv-step>
+        <dv-step
+          label="Field Mapping and Process Upload"
+          previousLabel="Previous"
+          [showDescription]="false"
+          finishLabel="Process Upload"
+          [isLoading]="uploading_excel"
+          (onBackClick)="handlePrevious(dvStepper)"
+          (onFinishClick)="previewMappingCount(dvStepper)"
+        >
+          <div class="row">
+            <div col="12">
+              <dv-label
+                label="File Name : {{ fileName }}"
+                type="bold"
+              ></dv-label>
+            </div>
+          </div>
+          <accordion [closeOthers]="true">
+            <div>
+              <div
+                *ngFor="let type of types; let i = index"
+                class="space-on-bottom"
+                [ngClass]="{
+                  'red-border':
+                    type?.mandatoryFieldNames?.length > 0 &&
+                    type?.mandatoryFieldNames?.length >
+                      type?.sheet?.mandatoryMappedCount &&
+                    clickedSubmit
+                }"
+              >
+                <accordion-group
+                  class="custom-view-list-accordion-group"
+                  [isOpen]="type.isOpen"
+                  (isOpenChange)="isOpenChange($event, type)"
+                  tabindex="-1"
+                >
+                  <div
+                    class="accordion-header custom-header-class"
+                    accordion-heading
+                  >
+                    <span>
+                      <span
+                        appIcon
+                        [name]="type.isOpen ? 'chevron-down' : 'chevron-right'"
+                        class="font-size-12 space-on-right"
+                        [style.margin-right.px]="type.isOpen ? '2' : '5'"
+                        [attr.aria-label]="
+                          'Toggle ' + type.panelName + ' accordion'
+                        "
+                        tabindex="0"
+                        role="button"
+                      ></span>
+                      <span>{{ type.panelName }}</span>
+                    </span>
+                    <span class="right-icons clickable font-size-14 pull-right">
+                      <div
+                        class="align-items-center text-left space-on-right-xxl"
+                      >
+                        <ng-container *ngIf="type.sheet.columnHeaders?.length">
+                          <span
+                            appIcon
+                            name="layout"
+                            class="space-on-right font-size-16 text-primary"
+                          ></span>
+                          <span class="font-size-12">{{
+                            "Total Mapped Columns : " +
+                              type.sheet.mappedCount +
+                              " of " +
+                              type.sheet.columnHeaders?.length +
+                              " | "
+                          }}</span>
+                        </ng-container>
+                        <ng-container *ngIf="type.sheet.columnHeaders?.length">
+                          <span
+                            appIcon
+                            [name]="
+                              type.sheet.mandatoryMappedCount ==
+                              type.mandatoryFieldNames?.length
+                                ? 'checked-circle'
+                                : 'alert-circle'
+                            "
+                            [ngClass]="{
+                              danger:
+                                type?.mandatoryFieldNames?.length > 0 &&
+                                type?.mandatoryFieldNames?.length >
+                                  type?.sheet?.mandatoryMappedCount &&
+                                clickedSubmit
+                            }"
+                            class="space-on-left space-on-right font-size-16 text-primary"
+                          ></span>
+                          <span
+                            class="font-size-12"
+                            [ngClass]="{
+                              danger:
+                                type?.mandatoryFieldNames?.length > 0 &&
+                                type?.mandatoryFieldNames?.length >
+                                  type?.sheet?.mandatoryMappedCount &&
+                                clickedSubmit
+                            }"
+                            tooltip="Map all mandatory fields to proceed."
+                          >
+                            {{
+                              " Mandatory Mapped (*) Columns : " +
+                                type.sheet.mandatoryMappedCount +
+                                " of " +
+                                type.mandatoryFieldNames?.length
+                            }}
+                          </span>
+                        </ng-container>
+
+                        <span
+                          *ngIf="types.length > 1"
+                          appIcon
+                          name="trashcan"
+                          (click)="
+                            removePanel(type.uploadTypeKey, type);
+                            $event.stopPropagation()
+                          "
+                          class="delete-control space-on-left-xxl"
+                          tabindex="0"
+                          role="button"
+                          [attr.aria-label]="
+                            'Remove' + type.panelName + 'panel'
+                          "
+                        ></span>
+                      </div>
+                    </span>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 align-items-center text-left">
+                      <div
+                        class="space-on-top space-on-bottom-xl space-on-right"
+                      >
+                        <dv-label label="Sheet Name" type="bold"></dv-label>
+                      </div>
+                      <div col="6">
+                        <dv-form-element
+                          [fieldName]="'Sheet Name'"
+                          elementCol="0"
+                        >
+                          <dv-select
+                            [list]="sheets"
+                            bindLabel="sheetName"
+                            bindValue="sheetId"
+                            placeholder="Select sheet"
+                            [name]="type.panelName"
+                            [id]="type.panelName"
+                            [(ngModel)]="type.sheet.sheetId"
+                            [ngModelOptions]="{ standalone: true }"
+                            (onSelectChange)="
+                              handleChangeSheetName($event, type)
+                            "
+                            [aria-label]="'Select sheet for ' + type.panelName"
+                          ></dv-select>
+                        </dv-form-element>
+                      </div>
+                    </div>
+                    <div class="col-md-6 align-items-center">
+                      <div
+                        col="5"
+                        class="space-on-top space-on-bottom-xl text-right"
+                      >
+                        <dv-label
+                          label="Use Saved Mapping"
+                          type="bold"
+                        ></dv-label>
+                      </div>
+                      <div col="5">
+                        <dv-form-element
+                          [fieldName]="'Use Saved Mapping'"
+                          elementCol="0"
+                        >
+                          <dv-select
+                            [list]="type.savedMappings"
+                            bindLabel="name"
+                            bindValue=""
+                            placeholder="Select Mapping"
+                            [name]="type.preivousMappingSelected"
+                            [(ngModel)]="type.preivousMappingSelected"
+                            [disabled]="type.sheet.columnHeaders?.length < 1"
+                            (onSelectChange)="
+                              handleUsePreviousMappingSelection($event, type, i)
+                            "
+                            [aria-label]="
+                              'Select saved mapping for ' + type.panelName
+                            "
+                          ></dv-select>
+                        </dv-form-element>
+                      </div>
+                      <div col="2" class="text-right">
+                        <button
+                          type="button"
+                          class="btn btn-default space-on-left"
+                          tooltip="Clear All Mapping"
+                          (click)="resetMapping(type)"
+                          [attr.aria-label]="
+                            'Clear all mapping for ' + type.panelName
+                          "
+                        >
+                          <span appIcon name="refresh"></span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="row space-on-top-xl space-on-bottom-xl max-height-350px"
+                    [class.border-bottom]="type.sheet.columnHeaders?.length > 4"
+                  >
+                    <div class="col-md-12 no-padding">
+                      <app-empty-state
+                        message="No sheet selected"
+                        [hidden]="type.sheet.columnHeaders?.length"
+                      ></app-empty-state>
+                      <table
+                        class="table table-bordered"
+                        *ngIf="type.sheet.columnHeaders?.length"
+                      >
+                        <tbody>
+                          <tr
+                            *ngFor="
+                              let columnHeader of type.sheet.columnHeaders;
+                              let in = index
+                            "
+                            class="display-flex"
+                          >
+                            <td width="50%" class="align-items-center">
+                              {{ columnHeader }}
+                            </td>
+                            <td width="50%">
+                              <dv-select
+                                [list]="type.sheet.mappingFields"
+                                bindLabel="label"
+                                bindValue="name"
+                                [clearable]="true"
+                                placeholder="Select DV field"
+                                [aria-label]="
+                                  type.sheet.mapping_metadata[columnHeader] ||
+                                  'Select DV Field'
+                                "
+                                [name]="'mappingField_' + in"
+                                [(ngModel)]="
+                                  type.sheet.mapping_metadata[columnHeader]
+                                "
+                                [ngModelOptions]="{ standalone: true }"
+                                addTagText="Add New"
+                                [addTag]="
+                                  type.entityType != 'team_member'
+                                    ? customFieldWrapper(columnHeader)
+                                    : false
+                                "
+                                (onClear)="handleClear(i, columnHeader)"
+                                (ngModelChange)="
+                                  handleColumnNameMapping(
+                                    $event,
+                                    i,
+                                    columnHeader
+                                  )
+                                "
+                                appendTo="body"
+                              ></dv-select>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="row align-items-center">
+                    <div class="col-md-8">
+                      <div
+                        *ngIf="
+                          type.mandatoryFieldNames?.length > 0 &&
+                          type.mandatoryFieldNames?.length >
+                            type.sheet.mandatoryMappedCount &&
+                          clickedSubmit
+                        "
+                        class="danger"
+                      >
+                        *Mapping of mandatory fields is required to proceed.
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-right">
+                        <dv-button
+                          *ngIf="type?.preivousMappingSelected"
+                          btnType="secondary"
+                          btnClass="btn btn-secondary space-on-right"
+                          (onClick)="
+                            confirmBeforeUpdatePreviousSelectedMapping(type)
+                          "
+                          [loader]="isSavingMapping"
+                          tooltipText="Update and save the mapping changes with the current. Review saved mapping in the Firm Settings > Bulk Upload > Save Mappings."
+                          [ariaLabel]="
+                            'Save and update mapping for ' + type.panelName
+                          "
+                        >
+                          Save and Update
+                        </dv-button>
+                        <dv-button
+                          *ngIf="type.sheet?.mappedCount > 0"
+                          [disabled]="loading"
+                          btnType="secondary"
+                          btnClass="btn btn-secondary"
+                          [tooltipText]="
+                            type?.preivousMappingSelected
+                              ? 'Save current mapping as new to reuse later. Review saved mapping in the Firm Settings > Bulk Upload > Save Mappings.'
+                              : 'Save the mapping to reuse later. Review saved mapping in the Firm Settings > Bulk Upload > Save Mappings.'
+                          "
+                          (onClick)="saveCurrentMapping()"
+                          [ariaLabel]="
+                            type?.preivousMappingSelected
+                              ? 'Save current mapping as new for ' +
+                                type.panelName
+                              : 'Save mapping for ' + type.panelName
+                          "
+                        >
+                          {{
+                            type?.preivousMappingSelected
+                              ? "Save as New"
+                              : "Save"
+                          }}
+                        </dv-button>
+                      </div>
+                    </div>
+                  </div>
+                </accordion-group>
+              </div>
+            </div>
+          </accordion>
+        </dv-step>
+      </dv-stepper>
+    </div>
+  </div>
+</div>

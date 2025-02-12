@@ -1,0 +1,184 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <span
+        appIcon
+        *ngIf="diligences[0].entity_type == 'Vehicle'"
+        name="vehicle-car"
+        class="space-on-right vehicle-icon-new-request align-middle"
+      ></span>
+      <span
+        appIcon
+        *ngIf="diligences[0].entity_type == 'Fund'"
+        name="fund"
+        class="space-on-right vehicle-icon-new-request align-middle"
+      ></span>
+      <span
+        class="align-middle"
+        *ngIf="selectedDiligenceRecords.length == 0 || !isInvestor"
+      >
+        Related Projects
+      </span>
+      <span *ngIf="selectedDiligenceRecords.length > 0 && isInvestor">
+        <strong
+          >Selected Records :
+          <span class="badge">{{
+            selectedDiligenceRecords.length
+          }}</span></strong
+        >
+      </span>
+      <a
+        *ngIf="selectedDiligenceRecords.length > 0 && isInvestor"
+        class="btn btn-default space-on-left-lg"
+        [tooltip]="'Withdraw requests'"
+        (click)="confirmBulkAction('withdraw')"
+      >
+        <strong>
+          <span appIcon name="close"></span>
+        </strong>
+      </a>
+    </span>
+  </div>
+
+  <div class="panel-body" *ngIf="!diligences">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="60"></app-spinner>
+  </div>
+
+  <div class="panel-body" *ngIf="diligences && diligences.length == 0">
+    <app-empty-state message="There are no related projects"></app-empty-state>
+  </div>
+
+  <div
+    class="panel-body has-notes-form clear-padding"
+    *ngIf="diligences && diligences.length > 0"
+  >
+    <table *ngIf="!isModal" class="table workflows_table">
+      <tbody>
+        <tr *ngFor="let diligence of diligences">
+          <td>
+            <input
+              class="align-middle clickable clear-margin"
+              *ngIf="isInvestor"
+              (change)="diligenceSelectionChanged(diligence)"
+              type="checkbox"
+              name="diligence_{{ diligence.id }}"
+              id="diligence_{{ diligence.id }}"
+              [(ngModel)]="diligence.isSelected"
+              [attr.aria-label]="diligence?.entity_name"
+            />
+
+            <a
+              *ngIf="diligences[0].entity_type == 'Vehicle'"
+              (click)="
+                redirectToProject(
+                  'app.diligence.firms.funds.vehicles.project.questionnaire',
+                  {
+                    fromfirmId: diligence.fromfirm_id,
+                    tofirmId: diligence.tofirm_id,
+                    fundId: diligence.parent_entity_id,
+                    vehicleId: diligence.entity_id,
+                    diligenceId: diligence.id
+                  }
+                )
+              "
+            >
+              &nbsp;&nbsp;{{ diligence.entity_name }}
+            </a>
+
+            <a
+              *ngIf="diligences[0].entity_type == 'Fund'"
+              (click)="
+                redirectToProject(
+                  'app.diligence.firms.strategies.funds.project.questionnaire',
+                  {
+                    fromfirmId: diligence.fromfirm_id,
+                    tofirmId: diligence.tofirm_id,
+                    strategyId: diligence.parent_entity_id,
+                    fundId: diligence.entity_id,
+                    diligenceId: diligence.id
+                  }
+                )
+              "
+            >
+              {{ diligence.entity_name }}
+            </a>
+          </td>
+          <td class="text-center">
+            <span diligenceStatus [status]="diligence.status"></span>
+          </td>
+          <td>
+            <small class="text-muted">
+              as of
+              {{
+                (diligence.lastupdated_at
+                  ? diligence.lastupdated_at
+                  : diligence.created_at
+                ) | dvDate
+              }}
+            </small>
+          </td>
+          <td>
+            <dv-progress-bar
+              [value]="diligence.percentage_completed"
+              type="success"
+              class="bs-progress"
+            >
+              <span
+                [ngClass]="{
+                  'text-black': diligence.percentage_completed == 0
+                }"
+                class="text-nowrap"
+              >
+                {{ diligence.percentage_completed }}%
+              </span>
+            </dv-progress-bar>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table *ngIf="isModal" class="table workflows_table">
+      <tbody>
+        <tr *ngFor="let diligence of diligences">
+          <td>
+            <input
+              class="align-middle clickable clear-margin"
+              *ngIf="isInvestor"
+              (change)="diligenceSelectionChanged(diligence)"
+              type="checkbox"
+              name="diligence_{{ diligence.id }}"
+              id="diligence_{{ diligence.id }}"
+              [(ngModel)]="diligence.isSelected"
+            />
+            <span *ngIf="diligences[0].entity_type == 'Vehicle'">
+              &nbsp;&nbsp;{{ diligence.entity_name }}
+            </span>
+            <span *ngIf="diligences[0].entity_type == 'Fund'">
+              {{ diligence.entity_name }}
+            </span>
+          </td>
+          <td class="text-center">
+            <span diligence-status="diligence.status"></span>
+          </td>
+          <td>
+            <small class="text-muted">
+              as of
+              {{
+                (diligence.lastupdated_at
+                  ? diligence.lastupdated_at
+                  : diligence.created_at
+                ) | dvDate
+              }}
+            </small>
+          </td>
+          <td>
+            <dv-progress-bar
+              [value]="diligence.percentage_completed"
+              type="success"
+            >
+            </dv-progress-bar>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

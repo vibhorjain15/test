@@ -1,0 +1,11 @@
+<app-modal
+  [title]="img"
+  [initialTemplate]="PartnerDetail"
+  [firstButtonLabel]="buttonLabel"
+  (onFirstClick)="handleModalFirstClick()"
+  [isLoading]="loader"
+></app-modal>
+
+<ng-template #PartnerDetail
+  ><div class="partner-height" [innerHtml]="partner.description"></div>
+</ng-template>

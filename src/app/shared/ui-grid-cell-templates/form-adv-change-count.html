@@ -1,0 +1,13 @@
+<ui-grid-cell-contents>
+  <a ui-sref="app.form_adv.firm.filings_history({firmCRD: row.entity.firmCRD})"
+     uib-tooltip="Compare the changes across filings"
+     data-ng-show="row.entity.changeCount  > 0">
+    <span humanize="compactInteger"
+          humanize-input="row.entity.changeCount">
+    </span>
+  </a>
+
+  <span data-ng-show="row.entity.changeCount  == 0" class="label label-success">
+    No Changes
+  </span>
+</ui-grid-cell-contents>

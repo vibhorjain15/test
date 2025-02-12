@@ -1,0 +1,164 @@
+<div class="container">
+  <div class="row clearfix">
+    <div class="authentication-form-wrapper max-width-50-pct">
+      <div class="logo-wrapper space-on-bottom">
+        <img
+          src="/assets/images/logo.png"
+          alt="DiligenceVault brand logo"
+          class="logo"
+        />
+      </div>
+
+      <app-spinner *ngIf="!user"></app-spinner>
+
+      <p class="alert alert-danger" *ngIf="alertMessage">
+        {{ alertMessage }}
+      </p>
+
+      <div *ngIf="user && !user.conversionDateTime">
+        <helper-text>
+          You are activating your account with email
+          <strong> {{ user.userName }} </strong>.
+        </helper-text>
+
+        <form
+          class="form-horizontal"
+          [formGroup]="activateForm"
+          autocomplete="off"
+        >
+          <div class="row">
+            <div class="col-md-6 col-sm-12">
+              <dv-form-element
+                [modelController]="activateForm.get('userName')"
+                labelPosition="top"
+                label="Account Email Address"
+                elementCol="12"
+                [showRightIcon]="false"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="mail"></span>
+                  </span>
+                  <input
+                    id="userName"
+                    type="text"
+                    class="form-control"
+                    formControlName="userName"
+                    tooltip="You are activating your account with this email address"
+                  />
+                </div>
+              </dv-form-element>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <dv-form-element
+                [modelController]="activateForm.get('firmName')"
+                labelPosition="top"
+                label="Name of Your Firm"
+                elementCol="12"
+                [showRightIcon]="false"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="institution"></span>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="firmName"
+                    id="firmName"
+                  />
+                </div>
+              </dv-form-element>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 col-sm-12">
+              <dv-form-element
+                [modelController]="activateForm.get('firstName')"
+                labelPosition="top"
+                label="First Name"
+                elementCol="12"
+                [isRequired]="true"
+                errorMessage="Please enter a valid first name"
+                [showRightIcon]="false"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="user"></span>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="firstName"
+                    id="firstName"
+                  />
+                </div>
+              </dv-form-element>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <dv-form-element
+                [modelController]="activateForm.get('lastName')"
+                labelPosition="top"
+                label="Last Name"
+                elementCol="12"
+                [isRequired]="true"
+                errorMessage="Please enter a valid last name"
+                [showRightIcon]="false"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="user"></span>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="lastName"
+                    id="lastName"
+                  />
+                </div>
+              </dv-form-element>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 col-sm-12">
+              <dv-password
+                *ngIf="!user.is_saml_enabled && user.is_default"
+                [twoColumnLayout]="true"
+                (onSubmit)="activateAccount()"
+                #password
+              ></dv-password>
+            </div>
+          </div>
+
+          <div
+            class="col-md-offset-4 col-md-4 space-on-bottom-xl space-on-top-xl"
+          >
+            <div>
+              <dv-button
+                btnWidth="100"
+                btnClass="activate-btn"
+                [loader]="loading"
+                (onClick)="activateAccount()"
+                type="submit"
+              >
+                Activate My DiligenceVault Account
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="user?.conversionDateTime">
+        <p class="alert alert-success">
+          Congratulations {{ user.firstName }}, your account email
+          {{ user.userName }} is already activated
+        </p>
+        <div class="col-md-offset-3 col-md-6 space-on-bottom-xl">
+          <a class="btn btn-primary btn-block" (click)="redirectToLogin()"
+            >Login
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

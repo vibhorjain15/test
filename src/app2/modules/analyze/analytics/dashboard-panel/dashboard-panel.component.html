@@ -1,0 +1,52 @@
+<div class="dashboard-col" [col]="config.col ? config.col :'6'">
+<div class="dashboard-panel" #container>
+  <div class="panel-heading">
+    <h5 class="panel-title position-relative" *ngIf="widgetTitle">
+      {{ widgetTitle }}
+    </h5>
+    <div class="dashboard-panel-controls">
+      <dv-button
+        [btnType]="'default'"
+        tooltip="Apply Filters"
+        container="body"
+        placement="left"
+        class="hidden"
+        [ariaLabel]="'Apply Filters'"
+      >
+        <span appIcon name="filter"></span>
+      </dv-button>
+      <dv-button
+        [btnType]="'default'"
+        *ngIf="!fullscreen_mode"
+        tooltip="Enter Fullscreen Mode"
+        container="body"
+        placement="left"
+        (onClick)="enterFullscreenMode()"
+        [loader]="false"
+        [ariaLabel]="'Enter Fullscreen Mode'"
+      >
+        <span appIcon name="expand"></span>
+      </dv-button>
+      <dv-button
+        *ngIf="fullscreen_mode"
+        [btnType]="'default'"
+        tooltip="Exit Fullscreen Mode"
+        container="body"
+        placement="left"
+        (onClick)="exitFullscreenMode()"
+        [ariaLabel]="'Exit Fullscreen Mode'"
+      >
+        <span appIcon name="compress"></span>
+      </dv-button>
+    </div>
+  </div>
+  <div class="js-widget-container">
+    <div *ngIf="config.type === 'mapael'">
+      <app-world-map [options]="config.options"></app-world-map>
+    </div>
+    <div *ngIf="config.type === 'donut_chart'">
+      <app-donut-chart [config]="config"></app-donut-chart>
+    </div>
+  </div>
+</div>
+</div>

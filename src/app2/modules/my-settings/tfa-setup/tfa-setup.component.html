@@ -1,0 +1,82 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Add DiligenceVault to Google Authenticator app</h5>
+  </div>
+  <div class="panel-body">
+    <ol>
+      <li class="space-on-bottom-lg">
+        <strong>Configure the app</strong>
+        <div class="row clearfix">
+          <div col="6">
+            <p>
+              Open the app and add your DiligenceVault account by scanning the
+              QR code to the right
+            </p>
+            <p>
+              If you can't use a QR code,
+              <a class="clickable" (click)="displayPskCodeDialog()">
+                enter this text code
+              </a>
+            </p>
+          </div>
+          <div col="6">
+            <img [src]="qr_code_url" alt="QR Code to enable two factor authentication" />
+          </div>
+        </div>
+      </li>
+      <li>
+        <p>
+          <strong>Enter the 6-digit code that the application generates</strong>
+        </p>
+        <div class="row clearfix">
+          <div col="6">
+            <form novalidate autocomplete="off">
+              <dv-form-element
+                [modelController]="codeController"
+                [fieldName]="'Code'"
+                [elementCol]="12"
+                [elementClass]="'space space-on-bottom'"
+                [errorMessage]="
+                  codeController?.touched && codeController?.invalid
+                    ? errorHandler()
+                    : null
+                "
+                [spacing]="'small'"
+                [isRequired]="true"
+              >
+                <input
+                  class="form-control"
+                  [formControl]="codeController"
+                  placeholder="123456"
+                  id="code"
+                  name="code"
+                  aria-label="Enter the 6-digit code that the application generates"
+                  autocomplete="off"
+                />
+              </dv-form-element>
+
+              <div class="form-group">
+                <dv-button
+                  [btnType]="'default'"
+                  [btnClass]="'space-on-right'"
+                  (onClick)="navigateToIntro()"
+                  [ariaLabel]="'Navigate back to introduction'"
+                >
+                  Back
+                </dv-button>
+                <dv-button
+                  [loader]="validating"
+                  (onClick)="validateCode()"
+                  class="minwidth"
+                  ariaLabel="Enable Two-Factor Authentication"
+                >
+                  <span> Enable Two-Factor Authentication</span>
+                </dv-button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</div>

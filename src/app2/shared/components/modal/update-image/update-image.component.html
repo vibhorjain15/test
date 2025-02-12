@@ -1,0 +1,55 @@
+<app-modal
+  [title]="'Upload New Image'"
+  firstButtonLabel="Update"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="UploadImageModalref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #UploadImageModalref>
+  <div class="row clearfix">
+    <div col="6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Cropping Area</div>
+
+        <div class="panel-body overflow-y-scroll">
+          <label
+            class="image-box text-muted text-center clickable"
+            for="select-image"
+            *ngIf="!imageDataURI"
+          >
+            <span appIcon name="image" size="4x"></span>
+            <p>
+              <strong>Click to select image file</strong>
+            </p>
+            <input
+              type="file"
+              id="select-image"
+              accept="image/*"
+              (change)="fileChangeCallback($event)"
+            />
+          </label>
+
+          <div *ngIf="isImage" class="image-cropper">
+            <div id="mainImgContainer">
+              <img id="cropImgDesignPref" alt="uploaded image" />
+            </div>
+          </div>
+
+          <span class="italic text-muted" *ngIf="imageDataURI"
+            >Image cannot be smaller than 100px &times; 100px</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div col="6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Preview</div>
+        <div class="panel-body preview-panel">
+          <div class="imgPreview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

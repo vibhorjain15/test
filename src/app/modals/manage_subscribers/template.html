@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    Manage Details
+    <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+  </h3>
+</div>
+
+<div class="modal-body">
+  <dv-subscribers data-ng-if="vm.diligence" entity-type="'Duediligence'" entity-id="vm.diligence.id" functions="vm.functions" show-header="false"></dv-subscribers>
+  <dv-sent-to-info data-ng-if="vm.diligence" diligence="vm.diligence"></dv-sent-to-info>
+  <dv-audit data-ng-if="vm.diligence" entity-id="vm.diligence.id"></dv-audit>
+  <dv-related-diligences refresh-linked-projects="vm.getRelatedDiligences()"
+    data-ng-if="vm.related_diligences.length > 0 && vm.diligence" related-diligences="vm.related_diligences"
+    is-modal="true"></dv-related-diligences>
+</div>
+
+<div class="modal-footer">
+  <button btn-type="default" data-ng-click="vm.cancel()">Close</button>
+</div>

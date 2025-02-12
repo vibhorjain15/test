@@ -1,0 +1,18 @@
+<div data-ng-if="!vm.dd_document.is_image"
+     class="full-height">
+  <spinner data-ng-hide="vm.iframe_loaded"></spinner>
+
+  <iframe frameborder="0"
+          class="full-width full-height"
+          iframe-url="vm.document_url"
+          data-ng-show="vm.iframe_loaded"
+          iframe-onload="vm.closeSpinner()">
+  </iframe>
+</div>
+
+<div data-ng-if="vm.dd_document.is_image"
+     class="text-center">
+  <img ng-src="{{vm.signed_url}}"
+       class="img-repsonsive inline-block"
+       alt="{{vm.dd_document.name}}">
+</div>

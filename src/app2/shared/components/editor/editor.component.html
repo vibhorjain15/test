@@ -1,0 +1,18 @@
+<ng-container *ngIf="!isLite && isLayoutReady">
+  <ckeditor
+    [editor]="Editor"
+    [disabled]="disabled"
+    [config]="config"
+    (ready)="onReady($event)"
+    (change)="onChange($event)"
+    (error)="onError($event)"
+  />
+</ng-container>
+<ng-container *ngIf="isLite">
+  <div class="readonly-mode" (click)="enableEditorMode()">
+    <div
+      [innerHTML]="value || config.placeholder | cleanHtml | dvSafeHtml"
+      [class.placeholder]="!value"
+    ></div>
+  </div>
+</ng-container>

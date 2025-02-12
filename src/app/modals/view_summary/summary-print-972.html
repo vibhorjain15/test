@@ -1,0 +1,319 @@
+<div id="js-print-area">
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-body">
+            <!--<spinner data-ng-hide="vm.formadv_firm"></spinner>-->
+
+            <div class="dv-table dv-table-middle dd-info-panel"
+                    >
+                <div class="bordered-right cell">
+                    <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                        {{::vm.entity_name}} ({{::vm.strategy_name}})
+                    </h4>
+                </div>
+                <div class="pull-right cell">
+                    <h4 class="clear-margin lh1-5 word-break-break-all">
+                        Commitment / Co-Investment Amount ($mm): {{::vm.commitment}} / {{::vm.coinvestment}}
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+              <span class="align-middle">
+              Summary
+              </span>
+        </div>
+        <div class="panel-body full-height align-middle">
+            <!--<spinner data-ng-hide="vm.profile"></spinner>-->
+            <table class="fund-profile-items space-on-top space-on-bottom">
+                <tbody>
+                <tr class="title-row">
+                    <td><small class="text-uppercase">Fund Size</small></td>
+                    <td><small class="text-uppercase">Geographic Focus</small></td>
+                    <td><small class="text-uppercase">Expected Beta</small></td>
+                    <td><small class="text-uppercase">Expected Correlation</small></td>
+                    <td><small class="text-uppercase">Target Net IRR</small></td>
+                    <td><small class="text-uppercase">Target Net MOIC</small></td>
+                </tr>
+                <tr class="icon-row text-muted">
+                    <td><icon name="tasks" size="2x"></icon></td>
+                    <td><icon name="location" size="2x"></icon></td>
+                    <td><icon name="strategy" size="2x"></icon></td>
+                    <td><icon name="grid" size="2x"></icon></td>
+                    <td><icon name="bar-graph" size="2x"></icon></td>
+                    <td><icon name="bar-graph" size="2x"></icon></td>
+                </tr>
+                <tr>
+                    <td><small>{{::vm.assets | toMillion}}</small></td>
+                    <td><small>{{::vm.geography}}</small></td>
+                    <td><small>{{::vm.beta | number:2}}</small></td>
+                    <td><small>{{::vm.correlation | number:2}}</small></td>
+                    <td><small>{{::vm.IRR | number:2}}%</small></td>
+                    <td><small>{{::vm.MOIC | number:2}}x</small></td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Opportunity</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.internal_opportunity"></span>
+            </div>
+        </div>
+        <hr>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.opportunity"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Team</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.internal_team"></span>
+            </div>
+        </div>
+        <hr>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.team"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Process</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.internal_process"></span>
+            </div>
+        </div>
+        <hr>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.process"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Firm Profile</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.internal_firm"></span>
+            </div>
+        </div>
+        <hr>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+              <span ng-bind-html="vm.firm"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Track Record</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+               <span ng-bind-html="vm.internal_track_record"></span>
+            </div>
+        </div>
+        <hr>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+               <span ng-bind-html="vm.track_record"></span>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Fund Name</th>
+                    <th class="text-center">Vintage</th>
+                    <th class="text-center">Fund Size</th>
+                    <th class="text-center">Total Contribution</th>
+                    <th class="text-center">Total Distribution</th>
+                    <th class="text-center">Current NAV</th>
+                    <th class="text-center">Net IRR</th>
+                    <th class="text-center">Gross IRR</th>
+                    <th class="text-center">TVPI Gross of Fees</th>
+                    <th class="text-center">TVPI Net of Fees</th>
+                    <th class="text-center">DPI</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr data-ng-repeat="data in [1, 2, 3, 4]">
+                    <td>Entity {{$index+1}}</td>
+                    <td class="text-center">{{2001+($index+3)}}</td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                    <td class="text-center"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Potential Risk Flags</h5>
+        </div>
+        <div class="panel-body"
+           data-ng-if="vm.flagged_questions_true && vm.flagged_questions_true.length != 0">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Question</th>
+                    <th class="text-center">Flag Value</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr data-ng-repeat="flag in vm.flagged_questions_true">
+                    <td>{{flag}}</td>
+                    <td class="text-center">Yes</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-body"
+           data-ng-if="vm.flagged_questions_false && vm.flagged_questions_false.length != 0">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Question</th>
+                    <th class="text-center">Flag Value</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr data-ng-repeat="flag in vm.flagged_questions_false">
+                    <td>{{flag}}</td>
+                    <td class="text-center">No</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--<div class="row clearfix avoid-page-break-inside">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Fund Terms</h5>
+                </div>
+                <div class="panel-body">
+                    <div class="panel-body full-height align-middle">
+                        
+                        <table class="fund-term-items space-on-top space-on-bottom">
+                            <tbody>
+                            <tr>
+                                <td><small class="text-uppercase">TERM 1</small></td>
+                                <td><small>{{::vm.term.assets}}</small></td>
+
+                            </tr>
+                            <tr>
+                                <td><small class="text-uppercase">TERM 2</small></td>
+                                <td><small>{{::vm.term.geograhy}}</small></td>
+
+                            </tr>
+                            <tr>
+                                <td><small class="text-uppercase">TERM 3</small></td>
+                                <td><small>{{::vm.term.geograhy}}</small></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Liquidity</h5>
+                </div>
+                <div class="panel-body">
+                    <div class="panel-body full-height align-middle">
+                        
+                        <table class="fund-term-items space-on-top space-on-bottom">
+                            <tbody>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">TERM 1</small></td>
+                                <td><small>{{::vm.liquidity.assets}}</small></td>
+
+                            </tr>
+                            <tr class="icon-row text-muted">
+                                <td><small class="text-uppercase">TERM 2</small></td>
+                                <td><small>{{::vm.liquidity.geograhy}}</small></td>
+
+                            </tr>
+                            <tr>
+                                <td><small class="text-uppercase">TERM 3</small></td>
+                                <td><small>{{::vm.liquidity.geograhy}}</small></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>-->
+
+    <!--<div class="row clearfix avoid-page-break-inside">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+            <span class="align-middle">
+              Key Service Providers
+            </span>
+                </div>
+                <div class="panel-body">
+                    PANEL 1
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+            <span class="align-middle">
+              Exceptions
+            </span>
+                </div>
+                <div class="panel-body">
+                    PANEL 2
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>

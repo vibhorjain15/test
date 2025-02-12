@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "es2020",
+    "lib": ["es2018", "dom", "ES2021"],
+    "baseUrl": "./",
+    "paths": {
+      "analyze": ["src/app2/modules/analyze/src/index.ts"],
+      "dv-dashboard": ["src/app2/modules/dashboard/src/index.ts"],
+      "data-hub": ["src/app2/modules/data-hub/src/index.ts"],
+      "entity": ["src/app2/modules/entity/src/index.ts"],
+      "firm-settings": ["src/app2/modules/firm-settings/src/index.ts"],
+      "form_adv": ["src/app2/modules/form_adv/src/index.ts"],
+      "invite": ["src/app2/modules/invite/src/index.ts"],
+      "my-settings": ["src/app2/modules/my-settings/src/index.ts"],
+      "project": ["src/app2/modules/project/src/index.ts"],
+      "qa-bank": ["src/app2/modules/qa-bank/src/index.ts"],
+      "releases": ["src/app2/modules/releases/src/index.ts"],
+      "reports": ["src/app2/modules/reports/src/index.ts"],
+      "stream": ["./node_modules/stream-browserify"]
+    }
+  }
+}

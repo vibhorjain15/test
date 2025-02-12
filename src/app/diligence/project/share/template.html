@@ -1,0 +1,244 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-share></ng2-share>
+</div>
+<br />
+<div data-ng-if="vm.Utils.isAngularJS()">
+<spinner broad-spinner spinner-height='40' data-ng-if="vm.loading"></spinner>
+<div data-ng-show="!vm.loading">
+  <div class="row clearfix">
+    <div class="col-md-12">
+      <div class="panel panel-default borderless-top">
+        <div class="panel-body clearfix">
+
+          <spinner broad-spinner spinner-height='40' data-ng-if="!vm.diligence"></spinner>
+
+          <div class="dv-table dv-table-middle dd-info-panel" data-ng-if="vm.diligence">
+            <div class="bordered-right cell">
+              <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                {{::vm.diligence.entity_name}}
+              </h4>
+              <div>
+                  <small class="text-muted" data-ng-if="vm.diligence.last_updated_at">
+                   Last Updated {{::vm.diligence.last_updated_at|date}}
+                  </small>
+              </div>
+            </div>
+
+            <div class="bordered-right text-center cell">
+              <button uib-tooltip="{{vm.dd_status != 'Approved' ? 'Only approved diligences are eligible to be shared' : 'Share Diligence'}}" btn-type="transparent" data-ng-class="{'disabled': vm.dd_status != 'Approved'}" data-ng-click="vm.startSharingProcess()" data-ng-if="!vm.startDDShare">
+                <div class="font-size-20"><span class="dvi dvi-share"></span></div>
+                <small>Share Diligence</small>
+              </button>
+              <button btn-type="transparent" data-ng-click="vm.cancelSharingProcess()" data-ng-if="vm.startDDShare">
+                <div><icon name="close" size="2x"></icon></div>
+                <small>Cancel</small>
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <form-wizard name="new-request-investor"
+               display-footer="true"
+               on-finish="vm.sendDueDiligenceRequest()"
+               data-ng-if="vm.startDDShare">
+    <wizard-step step-title="'Investor'"
+                 step-content-header-title="'Select investor(s) on the left hand panel, using search and filters to narrow your search. Don\'t see what you want? Add a new one to the list.'"
+                 before-enter="vm.resetFlags()"
+                 can-exit="vm.canProceedToReview">
+
+      <div class="row clearfix">
+        <div col="12">
+          <p class="alert alert-danger"
+             data-ng-show="vm.display_investor_selection_error">
+            Please select at least one investor with at least one contact / recipient to proceed
+          </p>
+
+          <dd-investor-selector selection="vm.selected_investors"
+                                select-all-investors="vm.request.all_investor_flag"
+                                disable-view="true">
+          </dd-investor-selector>
+        </div>
+      </div>
+    </wizard-step>
+
+    <wizard-step step-title="'Review'"
+                 step-content-header-title="'Please review your request'"
+                 before-enter="vm.setEntities()"
+                 next-button-label="Share Diligence"
+                 next-button-type="orange">
+
+      <div class="row clearfix">
+        <div col="6" class="bordered-right">
+          <div col="10" offset="1">
+
+            <form name="email_text_form">
+              <div class="space-on-top-xxl space-on-bottom-xxl">
+                  <dv-checkbox
+                          data-ng-model="vm.use_email_templates"
+                          data-ng-change="vm.getDefaultEmailTemplate(vm.use_email_templates)"
+                          data-ng-disabled="vm.disallow_custom_edits">
+                      <dv-checkbox-label>
+                          <b>Use email templates</b>
+                      </dv-checkbox-label>
+                  </dv-checkbox>
+              </div>
+                <form-group data-ng-if="vm.use_email_templates && vm.email_templates.length > 0" field-name="Email Text"
+                            tooltip-placement="left" data-ng-if="vm.email_templates.length">
+                    <label>Email Template</label>
+                    <select class="form-control"
+                                           id="alert-frequency"
+                                           chosen
+                                           data-ng-model="vm.default_email_template_message_id"
+                                           data-ng-options="template.id as template.name for template in vm.email_templates"
+                                           data-ng-change="vm.renderEmailTemplate(vm.default_email_template_message_id)">
+                                       <option value=""></option>
+                                   </select>
+                </form-group>
+                <form-group data-ng-if="vm.email_templates.length == 0 && vm.use_email_templates">
+                  <label>Email Template</label>
+                  <p>No email templates present, <a class="clickable" ui-sref="app.firm.settings.email_templates">click here</a> to add one</p>
+                </form-group>
+                <br>
+                <form-group field-name="Email Text" tooltip-placement="left" data-ng-if="!vm.disallow_custom_edits">
+                  <label>Email Message</label>
+                  <textarea id="email-text"
+                            ui-tinymce="vm.tinymceOptions"
+                            class="form-control"
+                            data-ng-model="vm.email_text"></textarea>
+                </form-group>
+            </form>
+        </div>
+      </div>
+      <div col="6">
+        <h4 class="alert alert-info text-center clear-margin-top space-on-left-lg">
+          Information Request Preview
+        </h4>
+
+        <div col="11">
+          <dl class="dl-horizontal clear-margin-bottom">
+            <dt>Project:</dt>
+            <dd>{{::vm.diligence.entity_name}}</dd>
+          </dl>
+          <hr>
+
+          <dl class="dl-horizontal clear-margin-bottom">
+            <dt>Investors</dt>
+            <dd data-ng-hide="vm.request.all_investor_flag">
+            <span>
+              <a href="" uib-tooltip="{{vm.formatTooltip(vm.all_selected_investors_arr)}}">{{vm.all_selected_investors_arr.length}}</a> investors with <a href="" uib-tooltip="{{vm.formatTooltip(vm.all_selected_investors_contacts_arr)}}">{{vm.all_selected_investors_contacts_arr.length}}</a> recipients
+            </span>
+            </dd>
+            <dd data-ng-show="vm.request.all_investor_flag">This request is for all active investors</dd>
+          </dl>
+
+          <dl class="dl-horizontal clear-margin-bottom">
+            <dt data-ng-if="!vm.request.is_internal" data-ng-class="{'space-on-top-lg': vm.email_text}">Email Msg</dt>
+            <dd>
+              <div data-ng-if="vm.email_text" class="email-text-wrapper">
+                <span class="word-break-break-all" data-ng-bind-html="vm.email_text"></span>
+              </div>
+              <span data-ng-if="!vm.email_text">--</span>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      </div>
+      <div class="row clearfix">
+        <dv-checkbox
+          data-ng-model="vm.accept_confidential_agreement"
+          label="I certify that this request is being sent to a prequalified investor as per our firm's regulatory and compliance standards.">
+        </dv-checkbox>
+      </div>
+
+    </wizard-step>
+  </form-wizard>
+
+  <div class="panel panel-default" data-ng-if="!vm.startDDShare && !vm.loading">
+    <div id="js-dd-docs-list" class="panel-body">
+      <dv-grid grid-resource="vm.sharedDiligence" grid-name="'project-manager-share'"></dv-grid>
+    </div>
+  </div>
+
+  <div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg" data-ng-class="{'in': vm.display_sidebar}" data-ng-show="vm.display_sidebar" id="js-sidebar-panel">
+    <div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <h5 class="panel-title">
+          <b class="js-sidebar-title">Follow-ups</b>
+          <a class="pull-right clickable link-disguise"
+             data-ng-click="vm.close()">
+            <icon name="close" size="lg"></icon>
+          </a>
+        </h5>
+      </div>
+      <spinner data-ng-show="vm.followupLoading"></spinner>
+
+      <div class="panel-body js-sidebar-content-container">
+        <p class="text-muted" data-ng-if="!vm.followup_responses.length && !vm.followupLoading">
+          <i>
+            No follow-ups to show. Would you like to add one?
+          </i>
+        </p>
+
+        <ul class="list-unstyled chat-bubbles pd-b-100">
+          <li data-ng-repeat="response in vm.followup_responses track by response.id" class="padding-right-xxl">
+            <div class="bubble"
+                 id="followup-response-{{response.id}}"
+                 data-ng-class="{'bubble-primary': response.firm_id == vm.current_user.firmInfo.id, 'bubble-default': response.firm_id != vm.current_user.firmInfo.id, 'pull-right': response.created_by == vm.current_user.id, 'pull-left': response.created_by != vm.current_user.id}">
+              <div class="bubbler">
+                <span data-ng-show="response.created_by == vm.current_user.id">You</span>
+
+                <span data-ng-hide="response.created_by == vm.current_user.id">
+                  {{::response.first_name}} {{::response.last_name}} ({{::response.firm_name}})
+                </span>
+              </div>
+
+              <div class="bubble-message" uib-tooltip="{{vm.formatDateTimeFormat(response.updated_at)}}">
+                <span class="pre-wrap">{{::response.text}}</span>
+
+                <div class="bubble-meta clearfix">
+                  <span class="pull-right">
+                     {{::response.updated_at | fromNow}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <form novalidate
+              name="vm.followup_form"
+              class="sidebar-form fixed-bottom"
+              data-ng-submit="vm.saveFollowupResponse()">
+          <form-group field-name="Response" validate-on="submit">
+            <textarea placeholder="Enter response here"
+                      class="form-control"
+                      msd-elastic="\n"
+                      data-ng-model="vm.new_followup_response.text"
+                      required></textarea>
+          </form-group>
+
+          <button type="submit"
+                  block
+                  button-loader="vm.saving_followup_response">
+              Follow up <span data-ng-if="vm.DVEntityDisplayName">with {{vm.DVEntityDisplayName}}</span>
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<!-- <div data-ng-show="!vm.loading && vm.dd_status != 'Approved'" class="text-center text-muted">
+  <br>
+  <small>Only completed and approved requests can be shared with investor</small>
+</div> -->

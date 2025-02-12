@@ -1,0 +1,18 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <div data-ng-hide="row.entity.is_tracking">
+        <button btn-type="primary"
+                size="sm"
+                data-ng-click="grid.appScope.vm.addFirmCRD(row)"
+                button-loader="row.adding_mapping">
+            Track
+        </button>
+    </div>
+    <div data-ng-show="row.entity.is_tracking">
+        <button btn-type="default"
+                size="sm"
+                data-ng-click="grid.appScope.vm.confirmMappingRemoval(row)"
+                button-loader="row.removing_mapping">
+            Untrack
+        </button>
+    </div>
+</ui-grid-cell-contents>

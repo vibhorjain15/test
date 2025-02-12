@@ -1,0 +1,37 @@
+<app-modal
+  [title]="'Upload CRDs'"
+  [firstButtonLabel]="'Upload'"
+  (onFirstClick)="submit()"
+  [initialTemplate]="templateRef"
+  [isFirstButtonDisabled]="!crdsCopy?.length"
+  [isLoading]="loading"
+>
+</app-modal>
+<ng-template #templateRef>
+  <form class="form-horizontal" autocomplete="off">
+    <dv-form-element
+      [modelController]="crds"
+      [fieldName]="'crd'"
+      [isRequired]="true"
+      [showRightIcon]="false"
+      [label]="'Add CRDs to track <small>(one per line)</small>'"
+      [errorMessage]="'CRD Upload is required'"
+      [for]="'crd-input'"
+    >
+      <textarea
+        [id]="'crd-input'"
+        class="form-control"
+        aria-label="Crd upload"
+        rows="3"
+        name="crds"
+        [formControl]="crds"
+        DvIntegerOnly
+      ></textarea>
+    </dv-form-element>
+    <div [ngClass]="{ 'text-success': crdsCopy?.length }" class="form-group">
+      <span class="control-label col-sm-3 fw-bolder">
+        <span>{{ crdsCopy ? crdsCopy.split("\n").length : 0 }} added</span>
+      </span>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,18 @@
+.label {
+  display: inline;
+  padding: 0.2em 0.6em 0.3em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: initial;
+  border-radius: 0.25em;
+}
+.label-primary {
+  background-color: var(--primary);
+}
+.label-warning {
+  background-color: var(--warning-dark);
+}

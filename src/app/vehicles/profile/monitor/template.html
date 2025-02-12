@@ -1,0 +1,224 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-vehicles-monitor></ng2-vehicles-monitor>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top hide-in-print-view">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-hide="vm.vehicle && vm.tags"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-show="vm.vehicle && vm.tags">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin">
+              {{vm.vehicle.display_name}} <span class="space-on-left label label-warning"  uib-tooltip="Deactivated by the owner firm"  ng-show="!vm.vehicle.platform_active">{{vm.statusLabel.INACTIVE}}</span>
+            </h4>
+            <p class="text-muted space-on-top" data-ng-if="vm.vehicle.fund_name">
+              <small>Parent Product:</small>
+              <small data-ng-if="!vm.is_manager">
+                <a ui-sref="app.firms.funds.profile.monitor({firmId: vm.vehicle.firm_id, fundId: vm.vehicle.fund_id})"><strong>{{vm.vehicle.fund_name}}</strong></a>
+              </small>
+              <small data-ng-if="vm.is_manager">
+                <a ui-sref="app.firms.funds.profile.aum_tr({firmId: vm.vehicle.firm_id, fundId: vm.vehicle.fund_id})"><strong>{{vm.vehicle.fund_name}}</strong></a>
+              </small>
+            </p>
+            <div data-ng-show="!vm.vehicle.is_active" class="space-on-top">
+              <span class="label label-danger">
+                INACTIVE
+              </span>
+            </div>
+          </div>
+
+          <div class="bordered-right cell">
+            <span class="pull-right" uib-dropdown>
+               <a href="" class="dropdown-toggle btn btn-transparent"
+                 uib-dropdown-toggle
+                 uib-tooltip="Edit or Delete Vehicle, Record Investment Activity,  View linked ADVs">
+                <div><icon name="ellipsis-h" size="2x"></icon></div>
+                <div class="space-on-top-n"><small>More Actions</small></div>
+              </a>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                <li>
+                  <a data-ng-click="vm.addTask()" role="button"><icon name="tasks" class="space-on-right-lg"></icon>Add task</a>
+                </li>
+                <li>
+                  <a ui-sref="app.partnership({entity_id: vm.vehicleId, entity_type: vm.entity_type, entity_name: vm.vehicle.name })" role="button"><icon name="bg-check" class="space-on-right-lg"></icon>Request background check</a>
+                </li>
+                <li>
+                    <a data-ng-click="vm.editVehicle()" role="button"><icon name="pencil" class="space-on-right-lg"></icon>Edit vehicle</a>
+                </li>
+                <li class="divider js-delete-button" data-ng-hide="!vm.vehicle.active"></li>
+                <li data-ng-hide="!vm.vehicle.is_active" >
+                    <a class="text-danger" data-ng-click="vm.deactivateVehicle()" role="button"><icon name="ban" class="space-on-right-lg"></icon>Mark as inactive</a>
+                </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="bordered-right w-320 cell" data-ng-if="vm.customDateFilter">
+            <dv-daterangepicker ng-model="vm.customDateFilter"
+                    min-date="vm.minDate" max-date="vm.maxDate"
+                    apply-method="vm.applyMethod"></dv-daterangepicker>
+          </div>
+
+          <div class="cell text-center">
+            <a class="btn btn-transparent"
+               ui-sref="app.monitor.vehicles">
+              <div><icon name="arrow-back" size="2x"></icon></div>
+              <small>Back to all {{vm.entity_type | standardPluralize}}</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="4" class="dv-notes-list-panel hide-in-print-view">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span>
+              <icon name="bookmark" class="space-on-right align-middle"></icon>
+
+              <span class="align-middle">
+                Relationship Summary
+              </span>
+            </span>
+            <div class="panel-controls">
+                <div class="panel-controls-wrapper">
+                    <a class="panel-control"
+                       data-ng-click="vm.editVehicle()"
+                       uib-tooltip ="Edit pipeline status / owner">
+                        <icon name="pencil"></icon>
+                    </a>
+                </div>
+              </div>
+          </div>
+          <div class="panel-body">
+              <ul class="list-unstyled due-diligence-history">
+                  <li><small class="text-muted text-uppercase">Relationship Status:</small> {{ vm.vehicle.relationship_status_name}}</li>
+                  <li ng-repeat="entry in vm.assignedFunctions"><small class="text-muted text-uppercase">{{entry.function_name}}:</small> <span class="user-tag-functions space-on-left" ng-repeat="user in entry.user_assigments">{{user.user_name}}</span></li>
+                  <li><small class="text-muted text-uppercase"># of Documents:</small> <a ui-sref="^.documents.list">{{vm.document_count}}</a></li>
+                  <li data-ng-show="vm.tags.length && vm.is_investor"><small class="text-muted text-uppercase">Tagged as:</small>
+                    <span data-ng-show="vm.tags.length">
+                      <span class="label-list">
+                        <span class="label label-default space-on-right text-uppercase"
+                              data-ng-repeat="tag in vm.tags">
+                          <small>{{tag.name}}</small>
+                        </span>
+                      </span>
+                    </span>
+                    <a class="clickable" data-ng-click="vm.displayTagsController()">
+                      <small>Edit Tags</small>
+                    </a>
+                  </li>
+                  <li data-ng-show="!vm.tags.length && vm.is_investor">
+                     <a href="" data-ng-click="vm.displayTagsController()">
+                      Why not tag this vehicle?
+                    </a>
+                  </li>
+              </ul>
+          </div>
+        </div>
+
+        <div class="dv-notes-list-panel">
+          <dv-custom-fields entity-type="'Vehicle'" entity-id="vm.vehicleId" custom-fields="vm.customFields" on-add="vm.manageCustomfield()"></dv-custom-fields>
+        </div>
+
+        <dv-tasks data-ng-if="vm.vehicle" entity-type="'Vehicle'" entity-id="vm.vehicleId" refresh-tasks="vm.refreshTasksList" date-filter="vm.dateRangeForDirectives"></dv-tasks>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <span>
+                <icon name="search" class="space-on-right align-middle"></icon>
+
+                <span class="align-middle">
+                  Diligence History <span data-ng-if="vm.diligences.length">({{vm.diligences.length}})</span>
+                </span>
+              </span>
+              <div class="panel-controls" data-ng-if="vm.is_investor">
+                <div class="panel-controls-wrapper">
+                    <a ui-sref="app.diligence.invite({vehicleId:vm.vehicleId})"
+                       class="panel-control"
+                       uib-tooltip ="Start new request">
+                        <icon name="plus"></icon>
+                    </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body historyBodyScroll">
+                <spinner broad-spinner spinner-height='40' data-ng-if="vm.loading_history"></spinner>
+                <empty-state message="No diligences available for this vehicle"
+                             data-ng-if="vm.diligences && !vm.diligences.length"></empty-state>
+                <ul class="list-unstyled due-diligence-history" data-ng-if="!vm.loading_history && vm.diligences">
+                    <li col="12" class="clear-horizontal-padding" data-ng-repeat="diligence in vm.diligences">
+                        <div col="12" class="full-width clear-horizontal-padding">
+                            <div col="3" class="align-middle text-center" data-ng-class="{'space-on-top-lg': (diligence.scheduled_for || diligence.status == 'Invited'), 'space-on-top-xl': !(diligence.scheduled_for || diligence.status == 'Invited')}">
+                                <span class="align-middle" diligence-status="diligence.status"></span>
+                            </div>
+
+                            <div col="9" class="align-middle">
+                                <div class="overflow-ellipsis"
+                                  uib-tooltip="{{diligence.template_name}}">
+                                    {{diligence.template_name}}
+                                </div>
+
+                                <div>
+                                    <small class="text-muted">
+                                      <span data-ng-show="diligence.status == 'Invited'">
+                                        Invited <span>{{diligence.created_at|fromNow}}</span>
+                                      </span>
+
+                                        <span data-ng-show="diligence.scheduled_for && diligence.status != 'Invited'">
+                                        Scheduled <span>{{diligence.scheduled_for|fromNow}}</span>
+                                      </span>
+
+                                        <span data-ng-show="diligence.closed_at && diligence.status != 'Invited'">
+                                            Closed <span>{{diligence.closed_at|fromNow}}</span>
+                                          </span>
+
+                                        <span data-ng-hide="(diligence.closed_at || diligence.scheduled_for || diligence.status == 'Invited')">
+                                            Updated <span>{{diligence.last_updated_at|fromNow}}</span>
+                                          </span>
+                                    </small>
+                                </div>
+
+                                <div data-ng-hide="(diligence.scheduled_for || diligence.status == 'Invited')">
+                                    <small>
+                                        <a ui-sref="app.diligence.project.questionnaire({diligenceId: diligence.id})">View Due Diligence</a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+          </div>
+      </div>
+
+      <div col="8">
+        <dv-notes data-ng-if="vm.vehicle" entity-type="'Vehicle'" entity-id="vm.vehicleId" notes-options="vm.notesOptions" entity-name="vm.vehicle.name" date-filter="vm.dateRangeForDirectives"></dv-notes>
+      </div>
+    </div>
+  </div>
+
+  <div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg hide-in-print-view" data-ng-class="{'in': vm.displaySidebarPanel}" data-ng-show="vm.displaySidebarPanel">
+    <div class="panel panel-primary">
+      <div class="panel-heading text-center">
+        <h5>
+          <b>{{vm.sidebarTitle}}</b>
+          <a class="pull-right clickable link-disguise"
+             data-ng-click="vm.displaySidebarPanel = false">
+            <icon name="close" size="lg"></icon>
+          </a>
+        </h5>
+      </div>
+
+      <div class="panel-body"
+           data-ng-class="{'has-record-form': vm.sidebarContent == 'record'}">
+        <ng-include src="vm.sidebarTemplate"></ng-include>
+      </div>
+    </div>
+  </div>
+</div>

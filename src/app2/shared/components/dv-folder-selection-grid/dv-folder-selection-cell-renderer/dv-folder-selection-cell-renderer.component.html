@@ -1,0 +1,102 @@
+<div *ngIf="params.data">
+  <div
+    *ngIf="params.data.document.type === 0"
+    class="folder-class cell-folder-container"
+  >
+    <div class="overflow-ellipsis">
+      <span
+        appIcon
+        [name]="params?.node?.expanded ? 'folder-open' : 'folder'"
+        [style.paddingRight.px]="5"
+        *ngIf="params.data.document.id != -99"
+      ></span
+      ><span
+        appIcon
+        name="document-selector"
+        [style.paddingRight.px]="5"
+        *ngIf="params.data.document.id == -99"
+      ></span
+      ><span
+        [tippyTooltip]="
+          params.data.document.name?.length > 60
+            ? params.data.document.name
+            : ''
+        "
+        [innerHtml]="params.data.dataToRender"
+      ></span>
+    </div>
+    <div>
+      <dv-radio
+        groupName="folder-selection"
+        [valueName]="params.data.document.id"
+        [(ngModel)]="params.api.selectedFolder.id"
+        *ngIf="!params.isMultiSelect"
+      ></dv-radio>
+      <div *ngIf="params.isMultiSelect" class="action-button">
+        <span
+          appIcon
+          name="plus-box"
+          *ngIf="!this.params.node.isSelected()"
+        ></span>
+        <span
+          appIcon
+          name="check-box"
+          *ngIf="this.params.node.isSelected()"
+        ></span>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="params.data.document.type"
+    class="text-primary cell-folder-container"
+  >
+    <div class="overflow-ellipsis">
+      <span
+        appIcon
+        name="file-doc-grid"
+        [style.paddingRight.px]="5"
+        class="text-primary"
+      ></span
+      ><span
+        [tippyTooltip]="
+          params.data.document.name?.length > 60
+            ? params.data.document.name
+            : ''
+        "
+        [innerHtml]="params.data.dataToRender"
+      ></span>
+      <small
+        class="text-muted asOfDates"
+        *ngIf="params.data.document.as_of_date && params.isMultiSelect"
+        >{{ params.data.document.as_of_date | dvDate : ["isLocaleDate"] }}
+        <span
+          *ngIf="params.data.document.reviews?.length"
+          class="space-on-left"
+          appIcon
+          name="reviewed-document"
+        ></span
+      ></small>
+    </div>
+    <div>
+      <dv-radio
+        groupName="folder-selection"
+        [valueName]="params.data.document.id"
+        [(ngModel)]="params.api.selectedFolder.id"
+        *ngIf="!params.isMultiSelect"
+      ></dv-radio>
+      <div *ngIf="params.isMultiSelect" class="action-button">
+        <span
+          appIcon
+          name="plus-box"
+          *ngIf="!this.params.node.isSelected()"
+        ></span>
+        <span
+          appIcon
+          name="check-box"
+          *ngIf="this.params.node.isSelected()"
+        ></span>
+      </div>
+    </div>
+  </div>
+</div>

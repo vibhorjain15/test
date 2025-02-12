@@ -1,0 +1,106 @@
+<ng2-upload-qa-file></ng2-upload-qa-file>
+<!-- <form name="vm.uploadQAForm" novalidate class="form-horizontal" data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">Select Word file
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a></h3>
+  </div>
+  <div class="modal-body" ng-if="vm.loading">
+    <spinner broad-spinner spinner-height='100'></spinner>
+  </div>
+  <div class="modal-body" ng-if="!vm.loading">
+    <div class="row clearfix">
+      <div class="dd-doc-selection-wrapper">
+        <div class="panel panel-default dd-doc-drop-panel" dv-file-handler dv-droppable dv-manual-upload
+          name="file-handler-one" ngf-multiple="true" ngf-select-disabled="true" dv-bind-files-to="vm.files"
+          dv-accept="vm.allowed_file_extensions_str" dv-pattern="vm.allowed_file_extensions_str" dv-max-file-size="::vm.maxFileSize" ngf-max-files="1"
+          ngf-drag-over-class="'panel-primary'" dv-fields="vm.documentParams" dv-upload-url="/dd_documents"
+          dv-on-upload="vm.documentUploadComplete(response)">
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your file here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+            <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button btn-type="default" dv-file-handler dv-manual-upload dv-bind-files-to="vm.files"
+            dv-upload-url="/dd_documents" name="file-handler-two" dv-accept="vm.allowed_file_extensions_str" dv-pattern="vm.allowed_file_extensions_str"
+            dv-fields="vm.documentParams" dv-max-file-size="::vm.maxFileSize"
+            dv-on-upload="vm.documentUploadComplete(response)">
+            Select File
+          </button>
+          <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix space-on-top-xxl">
+      <form-group field-name="Entity Type">
+        <label for="internal-key" class="control-label" col="3" col-type="sm">Entity Type</label>
+
+        <div col="9" col-type="sm">
+          <select name="relationship_status"
+                  id="relationship-status"
+                  class="form-control"
+                  required
+                  chosen
+                  data-ng-options="entity as entity.alias for entity in vm.entity_types"
+                  data-ng-model="vm.params.entity_type">
+            <option value="">--Select--</option>
+          </select>
+        </div>
+      </form-group>
+      <form-group field-name="{{vm.params.entity_type.alias}}">
+        <label for="internal-key" class="control-label" col="3" col-type="sm">{{vm.params.entity_type.alias}}</label>
+
+        <div col="9" col-type="sm" ng-if="vm.params.entity_type.name == vm.keywordConstants.MyFirm">
+          <p for="" class="space-on-top">{{vm.firm_name}}</p>
+        </div>
+        <div col="9" col-type="sm" ng-if="vm.params.entity_type.name == vm.keywordConstants.Product">
+          <select name="relationship_status"
+                  id="relationship-status"
+                  class="form-control"
+                  required
+                  chosen
+                  data-ng-options="entity.id as entity.name for entity in vm.funds"
+                  data-ng-model="vm.params.entity_id">
+            <option value="">--Select--</option>
+          </select>
+        </div>
+        <div col="9" col-type="sm" ng-if="vm.params.entity_type.name == vm.keywordConstants.Strategy">
+          <select name="relationship_status"
+                  id="relationship-status"
+                  class="form-control"
+                  chosen
+                  required
+                  data-ng-options="entity.id as entity.name for entity in vm.strategies"
+                  data-ng-model="vm.params.entity_id">
+            <option value="">--Select--</option>
+          </select>
+        </div>
+        <div col="9" col-type="sm" ng-if="vm.params.entity_type.name == vm.keywordConstants.Vehicle">
+          <select name="relationship_status"
+                  id="relationship-status"
+                  class="form-control"
+                  chosen
+                  required
+                  data-ng-options="entity.id as entity.name for entity in vm.vehicles"
+                  data-ng-model="vm.params.entity_id">
+            <option value="">--Select--</option>
+          </select>
+        </div>
+      </form-group>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving_template">Import</button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form> -->

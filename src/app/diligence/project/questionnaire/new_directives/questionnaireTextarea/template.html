@@ -1,0 +1,17 @@
+<div>
+  <textarea class="form-control"
+            ui-tinymce="vm.tinymceOptions"
+            data-ng-model-options="{ debounce: { 'default': 500 } }"
+            data-ng-change="vm.onResponseChange()"
+            data-ng-model="vm.response.attributes.textResponse"></textarea>
+
+  <button ngf-select
+          class="hidden"
+          ngf-accept="'*.png,*.jpg,*.jpeg'"
+          ngf-max-size="'{{::vm.maxFileSize}}'"
+          ng-model="vm.response.file"
+          id="file-upload-{{vm.response.id}}"
+          ngf-change="vm.uploadImage($files, $file)">
+      Upload File
+  </button>
+</div>

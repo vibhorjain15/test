@@ -1,0 +1,84 @@
+<app-spinner *ngIf="!questionresponse"></app-spinner>
+<form *ngIf="questionresponse" autocomplete="off">
+  <div class="relative qa-response-sequence js-qa-response-sequence full-width">
+    <div>
+      <div
+        *ngFor="let question of questionresponse"
+        class="qa-form-control avoid-page-break-inside full-width analytics-mode dashed-border-at-bottom"
+      >
+        <div class="row clearfix space-on-bottom">
+          <div col="7" class="col-md-7">
+            <div class="qa-question js-qa-question dimmed">
+              <span class="question-text-color">{{ question.index }}. </span>
+              <span
+                class="question-text-color clickable"
+                [innerHtml]="question.text"
+              ></span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="alert alert-info clear-border-radius borderless pull-left-override"
+          *ngIf="question.hint_text"
+        >
+          <span
+            class="break_word"
+            [innerHtml]="question.hint_text | cleanHtml"
+          ></span>
+        </div>
+        <app-benchmarking-que-table
+          *ngIf="
+            question.responseType != 'Boolean' &&
+            question.responseType != 'BooleanPlus' &&
+            question.responseType != 'Grid' &&
+            question.responseType != 'NoPlus' &&
+            question.responseType != 'aumTable' &&
+            question.responseType != 'Integer' &&
+            question.responseType != 'Grid' &&
+            question.responseType != 'CheckBox' &&
+            question.responseType != 'Dropdown' &&
+            question.responseType != 'Date' &&
+            question.responseType != 'Numeric' &&
+            question.responseType != 'Percentage' &&
+            question.responseType != 'Attachment' &&
+            question.responseType != 'ReturnTable' &&
+            question.responseType != 'DynamicGrid' &&
+            question.responseType != 'Bookends'
+          "
+          [templateId]="templateId"
+          [questionId]="question.id"
+          [tagId]="tagId"
+          [startDate]="startDate"
+          [endDate]="endDate"
+        ></app-benchmarking-que-table>
+        <app-benchmarking-que-graph
+          *ngIf="
+            question.responseType == 'Boolean' ||
+            question.responseType == 'BooleanPlus' ||
+            question.responseType == 'Grid' ||
+            question.responseType == 'NoPlus' ||
+            question.responseType == 'aumTable' ||
+            question.responseType == 'Percentage' ||
+            question.responseType == 'Integer' ||
+            question.responseType == 'Grid' ||
+            question.responseType == 'CheckBox' ||
+            question.responseType == 'Dropdown' ||
+            question.responseType == 'Date' ||
+            question.responseType == 'Numeric' ||
+            question.responseType == 'Percentage' ||
+            question.responseType == 'Attachment' ||
+            question.responseType == 'ReturnTable' ||
+            question.responseType == 'DynamicGrid' ||
+            question.responseType == 'Bookends'
+          "
+          [templateId]="templateId"
+          [responseType]="question.responseType"
+          [questionId]="question.id"
+          [tagId]="tagId"
+          [startDate]="startDate"
+          [endDate]="endDate"
+        ></app-benchmarking-que-graph>
+      </div>
+    </div>
+  </div>
+</form>

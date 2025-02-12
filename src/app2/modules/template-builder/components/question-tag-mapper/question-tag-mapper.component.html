@@ -1,0 +1,178 @@
+<app-spinner
+  class="justify-center"
+  *ngIf="loader"
+  aria-live="polite"
+></app-spinner>
+
+<div
+  class="template-bod"
+  *ngIf="activeTag"
+  role="region"
+  aria-labelledby="template-title"
+>
+  <div class="panel" role="region" aria-live="polite">
+    <div>
+      <div class="btn-tabs" role="tablist">
+        <div
+          (click)="showTags(item.id)"
+          *ngFor="let item of tagTypes; let i = index"
+          role="tab"
+          class="bold-text tag"
+          [ngClass]="{ 'text-primary': item.id === activeTag.id }"
+          [attr.tabindex]="item.id === activeTag.id ? 0 : -1"
+          id="tab-{{ i }}"
+          aria-selected="{{ item.id === activeTag.id ? 'true' : 'false' }}"
+          aria-controls="tabpanel-{{ i }}"
+          (keydown.enter)="showTags(item.id)"
+          (keydown.space)="showTags(item.id)"
+        >
+          <span appIcon *ngIf="item.id === activeTag.id" name="check"></span>
+          <span *ngIf="item.id !== activeTag.id">&nbsp;</span>
+          <span class="space-on-left">{{ item.text }}</span>
+        </div>
+      </div>
+
+      <div class="panel-body padding-10 bordered-image" id="template-title">
+        <div class="space-on-bottom">
+          <helper-text>
+            {{ activeTag.alertInfo }}
+          </helper-text>
+        </div>
+        <div class="space-on-bottom-lg justify-center">
+          <input
+            type="search"
+            name="customTags"
+            id="customTags"
+            class="form-control"
+            [placeholder]="placeholder"
+            [(ngModel)]="searchTerm"
+            aria-label="Search"
+          />
+          <dv-button
+            (onClick)="handleAddNewWidget(activeTag)"
+            class="margin-left"
+            *ngIf="activeTag.id == 4"
+            btnType="primary"
+          >
+            Add new tag
+          </dv-button>
+        </div>
+        <ng-container *ngIf="!activeTag.tags.length">
+          <app-empty-state
+            *ngIf="activeTag.id === 2"
+            (action)="handleMappingQuestion()"
+            actionLabel="Click here to add mapped question"
+            message="No mapped question tags found"
+          ></app-empty-state>
+          <app-empty-state
+            *ngIf="activeTag.id !== 2"
+            message="No tags found"
+          ></app-empty-state>
+        </ng-container>
+
+        <div class="question-tag-mapper-height overflow-ellipsis">
+          <dv-form-element
+            spacing="small"
+            elementCol="12"
+            [showRightIcon]="false"
+            *ngFor="let tag of activeTag.tags | filter : searchTerm"
+            role="list"
+          >
+            <div class="row clearfix d-flex-center" role="listitem">
+              <div class="col-md-8">
+                <div>
+                  <a
+                    class="add-sub space-on-right-lg text-black"
+                    (click)="handleOnSelect(tag)"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="tag.isSelected ? 'delete' : 'use this'"
+                  >
+                    <span
+                      *ngIf="tag.isSelected"
+                      appIcon
+                      class="icon-link text-success"
+                      name="check"
+                      tooltip="Delete"
+                      [adaptivePosition]="false"
+                      container="body"
+                      aria-hidden="true"
+                    ></span>
+                    <span
+                      *ngIf="!tag.isSelected"
+                      appIcon
+                      class="icon-link"
+                      name="plus"
+                      tooltip="Use This"
+                      container="body"
+                      [adaptivePosition]="false"
+                      aria-hidden="true"
+                    ></span>
+                  </a>
+                  <span
+                    class="bold-text space-on-right-lg"
+                    [innerHTML]="tag.text | dvSafeHtml"
+                  >
+                  </span>
+
+                  <a
+                    *ngIf="tag?.responseType"
+                    class="panel-control space-on-right-lg text-gray"
+                    tooltip="Edit"
+                    [adaptivePosition]="false"
+                    container="body"
+                    (click)="handleOnEdit(activeTag, tag)"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Edit"
+                  >
+                    <span appIcon name="pencil"></span>
+                  </a>
+                  <a
+                    *ngIf="tag?.responseType"
+                    class="panel-control space-on-right text-gray"
+                    tooltip="Delete"
+                    [adaptivePosition]="false"
+                    container="body"
+                    (click)="handleOnDelete(activeTag, tag)"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Delete"
+                  >
+                    <span appIcon name="trashcan"></span>
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <ng-container *ngIf="tag.responseType === 'dropdown'">
+                  <dv-select
+                    [error]=""
+                    [appendTo]="'body'"
+                    [list]="tag.previewOptions"
+                    [aria-label]="'previewOptions'"
+                    bindLabel="text"
+                    bindValue=""
+                  ></dv-select>
+                </ng-container>
+                <ng-container *ngIf="tag.responseType === 'date'">
+                  <app-date-picker></app-date-picker>
+                </ng-container>
+              </div>
+            </div>
+          </dv-form-element>
+        </div>
+
+        <div col="12" class="text-center">
+          <dv-button
+            *ngIf="activeTag.tags.length"
+            btnType="secondary"
+            (onClick)="handleAdd()"
+            [disabled]="!isTagsSelected"
+          >
+            Add selected tag
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

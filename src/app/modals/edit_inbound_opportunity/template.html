@@ -1,0 +1,154 @@
+<form name="vm.edit_inbound_opportunity_form"
+      data-ng-submit="vm.submit()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">Edit Opportunity
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="text-center" data-ng-if="vm.loading">
+        <spinner></spinner>
+    </div>
+    
+    <form-group field-name="Opportunity Name">
+        <label for="opportunity-name" class="control-label" col="4">
+            Name of the Opportunity
+            <span class="danger">*</span>
+        </label>
+        <div col="8">
+          <input
+            type="text"
+            class="form-control"
+            id="opportunity-name"
+            required
+            data-ng-model="vm.params.name"
+            placeholder="Name of the Opportunity"
+          />
+        </div>
+      </form-group>
+      <form-group
+        field-name="Description">
+        <label for="description" class="control-label" col="4"
+          >Description</label
+        >
+        <div col="8">
+            <textarea id="description"
+                ui-tinymce="vm.tinymceOptions"
+                class="form-control"
+                data-ng-model="vm.params.description"></textarea>
+        </div>
+      </form-group>
+      <form-group
+        field-name="Template">
+        <label for="template" class="control-label" col="4">
+          Template <span class="danger">*</span>
+        </label>
+        <div col="8">
+            <select class="form-control" id="template" 
+                required chosen
+                data-ng-options="template.id as template.name for template in vm.templates" 
+                data-ng-model="vm.params.template_id">
+                <option value="">-- Select Template --</option>
+            </select>
+        </div>
+      </form-group>
+      <form-group
+        field-name="Submission for">
+        <label for="entity-type" class="control-label" col="4">
+          Submission for
+        </label>
+        <div col="8">
+            <select class="form-control" id="entity-type" 
+                chosen
+                data-ng-model="vm.params.entity_type">
+                <option value="">-- Select --</option>
+                <option value="{{vm.keywordConstants.Firm}}">Firm</option>
+                <option value="{{vm.keywordConstants.Strategy}}">Strategy</option>
+                <option value="{{vm.keywordConstants.Product}}">Product</option>
+            </select>
+        </div>
+      </form-group>
+      <form-group
+        field-name="Contacts">
+        <label for="contacts" class="control-label" col="4">
+          <span
+            uib-tooltip="These are your internal team members who will be auto-subscribed to the opportunity created and will receive all notifications."
+            ><i class="dvi dvi-info"></i></span
+          >&nbsp;Subscribers <span class="danger">*</span>
+        </label>
+        <div col="8">
+          <select id="teammemberName" class="form-control" 
+                required
+                multiple chosen data-ng-model="vm.params.contacts"
+                no-results-text="'Could not find any members matching'" 
+                data-placeholder="Select Team Member"
+                data-ng-options="member.id as member.fullname for member in vm.team_members">
+            </select>
+        </div>
+      </form-group>
+      <form-group
+        field-name="Email Template">
+        <label for="email-template" class="control-label" col="4">
+          <span
+            uib-tooltip="This customized email will be sent to manager once they have submitted the pitch."
+            container="body"
+            ><i class="dvi dvi-info"></i></span
+          >&nbsp;Email Template <span class="danger">*</span>
+        </label>
+        <div col="8">
+            <select class="form-control" id="email template" chosen required
+                data-ng-model="vm.params.email_template_id"
+                data-ng-options="template.id as template.name for template in vm.emailTemplates">
+                <option value="">-- Select Email Template --</option>
+            </select>
+        </div>
+      </form-group>
+      <form-group
+        field-name="Visibility">
+        <label for="visibility" class="control-label" col="4">
+          <span
+            uib-tooltip="Private opportunity will be only visible to managers who have access to the url of the opportunity. Public opportunity will be visible to premium managers."
+            ><i class="dvi dvi-info"></i></span
+          >&nbsp; Visibility <span class="danger">*</span>
+        </label>
+        <div col="8">
+            <select id="visibility"
+                class="form-control"
+                required="true"
+                chosen
+                data-ng-model="vm.params.visibility_type"
+                data-ng-options="visibility.id as visibility.name for visibility in vm.visibilities">
+                <option value="">-- Select the visibility of opportunity --</option>
+            </select>
+        </div>
+      </form-group>
+      <form-group
+        field-name="Expiry date">
+        <label for="due-date" class="control-label" col="4">
+          <span
+            uib-tooltip="Use this for activating an opportunity (mandate specific RFP/RFI) for a limited time."
+            ><i class="dvi dvi-info"></i></span>&nbsp; Expiry Date
+        </label>
+        <div col="8">
+            <dv-datepicker data-ng-model="vm.params.due_date"
+                    id="expirydate"
+                    min-date="vm.minDate">
+            </dv-datepicker>
+        </div>
+      </form-group>
+      <div class="form-group">
+        <div col="8" offset="2">
+          <small><span class="font-size-10 text-orange align-top">*</span><i>Required field</i></small>
+        </div>
+      </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving_opportunity">Update Opportunity</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

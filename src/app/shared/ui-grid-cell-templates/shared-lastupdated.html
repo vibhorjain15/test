@@ -1,0 +1,11 @@
+<ui-grid-cell-contents class="text-center unstyledLink">
+  <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <a data-ng-if="row.entity.lastupdated_at" uib-tooltip="{{row.entity.lastupdated_at | fromNow}}"
+      tooltip-placement="right">
+      {{row.entity.lastupdated_at | fromNow}}
+    </a>
+    <a data-ng-if="!row.entity.lastupdated_at">
+      None
+    </a>
+  </div>
+</ui-grid-cell-contents>

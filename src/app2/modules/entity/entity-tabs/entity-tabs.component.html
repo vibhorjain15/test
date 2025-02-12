@@ -1,0 +1,7 @@
+<dv-tabs
+  [list]="currentTabList"
+  [loading]="loading"
+  (onTabClick)="handleTabChange($event)"
+  class="sticky-tab"
+></dv-tabs>
+<router-outlet></router-outlet>

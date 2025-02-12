@@ -1,0 +1,21 @@
+tinymce.addI18n("pl", {
+  "Advanced sort...": "Sortowanie zaawansowane...",
+  "Advanced Sort": "Sortowanie zaawansowane",
+  "Sort table by column ascending": "Sortuj tabel\u0119 wg kolumny rosn\u0105co",
+  "Sort table by column descending": "Sortuj tabel\u0119 wg kolumny malej\u0105co",
+  "Sort": "Sortuj",
+  "Order": "Kolejno\u015b\u0107",
+  "Sort by": "Sortuj wg",
+  "Ascending": "Rosn\u0105co",
+  "Descending": "Malej\u0105co",
+  "Selection": "Wyb\xf3r",
+  "Table": "Tabela",
+  "Column": "Kolumna",
+  "Row": "Wiersz",
+  "Column {0}": "Kolumna {0}",
+  "Row {0}": "Wiersz {0}",
+  "Row numbering": "Numerowanie wierszy",
+  "None": "Brak",
+  "Numeric": "Numeryczne",
+  "Alpha": "Alfabetyczne"
+});

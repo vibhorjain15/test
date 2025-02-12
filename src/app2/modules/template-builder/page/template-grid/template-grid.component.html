@@ -1,0 +1,16 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Templates"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-body">
+    <app-dv-grid
+      [rowData]="allTemplates"
+      [name]="gridName"
+      [onRowClicked]="onRowClicked"
+      [showCharacterFilter]="true"
+      [noRowsTemplate]="isLoading ? 'Loading...' : 'No results found'"
+    ></app-dv-grid>
+  </div>
+</div>

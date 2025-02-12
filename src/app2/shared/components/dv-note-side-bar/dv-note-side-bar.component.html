@@ -1,0 +1,154 @@
+<div
+  class="dd-sidebar-panel dv-sidebar-panel sidebar-lg"
+  [ngClass]="{ in: displaySidebarPanel }"
+  *ngIf="displaySidebarPanel"
+>
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5>
+        <b>{{ sidebarTitle }}</b>
+        <a
+          class="pull-right clickable link-disguise"
+          (click)="displaySidebarPanel = false"
+        >
+          <span appIcon name="close" size="lg"></span>
+        </a>
+      </h5>
+    </div>
+    <div class="panel-body">
+      <div class="panel panel-primary" *ngIf="displaySidebarPanel">
+        <div class="panel-heading text-center">
+          <h5>
+            <b>{{ sidebarTitle }}</b>
+            <a
+              class="pull-right clickable link-disguise"
+              (click)="closeSidebarPanel()"
+            >
+              <span appIcon name="close" size="lg"></span>
+            </a>
+          </h5>
+        </div>
+
+        <div class="panel-body has-notes-form">
+          <ul
+            *ngIf="!loadingNotes && questionNotes.length"
+            class="list-unstyled"
+          >
+            <li
+              *ngFor="let note of questionNotes; let $index = index"
+              class="bordered-bottom"
+              id="notes-{{ note.id }}"
+            >
+              <div class="media">
+                <div class="media-left padded-top">
+                  <span class="circled-initials">
+                    {{ $index + 1 }}
+                  </span>
+                </div>
+
+                <div class="media-body">
+                  <p class="space-on-bottom">
+                    <small class="text-muted">
+                      {{ note.first_name }} {{ note.last_name }} added on
+                      {{ note.updated_at | dvDate }}
+                    </small>
+                    <span
+                      class="pull-right space-on-right-xxl"
+                      *ngIf="!note.editing && canEditNote(note)"
+                    >
+                      <small
+                        class="text-muted v-align-text-top space-on-right"
+                        tooltip="Edit this note"
+                      >
+                        <a
+                          class="link-disguise clickable"
+                          (click)="editNote(note)"
+                          >edit</a
+                        >
+                      </small>
+                      <small
+                        class="text-muted v-align-text-top"
+                        tooltip="Delete this note"
+                      >
+                        <a
+                          class="link-disguise clickable"
+                          (click)="deleteNote(note)"
+                          >delete</a
+                        >
+                      </small>
+                    </span>
+                  </p>
+
+                  <p *ngIf="!note.editing" class="clear-margin">
+                    <span
+                      [innerHtml]="note.text | cleanHtml | dvSafeHtml"
+                    ></span>
+                  </p>
+
+                  <div *ngIf="note.editing" class="padded-right-sm">
+                    <app-tinymce-editor
+                      [isMentions]="true"
+                      [value]="note.text"
+                      (onChange)="handleEditorTextUpdate($event, note)"
+                      [tinyMceInit]="tinyMceInit"
+                    ></app-tinymce-editor>
+
+                    <div class="space-on-top">
+                      <dv-button
+                        btnClass="btn-sm"
+                        [loader]="note.updating_note"
+                        (onClick)="updateNote(note)"
+                      >
+                        Update
+                      </dv-button>
+                      &nbsp;
+                      <button
+                        class="btn btn-sm btn-default"
+                        [disabled]="note.updating_note"
+                        (click)="editCancel(note)"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <form novalidate name="add_notes_form" autocomplete="off">
+            <div>
+              <app-tinymce-editor
+                [isMentions]="true"
+                [value]="new_note?.text"
+                (onChange)="handleEditorTextChange($event)"
+                [tinyMceInit]="tinyMceInit"
+              ></app-tinymce-editor>
+            </div>
+
+            <div class="text-left space-on-top qa-bank-button-space">
+              <dv-button
+                (onClick)="saveNotes()"
+                type="submit"
+                [loader]="saving_notes"
+              >
+                Add Note
+              </dv-button>
+            </div>
+          </form>
+
+          <hr class="space-on-bottom" />
+
+          <app-spinner *ngIf="loadingNotes"></app-spinner>
+
+          <p
+            class="text-muted"
+            *ngIf="!loadingNotes && questionNotes.length == 0"
+          >
+            <i> There are no notes for this question. </i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

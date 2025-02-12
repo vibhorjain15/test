@@ -1,0 +1,261 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-firms-associated-contacts></ng2-firms-associated-contacts>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.firm"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-show="vm.firm">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{vm.firm.display_name}}
+            </h4>
+          </div>
+
+          <div class="text-center cell">
+            <button btn-type="transparent"
+                    data-ng-click="vm.addContact()"
+                    data-ng-class="{'disabled-Element':vm.isFreeSubscription}"
+                    uib-tooltip="{{vm.isFreeSubscription?'This feature is available for premium users. Learn more':'Add New Contact'}}">
+              <div><icon name="user" size="2x"></icon></div>
+              <small>Add Contact</small>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">{{vm.related_contacts.length}} Associated Contact(s)</h5>
+          </div>
+
+          <div class="panel-body">
+            <div data-ng-show="vm.related_contacts && vm.related_contacts.length">
+              <ul class="list-unstyled"
+                  tiles-adjuster="vm.adjust_entity_list"
+                  use-max-tile-width="true"
+                  tile-selector="> li">
+                <li class="inline-block pull-left max-w-320"
+                    on-render="vm.adjust_entity_list = true"
+                    data-ng-repeat="entity in vm.related_contacts">
+                  <div class="panel panel-default relative">
+                    <div class="panel-body">
+                      <div>
+                        <a ui-sref="app.contacts({Id: entity.id})" dv-limit-word="entity.fullName" char-limit="30">
+                        </a>
+                        <small data-ng-if="entity.has_bounce_history"  class="text-danger"
+                          uib-tooltip="Emails to this contact have bounced in the past.">
+                          <icon name="warning"></icon>
+                        </small>
+                        <span class="space-on-left label label-warning"  uib-tooltip="Deactivated by the owner firm"  ng-show="!entity.platform_active">{{vm.statusLabel.INACTIVE}}</span>
+                      </div>
+
+                      <ul class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons">
+                        <li class="space-on-bottom">
+                          <span class="align-middle text-muted" data-ng-if="entity.title">
+                            {{entity.title}}
+                          </span>
+                          <span class="align-middle text-white" data-ng-if="!entity.title">
+                            <i>*No title available*</i>
+                          </span>
+                        </li>
+                        <li>
+                        <li>
+                          <div class="max-w-400 inline-block space-on-top-lg" data-ng-show="entity.tag_names_arr.length">
+                            <span class="label-list">
+                              <span class="label label-default space-on-right text-uppercase"
+                                    data-ng-repeat="tag in entity.tag_names_arr track by $index">
+                                    <small>{{tag}}</small>
+                              </span>
+                            </span>
+                          </div>
+                          <div class="align-middle text-white space-on-top-lg" data-ng-if="!entity.tag_names_arr.length">
+                            <i>*No contact tags available*</i>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="row clearfix"  data-ng-show="!vm.related_contacts || !vm.related_contacts.length">
+              <div col="6" offset="3">
+                <empty-state icon-name="user"
+                             action="vm.addContact()"
+                             action-label="Add Contact"
+                             message="No contact(s) available for {{vm.firm.name}}. Why not add?">
+                </empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default" data-ng-hide="vm.related_contacts">
+          <div class="panel-body">
+            <spinner broad-spinner spinner-height='100'></spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row clearfix" data-ng-show="!vm.related_contacts">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <spinner broad-spinner spinner-height='100'></spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">{{vm.public_contacts.length}} {{vm.isFirmOwner? 'Internal': 'Visible'}} Contact(s)</h5>
+            <div class="panel-controls" data-ng-if="vm.isFirmOwner">
+                <div class="panel-controls-wrapper">
+                    <a class="panel-control"
+                       uib-tooltip="Add Visible Contacts"
+                       data-ng-click="vm.addPublicContact()">
+                       <icon name="plus"></icon>
+                    </a>
+                </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div  data-ng-show="vm.public_contacts && vm.public_contacts.length">
+              <ul class="list-unstyled"
+                  tiles-adjuster="vm.adjust_entity_list"
+                  use-max-tile-width="true"
+                  tile-selector="> li">
+                <li class="inline-block pull-left pos-rel internal_contacts_li"
+                    on-render="vm.adjust_entity_list = true"
+                    data-ng-repeat="entity in vm.public_contacts"
+                    data-ng-mouseenter="entity.display_action_buttons = true"
+                    data-ng-mouseleave="entity.display_action_buttons = false">
+                  <div class="panel panel-default space-on-right relative">
+                    <div class="panel-body">
+                      <div>
+                        <a class="clickable" ng-click="vm.goToUserPage(entity)" uib-tooltip="{{entity.fullName}}">
+                          {{entity.fullName}}
+                        </a>
+                        <small data-ng-if="entity.has_bounce_history"  class="text-danger"
+                          uib-tooltip="Emails to this contact have bounced in the past.">
+                          <icon name="warning"></icon>
+                        </small>
+                      </div>
+
+                      <ul class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons">
+                        <li class="space-on-bottom">
+                          <small data-ng-if="!entity.is_primary && !entity.is_public" class="visibility-hidden">
+                            Contact Type:
+                          </small>
+                          <span class="label label-success space-on-right" data-ng-if="entity.is_primary">
+                            Primary
+                          </span>
+                          <span class="label label-primary space-on-right" data-ng-if="entity.is_public">
+                            Visible
+                          </span>
+                        </li>
+                        <li data-ng-if="entity.internal_tags && entity.internal_tags.length">
+                          <span class="label label-default space-on-right" ng-repeat="department in entity.internal_tags">
+                            {{vm.getFunctionDescription(department)}}
+                          </span>
+                        </li>
+                      </ul>
+
+                      <div class="pos-abs stick-right-lg stick-bottom-lg" data-ng-if="entity.display_action_buttons && vm.isFirmOwner">
+                          <button btn-type="default"
+                                  uib-tooltip="Edit this contact"
+                                  data-ng-click="vm.editPublicContact(entity)"
+                                  size="xs">
+                              <icon name="pencil"></icon>
+                          </button>
+                          <button btn-type="default"
+                                  uib-tooltip="Remove this contact"
+                                  data-ng-click="vm.displayContactRemovalConfirmation(entity)"
+                                  class="danger"
+                                  size="xs">
+                              <icon name="trashcan"></icon>
+                          </button>
+                      </div>
+                      <div class="pos-abs stick-right-lg stick-bottom-sm" data-ng-if="!vm.isFirmOwner">
+                          <button btn-type="default"
+                                  data-ng-class="{'disabled': entity.is_tracking}"
+                                  uib-tooltip="{{entity.is_tracking? 'You are already tracking this contact' : 'Add this contact to portfolio'}}"
+                                  data-ng-click="vm.addContactToPortfolio(entity)"
+                                  size="xs">
+                              <icon name="plus"></icon>
+                          </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ribbon right-0" ng-if="entity.is_key_person"><span>Key Person</span></div>
+                </li>
+              </ul>
+            </div>
+            <div class="row clearfix" data-ng-show="vm.public_contacts && !vm.public_contacts.length && vm.isFirmOwner">
+              <div col="6" offset="3" class="space-on-top-lg">
+                <empty-state icon-name="user"
+                             action="vm.addPublicContact()"
+                             action-label="Assign Internal Contact"
+                             message="No internal contact(s) available for {{vm.firm.name}}. Why not add?">
+                </empty-state>
+              </div>
+            </div>
+            <div class="row clearfix" data-ng-show="vm.public_contacts && !vm.public_contacts.length && !vm.isFirmOwner">
+              <div col="6" offset="3" class="space-on-top-lg">
+                <empty-state icon-name="user"
+                             message="No visible contact(s) available.">
+                </empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix" data-ng-show="!vm.public_contacts && vm.isFirmOwner">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <spinner broad-spinner spinner-height='100'></spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="col-sm-12 space-on-bottom">
+            <span class="label label-success space-on-right">
+              Primary
+            </span>
+          <small><i>These are primary contacts of the entity on the {{vm.is_manager? 'your' : 'manager'}} side. These contacts will be notified of any activities related to their assigned entities. You will not be able to remove these contacts while sending out requests.</i></small>
+          </div>
+          <div class="col-sm-12 space-on-bottom">
+            <span class="label label-primary space-on-right">
+              Visible
+            </span>
+            <small><i>These are the visible contacts of the entity setup by {{vm.is_manager? 'your' : 'manager'}} firm. {{vm.is_manager? 'Investor' : 'You'}} can add/remove them based on the requirement.</i></small>
+          </div>
+          <div class="col-sm-12" ng-if="vm.is_manager">
+            <span class="label label-warning space-on-right">
+              Key Person
+            </span>
+            <small><i>These are the key employees of a firm like CEO, CTO, COO etc of the firm. You can mark all C level managers as a key person.</i></small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

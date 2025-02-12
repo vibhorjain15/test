@@ -1,0 +1,52 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Firm Disclaimers"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-body">
+    <div>
+      <div class="text-center">
+        <div
+          class="btn-group"
+          role="group"
+          aria-label="Disclaimer Type Selection"
+        >
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': disclaimers_type === 'active' }"
+            (click)="setDisclaimerType('active')"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="disclaimers_type === 'active'"
+            aria-label="Active Disclaimers"
+            (keydown.enter)="setDisclaimerType('active')"
+            >Active</span
+          >
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': disclaimers_type === 'inactive' }"
+            (click)="setDisclaimerType('inactive')"
+            tabindex="0"
+            role="button"
+            [attr.aria-pressed]="disclaimers_type === 'inactive'"
+            aria-label="Inactive Disclaimers"
+            (keydown.enter)="setDisclaimerType('inactive')"
+            >Inactive</span
+          >
+        </div>
+      </div>
+      <br />
+      <div *ngIf="renderGrid && !loading" role="region" aria-live="polite">
+        <app-dv-grid [rowData]="disclaimers" [name]="gridName"></app-dv-grid>
+      </div>
+      <div
+        class="text-center"
+        *ngIf="loading && !renderGrid"
+        aria-live="assertive"
+      >
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+  </div>
+</div>

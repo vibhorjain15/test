@@ -1,0 +1,11 @@
+.spinner-display {
+  height: 400px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.template-question-list-container {
+  max-height: calc(85vh - 95px);
+  overflow: auto;
+}

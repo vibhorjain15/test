@@ -1,0 +1,11 @@
+<div *ngIf="params.data.activity_type_name">
+  <button
+    appButton
+    class="btn btn-default btn-sm"
+    [adaptivePosition]="false"
+    [tooltip]="params.data.activity_type_name"
+    container="body"
+  >
+    {{ params.data.activity_type_name }}
+  </button>
+</div>

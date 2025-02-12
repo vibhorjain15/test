@@ -1,0 +1,79 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-product-tags></ng2-product-tags> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Manage Product Tags and Custom Fields</h5>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Manage all product tags and custom fields that are relevant to your organization under this
+            section.</div>
+    </div>
+    <div class="panel-body">
+        <spinner broad-spinner spinner-height='60' data-ng-if="vm.loading"></spinner>
+
+        <div data-ng-if="!vm.loading">
+
+            <div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">System Classification Tags</h5>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="label-list">
+                            <span class="label label-default text-uppercase space-on-right"
+                                data-ng-repeat="strategy in vm.systemStrategies">
+                                <small uib-tooltip="This is a system generated classification">{{strategy.name}}</small>
+                            </span>
+
+                            <p class="alert alert-info text-center" data-ng-if="!vm.systemStrategies.length">
+                                To enable system classification tags go to Firm settings > Preferences > Firm Preferences
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel panel-default space-on-top-xxl">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">Custom Classification Tags</h5>
+
+                        <div class="panel-controls">
+                            <div class="panel-controls-wrapper">
+                                <a class="panel-control" data-ng-click="vm.addNewStrategy()"
+                                    uib-tooltip="Add new custom classification">
+                                    <icon name="plus"></icon>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="label-list">
+                            <span class="label label-default text-uppercase space-on-right"
+                                data-ng-repeat="strategy in vm.strategies" data-ng-if="vm.strategies.length">
+                                <small>{{strategy.name}}</small>
+
+                                <a class="space-on-left clickable link-disguise"
+                                    data-ng-click="vm.editStrategy(strategy, $index)" data-ng-if="vm.is_admin">
+                                    <icon name="pencil"></icon>
+                                </a>
+                                <a class="space-on-left clickable link-disguise" data-ng-if="vm.is_admin"
+                                    uib-tooltip="Remove classification"
+                                    data-ng-click="vm.displayTagRemovalConfirmation(strategy, $index)">&times;</a>
+                            </span>
+
+                            <p class="alert alert-info text-center" data-ng-if="!vm.strategies.length">
+                                No custom classification tags available.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <custom-field-viewer entity-type="'fund'" entity-type-id="1219" source="'fund'"></custom-field-viewer>
+            </div>
+
+        </div>
+    </div>
+
+</div>

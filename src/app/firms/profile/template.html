@@ -1,0 +1,46 @@
+<div role="tabpanel">
+  <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+    <!--<li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.summary">
+        Summary
+      </a>
+    </li>-->
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.monitor"> Monitor </a>
+    </li>
+
+    <li ui-sref-active="active" data-ng-if="!vm.is_freeSubscriber">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.fund.profile" -->
+      <a ui-sref=".aum_tr"> AUM & Track Record </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.documents.list"> Documents </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.address"> Addresses </a>
+    </li>
+
+    <li ui-sref-active="active" authorized-view accessible-to="investor">
+      <a ui-sref="app.firms.profile.related_entities"> Related Products </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.associated_contacts">
+        Associated Contacts
+      </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.recommendations">
+        <span data-ng-if="vm.issue_tracker_default_name">{{vm.issue_tracker_default_name}}</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <ui-view />
+  </div>
+</div>

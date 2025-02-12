@@ -1,0 +1,56 @@
+.duplicate-secondary {
+  padding: 0% 1% 1% 1%;
+}
+.primary-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.tabs {
+  margin-top: 20px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  align-items: center;
+  gap: 20px;
+}
+
+.tabs ::ng-deep .panel-default {
+  border: none !important;
+}
+.tabs ::ng-deep .dv-tab {
+  box-shadow: 0px 15px 10px -15px #1111114d;
+}
+
+.empty {
+  margin-top: 10px;
+}
+
+.qa-bank-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.actions ::ng-deep .button-component {
+  display: flex;
+  align-items: center;
+}
+
+.selection-class {
+  color: #76a8b5;
+  font-weight: bold;
+  padding-top: 2px;
+  margin-left: 5px;
+}
+
+.selected-color {
+  color: #2196f3;
+}
+.qa-checkbox-wrapper {
+  margin-left: 15px;
+}

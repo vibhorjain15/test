@@ -1,0 +1,61 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='50' data-ng-if="!vm.diligence"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin">
+              {{::vm.diligence.entity_name}}
+            </h4>
+            <div>
+                <small class="text-muted" data-ng-if="vm.diligence.last_updated_at">
+                 Last Updated {{::vm.diligence.last_updated_at|date}}
+                </small>
+            </div>
+          </div>
+
+          <div class="bordered-right text-center cell">
+            <span class="align-middle">Status:</span>
+            <span diligence-status="vm.diligence.status"></span>
+
+          </div>
+
+          <div class="cell" data-ng-show="vm.role_count">
+            <p class="alert alert-info">
+              <small>
+                Assign team member to specific focus areas to collaborate on this project.
+              </small>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form class="form-horizontal">
+
+          <spinner broad-spinner spinner-height='40' data-ng-if="!vm.roles"></spinner>
+
+          <div class="form-group" data-ng-repeat="role in vm.roles">
+            <label class="control-label" col="5">{{role.role}}</label>
+
+            <div col="4">
+              <select chosen
+                      data-ng-model="role.userID"
+                      allow-single-deselect="true"
+                      data-ng-change="vm.assignTeamMember(role)"
+                      data-placeholder="Select a Team Member"
+                      data-ng-options="user.id as user.fullname for user in vm.teamMembers">
+                <option value=""></option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

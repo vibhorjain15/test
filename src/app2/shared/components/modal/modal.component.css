@@ -1,0 +1,48 @@
+.modal-success-button {
+  margin-right: 10px;
+}
+
+.text-left {
+  text-align: left !important;
+}
+.modal-header-flex {
+  display: flex;
+  width: 100%;
+}
+
+.modal-header-flex .modal-title {
+  flex: 1;
+  word-break: break-all;
+}
+
+.modal-header-description {
+  width: fit-content;
+  color: #5f6367;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 300;
+}
+.modal-sub-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-header {
+  word-break: break-word;
+}
+.max-height-70 {
+  max-height: 70vh !important;
+  overflow-x: auto !important;
+}
+.title {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.icon-bag-wrapper {
+  display: flex;
+  padding: 8px;
+  border-radius: 4px;
+  align-items: center;
+}

@@ -1,0 +1,183 @@
+<ng-container *ngIf="!loader">
+  <div class="history-detail">
+    <b>Categories & Sub-Categories:</b>
+    {{ historyDetail.selected_categories.length ? "" : "All" }}
+    <br />
+    <ul *ngIf="historyDetail.selected_categories.length">
+      <li
+        *ngFor="let cat of historyDetail.selected_categories"
+        class="category-names"
+      >
+        <b>{{ cat.category_name }}</b> -
+        <span *ngFor="let subcat of cat.subcategory_names; let last = last">{{
+          subcat + (!last ? "," : "")
+        }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <dv-divider horizontalMargin="tiny"> </dv-divider>
+
+  <ng-container *ngIf="showContentSetting">
+    <b> Content Settings </b>
+    <br />
+    <ul class="content-settings">
+      <ng-container *ngFor="let setting of historyDetail.content_settings">
+        <li *ngIf="setting.value">
+          {{ setting.label }}
+        </li>
+      </ng-container>
+    </ul>
+
+    <dv-divider horizontalMargin="tiny"> </dv-divider>
+  </ng-container>
+
+  <ng-container
+    *ngIf="
+      historyDetail.entity_settings &&
+      historyDetail.source_tab === TabType.Advanced &&
+      (historyDetail?.entity_settings[0]?.value ||
+        historyDetail?.entity_settings[2]?.value)
+    "
+  >
+    <b> Entity Settings </b>
+    <br />
+    <ul class="content-settings">
+      <li *ngIf="historyDetail.entity_settings[0]?.value">
+        {{ historyDetail.entity_settings[0].label }}
+        <ul class="content-settings">
+          <li>
+            <span
+              *ngFor="
+                let firms of historyDetail.selected_investor_firms;
+                let last = last
+              "
+            >
+              {{ firms + (!last ? "," : "") }}
+            </span>
+          </li>
+        </ul>
+      </li>
+
+      <li *ngIf="historyDetail.entity_settings[2]?.value">
+        {{ historyDetail.entity_settings[2].label }} :
+        {{ historyDetail.entity_settings[2].value }}
+        <ul class="content-settings">
+          <li *ngIf="historyDetail.selected_firms?.length">
+            <b>Firms :</b>
+            <span
+              *ngFor="
+                let firms of historyDetail.selected_firms;
+                let last = last
+              "
+            >
+              {{ firms + (!last ? "," : "") }}
+            </span>
+          </li>
+
+          <li *ngIf="historyDetail.selected_strategies?.length">
+            <b>Strategies :</b>
+            <span
+              *ngFor="
+                let firms of historyDetail.selected_strategies;
+                let last = last
+              "
+            >
+              {{ firms + (!last ? "," : "") }}
+            </span>
+          </li>
+
+          <li *ngIf="historyDetail.selected_products?.length">
+            <b>Products :</b>
+            <span
+              *ngFor="
+                let firms of historyDetail.selected_products;
+                let last = last
+              "
+            >
+              {{ firms + (!last ? "," : "") }}
+            </span>
+          </li>
+
+          <li *ngIf="historyDetail.selected_vehicles?.length">
+            <b>Vehicles :</b>
+            <span
+              *ngFor="
+                let firms of historyDetail.selected_vehicles;
+                let last = last
+              "
+            >
+              {{ firms + (!last ? "," : "") }}
+            </span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <dv-divider horizontalMargin="tiny"> </dv-divider>
+  </ng-container>
+
+  <ng-container
+    *ngIf="
+      historyDetail.entity_settings?.length &&
+      historyDetail.source_entity_type === keywordConstants.Project
+    "
+  >
+    <b> Filter Projects </b>
+    <br />
+    <ul class="content-settings">
+      <li>
+        {{ historyDetail.entity_settings[0].label }} :
+        {{ historyDetail.entity_settings[0].value }}
+      </li>
+      <ul>
+        <li>
+          <span
+            *ngFor="
+              let entities of historyDetail.selectedEntity;
+              let last = last
+            "
+          >
+            {{ entities + (!last ? "," : "") }}
+          </span>
+        </li>
+      </ul>
+      <li>Date Range: {{ historyDetail.entity_settings[2].value }}</li>
+    </ul>
+
+    <dv-divider horizontalMargin="tiny"> </dv-divider>
+  </ng-container>
+
+  <ng-container *ngIf="historyDetail.selected_tags?.length">
+    <b> Tags </b>
+    <br />
+    <ul class="content-settings">
+      <li>
+        <span *ngFor="let tags of historyDetail.selected_tags; let last = last">
+          {{ tags + (!last ? "," : "") }}
+        </span>
+      </li>
+    </ul>
+
+    <dv-divider horizontalMargin="tiny"> </dv-divider>
+  </ng-container>
+
+  <ng-container *ngIf="!currentUser.isInvestor && history.is_es_autofilled">
+    <ul>
+      <li>
+        <div class="match-settings">
+          <span [style.flex]="1"> % Similarity Match </span>
+          <span [style.flex]="1">
+            <dv-slider
+              [value]="historyDetail.matching_percentage"
+              min="0"
+              max="100"
+              [showPercentage]="true"
+              [disabled]="true"
+            ></dv-slider>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </ng-container>
+</ng-container>
+<app-spinner *ngIf="loader" class="justify-center"></app-spinner>

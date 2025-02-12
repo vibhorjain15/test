@@ -1,0 +1,22 @@
+.file-upload-btn {
+  padding: 18px;
+  width: 100%;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
+  border: 2px dashed #126b82 !important;
+  color: #126b82;
+}
+.file-upload-btn:hover {
+  color: #f0592b;
+}
+.btn-highlight {
+  border: 2px dashed #f0592b !important;
+  color: #f0592b;
+  background-color: #f0592b0f !important;
+}
+.btns {
+  display: flex;
+  justify-content: space-between;
+}

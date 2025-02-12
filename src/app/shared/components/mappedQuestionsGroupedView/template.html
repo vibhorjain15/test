@@ -1,0 +1,38 @@
+<div class="mapped-questions space-on-top-lg">
+  <ul class="mappedQuestions">
+    <li ng-repeat="template in vm.mappedQuestions">
+      <div class="clickable question-group-header" data-ng-click="vm.collapseGroup(template)">
+          <icon name="chevron-up" data-ng-show="template.isOpen"></icon>
+          <icon name="chevron-down" data-ng-show="!template.isOpen"></icon>
+          <span class="inline-block header-text" data-ng-class="{'space-on-right-xxl':!vm.readonly}">{{template.mapped_template_name}}</span>
+          <div class="controls" data-ng-hide="vm.readonly">
+              <span class="control control-danger"
+                  data-ng-click="vm.confirmRemoveQuestion(template,'group-header')"
+                  role="button"
+                  uib-tooltip="Remove mapping from this template"
+                  tooltip-placement="left"
+                  stop-event-propagation
+                  prevent-default>
+              <icon name="trashcan"></icon>
+          </span>
+        </div>
+      </div>
+      <ul class="list-group" data-ng-show="template.isOpen">
+        <li class="list-group-item" data-ng-repeat="question in template.questions">
+          <span class="inline-block" data-ng-class="{'space-on-right-xxl':!vm.readonly}" ng-bind-html="question.mapped_question_text"></span>
+          <div class="controls" data-ng-hide="vm.readonly">
+            <span class="control control-danger"
+                  data-ng-click="vm.confirmRemoveQuestion(question, 'group-item', $index)"
+                  role="button"
+                  uib-tooltip="Remove mapping from this question"
+                  tooltip-placement="left"
+                  stop-event-propagation
+                  prevent-default>
+              <icon name="trashcan"></icon>
+            </span>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,38 @@
+.btn-tabs {
+  height: 101px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  grid-gap: 1px;
+  background: #dbdbdb 0% 0% no-repeat padding-box;
+  border: 1px solid #dbdbdb;
+}
+
+.tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: white;
+}
+
+.text-editor {
+  height: 259px;
+}
+
+.editor {
+  height: 225px;
+}
+
+.d-flex-center {
+  display: flex;
+  align-items: center;
+}
+
+.margin-left {
+  margin-left: 10px;
+}
+
+.question-tag-mapper-height {
+  max-height: 328px;
+}

@@ -1,0 +1,28 @@
+<h5 class="panel-title">
+  <b> {{ heading }}</b>
+</h5>
+<div class="panel-controls">
+  <div class="panel-controls-wrapper">
+    <ng-container *ngFor="let control of controls">
+      <dv-button
+        *ngIf="control.condition ?? true"
+        placement="left"
+        [disabled]="control.isDisabled"
+        [tooltip]="control.tooltip"
+        container="body"
+        [btnType]="control.type || 'primary'"
+        [btnClass]="'space-on-top-2 space-on-right ' + control.class"
+        (onClick)="control.handleClick()"
+        [leftIcon]="control.leftIcon"
+      >
+        <span *ngIf="control.text"> {{ control.text }}</span>
+        <span
+          *ngIf="control.iconName"
+          appIcon
+          [name]="control.iconName"
+          [class]="control.iconClass"
+        ></span>
+      </dv-button>
+    </ng-container>
+  </div>
+</div>

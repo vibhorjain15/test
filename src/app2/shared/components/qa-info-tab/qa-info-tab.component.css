@@ -1,0 +1,76 @@
+.note-info {
+  display: flex;
+  align-items: center;
+  max-width: 85%;
+}
+.note-header {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
+}
+.note-content {
+  background: #ffffff 0% 0% no-repeat padding-box;
+  overflow-wrap: anywhere;
+  border: 1px solid #bfbfbf;
+  border-radius: 4px;
+  padding: 7px;
+  margin-top: 0px;
+  max-height: 320px;
+  overflow: auto;
+}
+.circled-initials {
+  margin: 0 !important;
+  cursor: default;
+  color: #126b82;
+  border: 1px solid #126b82;
+  background: none;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  width: 18px;
+}
+.auth-name {
+  margin-left: 2px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.last-edited {
+  margin-left: 5px;
+  font-size: 10px !important;
+  font-weight: lighter;
+  color: #a9a9a9;
+  font-style: italic;
+}
+.note-buttons {
+  cursor: pointer;
+}
+.edit-button {
+  padding: 1%;
+  text-align: center;
+}
+.revision {
+  background: #eeeeee 0% 0% no-repeat padding-box;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+}
+.text-ellipsis-flow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+.note-content::-webkit-scrollbar {
+  width: 5px;
+  height: 0px;
+}
+.note-content::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 7px 1px;
+}
+.note-content::-webkit-scrollbar-thumb {
+  background: lightgray;
+  border-radius: 5px;
+  min-height: 75px;
+}
+.note-content::-webkit-scrollbar-thumb:hover {
+  background: darkgray;
+}

@@ -1,0 +1,16 @@
+<span
+  class="badge"
+  [ngClass]="{
+    'dv-badge-success': status == 'success',
+    'dv-badge-warning': status == 'warning',
+    'dv-badge-danger': status == 'danger',
+    'dv-badge-info': status == 'info',
+    'dv-badge-disable': status == 'disable',
+    'dv-badge-normal': status == 'normal',
+    'dv-badge-in-progress': status == 'in_progress',
+    'dv-badge-spacing-small': spacingType == 'small',
+    'dv-badge-spacing-normal': spacingType == 'normal',
+  }"
+  [style.height]="SpacingTheme[height]"
+  >{{ label }}
+</span>

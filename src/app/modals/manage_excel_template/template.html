@@ -1,0 +1,330 @@
+<form class="form-horizontal" name="vm.contact_form" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+      <h3 class="modal-title">
+        {{vm.getHeaderText()}}
+          <!-- Create {{vm.isDiligenceCreation? 'Project' : 'Template'}} from selection -->
+
+          <a class="pull-right clickable link-disguise link-unstyled"
+             data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+  </div>
+  <div ng-show="vm.activeView != 'original'">
+    <div
+      class="panel panel-warning"
+      ng-if="vm.documentHasDuplicates && vm.originalContentFound"
+    >
+      <div class="panel-heading">
+        All existing Q/A content in your selection will be uploaded, replacing
+        any duplicates of existing content
+      </div>
+    </div>
+  </div>
+  <div ng-show="vm.activeView == 'original'">
+    <div
+      class="panel panel-danger"
+      ng-if="vm.documentHasDuplicates && !vm.originalContentFound"
+    >
+      <div class="panel-heading">
+        No new content found. All of the content in this upload exists in your
+        Q/A Bank.
+      </div>
+    </div>
+    <div
+      class="panel panel-warning"
+      ng-if="vm.documentHasDuplicates && vm.originalContentFound"
+    >
+      <div class="panel-heading">
+        All new content in your selection will be uploaded to your Q/A Bank. No
+        changes will be made to your existing content.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group" ng-if="vm.documentHasDuplicates">
+      <div class="text-center">
+        <div class="btn-group">
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.activeView == 'duplicate'}" data-ng-click="vm.setActiveView('duplicate')">Existing Content</label>
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.activeView == 'original'}" data-ng-click="vm.setActiveView('original')">New Content</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" ng-if="!vm.documentHasDuplicates && !vm.isQAflow">
+      <label for="">{{(vm.template_params.sourceType == 'questionnaire')?'Questionnaire Name':'Template Name:'}}</label>
+      <div class="col-sm-12">
+        <input type="text" class="form-control" ng-model="vm.finalData.name">
+      </div>
+    </div>
+    <div ng-repeat="section in vm.finalData.sections" ng-if="!vm.documentHasDuplicates">
+      <uib-accordion close-others="true">
+          <div uib-accordion-group is-open="section.isOpen">
+              <uib-accordion-heading>
+                  <h4 class="panel-title pos-rel">
+                      <a role="button" class="link-unstyled">
+                          <span class="space-on-left section_text">
+                            <strong>{{section.text}}</strong>
+                          </span>
+                      </a>
+                    <span class="indicating-icons">
+                      <icon data-ng-if="section.isOpen" class="dvi dvi-chevron-up"></icon>
+                      <icon data-ng-if="!section.isOpen" class="dvi dvi-chevron-down"></icon>
+                    </span>
+                  </h4>
+                  <span class="questionCount">{{vm.getCount(section)}}</span>
+              </uib-accordion-heading>
+              <div>
+                <div ng-repeat="subSection in section.subSections">
+                  <uib-accordion close-others="true">
+                      <div uib-accordion-group is-open="subSection.isOpen">
+                          <uib-accordion-heading>
+                              <h4 class="panel-title pos-rel">
+                                  <a role="button" class="link-unstyled">
+                                      <span class="space-on-left subSection_text">
+                                        <strong>{{subSection.text}}</strong>
+                                      </span>
+                                  </a>
+                                <span class="indicating-icons">
+                                  <icon data-ng-if="subSection.isOpen" class="dvi dvi-chevron-up"></icon>
+                                  <icon data-ng-if="!subSection.isOpen" class="dvi dvi-chevron-down"></icon>
+                                </span>
+                              </h4>
+                          </uib-accordion-heading>
+                          <div>
+                            <table class="table">
+                              <tbody>
+                                <tr ng-repeat="question in subSection.questions" data-ng-class="{'dupes-row': false}">
+                                  <td width="4%" class="text-center">
+                                    <dv-checkbox ng-model="question.is_selected" ng-change="vm.valildateQuestionSelection(question, subSection)"></dv-checkbox>
+                                  </td>
+                                  <td width="4%" class="QaEditContainer" ng-if="vm.isQAflow">
+                                    <button class="btn btn-xs btn-default editResButton" ng-show="!question.editable && vm.isQAflow" uib-tooltip="Edit Response" ng-click="question.editable = !question.editable"><icon name="pencil"></icon></button>
+                                    <button class="btn btn-xs btn-default editResButton"  ng-show="question.editable && vm.isQAflow" uib-tooltip="Save Changes" ng-click="question.editable = !question.editable"><icon name="check"></icon></button>
+                                  </td>
+                                  <td width="92%">
+                                    <div class="row clearfix">
+                                      <div class="col-sm-10 white-space-normal">
+                                        <div ng-show="question.responseTypeDesc != 'Grid'" class="parserTextQuestion">
+                                          {{question.text}}
+                                        </div>
+                                        <div ng-show="question.responseTypeDesc == 'Grid'" class="parserTextQuestion gridPreview">
+                                          <p>{{question.text}}</p>
+                                          <div ng-bind-html="question.html | trusthtml" class="space-on-top-lg"></div>
+                                        </div>
+                                      </div>
+                                      <div class="col-sm-2">
+                                        <!-- <small ng-if="(vm.isWordParser || vm.isQAflow)">{{question.responseType}}</small> -->
+                                        <span class="entity-group-container" ng-show="!vm.isQAflow">
+                                           <span class="clickable dropdown-toggle w-95" data-toggle="dropdown"
+                                              btn-type="default">
+                                              {{question.responseTypeDesc}}&nbsp;<span class="caret"></span>
+                                           </span>
+                                           <ul class="dropdown-menu" role="menu">
+                                              <li ng-repeat="resType in vm.responseTypes">
+                                                 <a data-ng-click="vm.changeResponseType(resType, question)" role="button">
+                                                    {{resType.description}}
+                                                 </a>
+                                              </li>
+                                           </ul>
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <div class="space-on-top res_container" ng-if="vm.source && vm.source == 'QA' && subSection.isOpen" ng-mouseover="question.hoverState = true;" ng-mouseleave="question.hoverState = false;">
+                                      <textarea ng-if="question.editable" id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                                         data-ng-model="question.responseHTML"></textarea>
+                                      <div ng-if="!question.editable" ng-bind-html="question.responseHTML | trusthtml"></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                      </div>
+                  </uib-accordion>
+                </div>
+              </div>
+          </div>
+      </uib-accordion>
+    </div>
+    <!-- ################################################################################################################################################# -->
+    <div ng-if="vm.documentHasDuplicates && !vm.responseFromQa.original.sections.length && vm.activeView == 'original'">
+      <div class="row clearfix">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+          <div class="panel panel-info text-center">
+            <div class="panel-heading">No data found</div>
+          </div>
+        </div>
+        <div class="col-sm-4"></div>
+      </div>
+    </div>
+    <div ng-if="vm.documentHasDuplicates && !vm.responseFromQa.existing.sections.length && vm.activeView == 'duplicate'">
+      <div class="row clearfix">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+          <div class="panel panel-info text-center">
+            <div class="panel-heading">No data found</div>
+          </div>
+        </div>
+        <div class="col-sm-4"></div>
+      </div>
+    </div>
+    <div ng-if="vm.documentHasDuplicates">
+      <div ng-repeat="section in vm.responseFromQa.original.sections track by $index" ng-show="vm.activeView == 'original'">
+        <uib-accordion close-others="true">
+            <div uib-accordion-group is-open="section.isOpen">
+                <uib-accordion-heading>
+                    <h4 class="panel-title pos-rel">
+                        <a role="button" class="link-unstyled">
+                            <span class="space-on-left section_text">
+                              <strong>{{section.text}}</strong>
+                            </span>
+                        </a>
+                      <span class="indicating-icons">
+                        <icon data-ng-if="section.isOpen" class="dvi dvi-chevron-up"></icon>
+                        <icon data-ng-if="!section.isOpen" class="dvi dvi-chevron-down"></icon>
+                      </span>
+                    </h4>
+                    <span class="questionCount">{{vm.getCount(section)}}</span>
+                </uib-accordion-heading>
+                <div >
+                  <div ng-repeat="subSection in section.subSections">
+                    <uib-accordion close-others="true">
+                        <div uib-accordion-group is-open="subSection.isOpen">
+                            <uib-accordion-heading>
+                                <h4 class="panel-title pos-rel">
+                                    <a role="button" class="link-unstyled">
+                                        <span class="space-on-left subSection_text">
+                                          <strong>{{subSection.text}}</strong>
+                                        </span>
+                                    </a>
+                                  <span class="indicating-icons">
+                                    <icon data-ng-if="subSection.isOpen" class="dvi dvi-chevron-up"></icon>
+                                    <icon data-ng-if="!subSection.isOpen" class="dvi dvi-chevron-down"></icon>
+                                  </span>
+                                </h4>
+                            </uib-accordion-heading>
+                            <div>
+                              <table class="table">
+                                <tbody>
+                                  <tr ng-repeat="question in subSection.questions" data-ng-class="{'dupes-row': false}">
+                                    <td width="5%" class="text-center">
+                                      <dv-checkbox ng-model="question.is_selected" ng-change="vm.valildateQuestionSelection(question, subSection)"></dv-checkbox>
+                                    </td>
+                                    <td width="95%">
+                                      <div class="row clearfix">
+                                        <div class="col-sm-12 white-space-normal">
+                                          <div ng-show="question.responseTypeDesc != 'Grid'" class="parserTextQuestion">
+                                            {{question.text}}
+                                          </div>
+                                          <div ng-show="question.responseTypeDesc == 'Grid'" class="gridPreview">
+                                            <p>{{question.text}}</p>
+                                            <div ng-bind-html="question.html | trusthtml" class="space-on-top-lg"></div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div class="space-on-top res_container" ng-if="vm.source && vm.source == 'QA' && subSection.isOpen" ng-mouseover="question.hoverState = true;" ng-mouseleave="question.hoverState = false;">
+                                        <textarea ng-if="question.responseHTML.length && question.editable" id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                                           data-ng-model="question.responseHTML"></textarea>
+                                        <div ng-if="question.responseHTML.length && !question.editable" ng-bind-html="question.responseHTML | trusthtml"></div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+                    </uib-accordion>
+                  </div>
+                </div>
+            </div>
+        </uib-accordion>
+      </div>
+      <div ng-repeat="section in vm.responseFromQa.existing.sections track by $index" ng-show="vm.activeView != 'original'">
+        <uib-accordion close-others="true">
+            <div uib-accordion-group is-open="section.isOpen">
+                <uib-accordion-heading>
+                    <h4 class="panel-title pos-rel">
+                        <a role="button" class="link-unstyled">
+                            <span class="space-on-left section_text">
+                              <strong>{{section.text}}</strong>
+                            </span>
+                        </a>
+                      <span class="indicating-icons">
+                        <icon data-ng-if="section.isOpen" class="dvi dvi-chevron-up"></icon>
+                        <icon data-ng-if="!section.isOpen" class="dvi dvi-chevron-down"></icon>
+                      </span>
+                    </h4>
+                    <span class="questionCount">{{vm.getCount(section)}}</span>
+                </uib-accordion-heading>
+                <div>
+                  <div ng-repeat="subSection in section.subSections">
+                    <uib-accordion close-others="true">
+                        <div uib-accordion-group is-open="subSection.isOpen">
+                            <uib-accordion-heading>
+                                <h4 class="panel-title pos-rel">
+                                    <a role="button" class="link-unstyled">
+                                        <span class="space-on-left subSection_text">
+                                          <strong>{{subSection.text}}</strong>
+                                        </span>
+                                    </a>
+                                  <span class="indicating-icons">
+                                    <icon data-ng-if="subSection.isOpen" class="dvi dvi-chevron-up"></icon>
+                                    <icon data-ng-if="!subSection.isOpen" class="dvi dvi-chevron-down"></icon>
+                                  </span>
+                                </h4>
+                            </uib-accordion-heading>
+                            <div>
+                              <table class="table">
+                                <tbody>
+                                  <tr ng-repeat="question in subSection.questions" data-ng-class="{'dupes-row': false}">
+                                    <td width="5%" class="text-center">
+                                      <dv-checkbox ng-model="question.is_selected" ng-change="vm.valildateQuestionSelection(question, subSection)"></dv-checkbox>
+                                    </td>
+                                    <td width="95%">
+                                      <div class="row clearfix">
+                                        <div class="col-sm-12 white-space-normal">
+                                          <div ng-show="question.responseTypeDesc != 'Grid'" class="parserTextQuestion">
+                                            {{question.text}}
+                                          </div>
+                                          <div ng-show="question.responseTypeDesc == 'Grid'" class="gridPreview">
+                                            <p>{{question.text}}</p>
+                                            <div ng-bind-html="question.html | trusthtml" class="space-on-top-lg"></div>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                      <div class="space-on-top res_container" ng-if="vm.source && vm.source == 'QA' && subSection.isOpen" ng-mouseover="question.hoverState = true;" ng-mouseleave="question.hoverState = false;">
+                                        <textarea ng-if="question.responseHTML.length && question.editable" id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                                           data-ng-model="question.responseHTML"></textarea>
+                                        <div ng-if="question.responseHTML.length && !question.editable" ng-bind-html="question.responseHTML | trusthtml"></div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+                    </uib-accordion>
+                  </div>
+                </div>
+            </div>
+        </uib-accordion>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4 text-right">
+        <h4 style="padding-right: 10px">Total: <strong>{{vm.getTotal()}}</strong></h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.loading" >{{vm.getSubmitText()}}</button>
+    <button btn-type="default"
+              data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

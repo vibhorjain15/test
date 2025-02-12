@@ -1,0 +1,42 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-tfastatus></ng2-tfastatus> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Two-factor Authentication</h5>
+  </div>
+
+  <div class="panel-body">
+    <div data-ng-hide="vm.currentUser.twoFactorEnabled">
+      <p>
+        Status:
+        <span class="text-danger">
+          <b class="align-middle">Off</b>
+          <icon name="close" class="space-on-left align-middle"></icon>
+        </span>
+      </p>
+
+      <a ui-sref="app.settings.security.two_factor_authentication.intro"
+         class="btn btn-primary">Setup two-factor authentication</a>
+    </div>
+
+    <div data-ng-show="vm.currentUser.twoFactorEnabled">
+      <p>
+        Status:
+        <span class="text-success">
+          <b class="align-middle">On</b>
+          <icon name="check" class="space-on-left align-middle"></icon>
+        </span>
+      </p>
+
+      <button btn-type="danger" data-ng-click="vm.disable2FA()">
+        Disable two-factor authentication
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    <p class="clear-margin">
+      <icon name="question-circle"></icon>
+      Two-factor authentication provides another layer of security to your account.
+    </p>
+  </div>
+</div>

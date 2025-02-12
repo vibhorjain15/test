@@ -1,0 +1,148 @@
+<div
+  *ngIf="comment"
+  class="comment"
+  [ngClass]="{
+    'space-on-bottom-xxl': spaceBelowComment,
+    'space-on-bottom': !spaceBelowComment,
+    'align-end': userId == comment.created_by_id,
+    'align-start': userId != comment.created_by_id
+  }"
+  [style.width.%]="rightOptions.length ? 98 : 100"
+  [attr.aria-label]="
+    comment?.created_by_name +
+    ' commented ' +
+    (lastEdited | dvDate : ['dvDateTime'])
+  "
+>
+  <div class="header" *ngIf="showCommentHeader">
+    <div class="header-left">
+      <span
+        class="circled-initials"
+        *ngIf="showIndex"
+        [attr.aria-label]="'Comment number ' + (index + 1)"
+      >
+        {{ index + 1 }}
+      </span>
+      <div
+        class="auth-name"
+        [attr.aria-label]="'Author: ' + comment?.created_by_name"
+      >
+        {{ comment?.created_by_name }}
+      </div>
+    </div>
+    <div class="header-right">
+      <span
+        *ngIf="topIcons"
+        class="icon-wrapper move-icon-color"
+        [style.min-width]="topIcons?.length * 30 + 'px'"
+      >
+        <ng-container *ngIf="showIcons">
+          <span
+            *ngFor="let iconData of topIcons"
+            [tooltip]="iconData?.tooltip"
+            container="body"
+            [ngClass]="{
+              'icon-span': iconData?.isDisabled
+            }"
+            [attr.aria-label]="iconData?.tooltip"
+          >
+            <span
+              appIcon
+              [name]="iconData?.name"
+              placement="left"
+              (click)="handleIconClick(iconData)"
+              [ngClass]="{
+                'icon-disable': iconData?.isDisabled,
+                'icon-active': iconData?.isactive,
+                'icon-highlighted': iconData?.isHighlighted
+              }"
+              [size]="iconData?.size"
+            ></span>
+          </span>
+        </ng-container>
+      </span>
+    </div>
+  </div>
+  <div class="content">
+    <div
+      class="content-left"
+      [class.not-resolved-parent]="!comment?.disabled && !comment?.parent_id"
+      [class.resolved]="comment?.disabled"
+    >
+      <ng-container>
+        <div
+          *ngIf="note"
+          [innerHtml]="note"
+          class="word-break-break-word"
+          [attr.aria-label]="note"
+        ></div>
+        <ng-content *ngIf="!note"></ng-content>
+        <div
+          class="last-edited"
+          [tooltip]="lastEdited | dvDate : ['calendarTime']"
+          [attr.aria-label]="
+            'Last edited ' + (lastEdited | dvDate : ['dvDateTime'])
+          "
+        >
+          {{ lastEdited + "Z" | dvDate : ["dvDateTime"] }}
+          <span *ngIf="comment?.updated_at"> (edited) </span>
+        </div>
+      </ng-container>
+    </div>
+    <div
+      class="content-right"
+      *ngIf="rightOptions.length && !comment?.disabled"
+    >
+      <dv-logo-label label="">
+        <dv-dropdown
+          type="default"
+          (onDropdownClick)="dropdownActionClick($event)"
+          [dropDownList]="rightOptions"
+          iconName="ellipsis-h"
+          [inpToolTip]="''"
+          iconSize="medium"
+          dropdownPlacement="right"
+          [ariaLabel]="'Options'"
+        ></dv-dropdown>
+      </dv-logo-label>
+    </div>
+  </div>
+  <div class="footer">
+    <div
+      class="footer-left font-bold"
+      *ngIf="comment?.comment_count > 0 && showReplyCount"
+    >
+      <a
+        class="icon-link"
+        (click)="navigateToReplyThread()"
+        tabindex="0"
+        [attr.aria-label]="
+          comment?.comment_count +
+          ' ' +
+          (comment?.comment_count == 1 ? 'Reply' : 'Replies')
+        "
+      >
+        {{ comment?.comment_count }}
+        {{ comment?.comment_count == 1 ? "Reply" : "Replies" }}
+      </a>
+    </div>
+    <div class="footer-right"></div>
+  </div>
+  <span
+    *ngIf="comment?.disabled && comment?.resolved_by_name"
+    [attr.aria-label]="
+      'Resolved by ' +
+      comment.resolved_by_name +
+      ' ' +
+      (comment.resolved_at | dvDate : ['dvDateTime'])
+    "
+  >
+    <small>
+      <i>
+        Resolved by {{ comment.resolved_by_name }}
+        on
+        {{ comment.resolved_at + "Z" | dvDate : ["dvDateTime"] }}
+      </i>
+    </small>
+  </span>
+</div>

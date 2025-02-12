@@ -1,0 +1,864 @@
+<div class="row space-on-top-lg">
+  <div class="list-group-item" *ngIf="loading_data">
+    <div class="row clearfix">
+      <div>
+        <app-spinner [broadSpinner]="true" [spinnerHeight]="20"></app-spinner>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="col-md-12"
+    [tooltip]="
+      disabled
+        ? 'Please contact customer service in order to enable this feature for your firm'
+        : ''
+    "
+  >
+    <div *ngIf="!loading_data && fields.length == 0">
+      <p class="clear-margin text-center">
+        No fields present,
+        <a class="clickable" (click)="redirect(redirectionUrl)">click here</a>
+        to add one
+      </p>
+    </div>
+    <div *ngIf="fields.length > 0">
+      <form [formGroup]="fieldForm" autocomplete="off">
+        <div
+          *ngFor="let fieldRow of mandatoryFields; let id = index"
+          class="space-on-top"
+        >
+          <ng-container
+            [ngTemplateOutlet]="fieldsList"
+            [ngTemplateOutletContext]="{ fieldRow: fieldRow, id: id }"
+          >
+          </ng-container>
+        </div>
+        <div *ngIf="mandatoryFields?.length == 0">
+          <div *ngFor="let fieldRow of nonMandatoryFields" class="space-on-top">
+            <ng-container
+              [ngTemplateOutlet]="fieldsList"
+              [ngTemplateOutletContext]="{ fieldRow: fieldRow }"
+            >
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="showNonMandatoryFields">
+          <div *ngFor="let fieldRow of nonMandatoryFields" class="space-on-top">
+            <ng-container
+              [ngTemplateOutlet]="fieldsList"
+              [ngTemplateOutletContext]="{ fieldRow: fieldRow }"
+            >
+            </ng-container>
+          </div>
+        </div>
+        <div
+          class="control-label col-md-3 pull-left"
+          *ngIf="nonMandatoryFields.length > 0"
+        >
+          <a
+            class="link clickable"
+            (click)="showNonMandatoryFields = !showNonMandatoryFields"
+            >{{ showNonMandatoryFields ? "Hide" : "Show More" }}
+            <span
+              class="arrowicon"
+              appIcon
+              [name]="showNonMandatoryFields ? 'angle-up' : 'angle-down'"
+            ></span
+          ></a>
+        </div>
+
+        <!-- common code for all fields -->
+        <ng-template #fieldsList let-fieldRow="fieldRow" let-id="id">
+          <div [formArrayName]="fieldRow.field_unique_key">
+            <div
+              *ngFor="
+                let control of getFormArray(fieldRow.field_unique_key).controls;
+                let i = index;
+                let last = last
+              "
+            >
+              <div class="custom-fields" [formGroupName]="i">
+                <!-- dropdown -->
+                <dv-form-element
+                  [fieldName]="fieldRow.alias"
+                  *ngIf="fieldRow && fieldRow.type == 'dropdown'"
+                  [showRightIcon]="false"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="control-label text-uppercase label-wrap"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory"
+                  [infoText]="fieldRow.description ? fieldRow.description : ''"
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                >
+                  <span col="12">
+                    <dv-select
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [clearable]="true"
+                      formControlName="value"
+                      [controller]="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        )
+                      "
+                      [disabled]="readonly"
+                      bindLabel="value"
+                      bindValue=""
+                      [list]="fieldRow.options"
+                      (onSelectChange)="
+                        onOptionChanged(fieldRow.field_unique_key, i, $event)
+                      "
+                      placeholder="Select an option"
+                      [contoller]="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        )
+                      "
+                      [aria-label]="fieldRow.alias"
+                    >
+                    </dv-select>
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                    <div
+                      *ngIf="
+                        fieldRow.otherOption &&
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        ).value?.id == fieldRow.otherOption.id
+                      "
+                      class="space-on-top"
+                    >
+                      <textarea
+                        [id]="fieldRow.field_unique_key + '_' + i"
+                        class="form-control"
+                        placeholder="Please provide explanation"
+                        msd-elastic="\n"
+                        [ngClass]="{
+                          'checkbox-error':
+                            fieldRow.otherOption &&
+                            getFormArray(fieldRow.field_unique_key).controls[
+                              i
+                            ].get('value').value.id ==
+                              fieldRow.otherOption.id &&
+                            !fieldRow.textExplanation &&
+                            isSubmitted
+                        }"
+                        placement="right"
+                        [required]="
+                          fieldRow.otherOption &&
+                          getFormArray(fieldRow.field_unique_key).controls[
+                            i
+                          ].get('value').value.id == fieldRow.otherOption.id
+                        "
+                        [(ngModel)]="fieldRow.textExplanation"
+                        [ngModelOptions]="{ standalone: true }"
+                        [attr.aria-label]="fieldRow.alias"
+                      ></textarea>
+                      <div
+                        class="text-danger"
+                        *ngIf="
+                          fieldRow.otherOption &&
+                          getFormArray(fieldRow.field_unique_key).controls[
+                            i
+                          ].get('value').value.id == fieldRow.otherOption.id &&
+                          !fieldRow.textExplanation &&
+                          isSubmitted
+                        "
+                      >
+                        Explanation is required
+                      </div>
+                    </div>
+                  </span>
+                </dv-form-element>
+                <!-- text -->
+                <dv-form-element
+                  *ngIf="fieldRow && fieldRow.type == 'text'"
+                  [fieldName]="fieldRow.alias"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="control-label text-uppercase label-wrap"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory && i === 0"
+                  [infoText]="
+                    i === 0 && fieldRow.description ? fieldRow.description : ''
+                  "
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                  [showRightIcon]="false"
+                >
+                  <span [col]="9">
+                    <input
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [attr.aria-label]="fieldRow.alias"
+                      placeholder="Please enter text here"
+                      class="form-control"
+                      formControlName="value"
+                      [readonly]="readonly"
+                      dvTrimValue
+                    />
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                  </span>
+                  <span [col]="3">
+                    <ng-container
+                      [ngTemplateOutlet]="buttonsTemplate"
+                      [ngTemplateOutletContext]="{
+                        fieldRow: fieldRow,
+                        i: i,
+                        last: last
+                      }"
+                    >
+                    </ng-container>
+                  </span>
+                </dv-form-element>
+
+                <!-- int -->
+                <dv-form-element
+                  *ngIf="fieldRow && fieldRow.type == 'int'"
+                  [fieldName]="fieldRow.alias"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="control-label text-uppercase label-wrap"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory && i === 0"
+                  [infoText]="
+                    i === 0 && fieldRow.description ? fieldRow.description : ''
+                  "
+                  [showRightIcon]="false"
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                >
+                  <span [col]="9">
+                    <input
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [attr.aria-label]="fieldRow.alias"
+                      placeholder="Please enter integer here"
+                      class="form-control"
+                      formControlName="value"
+                      [readonly]="readonly"
+                      appIntInput
+                      dvTrimValue
+                    />
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{
+                        fieldRow: fieldRow,
+                        i: i
+                      }"
+                    >
+                    </ng-container>
+                  </span>
+                  <span [col]="3">
+                    <ng-container
+                      [ngTemplateOutlet]="buttonsTemplate"
+                      [ngTemplateOutletContext]="{
+                        fieldRow: fieldRow,
+                        i: i,
+                        last: last
+                      }"
+                    >
+                    </ng-container>
+                  </span>
+                </dv-form-element>
+                <!-- numeric -->
+                <dv-form-element
+                  *ngIf="fieldRow && fieldRow.type == 'numeric'"
+                  [fieldName]="fieldRow.alias"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="control-label text-uppercase label-wrap"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory && i === 0"
+                  [infoText]="
+                    i === 0 && fieldRow.description ? fieldRow.description : ''
+                  "
+                  [showRightIcon]="false"
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                >
+                  <span [col]="9">
+                    <input
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [attr.aria-label]="fieldRow.alias"
+                      placeholder="Please enter numeric here"
+                      class="form-control"
+                      formControlName="value"
+                      [readonly]="readonly"
+                      appDecimalInput
+                      [allowNegative]="true"
+                      [decimalUpto]="4"
+                      dvTrimValue
+                    />
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                  </span>
+                  <span [col]="3">
+                    <ng-container
+                      [ngTemplateOutlet]="buttonsTemplate"
+                      [ngTemplateOutletContext]="{
+                        fieldRow: fieldRow,
+                        i: i,
+                        last: last
+                      }"
+                    >
+                    </ng-container>
+                  </span>
+                </dv-form-element>
+
+                <!-- link -->
+                <dv-form-element
+                  [fieldName]="fieldRow.alias"
+                  *ngIf="fieldRow && fieldRow.type == 'link'"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="control-label text-uppercase label-wrap"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory && i === 0"
+                  [infoText]="
+                    i === 0 && fieldRow.description ? fieldRow.description : ''
+                  "
+                  [showRightIcon]="false"
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                >
+                  <span col="5">
+                    <input
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [attr.aria-label]="fieldRow.alias"
+                      placeholder="Enter title"
+                      class="form-control"
+                      formControlName="value"
+                      [readonly]="readonly"
+                      (focusout)="setValidationForUrl(fieldRow, i)"
+                      dvTrimValue
+                    />
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                  </span>
+                  <span col="5">
+                    <input
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [attr.aria-label]="fieldRow.alias"
+                      placeholder="Enter URL"
+                      class="form-control required-input"
+                      formControlName="value_url"
+                      [readonly]="readonly"
+                      dvTrimValue
+                    />
+                    <div
+                      class="text-danger"
+                      *ngIf="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value_url'
+                        ).touched &&
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value_url'
+                        ).errors?.required
+                      "
+                    >
+                      <span
+                        class="text-lowercase font-weight-normal label-wrap"
+                        [innerHtml]="fieldRow.alias + ' ' + 'is required'"
+                      ></span>
+                    </div>
+                    <div
+                      class="text-danger"
+                      *ngIf="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value_url'
+                        ).touched &&
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value_url'
+                        ).errors?.pattern
+                      "
+                    >
+                      Please enter a valid domain in the format
+                      https://www.example.com
+                    </div>
+                  </span>
+                  <div col="2">
+                    <ng-container
+                      [ngTemplateOutlet]="buttonsTemplate"
+                      [ngTemplateOutletContext]="{
+                        fieldRow: fieldRow,
+                        i: i,
+                        last: last
+                      }"
+                    >
+                    </ng-container>
+                  </div>
+                </dv-form-element>
+                <!-- checkbox -->
+                <dv-form-element
+                  [fieldName]="fieldRow.alias"
+                  *ngIf="fieldRow && fieldRow.type == 'checkbox'"
+                  [showRightIcon]="false"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  labelClass="control-label text-uppercase label-wrap"
+                  elementCol="0"
+                  [isRequired]="fieldRow.is_mandatory"
+                  [infoText]="fieldRow.description ? fieldRow.description : ''"
+                  [for]="'checkBox ' + check"
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                >
+                  <span
+                    col="9"
+                    [ngClass]="{
+                      'checkbox-error':
+                        fieldRow.is_mandatory &&
+                        !getFormArray(fieldRow.field_unique_key).controls[
+                          i
+                        ].get('value').value &&
+                        isSubmitted
+                    }"
+                    class="label-wrap padding-left-10"
+                  >
+                    <dv-checkbox
+                      (onValChange)="
+                        onCheckBoxValueChange(fieldRow, i, option, $event)
+                      "
+                      *ngFor="let option of fieldRow.options; let check = index"
+                      [ngModel]="
+                        getCheckboxValue(fieldRow.field_unique_key, i, option)
+                      "
+                      [label]="option.value"
+                      [name]="'checkBox' + check + '' + option.id"
+                      [id]="'checkBox' + check + '' + option.id"
+                      [ngModelOptions]="{ standalone: true }"
+                      [disabled]="readonly"
+                    >
+                    </dv-checkbox>
+                  </span>
+                  <span col="9" offset="3">
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                  </span>
+                  <div
+                    col="12"
+                    class="space-on-top"
+                    *ngIf="
+                      fieldRow.otherOption && fieldRow.is_other_option_selected
+                    "
+                  >
+                    <textarea
+                      [attr.aria-label]="fieldRow.alias"
+                      class="form-control"
+                      placeholder="Please provide explanation"
+                      msd-elastic="\n"
+                      [required]="
+                        fieldRow.otherOption &&
+                        fieldRow.is_other_option_selected
+                      "
+                      [(ngModel)]="fieldRow.textExplanation"
+                      [ngModelOptions]="{ standalone: true }"
+                      [ngClass]="{
+                        'checkbox-error':
+                          fieldRow.otherOption &&
+                          fieldRow.is_other_option_selected &&
+                          isSubmitted &&
+                          !fieldRow.textExplanation
+                      }"
+                    ></textarea>
+                    <div
+                      class="text-danger"
+                      *ngIf="
+                        fieldRow.otherOption &&
+                        fieldRow.is_other_option_selected &&
+                        isSubmitted &&
+                        !fieldRow.textExplanation
+                      "
+                    >
+                      Explanation is required
+                    </div>
+                  </div>
+                </dv-form-element>
+                <!-- paragraph -->
+                <div
+                  class="form-group"
+                  *ngIf="fieldRow && fieldRow.type == 'textmultiline'"
+                >
+                  <ng-container
+                    *ngIf="readonly"
+                    [ngTemplateOutlet]="labelTemplate"
+                    [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                  >
+                  </ng-container>
+                  <div
+                    col="9"
+                    *ngIf="readonly"
+                    class="pull-right space-on-bottom"
+                  >
+                    <span col="12">
+                      <div
+                        [innerHtml]="
+                          getFormArray(fieldRow.field_unique_key).controls[
+                            i
+                          ].get('value').value | trustHtml
+                        "
+                        class="preview_div previewReadOnly"
+                      ></div>
+                    </span>
+                  </div>
+                  <span col="12" *ngIf="!readonly">
+                    <dv-form-element
+                      [fieldName]="fieldRow.alias"
+                      [modelController]="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        )
+                      "
+                      [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                      labelClass="control-label text-uppercase label-wrap"
+                      labelCol="3"
+                      elementCol="9"
+                      [isRequired]="fieldRow.is_mandatory"
+                      [showRightIcon]="false"
+                      [infoText]="fieldRow?.description || ''"
+                      [for]="fieldRow.field_unique_key + '_' + i"
+                    >
+                      <span
+                        col="12"
+                        [ngClass]="{
+                          'checkbox-error':
+                            fieldRow.is_mandatory &&
+                            !getFormArray(fieldRow.field_unique_key).controls[
+                              i
+                            ].get('value').value &&
+                            isSubmitted
+                        }"
+                      >
+                        <dv-editor
+                          [value]="
+                            getFormArray(fieldRow.field_unique_key).controls[
+                              i
+                            ].get('value').value
+                          "
+                          (onChange)="
+                            handleEditorTextChange(
+                              fieldRow.field_unique_key,
+                              i,
+                              $event
+                            )
+                          "
+                          [literVersion]="true"
+                          [configObj]="tinyMceInit"
+                          [isTrackChange]="enable_tracking"
+                          [id]="fieldRow.field_unique_key + '_' + i"
+                        >
+                        </dv-editor>
+                      </span>
+                      <ng-container
+                        [ngTemplateOutlet]="requiredError"
+                        [ngTemplateOutletContext]="{
+                          fieldRow: fieldRow,
+                          i: i
+                        }"
+                      >
+                      </ng-container>
+                    </dv-form-element>
+                  </span>
+                </div>
+                <!-- dynamic -->
+                <dv-form-element
+                  [fieldName]="fieldRow.alias"
+                  *ngIf="fieldRow && fieldRow.type == 'dynamic'"
+                  [showRightIcon]="false"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="text-uppercase label-wrap"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory"
+                  [infoText]="fieldRow.description ? fieldRow.description : ''"
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                >
+                  <span col="12">
+                    <dv-select
+                      *ngIf="!fieldRow.has_multiple"
+                      [clearable]="true"
+                      formControlName="value"
+                      [disabled]="readonly"
+                      placeholder="Select an option"
+                      bindLabel="value"
+                      bindValue=""
+                      [list]="fieldRow.dynamicSource"
+                      (onSelectChange)="
+                        onOptionChanged(fieldRow.field_unique_key, i, $event)
+                      "
+                      [contoller]="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        )
+                      "
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [aria-label]="fieldRow.alias"
+                    >
+                    </dv-select>
+
+                    <dv-select
+                      *ngIf="fieldRow.has_multiple"
+                      [multiple]="true"
+                      [clearable]="false"
+                      formControlName="value"
+                      [disabled]="readonly"
+                      placeholder="Select an option"
+                      bindLabel="value"
+                      bindValue=""
+                      [list]="fieldRow.dynamicSource"
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                      [aria-label]="fieldRow.alias"
+                    >
+                    </dv-select>
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                  </span>
+                </dv-form-element>
+
+                <!-- date -->
+                <dv-form-element
+                  *ngIf="
+                    fieldRow &&
+                    (fieldRow.type == 'date' || fieldRow.type == 'datetime')
+                  "
+                  [showRightIcon]="false"
+                  [modelController]="
+                    getFormArray(fieldRow.field_unique_key).controls[i].get(
+                      'value'
+                    )
+                  "
+                  [label]="i === 0 ? fieldRow.alias : '&nbsp;'"
+                  labelClass="control-label text-uppercase"
+                  labelCol="3"
+                  elementCol="9"
+                  [isRequired]="fieldRow.is_mandatory"
+                  [infoText]="fieldRow.description ? fieldRow.description : ''"
+                  [for]="fieldRow.field_unique_key + '_' + i"
+                >
+                  <span col="12">
+                    <app-date-picker
+                      *ngIf="fieldRow.type == 'date'"
+                      [clearable]="true"
+                      [value]="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        )?.value
+                      "
+                      placeholder="Select date"
+                      formControlName="value"
+                      (change)="
+                        onOptionChanged(fieldRow.field_unique_key, i, $event)
+                      "
+                      (blur)="
+                        getFormArray(fieldRow.field_unique_key)
+                          .controls[i].get('value')
+                          .markAsTouched()
+                      "
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                    >
+                    </app-date-picker>
+                    <app-date-time-picker
+                      #dateTime
+                      [clearable]="true"
+                      *ngIf="fieldRow.type == 'datetime'"
+                      [value]="
+                        getFormArray(fieldRow.field_unique_key).controls[i].get(
+                          'value'
+                        )?.value
+                      "
+                      placeholder="Select date"
+                      formControlName="value"
+                      (change)="
+                        onOptionChanged(fieldRow.field_unique_key, i, $event)
+                      "
+                      (blur)="
+                        getFormArray(fieldRow.field_unique_key)
+                          .controls[i].get('value')
+                          .markAsTouched()
+                      "
+                      [id]="fieldRow.field_unique_key + '_' + i"
+                    ></app-date-time-picker>
+                    <ng-container
+                      [ngTemplateOutlet]="requiredError"
+                      [ngTemplateOutletContext]="{ fieldRow: fieldRow, i: i }"
+                    >
+                    </ng-container>
+                  </span>
+                </dv-form-element>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- common code for field labels -->
+        <ng-template #labelTemplate let-fieldRow="fieldRow" let-i="i">
+          <label class="control-label text-uppercase" col="3" *ngIf="i === 0">
+            {{ fieldRow.alias }}
+            <span
+              appIcon
+              name="info"
+              *ngIf="fieldRow.description"
+              [tooltip]="fieldRow.description"
+            >
+            </span>
+            <span
+              *ngIf="fieldRow.is_mandatory"
+              class="font-size-10 text-orange align-top"
+              >*</span
+            >
+          </label>
+        </ng-template>
+
+        <!-- common code for add more/delete buttons -->
+        <ng-template
+          #buttonsTemplate
+          let-fieldRow="fieldRow"
+          let-i="i"
+          let-last="last"
+        >
+          <span
+            *ngIf="
+              i == 0 &&
+              getFormArray(fieldRow.field_unique_key).controls[i].get(
+                'value'
+              ) &&
+              !fieldRow.has_multiple
+            "
+          >
+            <button
+              appButton
+              class="btn btn-default btn-sm danger"
+              (click)="clearField(fieldRow.field_unique_key, i)"
+              tooltip="Clear Field"
+              aria-label="Clear Field"
+              [disabled]="disabled || readonly"
+              type="button"
+            >
+              <span appIcon name="Erase"></span>
+            </button>
+          </span>
+          <!-- only when multiple fields -->
+          <span *ngIf="i !== 0 && fieldRow.has_multiple">
+            <button
+              appButton
+              class="btn btn-default btn-sm danger"
+              (click)="removeField(fieldRow.field_unique_key, i)"
+              tooltip="Remove field"
+              aria-label="Remove field"
+              [disabled]="disabled || readonly"
+              type="button"
+            >
+              <span appIcon name="trashcan"></span>
+            </button>
+          </span>
+          <span *ngIf="i == 0 && fieldRow.has_multiple && !last">
+            <button
+              appButton
+              class="btn btn-default btn-sm danger"
+              (click)="removeField(fieldRow.field_unique_key, i)"
+              tooltip="Remove field"
+              aria-label="Remove field"
+              [disabled]="disabled || readonly"
+              type="button"
+            >
+              <span appIcon name="trashcan"></span>
+            </button>
+          </span>
+          <span *ngIf="i == 0 && fieldRow.has_multiple && last">
+            <button
+              appButton
+              class="btn btn-default btn-sm danger"
+              (click)="clearField(fieldRow.field_unique_key, i)"
+              tooltip="Clear Field"
+              aria-label="Clear Field"
+              [disabled]="disabled || readonly"
+              type="button"
+            >
+              <span appIcon name="Erase"></span>
+            </button>
+          </span>
+          <span *ngIf="last && fieldRow.has_multiple" class="space-on-left-lg">
+            <button
+              appButton
+              class="btn btn-default btn-sm success"
+              btnType="default"
+              size="sm"
+              tooltip="Add more"
+              aria-label="Add more field"
+              [disabled]="readonly"
+              (click)="addNewField(fieldRow, true)"
+              type="button"
+            >
+              <span appIcon name="plus"></span>
+            </button>
+          </span>
+        </ng-template>
+
+        <!-- common code for required field error -->
+        <ng-template #requiredError let-fieldRow="fieldRow" let-i="i">
+          <div
+            class="text-danger custom-fields"
+            *ngIf="
+              getFormArray(fieldRow.field_unique_key).controls[i].get('value')
+                .touched &&
+              getFormArray(fieldRow.field_unique_key).controls[i].get('value')
+                .errors?.required
+            "
+          >
+            <span
+              class="text-lowercase font-weight-normal label-wrap"
+              [innerHtml]="fieldRow.alias + ' ' + 'is required'"
+            ></span>
+          </div>
+        </ng-template>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+.grey-bg {
+  background: #f0f0f0 0% 0% no-repeat padding-box;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+.d-flex {
+  display: flex !important;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+:host document-name ::ng-deep .document-name-wrapper {
+  margin-bottom: 10px;
+}
+.excel-divider {
+  background: #e4e4e4 0% 0% no-repeat padding-box;
+  height: 2px;
+  margin: 15px -15px 15px -15px;
+}
+.excel-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.excel-sync-buttons ::ng-deep .button-component > div {
+  width: 65px;
+  justify-content: center;
+}

@@ -1,0 +1,95 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-products-monitor-manager></ng2-products-monitor-manager>
+ </div>
+ <div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">{{vm.entity_type | standardPluralize}}</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a class="panel-control" data-ng-if="!vm.is_freeSubscription"
+                   data-ng-click="vm.openNewFundDialog()"
+                   uib-tooltip="Add New {{vm.entity_type}}">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <spinner broad-spinner spinner-height='60' data-ng-if="vm.loading_funds"></spinner>
+
+        <div data-ng-if="!vm.loading_funds">
+            <ul class="list-unstyled"
+                tiles-adjuster="vm.adjust_fund_list"
+                use-max-tile-width="true"
+                tile-selector="> li"
+                min-tile-width="180"
+                data-ng-if="vm.fund_list.length>0">
+                <li class="inline-block pull-left"
+                    on-render="vm.adjust_fund_list = true"
+                    data-ng-repeat="fund in vm.fund_list"
+                    data-ng-mouseenter="display_action_buttons = true"
+                    data-ng-mouseleave="display_action_buttons = false">
+                    <div class="panel panel-default relative" data-ng-class="{'bg-light-gray-panel': display_action_buttons}">
+                        <div class="panel-body">
+                            <div class="max-w-200 lh1-5 word-break-break-all">
+                                <a ui-sref="{{vm.is_freeSubscription ? 'app.firms.funds.profile.aum_tr({firmId: fund.parentFirm.id,fundId: fund.id})' : 'app.firms.funds.profile.ddq({firmId: fund.parentFirm.id,fundId: fund.id})'}}" truncate-text="40" uib-tooltip="{{fund.name}}">
+                                    {{fund.name}}
+                                </a>
+                            </div>
+
+                            <ul class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons">
+                                <li class="space-on-bottom">
+                                    <span class="align-middle text-muted">{{fund.strategyName}}</span>
+                                </li>
+
+                                <li class="space-on-bottom">
+                                    <span class="align-middle text-muted"><small># VEHICLES: {{fund.shareclass_Count}}</small></span>
+                                </li>
+
+                                <li>
+                                    <fund-return fund-return="fund.return"
+                                                 uib-tooltip="Fund returns"
+                                                 date="fund.returnAsofDate"></fund-return>
+                                </li>
+                            </ul>
+
+                            <div class="pos-abs stick-right-lg stick-bottom-lg" data-ng-if="display_action_buttons">
+                                <button btn-type="default"
+                                        data-ng-show="vm.is_admin"
+                                        uib-tooltip="Edit this {{vm.entity_type}}"
+                                        data-ng-click="vm.editFund(fund)"
+                                        size="xs">
+                                    <icon name="pencil"></icon>
+                                </button>
+                                <button btn-type="default"
+                                        data-ng-show="vm.is_admin"
+                                        uib-tooltip="Remove this {{vm.entity_type}}"
+                                        data-ng-click="vm.displayFundRemovalConfirmation(fund)"
+                                        class="danger"
+                                        size="xs">
+                                    <icon name="trashcan"></icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <div col="6" offset="3" data-ng-if="vm.fund_list.length == 0">
+                <empty-state icon-name="fund"
+                             action="vm.openNewFundDialog()"
+                             action-label="Add New Product"
+                             data-ng-if="!vm.is_freeSubscription"
+                             message="No products available. Why not add?">
+                </empty-state>
+                <empty-state icon-name="fund"
+                             data-ng-if="vm.is_freeSubscription"
+                             message="No products available.">
+                </empty-state>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,162 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!entity"
+        ></app-spinner>
+        <div class="project-grid-wrapper" *ngIf="entity">
+          <div class="project-details">
+            <div>
+              <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                {{
+                  entity_type !== "DueDiligence"
+                    ? entity.display_name
+                    : entity.entity_name
+                }}
+              </h4>
+              <small class="text-muted">
+                {{ entity_label }} | {{ documentCount }}
+                {{ documentCount > 1 ? "documents" : "document" }}
+              </small>
+            </div>
+            <div class="bordered-right"></div>
+            <div class="text-center" *ngIf="entity_type == 'DueDiligence'">
+              <span class="align-middle display-block">Status</span>
+              <span diligenceStatus [status]="entity.status"></span>
+            </div>
+          </div>
+          <div class="right-options" *ngIf="subscription !== 'Free'">
+            <app-search-input
+              placeholder="Keyword Search"
+              (onSearch)="handleOnSearch($event)"
+              (onClear)="handleOnClear()"
+              class="w-400"
+            ></app-search-input>
+            <dv-dropdown
+              [dropDownList]="newOptions"
+              [disabled]="
+                !is_investor &&
+                !entity.is_internal &&
+                [
+                  diligenceStatusConstant.COMPLETED,
+                  diligenceStatusConstant.Approved,
+                  diligenceStatusConstant.NotApproved,
+                  diligenceStatusConstant.Evaluation
+                ].includes(entity.status)
+              "
+              tooltip="{{
+                !is_investor &&
+                !entity.is_internal &&
+                [
+                  diligenceStatusConstant.COMPLETED,
+                  diligenceStatusConstant.Approved,
+                  diligenceStatusConstant.NotApproved,
+                  diligenceStatusConstant.Evaluation
+                ].includes(entity.status)
+                  ? 'Document(s) cannot be added to a completed or closed external project.'
+                  : ''
+              }}"
+              dropdownPlacement="right"
+              class="document-add-dropdown"
+              customClass="document-dropdown-class"
+              (onDropdownClick)="handleNewDropdownClick($event)"
+            >
+              <span dropdownLabelContent class="btn btn-primary class-primary">
+                <span appIcon name="plus"></span> Add
+              </span>
+            </dv-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="panel panel-default selection-header-wrapper"
+      *ngIf="show_bulk_actions"
+    >
+      <div class="panel-body padded-lg selection-header">
+        <h5 class="inline space-on-right-lg">
+          <strong class="selection-header"
+            >Items Selected:
+            <span class="badge space-on-left-lg">{{
+              totalSelectedRecords
+            }}</span></strong
+          >
+        </h5>
+        <dv-button
+          btnType="default"
+          leftIcon="pencil"
+          class="space-on-right-lg"
+          (onClick)="bulkEditDocuments()"
+          >Edit</dv-button
+        >
+
+        <dv-button
+          tippyTooltip="Download All (select up to 1000 documents)"
+          btnType="default"
+          class="space-on-right-lg"
+          leftIcon="download-install-line"
+          [disabled]="totalSelectedRecords > 1000 || downloadingDocuments"
+          (onClick)="downloadAllDocuments()"
+          >Download</dv-button
+        >
+
+        <a
+          tippyTooltip="Close"
+          container="body"
+          class="btn pull-right text-black"
+          [style.margin-left]="'auto'"
+          (click)="closeQuickActions()"
+        >
+          <strong><span appIcon name="close"></span></strong>
+        </a>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body" *ngIf="isGridLoaded">
+        <app-dv-grid
+          [rowData]="documents"
+          class="doc-grid"
+          [name]="gridName"
+          [onSelectionChanged]="onSelectionChanged"
+          (gridReady)="handleOnGridReady($event)"
+          [onCellClicked]="onCellClicked"
+          [onRowSelected]="onRowSelected"
+          [noRowsTemplate]="
+            loadingDocuments && !documents.length
+              ? 'Loading...'
+              : 'No result found'
+          "
+          #entityDocumentsGrid
+        ></app-dv-grid>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="dv-sidebar-panel sidebar-lg"
+  [ngClass]="{ in: displaySidebarPanel }"
+  *ngIf="displaySidebarPanel"
+>
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5>
+        <b>{{ sidebarTitle }}</b>
+        <a
+          class="pull-right clickable link-disguise"
+          (click)="displaySidebarPanel = false"
+        >
+          <span appIcon name="close" size="lg"></span>
+        </a>
+      </h5>
+    </div>
+    <app-document-notes-sidebar
+      [attachment]="clickedDocument"
+      [diligenceId]="entity_id"
+    >
+    </app-document-notes-sidebar>
+  </div>
+</div>

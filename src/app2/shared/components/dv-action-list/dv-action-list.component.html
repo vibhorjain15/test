@@ -1,0 +1,81 @@
+<nav #actionListElement class="action-list overflow-hidden font-size-14">
+  <div class="push-content-right"></div>
+  <ul
+    class="action-list-body list-style-none clear-margin clear-padding js-responsive-actionlist"
+    *ngIf="actionList && actionList.actionItems"
+  >
+    <li class="d-inline-flex" *ngFor="let item of actionList.actionItems">
+      <a
+        class="action-list-item no-wrap text-decoration-none js-responsive-actionlist-item"
+        [attr.data-tab-item]="item.identifier"
+        *ngIf="item.isVisible"
+      >
+        <dv-logo-label
+          [icon]="item.icon"
+          [label]="item.label"
+          [isLoading]="item.isLoading"
+          [isEnabled]="!item.isDisabled"
+          [type]="!item.isDisabled ? 'button' : 'normal'"
+          [iconColor]="!item.isDisabled ? 'default' : 'disabled'"
+          [tippyTooltip]="item.tooltip"
+          (onClick)="clickHandler(item)"
+        ></dv-logo-label>
+      </a>
+    </li>
+  </ul>
+  <div
+    style="visibility: hidden"
+    class="actionlist-overflow-container js-responsive-actionlist-overflow"
+    container="body"
+  >
+    <span
+      dropdown
+      (isOpenChange)="onDropdownStateChange($event)"
+      placement="bottom right"
+      #bsDropDown="bs-dropdown"
+      container="body"
+    >
+      <a class="dropdown-toggle btn btn-transparent" dropdownToggle #toggler>
+        <dv-logo-label
+          icon="ellipsis-h"
+          label="More Actions"
+          [previewLabel]="actionList.moreOptionTooltip"
+        ></dv-logo-label>
+      </a>
+      <ng-container *ngIf="actionList && actionList.actionItems">
+        <ul
+          class="dropdown-menu dropdown-menu-right js-responsive-actionlist-dropdown-menu"
+          style="visibility: hidden"
+          *dropdownMenu
+          role="menu"
+        >
+          <ng-container *ngFor="let item of actionList.actionItems">
+            <li
+              *ngIf="item.isVisible"
+              [attr.data-menu-item]="item.identifier"
+              [tooltip]="item.tooltip"
+              [class.disabled-Element]="item.isDisabled"
+              container="body"
+              containerClass="action-list-tooltip"
+              role="menuitem"
+            >
+              <a
+                role="button"
+                (click)="clickHandler(item)"
+                [class.pointer-events-none]="item.isDisabled"
+                tabindex="0"
+              >
+                <span
+                  appIcon
+                  [name]="item.icon"
+                  class="space-on-right-lg"
+                ></span
+                >{{ item.label }}
+              </a>
+            </li>
+          </ng-container>
+        </ul>
+      </ng-container>
+    </span>
+  </div>
+</nav>

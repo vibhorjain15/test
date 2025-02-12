@@ -1,0 +1,18 @@
+<div class="row clearfix">
+  <div class="col-md-3">
+    <left-menu-panel
+      [loader]="loader"
+      [list]="leftMenu"
+      header="Partnerships portal"
+      (onMenuClick)="handleMenuClick($event)"
+    ></left-menu-panel>
+  </div>
+  <div class="col-md-9">
+    <dv-partnership-list
+      [loader]="loader"
+      [partners]="partnerLists"
+      [partnerTypeIndex]="lastSelectedIndex"
+    >
+    </dv-partnership-list>
+  </div>
+</div>

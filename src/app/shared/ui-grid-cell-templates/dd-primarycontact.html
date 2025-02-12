@@ -1,0 +1,7 @@
+<ui-grid-cell-contents>
+  <span class="text-muted" data-ng-if="row.entity.primary_contact == 'None'">
+    <i>*None*</i>
+  </span>
+
+  <span data-ng-if="row.entity.primary_contact != 'None'">{{row.entity.primary_contact}}</span>
+</ui-grid-cell-contents>

@@ -1,0 +1,46 @@
+<span class="dv-rating padding-5" [ngClass]="{ readonly: readonly }">
+  <rating
+    [(ngModel)]="value"
+    [max]="ratingScales.length"
+    [readonly]="readonly"
+    (click)="onRatingChange()"
+    [customTemplate]="customTemplate"
+    (onHover)="hoveringOver($event)"
+    (onLeave)="resetHovering()"
+    placement="top"
+    [tooltip]="ratingTooltip"
+    ></rating>
+
+  <ng-template #customTemplate let-index="index" let-value="value">
+    <span
+      class="dv-rating dvi dvi-square rating-level fa-lg level-off"
+      [ngStyle]="{
+        color:
+          value >= ratingScales[index].value
+            ? ratingScales[index].color_code
+            : offColor
+            ? offColor
+            : null
+      }"
+    ></span>
+  </ng-template>
+
+  <div
+    class="align-middle space-on-left display-block ratingValue"
+    *ngIf="value || hovering"
+  >
+    <b>{{ scale_value }}&nbsp;</b>
+    <a
+      tooltip="Clear Rating"
+      container="body"
+      role="button"
+      tabindex="0"
+      aria-label="clear rating"
+      class="align-middle link-disguise link-unstyled"
+      *ngIf="value && !hovering && !readonly"
+      (click)="resetRating(true)"
+    >
+      <span appIcon name="times"></span>
+    </a>
+  </div>
+</span>

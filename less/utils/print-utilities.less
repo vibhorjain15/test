@@ -1,0 +1,67 @@
+.avoid-page-break-inside() {
+  @media print {
+    page-break-inside: avoid;
+  }
+}
+
+@media print {
+  .avoid-page-break-inside {
+    page-break-inside: avoid;
+  }
+
+  @media (max-width: @screen-sm-min) {
+    .control-label {
+      text-align: left;
+      padding-top: 7px;
+    }
+  }
+
+  body {
+    &.print-initiated {
+      padding: 0 !important;
+
+      * {
+        visibility: hidden;
+      }
+
+      .container-fluid, .content-main.js-content-main{
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+
+      .hide-in-print-view{
+        display: none;
+      }
+
+      .show-in-print-view{
+        display: block;
+      }
+
+      .space-on-top{
+        padding-top: 10px;
+      }
+    }
+
+    .print-section {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+
+      &, * {
+        visibility: visible;
+      }
+
+      &.dd-print {
+        position: relative;
+        &, * {
+          visibility: visible;
+        }
+      }
+    }
+  }
+
+  @import (inline) "../../bower_components/fullcalendar/dist/fullcalendar.print.css";
+}

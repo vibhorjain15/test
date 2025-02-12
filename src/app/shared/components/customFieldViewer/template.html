@@ -1,0 +1,38 @@
+<div class="panel panel-default space-on-top-xxl">
+    <div class="panel-heading">
+        <h5 class="panel-title">{{vm.entity_type_name}}: Custom Fields</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a class="panel-control" data-ng-click="vm.addNewCustomTags(vm.entityType)" uib-tooltip="{{'Add new custom fields for '+ vm.entity_type_name}}">
+            <icon name="plus"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+        
+        <div class="label-list customFieldList">
+            <span data-ng-if="vm.loading_data">
+                <spinner broad-spinner spinner-height='20'></spinner>
+            </span>
+            <span class="label label-default text-uppercase space-on-right"
+                data-ng-repeat="entity in vm.custom_fields" data-ng-if="vm.custom_fields.length">
+                <small class="word-wrap-with-break-word">{{entity.alias}}</small>
+
+                <a class=" space-on-left clickable link-disguise" data-ng-click="vm.editCustomFields($index)"
+                    data-ng-if="vm.is_admin">
+                    <icon name="pencil"></icon>
+                </a>
+                <a class="space-on-left clickable link-disguise" data-ng-if="vm.is_admin"
+                    uib-tooltip="Remove Custom Field"
+                    data-ng-click="vm.displayFieldRemovalConfirmation(entity, $index)">&times;</a>
+            </span>
+
+            <p class="alert alert-info text-center" data-ng-if="!vm.loading_data && !vm.custom_fields.length">
+                    No {{vm.entity_type_name}} fields available.
+            </p>
+        </div>
+    </div>
+</div>

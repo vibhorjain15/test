@@ -1,0 +1,397 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-workflow-automation-detail></ng2-workflow-automation-detail>
+  </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body clearfix">
+                <spinner broad-spinner spinner-height='65' data-ng-if="!vm.workflow_status"></spinner>
+
+                <div class="dv-table dv-table-middle dd-info-panel full-width" data-ng-if="vm.workflow_status">
+                    <div class="bordered-right cell">
+                        <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                            <a class="space-on-left-lg" role="button" data-ng-click="vm.redirectToEntity(vm.workflow_status.entity_id,vm.workflow_status.entity_type)">
+                             {{vm.workflow_status.entity_name}} ({{vm.workflow_status.name}})</a>
+                        </h4>
+                        <p><small class="text-muted">{{vm.workflow_status.entity_name}}</small></p>
+                        <small class="text-muted">
+                            {{vm.workflow_status.pct_complete}}% completed
+                        </small>
+                    </div>
+
+                    <div class="cell text-center bordered-right" data-ng-if="(vm.workflow_pending_action_id == 'approval') && (vm.current_user.id == vm.workflow_pending_user_id)">
+                        <button btn-type="transparent" data-ng-click="vm.recordAction('approval')" button-loader="vm.performing_action">
+                            <div><icon name="thumbs-o-up" size="2x"></icon></div>
+                            <small>Approve</small>
+                        </button>
+                    </div>
+
+                    <div class="cell text-center bordered-right" data-ng-if="(vm.workflow_pending_action_id == 'review') && (vm.current_user.id == vm.workflow_pending_user_id)">
+                        <button btn-type="transparent" data-ng-click="vm.recordAction('review')" button-loader="vm.performing_action">
+                            <div><icon name="check2" size="2x"></icon></div>
+                            <small>Mark as Reviewed</small>
+                        </button>
+                    </div>
+
+                    <div class="cell text-center bordered-right">
+                        <button btn-type="transparent" data-ng-click="vm.recordAction('add_note')" button-loader="vm.performing_action">
+                            <div><icon name="notepad" size="2x"></icon></div>
+                            <small>Add Note</small>
+                        </button>
+                    </div>
+
+                    <div class="cell text-center bordered-right">
+                      <span uib-dropdown>
+                        <a href="" class="dropdown-toggle btn btn-transparent"
+                          uib-dropdown-toggle
+                          uib-tooltip="Delete Workflow">
+                           <div><icon name="ellipsis-h" size="2x"></icon></div>
+                           <div class="space-on-top-n"><small>More Actions</small></div>
+                        </a>
+
+                        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                          <li>
+                              <a data-ng-click="vm.confirmDeleteWorkflow()"
+                                 role="button"
+                                 class="danger">
+                                 <icon name="trashcan" class="space-on-right-lg"></icon>Delete workflow process
+                              </a>
+                          </li>
+                          <!-- <li>
+                              <a data-ng-click="vm.attachDocument()"
+                                 role="button">
+                                 <icon name="file" class="space-on-right-lg"></icon>Attach Document
+                              </a>
+                          </li> -->
+                        </ul>
+                      </span>
+                    </div>
+
+                    <div class="cell text-center">
+                        <a class="btn btn-transparent"
+                           ui-sref="app.dash">
+                            <div><icon name="arrow-back" size="2x"></icon></div>
+                            <small>Back to all workflows</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-body clearfix">
+                <spinner broad-spinner spinner-height='40' data-ng-if="!vm.workflow_status"></spinner>
+
+                <div class="dv-table dv-table-middle dd-info-panel full-width" data-ng-if="vm.workflow_status">
+
+                    <div class="cell text-center bordered-right">
+                        <h4 class="clear-margin">
+                            Last updated on
+                        </h4>
+                        <small class="text-muted" data-ng-if="vm.workflow_status.updated_at">
+                            {{vm.workflow_status.updated_at|date:"dd-MMMM-yyyy"}}
+                        </small>
+                        <small class="text-muted" data-ng-if="!vm.workflow_status.updated_at">
+                            {{vm.workflow_status.created_at|date:"dd-MMMM-yyyy"}}
+                        </small>
+                    </div>
+
+                    <div class="cell text-center bordered-right">
+                        <h4 class="clear-margin">
+                            Due on
+                        </h4>
+                        <small class="text-muted" data-ng-if="vm.workflow_status.due_at">
+                            {{vm.workflow_status.due_at | date:"dd-MMMM-yyyy"}}
+                        </small>
+                        <small class="text-muted" data-ng-if="!vm.workflow_status.due_at">
+                            --
+                        </small>
+                    </div>
+
+                    <div class="cell text-center bordered-right">
+                        <h4 class="clear-margin">
+                            Triggered on
+                        </h4>
+                        <small class="text-muted">
+                            {{vm.workflow_status.created_at|date:"dd-MMMM-yyyy"}}
+                        </small>
+                    </div>
+
+                    <div class="cell text-center">
+                        <h4 class="clear-margin">
+                            Workflow Owner
+                        </h4>
+                        <small class="text-muted">
+                            {{vm.workflow_status.owner_name}}
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+
+            <div col="12">
+                <div class="panel panel-default">
+                    <div class="panel-body padded-xl">
+
+                        <div col="12" class="clear-horizontal-padding">
+                            <div class="space-on-bottom-xl audit-timeline">
+                                <div col="12" class="space-on-bottom-lg min-height-70" ng-if="vm.workflow_status.workflow_steps_audit.length">
+                                    <div class="stepDesc">
+                                        <p>{{vm.activeStep.description}}</p>
+                                    </div>
+
+                                    <div class="status-tracker statusTrackerLagend">
+                                        <div class="full-width">
+                                            <div class="row full-width">
+                                                <div class="clear-margin" col="12">
+                                                    <div class="tracker-container full-width">
+                                                        <ul class="progress-meter full-width">
+                                                            <li ng-repeat="action in ['Completed', 'legend-gap', 'Pending', 'legend-gap', 'Invisible'] track by $index"
+                                                                data-ng-class="{'done legend': action == 'Completed', 'in-progress legend': action == 'Pending', 'upcoming legend': action == 'Invisible', 'legend-gap': action == 'legend-gap'}">
+                                                                <div class="single-tracker">
+                                                                    <div class="bubble-parent">
+                                                                        <div class="bubble"></div>
+                                                                    </div>
+                                                                    <div class="description action-owner text-black">{{ action == 'Completed' ? 'Completed' : (action == 'Pending' ? 'In Progress' : (action == 'Invisible' ? 'Pending' : '')) }}</div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="status-tracker full-width" ng-if="vm.workflow_status.workflow_steps_audit.length">
+                                    <div class="padded-lg full-width">
+                                        <div class="row full-width">
+                                            <br>
+                                            <div col="12" data-ng-class="{'overflow-container': (vm.workflow_status.workflow_steps_audit.length>7)}">
+                                                <div class="tracker-container full-width">
+                                                    <ul class="progress-meter full-width">
+                                                        <li ng-repeat="step in vm.workflow_status.workflow_steps_audit | orderBy: $index"
+                                                            data-ng-class="{'done': step.status == 'Completed', 'in-progress': step.status == 'Pending', 'upcoming': step.status == 'Invisible','activeStepLi':vm.activeStep.workflow_steps_id == step.workflow_steps_id}" class="cursor-pointer" data-ng-click="vm.setActiveStep(step)">
+                                                            <div class="single-tracker">
+                                                                <div class="bubble-parent">
+                                                                    <div class="bubble"></div>
+                                                                </div>
+                                                                <span class="action-item" truncate-text="30" uib-tooltip="{{step.name}}">{{step.name}}
+                                                                </span>
+                                                                <div class="border_bottom"></div>
+                                                                <div class="description current-status">{{ step.status == 'Completed' ? step.created_at_new : (step.status == 'Pending' ? step.from_now : 'Pending') }}</div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <spinner broad-spinner spinner-height='100' data-ng-show="!vm.workflow_status.workflow_steps_audit"></spinner>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" data-ng-if="vm.activeStep">
+            <div class="panel-body clearfix">
+                <div col="12" class="space-on-bottom-lg">
+                    <h4 class="space-on-bottom">
+                        {{vm.activeStep.name}}
+                    </h4>
+
+                </div>
+                <spinner broad-spinner spinner-height='55' data-ng-show="!vm.workflow_status.workflow_steps_audit"></spinner>
+                <div class="container-fluid" data-ng-if="vm.activeStep.actions.length">
+                    <div class="row clearfix">
+                        <div class="col-sm-8 workflowDetailsLeftCol">
+                            <div class="row clearfix borderBottom eachActionRow" data-ng-repeat="action in vm.activeStep.actions" data-ng-click="vm.setActiveAction(action)" data-ng-class="{'activeActionRow': vm.activeAction.workflow_steps_actions_id == action.workflow_steps_actions_id}">
+                                <div class="col-sm-4">
+                                    <!-- data-ng-class="{'activeBox': vm.activeAction.workflow_steps_actions_id == action.workflow_steps_actions_id}"  -->
+                                    <div class="box1 box">
+                                      <h4 class="dateHeader">Due in:</h4>
+                                      <h4 class="dateText" data-ng-if="vm.getDaysInBetween(action.due_at) == 0">Today</h4>
+                                      <h4 class="dateText" data-ng-if="vm.getDaysInBetween(action.due_at) > 0">{{vm.getDaysInBetween(action.due_at)}} days</h4>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="box2 box" data-ng-if="(action.action_id == 'approve')">
+                                        <button data-ng-disabled="vm.disableActions(action)" btn-type="transparent"  data-ng-click="vm.recordAction('approve',action)" button-loader="vm.actionButtons.approve">
+                                            <div><icon name="thumbs-o-up" size="2x"></icon></div>
+                                            <small>Approve</small>
+                                        </button>
+                                    </div>
+                                    <div class="box2 box" data-ng-if="(action.action_id == 'review')">
+                                        <button data-ng-disabled="vm.disableActions(action)" btn-type="transparent"  data-ng-click="vm.recordAction('review',action)" button-loader="vm.actionButtons.review">
+                                            <div><icon name="eye" size="2x"></icon></div>
+                                            <small>Mark as Reviewed</small>
+                                        </button>
+                                    </div>
+
+                                    <div class="box2 box" data-ng-if="action.action_id == 'add_note'">
+                                        <button data-ng-disabled="vm.disableActions(action)" btn-type="transparent"  data-ng-click="vm.recordAction('add_note',action)" button-loader="vm.actionButtons.add_note">
+                                            <div><icon name="notepad" size="2x"></icon></div>
+                                            <small>Add Note</small>
+                                        </button>
+                                    </div>
+
+                                    <div class="box2 box" data-ng-if="action.action_id == 'complete'">
+                                        <!-- vm.current_user.id != action.user_id -->
+                                        <!-- action.status == 'Invisible' || action.status == 'completed' -->
+                                        <button data-ng-disabled="vm.disableActions(action)" btn-type="transparent"  data-ng-click="vm.recordAction('complete',action)" button-loader="vm.actionButtons.complete">
+                                            <div><icon name="check2" size="2x"></icon></div>
+                                            <small>Mark as Completed</small>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <table class="table border-none actionsTable">
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-right">Progress</td>
+                                                <td><uib-progressbar value="action.percentageCompletion"
+                                                                 type="success"
+                                                                 class="bs-progress">
+                                                  <small data-ng-class="{'text-black': action.percentageCompletion == 0}">{{action.percentageCompletion}}%</small>
+                                                </uib-progressbar></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-right">
+                                                    Owner
+                                                </td>
+                                                <td>
+                                                <div data-ng-if="action.is_owner_task">
+                                                    <small class="w-210 text-muted">Assigned to Product Owner</small>
+                                                </div>
+                                                <div data-ng-if="!action.is_owner_task" class="ownerDiv">
+                                                    <span class="label text-uppercase label-default"
+                                                        data-ng-repeat="user in action.users" uib-tooltip="{{vm.displayUserName(user, 'user')}}">
+                                                        <small>{{vm.showInitials(user, 'user')}}</small>
+                                                    </span>
+                                                    <span class="label text-uppercase label-default"
+                                                        data-ng-repeat="function in action.functions" uib-tooltip="{{vm.displayUserName(function, 'function')}}">
+                                                        <small>{{vm.showInitials(function, 'function')}}</small>
+                                                    </span>
+                                                </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-right">Status</td>
+                                                <td>
+                                                    <span workflow-status="action.status"></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4 pos-rel">
+                            <div class="text-center workfloChecklistDiv">
+                                <div class="checklistInnerDiv">
+                                    <p class="text-muted" data-ng-show="!vm.activeAction.checklist.length">
+                                        <br>
+                                        <br>
+                                        No Checklist found
+                                    </p>
+                                    <div class="todo-list-container-center">
+                                        <ul class="todo-list">
+                                            <li class="todo-list-item" data-ng-repeat="task in vm.activeAction.checklist">
+                                                <dv-checkbox
+                                                        data-ng-model="task.is_complete"
+                                                        data-ng-disabled="vm.disableActions(vm.activeAction)"
+                                                        data-ng-change="vm.markTaskCompleted(task)">
+                                                    <dv-checkbox-label>
+                                                        <b data-ng-hide="task.is_complete">{{task.text}}</b>
+                                                        <b data-ng-show="task.is_complete" class="text-muted">{{task.text}}</b>
+                                                    </dv-checkbox-label>
+                                                </dv-checkbox>
+                                            </li>
+                                        </ul>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row clearfix">
+
+            <div col="12">
+                <div class="panel panel-default">
+                    <div class="panel-body padded-xl">
+
+                        <spinner broad-spinner spinner-height='40' data-ng-if="!vm.workflow_notes"></spinner>
+
+                        <div ng-if="vm.workflow_notes">
+                            <div col="12">
+                                <h4 class="space-on-bottom-lg">
+                                    Notes:
+                                </h4>
+                            </div>
+                            <div data-ng-repeat="note in vm.workflow_notes" data-ng-if="vm.workflow_notes.length">
+                                <div col="12">
+                                    <h5>
+                                        <div col="1" class="text-center lh1-5">{{$index + 1}}.</div>
+
+                                        <div col="11" class="lh1-5">
+                                            <p class="clear-margin responsive-image">
+                                                <span ng-bind-html="note.text | cleanhtml"></span>
+                                            </p>
+
+                                            <div>
+                                                <small class="text-muted">{{note.updated_at|fromNow}} by <strong>{{::note.first_name}} {{::note.last_name}}</strong>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </h5>
+                                </div>
+                            </div>
+                            <div col="12" data-ng-show="!vm.workflow_notes.length">
+                                <h5 class="space-on-bottom-lg">
+                                    No notes available.
+                                </h5>
+                            </div>
+                             <!-- <div col="6" data-ng-show="!vm.workflow_attachments.length">
+                                <h5 class="space-on-bottom-lg">
+                                    No documents available.
+                                </h5>
+                            </div>
+                            <div col="6" data-ng-show="vm.workflow_attachments.length">
+                                <dv-documents entity-type="Workflow" entity-id="vm.workflowId"></dv-documents>
+                            </div> -->
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg" data-ng-class="{'in': vm.displaySidebarPanel}" data-ng-show="vm.displaySidebarPanel">
+    <div class="panel panel-primary">
+        <div class="panel-heading text-center">
+            <h5>
+                <b>{{vm.sidebarTitle}}</b>
+                <a class="pull-right clickable link-disguise"
+                   data-ng-click="vm.displaySidebarPanel = false">
+                    <icon name="close" size="lg"></icon>
+                </a>
+            </h5>
+        </div>
+
+        <div class="panel-body">
+            <ng-include src="vm.sidebarTemplate"></ng-include>
+        </div>
+    </div>
+</div>

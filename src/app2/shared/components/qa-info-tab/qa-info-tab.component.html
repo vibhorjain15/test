@@ -1,0 +1,105 @@
+<div class="note-main" role="region" aria-label="Note">
+  <div class="note-header">
+    <div class="note-info">
+      <span class="circled-initials" *ngIf="showNumber"> {{ index + 1 }} </span>
+      <div class="auth-name text-ellipsis-flow">
+        {{ firstName + " " + lastName }}
+      </div>
+      <div class="last-edited text-ellipsis-flow">
+        {{ lastEdited | dvDate : ["dvDateTime"] }}
+      </div>
+    </div>
+    <div class="note-buttons text-ellipsis-flow">
+      <ng-container *ngIf="showIcons">
+        <span
+          appIcon
+          [isDisable]="!isEditable"
+          name="pencil"
+          (click)="onEdit()"
+          role="button"
+          tabindex="0"
+          aria-label="Edit"
+        ></span>
+        &nbsp;
+        <span
+          appIcon
+          *ngIf="!editMode"
+          [isDisable]="!isEditable"
+          name="trashcan"
+          (click)="onDelete()"
+          role="button"
+          tabindex="0"
+          aria-label="Delete"
+        ></span>
+      </ng-container>
+      <ng-container *ngIf="!showIcons && customNoteButton">
+        <dv-label
+          label="Restore"
+          (click)="handleCustomButtonClick()"
+          [overFlowEllipsis]="true"
+          color="primary"
+          *ngIf="
+            !(
+              mainObj?.response_type === responseType.Grid ||
+              mainObj?.response_type === responseType.DynamicGrid
+            ) && !isDeleted
+          "
+        ></dv-label>
+        <dv-label
+          label="Copy"
+          [overFlowEllipsis]="true"
+          (click)="handleCustomButtonClick()"
+          color="primary"
+          *ngIf="
+            (mainObj?.response_type === responseType.Grid ||
+              mainObj?.response_type === responseType.DynamicGrid) &&
+            !isDeleted
+          "
+        ></dv-label>
+      </ng-container>
+    </div>
+  </div>
+  <div
+    [class]="customClass"
+    [ngClass]="{ revision: noteType == 'revision' }"
+    *ngIf="!editMode"
+    aria-live="polite"
+  >
+    <ng-container *ngIf="!editMode">
+      <div
+        *ngIf="note"
+        [innerHtml]="note"
+        role="text"
+        [attr.aria-label]="note"
+      ></div>
+      <ng-content *ngIf="!note"></ng-content>
+    </ng-container>
+  </div>
+  <ng-container *ngIf="editMode">
+    <dv-editor
+      [value]="note"
+      [literVersion]="true"
+      (onChange)="onEditChange($event)"
+      [configObj]="tinyMceInit"
+      [isMentions]="true"
+      aria-label="Edit Note"
+      role="region"
+    ></dv-editor>
+    <div class="edit-button">
+      <dv-button
+        (onClick)="handleEdit()"
+        [loader]="editButtonLoad"
+        [disabled]="!editedNote"
+        ariaLabel="Update Note"
+      >
+        Update
+      </dv-button>
+      &nbsp;
+      <dv-button btnType="default" (onClick)="onEdit()" ariaLabel="Cancel Edit"
+        >Cancel</dv-button
+      >
+    </div>
+  </ng-container>
+  <!-- This was added to show the source information of the particular response if any -->
+  <ng-container [ngTemplateOutlet]="sourceInput"></ng-container>
+</div>

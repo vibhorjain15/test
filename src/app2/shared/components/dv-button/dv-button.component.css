@@ -1,0 +1,128 @@
+.visibility {
+  visibility: hidden;
+}
+
+.button-loader {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - 10px);
+}
+
+.orange-loader {
+  color: #f0592b;
+}
+
+.button-component {
+  position: relative;
+}
+
+.manager-request-btn-margin {
+  margin-right: 4px;
+}
+
+.btn-cursor {
+  cursor: no-drop;
+}
+.left-icon {
+  margin-right: 5px;
+}
+.button-component > div {
+  display: flex;
+  align-items: center;
+}
+
+.btn-new-orange {
+  color: var(--text-orange);
+  background: #f57c000d 0% 0% no-repeat padding-box;
+  border: 1px solid var(--text-orange);
+}
+
+.btn-new-orange:hover {
+  color: #f0592b !important;
+}
+
+:host ::ng-deep .btn.btn-new-orange:hover i {
+  color: #f0592b;
+}
+
+.btn-orange-fill {
+  color: white;
+  background:var(--dark-orange) 0% 0% no-repeat padding-box;
+}
+
+.btn-secondary {
+  background: #fff 0% 0% no-repeat padding-box;
+  color: #0071A4;
+  border: 1px solid #0071A4;
+  ;
+}
+
+.btn-darkBlue {
+  background: #34495e;
+  border: 1px solid white;
+  color: white;
+}
+
+.btn-darkBlue:hover {
+  background: #2c3e50;
+  border: 1px solid white;
+  color: white;
+}
+
+.btn-darkBlue-loader {
+  color: white;
+}
+:host ::ng-deep .btn.btn-darkBlue:hover i {
+  color: white;
+}
+.configure[disabled]:hover {
+  color: white !important;
+}
+
+.disabledClass {
+  opacity: 0.5;
+}
+
+.clear:hover {
+  color: #333 !important;
+  background-color: #fff !important;
+  border-color: #ccc !important;
+}
+
+.clear:focus {
+  color: #333 !important;
+  background-color: #fff !important;
+  border-color: #ccc !important;
+}
+
+:host ::ng-deep .btn.btn-default:hover i {
+  color: rgb(51, 51, 51);
+}
+
+.btn-darkBlue {
+  background: #34495e;
+  border: 1px solid white;
+  color: white;
+}
+.btn-darkBlue-loader {
+  color: white;
+}
+:host ::ng-deep .btn.btn-darkBlue:hover i {
+  color: white;
+}
+.btn-transparent {
+  background: transparent !important;
+}
+
+.Viewbutton {
+  color: #126b82;
+  border-color: #126b82;
+}
+.btn-danger {
+  background-color:var(--dark-red) !important;
+}
+.btn-tab {
+  background-color:#0071A4 !important;
+  color: white;
+}

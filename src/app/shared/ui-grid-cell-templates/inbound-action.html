@@ -1,0 +1,15 @@
+<ui-grid-cell-contents>
+    <div class="controls-wrapper">
+        <a uib-tooltip="Edit"
+           data-ng-click="grid.appScope.vm.editInbound(row.entity)"
+           class="btn btn-xs btn-default success">
+            <icon name="pencil"></icon>
+        </a>
+        <a uib-tooltip="Remove"
+           data-ng-click="grid.appScope.vm.displayInboundRemovalConfirmation(row.entity)"
+           class="btn btn-xs btn-default danger space-on-left">
+            <icon name="trashcan"></icon>
+        </a>
+    </div>
+</ui-grid-cell-contents>
+  

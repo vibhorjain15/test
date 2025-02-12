@@ -1,0 +1,216 @@
+.spinner-display {
+  height: 400px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+ul,
+li {
+  list-style: none;
+}
+p.tree,
+ul.tree,
+ul.tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+}
+
+ul.tree ul {
+  margin-left: 1em;
+}
+
+ul.tree li {
+  margin-left: 0.35em;
+  padding-bottom: 10px;
+  border-left: thin solid #126b82;
+  white-space: nowrap;
+}
+
+ul.tree li:first-child {
+  padding-top: 26px;
+  margin-top: -10px;
+}
+ul.tree li:last-child {
+  border-left: none;
+}
+ul.tree li li:first-child {
+  padding-top: 10px !important;
+  margin-top: 0 !important;
+  margin-left: 0.35em !important;
+}
+
+ul.tree li:before {
+  width: 0.9em;
+  height: 1.25em;
+  margin-right: 0.2em;
+  vertical-align: top;
+  border-bottom: thin solid #126b82;
+  content: "";
+  display: inline-block;
+}
+
+ul.tree li:last-child:before {
+  border-left: thin solid #126b82;
+}
+
+div > hr {
+  margin: 05px 0px 5px 25px;
+}
+
+div > accordion {
+  margin: 0px 0px 0px 10px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.icon-wrapper > span {
+  margin-left: 15px;
+}
+
+.accordion-header:hover {
+  text-decoration: none;
+}
+
+:host ::ng-deep .panel-body {
+  padding: 0;
+  border-top: none !important;
+}
+:host ::ng-deep .panel {
+  box-shadow: none;
+  background-color: transparent;
+}
+:host ::ng-deep .panel-title {
+  font-size: 14px;
+}
+:host ::ng-deep .panel-heading {
+  padding: 0px 10px 5px 12px;
+}
+:host ::ng-deep .checkbox {
+  margin: 0;
+}
+
+.move-icon-size {
+  font-size: 13px;
+}
+
+.add-sub {
+  padding: 5px 10px;
+  margin: 05px 0px 5px 25px;
+  display: flex;
+  align-items: center;
+}
+.add-sub:hover {
+  text-decoration: none;
+}
+.add-sub > span {
+  margin-right: 5px;
+}
+:host ::ng-deep .tree .list-box-move {
+  padding: 5px 8px !important;
+}
+
+:host ::ng-deep .form-group-margin-bottom {
+  margin-bottom: 5px !important;
+}
+.header-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.template-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 28px;
+  margin-bottom: 5px;
+}
+
+.icon-wrapper > span {
+  margin-left: 15px;
+  color: #bfbfbf;
+}
+
+.icon-wrapper > span:hover {
+  color: #16a1ab;
+}
+
+.icon-link:hover {
+  cursor: pointer;
+  color: #16a1ab !important;
+}
+.node-title {
+  width: fit-content;
+  border: 0.1em dashed lightgray;
+  background: white;
+  display: inline-block;
+}
+.node-title-text {
+  margin: 5px 24px;
+}
+ul.tree .isMultiSelectOn,
+ul.tree .isMultiSelectOn li,
+ul.tree .isMultiSelectOn li:first-child {
+  margin-left: 0.35em !important;
+}
+ul.tree .isMultiSelectOn li:first-child {
+  padding-top: 10px !important;
+  margin-top: 0 !important;
+}
+ul.tree .isMultiSelectOn li {
+  margin-top: 0 !important;
+}
+ul.tree .isMultiSelectOn {
+  border: 0 !important;
+  margin-left: 20px !important;
+}
+ul.tree .isMultiSelectOn::before {
+  display: none !important;
+}
+.move-lable-wrapper {
+  display: flex;
+  align-items: center;
+}
+.active-header-icon .icon-wrapper > span {
+  margin-left: 8px;
+  font-size: 10px;
+  height: 18px;
+  padding: 3px;
+  color: #fff;
+  text-align: center;
+  width: 18px;
+  background: #27b098;
+  border-radius: 50%;
+  border: 1px solid #27b098;
+}
+.active-header-icon .icon-wrapper > span:hover {
+  background: #369db8 !important;
+  color: white !important;
+}
+.icon-active {
+  color: #16a1ab;
+}
+
+.icon-disable {
+  pointer-events: none;
+}
+.icon-span {
+  cursor: no-drop;
+}
+.move-icon-color {
+  color: #27b098;
+}
+.orange-text {
+  color: orange !important;
+}

@@ -1,0 +1,141 @@
+<div class="panel panel-primary" data-ng-if="vm.displaySidebarPanel">
+  <div class="panel-heading text-center">
+    <h5>
+      <b>Manage internal notes for this response</b>
+      <a class="pull-right clickable link-disguise"
+         data-ng-click="vm.closeSidebarPanel()">
+        <icon name="close" size="lg"></icon>
+      </a>
+    </h5>
+  </div>
+
+  <div class="panel-body has-notes-form">
+
+    <form novalidate
+          name="vm.add_notes_form"
+          data-ng-submit="vm.saveNotes()">
+      <form-group field-name="Response"
+                  tooltip-placement="left"
+                  validate-on="submit">
+              <textarea id="save_note_area"
+                        name="save_note_area"
+                        ng-model="vm.new_note.text"
+                        ui-tinymce="vm.tinymceOptions"
+                        ng-required="true"
+                        dv-input-change-alert
+                        dv-on-input-save="vm.saveNotes()"
+                        dv-unsaved-changes-update-property="$parent.$parent.$parent.has_unsaved_changes[$id]"
+                        dv-input-alert-entity-type="'notes'"
+                        mentio
+                        mentio-id="'tinyMceNotesAddArea'"
+                        mentio-typed-text="vm.typedTerm"
+                        mentio-iframe-element="vm.tinymceEditor.iframeElement"
+                        mentio-require-leading-space="true"></textarea>
+
+        <mentio-menu
+                class="mention-menu-fixed"
+                data-ng-if="vm.tinymceEditor.iframeElement"
+                mentio-for="'tinyMceNotesAddArea'"
+                mentio-trigger-char="'@'"
+                mentio-items="vm.filteredTeamMembers"
+                mentio-template-url="shared/directives/dvMention/template.html"
+                mentio-select="vm.getDisplayName(item)"
+                mentio-search="vm.filterTeamMembers(term)"
+        ></mentio-menu>
+      </form-group>
+
+      <div class="text-left">
+        <button type="submit" button-loader="vm.saving_notes">
+          Add Note
+        </button>
+      </div>
+
+    </form>
+
+    <hr class="space-on-bottom">
+
+    <spinner data-ng-show="vm.loadingNotes"></spinner>
+
+    <p class="text-muted"
+       data-ng-if="!vm.loadingNotes && !vm.questionNotes.length">
+      <i>
+        There are no notes for this question.
+      </i>
+    </p>
+
+    <ul data-ng-if="!vm.loadingNotes && vm.questionNotes.length"
+        class="list-unstyled">
+      <li data-ng-repeat="note in vm.questionNotes track by note.id"
+          class="bordered-bottom"
+          data-ng-controller="ProjectAddNotesController as notes_ctrl"
+          id="notes-{{note.id}}">
+        <div class="media">
+          <div class="media-left padded-top">
+            <span class="circled-initials">
+              {{$index+1}}
+            </span>
+          </div>
+
+          <div class="media-body">
+            <p class="space-on-bottom">
+              <small class="text-muted">
+                {{::note.first_name}} {{::note.last_name}} added {{note.updated_at|fromNow}}
+              </small>
+              <span class="pull-right space-on-right-xxl" data-ng-if="!notes_ctrl.editing && vm.canEditNote(note)">
+                    <small class="text-muted v-align-text-top space-on-right" uib-tooltip="Edit this note">
+                        <a class="link-disguise clickable"
+                           data-ng-click="notes_ctrl.editNote(note)">edit</a>
+                    </small>
+                    <small class="text-muted v-align-text-top" uib-tooltip="Delete this note">
+                        <a class="link-disguise clickable"
+                           data-ng-click="notes_ctrl.deleteNote(note)">delete</a>
+                    </small>
+              </span>
+            </p>
+
+            <p data-ng-if="!notes_ctrl.editing" class="clear-margin">
+              <span  ng-bind-html="note.text | cleanhtml"></span>
+            </p>
+
+            <div data-ng-if="notes_ctrl.editing" class="padded-right-sm">
+              <textarea id="edit-note-area"
+                        ng-model="note.text"
+                        ui-tinymce="notes_ctrl.tinymceOptionsEdit"
+                        ng-required="true"
+                        dv-input-change-alert
+                        dv-on-input-save="notes_ctrl.updateNote(note)"
+                        dv-unsaved-changes-update-property="$parent.$parent.$parent.has_unsaved_changes[$id]"
+                        dv-input-alert-entity-type="'notes'"
+                        mentio
+                        mentio-id="'tinyMceNotesEditArea'"
+                        mentio-typed-text="notes_ctrl.typedTerm"
+                        mentio-iframe-element="notes_ctrl.tinymceEditEditor.iframeElement"
+                        mentio-require-leading-space="true"></textarea>
+
+              <mentio-menu
+                      class="mention-menu-fixed"
+                      data-ng-if="notes_ctrl.tinymceEditEditor.iframeElement"
+                      mentio-for="'tinyMceNotesEditArea'"
+                      mentio-trigger-char="'@'"
+                      mentio-items="notes_ctrl.filteredTeamMembers"
+                      mentio-template-url="shared/directives/dvMention/template.html"
+                      mentio-select="notes_ctrl.getDisplayName(item)"
+                      mentio-search="notes_ctrl.filterTeamMembers(term)"></mentio-menu>
+
+              <div class="space-on-top">
+                <button btn-type="primary"
+                        size="sm"
+                        button-loader="notes_ctrl.updating_note"
+                        data-ng-click="notes_ctrl.updateNote(note)">Update</button>
+                <button btn-type="default"
+                        size="sm"
+                        data-ng-disabled="notes_ctrl.updating_note"
+                        data-ng-click="notes_ctrl.cancel(note)">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

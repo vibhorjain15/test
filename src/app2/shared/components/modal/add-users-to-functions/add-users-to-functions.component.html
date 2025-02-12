@@ -1,0 +1,98 @@
+<app-modal
+  [title]="title"
+  [firstButtonLabel]="firstButtonLabel"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="NewFunctionref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #NewFunctionref>
+  <div *ngIf="loading_data">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="35"></app-spinner>
+  </div>
+  <div class="space-on-top-lg" *ngIf="!loading_data">
+    <form [formGroup]="teamsForm" autocomplete="off">
+      <div formArrayName="fnForm">
+        <div
+          *ngFor="let team of fnForm.controls; let i = index"
+          class="space-on-top-lg"
+        >
+          <div class="row" [formGroupName]="i">
+            <div col="4" class="space-on-left space-on-right">
+              <dv-form-element
+                [fieldName]="'Role'"
+                [modelController]="fnForm.controls[i].get('role')"
+                [showRightIcon]="false"
+                label="User Roles:"
+                errorMessage="Role is required"
+                labelPosition="top"
+                [elementCol]="12"
+                [for]="'role' + i"
+              >
+                <dv-select
+                  [id]="'role' + i"
+                  [clearable]="false"
+                  [readonly]="disabled"
+                  formControlName="role"
+                  placeholder="Select user role"
+                  [list]="functions"
+                  [bindValue]="'function_id'"
+                  [bindLabel]="'function_name'"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+            <div col="6" class="space-on-left space-on-right">
+              <dv-form-element
+                [fieldName]="'Team'"
+                [modelController]="fnForm.controls[i].get('teamMembers')"
+                [showRightIcon]="false"
+                label="Team Member(s):"
+                [elementCol]="12"
+                errorMessage="Team Member(s) is required"
+                labelPosition="top"
+                [for]="'teamMembers' + i"
+              >
+                <dv-select
+                  [id]="'teamMembers' + i"
+                  [clearable]="false"
+                  chosen
+                  [readonly]="disabled"
+                  formControlName="teamMembers"
+                  (onSelectChange)="triggerValidations(i)"
+                  [multiple]="true"
+                  placeholder="Select team members"
+                  [list]="dropdown_teams"
+                  [bindLabel]="'fullname'"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+            <div col="1">
+              <div class="ownerDeleteBtn" *ngIf="!edit_mode">
+                <button
+                  *ngIf="showDel"
+                  class="btn btn-default btn-sm danger function-right-button-margin"
+                  tooltip="Delete"
+                  aria-label="Delete"
+                  (click)="removeControl(i)"
+                >
+                  <strong><span appIcon name="trashcan"></span></strong>
+                </button>
+                <button
+                  *ngIf="i + 1 === fnForm.controls.length"
+                  class="btn btn-default success btn-sm"
+                  tooltip="Add"
+                  aria-label="Add"
+                  (click)="addNewControlEvent()"
+                >
+                  <strong><span appIcon name="plus"></span></strong>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

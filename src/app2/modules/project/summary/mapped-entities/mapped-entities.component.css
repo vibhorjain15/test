@@ -1,0 +1,13 @@
+.mapped-entities-list li {
+  padding: 10px 15px;
+  border-bottom: 1px solid #efefef;
+}
+
+.color-primary {
+  color: #126b82;
+}
+
+.mapped-entities-list {
+  max-height: 400px;
+  overflow-y: auto;
+}

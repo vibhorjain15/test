@@ -1,0 +1,141 @@
+<form class="form-horizontal" name="vm.documentForm" novalidate data-ng-submit="vm.submit()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Add New File
+
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="text-center">
+        <div class="btn-group">
+            <button data-ng-disabled="false" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.tabType == 'existing'}" data-ng-click="vm.setTabType('existing')">Use Existing</button>
+            <button data-ng-disabled="false"  class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.tabType == 'new'}" data-ng-click="vm.setTabType('new')">New Upload</button>
+        </div>
+      </div>
+      <div class="row">
+        <div data-ng-if="vm.tabType == 'existing'">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-6">
+                <label class="text-muted">Search:</label>
+                <div class="searchTextDiv">
+                  <input type="text" data-ng-model="vm.searchtext" class="form-control" placeholder="Search by name">
+                  <icon data-ng-if="vm.searchtext.length >= 4" class="closeIcon" name="close" data-ng-click="vm.searchtext = ''"></icon>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="pd-10">
+              <label class="control-label">Assign Documents</label>
+            </div>
+            <div class="col-md-12">
+              <ul class="list-group dd-attachments-selector overflow-x-hidden m-h-300">
+                <empty-state data-ng-if="vm.attachments && vm.attachments.length == 0" message="No documents available. Once a document is attached, you can reuse it across investor requests"></empty-state>
+                <li class="list-group-item clearfix"
+                    data-ng-repeat="attachment in vm.attachments | filter: {file_name: vm.searchtext}">
+                  <div class="pull-left">
+                    <!-- <attachment-icon filename="attachment.name"></attachment-icon> -->
+                    <a class="clickable" data-ng-click="vm.downloadDocument(attachment)">
+                      {{attachment.file_name}}
+                    </a>
+                  </div>
+
+                  <div class="pull-right">
+                    <icon name="check"
+                        size="lg"
+                        data-ng-show="attachment.assigned"
+                        uib-tooltip="Unassign Document"
+                        data-ng-click="vm.removeAttachment(attachment)"
+                        class="text-success clickable"></icon>
+
+                    <button btn-type="default"
+                          size="sm"
+                          button-loader="attachment.being_assigned"
+                          uib-tooltip="{{vm.entityId ? 'Assign Document' : 'Please select associated ' +vm.entityType}}"
+                          data-ng-click="vm.assignAttachment(attachment)"
+                          data-ng-hide="attachment.assigned"
+                          class="btn-attachment-selector">
+                        <icon name="plus"></icon>
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div data-ng-if="vm.tabType == 'new'">
+          <div class="dd-doc-selection-wrapper space-on-top">
+              <div class="panel panel-default dd-doc-drop-panel"
+                  dv-file-handler
+                  name="file-handler-one"
+                  dv-droppable
+                  dv-manual-upload
+                  dv-fields="vm.updatedParams"
+                  ngf-multiple="true"
+                  ngf-select-disabled="true"
+                  dv-bind-files-to="vm.files"
+                  ngf-max-files="1"
+                  dv-accept="::vm.allowed_file_extensions_str"
+                  dv-pattern="::vm.allowed_file_extensions_str"
+                  dv-max-file-size="::vm.maxFileSize"
+                  dv-upload-url="/PublicDocuments/Upload"
+                  dv-on-upload="vm.documentUploadComplete(response)"
+                  dv-on-upload-error="vm.documentUploadFailed(response)"
+                  ngf-drag-over-class="'panel-primary'">
+                <div class="panel-body">
+                  <p class="text-muted text-center">
+                    <strong>Drag & Drop your file here</strong>
+                  </p>
+
+                  <p class="text-muted text-center">
+                    <icon name="upload" size="2x"></icon>
+                  </p>
+
+                  <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+                </div>
+              </div>
+
+              <div class="dd-doc-select-button-container">
+                <button btn-type="default"
+                        dv-file-handler
+                        dv-manual-upload
+                        dv-fields="vm.updatedParams"
+                        name="file-handler-two"
+                        dv-bind-files-to="vm.files"
+                        dv-upload-url="/PublicDocuments/Upload"
+                        dv-accept="::vm.allowed_file_extensions_str"
+                        dv-pattern="::vm.allowed_file_extensions_str"
+                        dv-max-file-size="::vm.maxFileSize"
+                        dv-on-upload="vm.documentUploadComplete(response)"
+                        dv-on-upload-error="vm.documentUploadFailed(response)">
+                  Select File
+                </button>
+                <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+              </div>
+            </div>
+            <a data-ng-click="vm.downloadAttachment()" class="link-disguise">
+              <dv-checkbox
+                      disabled="disabled"
+                      checked="checked"
+                      data-ng-show="vm.question.filename">
+                <dv-checkbox-label>
+                  <span class="break-all" data-ng-bind="vm.question.filename"
+                        uib-tooltip="{{vm.question.filename}}">
+                  </span>
+                </dv-checkbox-label>
+              </dv-checkbox>
+            </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit"
+            button-loader="vm.savingDocument">{{vm.edit_mode ? 'Update Document' : 'Add Document'}}</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

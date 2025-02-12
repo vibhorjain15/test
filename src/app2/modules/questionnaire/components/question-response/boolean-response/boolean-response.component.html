@@ -1,0 +1,79 @@
+<ng-container *ngIf="!isNotApplicable">
+  <dv-radio-group type="horizontal" *ngIf="!isReadOnly">
+    <dv-radio
+      type="info inline"
+      label="Yes"
+      [groupName]="id"
+      [radioId]="id"
+      valueName="yes"
+      [(ngModel)]="booleanValue"
+      (ngModelChange)="handleChange($event, explanation)"
+    ></dv-radio>
+    <dv-radio
+      type="info inline"
+      label="No"
+      class="space-on-left"
+      valueName="no"
+      [(ngModel)]="booleanValue"
+      [groupName]="id"
+      [radioId]="id"
+      (ngModelChange)="handleChange($event, explanation)"
+    >
+    </dv-radio>
+  </dv-radio-group>
+
+  <div *ngIf="isReadOnly && booleanValue">
+    {{ booleanValue | titlecase }}
+  </div>
+  <div *ngIf="isReadOnly && booleanValue == null" aria-hidden="true">
+    <i class="text-muted">
+      <small>*No response available*</small>
+    </i>
+  </div>
+
+  <div
+    *ngIf="type !== responseType.Boolean && !isReadOnly"
+    class="space-on-top"
+  >
+    <ng-container
+      *ngIf="
+        (type === responseType.NoPlus && booleanValue === 'no') ||
+        (type === responseType.BooleanPlus && booleanValue === 'yes')
+      "
+    >
+      <dv-editor
+        [configObj]="tinyMceInit"
+        [value]="explanation"
+        [isReadonly]="isReadOnly"
+        [focusOnInit]="true"
+        [isLite]="
+          status.currentActiveQuestionId !==
+          question.sequenceID + '-' + question.id
+        "
+        (onChange)="handleChange(booleanValue, $event)"
+        #editor
+        role="textbox"
+        aria-label="Explanation"
+        (click)="updateEditorInstance()"
+      >
+      </dv-editor>
+      <div *ngIf="!explanation?.length" class="text-danger">
+        {{ explanationError }}
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="type !== responseType.Boolean && isReadOnly && booleanValue">
+    <div
+      *ngIf="explanation"
+      class="space-on-top-lg comments-width comments-border"
+      [innerHtml]="explanation"
+    ></div>
+    <i class="text-muted" *ngIf="explanation == ''" aria-hidden="true">
+      <small>*No Response Available*</small>
+    </i>
+  </div>
+</ng-container>
+
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>

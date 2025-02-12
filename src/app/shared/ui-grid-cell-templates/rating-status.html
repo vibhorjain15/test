@@ -1,0 +1,12 @@
+<ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="text-left">
+    <span class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD
+        CUSTOM_FILTERS}}
+    </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents
+    ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <span class="label text-uppercase"
+        data-ng-class="{'label-very-poor': row.entity.rating_value.toLowerCase()=='very poor', 'label-poor': row.entity.rating_value.toLowerCase()=='poor','label-average': row.entity.rating_value.toLowerCase()=='average','label-good': row.entity.rating_value.toLowerCase()=='good','label-excellent': row.entity.rating_value.toLowerCase()=='excellent'}">
+        <small>{{row.entity.rating_value}}</small>
+    </span>
+</ui-grid-cell-contents>

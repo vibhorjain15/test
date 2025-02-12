@@ -1,0 +1,79 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          spinnerHeight="65"
+          *ngIf="!vehicle"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="vehicle">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ vehicle.display_name }}
+            </h4>
+          </div>
+          <div class="cell">
+            <helper-text [innerHtml]="">
+              Track existing or create new investor requests, standard DDQs, and
+              Q/A library projects for this vehicle.
+            </helper-text>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix" *ngIf="currentUser">
+      <div col="4">
+        <vehicle-ddqs
+          [ddqs]="investorDdqs"
+          [currentUser]="currentUser"
+          [modalTitle]="NewRequestTypes.InvestorRequest"
+          ddqType="investor"
+          [helpText]="
+            'For RFP and investor relations teams to respond to or set up and manage inbound investor requests.'
+          "
+          [emptyStateMessage]="
+            'No investor requests available for this ' +
+            entity_type +
+            '. Please add'
+          "
+          (modalOpen)="invokeAddInvestorDDQDialog()"
+        ></vehicle-ddqs>
+      </div>
+      <div col="4">
+        <vehicle-ddqs
+          [ddqs]="ddqs"
+          [currentUser]="currentUser"
+          [modalTitle]="NewRequestTypes.StandardDDQ"
+          [helpText]="
+            'For your team to maintain historical and current annual and quarterly DDQs at the vehicle level. You can create new versions, update content, and then share with your investors.'
+          "
+          [emptyStateMessage]="
+            'No internal / standard DDQ available for this ' +
+            entity_type +
+            '. Please add'
+          "
+          (modalOpen)="invokeAddDDQDialog()"
+        ></vehicle-ddqs>
+      </div>
+      <!-- authorized-view accessible-to="manager" -->
+      <div col="4">
+        <app-profile-ddq
+          [ddqs]="profileddqs"
+          [helpText]="
+            'For SMEs to build and maintain your firm’s Q/A content library with the most recent and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Library.'
+          "
+          [tooltipText]="
+            'Build and maintain your firm’s Q/A content library with compliant and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Library. Pro tip: It is best practice for SMEs to regularly review this content and treat these responses as your one source of truth.'
+          "
+          [emptyStateMessage]="
+            'No Q/A Library content available for this ' +
+            entity_type +
+            '. Please add'
+          "
+          (modalOpen)="invokeAddProfileDDQDialog()"
+        ></app-profile-ddq>
+      </div>
+    </div>
+  </div>
+</div>

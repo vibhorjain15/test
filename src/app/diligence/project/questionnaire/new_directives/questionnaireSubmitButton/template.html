@@ -1,0 +1,9 @@
+<button btn-type="transparent"
+    uib-tooltip="{{vm.getFinishButtonToolTipText($parent.vm.mandatoryUnansweredCount,$parent.vm.wipCount, $parent.vm.totalReviewPending, $parent.vm.totalReviewFailed, $parent.vm.totalTrackChangesCount, $parent.vm.totalReviewAssignmentPending, $parent.vm.totalRatingTrackChangesCount, $parent.vm.totalRatingReviewPending, $parent.vm.totalRatingReviewAssignmentPending, $parent.vm.totalRatingReviewFailed, $parent.vm.totalUnResolvedComments, $parent.vm.validationRequiredCount)}}"
+    data-ng-click="vm.submit('Completed')"
+    data-ng-class="{'btn-submit-orange': (vm.diligence.status == 'Started' || vm.diligence.status == 'Followup' || vm.diligence.status == 'ExtensionRequested' || vm.diligence.status == 'InReview'),'disabled':!(vm.diligence.status == 'Started' || vm.diligence.status == 'Followup' || vm.diligence.status == 'ExtensionRequested' || vm.diligence.status == 'InReview') || vm.is_readonly || $parent.vm.mandatoryUnansweredCount > 0 || $parent.vm.wipCount> 0 || $parent.vm.totalTrackChangesCount > 0 || (vm.diligence.review_mandatory && ($parent.vm.totalReviewAssignmentPending > 0 || $parent.vm.totalReviewPending > 0 || $parent.vm.totalReviewFailed > 0)) || $parent.vm.totalRatingTrackChangesCount > 0 || (vm.diligence.review_mandatory && ($parent.vm.totalRatingReviewAssignmentPending > 0 || $parent.vm.totalRatingReviewPending)) || $parent.vm.totalRatingReviewFailed > 0 || $parent.vm.totalUnResolvedComments > 0 || $parent.vm.validationRequiredCount > 0}">
+  <div>
+    <icon name="check" size="2x"></icon>
+  </div>
+  <small><strong>{{vm.submitText}}</strong></small>
+</button>

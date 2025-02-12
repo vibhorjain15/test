@@ -1,0 +1,66 @@
+<div
+  class="panel panel-default"
+  [id]="'recommendation-grid-' + guid"
+  role="region"
+  aria-label="Recommendation Grid Panel"
+  *ngIf="!onlyGrid"
+>
+  <div class="panel-heading">
+    <h5
+      class="panel-title"
+      [ngClass]="{ 'text-uppercase': showHeaderUpperCase }"
+      *ngIf="firm_preferences"
+    >
+      {{ firm_preferences?.issue_tracker_default_name }} Tracker
+    </h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          *ngIf="entity_id && entity_type && !isUserLoading"
+          (click)="addNewRecommendation()"
+          [tooltip]="
+            isFreeSubscription
+              ? 'This feature is available for premium users.'
+              : allowAdding
+              ? 'Add New ' + firm_preferences?.issue_tracker_default_name
+              : ''
+          "
+          container="body"
+          [adaptivePosition]="true"
+          [ngClass]="{
+            'route-link-disabled': isFreeSubscription || !allowAdding
+          }"
+          tabindex="0"
+          role="button"
+          aria-label="Add New Recommendation"
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body" role="region" aria-label="Recommendation Grid">
+    <app-dv-grid
+      [rowData]="recommendations"
+      [name]="gridName"
+      [noRowsTemplate]="isLoading ? 'Loading...' : 'No results found'"
+      [onCellClicked]="onCellClicked"
+      [getRowClass]="handleRowClass"
+      (gridReady)="onGridReady($event)"
+    ></app-dv-grid>
+  </div>
+</div>
+
+<app-dv-grid
+  *ngIf="onlyGrid"
+  [rowData]="recommendations"
+  [name]="gridName"
+  [noRowsTemplate]="isLoading ? 'Loading...' : 'No results found'"
+  [onCellClicked]="onCellClicked"
+  [getRowClass]="handleRowClass"
+  (gridReady)="onGridReady($event)"
+  [onRowClicked]="handleRowClicked"
+  [showSaveView]="!recommendationsData"
+></app-dv-grid>

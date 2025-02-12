@@ -1,0 +1,432 @@
+
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-new-template is-angular-js="true"></ng2-new-template>
+</div>
+
+<form
+  data-ng-if="vm.Utils.isAngularJS()"
+  name="vm.manage_template_form"
+  novalidate
+  class="form-horizontal"
+  data-ng-submit="vm.submit()"
+>
+  <div class="modal-header">
+    <h3 class="modal-title" ng-if="!vm.fromManagerRequest">
+      {{(vm.edit_mode) ? 'Edit Template Info' : 'Create New Template'}}
+      <a
+        class="pull-right clickable link-disguise link-unstyled"
+        data-ng-click="vm.cancel()"
+        >&times;</a
+      >
+    </h3>
+    <h3 class="modal-title" ng-if="vm.fromManagerRequest">
+      Create New Project
+      <a
+        class="pull-right clickable link-disguise link-unstyled"
+        data-ng-click="vm.cancel()"
+        >&times;</a
+      >
+    </h3>
+  </div>
+
+  <div class="modal-body" col="12">
+    <div
+      col="12"
+      class="text-center space-on-bottom-xl"
+      data-ng-if="!vm.edit_mode && vm.isManager && !vm.fromManagerRequest"
+    >
+      <div col="6" class="bordered-right">
+        <div class="text-center pa-tb-lg">
+          <a
+            class="link-disguise clickable"
+            data-ng-click="vm.changeOptionType(vm.requestSteps['DOC_PARSER'])"
+            uib-tooltip="Document Parser"
+            data-ng-class="{'text-orange':(vm.optionType == vm.requestSteps['DOC_PARSER'] || vm.optionType == vm.requestSteps['EXCEL_PARCER'])}"
+          >
+            <div class="space-on-bottom">
+              <icon name="file" size="2x"></icon>
+            </div>
+            Document Parser
+          </a>
+        </div>
+        <p class="alert alert-info">
+          Attach document to digitize your template (.xlsx or .docx file)
+        </p>
+      </div>
+      <div col="6">
+        <div class="text-center pa-tb-lg">
+          <a
+            class="link-disguise clickable"
+            data-ng-click="vm.changeOptionType(vm.requestSteps['TEMPLATE_BUILDER'])"
+            uib-tooltip="Template Builder"
+            data-ng-class="{'text-orange':vm.optionType == vm.requestSteps['TEMPLATE_BUILDER']}"
+          >
+            <div class="space-on-bottom">
+              <icon name="tools" size="2x"></icon>
+            </div>
+            Template Builder
+          </a>
+        </div>
+        <p class="alert alert-info">
+          Build a template using our template builder
+        </p>
+      </div>
+    </div>
+    <div
+      col="12"
+      class="text-center space-on-bottom-xl"
+      data-ng-if="!vm.edit_mode && vm.fromManagerRequest"
+    >
+      <div col="12" class="bordered-right">
+        <div class="text-center pa-tb-lg">
+          <a
+            class="link-disguise clickable"
+            data-ng-click="vm.changeOptionType(vm.requestSteps['DOC_PARSER'])"
+            uib-tooltip="Document Parser"
+            data-ng-class="{'text-orange':(vm.optionType == vm.requestSteps['DOC_PARSER'] || vm.optionType == vm.requestSteps['EXCEL_PARCER'])}"
+          >
+            <div class="space-on-bottom">
+              <icon name="file" size="2x"></icon>
+            </div>
+            Document Parser
+          </a>
+        </div>
+        <p class="alert alert-info">
+          Attach document to digitize your template (.xlsx or .docx file)
+        </p>
+      </div>
+    </div>
+    <!-- <div col="12" data-ng-if="!vm.edit_mode && !vm.optionTypeEdit && vm.isManager">
+      <label class="control-label" col="3">Your Selection</label>
+      <div col="8" class="templateCreationSelection">
+        <label col="5" class="font-size-16 space-on-top">{{vm.optionType == vm.requestSteps['DOC_PARSER']?'Document Parser':'Template Builder'}}</label>
+        <a class="btn btn-default btn-sm" col="1" data-ng-click="vm.optionTypeEdit = true;">
+          <icon name="pencil"></icon>
+        </a>
+      </div>
+    </div> -->
+    <hr col="12" data-ng-if="vm.isManager" />
+    <div col="12" data-ng-if="vm.isManager">
+      <div
+        class="dd-doc-selection-wrapper"
+        data-ng-if="vm.optionType == vm.requestSteps['DOC_PARSER'] && vm.optionType"
+      >
+        <div
+          class="panel panel-default dd-doc-drop-panel"
+          dv-file-handler
+          dv-droppable
+          dv-manual-upload
+          name="file-handler-one"
+          ngf-multiple="true"
+          ngf-select-disabled="true"
+          dv-bind-files-to="vm.files"
+          dv-accept="vm.allowed_file_extensions_str"
+          dv-pattern="vm.allowed_file_extensions_str"
+          dv-max-file-size="::vm.maxFileSize"
+          ngf-max-files="1"
+          ngf-drag-over-class="'panel-primary'"
+          dv-fields="vm.documentParams"
+          dv-upload-url="/dd_documents"
+          dv-on-upload="vm.documentUploadComplete(response)"
+        >
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your file here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+            <div
+              data-ng-repeat="file in vm.drop_files"
+              dv-limit-word="file.name"
+              char-limit="30"
+            ></div>
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button
+            btn-type="default"
+            dv-file-handler
+            dv-manual-upload
+            dv-bind-files-to="vm.files"
+            dv-upload-url="/dd_documents"
+            name="file-handler-two"
+            dv-accept="vm.allowed_file_extensions_str"
+            dv-pattern="vm.allowed_file_extensions_str"
+            dv-fields="vm.documentParams"
+            dv-max-file-size="::vm.maxFileSize"
+            dv-on-upload="vm.documentUploadComplete(response)"
+          >
+            Select File
+          </button>
+          <div
+            data-ng-repeat="file in vm.files"
+            dv-limit-word="file.name"
+            char-limit="30"
+          ></div>
+        </div>
+      </div>
+      <!--  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+      <div
+        class="dd-doc-selection-wrapper"
+        data-ng-if="vm.optionType == vm.requestSteps['EXCEL_PARCER'] && vm.optionType"
+      >
+        <div
+          class="panel panel-default dd-doc-drop-panel"
+          dv-file-handler
+          dv-droppable
+          dv-manual-upload
+          name="file-handler-one"
+          ngf-multiple="true"
+          ngf-select-disabled="true"
+          dv-bind-files-to="vm.files"
+          dv-accept="vm.allowed_file_extensions_str"
+          dv-pattern="vm.allowed_file_extensions_str"
+          dv-max-file-size="::vm.maxFileSize"
+          ngf-max-files="1"
+          ngf-drag-over-class="'panel-primary'"
+          dv-fields="vm.documentParams"
+          dv-upload-url="/excel_parser/upload"
+          dv-on-upload="vm.documentUploadComplete(response)"
+        >
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your file here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+            <div
+              data-ng-repeat="file in vm.drop_files"
+              dv-limit-word="file.name"
+              char-limit="30"
+            ></div>
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button
+            btn-type="default"
+            dv-file-handler
+            dv-manual-upload
+            dv-bind-files-to="vm.files"
+            dv-upload-url="/dd_documents"
+            name="file-handler-two"
+            dv-accept="vm.allowed_file_extensions_str"
+            dv-pattern="vm.allowed_file_extensions_str"
+            dv-fields="vm.documentParams"
+            dv-max-file-size="::vm.maxFileSize"
+            dv-on-upload="vm.documentUploadComplete(response)"
+          >
+            Select File
+          </button>
+          <div
+            data-ng-repeat="file in vm.files"
+            dv-limit-word="file.name"
+            char-limit="30"
+          ></div>
+        </div>
+      </div>
+    </div>
+    <hr
+      col="12"
+      data-ng-if="vm.optionType && (vm.optionType == vm.requestSteps['DOC_PARSER'] || vm.optionType == vm.requestSteps['EXCEL_PARCER'])"
+    />
+    <div col="12">
+      <form-group
+        field-name="Template Name"
+        data-ng-if="(vm.edit_mode || vm.optionType) && !vm.fromManagerRequest"
+      >
+        <label class="control-label col-sm-3" for="template-name"
+          >Template Name<span class="font-size-10 text-orange align-top"
+            >*</span
+          ></label
+        >
+
+        <div class="col-sm-9">
+          <input
+            type="text"
+            class="form-control"
+            data-ng-model="vm.manage_template.name"
+            dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+            placeholder="Enter a template name"
+            required
+            maxlength="140"
+          />
+        </div>
+      </form-group>
+
+      <form-group
+        field-name="Strategy"
+        data-ng-if="(!vm.edit_mode && vm.optionType == vm.requestSteps['TEMPLATE_BUILDER']) && !vm.fromManagerRequest"
+      >
+        <label for="{{vm.entity_sub_type}}" class="control-label col-sm-3"
+          >{{vm.entity_sub_type}}</label
+        >
+
+        <div class="col-sm-9">
+          <select
+            name="{{vm.entity_sub_type}}"
+            id="{{vm.entity_sub_type}}"
+            class="form-control"
+            chosen
+            data-ng-disabled="!vm.strategies"
+            data-ng-options="strategy.id as strategy.name for strategy in vm.strategies"
+            data-ng-model="vm.manage_template.strategyID"
+          >
+            <option value="">
+              --Universal: Not {{vm.entity_sub_type}} specific--
+            </option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group
+        field-name="Frequency"
+        data-ng-if="(vm.edit_mode || vm.optionType) && !vm.fromManagerRequest"
+      >
+        <label class="control-label col-sm-3">Frequency</label>
+
+        <div class="col-sm-8">
+          <select
+            class="form-control"
+            id="frequency"
+            chosen
+            data-ng-options="frequency.id as frequency.value for frequency in vm.frequencies"
+            data-ng-model="vm.manage_template.frequency_id"
+          >
+            <option value="">Select Frequency</option>
+          </select>
+        </div>
+        <icon
+          name="info"
+          class="text-info"
+          uib-tooltip="{{vm.isManager?'Your answers will auto expire at the selected frequency':'The diligence requests for this template will be auto-scheduled at selected frequency'}}"
+        >
+        </icon>
+      </form-group>
+
+      <form-group
+        field-name="Type"
+        data-ng-if="(!vm.edit_mode && vm.optionType) && !vm.fromManagerRequest"
+      >
+        <label class="control-label col-sm-3"
+          >Type<span class="font-size-10 text-orange align-top">*</span></label
+        >
+
+        <div class="col-sm-9">
+          <div class="btn-group" data-ng-if="!vm.manage_template.type_disabled">
+            <label
+              class="btn btn-default"
+              data-ng-model="vm.manage_template.type"
+              uib-tooltip="{{vm.isManager?'Template for investor requests or standard DDQs':'Standard DDQ templates'}}"
+              data-ng-class="{'btn-primary':vm.manage_template.type == 'dd_new'}"
+              uib-btn-radio="'dd_new'"
+              required
+            >
+              <icon name="file-add"></icon>
+              {{vm.isManager?'Investor Request/Standard':'Standard'}}
+            </label>
+            <label
+              class="btn btn-default"
+              data-ng-model="vm.manage_template.type"
+              data-ng-class="{'btn-primary':vm.manage_template.type == 'dd_profile'}"
+              uib-tooltip="{{vm.isManager?'Template for Pre-approved Q/As':'Template to track Product or Firm profile'}}"
+              uib-btn-radio="'dd_profile'"
+              required
+            >
+              <icon name="user-check"></icon>
+              {{vm.isManager?'Pre-approved Q/As':'Profile'}}
+            </label>
+          </div>
+          <h4
+            class="space-on-top"
+            data-ng-if="vm.manage_template.type_disabled"
+          >
+            <span class="label label-primary"
+              >{{vm.manage_template.type == 'dd_profile'?'Pre-approved
+              Q/As':'Standard'}}</span
+            >
+          </h4>
+        </div>
+      </form-group>
+      <div
+        class="alert alert-info"
+        data-ng-if="vm.isManager && !vm.fromManagerRequest"
+      >
+        <span data-ng-if="vm.manage_template.type == 'dd_new'">
+          Respond to Investor DDQs, create digital DDQs to share with investors
+          or build internal DDQs at firm and product level for particular time
+          period
+        </span>
+        <span data-ng-if="vm.manage_template.type == 'dd_profile'">
+          Build and extend your Q/A Library Content at product/firm
+          level which can utilized by analysts to respond to various DDQs with
+          pre-approved and compliant responses.
+        </span>
+      </div>
+      <div
+        class="space-on-top form-group"
+        data-ng-if="!vm.edit_mode && vm.permissions_enabled"
+      >
+        <a
+          class="link clickable pull-right"
+          data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions"
+        >
+          Add Team Permissioning
+        </a>
+      </div>
+
+      <div
+        class="form-group"
+        data-ng-show="vm.showAdvanceOptions"
+        data-ng-if="!vm.edit_mode && vm.permissions_enabled"
+      >
+        <team-selection
+          type="'Resource'"
+          selected-teams="vm.selectedTeams"
+          teamselection-form="vm.teamselectionForm"
+          on-close="vm.cancel()"
+          disabled="!vm.permissions_enabled"
+          teams="vm.teams"
+          access-list="vm.visibilityList"
+        ></team-selection>
+      </div>
+    </div>
+  </div>
+  <div
+    class="form-group"
+    data-ng-if="vm.edit_mode || vm.optionType && !vm.fromManagerRequest"
+  >
+    <div col="8" offset="2">
+      <small
+        ><span class="font-size-10 text-orange align-top">*</span
+        ><i>Required field</i></small
+      >
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="submit"
+      button-loader="vm.saving_template"
+      data-ng-if="(vm.optionType || vm.edit_mode) && !vm.fromManagerRequest"
+    >
+      {{vm.edit_mode ? 'Update Template' : 'Create Template'}}
+    </button>
+    <button
+      type="submit"
+      button-loader="vm.saving_template"
+      data-ng-if="(vm.optionType || vm.edit_mode) && vm.fromManagerRequest"
+    >
+      Create Project
+    </button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

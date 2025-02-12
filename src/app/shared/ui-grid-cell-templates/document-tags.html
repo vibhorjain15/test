@@ -1,0 +1,48 @@
+<ui-grid-cell-contents class="text-left" ng-mouseenter="showPreview=true" ng-mouseleave="showPreview=false">
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <span data-ng-show="!row.groupHeader" class="unstyledLink">
+      <a data-ng-if="!row.entity.attachment_id" 
+           uib-tooltip="{{row.entity.name}}">
+          <span dv-limit-word="row.entity.name"></span>
+      </a>
+
+      <a data-ng-if="row.entity.attachment_id" 
+         uib-tooltip="{{row.entity.name}}">
+          <span dv-limit-word="row.entity.name"></span>
+      </a>
+
+      <button
+              btn-type="default"
+              size="xs"
+              class="space-on-left-lg"
+              ng-show="showPreview"
+              uib-tooltip="Preview"
+              data-ng-click="grid.appScope.vm.getSignedURL(row.entity);grid.appScope.vm.previewClicked = true">
+        <icon name="eye"></icon>
+      </button>
+
+      <button
+              btn-type="default"
+              size="xs"
+              class="space-on-left"
+              ng-show="showPreview && grid.appScope.vm.showPreviewIcon(row.entity)"
+              uib-popover-template="grid.appScope.vm.searchResultTemplateUrl"
+              popover-class="search-result-popover"
+              popover-placement="right"
+              popover-trigger="mouseenter"
+              popover-title="Search Result">
+        <icon name="search"></icon>
+      </button>
+    </span>
+
+    <span data-ng-if="row.groupHeader">
+      <span uib-tooltip="{{grid.appScope.vm.getContextValue(grid, row, col)}}">
+        <span dv-limit-word="grid.appScope.vm.getContextValue(grid, row, col)" char-limit="34"></span>
+      </span>
+    </span>
+  </div>
+</ui-grid-cell-contents>

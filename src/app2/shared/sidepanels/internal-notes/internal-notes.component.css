@@ -1,0 +1,58 @@
+.notes-helper {
+  margin-top: 3%;
+}
+.note-container {
+  background: #ffffff08 0% 0% no-repeat padding-box;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.note-question {
+  margin-top: 10px;
+}
+.notes {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.dv-notes {
+  flex-basis: 80%;
+}
+
+.helper-text {
+  flex-basis: 50%;
+}
+.In-empty-state {
+  width: 100%;
+  align-self: center;
+  padding: 2%;
+  padding-top: 0;
+}
+.note-container-heading {
+  color: #27b098;
+}
+.loader {
+  padding: 10px;
+}
+
+:host ::ng-deep .panel-segment {
+  border-radius: 10px;
+  overflow: auto;
+}
+
+:host ::ng-deep .panel-segment::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+:host ::ng-deep .panel-segment::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 7px 1px;
+}
+:host ::ng-deep .panel-segment::-webkit-scrollbar-thumb {
+  background: lightgray;
+  border-radius: 5px;
+  min-height: 75px;
+}
+:host ::ng-deep .panel-segment::-webkit-scrollbar-thumb:hover {
+  background: darkgray;
+}

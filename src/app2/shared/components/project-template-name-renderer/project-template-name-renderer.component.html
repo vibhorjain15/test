@@ -1,0 +1,7 @@
+<span
+  *ngIf="!params.node.group && params.data.displayStatus === 'Invited'; else default"
+  ><strong>{{ params.value }}</strong></span
+>
+<ng-template #default>
+  <span>{{ params.value }}</span>
+</ng-template>

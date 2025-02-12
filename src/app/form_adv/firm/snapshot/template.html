@@ -1,0 +1,250 @@
+<ng2-snapshot data-ng-if="vm.Utils.isAngular()">
+</ng2-snapshot>
+<div data-ng-if="vm.Utils.isAngularJS()" id="js-print-area">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <spinner data-ng-hide="vm.formadv_firm"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel full-width"
+           data-ng-show="vm.formadv_firm">
+        <div class="bordered-right cell max-w-320">
+          <h4 class="clear-margin lh1-5 word-break-break-all">
+            {{::vm.formadv_firm.businessName}}
+          </h4>
+
+          <div class="lh1-5">
+            <small class="text-muted">
+              ({{::vm.profile.legal_address}})
+            </small>
+          </div>
+        </div>
+
+        <div class="cell bordered-right">
+          <span class="align-middle">CRD #</span>
+          {{::vm.formadv_firm.id}}<br>
+          <small class="text-muted">
+            Latest Filing: {{::vm.formadv_firm.filingDate|date}}
+          </small>
+        </div>
+
+        <div class="cell bordered-right">
+          <span class="align-middle">SEC #</span>
+          {{::vm.formadv_firm.secNb}}
+          <!--<small class="text-muted">
+            ({{::vm.formadv_firm.website}})
+          </small>-->
+        </div>
+
+        <div class="cell bordered-right">
+          <span class="align-middle space-on-right">Registration:</span><span class="label text-uppercase label-success">{{vm.formadv_firm.firmType}}</span> / <span class="label text-uppercase label-success">{{vm.formadv_firm.status}}</span>
+          <br>
+          <small class="text-muted">
+            Registration Date: {{::vm.formadv_firm.registration_Date|date}}
+          </small>
+        </div>
+        <div class="cell bordered-right">
+          <a class="clickable btn btn-transparent"
+               data-ng-click="vm.toggleADVTracking()"
+               button-loader="vm.toggling_ADV_tracking">
+              <div data-ng-show="vm.formadv_firm.is_tracking" uib-tooltip="Untrack this firm">
+                <div><icon name="close" size="2x" class="text-muted"></icon></div>
+                <small>Untrack</small>
+              </div>
+              <div data-ng-hide="vm.formadv_firm.is_tracking" uib-tooltip="Track this firm">
+                <div><icon name="bookmark-add-fill" size="2x" class="text-muted"></icon></div>
+                <small>Track</small>
+              </div>
+          </a>
+        </div>
+        <div class="cell text-center">
+          <button btn-type="transparent" data-ng-click="vm.goBack()">
+            <div><icon name="arrow-back" size="2x"></icon></div>
+            <small>Go back</small>
+          </button>
+        </div>
+        <!--<div class="cell">
+          <a class="btn btn-transparent"
+             print-section
+             print-options="vm.printOptions"
+             uib-tooltip="Print">
+             <div><icon name="print" size="2x"></icon></div>
+          </a>
+        </div>-->
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="align-middle">
+        Firm Summary
+      </span>
+    </div>
+    <div class="panel-body full-height align-middle">
+      <spinner data-ng-hide="vm.profile"></spinner>
+      <table class="fund-profile-items space-on-top space-on-bottom" data-ng-show="vm.profile">
+        <tbody>
+          <tr class="title-row">
+            <td><small class="text-uppercase">RAUM</small></td>
+            <td><small class="text-uppercase"># of Funds</small></td>
+            <td><small class="text-uppercase">GAV</small></td>
+            <td><small class="text-uppercase">Employees</small></td>
+            <td><small class="text-uppercase"># of Offices</small></td>
+            <td><small class="text-uppercase">Disclosures / DRPs</small></td>
+          </tr>
+          <tr class="icon-row text-muted">
+              <td><icon name="tasks" size="2x"></icon></td>
+              <td><icon name="funds" size="2x"></icon></td>
+              <td><icon name="fund" size="2x"></icon></td>
+              <td><icon name="users" size="2x"></icon></td>
+              <td><icon name="institution" size="2x"></icon></td>
+              <td><icon name="flag" size="2x" data-ng-class="{'text-danger': (vm.profile.disclosure_count>1)}"></icon></td>
+          </tr>
+          <tr>
+              <td><small>{{vm.profile.raum ? (vm.profile.raum | toMillion) : 'N/A'}}</small></td>
+              <td><small>{{vm.profile.fund_count ? vm.profile.fund_count : 'N/A'}}</small></td>
+              <td><small>{{vm.profile.fund_gav ? (vm.profile.fund_gav | toMillion) : 'N/A'}}</small></td>
+              <td><small>{{::vm.profile.employee_count}}<br>({{::vm.profile.investment_employee_count}} Investment)</small></td>
+              <td><small>{{vm.profile.office_count ? vm.profile.office_count : 'N/A'}}</small></td>
+              <td><small>{{vm.profile.disclosure_count ? vm.profile.disclosure_count : 'N/A'}}</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row clearfix">
+      <div col="4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Asset Breakdown</h5>
+          </div>
+          <div class="panel-body">
+            <div class="space-on-top space-on-bottom" donut-chart config="vm.advAssetBreakdownConfig"></div>
+          </div>
+        </div>
+      </div>
+
+      <div col="4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Investor Breakdown</h5>
+          </div>
+          <div class="panel-body">
+            <div class="space-on-top space-on-bottom" donut-chart config="vm.advClientBreakdownConfig"></div>
+          </div>
+        </div>
+      </div>
+
+      <div col="4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">
+              Investor Summary
+            </span>
+          </div>
+          <div class="panel-body full-height align-middle">
+            <spinner data-ng-hide="vm.profile"></spinner>
+            <table class="fund-profile-items space-on-top space-on-bottom" data-ng-show="vm.profile">
+              <tbody>
+                <tr class="title-row">
+                  <td><small class="text-uppercase"># of Investors</small></td>
+                  <td><small class="text-uppercase"># of Accounts</small></td>
+                </tr>
+                <tr class="icon-row text-muted">
+                  <td><icon name="investor" size="2x"></icon></td>
+                  <td><icon name="bank-account-fill" size="2x"></icon></td>
+                </tr>
+                <tr>
+                    <td><small>{{::vm.profile.investor_count}} ({{::vm.profile.pct_foreign}}% Foreign)</small></td>
+                    <td><small>{{::vm.profile.account_count}}</small></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Compensation</h5>
+          </div>
+          <div class="panel-body">
+            <spinner data-ng-hide="vm.profile"></spinner>
+            <div class="panel panel-default clear-margin-bottom" data-ng-show="vm.profile">
+              <div class="panel-body full-height align-middle">
+                <table class="fund-profile-items">
+                  <tbody>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">% of AUM</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom"><i class="dvi" data-ng-class="{'text-muted dvi-close': !vm.profile.comp_pct_AUM, 'text-success dvi-check': vm.profile.comp_pct_AUM}"></i></h4>
+                    </td>
+                  </tr>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">Fixed fees</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom"><i class="dvi" data-ng-class="{'text-muted dvi-close': !vm.profile.comp_fixed_fee, 'text-success dvi-check': vm.profile.comp_fixed_fee}"></i></h4>
+                    </td>
+
+                  </tr>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">Performance-based fees</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom"><i class="dvi" data-ng-class="{'text-muted dvi-close': !vm.profile.comp_performance, 'text-success dvi-check': vm.profile.comp_performance}"></i></h4>
+                    </td>
+                  </tr>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">Other fees</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom"><i class="dvi" data-ng-class="{'text-muted dvi-close': !vm.profile.comp_other_fee, 'text-success dvi-check': vm.profile.comp_other_fee}"></i></h4>
+                    </td>
+                  </tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <div class="row clearfix">
+    <div col="6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="align-middle">
+            Service Providers
+          </span>
+        </div>
+        <div class="panel-body">
+          <dv-grid grid-resource="vm.service_providers_resource" grid-name="'formadv-firm-service-providers'"></dv-grid>
+        </div>
+      </div>
+    </div>
+    <div col="6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="align-middle">
+            Regulators
+          </span>
+        </div>
+        <div class="panel-body">
+          <dv-grid grid-resource="vm.regulators_resource" grid-name="'formadv-firm-regulators'"></dv-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="align-middle">
+        Benchmarking
+      </span>
+    </div>
+    <div class="panel-body full-height align-middle">
+      Percentile for RAUM | # of Service Providers | # of employees | # of offices
+    </div>
+  </div>-->
+</div>

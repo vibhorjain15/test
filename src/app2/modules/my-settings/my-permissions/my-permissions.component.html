@@ -1,0 +1,83 @@
+<div class="panel panel-default borderless-top">
+  <div class="panel-body clearfix">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="65"
+      *ngIf="loading"
+    ></app-spinner>
+    <div class="dv-table dv-table-middle dd-info-panel">
+      <div class="bordered-right cell">
+        <div class="lh1-5">
+          <strong>{{ current_user?.fullName }}</strong>
+        </div>
+      </div>
+      <div class="cell">
+        <dv-button [btnType]="'transparent'" (onClick)="goBack()">
+          <div><span appIcon name="arrow-back" size="2x"></span></div>
+          <small>Back</small>
+        </dv-button>
+      </div>
+    </div>
+    <div *ngIf="current_user?.firmwide_role_alias">
+      <span class="label label-default label-sm">{{
+        current_user.firmwide_role_alias
+      }}</span>
+    </div>
+  </div>
+</div>
+<div class="panel panel-default permissions-details">
+  <div class="panel-heading">
+    <h5 class="panel-title">Teams</h5>
+  </div>
+  <div class="panel-body">
+    <div class="row clear-margin">
+      <div class="com-sm-12">
+        <span
+          class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+          *ngFor="let team of teams"
+          (mouseover)="team.hoverState = true"
+          (mouseleave)="team.hoverState = false"
+        >
+          <small>
+            <a
+              class="space-on-left clickable link-disguise"
+              (click)="goToSelectedEntity(team)"
+            >
+              <strong>{{ team.team_name }} &nbsp;</strong>
+            </a>
+          </small>
+          <small class="text-muted">{{ team.role_name }}</small>
+        </span>
+        <div *ngIf="!teams || !teams.length">
+          <p class="text-muted"><small>You are not part of any team</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Nav tabs -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Permissions</h5>
+  </div>
+  <div class="panel-body">
+    <dv-tabs
+      [list]="tabList"
+      size="large"
+      (onTabClick)="handleTabChange($event)"
+    ></dv-tabs>
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div *ngIf="!loading_assignments">
+        <app-dv-grid
+          [rowData]="assignmentResources"
+          [name]="gridName"
+          [onCellClicked]="onCellClicked"
+        ></app-dv-grid>
+      </div>
+      <div class="permission-label-loader" *ngIf="loading_assignments">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+.note-info {
+  display: flex;
+  align-items: center;
+}
+.note-header {
+  display: flex;
+  justify-content: space-between;
+}
+.note-content {
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+.note-main {
+  background: #f8f8f8 0% 0% no-repeat padding-box;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  padding: 5px;
+}
+.circled-initials {
+  margin: 0 !important;
+  cursor: default;
+  color: #126b82;
+  border: 1px solid #126b82;
+  background: none;
+  min-width: 18px;
+  height: 18px;
+  line-height: 15px;
+  width: 18px;
+}
+.auth-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+.last-edited {
+  margin-left: 5px;
+  font-weight: lighter;
+  color: #a9a9a9;
+  font-style: italic;
+}
+.note-buttons {
+  cursor: pointer;
+}
+.edit-button {
+  text-align: right;
+  margin-top: 10px;
+}
+
+:host ::ng-deep .tox .tox-toolbar__primary {
+  background: #e7eaf4 0% 0% no-repeat padding-box;
+}
+
+.disabled-icon {
+  cursor: not-allowed;
+  color: #999 !important;
+}

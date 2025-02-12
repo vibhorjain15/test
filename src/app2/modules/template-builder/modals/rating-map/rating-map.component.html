@@ -1,0 +1,132 @@
+<app-modal
+  [title]="'Create Scores/Rating Map'"
+  firstButtonLabel="Create Scores/Rating Map"
+  [initialTemplate]="template"
+  (onFirstClick)="createRating($event)"
+  [isFirstButtonDisabled]="ratingScaleDefinition.length == 0"
+  [isLoading]="loader"
+></app-modal>
+
+<ng-template #template>
+  <div class="main" role="region" aria-label="Rating Scale Form">
+    <helper-text>
+      Navigate to
+      <a class="clickable" (click)="handleRouteToRatingScales()" tabindex="0"
+        >Firm Settings > Rating/Score Map > Rating/Score Scales</a
+      >
+      to add new rating/score Scales
+    </helper-text>
+    <form
+      class="form-horizontal"
+      [formGroup]="scaleForm"
+      autocomplete="off"
+      aria-label="Rating Scale Selection Form"
+    >
+      <dv-form-element
+        [modelController]="scaleForm.get('scale')"
+        label="Scores/Rating Scale"
+        labelPosition="top"
+        elementCol="12"
+        errorMessage="Scores/Rating Scale is required"
+        [showRightIcon]="false"
+      >
+        <dv-select
+          [id]="'scale'"
+          [contoller]="scaleForm.get('scale')"
+          [error]=""
+          [list]="ratingScales | async"
+          bindLabel="name"
+          bindValue=""
+          [appendTo]="'body'"
+          formControlName="scale"
+          (onSelectChange)="handleChange($event)"
+        ></dv-select>
+      </dv-form-element>
+    </form>
+    &nbsp;
+
+    <div
+      class="col-md-12 btn-group space-on-bottom-xxl switchbuttons"
+      *ngIf="type"
+      role="group"
+      aria-label="Switch Buttons"
+    >
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': type === 'section' }"
+        (click)="handleButton('section')"
+        tabindex="0"
+        role="button"
+      >
+        Sub-category
+      </span>
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': type === 'question' }"
+        (click)="handleButton('question')"
+        tabindex="0"
+        role="button"
+      >
+        Question
+      </span>
+    </div>
+    <helper-text *ngIf="type == 'question'" tabindex="0" role="note">
+      You can set rules and flags at question level for this template
+    </helper-text>
+    <helper-text *ngIf="type == 'section'" tabindex="0" role="note">
+      You can only set flags, the rules need to be created at question level
+    </helper-text>
+    <app-spinner
+      broad-spinner
+      spinner-height="100"
+      *ngIf="loaderRatingScale"
+      tabindex="0"
+      role="status"
+      aria-busy="true"
+    ></app-spinner>
+
+    <div
+      *ngIf="
+        !loaderRatingScale &&
+        selectedRatingObject?.scale_mode == 'ScoreBand' &&
+        ratingScaleDefinition?.length > 0
+      "
+      role="region"
+      aria-label="Score Traffic Light Legend"
+    >
+      <div class="small space-on-top-lg">
+        Score Traffic Light legend:
+        <div
+          class="scoreband"
+          *ngFor="let rating of ratingScaleDefinition"
+          tabindex="0"
+        >
+          <dv-rating-chip
+            [color]="rating.color_code"
+            [label]="rating.name"
+            textColor="white"
+          >
+          </dv-rating-chip>
+          Score between {{ rating.range_min_value }} &
+          {{ rating.range_max_value }}
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="
+        !loaderRatingScale &&
+        selectedRatingObject?.scale_mode == 'Absolute' &&
+        ratingScaleDefinition?.length > 0
+      "
+      role="region"
+      aria-label="Assign a Rating"
+    >
+      <h5 class="text-bold space-on-bottom-xl" tabindex="0">Assign a rating</h5>
+      <dv-rating
+        [max]="ratingScaleDefinition?.length"
+        [ratingScales]="ratingScaleDefinition"
+        tabindex="0"
+      ></dv-rating>
+    </div>
+  </div>
+</ng-template>

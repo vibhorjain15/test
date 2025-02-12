@@ -1,0 +1,10 @@
+<hr
+  *ngIf="type == 'horizontal'"
+  [style]="{ margin: margin + 'px' + ' 0' }"
+  class="no-hr-margin"
+/>
+<div
+  *ngIf="type == 'vertical'"
+  [style.height.px]="height"
+  class="vertical-line"
+></div>

@@ -1,0 +1,377 @@
+<app-modal
+  [title]="'Setup filters to narrow your search'"
+  [firstButtonLabel]="'Start Searching'"
+  [initialTemplate]="manageQuestionSearch"
+  (onFirstClick)="searchByFilters()"
+  [isCancelButton]="false"
+  [secondButtonLabel]="'Reset & Search'"
+  (onSecondClick)="removeAndSearch()"
+>
+</app-modal>
+
+<ng-template #manageQuestionSearch>
+  <div class="row">
+    <div col="12">
+      <form
+        class="form-horizontal"
+        name="custom_search_form"
+        novalidate
+        autocomplete="off"
+      >
+        <div col="12">
+          <div
+            col="10"
+            offset="1"
+            class="space-on-bottom-lg space-on-top-lg space-on-left-xl"
+          >
+            <span
+              class="control-label clea\r-margin-bottom inline-block space-on-right fw-bolder"
+            >
+              <span class="text-capitalize"> Questions </span>
+              matching
+            </span>
+            <dv-select
+              [(ngModel)]="globalTernaryOperator"
+              [list]="logicConditionOptions"
+              [aria-label]="'logic Condition Options'"
+              name="globalTernaryOperator"
+              class="inline-block w-80"
+            >
+            </dv-select>
+            <span
+              class="control-label clear-margin-bottom inline-block space-on-left fw-bolder"
+              >of the selected criteria</span
+            >
+          </div>
+          <div col="1">
+            <div class="pull-right">
+              <dv-button
+                size="sm"
+                btnType="default"
+                class="space-on-right"
+                tooltip="Clear filters"
+                (onClick)="clearFilters()"
+              >
+                Clear Filter(s)
+              </dv-button>
+            </div>
+          </div>
+        </div>
+        <div class="space-on-bottom-lg space-on-top-lg" col="12">
+          <div
+            col="12"
+            class="space-on-top-xl"
+            *ngFor="let criteria of searchCriterias; let i = index"
+          >
+            <div col="1" class="padding-right-lg">
+              <span class="control-label" *ngIf="i == 0">&nbsp;</span>
+              <h5
+                class="text-right clear-margin-bottom text-uppercase"
+                [ngClass]="{ 'text-muted': !criteria?.advance_filter_value }"
+                *ngIf="i > 0"
+              >
+                {{ globalTernaryOperator }}
+              </h5>
+            </div>
+            <div
+              col="4"
+              class="padding-right-lg"
+              *ngIf="i < defaultCriteriaOptions.length"
+            >
+              <form-group field-name="Criteria" tooltip-placement="left">
+                <label
+                  for="criteria_{{ i }}"
+                  class="control-label text-capitalize"
+                  *ngIf="i == 0"
+                  >Filters</label
+                >
+                <dv-select
+                  id="criteria_{{ i }}"
+                  name="criteria_{{ i }}"
+                  placeholder="Select a criteria"
+                  (onSelectChange)="selectCriteria($event, criteria, i)"
+                  bindValue="filter_label"
+                  bindLabel="filter_label"
+                  [list]="defaultCriteriaOptions"
+                  [ngModel]="criteria?.criteria_obj?.filter_label"
+                  [disabled]="true"
+                >
+                </dv-select>
+              </form-group>
+            </div>
+            <div
+              col="4"
+              class="padding-right-lg"
+              *ngIf="i >= defaultCriteriaOptions.length"
+            >
+              <form-group field-name="Criteria" tooltip-placement="left">
+                <label
+                  for="criteria_{{ i }}"
+                  class="control-label text-capitalize"
+                  *ngIf="i == 0"
+                  >Filters</label
+                >
+                <dv-select
+                  *ngIf="activeView !== 'preapproved'"
+                  id="criteria_{{ i }}"
+                  name="criteria_{{ i }}"
+                  [(ngModel)]="criteria.criteria_obj"
+                  bindLabel="filter_label"
+                  bindValue=""
+                  placeholder="Select a criteria"
+                  [list]="customCriteriaOptions"
+                  (onSelectChange)="selectCriteria($event, criteria, i)"
+                >
+                </dv-select>
+                <dv-select
+                  *ngIf="activeView == 'preapproved'"
+                  id="criteria_{{ i }}"
+                  name="criteria_{{ i }}"
+                  [list]="customCriteriaOptionsPreapproved"
+                  bindLabel="filter_label"
+                  [(ngModel)]="criteria.criteria_obj"
+                  bindValue=""
+                  placeholder="Select a criteria"
+                  (onSelectChange)="selectCriteria($event, criteria, i)"
+                >
+                </dv-select>
+              </form-group>
+            </div>
+            <div col="3" class="padding-right-lg">
+              <label
+                class="control-label"
+                *ngIf="i === 0"
+                for="condition_{{ i }}"
+                >Condition</label
+              >
+
+              <dv-select
+                [list]="criteria?.criteria_obj?.search_type"
+                bindLabel="label"
+                bindValue="value"
+                id="condition_{{ i }}"
+                [(ngModel)]="criteria.condition"
+                name="condition_{{ i }}"
+                data-ng-init=" setOptionsDefaultValue(criteria, i)"
+              >
+              </dv-select>
+            </div>
+            <div col="4">
+              <div
+                class="width-95-pct inline-block padding-right-lg"
+                *ngIf="criteria.condition == 'not_empty'"
+              >
+                <label for="value_{{ i }}" class="control-label" *ngIf="i == 0"
+                  >Value</label
+                >
+                <dv-select
+                  id="value_{{ i }}"
+                  [list]="{ name: 'Yes', id: true }"
+                  data-ng-init="criteria.advance_filter_value = true"
+                  [(ngModel)]="criteria.advance_filter_value"
+                  [disabled]="true"
+                >
+                </dv-select>
+              </div>
+              <div
+                class="width-95-pct inline-block padding-right-lg"
+                *ngIf="criteria.condition != 'not_empty'"
+              >
+                <form-group
+                  *ngIf="
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                    FILTER_TYPES.BOOLEAN
+                  "
+                >
+                  <label
+                    for="value_{{ i }}"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <dv-select
+                    id="value_{{ i }}"
+                    name="value_{{ i }}"
+                    [list]="yesNoList"
+                    [(ngModel)]="criteria.advance_filter_value"
+                  >
+                  </dv-select>
+                </form-group>
+                <form-group
+                  field-name="Value"
+                  *ngIf="
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.NUMBER ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.INT ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.NUMERIC ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.INTEGER
+                  "
+                  tooltip-placement="left"
+                >
+                  <label
+                    for="value_{{ i }}"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <input
+                    type="number"
+                    name="value_{{ i }}"
+                    id="value_{{ i }}"
+                    [(ngModel)]="criteria.advance_filter_value"
+                    class="form-control"
+                  />
+                </form-group>
+                <form-group
+                  field-name="Value"
+                  *ngIf="
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.STRING ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.TEXT ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.PARAGRAPH ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.MULTILINE ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.LINK
+                  "
+                  tooltip-placement="left"
+                >
+                  <label
+                    for="value_{{ i }}"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <input
+                    type="text"
+                    id="value_{{ i }}"
+                    name="value_{{ i }}"
+                    placeholder="Type a value"
+                    [(ngModel)]="criteria.advance_filter_value"
+                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                    class="form-control"
+                  />
+                </form-group>
+                <form-group
+                  field-name="Value"
+                  *ngIf="
+                    criteria?.criteria_obj.filter_type?.toLowerCase() ==
+                      FILTER_TYPES.DYNAMIC ||
+                    criteria?.criteria_obj?.filter_type?.toLowerCase() ==
+                      FILTER_TYPES.RANGE ||
+                    criteria?.criteria_obj.filter_type?.toLowerCase() ==
+                      FILTER_TYPES.DROPDOWN ||
+                    criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.CHECKBOX ||
+                    criteria?.criteria_obj.filter_type?.toLowerCase() ==
+                      FILTER_TYPES.DROP
+                  "
+                  tooltip-placement="left"
+                >
+                  <label
+                    for="value_{{ i }}"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <dv-select
+                    [list]="criteria.criteria_obj.options"
+                    bindLabel="value"
+                    bindValue="id"
+                    id="value_{{ i }}"
+                    [(ngModel)]="criteria.advance_filter_value"
+                    name="value_{{ i }}"
+                  >
+                  </dv-select>
+                </form-group>
+                <form-group
+                  field-name="Value"
+                  *ngIf="
+                    (criteria.criteria_obj.filter_type?.toLowerCase() ==
+                      FILTER_TYPES.DATE ||
+                      criteria.criteria_obj.filter_type.toLowerCase() ==
+                        FILTER_TYPES.DATETIME) &&
+                    criteria.condition == 'between'
+                  "
+                >
+                  <label
+                    for="value_{{ i }}"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <div col="12">
+                    <app-date-range-picker
+                      id="value_{{ i }}"
+                      name="daterangefilter_{{ i }}"
+                      [minDate]="minDate"
+                      [maxDate]="maxDate"
+                    >
+                    </app-date-range-picker>
+                  </div>
+                </form-group>
+                <form-group
+                  field-name="Value"
+                  *ngIf="
+                    (criteria.criteria_obj.filter_type.toLowerCase() ==
+                      FILTER_TYPES.DATE ||
+                      criteria.criteria_obj.filter_type.toLowerCase() ==
+                        FILTER_TYPES.DATETIME) &&
+                    criteria.condition != 'between'
+                  "
+                >
+                  <label
+                    for="value_{{ i }}"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <app-date-picker
+                    [value]="getDate(criteria.advance_filter_value)"
+                    placeholder="Select a date"
+                    (change)="handleDateChange($event, criteria)"
+                    id="value_{{ i }}"
+                  >
+                  </app-date-picker>
+                </form-group>
+              </div>
+              <a
+                [ngStyle]="i == 0 && { top: '33px' }"
+                *ngIf="
+                  searchCriterias.length > 1 &&
+                  (i > defaultCriteriaOptions.length - 1 ||
+                    criteria?.advance_filter_value ||
+                    criteria.advance_filter_value?.toString() == '0')
+                "
+                (click)="removeCurrentFilter(criteria, i)"
+                class="clickable clear-filter-btn"
+              >
+                <span appIcon name="close" class="color-danger"></span>
+              </a>
+            </div>
+          </div>
+          <div col="12" class="space-on-top-xxl">
+            <div offset="10" col="2" class="">
+              <div class="pull-right">
+                <dv-button
+                  size="sm"
+                  btnType="default"
+                  class="space-on-right"
+                  tooltipText="Add Criteria"
+                  (onClick)="addNewCriteria()"
+                >
+                  <span appIcon name="plus"></span>
+                </dv-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>

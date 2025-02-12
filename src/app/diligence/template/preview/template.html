@@ -1,0 +1,14 @@
+<div class="panel panel-default"
+     data-ng-if="vm.sections && !vm.sections.length">
+  <div class="panel-body">
+    <div col="6" offset="3">
+      <empty-state icon-name="document-question"
+                   message="This template doesn't have any sections. Why don't you add some?"
+                   action="vm.redirectToSections()"
+                   action-label="Add a new section"></empty-state>
+    </div>
+  </div>
+</div>
+<ng2-template-preview data-ng-if="vm.Utils.isTemplateAngular()"></ng2-template-preview>
+<questionnaire-preview data-ng-if="!vm.Utils.isTemplateAngular()" selected-section="vm.selected_section">
+</questionnaire-preview>

@@ -1,0 +1,70 @@
+<div class="transparent-input-group input-group advance-search-input-group">
+  <span class="input-icon"><icon name="search"></icon></span>
+  <form data-ng-submit="submit({filters: filters})">
+    <input type="text"
+           data-ng-model="filters.q"
+           class="form-control input-question-search input"
+           placeholder="Search discussions">
+  </form>
+  <span class="input-group-btn">
+    <button class="btn btn-default dropdown-toggle"
+            data-toggle="dropdown"
+            btn-type="default">
+      <span class="caret"></span>
+    </button>
+
+    <div class="dropdown-menu pull-right padded-lg" role="menu">
+      <form data-ng-click="stopPropagation($event)"
+            data-ng-submit="submit({filters: filters})"
+            class="forum-advance-search-form">
+        <div class="form-group">
+          <label>Question text</label>
+          <input type="text"
+                 class="form-control"
+                 data-ng-model="filters.q"
+                 placeholder="Example: What is due diligence ?">
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+
+          <tags-input ng-model="filters.category"
+                      id="category"
+                      on-tag-added="setCategoryPlaceholder()"
+                      on-tag-removed="setCategoryPlaceholder()"
+                      placeholder="{{category_placeholder}}">
+
+            <auto-complete source="filterCategories($query)"
+                           add-from-autocomplete-only=true
+                           min-length="1"></auto-complete>
+          </tags-input>
+        </div>
+
+        <div class="form-group">
+          <label>Fund Type</label>
+
+          <tags-input ng-model="filters.fund"
+                      id="fund"
+                      on-tag-added="setFundPlaceholder()"
+                      on-tag-removed="setFundPlaceholder()"
+                      placeholder="{{fund_placeholder}}">
+            <auto-complete source="filterFunds($query)"
+                           add-from-autocomplete-only=true
+                           min-length="1"></auto-complete>
+          </tags-input>
+        </div>
+
+        <div class="form-group clear-margin">
+          <button class="btn btn-default btn-primary" data-ng-click="submit({filters: filters})" btn-type="default">
+            <icon name="filter"></icon>
+            Apply Filters
+          </button>
+
+          <button class="btn btn-default" type="reset" data-ng-click="resetFilters()">
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </span>
+</div>

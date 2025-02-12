@@ -1,0 +1,534 @@
+<app-modal
+  [title]="'Selected Template - ' + template.name"
+  [initialTemplate]="viewQuestionTags"
+  [isCancelButton]="false"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #viewQuestionTags>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <small
+        >Copy DV tags corresponding to selected data points and place into your
+        custom presentation design. DV tags will be replaced by actual responses
+        at the report generation time.</small
+      >
+    </div>
+  </div>
+  <div class="panel">
+    <div *ngIf="loading" class="text-center">
+      <app-spinner></app-spinner>
+    </div>
+    <div *ngIf="!loading">
+      <!-- btn group -->
+      <div class="row clearfix">
+        <div class="text-center space-on-bottom-lg">
+          <div class="btn-group">
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': selectedTab == 'QuestionTags' }"
+              (click)="setActiveTab('QuestionTags')"
+              >Question Tags</span
+            >
+            <span
+              *ngIf="isAbsolute"
+              ng-show="isAbsolute"
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': selectedTab == 'RatingTags' }"
+              (click)="setActiveTab('RatingTags')"
+              >Rating Tags</span
+            >
+            <span
+              *ngIf="!isAbsolute"
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': selectedTab == 'ScoreTags' }"
+              (click)="setActiveTab('ScoreTags')"
+              >Score Tags</span
+            >
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': selectedTab == 'CustomTags' }"
+              (click)="setActiveTab('CustomTags')"
+              >Custom Tags</span
+            >
+          </div>
+        </div>
+      </div>
+      <!-- btn group -->
+
+      <div class="row clearfix" *ngIf="selectedTab == 'QuestionTags'">
+        <div class="col-sm-5">
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="searchText"
+              placeholder="Filter by question"
+            />
+          </div>
+        </div>
+        <div class="col-sm-5" *ngIf="selectedTab == 'QuestionTags'">
+          <dv-select
+            name="section"
+            name="section"
+            [clearable]="false"
+            bindLabel="name"
+            bindValue="id"
+            [searchable]="true"
+            placeholder="Filter by subcategory"
+            [(ngModel)]="selectedSection"
+            (onSelectChange)="filtersQuestionTags()"
+            [list]="sections"
+          >
+          </dv-select>
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-default" (click)="clearFilters()">
+            Clear
+          </button>
+        </div>
+      </div>
+      <!-- question tags  -->
+      <div *ngIf="selectedTab == 'QuestionTags' && !loading">
+        <table
+          class="table mt-5 table-condensed table-striped w-100"
+          style="width: 100%"
+        >
+          <tbody>
+            <tr *ngFor="let tag of questionTags">
+              <td>
+                <button
+                  class="btn btn-default sm space-on-right-lg"
+                  tooltip="Copy Comment tags"
+                  aria-label="Copy Comments tags"
+                  [disabled]="
+                    tag.responseType == 'Text' ||
+                    tag.responseType == 'TextMultiLine' ||
+                    tag.responseType == 'TextEmail'
+                  "
+                  ngxClipboard
+                  [cbContent]="tag.copyCommentKey"
+                  (click)="copyTags('Question')"
+                >
+                  <icon appIcon name="copy"></icon>
+                </button>
+                <button
+                  class="btn btn-default sm space-on-right-lg"
+                  tooltip="Copy response tags"
+                  aria-label="Copy response tags"
+                  ngxClipboard
+                  [cbContent]="tag.copyKey"
+                  (click)="copyTags('Question')"
+                >
+                  <icon appIcon name="copy"></icon>
+                </button>
+                <span [innerHTML]="tag.text"></span>
+                <span
+                  class="pull-right clickable"
+                  *ngIf="tag.responseType == 'Grid'"
+                  ><a (click)="tag.expanded = !tag.expanded">View Grid</a>
+                </span>
+                <dv-reports-view-grid
+                  *ngIf="tag.expanded"
+                  [template]="template"
+                  [tagDetail]="tag"
+                ></dv-reports-view-grid>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center" *ngIf="!questionTags.length">
+          <p class="text-muted space-on-top">No Question Tags Found</p>
+        </div>
+      </div>
+      <!-- question tags -->
+
+      <!-- custom tags -->
+      <div *ngIf="selectedTab == 'CustomTags' && !loading">
+        <table
+          class="table table-condensed table-striped"
+          style="width: 100%"
+          *ngIf="customTagsArr.length"
+        >
+          <tbody>
+            <tr *ngFor="let tag of customTagsArr | filter : searchText">
+              <td>
+                <button
+                  class="btn btn-default sm space-on-right-lg"
+                  tooltip="Copy tags"
+                  aria-label="Copy tags"
+                  ngxClipboard
+                  [cbContent]="tag.copyKey"
+                  (click)="copyTags('Custom')"
+                >
+                  <icon appIcon name="copy"></icon>
+                </button>
+                {{ tag.item1 }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center" *ngIf="!customTagsArr.length">
+          <p class="text-muted space-on-top">No Custom Tags Found</p>
+        </div>
+      </div>
+
+      <!-- custom tags -->
+      <!-- rating tahs -->
+      <div
+        *ngIf="
+          (selectedTab == 'RatingTags' || selectedTab == 'ScoreTags') &&
+          !loading
+        "
+      >
+        <div *ngIf="loading_custom_fields" class="text-center">
+          <app-spinner></app-spinner>
+        </div>
+        <div class="row">
+          <div
+            [ngClass]="{
+              'col-md-4': selectedCategory || selectedTotalScore,
+              'col-md-12': !selectedCategory || !selectedTotalScore
+            }"
+            class="overflow-scroll-y-axis overflow-x-hidden"
+          >
+            <div class="list-group list-group-menu">
+              <div>
+                <a
+                  class="list-group-item clickable"
+                  *ngIf="ratingTags.length"
+                  [ngClass]="{ 'text-orange': selectedTotalScore }"
+                  (click)="selectTotalScore()"
+                >
+                  Total {{ isAbsolute ? "Rating" : "Score" }}
+                  <icon appIcon name="chevron-right"></icon>
+                </a>
+              </div>
+              <div *ngIf="selectedRatingScheme?.rating_level == 'Section'">
+                <a
+                  class="list-group-item clickable"
+                  *ngFor="let category of ratingTags"
+                  [ngClass]="{ 'text-orange': category.active }"
+                  (click)="selectCategory(category)"
+                >
+                  {{ category.name }}
+                  <icon appIcon name="chevron-right"></icon>
+                </a>
+              </div>
+              <div *ngIf="selectedRatingScheme?.rating_level == 'Question'">
+                <div
+                  class="nested-list-group-container"
+                  *ngFor="let category of ratingTags"
+                >
+                  <a
+                    class="list-group-item"
+                    role="button"
+                    tabindex="0"
+                    (click)="category.expanded = !category.expanded"
+                  >
+                    <span class="state-label">{{ category.name }}</span>
+                    <icon
+                      appIcon
+                      name="chevron-right"
+                      *ngIf="!category.expanded"
+                    ></icon>
+                    <icon
+                      appIcon
+                      name="chevron-down"
+                      class="text-orange"
+                      *ngIf="category.expanded"
+                    ></icon>
+                  </a>
+
+                  <div class="list-group" *ngIf="category.expanded">
+                    <a
+                      class="list-group-item clickable"
+                      *ngFor="let subcategory of category.ratings"
+                      [ngClass]="{ 'text-orange': subcategory.active }"
+                      (click)="selectSubCategory(subcategory, category)"
+                    >
+                      {{ subcategory.name }}
+                      <icon appIcon name="chevron-right"></icon>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            col="8"
+            *ngIf="selectedTotalScore"
+            class="padded-lg list-group-item"
+          >
+            <div class="row padded">
+              <p class="inline-block w-130">
+                Total {{ isAbsolute ? "Rating" : "Score" }} Tags:
+              </p>
+              <button
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} value"
+                aria-label="Copy {{ isAbsolute ? 'rating' : 'score' }} value"
+                ngxClipboard
+                [cbContent]="selectedTotalScore?.copyParams?.copyKey"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+              <button
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} name"
+                aria-label="Copy {{ isAbsolute ? 'rating' : 'score' }} name"
+                ngxClipboard
+                [cbContent]="selectedTotalScore?.copyParams?.copyKeyName"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+              <button
+                *ngIf="!isAbsolute"
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} color"
+                aria-label="Copy {{ isAbsolute ? 'rating' : 'score' }} color"
+                ngxClipboard
+                [cbContent]="selectedTotalScore?.copyParams?.copyKeyColor"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+            </div>
+          </div>
+          <div
+            col="8"
+            *ngIf="selectedCategory && !selectedTotalScore"
+            class="padded-lg list-group-item"
+          >
+            <div class="row padded">
+              <p class="inline-block w-130">Category Tags:</p>
+              <button
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} value"
+                [attr.aria-label]="
+                  'Copy ' + isAbsolute ? 'rating' : 'score' + ' value'
+                "
+                ngxClipboard
+                [cbContent]="selectedCategory?.copyParams?.copyKey"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+              <button
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} name"
+                [attr.aria-label]="
+                  'Copy ' + isAbsolute ? 'rating' : 'score' + ' name'
+                "
+                ngxClipboard
+                [cbContent]="selectedCategory?.copyParams?.copyKeyName"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+              <button
+                *ngIf="!isAbsolute"
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} color"
+                [attr.aria-label]="
+                  'Copy ' + isAbsolute ? 'rating' : 'score' + ' color'
+                "
+                ngxClipboard
+                [cbContent]="selectedCategory?.copyParams?.copyKeyColor"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+            </div>
+            <div
+              class="row padded"
+              *ngIf="selectedRatingScheme?.rating_level == 'Question'"
+            >
+              <p class="inline-block w-130">SubCategory Tags:</p>
+              <button
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} value"
+                [attr.aria-label]="
+                  'Copy ' + isAbsolute ? 'rating' : 'score' + ' value'
+                "
+                ngxClipboard
+                [cbContent]="selectedSubcategory?.copyParams?.copyKey"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+              <button
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} name"
+                [attr.aria-label]="
+                  'Copy ' + isAbsolute ? 'rating' : 'score' + ' name'
+                "
+                ngxClipboard
+                [cbContent]="selectedSubcategory?.copyParams?.copyKeyName"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+              <button
+                *ngIf="!isAbsolute"
+                class="btn btn-default sm space-on-right-lg"
+                tooltip="Copy {{ isAbsolute ? 'rating' : 'score' }} color"
+                [attr.aria-label]="
+                  'Copy ' + isAbsolute ? 'rating' : 'score' + ' color'
+                "
+                ngxClipboard
+                [cbContent]="selectedSubcategory?.copyParams?.copyKeyColor"
+                (click)="copyTags('Score')"
+              >
+                <icon appIcon name="copy"></icon>
+              </button>
+            </div>
+            <div>
+              <table
+                class="table table-condensed table-striped"
+                style="width: 100%"
+              >
+                <tbody *ngFor="let tag of selectedSubcategory.ratings">
+                  <tr class="subcategory-details">
+                    <td style="width: 5%">
+                      <div>
+                        <button
+                          class="btn btn-default sm space-on-right-lg"
+                          tooltip="Copy {{
+                            isAbsolute ? 'rating' : 'score'
+                          }} value tag"
+                          [attr.aria-label]="
+                            'Copy ' + isAbsolute
+                              ? 'rating'
+                              : 'score' + ' value tag'
+                          "
+                          ngxClipboard
+                          [cbContent]="tag.copyParams.copyKey"
+                          (click)="copyTags('Score')"
+                        >
+                          <icon appIcon name="copy"></icon>
+                        </button>
+                      </div>
+                    </td>
+                    <td style="width: 5%">
+                      <button
+                        class="btn btn-default sm space-on-right-lg"
+                        tooltip="Copy {{
+                          isAbsolute ? 'rating' : 'score'
+                        }} name tag"
+                        [attr.aria-label]="
+                          'Copy ' + isAbsolute
+                            ? 'rating'
+                            : 'score' + ' name tag'
+                        "
+                        ngxClipboard
+                        [cbContent]="tag.copyParams.copyKeyName"
+                        (click)="copyTags('Score')"
+                      >
+                        <icon appIcon name="copy"></icon>
+                      </button>
+                    </td>
+                    <td style="width: 5%" *ngIf="!isAbsolute">
+                      <button
+                        class="btn btn-default sm space-on-right-lg"
+                        tooltip="Copy {{
+                          isAbsolute ? 'rating' : 'score'
+                        }} color"
+                        [attr.aria-label]="
+                          'Copy ' + isAbsolute
+                            ? 'rating'
+                            : 'score' + ' name color'
+                        "
+                        ngxClipboard
+                        [cbContent]="tag.copyParams.copyKeyColor"
+                        (click)="copyTags('Score')"
+                      >
+                        <icon appIcon name="copy"></icon>
+                      </button>
+                    </td>
+                    <td style="width: 75%">
+                      <span>{{ tag.name }}</span>
+                    </td>
+                    <td style="width: 10%">
+                      <!-- <span
+                        *ngIf="custom_fields.length > 0"></span> -->
+                      <span [innerHTML]="tag.name"></span>
+                    </td>
+                    <td style="width: 10%" *ngIf="custom_fields?.length > 0">
+                      <span
+                        class="clickable pull-right"
+                        (click)="
+                          tag.showCustomFieldsTags = !tag.showCustomFieldsTags
+                        "
+                      >
+                        <icon
+                          *ngIf="!tag.showCustomFieldsTags"
+                          appIcon
+                          name="chevron-up"
+                          class="font-size-18 space-on-top"
+                        ></icon>
+                        <icon
+                          *ngIf="tag.showCustomFieldsTags"
+                          appIcon
+                          name="chevron-down"
+                          class="font-size-18 space-on-top"
+                        ></icon>
+                      </span>
+                    </td>
+                  </tr>
+                  <div class="space-on-left" *ngIf="tag.showCustomFieldsTags">
+                    <tr *ngFor="let customFields of custom_fields">
+                      <td style="width: 5%">
+                        <button
+                          class="btn btn-default sm space-on-right-lg"
+                          tooltip="Copy tags"
+                          aria-label="Copy tags"
+                          ngxClipboard
+                          [cbContent]="
+                            '#customFields_{{
+                          tag.group_id
+                        }}_{{ $index }}'
+                          "
+                          (click)="copyTags('Score')"
+                        >
+                          <icon appIcon name="copy"></icon>
+                        </button>
+                      </td>
+                      <td style="width: 75%">{{ customFields.alias }}</td>
+                      <td style="width: 10%">
+                        <div
+                          style="height: 0; width: 0; opacity: 0"
+                          id="customFields_{{ tag.group_id }}_{{ $index }}"
+                        >
+                          <span>{{</span
+                          ><span
+                            >ratingfield_{{ tag.group_id }}_{{
+                              customFields.field_unique_key
+                            }}_1</span
+                          ><span>}}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </div>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div
+          class="text-center"
+          *ngIf="!ratingTags.length || !questionTags.length"
+        >
+          <p class="text-muted space-on-top">
+            No Rating Tags Found. Click
+            <a (click)="goToTemplateView()" class="clickable">here</a> to
+            generate corresponding ratings tags for this template.
+          </p>
+        </div>
+      </div>
+      <!-- rating tahs -->
+    </div>
+  </div>
+</ng-template>

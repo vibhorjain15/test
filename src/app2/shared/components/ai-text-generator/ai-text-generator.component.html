@@ -1,0 +1,213 @@
+<div class="ai-wrapper">
+  <b>Note: </b
+  >{{
+    applyToGenerated && generatedOnce
+      ? "Prompts are applied on the generated response"
+      : selectedResponse()?.customSelection
+      ? "Prompts are applied on the highlighted response"
+      : "Prompts are applied on the original response"
+  }}
+  <div
+    class="text-generate-box space-on-bottom"
+    #scrollMe
+    [scrollTop]="scrollMe.scrollHeight"
+    [ngClass]="{ 'selected-response': applyToGenerated && generatedOnce }"
+  >
+    <span
+      *ngIf="!loaderApi && !compareMode"
+      [innerHtml]="generatedResponse | dvSafeHtml"
+      [ngClass]="{
+        disabled: generatedResponse === 'Please select a prompt from below.'
+      }"
+    ></span>
+    <span
+      *ngIf="!loaderApi && compareMode"
+      htmlDiff
+      [current]="generatedResponse"
+      [previous]="latestSelectedText?.selectedText"
+    ></span>
+    <app-spinner class="text-center" *ngIf="loaderApi"></app-spinner>
+  </div>
+
+  <div class="word-count-copy" *ngIf="generated && !generating">
+    <div>{{ generatedCount }} words</div>
+    |
+    <span
+      appIcon
+      name="copy"
+      customSize="big"
+      class="clickable"
+      tippyTooltip="Copy generated text"
+      (click)="onCopyText()"
+    ></span>
+    |
+    <div class="ai-feedback">
+      <span
+        appIcon
+        name="thumbs-o-up"
+        customSize="big"
+        [ngClass]="{
+          'text-success-ai': this.feedbackSelected === 'good'
+        }"
+        class="clickable"
+        tippyTooltip="Generated response is useful"
+        (click)="feedback('good')"
+      ></span>
+      <span
+        customSize="big"
+        appIcon
+        class="clickable"
+        [ngClass]="{
+          'text-danger': this.feedbackSelected === 'bad'
+        }"
+        tippyTooltip="Generated response is not adequate"
+        name="thumbs-o-down"
+        (click)="feedback('bad')"
+      ></span>
+    </div>
+  </div>
+
+  <div class="action-buttons-ai">
+    <dv-button
+      [disabled]="generating || systemGenerated"
+      (onClick)="handleAction('replace')"
+      *ngIf="generated && !isReadonly"
+      id="ai-replace"
+      >Replace</dv-button
+    >
+    <dv-button
+      btnType="blue-border"
+      (onClick)="handleAction('insertBelow')"
+      *ngIf="generated && !isReadonly"
+      id="ai-appened"
+      [disabled]="generating || systemGenerated"
+      >Append</dv-button
+    >
+    <dv-button
+      btnType="default"
+      (onClick)="handleCompare()"
+      id="ai-compare"
+      *ngIf="generated"
+      [tippyTooltip]="
+        compareMode ? '' : 'Compare generated response with initial response'
+      "
+      [disabled]="generating || systemGenerated"
+      >{{ compareMode ? "Back" : "Compare" }}</dv-button
+    >
+  </div>
+  <div class="d-flex align-items-center space-on-top-lg" *ngIf="generatedOnce">
+    <ui-switch
+      size="small"
+      [(ngModel)]="applyToGenerated"
+      [disabled]="generating"
+      id="ai-switch"
+      [style.margin-bottom.px]="-8"
+      class="ai-switch"
+    ></ui-switch>
+    Apply prompt on the above generated response
+    <span
+      appIcon
+      name="info"
+      tippyTooltip="If disabled, the prompt will be applied on the original response"
+      class="info-icon text-info"
+    ></span>
+  </div>
+  <div class="action-bar-ai space-on-top-lg">
+    <textarea
+      autosize
+      placeholder="Ask AI to edit or generate."
+      class="form-control"
+      (keydown.enter)="handleGenerate()"
+      [disabled]="generating"
+      *ngIf="selectedPrompt?.key === AiPrompts.Custom"
+      [(ngModel)]="customAIText"
+    ></textarea>
+    <dv-dropdown
+      #dropdownAi
+      [dropDownList]="dropdownList"
+      [autoClose]="true"
+      [style.flex]="1"
+      [customButton]="true"
+      [disabled]="generating"
+      [inheritWidth]="true"
+      [style.width.%]="100"
+      [toggleDropDown]="isDropDownOpen"
+      (onDropdownClick)="handlePromptSelected($event)"
+      (onDropdownToggle)="onDropdownToggle($event)"
+      [dropup]="true"
+      [container]="null"
+      type="default"
+    >
+      <div dropdownLabelContent class="dropdown-ai">
+        <span
+          class="text-ai"
+          #dropdownLabel
+          [tippyTooltip]="
+            showLabelTooltip()
+              ? selectedPrompt?.displayLabel ?? selectedPrompt?.label
+              : ''
+          "
+        >
+          {{
+            (selectedPrompt?.displayLabel ?? selectedPrompt?.label) ||
+              "Please select a prompt"
+          }}</span
+        >
+        <span appIcon name="caret-down" [style.padding-top.px]="1.5"></span>
+      </div>
+    </dv-dropdown>
+    <dv-button
+      style="background-color: white"
+      [btnType]="addingText ? 'default' : 'orange-border'"
+      *ngIf="!generating && showGenerateButton"
+      (onClick)="handleGenerateStop(addingText ? true : false)"
+      id="ai-generate"
+      [disabled]="
+        (selectedPrompt?.key === AiPrompts.Custom && !customAIText) ||
+        !selectedPrompt ||
+        (generating && !addingText)
+      "
+      >Generate</dv-button
+    >
+    <dv-button
+      style="background-color: white"
+      [btnType]="addingText ? 'default' : 'orange-border'"
+      id="ai-tryAgain"
+      (onClick)="handleGenerateStop(addingText ? true : false)"
+      [disabled]="
+        (generating && !addingText) ||
+        !(selectedPrompt.key === AiPrompts.Custom
+          ? customAIText.trim()
+          : selectedPrompt.key)
+      "
+      [tippyTooltip]="
+        addingText ? 'Stop generating' : 'Try again with the same prompt'
+      "
+      *ngIf="generating || !showGenerateButton"
+      >{{ addingText ? "Stop" : "Regenerate" }}</dv-button
+    >
+  </div>
+
+  <div style="opacity: 0.5; font-size: 12px">
+    Access our FAQ
+    <b
+      ><u
+        ><a
+          target="_blank"
+          [href]="
+            !is_manager
+              ? 'https://faq.diligencevault.com/hc/en-us/articles/25330206204567-Generative-AI-Intro-FAQs-for-Requestors'
+              : 'https://faq.diligencevault.com/hc/en-us/articles/26457304730135-Generative-AI-Intro-FAQs-for-Responders'
+          "
+          >here</a
+        ></u
+      ></b
+    >. By utilizing any AI feature in DiligenceVault, you acknowledge that you
+    have read and agree to our
+    <b
+      ><u
+        ><a target="_blank" href="/#/app/ai-terms-of-use">AI Terms of Use</a></u
+      ></b
+    >.
+  </div>
+</div>

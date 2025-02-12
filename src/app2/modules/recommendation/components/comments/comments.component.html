@@ -1,0 +1,272 @@
+<ng-container>
+  <div class="comments-section" *ngIf="!editMode && !replyMode">
+    <div class="description" *ngIf="showDesc">
+      <span *ngIf="!panelDesc">{{ issue?.description }}</span>
+      <span *ngIf="panelDesc">{{ panelDesc }}</span>
+    </div>
+    <div
+      #scrollBottomDiv
+      [scrollTop]="scrollBottomDiv.scrollHeight"
+      class="comments-container"
+      *ngIf="parent_level_comments.length > 0"
+    >
+      <ng-container
+        *ngFor="let comment of parent_level_comments; let i = index"
+      >
+        <div class="recommendation">
+          <comment
+            [comment]="comment"
+            [note]="comment?.text"
+            [spaceBelowComment]="
+              parent_level_comments[i]?.created_by_name !=
+              parent_level_comments[i + 1]?.created_by_name
+            "
+            [showCommentHeader]="
+              parent_level_comments[i]?.created_by_name !=
+              parent_level_comments[i - 1]?.created_by_name
+            "
+            [index]="i"
+            [showIndex]="false"
+            [iconList]="comment.iconList"
+            (onIconClick)="handleIconClick($event)"
+          >
+          </comment>
+        </div>
+      </ng-container>
+    </div>
+    <div *ngIf="parent_level_comments.length">
+      <dv-divider></dv-divider>
+      <ng-container *ngIf="hasUnresolvedFollowups">
+        <dv-button
+          btnClass="center-block space-on-top-lg space-on-bottom-lg"
+          (onClick)="handleBulkResolve()"
+          btnType="secondary"
+          [disabled]="responseRevisionInProgress && isManager"
+          [tooltipText]="
+            responseRevisionInProgress && isManager
+              ? 'You can\'t resolve follow-ups until the response is submitted to the investor'
+              : ''
+          "
+          >Resolve and Close</dv-button
+        >
+        <div class="space-on-bottom-lg" *ngIf="showRevisionHelpText">
+          <helper-text [innerHtml]="revisionHelpText"></helper-text>
+        </div>
+        <div class="space-on-bottom-lg" *ngIf="showRevisionNotAllowedHelpText">
+          <helper-text
+            innerHtml="To revise the response, please ask the requestor to enable 'Allow response revisions'."
+          ></helper-text>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!hasUnresolvedFollowups">
+        <div class="space-on-bottom-lg" *ngIf="showInvestorSumissionHelpText">
+          <helper-text
+            [innerHtml]="
+              isManager
+                ? 'The requestor has resolved this follow-up and cancelled any pending revisions.'
+                : 'You or your team member has cancelled any pending revisions and resolved the follow-up.'
+            "
+          ></helper-text>
+        </div>
+      </ng-container>
+    </div>
+    <ng-container *ngIf="!parent_level_comments.length">
+      <div
+        *ngIf="panelName"
+        class="text-center space-on-top-xxl space-on-bottom-xxl"
+      >
+        <span class="no-items text-italic">
+          No
+          <span *ngIf="!panelName">comments</span>
+          <span *ngIf="panelName">{{ panelName }}</span>
+          added
+          <span *ngIf="issueEntityType">
+            for this
+            {{ firm_preferences?.issue_tracker_default_name | lowercase }}
+          </span>
+        </span>
+      </div>
+    </ng-container>
+    <div class="note-editor" *ngIf="!isReadOnly">
+      <dv-editor
+        [configObj]="tinyMceInit"
+        [isMentions]="true"
+        [mentionsList]="mentionsList"
+        [value]="noteText"
+        (onChange)="handleNoteEdit($event)"
+      ></dv-editor>
+      <dv-checkbox
+        *ngIf="showRevisionOption"
+        label="Allow Response Revisions"
+        [(ngModel)]="revisionOptionValue"
+        [disabled]="responseRevisionInProgress"
+        [tooltipText]="
+          responseRevisionInProgress
+            ? 'You can\'t disable this option as the responder is currently revising the response'
+            : ''
+        "
+      ></dv-checkbox>
+      <div class="footer-buttons text-center">
+        <dv-button
+          [disabled]="!noteText || disableFollowup"
+          class="editor-enter-button"
+          [tooltipText]="
+            disableFollowup
+              ? 'This functionality is disabled by your admin'
+              : noteText
+              ? ''
+              : 'Please enter a comment to send'
+          "
+          container="body"
+          [adaptivePosition]="true"
+          (onClick)="handleSaveNote()"
+          [ariaLabel]="noteText ? 'Save comment' : 'Enter a comment to save'"
+          >{{ saveButtonLabel }}</dv-button
+        >
+        <dv-button
+          btnType="default"
+          btnClass="space-on-left"
+          (onClick)="handleOnCancelClick()"
+          [ariaLabel]="'Cancel'"
+          >Cancel</dv-button
+        >
+      </div>
+    </div>
+  </div>
+  <div class="editMode" *ngIf="editMode">
+    <div class="header-left">
+      <span
+        appIcon
+        class="icon-link space-on-right"
+        name="chevron-left"
+        (click)="editMode = false"
+      ></span>
+      <span class="space-on-left">Editing</span>
+    </div>
+    <ng-container>
+      <div class="note-editor">
+        <dv-editor
+          [configObj]="tinyMceInit"
+          [value]="editText"
+          [isMentions]="true"
+          (onChange)="handleEditText($event)"
+        ></dv-editor>
+        <div class="footer-buttons text-center">
+          <dv-button
+            [disabled]="!editText"
+            class="space-on-right"
+            (onClick)="handleEditSave()"
+            [ariaLabel]="
+              editText ? 'Save changes' : 'Enter text to save changes'
+            "
+          >
+            {{ saveButtonLabel }}
+          </dv-button>
+          <dv-button
+            btnType="default"
+            btnClass="space-on-left"
+            (onClick)="editMode = false"
+            [ariaLabel]="'Cancel'"
+            >Cancel</dv-button
+          >
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="replyMode" *ngIf="replyMode && !editMode">
+    <div class="header-left">
+      <span
+        appIcon
+        class="clickable icon-hover space-on-right"
+        color="#126b82"
+        name="chevron-left"
+        (click)="replyMode = false"
+      ></span>
+      <span class="space-on-left">Thread</span>
+    </div>
+    <div *ngIf="ThreadParentComment" class="recommendation">
+      <comment
+        [comment]="ThreadParentComment"
+        [spaceBelowComment]="false"
+        [note]="ThreadParentComment.text"
+        [showReplyCount]="false"
+        [index]="i"
+        [showIndex]="false"
+        (onIconClick)="handleIconClick($event)"
+      >
+      </comment>
+    </div>
+    <div class="parent-reply-separator">
+      <div *ngIf="ThreadParentComment?.comment_count > 0">
+        <span class="more-text space-on-left">
+          {{ ThreadParentComment?.comment_count }}
+          {{ ThreadParentComment?.comment_count == 1 ? "Reply" : "Replies" }}
+        </span>
+      </div>
+      <div
+        class="space-on-right-xl space-on-left"
+        style="background: #dadce0; height: 1px; width: 100%"
+      ></div>
+    </div>
+    <ng-container *ngIf="replies.length">
+      <ng-container *ngFor="let comment of replies; let i = index">
+        <div class="recommendation">
+          <comment
+            [comment]="comment"
+            [note]="comment.text"
+            [spaceBelowComment]="
+              replies[i]?.created_by_name != replies[i + 1]?.created_by_name
+            "
+            [showCommentHeader]="
+              replies[i]?.created_by_name != replies[i - 1]?.created_by_name
+            "
+            [index]="i"
+            [showIndex]="false"
+            [iconList]="comment.iconList"
+            (onIconClick)="handleIconClick($event)"
+          >
+          </comment>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="!replies.length">
+      <div class="text-center space-on-top-xxl space-on-bottom-xxl">
+        <span class="no-items text-italic"
+          >No reply added for this thread.</span
+        >
+      </div>
+    </ng-container>
+    <div class="note-editor" *ngIf="!isReadOnly">
+      <dv-editor
+        [isMentions]="true"
+        [configObj]="tinyMceInit"
+        [literVersion]="true"
+        [value]="replyText"
+        (onChange)="handleReplyEdit($event)"
+      ></dv-editor>
+      <div class="footer-buttons text-center">
+        <dv-button
+          [disabled]="!replyText || disableFollowup"
+          class="editor-enter-button"
+          (onClick)="handleSaveReply()"
+          [tooltipText]="
+            disableFollowup
+              ? 'This functionality is disabled by your admin'
+              : replyText
+              ? ''
+              : 'Please enter a comment to reply'
+          "
+          [ariaLabel]="replyText ? 'Save reply' : 'Enter a reply to save'"
+          >{{ saveButtonLabel }}</dv-button
+        >
+        <dv-button
+          btnType="default"
+          btnClass="space-on-left"
+          (onClick)="replyMode = false"
+          [ariaLabel]="'Cancel reply'"
+          >Cancel</dv-button
+        >
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,66 @@
+<div class="text-left" *ngIf="params.data && !params.node.group">
+  <a
+    *ngIf="params.data.entity_type == 'Fund'"
+    (click)="
+      handleClick('app.diligence.firms.funds.project.summary', {
+        fromfirmId: params.data.fromfirm_id,
+        tofirmId: params.data.tofirm_id ?? 0,
+        fundId: params.data.entity_id,
+        diligenceId: params.data.id
+      })
+    "
+  >
+    {{ params.data.entity_name }}
+  </a>
+  <a
+    *ngIf="params.data.entity_type == 'Firm'"
+    (click)="
+      handleClick('app.diligence.firms.project.summary', {
+        fromfirmId: params.data.fromfirm_id,
+        tofirmId: params.data.entity_id,
+        diligenceId: params.data.id
+      })
+    "
+  >
+    {{ params.data.entity_name }}
+  </a>
+  <a
+    *ngIf="params.data.entity_type == 'Vehicle'"
+    (click)="
+      handleClick('app.diligence.project.summary', {
+        diligenceId: params.data.id
+      })
+    "
+  >
+    {{ params.data.entity_name }}
+  </a>
+  <a
+    *ngIf="params.data.entity_type == 'Review'"
+    (click)="
+      handleClick('app.diligence.project.summary', {
+        diligenceId: params.data.id
+      })
+    "
+  >
+    {{ params.data.entity_name }}
+  </a>
+  <a
+    class="js-projects-dd-name"
+    *ngIf="params.data.entity_type == 'Strategy'"
+    (click)="
+      handleClick('app.diligence.project.summary', {
+        fromfirmId: params.data.fromfirm_id,
+        tofirmId: params.data.entity_id,
+        diligenceId: params.data.id
+      })
+    "
+  >
+    {{ params.data.entity_name }}
+  </a>
+</div>
+
+<div *ngIf="params.node.group">
+  <span>
+    {{ params.value }}
+  </span>
+</div>

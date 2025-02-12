@@ -1,0 +1,112 @@
+.QA-filter {
+  display: flex;
+  width: 400px;
+}
+.qainput {
+  height: 36px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.search-select > ::ng-deep .ng-select .ng-select-container {
+  background: #a9a9a945;
+  border-radius: 0px 4px 4px 0px;
+  width: 130px;
+}
+.qa-bank-actions {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.qa-bank-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  justify-content: center;
+}
+
+.divider {
+  margin-top: 10px;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+.header-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 10px;
+  position: sticky;
+  padding-top: 5px;
+  top: 39px;
+  z-index: 10;
+  background-color: white;
+}
+.qa-header {
+  display: flex;
+  padding-right: 10px;
+  padding-left: 5px;
+  box-shadow: 0px 15px 10px -15px #1111114d;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.qa-bank-sidepanel ::ng-deep .panel-segment {
+  border-radius: 10px;
+  max-height: calc(100vh - 240px);
+}
+.qa-tabs {
+  flex-grow: 1;
+}
+
+.qa-tabs ::ng-deep .panel-default {
+  border: none !important;
+}
+
+.side-panel-sticky {
+  position: sticky;
+  top: 188px;
+}
+
+.qa-tabs ::ng-deep .dv-tab {
+  gap: 3vw;
+  margin-left: -3vw;
+}
+.main-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qa-pagination {
+  padding-left: 5px;
+  padding-right: 8px;
+  width: 100%;
+  position: sticky;
+  bottom: 0px;
+  margin-bottom: 15px;
+  background-color: white;
+}
+.disabled {
+  opacity: 0.65;
+}
+
+@media screen and (max-width: 980px) {
+  .qa-pagination {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 15px;
+    background-color: white;
+  }
+
+  .header-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+    position: relative;
+    padding-top: 5px;
+    background-color: white;
+  }
+}

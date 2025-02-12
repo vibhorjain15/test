@@ -1,0 +1,33 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <b>Management Firm Profile</b>
+    </div>
+
+    <div class="panel-body full-height align-middle">
+        <table class="fund-profile-items space-on-top space-on-bottom">
+            <tbody>
+            <tr class="title-row">
+                <td><small class="text-uppercase">Firm AUM</small></td>
+                <td><small class="text-uppercase">No. of Funds</small></td>
+                <td><small class="text-uppercase">Employees</small></td>
+                <td><small class="text-uppercase">Registration</small></td>
+                <td><small class="text-uppercase">Firm <br> Ownership</small></td>
+            </tr>
+            <tr class="icon-row">
+                <td><icon name="tasks" size="2x"></icon></td>
+                <td><icon name="bookmark" size="2x"></icon></td>
+                <td><icon name="users" size="2x"></icon></td>
+                <td><icon name="check" size="2x"></icon></td>
+                <td><icon name="flag" size="2x"></icon></td>
+            </tr>
+            <tr>
+                <td><small>{{firm_overview.firm_aum}} MM</small></td>
+                <td><small>{{firm_overview.fund_count}}</small></td>
+                <td><small>{{firm_overview.employee_count}} total <br> {{firm_overview.investor_count}} inv</small></td>
+                <td><small>{{firm_overview.date_of_registration}}</small></td>
+                <td><small>{{firm_overview.firm_ownership}} <br> Employee</small></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

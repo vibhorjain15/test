@@ -1,0 +1,39 @@
+<div class="status-tracker full-width" ng-if="states.length">
+  <div class="padded-lg full-width">
+    <div class="row full-width">
+      <div col="12">
+        <div class="tracker-container full-width">
+          <ul class="progress-meter full-width">
+
+            <li ng-repeat="state in states | orderBy: $index"
+                ng-class="[state.status, { sub: state.desc_type === 'sub' }]">
+              <!-- BLOCK FOR TEXT TYPE -->
+              <div class="single-tracker" ng-if="state.desc_type === 'text'">
+                <div class="bubble-parent">
+                    <div class="bubble"></div>
+                </div>
+                <span>{{ state.label }}</span>
+                <div class="description">{{ state.desc }}</div>
+              </div>
+
+
+              <!-- BLOCK FOR SUB TYPE -->
+              <!--<div class="single-tracker"
+                   ng-if="state.desc_type === 'sub'"
+                   uib-popover-template="state.templateUrl"
+                   popover-placement="top"
+                   popover-title="Summary"
+                   popover-trigger="mouseenter">
+                <div class="bubble"></div>
+                <span>{{ state.label }}</span>
+              </div>-->
+
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

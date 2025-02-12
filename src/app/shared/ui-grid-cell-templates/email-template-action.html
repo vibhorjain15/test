@@ -1,0 +1,19 @@
+<ui-grid-cell-contents>
+  <div class="email_templates_actions">
+    <button btn-type="default"
+            size="sm"
+            data-ng-class="{'active disabled': row.entity.is_default}"
+            uib-tooltip="{{row.entity.is_default? 'This is default template': 'Make this default'}}"
+            ng-click="grid.appScope.vm.selectDefaultTemplate(row.entity)"><icon name="check"></icon></button>
+    <button btn-type="default"
+            size="sm"
+            uib-tooltip="Edit Template"
+            ng-click="grid.appScope.vm.editTemplate(row.entity)"><icon name="pencil"></icon></button>
+    <button btn-type="default"
+            size="sm"
+            class="danger"
+            uib-tooltip="Delete Template"
+            ng-click="grid.appScope.vm.confirmDeleteTemplate(row.entity)"><icon name="trashcan"></icon></button>
+
+  </div>
+</ui-grid-cell-contents>

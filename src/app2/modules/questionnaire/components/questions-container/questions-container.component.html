@@ -1,0 +1,254 @@
+<div
+  class="diligence-text-center"
+  *ngIf="loading || loadingForRequiredPosition"
+>
+  <app-spinner></app-spinner>
+</div>
+<div
+  class="questionnaire-segment"
+  [autoScroll]="paramsQuestionId || duplicateSequenceId"
+  [autoScrollDelayTime]="0"
+  *ngIf="questionData.length && !loadingForRequiredPosition"
+>
+  <div class="container-wrapper">
+    <questions-section
+      class="container-header"
+      [teamMembersMap]="teamMembers"
+      [diligence]="diligence"
+      [user]="user"
+      [activeSection]="activeSection"
+      [filterStatus]="filterStatus"
+      [searchQuery]="searchQuery"
+      [userRolesMap]="userRolesMap"
+      (onSMEUpdate)="handleSmeUpdate($event)"
+      [style.padding-bottom]="
+        localActiveSection?.data?.headerText
+          ? '10px !important'
+          : '0px !important'
+      "
+    >
+    </questions-section>
+    <div
+      *ngIf="
+        localActiveSection.data.isMultiple &&
+        !(
+          diligence.diligence_type !== DiligenceTypeEnum.dd_profile &&
+          (diligence.status === diligenceStatusConstant.Completed ||
+            diligence.status === diligenceStatusConstant.PendingRestart ||
+            (diligence.status === diligenceStatusConstant.Followup &&
+              !user.isManager &&
+              diligence.is_internal) ||
+            diligence.status === diligenceStatusConstant.NotApproved ||
+            diligence.status === diligenceStatusConstant.Deleted ||
+            diligence.status === diligenceStatusConstant.Withdrawn ||
+            diligence.status === diligenceStatusConstant.Approved ||
+            diligence.allowOnlyFollowups ||
+            triggerStartedComponentForReadonlyStatus)
+        )
+      "
+      class="custom-button-ui"
+    >
+      <dv-button
+        *ngIf="sequenceDropdown[0].key === 'none'"
+        btnType="transparent"
+        borderRadius="0px"
+        tippyTooltip="Repeat this section"
+        ariaLabel="Repeat this section"
+        (onClick)="handleSequenceClick(sequenceDropdown[1])"
+      >
+        <span class="text-primary">+ Add More</span>
+      </dv-button>
+      <dv-button
+        *ngIf="sequenceDropdown[0].key !== 'none'"
+        btnType="transparent"
+        borderRadius="0px"
+        ariaLabel="Repeat this section"
+      >
+        <dv-dropdown
+          label="+ Add More"
+          tippyTooltip="Repeat this section"
+          [dropDownList]="sequenceDropdown"
+          iconName="caret-down"
+          dropdownPlacement="right"
+          iconSize="small"
+          (onDropdownClick)="handleSequenceClick($event)"
+          (onIconClick)="handleSequenceIconClick($event)"
+        ></dv-dropdown>
+      </dv-button>
+    </div>
+  </div>
+
+  <div
+    *ngIf="localActiveSection?.data?.headerText"
+    class="panel panel-info js-header-text clear-margin clear-border-radius container-border-color"
+  >
+    <div class="panel-heading borderless">
+      <dv-show-more [text]="localActiveSection.data.headerText"> </dv-show-more>
+    </div>
+  </div>
+  <questionnaire-started
+    *ngIf="
+      (questionData.length &&
+        diligence.diligence_type !== DiligenceTypeEnum.dd_profile &&
+        diligence.status === diligenceStatusConstant.Started &&
+        !diligence.allowOnlyFollowups) ||
+      (diligence.status === diligenceStatusConstant.Followup &&
+        user.isManager &&
+        !diligence.is_internal) ||
+      (user.isManager &&
+        diligence.status === diligenceStatusConstant.ExtensionRequested) ||
+      triggerStartedComponentForReadonlyStatus
+    "
+    [teamMembersMap]="teamMembers"
+    [userRolesMap]="userRolesMap"
+    [questions]="questionData"
+    [diligence]="diligence"
+    (onLinkClick)="handleLinkClick($event)"
+    (onIconClick)="handleIconClick($event)"
+    (onResponseChange)="handleResponseChange($event)"
+    [activeSection]="activeSection"
+    [user]="user"
+    [isSidePanelOpened]="isSidePanelOpened"
+    [sme]="sme"
+    [requiredQuestionIndex]="requiredQuestionIndex"
+    [triggeredStartedComponentForReadonlyStatus]="
+      triggerStartedComponentForReadonlyStatus
+    "
+  ></questionnaire-started>
+
+  <questionnaire-pre-approved
+    *ngIf="
+      questionData.length &&
+      diligence.diligence_type === DiligenceTypeEnum.dd_profile &&
+      diligence.status === diligenceStatusConstant.Started
+    "
+    [teamMembersMap]="teamMembers"
+    [questions]="questionData"
+    [diligence]="diligence"
+    (onLinkClick)="handleLinkClick($event)"
+    (onIconClick)="handleIconClick($event)"
+    (onResponseChange)="handleResponseChange($event)"
+    [activeSection]="activeSection"
+    [user]="user"
+    [isSidePanelOpened]="isSidePanelOpened"
+    [userRolesMap]="userRolesMap"
+    [sme]="sme"
+    [requiredQuestionIndex]="requiredQuestionIndex"
+    [questionListUpdateOnScroll]="questionListUpdateOnScroll"
+  ></questionnaire-pre-approved>
+
+  <questionnaire-in-review
+    *ngIf="
+      questionData.length &&
+      diligence.diligence_type !== DiligenceTypeEnum.dd_profile &&
+      diligence.status == diligenceStatusConstant.InReview &&
+      !diligence.allowOnlyFollowups
+    "
+    [teamMembersMap]="teamMembers"
+    [questions]="questionData"
+    [diligence]="diligence"
+    (onLinkClick)="handleLinkClick($event)"
+    (onIconClick)="handleIconClick($event)"
+    (onResponseChange)="handleResponseChange($event)"
+    [activeSection]="activeSection"
+    [user]="user"
+    [isSidePanelOpened]="isSidePanelOpened"
+    [requiredQuestionIndex]="requiredQuestionIndex"
+    [questionListUpdateOnScroll]="questionListUpdateOnScroll"
+  ></questionnaire-in-review>
+
+  <questionnaire-readonly
+    *ngIf="
+      questionData.length &&
+      diligence.diligence_type !== DiligenceTypeEnum.dd_profile &&
+      !triggerStartedComponentForReadonlyStatus &&
+      (diligence.status === diligenceStatusConstant.Completed ||
+        diligence.status === diligenceStatusConstant.PendingRestart ||
+        (diligence.status === diligenceStatusConstant.Followup &&
+          !user.isManager) ||
+        diligence.status === diligenceStatusConstant.NotApproved ||
+        diligence.status === diligenceStatusConstant.Deleted ||
+        diligence.status === diligenceStatusConstant.Withdrawn ||
+        diligence.status === diligenceStatusConstant.Approved ||
+        diligence.status === diligenceStatusConstant.Scheduled ||
+        diligence.allowOnlyFollowups)
+    "
+    [teamMembersMap]="teamMembers"
+    [questions]="questionData"
+    [diligence]="diligence"
+    (onLinkClick)="handleLinkClick($event)"
+    (onIconClick)="handleIconClick($event)"
+    (onResponseChange)="handleResponseChange($event)"
+    [activeSection]="activeSection"
+    [user]="user"
+    [isSidePanelOpened]="isSidePanelOpened"
+    [requiredQuestionIndex]="requiredQuestionIndex"
+  ></questionnaire-readonly>
+
+  <questionnaire-evaluation
+    *ngIf="
+      questionData.length &&
+      diligence.diligence_type !== DiligenceTypeEnum.dd_profile &&
+      !triggerStartedComponentForReadonlyStatus &&
+      diligence.status === diligenceStatusConstant.Evaluation
+    "
+    [teamMembersMap]="teamMembers"
+    [questions]="questionData"
+    [diligence]="diligence"
+    (onLinkClick)="handleLinkClick($event)"
+    (onIconClick)="handleIconClick($event)"
+    (onResponseChange)="handleResponseChange($event)"
+    [activeSection]="activeSection"
+    [user]="user"
+    [isSidePanelOpened]="isSidePanelOpened"
+    [requiredQuestionIndex]="requiredQuestionIndex"
+    [questionListUpdateOnScroll]="questionListUpdateOnScroll"
+  ></questionnaire-evaluation>
+  <scroll-top-button></scroll-top-button>
+</div>
+
+<app-empty-state
+  *ngIf="!loading && !questionData.length"
+  message="No questions available for this sub-category"
+>
+</app-empty-state>
+
+<div
+  *ngIf="!loading && !loadingForRequiredPosition && questionData.length"
+  class="text-center section-prev-next"
+>
+  <button
+    *ngIf="previous"
+    tabindex="-1"
+    class="btn btn-default"
+    (click)="handlePrevNextClick(previous)"
+    [tooltip]="previous?.name"
+  >
+    <span
+      appIcon
+      name="chevron-left"
+      class="align-middle space-on-right"
+    ></span>
+    {{
+      previous?.name
+        ? ("Previous : " + previous?.name | truncate : 30)
+        : "Previous"
+    }}
+  </button>
+
+  <dv-button
+    btnType="default"
+    btnClass="space-on-left"
+    [tabIndex]="-1"
+    (onClick)="handlePrevNextClick(next)"
+    *ngIf="next"
+    [tooltip]="next?.name"
+  >
+    {{ next?.name ? ("Next : " + next?.name | truncate : 30) : "Next" }}
+    <span
+      appIcon
+      name="chevron-right"
+      class="align-middle space-on-left"
+    ></span>
+  </dv-button>
+</div>

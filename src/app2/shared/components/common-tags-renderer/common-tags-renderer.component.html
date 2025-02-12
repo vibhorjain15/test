@@ -1,0 +1,8 @@
+<span *ngIf="params.data && !params.node.group">
+  <div *ngIf="tag" class="text-uppercase label label-default">
+    <span>
+      {{ tag }}
+    </span>
+  </div>
+</span>
+<span *ngIf="params.node.group">{{ params.value }}</span>

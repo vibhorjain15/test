@@ -1,0 +1,95 @@
+<form novalidate name="vm.manage_rating_scales_form" data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+          Manage Rating scale for {{vm.category.name}}
+    
+          <a class="pull-right clickable link-disguise link-unstyled"
+             data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+    
+    <div class="modal-body">
+        <div class="list-group" data-ng-show="vm.loading_scale">
+            <spinner broad-spinner spinner-height='60'></spinner>
+        </div>
+        <table class="table-transparent table clear-margin" data-ng-show="!vm.loading_scale && vm.selectedScale.rating_scales.length">
+            <thead>
+                <tr>
+                    <th style="width: 30%">{{vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand?'Band Name':'Scale Name'}}</th>
+                    <th style="width: 40%" colspan="2">Score Range</th>
+                    <th style="width: 30%">{{vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand?'Band Color':'Scale Color'}}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>
+                        <form-group field-name="Scale Name" tooltip-placement="bottom">
+                            <input type="text" maxlength="200" class="form-control" data-ng-model="vm.noValue.name" disabled required />
+                        </form-group>
+                    </td>
+                    <td>
+                        <form-group field-name="Scale Min Value" tooltip-placement="top" class="inline-block">
+                            <input type="text" class="form-control" data-ng-model="vm.noValue.range_min_value"
+                                input-preselect placeholder="Minimum Value" disabled />
+                        </form-group>
+                    </td>
+                    <td>
+                        <form-group field-name="Scale Max Value" tooltip-placement="bottom" class="inline-block">
+                            <input type="text" class="form-control" data-ng-model="vm.noValue.range_max_value"
+                                input-preselect placeholder="Maximum Value" disabled />
+                        </form-group>
+                    </td>
+                    <td>
+                        <form-group field-name="Scale Color" tooltip-placement="top">
+                            <input name="color-unrated" id="color-unrated" minicolors="vm.miniColorSettings"
+                                class="form-control" type="text" ng-pattern="/#?[0-9A-Fa-f]{6}/"
+                                data-ng-change="vm.onUnratedColorChanged()"
+                                disabled
+                                custom-pattern-message="Please enter a valid 6-digit color code starting with a #."
+                                ng-model="vm.noValue.color_code" ng-required="true">
+                        </form-group>
+                    </td>
+                </tr>
+                <tr data-ng-repeat="rating_scale in vm.selectedScale.rating_scales">
+                    <td>
+                        <form-group field-name="Scale Name" tooltip-placement="bottom">
+                            <input type="text" maxlength="200" class="form-control" data-ng-model="rating_scale.name" disabled input-preselect
+                                required />
+                        </form-group>
+                    </td>
+                    <td>
+                        <form-group field-name="Scale Min Value" tooltip-placement="top" class="inline-block">
+                            <input type="text" class="form-control" data-ng-model="rating_scale.range_min_value"
+                                input-preselect
+                                placeholder="Minimum Value" name="range-min-value-{{$index}}"
+                                data-ng-model-options="{ debounce: { 'default': 500 } }"
+                                data-ng-change="vm.setScaleValidity()" required />
+                        </form-group>
+                    </td>
+                    <td>
+                        <form-group field-name="Scale Max Value" tooltip-placement="bottom" class="inline-block">
+                            <input type="text" class="form-control" data-ng-model="rating_scale.range_max_value"
+                                input-preselect placeholder="Maximum Value"
+                                name="range-max-value-{{$index}}" data-ng-model-options="{ debounce: { 'default': 500 } }"
+                                data-ng-change="vm.setScaleValidity()" required />
+                        </form-group>
+                    </td>
+                    <td>
+                        <form-group field-name="Scale Color" tooltip-placement="top">
+                            <input name="color-{{$index}}" id="color-{{$index}}" minicolors="vm.miniColorSettings"
+                                class="form-control" type="text" ng-pattern="/#?[0-9A-Fa-f]{6}/" disabled
+                                custom-pattern-message="Please enter a valid 6-digit color code starting with a #."
+                                ng-model="rating_scale.color_code" ng-required="true">
+                        </form-group>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.saving">Save</button>
+        <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

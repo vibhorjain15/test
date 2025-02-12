@@ -1,0 +1,54 @@
+<div class="panel panel-default relative">
+  <div class="panel-heading">
+    <h5 class="panel-title text-bold">Saved Mappings</h5>
+  </div>
+  <div class="panel-body">
+    <div class="panel panel-default bg-sky-blue" *ngIf="show_bulk_actions">
+      <div class="panel-body padded-lg">
+        <h5 class="inline space-on-right-lg">
+          <strong>
+            Selected Records :
+            <span class="badge">{{ totalSelectedRecords }}</span>
+          </strong>
+        </h5>
+        <a
+          tooltip="Delete Selected"
+          container="body"
+          class="btn btn-default space-on-right-lg"
+          [ngClass]="{
+            linkDisabled: totalSelectedRecords > 1000 || freeSubscription
+          }"
+          (click)="confirmBulkMappingDeletion()"
+          role="button"
+          tabindex="0"
+          aria-label="Delete Selected Records"
+        >
+          <strong><span appIcon name="trashcan"></span></strong>
+        </a>
+        <a
+          tooltip="Close"
+          container="body"
+          class="btn pull-right text-black danger"
+          (click)="closeQuickActions()"
+          role="button"
+          tabindex="0"
+          aria-label="Close"
+        >
+          <strong><span appIcon name="close"></span></strong>
+        </a>
+      </div>
+    </div>
+    <div *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="mappings"
+        [name]="gridName"
+        [onSelectionChanged]="onSelectionChanged"
+        [onRowSelected]="onRowSelected"
+        #mappingsGrid
+      ></app-dv-grid>
+    </div>
+    <div class="text-center" *ngIf="!render_grid">
+      <app-spinner></app-spinner>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+.ddl-button-transparent {
+  border: none;
+  background: none;
+}
+.compare_screen_second .closeIcon {
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  background: #eee;
+  color: #666;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 3px;
+}
+
+.comare-panel-bg {
+  background: #f5f7fa;
+  padding-bottom: 10px;
+}
+
+.comare-panel-bg-main {
+  position: sticky;
+  top: 40px !important;
+  height: 15px;
+  background: #f5f7fa;
+  z-index: 999;
+}
+::ng-deep .compare .dd-score-display{
+  margin-right: 6px;
+}

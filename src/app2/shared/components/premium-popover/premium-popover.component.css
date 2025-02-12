@@ -1,0 +1,39 @@
+.premium-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(165 208 220 / 22%);
+  margin: -9px -14px;
+}
+.premium-popup {
+  display: flex;
+  flex-direction: column;
+}
+.premium-body {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+.body-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  font-size: 14px;
+  font-weight: 400;
+}
+.body-title {
+  color: #0071a4;
+  font-size: 10px;
+  font-weight: 600;
+}
+.body-title-2 {
+  font-size: 16px;
+  font-weight: 600;
+}

@@ -1,0 +1,18 @@
+<div>
+  <span>
+    <button (click)="onToggleFiltering()">Toggle Filtering</button>
+    <br />
+  </span>
+  <button (click)="onDownloadAsPDF()">Download as PDF</button> <br />
+  <button (click)="onDownloadAsCSV()" *ngIf="!hideExportOptions">
+    Download as CSV
+  </button>
+  <br *ngIf="!hideExportOptions" />
+  <button (click)="onExcelExportAll()" *ngIf="!hideExportOptions">
+    Export All Data in Excel
+  </button>
+  <br *ngIf="!hideExportOptions" />
+  <button (click)="onExcelExportVisible()" *ngIf="!hideExportOptions">
+    Export Visible Data in Excel
+  </button>
+</div>

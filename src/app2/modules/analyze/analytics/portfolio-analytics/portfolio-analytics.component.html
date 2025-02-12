@@ -1,0 +1,7 @@
+<div class="panel panel-default">
+  <div class="panel-body text-muted">
+    <h4 class="inline-block text-primary">PORTFOLIO ANALYTICS</h4>
+  </div>
+</div>
+<app-spinner *ngIf="!dataIsLoaded"></app-spinner>
+<app-dashboard [config]="dashboardConfig" *ngIf="dataIsLoaded"></app-dashboard>

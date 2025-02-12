@@ -1,0 +1,20 @@
+.radio-button {
+  display: flex;
+  align-items: center;
+}
+
+span {
+  margin-left: 10px;
+}
+input {
+  margin-bottom: 3px;
+}
+
+input[disabled] {
+  color: #666666;
+  cursor: not-allowed;
+}
+
+label {
+  margin-bottom: 0px;
+}

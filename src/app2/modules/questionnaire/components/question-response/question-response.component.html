@@ -1,0 +1,446 @@
+<div
+  [attr.id]="'ck-comment-target-' + question?.id"
+  class="space-on-bottom-lg row space-on-left space-on-right"
+  [ngClass]="{ 'overflow-class': isReadOnly }"
+  *ngIf="!showUnsubmittedResponseText"
+  tabindex="-1"
+>
+  <ng-container *ngIf="question.responseType === 'TextEmail'">
+    <dv-form-element
+      elementClass="input-group"
+      spacing="medium"
+      labelPosition="top"
+      elementCol="6"
+    >
+      <response-input
+        [id]="question?.id"
+        [placeholder]="placeholder[question.responseType]"
+        [(value)]="response"
+        (onValueChange)="handleValueChange($event)"
+        [error]="question?.answer?.attributes.localErrorState"
+        type="email"
+        [question]="question"
+        [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+        [isReadOnly]="isReadOnly"
+      >
+      </response-input>
+    </dv-form-element>
+  </ng-container>
+  <ng-container
+    *ngIf="
+      question.responseType === 'Numeric' ||
+      question.responseType === 'Integer' ||
+      question.responseType === 'Percentage' ||
+      question.responseType === 'TextPhone' ||
+      question.responseType === 'Identifier'
+    "
+  >
+    <dv-form-element
+      elementClass="input-group"
+      spacing="medium"
+      labelPosition="top"
+      elementCol="6"
+    >
+      <response-input
+        [id]="question?.id"
+        [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+        [placeholder]="placeholder[question.responseType]"
+        [(value)]="response"
+        (onValueChange)="handleValueChange($event)"
+        [type]="question.responseType == 'Integer' ? 'pureNumber' : 'number'"
+        [error]="question?.answer?.attributes.localErrorState"
+        [rightIcon]="question.responseType === 'Percentage' ? '%' : ''"
+        [question]="question"
+        [commaAddResponse]="commaAddResponse"
+        [isReadOnly]="isReadOnly"
+      >
+      </response-input>
+    </dv-form-element>
+  </ng-container>
+  <ng-container *ngIf="question.responseType === 'Text'">
+    <dv-form-element
+      elementClass="input-group"
+      spacing="medium"
+      labelPosition="top"
+      elementCol="6"
+    >
+      <response-input
+        [id]="question?.id"
+        [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+        [question]="question"
+        [placeholder]="placeholder[question.responseType]"
+        [(value)]="response"
+        (onValueChange)="handleValueChange($event)"
+        type="text"
+        [error]="question?.answer?.attributes.localErrorState"
+        [question]="question"
+        [isReadOnly]="isReadOnly"
+      >
+      </response-input>
+    </dv-form-element>
+    <dv-form-element
+      elementClass="input-group"
+      spacing="medium"
+      labelPosition="top"
+      elementCol="12"
+    >
+      <div
+        class="space-on-top-lg text-right"
+        *ngIf="
+          question?.response_word_limit &&
+          onlyTextValue &&
+          !question?.answer?.attributes?.localis_NA
+        "
+      >
+        <span
+          [ngClass]="{
+            'text-success': onlyTextValue <= question.response_word_limit,
+            'text-danger': onlyTextValue > question.response_word_limit,
+            'bold-text': onlyTextValue > question.response_word_limit
+          }"
+        >
+          <span
+            *ngIf="
+              onlyTextValue &&
+              onlyTextValue > 0 &&
+              !question?.answer?.attributes?.localis_NA
+            "
+          >
+            {{ onlyTextValue }} words
+          </span>
+          (maximum {{ question.response_word_limit }} words)
+        </span>
+      </div>
+
+      <div
+        class="space-on-top-lg text-right"
+        *ngIf="
+          !question?.response_word_limit &&
+          onlyTextValue &&
+          !question?.answer?.attributes?.localis_NA
+        "
+      >
+        <span> {{ onlyTextValue }} words </span>
+      </div>
+    </dv-form-element>
+  </ng-container>
+  <ng-container *ngIf="question.responseType === 'TextMultiLine'">
+    <text-multiline-response
+      [value]="question.answer.attributes.localTextResponse"
+      (onValueChange)="handleValueChange($event)"
+      [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+      [isReadOnly]="isReadOnly"
+      [id]="question.sequenceID + '-' + question.sectionID + '-' + question.id"
+      [question]="question"
+      [showComments]="showComments"
+      [isTrackChange]="isTrackChange"
+      (onTrackChange)="handleMultiTrackChange($event)"
+      (onReviewCommentFocused)="handleReviewCommentFocused()"
+      (onAddReviewComment)="handleAddReviewComment($event)"
+      *ngIf="
+        !isReadOnly ||
+        question?.answer?.attributes?.localis_NA ||
+        status.currentActiveQuestionId ===
+          question.sequenceID + '-' + question.id
+      "
+    ></text-multiline-response>
+    <span
+      class="word-wrap-break-word text-multiline-ans"
+      *ngIf="
+        isReadOnly &&
+        isPrintPreview &&
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        question?.answer?.attributes.responseDisplay &&
+        question?.answer?.id &&
+        status.currentActiveQuestionId !==
+          question.sequenceID + '-' + question.id
+      "
+      [innerHtml]="question?.answer?.attributes.responseDisplay | dvSafeHtml"
+    ></span>
+    <p
+      *ngIf="
+        isReadOnly &&
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        (!question?.answer?.attributes.responseDisplay || !question?.answer?.id)
+      "
+    >
+      <i class="text-muted">
+        <small>*No response available*</small>
+      </i>
+    </p>
+  </ng-container>
+
+  <div
+    class="clear-margin space-on-top-lg"
+    *ngIf="
+      question.responseType === 'Boolean' ||
+      question.responseType === 'BooleanPlus' ||
+      question.responseType === 'NoPlus'
+    "
+  >
+    <boolean-response
+      [type]="question.responseType"
+      [booleanValue]="booleanResponse"
+      [explanation]="localBooleanExplaination"
+      [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+      [question]="question"
+      (onValueChange)="handleValueChange($event)"
+      [isReadOnly]="isReadOnly"
+    ></boolean-response>
+  </div>
+
+  <div
+    class="input-group datepicker-group col-md-{{
+      useFullWidth || device.isTabletDevice || device.isMobileDevice
+        ? '12'
+        : '6'
+    }}"
+    *ngIf="question.responseType === 'Date'"
+  >
+    <app-date-picker
+      *ngIf="(!question?.answer?.attributes?.localis_NA ?? true) && !isReadOnly"
+      [value]="response"
+      placeholder="Select date"
+      (change)="handleDateValue($event)"
+    >
+    </app-date-picker>
+    <p *ngIf="question?.answer?.attributes?.localis_NA" class="text-muted">
+      <i class="text-info">* This question is marked as Not Applicable *</i>
+    </p>
+    <p
+      *ngIf="
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        isReadOnly &&
+        question?.answer?.attributes?.responseText
+      "
+      class="space-on-top-lg answer-text-color"
+      [innerHtml]="question?.answer?.attributes?.responseText"
+    ></p>
+    <p
+      *ngIf="
+        isReadOnly &&
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        !question?.answer?.attributes.responseText
+      "
+    >
+      <i class="text-muted">
+        <small>*No response available*</small>
+      </i>
+    </p>
+  </div>
+
+  <div
+    class="col-md-{{
+      useFullWidth || device.isTabletDevice || device.isMobileDevice
+        ? '12'
+        : '6'
+    }}"
+    *ngIf="question.responseType === 'Dropdown'"
+  >
+    <dropdown-response
+      [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+      [options]="question.options"
+      [value]="dropdownValue"
+      [question]="question"
+      (onValueChange)="handleValueChange($event)"
+      *ngIf="!isReadOnly || question?.answer?.attributes?.localis_NA"
+    ></dropdown-response>
+    <ng-container
+      *ngIf="
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        isReadOnly &&
+        question?.answer?.attributes.responseText
+      "
+      class="space-on-top-lg answer-text-color"
+    >
+      <p
+        *ngIf="question?.answer?.attributes.responseText.includes('Other')"
+        [innerHtml]="question?.answer?.attributes?.responseDisplay"
+      ></p>
+      <p
+        *ngIf="!question?.answer?.attributes.responseText.includes('Other')"
+        [innerHtml]="question?.answer?.attributes?.responseText"
+      ></p>
+    </ng-container>
+    <p
+      *ngIf="
+        isReadOnly &&
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        !question?.answer?.attributes.responseText
+      "
+    >
+      <i class="text-muted">
+        <small>*No response available*</small>
+      </i>
+    </p>
+  </div>
+
+  <div
+    class="col-md-{{
+      useFullWidth || device.isTabletDevice || device.isMobileDevice
+        ? '12'
+        : '6'
+    }} clear-margin space-on-top-lg input-group datepicker-group"
+    *ngIf="question.responseType === 'CheckBox'"
+  >
+    <checkbox-response
+      [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+      [checkboxValues]="checkboxVal"
+      [options]="question.options"
+      [question]="question"
+      (onValueChange)="handleValueChange($event)"
+      [isReadOnly]="isReadOnly"
+    ></checkbox-response>
+  </div>
+  <div
+    class="col-md-{{
+      useFullWidth || device.isTabletDevice || device.isMobileDevice
+        ? '12'
+        : '6'
+    }} clear-margin space-on-top-lg datepicker-group"
+    *ngIf="question.responseType === 'Attachment'"
+  >
+    <ng-container *ngIf="!question?.answer?.attributes?.localis_NA ?? true">
+      <attachment-response
+        [question]="question"
+        [isPreview]="isPreview"
+        (onAttachmentChange)="handleAttachmentChange($event)"
+        [isReadOnly]="isReadOnly"
+      ></attachment-response>
+    </ng-container>
+
+    <p *ngIf="question?.answer?.attributes?.localis_NA" class="text-muted">
+      <i class="text-info">*This question is marked as Not Applicable*</i>
+    </p>
+  </div>
+  <div
+    class="col-md-12 clear-margin space-on-top-lg input-group datepicker-group"
+    *ngIf="
+      question.responseType === 'aumTable' ||
+      question.responseType === 'ReturnTable'
+    "
+  >
+    <ng-container *ngIf="!question?.answer?.attributes?.localis_NA ?? true">
+      <aum-response
+        [question]="question"
+        [isReadOnly]="isReadOnly"
+        [isReadOnlyEditable]="isReadOnlyEditable"
+        [isPrintPreview]="isPrintPreview"
+        (onChange)="handleAumChange($event)"
+      ></aum-response>
+    </ng-container>
+
+    <p *ngIf="question?.answer?.attributes?.localis_NA" class="text-muted">
+      <i class="text-info">*This question is marked as Not Applicable*</i>
+    </p>
+  </div>
+  <div
+    class="col-md-12 clear-margin space-on-top-lg input-group datepicker-group"
+    *ngIf="
+      question.responseType === 'DynamicGrid' ||
+      question.responseType === 'Grid'
+    "
+  >
+    <grid-response
+      [gridResponse]="question?.answer?.attributes?.localgrid_responses"
+      [isNotApplicable]="question?.answer?.attributes?.localis_NA"
+      id="{{ question.sequenceID }}-{{ question.sectionId }}-{{ question.id }}"
+      [gridData]="gridData"
+      [isGridValidated]="
+        !question?.answer?.attributes?.localis_validation_required
+      "
+      [isDynamic]="question.responseType === 'DynamicGrid'"
+      [isLite]="
+        !isReadOnly && !question.answer.attributes.is_validation_required
+      "
+      [reload$]="reload$"
+      [isPlainRendering]="isPlainRendering || isReadOnly"
+      [enableHeaders]="enableHeaders"
+      [isPrintPreview]="isPrintPreview"
+      (onValueChange)="handleValueChange($event)"
+      (onInsertRow)="handleRowInsertion($event)"
+      (onDeleteRow)="handleRowDeletion($event)"
+    ></grid-response>
+  </div>
+
+  <div
+    *ngIf="question.responseType === 'Bookends'"
+    class="input-group col-md-{{ useFullWidth ? '12' : '6' }}"
+    [ngClass]="{
+      'has-success': isBookendTouched && !bookendError,
+      'has-error': bookendError
+    }"
+  >
+    <div
+      *ngIf="(!question?.answer?.attributes?.localis_NA ?? true) && !isReadOnly"
+      class="clear-margin space-on-top-lg row clearfix"
+    >
+      <div
+        class="col-md-{{
+          useFullWidth || device.isTabletDevice || device.isMobileDevice
+            ? '12'
+            : '6'
+        }}"
+      >
+        <input
+          class="form-control"
+          placeholder="Min Value"
+          [(ngModel)]="minVal"
+          (ngModelChange)="handleBookendChange(question.responseType)"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="col-md-{{ useFullWidth ? '12' : '6' }}">
+        <input
+          class="form-control"
+          placeholder="Max Value"
+          [(ngModel)]="maxVal"
+          autocomplete="off"
+          (ngModelChange)="handleBookendChange(question.responseType)"
+        />
+      </div>
+      <div *ngIf="bookendError" class="text-danger">
+        {{ bookendError }}
+      </div>
+    </div>
+    <p *ngIf="question?.answer?.attributes?.localis_NA" class="text-muted">
+      <i class="text-info">*This question is marked as Not Applicable*</i>
+    </p>
+    <p
+      *ngIf="
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        isReadOnly &&
+        question?.answer?.attributes?.responseText
+      "
+      class="space-on-top-lg answer-text-color"
+      [innerHtml]="question?.answer?.attributes?.responseText"
+    ></p>
+    <p
+      *ngIf="
+        isReadOnly &&
+        (!question?.answer?.attributes?.localis_NA ?? true) &&
+        !question?.answer?.attributes?.responseText
+      "
+    >
+      <i class="text-muted">
+        <small>*No response available*</small>
+      </i>
+    </p>
+  </div>
+</div>
+
+<div
+  class="space-on-bottom-lg row space-on-left space-on-right"
+  [ngClass]="{ 'overflow-class': isReadOnly }"
+  *ngIf="showUnsubmittedResponseText"
+>
+  <p>
+    <i class="text-muted">
+      <small
+        >The responder is reviewing the follow-up. We'll send you a notification
+        once the follow-up is addressed.</small
+      >
+    </i>
+  </p>
+</div>

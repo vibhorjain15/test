@@ -1,0 +1,105 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{ tag.label }}</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          placement="left"
+          popoverTitle="Add {{ tagLabel }}s"
+          [popover]="popTemplate"
+          #pop="bs-popover"
+          (onHidden)="onHidden()"
+          clickable
+          title="Add {{ tagLabel | titlecase }}s"
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="60"
+      *ngIf="!tagsValue"
+    ></app-spinner>
+    <div *ngIf="tagsValue">
+      <div *ngIf="tagsValue?.length" class="label-list">
+        <span
+          class="label label-default text-uppercase space-on-right"
+          *ngFor="let value of tagsValue"
+          [attr.aria-label]="value.name"
+          role="text"
+        >
+          <small>{{ value.name }}</small>
+          <a
+            tooltip="Remove {{ tagLabel }}"
+            class="space-on-left clickable link-disguise"
+            (click)="displayTagRemovalConfirmation(value)"
+            clickable
+            *ngIf="is_admin"
+            title="Remove {{ tagLabel }}"
+            >&times;</a
+          >
+        </span>
+      </div>
+      <div col="8" offset="2" *ngIf="!tagsValue?.length">
+        <app-empty-state
+          [iconName]="'tag'"
+          *ngIf="is_admin"
+          [actionLabel]="actionLabel"
+          [message]="message"
+          (action)="initiateTagAddition()"
+        >
+        </app-empty-state>
+        <app-empty-state
+          [iconName]="'tag'"
+          *ngIf="!is_admin"
+          [message]="
+            'No {{ tagLabel }}s available for this {{ tagLabel }} category. Please contact your admin to get started'
+          "
+        >
+        </app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #popTemplate>
+  <form novalidate (ngSubmit)="saveTags()" autocomplete="off">
+    <div class="form-group">
+      <tag-input
+        [(ngModel)]="new_tag_params.list"
+        (ngModelChange)="handleTagsInput($event)"
+        name="list"
+        placeholder="Enter {{ tagLabel }}s separated by comma"
+        secondaryPlaceholder="Enter {{ tagLabel }}s separated by comma"
+        separatorKeys="[',']"
+        [errorMessages]="errorMessages"
+        [validators]="validators"
+        theme="minimal"
+      ></tag-input>
+      <small
+        class="text-danger"
+        *ngIf="showError && !new_tag_params.list.length"
+      >
+        Please enter at least one {{ tagLabel }}
+      </small>
+    </div>
+    <div class="form-group text-right">
+      <button appButton type="submit" class="minWidth">
+        <span *ngIf="!saving_tags">Save</span>
+        <span *ngIf="saving_tags"> <app-spinner></app-spinner> </span>
+      </button>
+      <button
+        appButton
+        type="button"
+        btnType="default"
+        (click)="onCancel()"
+        class="space-left"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,54 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">API Integration Key & Documentation</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      If you want to talk to DiligenceVault in special API way, you can. Our
+      entire platform is based on robust REST APIs, and you can access your API
+      key here.
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner *ngIf="loading_api_key"></app-spinner>
+    <dv-button
+      ariaLabel="Generate API Key"
+      [btnType]="'primary'"
+      (onClick)="generateAPIKey()"
+      *ngIf="!loading_api_key && !api_key"
+    >
+      <span *ngIf="!generating_api_key"> Generate API Key </span>
+      <span *ngIf="generating_api_key"> <app-spinner></app-spinner> </span>
+    </dv-button>
+    <div *ngIf="api_key">
+      <div class="row clearfix">
+        <div class="col-md-5">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="api_key"
+            aria-disabled="true"
+            readonly
+            aria-label="API Key"
+          />
+        </div>
+        <dv-button
+          tooltip="Reset API key"
+          ariaLabel="Reset API key"
+          container="body"
+          triggers="mouseenter:mouseleave"
+          [loader]="generating_api_key"
+          [disabled]="false"
+          [btnClass]="'minwidth'"
+          [btnType]="'default'"
+          (onClick)="regenerateAPIKey()"
+        >
+          <span appIcon name="refresh"></span>
+        </dv-button>
+      </div>
+      <small class="text-danger">
+        <i>Be sure to keep your API key a secret.</i>
+      </small>
+    </div>
+  </div>
+</div>

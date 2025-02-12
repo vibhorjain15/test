@@ -1,0 +1,264 @@
+<app-modal
+  [title]="edit_mode ? 'Editing Address' : 'Add New Address'"
+  [firstButtonLabel]="edit_mode ? 'Update Address' : 'Add Address'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="addressRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #addressRef>
+  <form class="form-horizontal" [formGroup]="addressForm" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [fieldName]="'Street Address'"
+        [modelController]="addressForm.get('address_line_1')"
+        [showRightIcon]="true"
+        [labelCol]="4"
+        [label]="'Street Address 1'"
+        [errorMessage]="
+          addressForm.get('address_line_1').errors?.required
+            ? (errorMessageMap.required | interpolate : 'Street Address')
+            : addressForm.get('address_line_1').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'Street Address')
+            : addressForm.get('address_line_1').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter
+              | interpolate : 'Street Address')
+            : ''
+        "
+        [isRequired]="true"
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="address_line_1"
+          name="street_address_1"
+          formControlName="address_line_1"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Street Address-2'"
+        [modelController]="addressForm.get('address_line_2')"
+        [showRightIcon]="true"
+        [label]="'Street Address 2'"
+        [labelCol]="4"
+        [errorMessage]="
+          addressForm.get('address_line_2').errors?.required
+            ? (errorMessageMap.required | interpolate : 'Street Address')
+            : addressForm.get('address_line_2').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'Street Address')
+            : addressForm.get('address_line_2').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter
+              | interpolate : 'Street Address')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="address_line_2"
+          name="street_address_2"
+          formControlName="address_line_2"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'City'"
+        [modelController]="addressForm.get('city')"
+        [showRightIcon]="true"
+        [label]="'City'"
+        [isRequired]="true"
+        [labelCol]="4"
+        [errorMessage]="
+          addressForm.get('city').errors?.required
+            ? (errorMessageMap.required | interpolate : 'City')
+            : addressForm.get('city').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'City')
+            : addressForm.get('city').errors?.pattern
+            ? (errorMessageMap.validCityName | interpolate : 'City')
+            : ''
+        "
+        [isRequired]="true"
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="city"
+          name="city"
+          formControlName="city"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'State'"
+        [modelController]="addressForm.get('state')"
+        [showRightIcon]="true"
+        [label]="'State'"
+        [labelCol]="4"
+        [errorMessage]="
+          addressForm.get('state').errors?.required
+            ? (errorMessageMap.required | interpolate : 'State')
+            : addressForm.get('state').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'State')
+            : addressForm.get('state').errors?.pattern
+            ? (errorMessageMap.validCityName | interpolate : 'State')
+            : ''
+        "
+        [isRequired]="true"
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="state"
+          name="state"
+          formControlName="state"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Zipcode'"
+        [modelController]="addressForm.get('zip_code')"
+        [showRightIcon]="true"
+        [label]="'Zipcode'"
+        [labelCol]="4"
+        [errorMessage]="
+          addressForm.get('zip_code').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'Zip code')
+            : addressForm.get('zip_code').errors?.pattern
+            ? (errorMessageMap.validZipcode | interpolate : 'Zip code')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="zip_code"
+          name="zipcode"
+          formControlName="zip_code"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Country'"
+        [modelController]="addressForm.get('country')"
+        [showRightIcon]="true"
+        [label]="'Country'"
+        [labelCol]="4"
+        [isRequired]="true"
+        [errorMessage]="
+          addressForm.get('country').errors?.required
+            ? 'Country is required'
+            : ''
+        "
+      >
+        <dv-select
+          [list]="countries"
+          formControlName="country"
+          bindLabel="value"
+          bindValue="id"
+          [disabled]="false"
+          [clearable]="false"
+          [searchable]="true"
+          [placeholder]=""
+          [id]="'country'"
+          name="country"
+          [placeholder]="'-- Select Country --'"
+        ></dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Phone'"
+        [modelController]="addressForm.get('phone_1')"
+        [showRightIcon]="true"
+        [label]="'Primary Phone'"
+        [errorMessage]="
+          addressForm.get('phone_1').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'Phone')
+            : addressForm.get('phone_1').errors?.pattern
+            ? (errorMessageMap.validPhoneCharsOnly | interpolate : 'Phone')
+            : ''
+        "
+        [labelCol]="4"
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="phone_1"
+          name="phone1"
+          formControlName="phone_1"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Phone2'"
+        [modelController]="addressForm.get('phone_2')"
+        [showRightIcon]="true"
+        [label]="'Secondary Phone'"
+        [errorMessage]="
+          addressForm.get('phone_2').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'Phone')
+            : addressForm.get('phone_2').errors?.pattern
+            ? (errorMessageMap.validPhoneCharsOnly | interpolate : 'Phone')
+            : ''
+        "
+        [labelCol]="4"
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="phone_2"
+          name="phone"
+          formControlName="phone_2"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Fax'"
+        [modelController]="addressForm.get('fax')"
+        [showRightIcon]="true"
+        [label]="'Fax'"
+        [labelCol]="4"
+        [errorMessage]="
+          addressForm.get('fax').errors?.maxLength
+            ? (errorMessageMap.maxLength | interpolate : 'Phone')
+            : addressForm.get('fax').errors?.pattern
+            ? (errorMessageMap.validPhoneCharsOnly | interpolate : 'Phone')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="fax"
+          name="fax"
+          formControlName="fax"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [modelController]="addressForm.get('is_headquarter')"
+        [showRightIcon]="true"
+        [fieldName]="'is_headquarter'"
+        [elementClass]="'col-md-offset-4'"
+      >
+        <dv-checkbox
+          formControlName="is_headquarter"
+          [label]="'This is firm headquarter'"
+          name="is_headquarter"
+          [labelClass]="'text-black'"
+          (onValChange)="onHeadquarterValueChange($event)"
+        ></dv-checkbox>
+      </dv-form-element>
+
+      <div class="form-group">
+        <div col="8" offset="2">
+          <small
+            ><span class="font-size-10 text-orange align-top">*</span
+            ><i>Required field</i></small
+          >
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

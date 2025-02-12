@@ -1,0 +1,7 @@
+.grid-cell-wrap {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

@@ -1,0 +1,5 @@
+.new-ddq-formButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}

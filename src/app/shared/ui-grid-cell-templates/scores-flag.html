@@ -1,0 +1,6 @@
+<ui-grid-cell-contents>
+    {{row.entity.flag_count}}
+    <icon class="align-middle space-on-left" name="flag"
+          uib-tooltip="{{row.entity.flag_count ? row.entity.flag_count + ' flag(s) have been set': 'No flag set'}}"
+          data-ng-class="{'dd-no-flag-set': !row.entity.flag_count, 'text-danger': row.entity.flag_count}"></icon>
+</ui-grid-cell-contents>

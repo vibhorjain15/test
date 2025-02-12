@@ -1,0 +1,44 @@
+<div class="space-on-top col-md-12">
+  <div
+    class="document-name-wrapper"
+    [ngClass]="{ 'col-md-10': canModify && isQuestionView }"
+  >
+    <div class="document-name">
+      <ng-container *ngIf="isQuestionView">
+        <a document-viewer [dd_document]="document" target="_blank">
+          <span class="colored" appIcon [name]="document.fileIcon"></span>
+          <strong> {{ document.name | truncate : 40 }}</strong>
+        </a>
+      </ng-container>
+      <ng-container *ngIf="!isQuestionView">
+        <strong>{{
+          document.id
+            ? (document.file_name | truncate : truncateAfter)
+            : (document.name | truncate : truncateAfter)
+        }}</strong>
+      </ng-container>
+      <span
+        *ngIf="document.reviews?.length"
+        customSize="big"
+        class="space-on-left space-on-top-2"
+        appIcon
+        name="reviewed-document"
+      ></span>
+      <span
+        *ngIf="canModify"
+        [tooltip]="deleteTooltip"
+        placement="left"
+        appIcon
+        name="trashcan"
+        size="lg"
+        class="pull-right danger"
+        (click)="onDelete()"
+      ></span>
+    </div>
+  </div>
+  <div class="col-md-2 edit-document-label" *ngIf="canModify && isQuestionView">
+    <a (click)="onEdit()">
+      <strong>Edit Info</strong>
+    </a>
+  </div>
+</div>

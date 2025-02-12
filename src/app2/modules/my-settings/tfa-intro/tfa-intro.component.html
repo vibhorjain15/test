@@ -1,0 +1,57 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">About Two-Factor Authentication</h5>
+  </div>
+  <div class="panel-body">
+    <p>
+      Two-factor authentication adds an
+      <strong>extra layer of security to your account.</strong> Check off one of
+      your <strong>cybersecurity criterias</strong> by activiting this feature
+      and help us secure your data.
+    </p>
+    <div class="space-on-top-lg">
+      <div>
+        <strong>STEP 1:</strong> When you sign into your DiligenceVault account,
+        you'll enter username and password, like always.
+        <strong>(First Level of Defense)</strong>
+      </div>
+    </div>
+    <div class="space-on-top-lg">
+      <div>
+        <strong>STEP 2:</strong> In addition, you'll need to enter an additional
+        code that DiligenceVault sends to your phone or tablet app. Once you
+        enter the code, you'll be logged into your DiligenceVault account.
+        <strong>(Second Level of Defense)</strong>
+      </div>
+    </div>
+    <br />
+    <p>
+      Setup to get two-factor authentication codes is easy! Get started by
+      installing
+      <a
+        href="https://support.google.com/accounts/answer/1066447?hl=en"
+        target="_blank"
+        class="font-bold"
+      >
+        Google Authenticator
+      </a>
+      on your phone.
+    </p>
+    <hr />
+    <dv-checkbox
+      name="mobile_setup"
+      [(ngModel)]="setup_app_on_mobile"
+      [label]="'I have installed Google Authenticator on phone or tablet'"
+    >
+    </dv-checkbox>
+    <div>
+      <dv-button
+        [btnType]="'primary'"
+        (onClick)="redirectTo2FASetup()"
+        [disabled]="!setup_app_on_mobile"
+      >
+        Let's get started!
+      </dv-button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Platform Activity</h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control"
+           data-ng-click="vm.markAllAsRead()"
+           button-loader="vm.loading"
+           stop-event-propagation
+           uib-tooltip="Mark all as Read">
+          <icon name="check-all"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body" data-ng-if="vm.is_loading">
+    <spinner></spinner>
+  </div>
+  <div class="list-group notification-list"
+       data-ng-show="!vm.is_loading && vm.notifications.length > 0">
+    <a class="list-group-item notification"
+       notification-link
+       notification="notification"
+       data-ng-class="{'unread': notification.unread}"
+       data-ng-repeat="notification in vm.notifications"
+       data-ng-click="vm.closeMenu()">
+      <span class="media">
+        <span class="media-left text-center">
+          <span data-ng-switch="notification.type">
+            <icon name="briefcase"
+                  data-ng-switch-when="duediligence"></icon>
+
+            <icon name="table"
+                  data-ng-switch-when="track_record"></icon>
+
+            <icon name="calendar"
+                  data-ng-switch-when="invitation"></icon>
+
+            <icon name="comments-o"
+                  data-ng-switch-when="discussion"></icon>
+
+            <icon name="doubt"
+                  data-ng-switch-when="followup"></icon>
+
+            <icon name="doubt"
+                  data-ng-switch-when="diligencefollowup"></icon>  
+                  
+            <icon name="file"
+                  data-ng-switch-when="documentShared"></icon>
+            
+            <icon name="file"
+                  data-ng-switch-when="documentVersionChanged"></icon>       
+            
+            <icon name="tasks"
+                  data-ng-switch-when="workflow"></icon>                            
+          </span>
+
+          <br>
+
+          <small data-ng-show="notification.unread">
+            <small>
+              <icon name="circle" class="text-primary"></icon>
+            </small>
+          </small>
+        </span>
+
+        <span class="media-body">
+          {{notification.text}}
+
+          <br>
+
+          <small class="text-muted">
+            {{notification.insertTimeStamp|fromNow}}
+          </small>
+        </span>
+
+        <span role="button"
+              data-ng-if="notification.unread"
+              class="notification-marker pos-abs stick-right-sm stick-top-sm js-mark-explicit"
+              uib-tooltip="Mark as Read">
+          <icon name="check"></icon>
+        </span>
+      </span>
+    </a>
+  </div>
+  <div class="panel-footer text-center" data-ng-hide="vm.preview">
+    <uib-pagination total-items="vm.total_items"
+                    data-ng-model="vm.current_page"
+                    class="pagination-sm clear-margin"
+                    max-size="5"
+                    boundary-links="true"
+                    data-ng-change="vm.getNotifications()">
+    </uib-pagination>
+  </div>
+
+  <div class="panel-body"
+       data-ng-if="!vm.is_loading && vm.notifications.length == 0">
+    <empty-state icon-name="smile-o"
+                 message="You don't have any notifications">
+    </empty-state>
+  </div>
+
+  <div class="panel-footer clear-padding" data-ng-show="vm.preview">
+    <a ui-sref="app.diligence.platform_activity"
+       class="btn btn-block btn-default all-notifications"
+       data-ng-click="vm.closeMenu()">
+      View All
+    </a>
+  </div>
+</div>

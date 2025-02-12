@@ -1,0 +1,15 @@
+.subcategory-details{
+  display: table;
+}
+.space-on-left{
+  margin-left: 5px;
+}
+.list-style{
+  list-style: none;
+}
+.question-tags table{
+  margin-bottom: 0;
+}
+.paddig-left-0{
+  padding-left: 0;
+}

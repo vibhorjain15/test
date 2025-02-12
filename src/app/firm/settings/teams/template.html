@@ -1,0 +1,26 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-teams></ng2-teams> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">Teams</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a id="js-add-team-members" class="panel-control"
+                   data-ng-class="{'disabledHeaderAction': !vm.permissions_enabled && vm.teamCount >= vm.allowed_teams}"
+                   data-ng-click="vm.openNewTeamDialog()"
+                   tooltip-placement="left"
+                   uib-tooltip="{{!vm.permissions_enabled && vm.teamCount >= vm.allowed_teams?'Please contact customer service in order to enable this feature for your firm':'Add New Team'}}">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info" data-ng-hide="vm.permissions_enabled">
+      <div class="panel-heading permissionsHelpText">You are eligible for permissioning/team module. Please reach out to our customer service at <a href="mailto:ask@diligencevault.com?subject=Team permission">ask@diligencevault.com</a> to enable this.</div>
+    </div>
+    <div class="panel-body">
+        <div data-ng-if="vm.render_grid">
+            <dv-grid grid-resource="vm.teams" name="vm.teams_grid" grid-name="'teams'"></dv-grid>
+        </div>
+    </div>
+</div>

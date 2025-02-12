@@ -1,0 +1,30 @@
+<div
+  class="text-left"
+  (mouseenter)="showPreview = true"
+  (mouseleave)="showPreview = false"
+  *ngIf="params.data"
+  class="d-flex align-items-center"
+  (click)="iconClicked()"
+>
+  <a
+    [tooltip]="params.data.name"
+    container="body"
+    [adaptivePosition]="false"
+    class="more-text"
+  >
+    <span>{{ params.data.name }}</span>
+  </a>
+  <button
+    appButton
+    btnType="default"
+    size="xs"
+    class="space-on-left-lg"
+    *ngIf="showPreview"
+    tooltip="Preview"
+    aria-label="Preview"
+    container="body"
+    [adaptivePosition]="false"
+  >
+    <span appIcon [name]="params.data.nameIcon"></span>
+  </button>
+</div>

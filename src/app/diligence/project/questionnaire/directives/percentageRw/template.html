@@ -1,0 +1,8 @@
+<div class="input-group">
+  <input type="number"
+         class="form-control"
+         ng-pattern="/^(?:\d*\.\d+|\d+)$/"
+         ng-model-options="{ debounce: { 'default': 500 } }"
+         data-ng-model="response.numericResponseA" />
+  <span class="input-group-addon">%</span>
+</div>

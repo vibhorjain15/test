@@ -1,0 +1,62 @@
+<div class="panel panel-default space-on-top-xxl">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{ entity_type_name }}: Custom Fields</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          [tooltip]="'Add new custom fields for ' + entity_type_name"
+          container="body"
+          class="panel-control"
+          (click)="addNewCustomTags()"
+          placement="left"
+          clickable
+          title="Add New Custom Tag"
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="label-list customFieldList">
+      <span *ngIf="loading_data">
+        <app-spinner [broadSpinner]="true" [spinnerHeight]="20"></app-spinner>
+      </span>
+      <span *ngIf="!loading_data && custom_fields?.length">
+        <span
+          class="label label-default text-uppercase space-on-right"
+          *ngFor="let entity of custom_fields; let $index = index"
+        >
+          <small class="word-wrap-with-break-word">{{ entity.alias }}</small>
+          <a
+            class="space-on-left clickable link-disguise"
+            (click)="editCustomFields($index)"
+            *ngIf="is_admin"
+            clickable
+            [attr.aria-label]="'Edit ' + entity.alias"
+            [title]="'Edit ' + entity.alias"
+          >
+            <span appIcon name="pencil"></span>
+          </a>
+          <a
+            tooltip="Remove Custom Field"
+            container="body"
+            class="space-on-left clickable link-disguise"
+            *ngIf="is_admin"
+            (click)="displayFieldRemovalConfirmation(entity, $index)"
+            clickable
+            [attr.aria-label]="'Remove ' + entity.alias"
+            [title]="'Remove ' + entity.alias"
+            >&times;</a
+          >
+        </span>
+      </span>
+    </div>
+    <helper-text
+      *ngIf="!loading_data && !custom_fields?.length"
+      class="text-center"
+    >
+      No {{ entity_type_name.toLowerCase() }} fields available.
+    </helper-text>
+  </div>
+</div>

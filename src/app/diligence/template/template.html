@@ -1,0 +1,211 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <ng2-new-template-header data-ng-if="vm.Utils.isTemplateAngular()"></ng2-new-template-header>
+    <div data-ng-if="!vm.Utils.isTemplateAngular()" class="panel panel-default hide-in-print-view">
+      <spinner data-ng-if="!vm.template"></spinner>
+      <div  data-ng-if="vm.template" class="panel-body clearfix">
+        <div class="dv-table dv-table-middle dd-info-panel full-width">
+          <div class="bordered-right text-center cell col-sm-3">
+            <h4 class="clear-margin lh1-5 word-break-break-all">
+              {{vm.template.templateInfo.name}}
+
+                <button btn-type="transparent"
+                        data-ng-if="vm.template.isEditable"
+                        data-ng-click="vm.openUpdateTemplateModal()"
+                        uib-tooltip="Edit template info">
+                    <small>
+                        <icon name="pencil" size="1x">
+                    </small>
+                </button>
+            </h4>
+
+            <div class="space-on-bottom">
+              <span class="label label-orange text-uppercase space-on-right" data-ng-show="vm.template.templateInfo.is_draft"
+                    uib-tooltip="Templates in draft state can't be used while sending invitations. Activate them once your template changes are finalized">
+                Draft
+              </span>
+              <span class="label text-uppercase label-default">{{vm.template.templateTypeName}}</span>
+            </div>
+
+            <div>
+              <small class="text-muted">
+                <i>updated {{vm.template.last_updated_at | fromNow}}</i>
+              </small>
+            </div>
+          </div>
+
+            <div class="bordered-right text-center cell">
+                <h4 class="clear-margin" data-ng-if="vm.template">
+                    <span data-ng-if="vm.template.frequency_id && vm.template.frequency_name">{{vm.template.frequency_name}}</span>
+                    <span class="font-size-14" data-ng-if="!(vm.template.frequency_id)">None</span>
+                </h4>
+                <small class="text-muted">
+                    Frequency
+                </small>
+            </div>
+
+          <div class="bordered-right text-center cell"
+               data-ng-hide="$state.$current.name == 'app.diligence.template.categories'">
+            <span class="align-middle">
+              <ng-pluralize count="vm.template.questionCount"
+                            when="{'0': 'No Questions', '1': '1 Question', 'other': '{} Questions'}">
+              </ng-pluralize>
+            </span>
+          </div>
+
+          <div class="bordered-right text-center cell">
+            <a class="btn btn-transparent"
+               data-ng-hide="$state.$current.name == 'app.diligence.template.categories' || $state.$current.name == 'app.diligence.template.categories.subcategories' || $state.$current.name == 'app.diligence.template.categories.subcategories.questions' || $state.$current.name == 'app.diligence.template.print_preview' || $state.$current.name == 'app.diligence.template.scoring'"
+               data-ng-if="vm.template.isEditable"
+               data-ng-disabled="(!vm.active_section.category_id) && ($state.$current.name != 'app.diligence.template.scoring')"
+               data-ng-click="vm.onEditTemplate()"
+               button-loader="vm.creating_version"
+               uib-tooltip="Edit template structure">
+              <div><icon name="pencil" size="2x"></icon></div>
+              <small>Edit</small>
+            </a>
+
+            <button btn-type="default"
+               class="clickable btn btn-transparent"
+               data-ng-if="vm.template.isEditable"
+               data-ng-click="vm.gotoPreview()"
+               data-ng-hide="$state.$current.name == 'app.diligence.template.preview'"
+               data-ng-disabled="vm.preview_disabled && $state.$current.name != 'app.diligence.template.scoring'">
+              <div><icon name="eye" size="2x"></icon></div>
+              <small>Preview</small>
+            </button>
+
+            <a class="btn btn-transparent"
+               uib-tooltip="{{vm.startRequestButton.tooltip}}"
+               data-ng-click="vm.addNewDDQ()"
+               data-ng-if="!vm.request"
+               data-ng-hide="$state.$current.name == 'app.diligence.template.scoring' || vm.template.templateInfo.is_draft">
+              <div><icon name="briefcase" size="2x"></icon></div>
+              <small>{{vm.startRequestButton.text}}</small>
+            </a>
+
+            <a class="btn btn-transparent activateDiligenceTemplate"
+               uib-tooltip="Start Populating DDQ"
+               data-ng-click="vm.startPopulating()"
+               button-loader="vm.starting_ddq"
+               data-ng-if="vm.isManager && vm.request"
+               data-ng-hide="$state.$current.name == 'app.diligence.template.scoring'">
+              <div><icon name="briefcase" size="2x"></icon></div>
+              <small>Start Populating</small>
+            </a>
+
+            <a btn-type="default"
+                class="clickable btn btn-transparent"
+                data-ng-if="($state.$current.name != 'app.diligence.template.preview')&& ($state.$current.name != 'app.diligence.template.print_preview') && ($state.$current.name != 'app.diligence.template.scoring') && (vm.isInvestor)"
+                data-ng-click="vm.gotoTemplateScoring()">
+                <div><icon name="scores" size="2x"></icon></div>
+                <small>Set Flag / Scores</small>
+            </a>
+
+            <a btn-type="default"
+               class="clickable btn btn-transparent activateDiligenceTemplate"
+               data-ng-show="vm.template.templateInfo.is_draft && ($state.$current.name != 'app.diligence.template.print_preview') && !vm.request"
+               button-loader="vm.activating_template"
+               data-ng-click="vm.confirmActivation()"
+               uib-tooltip="{{vm.activateTooltipText}}">
+              <div><icon name="check" size="2x"></icon></div>
+              <small>Activate</small>
+            </a>
+
+
+              <button class="space-on-top-n" btn-type="transparent"
+                      data-ng-show="$state.$current.name == 'app.diligence.template.print_preview' && vm.disable_print">
+                  <div><spinner broad-spinner spinner-height='15'></spinner></div>
+                  <small>Print</small>
+              </button>
+
+
+            <button btn-type="transparent"
+                    print-section
+                    print-options="vm.printOptions"
+                    section-id="js-questionnaire-parent-tpl"
+                    data-ng-show="$state.$current.name == 'app.diligence.template.print_preview' && !vm.disable_print">
+              <div><icon name="print" size="2x"></icon></div>
+              <small>Print</small>
+            </button>
+
+              <a btn-type="default"
+                 ui-sref="app.diligence.template.print_preview"
+                 data-ng-show="($state.$current.name == 'app.diligence.template.preview') && (vm.template.questionCount > 0)"
+                 class="btn btn-transparent">
+                  <div><icon name="print" size="2x"></icon></div>
+                  <small>Print Preview</small>
+              </a>
+
+            <span data-ng-if="($state.$current.name != 'app.diligence.template.scoring')" uib-dropdown>
+              <a href="" class="dropdown-toggle btn btn-transparent"
+                 uib-dropdown-toggle
+                 uib-tooltip="Duplicate this template to create a new copy, or delete this template entirely.">
+                  <div><icon name="ellipsis-h" size="2x"></icon></div>
+                  <small>More Actions</small>
+              </a>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu" data-ng-init="vm.showDivider = false">
+                  <li data-ng-if="vm.template.templateInfo.type != 'dd_profile'" data-ng-init="vm.showDivider = true">
+                      <a data-ng-click="vm.cloneTemplate()" role="button"
+                         data-ng-class="{'disabled': !vm.template.canBeCloned}" uib-tooltip="Duplicate this template">
+                          <icon name="clone" class="space-on-right-lg"></icon>Duplicate Template
+                      </a>
+                  </li>
+                  <li data-ng-if="($state.$current.name == 'app.diligence.template.scoring') && (vm.template.isEditable)" data-ng-init="vm.showDivider = true">
+                      <a data-ng-click="vm.onEditTemplate()" role="button"
+                         uib-tooltip="Edit this template">
+                          <icon name="pencil" class="space-on-right-lg"></icon>Edit Template
+                      </a>
+                  </li>
+                  <li data-ng-if="($state.$current.name != 'app.diligence.template.scoring') && !vm.template.templateInfo.is_draft && (vm.isInvestor)" data-ng-init="vm.showDivider = true">
+                    <a data-ng-if="!vm.template.templateInfo.mappedRatingSchemes" 
+                      data-ng-click="vm.createRatingFromTemplate()" role="button"
+                      uib-tooltip="Create rating definition for this template">
+                        <icon name="rating" class="space-on-right-lg"></icon>Generate Rating / Score Map
+                    </a>
+                    <a data-ng-if="vm.template.templateInfo.mappedRatingSchemes && (vm.isInvestor)"
+                      ui-sref="app.firm.settings.investment_rating.types({rating_id: vm.template.templateInfo.mappedRatingSchemes[0]})" role="button"
+                      uib-tooltip="Redirect to the associated rating definition">
+                        <icon name="rating" class="space-on-right-lg"></icon>View Associated Rating Scheme
+                    </a>
+                  </li>
+                  <li data-ng-if="($state.$current.name == 'app.diligence.template.preview') && ($state.$current.name != 'app.diligence.template.scoring') && (vm.isInvestor)" data-ng-init="vm.showDivider = true">
+                      <a data-ng-click="vm.gotoTemplateScoring()" role="button"
+                         uib-tooltip="Set or view flags and scoring rules for this template">
+                          <icon name="scores" class="space-on-right-lg"></icon>Set Flag / Score Rules
+                      </a>
+                  </li>
+                  <li >
+                    <a data-ng-click="vm.downloadAsExcel()" role="button"
+                       uib-tooltip="Download this template in Excel">
+                        <icon name="download3" class="space-on-right-lg"></icon>Download as Excel
+                    </a>
+                  </li>
+
+                  <li data-ng-if="vm.showDivider" class="divider"></li>
+                  <li>
+                      <a data-ng-click="vm.deleteTemplate()" role="button"
+                         data-ng-class="{'disabled': !vm.template.isEditable}" uib-tooltip="Delete this template">
+                          <icon name="trashcan" class="space-on-right-lg"></icon>Delete Template
+                      </a>
+                  </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="cell text-center">
+            <a btn-type="default"
+                 data-ng-click="vm.goBackToPreviousPage()"
+                 class="btn btn-transparent">
+              <div><icon name="arrow-back" size="2x"></icon></div>
+              <small>{{$state.$current.name == 'app.diligence.template.categories' || $state.$current.name == 'app.diligence.template.categories.subcategories' || $state.$current.name == 'app.diligence.template.categories.subcategories.questions' || $state.$current.name == 'app.diligence.template.scoring'? 'Back':'Back to all templates'}}</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ui-view />
+  </div>
+</div>

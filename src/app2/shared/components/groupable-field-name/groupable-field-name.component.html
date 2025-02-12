@@ -1,0 +1,42 @@
+<div *ngIf="params.data">
+  <div>
+    <div
+      *ngIf="params?.data[params?.colDef?.colId]?.length"
+      [ngClass]="{
+        'more-text': params.data[params.colDef.colId].length <= 1
+      }"
+    >
+      <span
+        [ngClass]="{ 'label label-default': !params.type }"
+        [tippyTooltip]="
+          params.data[params.colDef.colId][0]?.length > 15
+            ? params.data[params.colDef.colId][0]
+            : ''
+        "
+      >
+        <ng-container *ngIf="params.data[params.colDef.colId].length > 1">
+          {{ params.data[params.colDef.colId][0] ?? "" | truncate : 15 }}
+        </ng-container>
+        <ng-container *ngIf="params.data[params.colDef.colId].length <= 1">
+          {{ params.data[params.colDef.colId][0] ?? "" }}
+        </ng-container>
+      </span>
+      <span
+        class="clickable"
+        [style.color]="colorTheme.success"
+        *ngIf="params.data[params.colDef.colId].length > 1"
+        [adaptivePosition]="false"
+        container="body"
+        [tippyTooltip]="formatTagsTooltip(params.data[params.colDef.colId])"
+      >
+        + {{ params.data[params.colDef.colId].length - 1 }} more
+      </span>
+    </div>
+  </div>
+</div>
+
+<ng-container *ngIf="params?.node?.group">
+  <span>
+    {{ params?.value }}
+  </span>
+</ng-container>

@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <span class="align-middle"> Entities Evaluated </span>
+    </span>
+  </div>
+  <div class="panel-body" *ngIf="!mappedEntities">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="60"></app-spinner>
+  </div>
+  <div class="panel-body" *ngIf="mappedEntities && mappedEntities.length === 0">
+    <app-empty-state message="There are no entities linked."></app-empty-state>
+  </div>
+  <div
+    class="panel-body clear-padding"
+    *ngIf="mappedEntities && mappedEntities.length > 0"
+  >
+    <ul class="list-unstyled mapped-entities-list" tabindex="0">
+      <ng-container *ngFor="let mappedEntity of mappedEntities">
+        <li *ngIf="mappedEntity.entity_name || mappedEntity.name">
+          <span *ngIf="mappedEntity.entity_name"
+            ><a
+              [href]="mappedEntity.entityUrl"
+              target="_blank"
+              *ngIf="mappedEntity.entityUrl"
+              >{{ mappedEntity.entity_name }}</a
+            >
+            <span class="text-muted" *ngIf="!mappedEntity.entityUrl">{{
+              mappedEntity.entity_name
+            }}</span>
+            <span
+              class="text-muted"
+              *ngIf="
+                mappedEntity.tofirm_name &&
+                mappedEntity.entity_type != 'Firm' &&
+                mappedEntity.entity_type != 'Review'
+              "
+            >
+              ({{ mappedEntity.tofirm_name }})
+            </span>
+            -
+          </span>
+          <span class="text-muted"
+            ><span *ngIf="mappedEntity.name"
+              >Project:
+              <a
+                [href]="mappedEntity.projectUrl"
+                target="_blank"
+                *ngIf="mappedEntity.projectUrl"
+                >{{ mappedEntity.name }} </a
+              ><span
+                *ngIf="!mappedEntity.projectUrl"
+                [tooltip]="mappedEntity.tooltip"
+                >{{ mappedEntity.name }}</span
+              > </span
+            ><span *ngIf="mappedEntity.as_of_date">
+              | As of Date:
+              {{ mappedEntity.as_of_date | dvDate : ["isLocaleDate"] }}</span
+            ></span
+          >
+          <span class="space-on-left badge" [ngClass]="mappedEntity.badgeClass">
+            {{ mappedEntity.displayEntityType }}
+          </span>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</div>

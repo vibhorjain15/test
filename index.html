@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="/">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <title ng-bind="title || 'DiligenceVault'"></title>
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/ico/apple-touch-icon-57x57.png"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/ico/apple-touch-icon-60x60.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/ico/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/ico/apple-touch-icon-76x76.png"/>
+    <link rel="icon" type="image/png" href="/assets/ico/favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="/assets/ico/favicon-96x96.png" sizes="96x96"/>
+    <link rel="icon" type="image/png" href="/assets/ico/favicon-16x16.png" sizes="16x16"/>
+    <link rel="manifest" href="/assets/ico/android-chrome-manifest.json"/>
+    <link rel="shortcut icon" href="/assets/ico/favicon.ico"/>
+    <meta name="msapplication-TileColor" content="#ffffff"/>
+    <meta name="msapplication-config" content="/assets/ico/browserconfig.xml"/>
+    <meta name="theme-color" content="#ffffff"/>
+
+    <!-- <link rel="stylesheet" href="assets/stylesheets/tinymce/skins/tinymce-dv/skin.min.css"> 
+    <link rel="stylesheet" href="assets/stylesheets/tinymce/skins/tinymce-dv/content.min.css"> 
+    <link rel="stylesheet" href="assets/stylesheets/tiny_mce_custom.css">  -->
+    <!-- <style>
+.loader-wrapper .loader-logo,.loader-wrapper .artboard{position:absolute;left:50%;top:50%}.loader-wrapper .loader-logo{margin-left:-100px;margin-top:0}.loader-wrapper .artboard{margin-left:-65px;margin-top:-112.5px}.loader-wrapper .artboard canvas{position:absolute;top:0;left:8px}
+</style> --> 
+
+    <!-- <link rel="stylesheet" href="static/stylesheets/app.css">
+    <style>
+.loader-wrapper .loader-logo,.loader-wrapper .artboard{position:absolute;left:50%;top:50%}.loader-wrapper .loader-logo{margin-left:-100px;margin-top:0}.loader-wrapper .artboard{margin-left:-65px;margin-top:-112.5px}.loader-wrapper .artboard canvas{position:absolute;top:0;left:8px}
+</style> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.10.1/polyfill.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.9.0/exceljs.js"></script>
+  </head>
+
+  <body>
+    <toaster-container toaster-options="{'limit':2}"></toaster-container>
+
+    <div id="loader">
+      <div class="loader-wrapper">
+        <div class="analyze-img-wrapper artboard">
+          <img src="/assets/images/analyze-blue.png?__inline=true" alt="">
+          <canvas id="js-artboard" width="120px" height="67px"></canvas>
+        </div>
+        <img src="/assets/images/logo-small.png?__inline=true" alt="logo" class="loader-logo">
+      </div>
+    </div>
+    <div>
+      <div ui-view="authentication-view"></div>
+
+      <div ng-show="app_initialized">
+        <!-- <app-topnav></app-topnav> -->
+        <div ui-view="topnav"></div>
+        <div ui-view="feedback"></div>
+
+        <div class="relative">
+          <div class="content-main js-content-main">
+            <div class="container-fluid">
+              <div ui-view></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <sidebar-container></sidebar-container>
+    
+    <script>
+      (function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
+      c&&c.apply(this,a)};var b=function(){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];
+      c.src="//beacon.errorception.com/"+s+".js";c.async=!0;b.parentNode.insertBefore(c,b)};
+      _.addEventListener?_.addEventListener("load",b,!1):_.attachEvent("onload",b)})
+      (window,document,"script","5ec3a8f49cf1e33d7913afa5");
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://test.diligencevault.com/static/js/tinymce.min.js"></script>
+    <script src="https://test.diligencevault.com/static/js/handsontable.full.min.js"></script>
+
+    <script src="https://test.diligencevault.com/static/js/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.9/angular.min.js"></script>
+    
+    <script type="text/javascript">
+      WebFontConfig = {
+        google: { families: [ 'Open+Sans:600,300,400:latin' ] }
+      };
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+          '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })();
+    </script>
+
+    <!-- Notify users to update their browser if using a versin which we do not support -->
+    <!--[if IE]>
+    <script>
+      var $buoop = {c:2, text: 'DiligenceVault works best with Chrome, Firefox, and Internet Explorer 11. If Internet Explorer is required in your workplace, make sure you are using the latest version ​<b>(IE 11 or higher)</b>​. If you experience any issues, please email us at <a href="mailto:ask@diligencevault.com">ask@diligencevault.com</a>.'};
+      function $buo_f(){
+       var e = document.createElement("script");
+       e.src = "//browser-update.org/update.min.js";
+       document.body.appendChild(e);
+      };
+      try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+      catch(e){window.attachEvent("onload", $buo_f)}
+    </script>
+    <![endif]-->
+    <![if !IE]>
+    <script>
+      var $buoop = {c:2, text: 'Your browser is out of date. Update your browser for the best experience on DiligenceVault. If you experience any issues, please email us at <a href="mailto:ask@diligencevault.com">ask@diligencevault.com</a>.'};
+      function $buo_f(){
+       var e = document.createElement("script");
+       e.src = "//browser-update.org/update.min.js";
+       document.body.appendChild(e);
+      };
+      try {document.addEventListener("DOMContentLoaded", $buo_f,false)}
+      catch(e){window.attachEvent("onload", $buo_f)}
+    </script>
+    <![endif]>
+
+    <!-- <script type="text/javascript">
+      $(document).ready(function () {
+        Office.initialize = function() {
+          console.log("office initialized")
+        }
+      });
+    </script> -->
+
+    <div id="extension-data">
+      <input type="hidden" id="extensionAT" value="" />
+      <input type="hidden" id="extensionRT" value="" />
+      <input type="hidden" id="extensionFN" value="" />
+    </div>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title" id="reviewDefinitionsTitle">
+      <b>Review Definitions</b>
+    </h5>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      *ngIf="!definition"
+      aria-label="Loading review definitions"
+    ></app-spinner>
+    <div class="review-details" *ngIf="definition">
+      <div [isSearch]="false" [isAdd]="false" class="wrapper">
+        <div class="header-wrapper">
+          <div class="details">
+            <div class="label-group">
+              <div class="name">
+                <dv-label
+                  size="heading"
+                  [label]="definition?.name"
+                  type="bold"
+                  class="more-text"
+                  [title]="'diligenceName'"
+                  [truncateLimit]="25"
+                >
+                </dv-label>
+                <span
+                  appIcon
+                  name="pencil"
+                  (click)="handleEdit()"
+                  style="margin-left: 5px; opacity: 0.6"
+                  class="space-on-left-3 cursor-pointer font-size-13"
+                  aria-label="Edit definition"
+                  role="button"
+                  tabindex="0"
+                ></span>
+              </div>
+              <dv-label
+                size="large"
+                align="left"
+                [label]="
+                  'Last Updated on ' +
+                  (definition?.updated_at ?? definition?.created_at | dvDate)
+                "
+              >
+              </dv-label>
+            </div>
+            <dv-divider verticalHeight="large" type="vertical"></dv-divider>
+            <div class="label-group">
+              <dv-label
+                size="large"
+                [label]="'<i>Apply to</i>'"
+                [style.margin-left.px]="16"
+              >
+              </dv-label>
+              <dv-select
+                [list]="questionFilter"
+                [(ngModel)]="filter"
+                [searchable]="false"
+                bindLabel="display_name"
+                class="specialSelect"
+                ariaLabel="Select filter"
+              ></dv-select>
+            </div>
+          </div>
+          <div class="actions">
+            <dv-logo-label
+              icon="trashcan"
+              SizeType="huge"
+              label="Delete"
+              class="hover-red"
+              (onClick)="handleDelete()"
+              ariaLabel="Delete definition"
+            ></dv-logo-label>
+            <dv-divider verticalHeight="medium" type="vertical"></dv-divider>
+            <dv-logo-label
+              icon="arrow-back"
+              SizeType="huge"
+              label="Back to all definitions"
+              (onClick)="handleGoBack()"
+              ariaLabel="Go back to all definitions"
+            ></dv-logo-label>
+          </div>
+        </div>
+      </div>
+
+      <review-definition-steps-multiple
+        [steps]="definition.steps"
+        [teamRoleList]="teamRoleList"
+        (handleDeleteStepEmit)="handleDeleteStep()"
+        #stepMultiple
+      ></review-definition-steps-multiple>
+
+      <div class="add-reviewr">
+        <dv-button
+          btnType="default"
+          (onClick)="addStep()"
+          fontSizeType="medium"
+          leftIcon="plus"
+          [disabled]="!steps?.checkValid(false)"
+          ariaLabel="Add step"
+        >
+          <span class="font-size-14"
+            >Add Step
+            {{ getActiveSteps() + 1 }}
+          </span>
+        </dv-button>
+      </div>
+
+      <div class="save-buttons">
+        <dv-button
+          (onClick)="saveChanges()"
+          [loader]="buttonLoader"
+          ariaLabel="Save changes"
+        >
+          Save Changes
+        </dv-button>
+        <!-- <dv-button btnType="default">Cancel</dv-button> -->
+      </div>
+    </div>
+  </div>
+</div>

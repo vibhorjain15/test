@@ -1,0 +1,108 @@
+<section
+  class="panel-segment side-panel-in-animation"
+  [class.padding-top-10]="showAddComment"
+>
+  <div class="panel-header" [class.space-on-bottom-lg]="showAddComment">
+    <div class="header-icon-wrapper">
+      <div class="flex align-items-center">
+        <span
+          *ngIf="backIcon"
+          container="body"
+          (click)="handleOnBackClick()"
+          class="space-on-right font-size-12 cursor-pointer"
+          name="chevron-left"
+          container="body"
+          [adaptivePosition]="true"
+          appIcon
+        ></span>
+        <span
+          >{{ title }}
+          <span
+            appIcon
+            name="info"
+            *ngIf="infoText"
+            (click)="onInfoIconClick()"
+            [tippyTooltip]="infoText"
+            class="info-icon"
+          ></span
+        ></span>
+      </div>
+      <div class="icon-wrapper">
+        <span
+          appIcon
+          *ngIf="addIcon"
+          class="icon-link"
+          tooltip="Add"
+          name="plus"
+          container="body"
+          [adaptivePosition]="true"
+          (click)="handleOnAddClick($event)"
+        ></span>
+        <span
+          appIcon
+          *ngIf="!addIcon && listIcon"
+          class="icon-link"
+          name="list"
+          tooltip="List"
+          container="body"
+          [adaptivePosition]="false"
+          (click)="handleOnListClick($event)"
+        ></span>
+        <span
+          *ngIf="showAddComment"
+          role="button"
+          aria-label="Click to add new comment"
+          class="btn button-component btn-primary lh1"
+          (click)="handleAddNewComment()"
+        >
+          <span [innerHTML]="ckEditorAddCommentIcon | trustHtml"></span>
+          New Comment
+        </span>
+        <span
+          appIcon
+          class="icon-link"
+          name="close"
+          (click)="handleCloseClick($event)"
+          tooltip="Close"
+          container="body"
+          [adaptivePosition]="false"
+          *ngIf="showCloseIcon"
+        ></span>
+      </div>
+    </div>
+  </div>
+  <hr class="space-on-bottom-lg space-on-top-lg" *ngIf="showSeparator" />
+  <div class="side-panel-body">
+    <ng-content></ng-content>
+    <div *ngIf="isFooter" class="side-panel-footer">
+      <dv-button
+        [disabled]="isSecondaryLoading || isFirstButtonDisabled"
+        btnClass="btn btn-primary"
+        (onClick)="handleOnClick()"
+        *ngIf="!!firstButtonLabel"
+        [tippyTooltip]="firstButtonTooltip"
+        [loader]="isLoading"
+      >
+        {{ firstButtonLabel }}
+      </dv-button>
+      <dv-button
+        [disabled]="isLoading"
+        btnClass="btn btn-default"
+        (onClick)="handleOnSecondClick()"
+        *ngIf="!!secondButtonLabel"
+        [loader]="isSecondaryLoading"
+      >
+        {{ secondButtonLabel }}
+      </dv-button>
+      <button
+        *ngIf="isCancelButton"
+        type="button"
+        class="btn btn-default"
+        (click)="handleOnCancelClick($event)"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+  <ng-content select="[sidePanelFooter]"></ng-content>
+</section>

@@ -1,0 +1,3 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div>{{row.entity.last_reminded_at | fromNow}}</div>
+</ui-grid-cell-contents>

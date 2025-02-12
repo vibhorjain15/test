@@ -1,0 +1,174 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!strategy"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="strategy">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ strategy?.display_name }}
+            </h4>
+            <span
+              *ngIf="strategy?.status === 'Following'"
+              class="label text-uppercase"
+              [ngClass]="getStatusClass(strategy.status)"
+            >
+              <small>{{ strategy.status }}</small>
+            </span>
+            <p
+              class="text-muted space-on-top"
+              *ngIf="strategy?.parentFirm.name"
+            >
+              <small>Parent Firm: &nbsp;</small>
+              <small>
+                <a (click)="navigateToMonitor()" class="clickable"
+                  ><strong>{{ strategy?.parentFirm.name }}</strong></a
+                >
+              </small>
+            </p>
+          </div>
+          <div
+            class="bordered-right cell"
+            *ngIf="isEditable"
+            accessibleTo="manager"
+            authorized-view
+          >
+            <dv-button
+              [btnType]="'transparent'"
+              tooltip="Edit this strategy"
+              container="body"
+              (onClick)="editStrategy()"
+            >
+              <div>
+                <span appIcon name="pencil" size="2x"></span>
+              </div>
+              <small>Edit Strategy</small>
+            </dv-button>
+          </div>
+          <div
+            class="cell bordered-right"
+            accessibleTo="investor"
+            authorized-view
+          >
+            <a
+              class="clickable btn btn-transparent"
+              (click)="navigateToProfileRelatedEntities()"
+              tooltip="Management firm, related strategies and strategies"
+              container="body"
+            >
+              <div>
+                <span appIcon name="branches" size="2x"></span>
+              </div>
+              <small>Related Entities</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h4 class="clear-margin-top text-muted">Parent Firm Description</h4>
+        <p class="clear-margin">
+          {{ strategy?.parentFirm.firmDescription }}
+          <span
+            class="text-muted"
+            *ngIf="!strategy?.parentFirm.firmDescription"
+          >
+            <i>
+              Apparently, this firm prefers to keep an air of mystery about
+              them. No description was provided.
+            </i>
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="panel-title">
+          Performance History
+          <span
+            *ngIf="
+              default_track_record?.name ||
+              default_track_record?.currency_name ||
+              default_track_record?.profile_type
+            "
+          >
+            ({{ default_track_record?.name }} -
+            {{ default_track_record?.currency_name }} -
+            {{ default_track_record?.profile_type }})
+          </span>
+
+          <small *ngIf="track_record_end_date && track_record_start_date">
+            ({{ track_record_start_date | date : "MMM yyyy" }} -
+            {{ track_record_end_date | date : "MMM yyyy" }})
+          </small>
+        </h5>
+        <div class="panel-controls" *ngIf="default_track_record">
+          <div class="panel-controls-wrapper">
+            <a
+              tooltip="View in Tabular format"
+              placement="left"
+              container="body"
+              class="panel-control"
+              routerLink="../aum_tr"
+            >
+              <span appIcon name="table"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="chart1"></div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="panel-title">
+          AUM History ({{ default_aum?.name }})
+          <small *ngIf="default_aum?.currency_name">
+            (in {{ default_aum?.currency_name }} millions)
+          </small>
+        </h5>
+        <div class="panel-controls" *ngIf="default_aum">
+          <div class="panel-controls-wrapper">
+            <a
+              tooltip="View in Tabular format"
+              placement="left"
+              container="body"
+              class="panel-control"
+              routerLink="../aum_tr"
+            >
+              <span appIcon name="table"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="chart2"></div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="12">
+        <app-entity-summary-documents
+          [attachments]="attachments"
+          [isManager]="is_manager"
+          (attachmentEvent)="getAttachments()"
+        >
+          <div class="panel-footer" *ngIf="!(attachments.length < 6)">
+            <div class="clearfix">
+              <div class="pull-right">
+                <a (click)="navigateToDocumentsList()" class="btn btn-default">
+                  View More &raquo;
+                </a>
+              </div>
+            </div>
+          </div>
+        </app-entity-summary-documents>
+      </div>
+    </div>
+  </div>
+</div>

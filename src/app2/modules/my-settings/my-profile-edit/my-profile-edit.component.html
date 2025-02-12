@@ -1,0 +1,285 @@
+<form
+  class="form-horizontal my-profile"
+  [formGroup]="userProfileForm"
+  novalidate
+  autocomplete="off"
+>
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <div class="upload-user-flex">
+        <div
+          class="user-avatar inline-block align-middle relative"
+          [ngClass]="{ 'has-icon': true }"
+        >
+          <app-user-profile
+            [avatarIconSize]="'4x'"
+            [avatarIconClass]="'avatar'"
+            [avatarImgClass]="'img-thumbnail avatar'"
+            [user]="userModel"
+          ></app-user-profile>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 user-info-form-group">
+      <div class="row clearfix space-on-bottom">
+        <div class="col-md-6 profile-form-group-margin">
+          <dv-form-element
+            [fieldName]="'First Name'"
+            [modelController]="userProfileForm.get('firstname')"
+            [errorMessage]="
+              userProfileForm.get('firstname').errors?.required &&
+              !userProfileForm.get('firstname').errors?.whitespace
+                ? 'First name is required'
+                : userProfileForm.get('firstname').touched &&
+                  (userProfileForm.get('firstname').errors?.pattern ||
+                    userProfileForm.get('firstname').errors?.whitespace)
+                ? nameValidationError
+                : ''
+            "
+            [labelCol]="0"
+            [elementCol]="12"
+            [elementClass]="'no-padding'"
+          >
+            <input
+              id="firstname"
+              type="text"
+              placeholder="First Name"
+              maxlength="30"
+              class="form-control"
+              formControlName="firstname"
+            />
+          </dv-form-element>
+        </div>
+        <div class="col-md-6 clear-padding-left profile-form-group-margin">
+          <dv-form-element
+            [fieldName]="'Last Name'"
+            [modelController]="userProfileForm.get('lastname')"
+            [showRightIcon]="false"
+            [elementCol]="0"
+            [elementCol]="12"
+            [elementClass]="'no-padding'"
+            [errorMessage]="
+              userProfileForm.get('lastname').errors?.required &&
+              !userProfileForm.get('lastname').errors?.whitespace
+                ? 'Last Name is required'
+                : userProfileForm.get('lastname').errors?.pattern
+                ? nameValidationError
+                : ''
+            "
+          >
+            <input
+              type="text"
+              placeholder="Last Name"
+              maxlength="30"
+              class="form-control"
+              formControlName="lastname"
+              id="lastname"
+            />
+          </dv-form-element>
+        </div>
+      </div>
+      <div class="profile-form-margin">
+        <dv-form-element
+          [fieldName]="'Title'"
+          [modelController]="userProfileForm.get('title')"
+          [elementCol]="0"
+          [elementCol]="12"
+          [elementClass]="'no-padding'"
+          [errorMessage]="
+            userProfileForm.get('title').invalid ? nameValidationError : ''
+          "
+        >
+          <div class="input-group">
+            <span class="input-group-addon">
+              <span appIcon name="briefcase"></span>
+            </span>
+            <input
+              type="text"
+              placeholder="Title"
+              maxlength="60"
+              class="form-control"
+              formControlName="title"
+              id="title"
+            />
+          </div>
+        </dv-form-element>
+      </div>
+
+      <div
+        class="form-group"
+        tooltip="Cannot edit this field. Please contact your administrator."
+        container="body"
+      >
+        <div class="input-group">
+          <span class="input-group-addon">
+            <span appIcon name="mail"></span>
+          </span>
+          <input
+            type="text"
+            placeholder="Email"
+            class="form-control"
+            formControlName="userName"
+            id="userName"
+          />
+        </div>
+      </div>
+      <div
+        class="form-group"
+        tooltip="Cannot edit this field. Please contact your administrator."
+        container="body"
+      >
+        <div class="input-group">
+          <span class="input-group-addon">
+            <span appIcon name="institution"></span>
+          </span>
+          <input
+            type="text"
+            placeholder="Firm Name"
+            class="form-control"
+            formControlName="firm_name"
+            id="firm_name"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <dv-form-element
+    [modelController]="userProfileForm.get('phoneNumber')"
+    [label]="'Phone'"
+    [elementCol]="'5'"
+    [errorMessage]="
+      'Only Numbers, parenthesis, plus, minus and dot are allowed'
+    "
+  >
+    <input
+      type="text"
+      id="phone"
+      placeholder="(XXX) XXX-XXXX"
+      maxlength="30"
+      class="form-control"
+      formControlName="phoneNumber"
+      id="phoneNumber"
+    />
+  </dv-form-element>
+
+  <dv-form-element
+    [modelController]="userProfileForm.get('address')"
+    label="Street Address"
+    [elementCol]="'5'"
+    [errorMessage]="'Street Address cannot start with a special character'"
+  >
+    <textarea
+      id="street-address"
+      autosize
+      maxlength="200"
+      placeholder="Example: 9th road, 5th street"
+      class="form-control"
+      formControlName="address"
+      id="address"
+    ></textarea>
+  </dv-form-element>
+
+  <dv-form-element
+    [modelController]="userProfileForm.get('city')"
+    label="City"
+    [elementCol]="'5'"
+    [errorMessage]="'Only Alphabets and some special characters allowed'"
+  >
+    <input
+      type="text"
+      id="city"
+      placeholder="Example: New York"
+      maxlength="60"
+      class="form-control"
+      formControlName="city"
+      id="city"
+    />
+  </dv-form-element>
+
+  <dv-form-element
+    [modelController]="userProfileForm.get('state')"
+    label="State"
+    [elementCol]="'5'"
+    [errorMessage]="'Only Alphabets and some special characters allowed'"
+  >
+    <input
+      type="text"
+      id="state"
+      placeholder="Example: New York"
+      maxlength="60"
+      class="form-control"
+      formControlName="state"
+      id="state"
+    />
+  </dv-form-element>
+
+  <dv-form-element
+    [modelController]="userProfileForm.get('zipcode')"
+    label="Zipcode"
+    [elementCol]="'5'"
+    [errorMessage]="'Zipcode not valid'"
+  >
+    <input
+      type="text"
+      id="zipcode"
+      placeholder="Example: 10018"
+      maxlength="10"
+      class="form-control"
+      formControlName="zipcode"
+    />
+  </dv-form-element>
+
+  <dv-form-element
+    [modelController]="userProfileForm.get('country_id')"
+    [fieldName]="'Country'"
+    [showRightIcon]="false"
+    [label]="'Country'"
+    [elementCol]="'5'"
+  >
+    <dv-select
+      [list]="countries"
+      formControlName="country_id"
+      bindLabel="value"
+      bindValue="id"
+      [disabled]="false"
+      [clearable]="false"
+      [searchable]="true"
+      [placeholder]="countries ? '--Select Country--' : 'Loading countries...'"
+      [id]="'country_id'"
+    ></dv-select>
+  </dv-form-element>
+
+  <dv-form-element
+    [modelController]="userProfileForm.get('languageCode')"
+    [fieldName]="'Language'"
+    [showRightIcon]="false"
+    [label]="'Language'"
+    [elementCol]="'5'"
+  >
+    <dv-select
+      [list]="languageCodeMap"
+      formControlName="languageCode"
+      bindLabel="name"
+      bindValue="code"
+      [clearable]="false"
+      [searchable]="true"
+      placeholder="--Select Language--"
+      [id]="'languageCode'"
+    ></dv-select>
+  </dv-form-element>
+
+  <div class="form-group clear-margin">
+    <div class="col-md-9 col-md-offset-3">
+      <dv-button
+        btnClass="space-on-right minwidth"
+        [loader]="loader"
+        (onClick)="submit()"
+        [disabled]="userProfileForm.invalid"
+        *ngIf="userProfileForm?.touched"
+      >
+        Save My Profile
+      </dv-button>
+      <dv-button *ngIf="userProfileForm?.touched" (onClick)="cancel()" btnType="default"> Cancel </dv-button>
+    </div>
+  </div>
+</form>

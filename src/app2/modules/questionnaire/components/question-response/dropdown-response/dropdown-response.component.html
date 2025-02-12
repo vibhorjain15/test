@@ -1,0 +1,36 @@
+<dv-select
+  *ngIf="!isNotApplicable"
+  [list]="options"
+  (onSelectChange)="handleChange($event)"
+  [(ngModel)]="value"
+  bindLabel="value"
+  bindValue=""
+  [aria-label]="'Select Option'"
+></dv-select>
+<textarea
+  class="form-control space-on-top"
+  [(ngModel)]="otherText"
+  (ngModelChange)="handleTextChange($event)"
+  name=""
+  id=""
+  cols="30"
+  rows="5"
+  *ngIf="otherId != -1 && localSelectedVal?.id == otherId && !isNotApplicable"
+  aria-label="Other Text"
+></textarea>
+<div
+  *ngIf="
+    otherId != -1 &&
+    localSelectedVal?.id == otherId &&
+    !otherText &&
+    !isNotApplicable
+  "
+  class="text-danger"
+  role="alert"
+  aria-live="assertive"
+>
+  {{ otherTextError }}
+</div>
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>

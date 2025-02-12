@@ -1,0 +1,100 @@
+/**
+Copyright 2022 LoopIndex, This file is part of the Track Changes plugin for CKEditor.
+
+The track changes plugin is commercial software. Details in https://www.loopindex.com/software-license-for-track-changes-ckeditor-plugin
+Written by (David *)Frenkiel - https://github.com/imdfl
+**/
+
+.cke_editable, .mce-content-body {
+	&:not(.FLITE-Tracking) {
+		.ice-del:not(.flite-container-only) {
+			display: none;
+		}
+	}
+}
+
+//.ice-ins, .ice-del {
+//	white-space:pre-wrap;
+//}
+
+.FLITE-Tracking {
+	.ice-ins, .ice-del {
+		color: #000;
+	}
+
+	.ice-del:not(.flite-container-only) {
+		text-decoration: line-through !important;
+		color: #555;
+		//background-color: #ffb9b9 !important;
+	}
+
+	//td.ice-del.flite-container-only {
+	//	background-color: #ffb9b9 !important;
+	//}
+
+	li.flite-container-only {
+		&.ice-del, &.ice-ins {
+			position: relative;
+			&::before {
+				content: "";
+				position: absolute;
+				top: -1px;
+				left: -12px;
+				width: 12px;
+				height: 12px;
+				background-repeat: no-repeat;
+				background-position: left center;
+				background-size: 12px 12px;
+			}
+		}
+		&.ice-del::before {
+			background-image: url("./redx12.png");
+		}
+		&.ice-ins::before {
+			background-image: url("./blueplus12.png");
+		}
+
+	}
+
+	p,div,h1,h2,h3,h4,h5 {
+		&.flite-container-only {
+			&.ice-del, &.ice-ins {
+				border: 1px dashed;
+			}
+			//&.ice-del {
+			//	border-color: red;
+			//}
+			//&.ice-ins {
+			//	border-color: blue;
+			//}
+		}
+	}
+
+	img.ice-del, .ice-del.cke_widget_wrapper {
+		border: 2px dashed;
+		box-sizing: border-box;
+		background-color: transparent !important;
+	}
+
+	.ice-del:not(.flite-container-only) * {
+		text-decoration: line-through !important;
+	}
+
+	.ice-ins:not(.flite-container-only), .ice-ins:not(.flite-container-only)>:not(img), .ice-ins td, td.ice-ins.flite-container-only  {
+		//background-color: #b8f580 !important;
+		box-sizing: border-box;
+	}
+
+	img.ice-ins, .ice-ins.cke_widget_wrapper {
+		border: 2px dashed;
+		background-color: transparent !important;
+		// background-color: #cdffd0;
+		box-sizing: border-box;
+	}
+
+
+}
+
+.fr-toolbar .fr-command.fr-btn.flite-froala-button-highlight {
+	border: 1px solid rgba(128, 128, 128, 0.3);
+}

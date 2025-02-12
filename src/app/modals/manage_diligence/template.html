@@ -1,0 +1,49 @@
+<form name="vm.manage_diligence_form" novalidate class="form-horizontal" data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">Edit Diligence Project
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="Project Name">
+      <label class="control-label col-sm-3" for="template-name">Project Name<span
+          class="font-size-10 text-orange align-top">*</span></label>
+
+      <div class="col-sm-9">
+        <input type="text" class="form-control" data-ng-model="vm.manage_diligence.name"
+          dv-restrict-input="{type: 'avoidFirstSplCharacter'}" placeholder="Enter a project name" required />
+      </div>
+    </form-group>
+
+    <form-group field-name="Due At" control-selector="dv-datepicker">
+      <label class="control-label col-sm-3">Due Date</label>
+
+      <div class="col-sm-8">
+        <dv-datepicker id="due-at" name="due-date" ng-required="true" min-date="vm.minDate" data-ng-model="vm.manage_diligence.due_at"
+          data-ng-change="vm.validateDueDate()">
+        </dv-datepicker>
+      </div>
+
+    </form-group>
+
+    <form-group field-name="As of Date" control-selector="dv-datepicker">
+      <label class="control-label col-sm-3">As of Date</label>
+
+      <div class="col-sm-8">
+        <dv-datepicker id="as-of-date" name="as-of-date" ng-required="true" data-ng-model="vm.manage_diligence.as_of_date"
+          max-date="vm.maxAsOfDate" data-ng-change="vm.validateDueDate()">
+        </dv-datepicker>
+      </div>
+
+    </form-group>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving_diligence">Update Project</button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

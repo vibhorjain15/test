@@ -1,0 +1,219 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-rating-definition></ng2-rating-definition> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{vm.headerConstants.RATINGDEFINITION}}</h5>
+
+    <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+            <a class="panel-control"
+               data-ng-click="vm.onAddRatingClick()"
+               uib-tooltip="Add New Rating/Score Definition">
+                <icon name="plus"></icon> Add New
+            </a>
+        </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="row space-on-bottom-lg">
+      <div col="12">
+        <spinner data-ng-show="vm.loading_rating_schemes">
+        </spinner>
+        <div col="6" offset="3" class="rating-selection-list" data-ng-hide="vm.loading_rating_schemes">
+          <span class="filter-input">
+            <input type="text" class="form-control" data-ng-model="vm.filterRatingScheme" placeholder="Search by name"/>
+          </span>
+          <div class="rating-scroll-view space-on-top-lg">
+            <ul col="12">
+              <empty-state message="No Rating types added. Add one by clicking the add button above." data-ng-hide="vm.rating_types.length"></empty-state>
+              <li data-ng-repeat="type in vm.rating_types | filter: vm.filterRatingScheme" ng-class="{'active-selection':type.id == vm.selectedType.id}" data-ng-click="vm.selectRatingType(type)" id="rating_scheme_{{type.id}}">
+                <div class="row item">
+                  <span class="align-middle text">
+                    <span class="ratingText">{{type.name}}</span>
+                  </span>
+                  <div class="pull-right controls">
+                    <span class="control"
+                          data-ng-click="vm.onEditRatingType(type)"
+                          data-ng-class="{'disabled-Element':type.is_system}"
+                          uib-tooltip="{{type.is_system?'You cannot edit system level ratings':''}}"
+                          role="button" stop-event-propagation
+                          prevent-default>
+                      <icon name="pencil"></icon>
+                    </span>
+                    <span class="control-danger"
+                          data-ng-click="vm.confirmRatingDeletion(type)"
+                          data-ng-class="{'disabled-Element':type.is_system}"
+                          uib-tooltip="{{type.is_system?'You cannot delete system level ratings':''}}"
+                          role="button" stop-event-propagation
+                          prevent-default>
+                      <icon name="trashcan"></icon>
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix container-fluid" data-ng-if="vm.selectedType">
+      <div class="rating-form-border">
+        <h4 class="rating-type-header lh1-5">
+            Viewing Definition for {{vm.selectedType.name}}
+        </h4>
+        <div>
+          <spinner data-ng-show="vm.loading_categories">
+          </spinner>
+          <div class="row clearfix" ng-show="vm.ratingDef.categories">
+            <div col="12" class="space-on-top-lg">
+              <div class="col-md-4">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading">
+                    <h5 class="panel-title">Categories</h5>
+
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <a class="panel-control js-add-category"
+                          data-ng-class="{'disabled-Element':vm.selectedType.is_system}" uib-tooltip="{{vm.selectedType.is_system?'You cannot edit system level ratings':'Edit Category'}}"
+                          data-ng-click="vm.openAddCategoryModal()">
+                            <icon name="pencil"></icon>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-body">
+                    <empty-state message="No categories available. You can add them using the button at the top right corner of this panel" data-ng-hide="vm.ratingDef.categories.length"></empty-state>
+                    <div class="list-group" data-ng-show="vm.ratingDef.categories.length">
+                      <a class="list-group-item has-controls"
+                        data-ng-class="{'active': vm.selectedCategory.id == category.id}"
+                        data-ng-repeat="category in vm.ratingDef.categories | orderBy: 'order'"
+                        data-ng-click="vm.getSubcategories(category)">
+                        <div class="ratingBox">
+                          <div class="itemName">{{category.name}}</div>
+                          <div class="percentage text-center lh1">
+                            <div ng-class="{'text-default':vm.selectedCategory.id == category.id,'text-primary':vm.selectedCategory.id != category.id}">{{category.weightage}}%</div>
+
+                            <small ng-class="{'text-default':vm.selectedCategory.id == category.id,'text-muted':vm.selectedCategory.id != category.id}"><small>Weightage</small></small>
+                          </div>
+                          <span class="edit-scale"
+                                role="button"
+                                data-ng-if="category.rating_scale_id && vm.selectedType.rating_scale_mode == vm.ratingConstants.ScoreBand"
+                                data-ng-click="vm.openEditScaleModal(category, vm.selectedType, $index)"
+                                stop-event-propagation
+                                prevent-default>
+                            <icon name="scoring"></icon>
+                          </span>
+                          <span class="exceedingError">
+                            <icon data-ng-if="category.exceeding_weight > vm.precision" name="info" class="text-danger"
+                              uib-tooltip="The total weightage under this category exceeds by {{category.exceeding_weight|number:2}}%. Please verify the weights for correct calculation of ratings."></icon>
+                            <icon data-ng-if="category.exceeding_weight < vm.negativePrecision" name="info" class="text-danger"
+                              uib-tooltip="The total weightage under this category is less by {{category.exceeding_weight * -1 |number:2}}%. Please verify the weights for correct calculation of ratings."></icon>
+                          </span>
+
+
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading">
+                    <h5 class="panel-title">SubCategories</h5>
+
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <a class="panel-control js-add-category" data-ng-class="{'disabled-Element':vm.selectedCategory == null || vm.selectedType.is_system}" uib-tooltip="{{vm.selectedCategory == null?'Please select a category to add new subcategories':vm.selectedType.is_system?'You cannot edit system level ratings':'Edit Subcategory'}}"
+                          data-ng-click="vm.openAddSubCategoryModal()">
+                            <icon name="pencil"></icon>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-body">
+
+                    <empty-state message="No subcategories available. You can add them using the button at the top right corner of this panel" data-ng-hide="vm.ratingDef.subcategories.length"></empty-state>
+                    <div class="list-group" data-ng-show="vm.ratingDef.subcategories.length">
+                      <a class="list-group-item has-controls"
+                        data-ng-class="{'active': vm.selectedSubCategory.id == subcategory.id}"
+                        data-ng-repeat="subcategory in vm.ratingDef.subcategories | orderBy: 'order'"
+                        data-ng-click="vm.getRatings(subcategory)">
+                        <div class="ratingBox">
+                          <div class="itemName">{{subcategory.name}}</div>
+                          <div class="percentage text-center lh1">
+                            <div ng-class="{'text-default':vm.selectedSubCategory.id == subcategory.id,'text-primary':vm.selectedSubCategory.id != subcategory.id}">{{subcategory.weightage}}%</div>
+
+                            <small ng-class="{'text-default':vm.selectedSubCategory.id == subcategory.id,'text-muted':vm.selectedSubCategory.id != subcategory.id}"><small>Weightage</small></small>
+                          </div>
+                          <span class="edit-scale"
+                                role="button"
+                                data-ng-if="subcategory.rating_scale_id && vm.selectedType.rating_scale_mode == vm.ratingConstants.ScoreBand"
+                                data-ng-click="vm.openEditScaleModal(subcategory,vm.selectedCategory, $index)"
+                                stop-event-propagation
+                                prevent-default>
+                            <icon name="scoring"></icon>
+                          </span>
+                          <span class="exceedingError">
+                            <icon data-ng-if="subcategory.exceeding_weight > vm.precision" name="info" class="text-danger"
+                              uib-tooltip="The total weightage under this subcategory exceeds by {{subcategory.exceeding_weight|number:2}}%. Please verify the weights for correct calculation of ratings."></icon>
+                            <icon data-ng-if="subcategory.exceeding_weight < vm.negativePrecision" name="info" class="text-danger"
+                              uib-tooltip="The total weightage under this subcategory is less by {{subcategory.exceeding_weight * -1|number:2}}%. Please verify the weights for correct calculation of ratings."></icon>
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading">
+                    <h5 class="panel-title">Ratings</h5>
+
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <a class="panel-control js-add-category" data-ng-class="{'disabled-Element':vm.selectedSubCategory == null || vm.selectedType.is_system || vm.selectedType.rating_level.toLowerCase() == 'section'}" uib-tooltip="{{vm.selectedSubCategory == null?'Please select a subcategory to add new ratings':vm.selectedType.is_system?'You cannot edit system level ratings':'Edit Ratings'}}"
+                          data-ng-click="vm.openAddRatingsModal()">
+                            <icon name="pencil"></icon>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel-body">
+                    <empty-state message="No ratings available. You can add them using the button at the top right corner of this panel" data-ng-hide="vm.ratingDef.ratings.length"></empty-state>
+                    <div class="list-group" data-ng-show="vm.ratingDef.ratings.length">
+                      <a class="list-group-item has-controls"
+                        data-ng-repeat="rating in vm.ratingDef.ratings | orderBy: 'order'">
+                        <div class="ratingBox">
+                          <div class="itemName" data-ng-bind-html="rating.name"></div>
+                          <div class="percentage text-center lh1">
+                            <div class="text-primary">{{rating.weightage}}%</div>
+
+                            <small class="text-muted"><small>Weightage</small></small>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-ng-if="vm.selectedType && !vm.selectedType.is_system">
+      <div class="rating-form-border">
+        <custom-field-viewer entity-type="'rating'" entity-id="vm.selectedType.id" source="'rating'"></custom-field-viewer>
+      </div>
+    </div>
+  </div>
+</div>

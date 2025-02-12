@@ -1,0 +1,11 @@
+:host ::ng-deep .template-body {
+  padding-right: 4px;
+  margin-right: -6px;
+}
+:host ::ng-deep .side-panel-body {
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-right: -6px;
+}

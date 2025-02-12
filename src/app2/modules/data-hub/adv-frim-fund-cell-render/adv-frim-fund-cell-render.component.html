@@ -1,0 +1,20 @@
+<div
+  class="text-left"
+  (mouseenter)="showPreview = true"
+  (mouseleave)="showPreview = false"
+  *ngIf="params.data"
+>
+  <a
+    [tooltip]="label"
+    container="body"
+    [adaptivePosition]="false"
+    href="#/app/form_adv/firm/{{ params?.data?.firmcrd }}/{{ link }}"
+    (click)="click($event)"
+  >
+    <span>{{ label }}</span>
+  </a>
+</div>
+
+<p *ngIf="params.node.group">
+  {{ params.value }}
+</p>

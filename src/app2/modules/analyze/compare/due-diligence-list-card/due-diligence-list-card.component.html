@@ -1,0 +1,75 @@
+<ul class="list-unstyled compare-dd-selection clearfix space-on-top-lg">
+  <li
+    *ngFor="let diligence of cardData; let index = index"
+    [id]="'select_li_' + index"
+    option="diligence"
+  >
+    <div
+      class="panel panel-default panel-selectable"
+      [ngClass]="selectedCard.has(diligence.id) ? 'list-check-card' : ''"
+      (click)="handleOnClick(diligence.id, index)"
+    >
+      <div class="panel-body">
+        <b
+          truncate-text="25"
+          style="word-break: break-all"
+          [tooltip]="diligence.entity_name"
+          >{{ diligence.entity_name }}</b
+        >
+        <br />
+        <small>{{ diligence.created_at | dvDate : ["isLocaleDate"] }}</small>
+        <br /><br />
+        <span
+          style="word-break: break-all"
+          [tooltip]="diligence.project_name"
+          class="text-uppercase text-muted"
+        >
+          {{ diligence.project_name | truncate : 25 }}
+        </span>
+        <br /><br />
+        <small>
+          <b
+            >Flags : {{ diligence.total_flags }}
+            <span
+              appIcon
+              class="align-middle space-on-left"
+              name="flag"
+              [tooltip]="
+                diligence.total_flags
+                  ? diligence.total_flags + ' flag(s) have been set'
+                  : 'No flag set'
+              "
+              [ngClass]="{
+                'dd-no-flag-set': !diligence.total_flags,
+                'text-danger': diligence.total_flags
+              }"
+            ></span>
+          </b>
+        </small>
+        <br /><br />
+        <small *ngIf="isScore">
+          <b
+            >Score:
+            <dv-dd-rated-score
+              [score]="diligence.aggregate_score"
+              [keepWatcherOn]="true"
+              [ratingScale]="ratingScales"
+              [naValue]="naValue"
+              total="100"
+              [showTotal]="
+                ratingScheme.primary_rating_scale_mode == 'ScoreBand'
+              "
+              [ratingValue]="diligence.aggregate_rating"
+              [useRatingValue]="true"
+            ></dv-dd-rated-score>
+          </b>
+        </small>
+        <br /><br />
+        <small
+          >{{ diligence.answer_count }}/{{ diligence.question_count }} Questions
+          Answered</small
+        >
+      </div>
+    </div>
+  </li>
+</ul>

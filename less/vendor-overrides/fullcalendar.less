@@ -1,0 +1,35 @@
+.fc-toolbar{
+  .border-top-radius(6px);
+
+  background-color: #073336;
+  color: white;
+  margin-bottom: 0;
+}
+
+.fc-toolbar {
+  height: 36px;
+
+  .fc-center {
+    > h2 {
+      font-size: 1.25em;
+      line-height: 36px;
+    }
+  }
+}
+
+.fc-button{
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 36px !important;
+  border: none;
+
+  &, &.fc-state-default {
+    .button-variant(@btn-primary-color; #073336; transparent);
+    background-image: none;
+  }
+}
+
+.fc-ltr .fc-basic-view .fc-day-number{
+  text-align: center;
+}
+

@@ -1,0 +1,160 @@
+<div class="row clearfix form-adv-threshold">
+  <div col="12">
+    <div class="panel panel-default">
+      <dv-panel-heading
+        class="panel-heading"
+        heading="Configure Materiality Thresholds for Filing Changes"
+        [controls]="panelHeadingControls"
+      ></dv-panel-heading>
+
+      <div class="panel-body">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="80"
+          *ngIf="!thresholds"
+        >
+        </app-spinner>
+
+        <span *ngIf="thresholds && thresholds.length">
+          <div col="12" class="pa-lr-xxl">
+            <div col="12" class="space-on-top-xl padded-bottom-xl">
+              <div col="2">
+                <div col="10" offset="2">
+                  <span class="control-label fw-bolder">Type</span>
+                </div>
+              </div>
+              <div col="5">
+                <span class="control-label fw-bolder">Question</span>
+              </div>
+              <div col="2" class="text-center">
+                <span class="control-label fw-bolder">Condition</span>
+              </div>
+
+              <div col="2" class="text-center">
+                <span class="control-label fw-bolder">Threshold Value</span>
+              </div>
+              <div col="1" class="text-center">
+                <span class="control-label">&nbsp;</span>
+              </div>
+            </div>
+          </div>
+
+          <div col="12" *ngFor="let group of grouped_thresholds">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h5 class="panel-title">Section: {{ group.section_name }}</h5>
+              </div>
+              <div class="panel-body">
+                <div
+                  col="12"
+                  class="pa-tb-lg threshold-item"
+                  *ngFor="let threshold of group.thresholds; let index = index"
+                  [ngClass]="{
+                    active: threshold.hoverState,
+                    'first-threshold': index === 0
+                  }"
+                  (mouseover)="threshold.hoverState = true"
+                  (mouseout)="threshold.hoverState = false"
+                >
+                  <div col="2">
+                    <h5 class="text-center inline-block" col="2">
+                      <span class="space-on-right-lg">{{ index + 1 }}.</span>
+                    </h5>
+                    <h5 col="10">{{ threshold.typeText }}</h5>
+                  </div>
+                  <div col="5">
+                    <h5>
+                      <span class="space-on-right-lg">{{
+                        threshold.questionObj.displayText
+                      }}</span>
+                    </h5>
+                  </div>
+
+                  <div col="2" class="text-center">
+                    <h5 class="space-on-right-lg">
+                      {{ threshold.operatorText }}
+                    </h5>
+                  </div>
+
+                  <div col="2" class="text-center">
+                    <h5
+                      *ngIf="
+                        threshold.operator_id !== 'ac' &&
+                        !(
+                          threshold.questionObj.response_type === 'Boolean' ||
+                          threshold.questionObj.response_type ===
+                            'BooleanPlus' ||
+                          threshold.questionObj.response_type === 'NoPlus'
+                        )
+                      "
+                    >
+                      {{ threshold.threshold_value }}
+                    </h5>
+                    <h5
+                      *ngIf="
+                        threshold.operator_id !== 'ac' &&
+                        (threshold.questionObj.response_type === 'Boolean' ||
+                          threshold.questionObj.response_type ===
+                            'BooleanPlus' ||
+                          threshold.questionObj.response_type === 'NoPlus')
+                      "
+                    >
+                      {{ threshold.threshold_value === true ? "Yes" : "No" }}
+                    </h5>
+
+                    <h5 *ngIf="threshold.operator_id === 'ac'">N/A</h5>
+                  </div>
+                  <div col="1" class="space-on-top text-center">
+                    <span>
+                      <!-- <span *ngIf="threshold.hoverState"> -->
+                      <button
+                        appButton
+                        class="space-on-top-xm space-on-right btn-sm btn btn-default"
+                        tooltip="Edit threshold"
+                        container="body"
+                        (click)="editThreshold(threshold)"
+                        type="button"
+                        aria-label="Edit threshold"
+                      >
+                        <span appIcon name="pencil"></span>
+                      </button>
+
+                      <button
+                        appButton
+                        class="space-on-top-xm btn-sm btn btn-default danger"
+                        tooltip="Remove threshold"
+                        container="body"
+                        (click)="removeThreshold(threshold)"
+                        type="button"
+                        aria-label="Remove threshold"
+                      >
+                        <span appIcon name="trashcan"></span>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <scroll-top-button></scroll-top-button>
+        </span>
+
+        <div
+          class="panel-body"
+          col="6"
+          offset="3"
+          *ngIf="thresholds && !thresholds.length"
+        >
+          <app-empty-state
+            iconName="warning"
+            [message]="'No thresholds currently set'"
+            (action)="addNewThreshold()"
+            [actionLabel]="'Add thresholds'"
+          >
+          </app-empty-state>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

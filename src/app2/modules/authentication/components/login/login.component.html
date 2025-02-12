@@ -1,0 +1,417 @@
+<div class="row parent-container">
+  <div
+    class="col-md-6 no-padding"
+    *ngIf="
+      !showFirmSelection &&
+      !isInboundRequest &&
+      (DeviceService.isWebDevice || DeviceService.isDesktopDevice)
+    "
+  >
+    <div
+      class="banner-wrapper row no-padding no-margin"
+      [ngStyle]="{
+        'background-color': banner && (banner?.background_color ?? '#d5f2fa'),
+        'background-image': banner?.button_asset_url
+          ? 'url(' + banner.button_asset_url + ')'
+          : 'none',
+        'background-size': 'cover',
+        'background-position': 'center center'
+      }"
+    >
+      <div *ngIf="banner" class="banner-image-wrapper col-md-7">
+        <img
+          [src]="banner?.banner_url"
+          width="100%"
+          (load)="showButton = true"
+        />
+        <a
+          *ngIf="banner && banner?.redirect_url && showButton"
+          (click)="navigateToReleaseNotes(banner?.redirect_url)"
+          alt="redirect link button"
+          class="redirect-link-button"
+          [ngStyle]="{
+            color: banner?.button_label_color ?? '#1890af',
+            'background-color': banner?.button_color ?? 'transparent',
+            border: '1px solid ' + (banner?.button_label_color ?? '#1890af')
+          }"
+        >
+          {{ banner.button_label }}
+        </a>
+      </div>
+      <div class="megaphone-image-wrapper col-md-2" *ngIf="banner">
+        <!-- <img
+          *ngIf="banner?.button_asset_url && showButton"
+          class="megaphone-image"
+          [src]="banner?.button_asset_url"
+          height="100vh"
+          width="100%"
+        /> -->
+      </div>
+      <div *ngIf="!banner && !showButton" class="skeleton-loader"></div>
+    </div>
+  </div>
+  <div
+    [ngClass]="{
+      'col-md-6':
+        !showFirmSelection &&
+        !isInboundRequest &&
+        (DeviceService.isWebDevice || DeviceService.isDesktopDevice),
+      'col-md-12':
+        showFirmSelection &&
+        isInboundRequest &&
+        !(DeviceService.isWebDevice || DeviceService.isDesktopDevice)
+    }"
+    [class.login-section]="!(showFirmSelection || isInboundRequest)"
+  >
+    <div
+      class="authentication-form-wrapper login-form-wrapper"
+      [ngClass]="{
+        'custom-css-for-firm-selection':
+          showFirmSelection && user_firms.length > 5
+      }"
+    >
+      <div
+        class="logo-wrapper back_button_container pos-rel"
+        [ngClass]="{ 'min-height-50px': isInboundRequest }"
+      >
+        <a
+          *ngIf="showLoginWithPass && !showFirmSelection"
+          class="clickable"
+          (click)="goBackToEnterEmail()"
+          ><img
+            src="https://img.icons8.com/ios/64/000000/circled-left-2.png"
+            class="back_img"
+        /></a>
+        <img
+          src="/assets/images/logo.png"
+          alt="DiligenceVault"
+          class="logo"
+          *ngIf="!isInboundRequest"
+        />
+        <img
+          src="{{ inboundLogo }}"
+          alt="Logo"
+          class="logo"
+          *ngIf="isInboundRequest"
+        />
+      </div>
+
+      <div
+        class="alert alert-custom-danger new-custom-error"
+        *ngIf="messageShown"
+      >
+        <div class="new-custom-error-para">
+          <p
+            *ngFor="
+              let message of alertMessage;
+              let last = last;
+              let index = index
+            "
+          >
+            <strong *ngIf="index == 0">
+              {{ message }}
+            </strong>
+            <span *ngIf="index > 0">
+              {{ message }}
+            </span>
+            <span *ngIf="!last">.</span>
+          </p>
+        </div>
+      </div>
+      <div *ngIf="!showLoginWithPass && !showFirmSelection">
+        <form [formGroup]="loginForm">
+          <dv-form-element
+            [modelController]="loginForm.get('userName')"
+            labelPosition="top"
+            elementCol="12"
+            [isRequired]="true"
+          >
+            <div class="input-group">
+              <span class="input-group-addon">
+                <span appIcon name="mail"></span>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="userName"
+                placeholder="Email"
+                name="userName"
+              />
+            </div>
+            <div
+              *ngIf="
+                loginForm.get('userName').touched &&
+                loginForm.get('userName').errors?.required
+              "
+              class="text-danger"
+            >
+              Email is required
+            </div>
+            <div
+              *ngIf="
+                loginForm.get('userName').touched &&
+                loginForm.get('userName').errors?.email
+              "
+              class="text-danger"
+            >
+              Please enter a valid email
+            </div>
+          </dv-form-element>
+
+          <br /><br />
+          <div class="form-group space-on-top-lg col-md-12">
+            <dv-button
+              btnWidth="100"
+              btnClass="activate-btn"
+              [loader]="loading"
+              (onClick)="checkSamlConnection()"
+            >
+              Log in
+            </dv-button>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="showFirmSelection" class="firm_selection_container">
+        <div class="firm_loader" *ngIf="settingUpFirm">
+          <app-spinner></app-spinner>
+        </div>
+        <div class="row clearfix">
+          <div class="text-center">
+            <h4>Please select a firm</h4>
+          </div>
+        </div>
+        <div class="firm_selection_card">
+          <div
+            *ngFor="let firm of user_firms"
+            class="firm_row row clearfix"
+            [ngClass]="{ active_row: firm.firm_id == current_user.firmInfo.id }"
+          >
+            <div class="col-sm-1">
+              <div
+                class="firm_initial clickable"
+                [style]="
+                  firm.firm_logo
+                    ? 'background-color: #fff !important;border: 1px solid #989898;padding-top: 15px;'
+                    : firm.style
+                "
+              >
+                <div *ngIf="firm.firm_logo">
+                  <img
+                    src="{{ firm.firm_logo }}"
+                    alt="firm logo"
+                    class="img-responsive"
+                  />
+                </div>
+                <div *ngIf="!firm.firm_logo">{{ firm.firm_name[0] }}</div>
+              </div>
+            </div>
+            <div class="col-sm-11">
+              <div class="firm_name_container">
+                <p class="firm_name">
+                  <a
+                    *ngIf="firm.status == userFilter.Active"
+                    class="clickable"
+                    (click)="setSelectedFirm(firm)"
+                    >{{ firm.firm_name }}</a
+                  >
+                  <span
+                    *ngIf="firm.status != userFilter.Active"
+                    class="text-muted"
+                    >{{ firm.firm_name }}</span
+                  >
+                </p>
+              </div>
+              <span class="firm_action">
+                <dv-button
+                  *ngIf="firm.status == userFilter.Invited"
+                  btnClass="btn btn-xs btn-primary activateBtn"
+                  tooltip="Resend Activation Link To Email"
+                  (onClick)="resendActivation(firm)"
+                >
+                  Activate
+                </dv-button>
+                <label
+                  *ngIf="firm.status == userFilter.Pending"
+                  class="label label-warning"
+                  >Approval Pending</label
+                >
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="showLoginWithPass && !showFirmSelection">
+        <form [formGroup]="loginForm">
+          <div *ngIf="!otp_mode">
+            <dv-form-element
+              [modelController]="loginForm.get('userName')"
+              labelPosition="top"
+              elementCol="12"
+            >
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <span appIcon name="mail"></span>
+                </span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="userName"
+                  placeholder="Email"
+                  name="userName"
+                  id="userName"
+                  autocomplete="email"
+                />
+              </div>
+            </dv-form-element>
+            <br /><br />
+          </div>
+
+          <div *ngIf="!otp_mode && !isSamlLogin">
+            <dv-form-element
+              [modelController]="loginForm.get('password')"
+              [elementCol]="12"
+              [isRequired]="true"
+              *ngIf="!otp_mode && !isSamlLogin"
+            >
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <span appIcon name="key"></span>
+                </span>
+                <input
+                  class="form-control"
+                  id="new-password"
+                  placeholder="Password"
+                  [type]="passwordElementType"
+                  formControlName="password"
+                  placement="right"
+                />
+                <a
+                  [ngStyle]="{
+                    right:
+                      loginForm.get('password').touched &&
+                      loginForm.get('password')?.valid
+                        ? '32px'
+                        : '12px'
+                  }"
+                  class="password-style-element clickable"
+                  (click)="showPasswordToggle()"
+                >
+                  <span appIcon name="eye" *ngIf="passwordNotVisible"></span>
+                  <span
+                    appIcon
+                    name="view-hide"
+                    *ngIf="!passwordNotVisible"
+                  ></span>
+                </a>
+              </div>
+              <div
+                *ngIf="
+                  loginForm.get('password').touched &&
+                  loginForm.get('password').errors?.required
+                "
+                class="text-danger"
+              >
+                Password is required
+              </div>
+            </dv-form-element>
+            <br /><br *ngIf="!showLoginWithPass" />
+          </div>
+
+          <dv-form-element
+            [modelController]="loginForm.get('otp_code')"
+            labelPosition="top"
+            elementCol="12"
+            *ngIf="otp_mode"
+          >
+            <div class="helper_text">
+              Enter the code displayed in the Google Authenticator App on your
+              mobile device.
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <span appIcon name="mobile"></span>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="otp_code"
+                placeholder="Two-factor authentication code"
+                id="otp_code"
+              />
+            </div>
+            <div
+              *ngIf="
+                loginForm.get('otp_code').touched &&
+                loginForm.get('otp_code').errors?.required
+              "
+              class="text-danger"
+            >
+              Authentication code is required
+            </div>
+          </dv-form-element>
+          <br /><br />
+
+          <div class="form-group space-on-top-lg col-md-12">
+            <dv-button
+              btnWidth="100"
+              btnClass="activate-btn"
+              [loader]="loading"
+              (onClick)="login()"
+            >
+              Log in
+            </dv-button>
+          </div>
+        </form>
+      </div>
+      <div col="12" class="form-group space-on-top-lg">
+        <div class="text-right">
+          <a
+            (click)="redirectToForgetPasswordPage()"
+            *ngIf="!showFirmSelection && !showAccountCreationButton"
+            >Forgot your password?</a
+          >
+          <a
+            class="clickable"
+            *ngIf="showFirmSelection"
+            (click)="goToRequiredState()"
+            >Keep me logged in with default firm</a
+          >
+        </div>
+      </div>
+
+      <div class="login-footer text-center" *ngIf="isInboundRequest">
+        <label class="text-gray">Powered By </label>
+        <img
+          src="/assets/images/logo-small.png"
+          alt="Diligence Vault"
+          class="logo height-30"
+        />
+      </div>
+    </div>
+    <div *ngIf="showNudges">
+      <dv-nudge [nudge]="selectedNudge"></dv-nudge>
+    </div>
+  </div>
+</div>
+<div class="toaster" *ngIf="toasterVisible">
+  <span appIcon name="key" customSize="big" class="person-icon"></span>
+  <span [innerHtml]="toasterMessage"></span>
+  <button class="close-icon" (click)="closeToaster()">×</button>
+  <!-- <div class="timer" *ngIf="toasterVisible">{{ remainingTime }}</div> -->
+</div>
+<a
+  alt="Support redirect link"
+  class="help-link-button"
+  [href]="'https://faq.diligencevault.com/hc/en-us/categories/4403613345431-Account-Security-Preferences'"
+  target="_blank"
+>
+  <span
+    appIcon
+    name="question-circle"
+    customSize="large"
+    class="space-on-right"
+  ></span
+  >Account Help
+</a>

@@ -1,0 +1,68 @@
+<app-modal
+  [title]="source == 'signup' ? 'Possible Matches' : 'View Existing Firms'"
+  [isLoading]="loading"
+  [initialTemplate]="viewDupRef"
+  [isCancelButton]="false"
+  #viewDupModal
+>
+</app-modal>
+<ng-template #viewDupRef>
+  <div *ngFor="let firm of duplicateFirms">
+    <div class="panel panel-default firm-list-container">
+      <div class="panel-body">
+        <div class="dv-table dv-table-middle full-width">
+          <div class="cell text-center" col="9">
+            <div class="max-w-360 lh15 word-break-break-all text-left">
+              <b
+                [ngClass]="{ 'text-gray': !firm.is_tracking }"
+                class="block-display width-fit"
+                [tippyTooltip]="firm.name"
+                char-limit="30"
+                >{{ firm?.name }}
+              </b>
+              <a
+                class="max-w-250 block-display clickable overflow-ellipsis"
+                [href]="firm.websiteUrl"
+                target="_blank"
+                >{{ firm?.website }}
+              </a>
+              <small
+                class="text-muted block-display width-fit"
+                tippyTooltip="Firm Type: {{ firm.firm_type }}"
+                char-limit="40"
+                >{{ firm?.firm_type }}</small
+              >
+            </div>
+          </div>
+          <div class="cell bordered-left text-center" col="3">
+            <dv-button
+              [btnType]="'primary'"
+              [btnClass]="'btn btn-primary'"
+              (onClick)="addToPortfolio(firm)"
+              *ngIf="source == 'manage_firm' && !firm?.is_tracking"
+            >
+              Add to Portfolio
+            </dv-button>
+            <dv-button
+              tippyTooltip="This firm is in your portfolio. Go to detail"
+              [btnType]="'default'"
+              [btnClass]="'btn btn-primary btn-sm'"
+              (onClick)="navigateToRelatedFirms(firm.id)"
+              *ngIf="source == 'manage_firm' && firm?.is_tracking"
+            >
+              View Firm
+            </dv-button>
+            <dv-button
+              [btnType]="'default'"
+              [btnClass]="'btn btn-primary btn-sm'"
+              (onClick)="selectFirm(firm)"
+              *ngIf="source == 'signup'"
+            >
+              Select
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

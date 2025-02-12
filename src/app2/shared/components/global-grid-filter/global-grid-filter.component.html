@@ -1,0 +1,282 @@
+<div class="" *ngIf="!isDisplay && !isAPILoaded" role="alert">
+  <app-spinner [broadSpinner]="true" [spinnerHeight]="20"></app-spinner>
+</div>
+<form
+  class="form-horizontal"
+  name="searchForm"
+  novalidate
+  *ngIf="isDisplay && isAPILoaded"
+  autocomplete="off"
+>
+  <div class="panel-body">
+    <div col="12" class="space-on-bottom-lg">
+      <div offset="1" col="11" class="">
+        <label
+          class="control-label clear-margin-bottom inline-block space-on-right"
+          for="globalTernaryOperator"
+          >Documents matching</label
+        >
+        <span class="inline-block w-80">
+          <dv-select
+            [list]="dropdownItems"
+            [(ngModel)]="globalTernaryOperator"
+            bindLabel="label"
+            bindValue="key"
+            [searchable]="true"
+            name="globalTernaryOperator"
+            [id]="'globalTernaryOperator'"
+            [aria-label]="'Documents matching'"
+          ></dv-select>
+        </span>
+        <span
+          class="control-label clear-margin-bottom inline-block space-on-left fw-bolder"
+          >of the following criteria</span
+        >
+      </div>
+      <!-- Dynamic forms -->
+      <div
+        col="12"
+        class="space-on-top-xl"
+        *ngFor="let criteria of searchCriteria; let $index = index"
+      >
+        <div col="1" class="pa-lr-lg">
+          <span class="control-label fw-bolder" *ngIf="$index === 0"
+            >&nbsp;</span
+          >
+          <h5
+            class="text-right clear-margin-bottom text-uppercase"
+            *ngIf="$index > 0"
+          >
+            {{ globalTernaryOperator }}
+          </h5>
+        </div>
+        <!-- Components -->
+        <!-- 1st Column -->
+        <div col="2" class="pa-lr-lg">
+          <dv-form-element
+            [fieldName]="'Criteria'"
+            [showRightIcon]="false"
+            [isRequired]="false"
+            [elementCol]="12"
+          >
+            <span
+              for="criteria_{{ $index }}"
+              class="control-label text-capitalize fw-bolder"
+              *ngIf="$index == 0"
+              >Criteria</span
+            >
+            <dv-select
+              [list]="criteriaOptions"
+              (onSelectChange)="selectCriteria(criteria, $index, $event)"
+              bindLabel="text"
+              bindValue="id"
+              [(ngModel)]="criteria['criteriaText']"
+              [disabled]="false"
+              [clearable]="false"
+              [searchable]="true"
+              [placeholder]="'Select a criteria'"
+              id="criteria_{{ $index }}"
+              name="criteria_{{ $index }}"
+              [aria-label]="'Criteria'"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+        <!-- 2nd column -->
+        <div col="2" class="pa-lr-lg">
+          <dv-form-element
+            [fieldName]="'Condition'"
+            [showRightIcon]="false"
+            [isRequired]="false"
+            [elementCol]="12"
+          >
+            <span class="control-label fw-bolder" *ngIf="$index === 0"
+              >Condition</span
+            >
+            <dv-select
+              [(ngModel)]="criteria.condition"
+              id="condition_{{ $index }}"
+              name="condition_{{ $index }}"
+              [clearable]="false"
+              [searchable]="true"
+              [placeholder]="'Select an Option'"
+              [list]="criteria.criteriaObj?.items ?? []"
+              [aria-label]="'Condition'"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+        <!-- 3rd Column -->
+        <div col="5" class="pa-lr-lg">
+          <span class="control-label fw-bolder" *ngIf="$index == 0">Value</span>
+          <dv-form-element [fieldName]="'value'" [elementCol]="12">
+            <ng-container *ngIf="!criteria.criteriaObj?.responseType">
+              <input
+                type="text"
+                autocomplete="off"
+                [(ngModel)]="criteria.value"
+                required
+                placeholder="Type a value"
+                [pattern]="valueRegex"
+                class="form-control"
+                [readonly]="!criteria.criteriaObj"
+                id="responseType_text_{{ $index }}"
+                name="responseType_text_{{ $index }}"
+                (ngModelChange)="changeOption(criteria)"
+                aria-label="Value"
+                autocomplete="off"
+              />
+            </ng-container>
+
+            <ng-container *ngIf="criteria.criteriaObj?.responseType == 'Date'">
+              <app-date-picker
+                [minDate]="minDate"
+                [maxDate]="maxDate"
+                [value]="criteria.value"
+                (change)="setDateValue($event, criteria)"
+                [ariaLabel]="'Value'"
+              >
+              </app-date-picker>
+            </ng-container>
+
+            <ng-container
+              *ngIf="
+                criteria.criteriaObj?.text == 'Document Type' &&
+                criteria.criteriaObj?.responseType == 'Dropdown'
+              "
+            >
+              <dv-select
+                [list]="criteria.criteriaObj?.childOptions"
+                (onSelectChange)="handleOnSelectChange($event, criteria)"
+                [(ngModel)]="criteria.value"
+                bindLabel="name"
+                [bindValue]="null"
+                [clearable]="true"
+                [searchable]="true"
+                [multiple]="true"
+                placeholder="Select some options"
+                id="responseType_docType_{{ $index }}"
+                name="responseType_docType_{{ $index }}"
+              ></dv-select>
+            </ng-container>
+
+            <ng-container
+              *ngIf="
+                criteria.criteriaObj?.responseType == 'Integer' ||
+                criteria.criteriaObj?.responseType == 'Percentage' ||
+                criteria.criteriaObj?.responseType == 'Numeric'
+              "
+            >
+              <input
+                type="number"
+                [(ngModel)]="criteria.value"
+                class="form-control"
+                [readonly]="!criteria.criteriaObj"
+                id="responseType_percentage_{{ $index }}"
+                name="responseType_percentage_{{ $index }}"
+                [attr.aria-label]="
+                  'enter ' + criteria.criteriaObj?.responseType + 'value'
+                "
+                required
+                (ngModelChange)="changeOption(criteria)"
+                autocomplete="off"
+              />
+            </ng-container>
+
+            <ng-container
+              *ngIf="
+                criteria.criteriaObj?.responseType == 'TextEmail' ||
+                criteria.criteriaObj?.responseType == 'Text' ||
+                criteria.criteriaObj?.responseType == 'TextMultiLine' ||
+                criteria.criteriaObj?.responseType == 'TextPhone'
+              "
+            >
+              <input
+                type="text"
+                [(ngModel)]="criteria.value"
+                class="form-control"
+                dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                id="responseType_textEmail_{{ $index }}"
+                name="responseType_textEmail_{{ $index }}"
+                [attr.aria-label]="
+                  'enter ' + criteria.criteriaObj?.responseType + 'value'
+                "
+                (ngModelChange)="changeOption(criteria)"
+                required
+                autocomplete="off"
+              />
+            </ng-container>
+
+            <ng-container
+              *ngIf="
+                criteria.criteriaObj?.text != 'Document Type' &&
+                criteria.criteriaObj?.responseType == 'Dropdown'
+              "
+            >
+              <dv-select
+                [list]="criteria.criteriaObj?.childOptions"
+                (onSelectChange)="handleOnSelectChange($event, criteria)"
+                [(ngModel)]="criteria.value"
+                bindLabel="name"
+                [bindValue]="null"
+                [clearable]="false"
+                [searchable]="true"
+                [multiple]="true"
+                placeholder="Select some options"
+                id="responseType_dropdown_{{ $index }}"
+                name="responseType_dropdown_{{ $index }}"
+              ></dv-select>
+            </ng-container>
+          </dv-form-element>
+        </div>
+        <!-- buttons -->
+        <div col="2" class="pa-lr-lg">
+          <span class="control-label" *ngIf="$index === 0">&nbsp;</span>
+          <div>
+            <dv-button
+              tooltip="Remove Criteria"
+              container="body"
+              [btnType]="'default'"
+              [btnClass]="'space-on-right'"
+              [disabled]="searchCriteria.length === 1"
+              size="sm"
+              (onClick)="removeCriteria($index)"
+              [ariaLabel]="'Remove Criteria'"
+            >
+              <span appIcon name="minus"></span>
+            </dv-button>
+            <dv-button
+              [loader]="false"
+              [btnType]="'default'"
+              [btnClass]="'space-on-right'"
+              [size]="'sm'"
+              *ngIf="searchCriteria.length == $index + 1"
+              (onClick)="addNewCriteria(criteria)"
+              tooltip="Add Criteria"
+              container="body"
+              [ariaLabel]="'Add Criteria'"
+            >
+              <span appIcon name="plus"></span>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div col="12" class="space-on-bottom-xl">
+      <div offset="1" col="4" class="">
+        <dv-button
+          [btnType]="'primary'"
+          class="space-on-right-lg"
+          (onClick)="getSearchResults()"
+          [disabled]="!isValidSearch"
+        >
+          <span appIcon name="search" class="space-on-right"></span>
+          Start Searching
+        </dv-button>
+        <dv-button [btnType]="'default'" (onClick)="resetFiltersData()">
+          <span appIcon name="refresh" class="space-on-right"></span>
+          Reset Filters
+        </dv-button>
+      </div>
+    </div>
+  </div>
+</form>

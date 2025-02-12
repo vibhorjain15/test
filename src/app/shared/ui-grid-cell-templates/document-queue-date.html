@@ -1,0 +1,11 @@
+<ui-grid-cell-contents>
+  <div>
+    <span data-ng-show="!row.groupHeader">
+      {{row.entity.as_of_date|date:'dd-MMMM-yyyy'}}
+    </span>
+
+    <span data-ng-if="row.groupHeader">
+      {{row.treeNode.children[0].row.entity.as_of_date|date:'dd-MMMM-yyyy'}}
+    </span>
+  </div>
+</ui-grid-cell-contents>

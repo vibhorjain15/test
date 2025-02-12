@@ -1,0 +1,4 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div data-ng-hide="!row.entity.last_updated_at">{{row.entity.last_updated_at | fromNow}}</div>
+  <div data-ng-hide="row.entity.last_updated_at">Never</div>
+</ui-grid-cell-contents>

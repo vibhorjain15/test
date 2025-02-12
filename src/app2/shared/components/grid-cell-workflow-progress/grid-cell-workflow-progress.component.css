@@ -1,0 +1,38 @@
+.workflow-wrapper {
+  display: flex;
+  width: 170px;
+  height: 40px;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3.538px;
+}
+
+.workflow-right-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.workflow-success {
+  background: var(--Success-Icon-Green, #1b985b);
+}
+.workflow-danger {
+  background: var(--Tertiary-Bright-Pink, #b2006f);
+}
+.workflow-warning {
+  background: var(--note-warning-icon-yellow-600, #ffc107);
+}
+.workflow-in-progress {
+  background: var(--Tertiary-Bright-Blue, #0065c1);
+}
+.workflow-disable {
+  opacity: 0.5;
+  background: var(--Text-Grey-Subtext-400, #6b6e80);
+}

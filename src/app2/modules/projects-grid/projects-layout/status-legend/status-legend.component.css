@@ -1,0 +1,7 @@
+.label-danger-light{
+  color: var(--dark-red) !important;
+  background-color: var(--dark-gray) !important;
+}
+.label-orange-light {
+  color: var(--orange-900) !important;
+}

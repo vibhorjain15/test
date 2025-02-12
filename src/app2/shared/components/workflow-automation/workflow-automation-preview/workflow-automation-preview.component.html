@@ -1,0 +1,268 @@
+<div class="panel panel-default workflow-panel">
+  <div class="panel-heading">
+    <h4 class="clear-margin">
+      <b>Workflow Process Preview</b>
+    </h4>
+  </div>
+  <div class="panel-body clearfix">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="65"
+      *ngIf="loading_workflow"
+    ></app-spinner>
+    <div *ngIf="workflow_audits && !loading_workflow">
+      <form [formGroup]="workflow_audit_preview_form" autocomplete="off">
+        <div class="row">
+          <div col="4">
+            <dv-form-element
+              [fieldName]="'name'"
+              tooltip-placement="top"
+              [modelController]="
+                workflow_audit_preview_form.get('workflowNameControl')
+              "
+              [elementCol]="7"
+              label="Name:"
+              [errorMessage]="' Workflow Name is required'"
+            >
+              <input
+                type="text"
+                class="form-control"
+                id="workflowNameControl"
+                name="name"
+                formControlName="workflowNameControl"
+                dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                required
+              />
+            </dv-form-element>
+          </div>
+          <div col="6">
+            <dv-form-element
+              [fieldName]="'Workflow'"
+              tooltip-placement="top"
+              label="Select Workflow Definition:"
+              labelCol="5"
+              elementCol="7"
+              [for]="'workflowDefinitionControl'"
+            >
+              <dv-select
+                [id]="'workflowDefinitionControl'"
+                [clearable]="false"
+                [searchable]="true"
+                formControlName="workflowDefinitionControl"
+                notFoundText="Could not find any workflows"
+                placeholder="Select a workflow"
+                (onSelectChange)="onWorkflowChanged()"
+                [list]="workflows"
+              >
+              </dv-select>
+            </dv-form-element>
+          </div>
+        </div>
+        <div class="row">
+          <div col="4" class="space-on-top-xl">
+            <dv-form-element
+              [fieldName]="'Due Date'"
+              label="Workflow Due Date:"
+              elementCol="7"
+              elementClass="margin-auto"
+            >
+              <span type="text" class="space-on-top text-danger fw-bolder">{{
+                workflow_due_date | dvDate : ["isLocaleDate"]
+              }}</span>
+            </dv-form-element>
+          </div>
+
+          <div col="6" class="space-on-top-xl">
+            <dv-form-element
+              [fieldName]="'Process Owner'"
+              labelCol="5"
+              elementCol="7"
+              label="Change Workflow Process Owner:"
+              [for]="'ownerControl'"
+            >
+              <dv-select
+                [id]="'ownerControl'"
+                [clearable]="false"
+                [searchable]="true"
+                formControlName="ownerControl"
+                notFoundText="Could not find any action items"
+                placeholder="Select an owner"
+                [list]="teamMembers"
+                [bindLabel]="'fullname'"
+              >
+              </dv-select>
+            </dv-form-element>
+          </div>
+        </div>
+      </form>
+      <hr col="12" />
+
+      <table
+        class="table table-borderless clear-margin-bottom workflow-preview-table"
+      >
+        <thead>
+          <tr>
+            <th class="text-center">Workflow Steps</th>
+            <th class="text-center">Actions for the Step</th>
+            <th class="text-center">DueDate</th>
+            <th class="text-center">Owner</th>
+            <th class="text-center">Checklist</th>
+          </tr>
+        </thead>
+        <tbody
+          class="borderless"
+          *ngFor="
+            let step of workflow?.steps;
+            let stepIndex = index;
+            trackBy: trackByIndex
+          "
+        >
+          <tr
+            *ngFor="
+              let action of step.actions;
+              let $index = index;
+              let actionIndex = index;
+              trackBy: trackByIndex
+            "
+          >
+            <td
+              [ngClass]="{
+                'vertical-border-td': stepIndex !== workflow?.steps.length - 1,
+                relative:
+                  $index === 0 && stepIndex === workflow?.steps.length - 1
+              }"
+            >
+              <div *ngIf="$index === 0" class="wordflow-step-action">
+                {{ action.name }}
+                <span
+                  [tooltip]="action.description"
+                  container="body"
+                  appIcon
+                  name="info"
+                  class="space-on-left"
+                  [ngClass]="{ disableField: !action.description }"
+                >
+                </span>
+              </div>
+            </td>
+            <td>
+              <button
+                [tooltip]="action.action_id"
+                container="body"
+                class="btn btn-sm btn-default"
+                [attr.aria-label]="action.action_id"
+              >
+                <span
+                  appIcon
+                  name="notepad"
+                  *ngIf="action.action_id == 'add_note'"
+                ></span>
+                <span
+                  appIcon
+                  name="thumbs-up"
+                  *ngIf="action.action_id == 'approve'"
+                ></span>
+                <span
+                  appIcon
+                  name="thumbs-down"
+                  *ngIf="action.action_id == 'non_approval'"
+                ></span>
+                <span
+                  appIcon
+                  name="star"
+                  *ngIf="action.action_id == 'rate'"
+                ></span>
+                <span
+                  appIcon
+                  name="mail"
+                  *ngIf="action.action_id == 'alert'"
+                ></span>
+                <span
+                  appIcon
+                  name="file-pdf-o"
+                  *ngIf="action.action_id == 'extract_data'"
+                ></span>
+                <span
+                  appIcon
+                  name="eye"
+                  *ngIf="action.action_id == 'review'"
+                ></span>
+                <span
+                  appIcon
+                  name="check2"
+                  *ngIf="action.action_id == 'complete'"
+                ></span>
+                <span
+                  appIcon
+                  name="hour-glass"
+                  *ngIf="!action.action_id"
+                ></span>
+              </button>
+            </td>
+            <td>
+              <app-date-picker
+                [minDate]="minDate"
+                [value]="action.due_at"
+                (change)="dueDateChanged($event, action)"
+                required
+              >
+              </app-date-picker>
+            </td>
+            <td>
+              <div *ngIf="action.is_owner_task">
+                <small class="w-210 text-muted"
+                  >Assigned to Process Owner</small
+                >
+              </div>
+              <div *ngIf="!action.is_owner_task" class="ownerDiv">
+                <span
+                  class="label text-uppercase label-default"
+                  *ngFor="let user of action.users"
+                  [tooltip]="displayUserName(user, 'user')"
+                >
+                  <small>{{ showInitials(user, "user") }}</small>
+                </span>
+                <span
+                  class="label text-uppercase label-default"
+                  *ngFor="let function of action.functions"
+                  [tooltip]="displayUserName(function, 'function')"
+                >
+                  <small>{{ showInitials(function, "function") }}</small>
+                </span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <ul *ngIf="action.checklist.length" class="todo-list">
+                  <li
+                    *ngFor="let todo of action.checklist"
+                    class="todo-list-item"
+                  >
+                    <ng-container *ngIf="todo.is_active">
+                      <small [tooltip]="todo.text" container="body">{{
+                        todo.text
+                      }}</small>
+                    </ng-container>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="form-group">
+        <div col="12" class="text-center">
+          <div class="preview-footer">
+            <dv-button
+              [loader]="trigger_workflow"
+              (onClick)="triggerWorkflow()"
+              [disabled]="utils.getObjectLength(workflow.steps) < 1"
+            >
+              Trigger Workflow
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

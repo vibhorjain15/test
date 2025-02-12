@@ -1,0 +1,98 @@
+<!-- Add class 'ck' to avoid closing ckeditor on outside click -->
+<div class="ck" *ngIf="!isOutsideEditorComment; else outsideEditorComment">
+  <side-panel-wrapper
+    [title]="'Review Comments'"
+    [isFooter]="false"
+    [showAddComment]="true"
+    (onCancelClick)="onCancel()"
+    (onAddNewComment)="addExternalComment()"
+  >
+    <div
+      class="editor-container__sidebar"
+      [ngClass]="{ 'editor-container__disable-controls': showLoader }"
+    >
+      <div class="more-text space-on-bottom-lg" aria-label="Question Text">
+        <span>
+          <b class="outside-editor-container-heading">Question: </b>
+          <span [innerHTML]="question?.text"></span>
+        </span>
+      </div>
+      <div class="tabs">
+        <button
+          class="tabs__item"
+          [class.active]="tab === 'comments'"
+          (click)="handleTabClick('comments')"
+        >
+          Unresolved
+        </button>
+        <button
+          class="tabs__item"
+          [class.active]="tab === 'comments-archive'"
+          (click)="handleTabClick('comments-archive')"
+        >
+          Resolved
+        </button>
+      </div>
+      <div class="sidebar__container">
+        <div
+          class="sidebar comments__list overflow"
+          [class.active]="tab === 'comments'"
+          #commentsContainer
+        ></div>
+        <div
+          class="sidebar sidebar--archive"
+          [class.active]="tab === 'comments-archive'"
+        >
+          <div class="comments-archive">
+            <div
+              class="comments-archive__list"
+              #commentsArchiveListContainer
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="showLoader" class="editor-container__overlay">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+    <div sidePanelFooter class="sidebar__footer">
+      <dv-button
+        [ngClass]="{
+          'hide--resolve-comment-btn': tab === 'comments-archive'
+        }"
+        [disabled]="!isAnyOpenCommentsAvailable || apiCallsInProgress"
+        [loader]="apiCallsInProgress"
+        btnType="default"
+        btnClass="btn-primary-outline width-100-pct"
+        class="flex-grow-1"
+        (onClick)="resolveComments()"
+      >
+        Resolve All Comments
+      </dv-button>
+      <dv-button
+        [disabled]="isPreviousButtonDisabled || apiCallsInProgress"
+        btnType="primary"
+        class="space-on-left"
+        tooltip="Go to previous question"
+        (onClick)="navigateToPreviousQuestion()"
+      >
+        <span appIcon name="chevron-left"></span>
+      </dv-button>
+      <dv-button
+        [disabled]="isNextButtonDisabled || apiCallsInProgress"
+        btnType="primary"
+        class="space-on-left"
+        tooltip="Go to next question"
+        (onClick)="navigateToNextQuestion()"
+      >
+        <span appIcon name="chevron-right"></span>
+      </dv-button>
+    </div>
+  </side-panel-wrapper>
+</div>
+<ng-template #outsideEditorComment>
+  <ck-outside-comments-panel
+    [question]="question"
+    [onSuccess]="onSuccess"
+  ></ck-outside-comments-panel>
+</ng-template>

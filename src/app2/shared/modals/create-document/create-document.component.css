@@ -1,0 +1,19 @@
+.create-folder-class {
+  display: flex;
+  flex-direction: column;
+}
+.folder-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.searchIcon {
+  position: absolute;
+  right: 17px;
+  top: 8px;
+  color: #9a9a9a;
+  font-size: 17px;
+}
+input.folder-location.form-control[readonly] {
+  background-color: white !important;
+}

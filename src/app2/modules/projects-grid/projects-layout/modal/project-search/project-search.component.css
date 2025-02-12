@@ -1,0 +1,35 @@
+.project-filter-segment {
+  padding: 10px;
+  background: rgb(236, 247, 249);
+  display: grid;
+}
+
+.project-filter-switch {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+
+.project-filter-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+::ng-deep .project-filter-operator .ng-select-container {
+  height: 28px !important;
+  border: none;
+  min-height: 28px;
+}
+::ng-deep .project-filter-date-picker .date-time-container {
+  background-color: white;
+}
+.operator-center {
+  display: flex;
+  justify-content: right;
+}
+
+.entity-setting {
+  margin-bottom: 0px;
+}

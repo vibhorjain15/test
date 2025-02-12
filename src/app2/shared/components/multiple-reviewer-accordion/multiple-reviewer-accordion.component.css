@@ -1,0 +1,49 @@
+.review-detail-multiple {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.assign-reviewer-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reviewers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.name {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+:host ::ng-deep .accordion-group .panel {
+  background-color: #fff;
+
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep accordion-group.panel {
+  box-shadow: none !important;
+}
+
+.reviewer-count {
+  background: #eeeeee 0% 0% no-repeat padding-box;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.min-reviewer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.note-panel {
+  border-radius: 4px;
+}

@@ -1,0 +1,26 @@
+<ui-grid-cell-contents>
+  <button btn-type="default"
+          size="sm"
+          ng-hide="grid.appScope.vm.isCurrentFirm(row.entity)"
+          data-ng-class="{'disabled': (row.entity.status != 'Active')}"
+          uib-tooltip="{{(grid.appScope.vm.isCurrentFirm(row.entity) && (row.entity.status == 'Active'))? 'You are logged in to this firm': (!grid.appScope.vm.isCurrentFirm(row.entity) && (row.entity.status != 'Active'))? 'This account is not active' : 'Switch to this firm'}}"
+          ng-click="grid.appScope.vm.checkSamlConnection(row.entity)"><icon name="swap"></icon>
+  </button>
+
+  <button btn-type="default"
+          size="sm"
+          uib-tooltip="Request activation link for this firm"
+          data-ng-if="(row.entity.status == 'Invited')"
+          ng-click="grid.appScope.vm.activateFirmAccess(row.entity)">
+    <icon name="check"></icon>
+  </button>
+
+  <button btn-type="default"
+          size="sm"
+          uib-tooltip="Request approval from the admin"
+          data-ng-if="(row.entity.status == 'PendingApproval')"
+          ng-click="grid.appScope.vm.requestApproval(row.entity)">
+    <icon name="check"></icon>
+  </button>
+
+</ui-grid-cell-contents>

@@ -1,0 +1,31 @@
+.pull-right-flex {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ddq-checkbox-margin {
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+.ddq-label-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+}
+
+.ddq-slash {
+  margin: 4px;
+}
+
+.new-ddq-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .ng-tag-label {
+  font-size: 100% !important;
+  color: #16a1ab !important;
+}

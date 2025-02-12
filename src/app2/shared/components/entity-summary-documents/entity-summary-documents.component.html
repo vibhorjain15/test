@@ -1,0 +1,53 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Documents</h5>
+  </div>
+  <div class="panel-body" *ngIf="!attachments">
+    <app-spinner></app-spinner>
+  </div>
+  <ul class="list-group">
+    <li
+      class="list-group-item"
+      *ngFor="let attachment of attachments | limitTo : 5"
+    >
+      <div class="clearfix">
+        <div class="pull-left">
+          <a
+            document-viewer
+            [dd_document]="attachment"
+            class="clickable"
+            (callbackEvent)="handleCallback($event)"
+          >
+            {{ attachment.file_name }}
+          </a>
+          <br *ngIf="attachment.type_name" />
+          <span class="text-muted" *ngIf="attachment.type_name"
+            >({{ attachment.type_name }})</span
+          >
+          <br />
+          <small class="text-muted">
+            as of {{ attachment.as_of_date | dvDate : ["isLocaleDate"] }}
+          </small>
+          <br />
+          <small class="text-muted" *ngIf="isManager">
+            <span appIcon name="eye"></span>
+            {{ attachment.view_count }} views
+          </small>
+        </div>
+        <div class="pull-right">
+          <app-attachment-icon
+            [filename]="attachment.file_name"
+            size="2x"
+            class="file-attachment-icon"
+          >
+          </app-attachment-icon>
+        </div>
+      </div>
+    </li>
+
+    <li class="list-group-item" *ngIf="!attachments?.length">
+      <app-empty-state message="No documents found"> </app-empty-state>
+    </li>
+  </ul>
+  <ng-content></ng-content>
+</div>

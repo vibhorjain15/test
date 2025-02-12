@@ -1,0 +1,62 @@
+<app-modal
+  firstButtonLabel="Update"
+  title="Manage Tags"
+  [subTitle]="questions.length + ' questions selected'"
+  (onFirstClick)="updateTagsBulkData($event)"
+  [isLoading]="loadingData"
+>
+  <!-- not getting used -->
+  <!-- <div *ngIf="addNewQuestionToggle" class="add-new-questions-wrapper">
+    <div class="space-on-bottom-xl">
+      <p class="title-txt">Add New Tags</p>
+    </div>
+    <div>
+      <textarea [(ngModel)]="tagsToBeAdded"></textarea>
+    </div>
+    <div class="hint-text">Add a (,) in between to add multiple tags.</div>
+  </div> -->
+
+  <helper-text
+    >New tags can be created by Super Admins and Business Admins under Firm
+    Settings > Manage Tags and Custom Fields.</helper-text
+  >
+
+  <div class="remove-all-action" *ngIf="IsRemoveAllTagsOption">
+    <a
+      (click)="removeAllTags()"
+      class="clickable danger text-danger pull-right"
+    >
+      Remove All Tags
+    </a>
+  </div>
+  <manage-bulk-tags
+    type="tags"
+    [questions]="questions"
+    [dropdownData]="tags"
+    (onChangeTags)="handleChangetags($event)"
+    (OnRemoveQuestions)="handleRemoveQuestions($event)"
+    (OnBulkRemoveQuestions)="handleBulkRemoveQuestions($event)"
+  ></manage-bulk-tags>
+  <div class="space-on-top-xxl list-bulk-items width-50-pct">
+    <p class="space-on-bottom-xl">
+      Add Tags to all selected records
+      <span
+        appIcon
+        name="info"
+        class="space-on-left"
+        tooltip="To add tag(s) to all the selected questions at once."
+      >
+      </span>
+    </p>
+    <dv-select
+      [(ngModel)]="tagsList"
+      [clearable]="false"
+      [searchable]="true"
+      [multiple]="true"
+      placeholder="Select tags"
+      [aria-label]="'Select tags'"
+      [list]="tags"
+    >
+    </dv-select>
+  </div>
+</app-modal>

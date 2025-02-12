@@ -1,0 +1,26 @@
+.danger {
+  color: #cd3333;
+}
+.mt-10 {
+  margin-top: 10px;
+}
+.form-group {
+  text-align: center;
+}
+.panel-body-modify {
+  padding-right: 5px;
+  padding-bottom: 15px;
+  padding-left: 5px;
+}
+.bold-blue {
+  color: #3891a6;
+  font-weight: 700;
+}
+
+.editor ::ng-deep .tox .tox-toolbar__primary {
+  border: 0;
+}
+
+.m-20 {
+  margin: 20px;
+}

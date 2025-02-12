@@ -1,0 +1,5 @@
+.hotTable {
+  padding: 1%;
+  min-height: 200px;
+  overflow: auto;
+}

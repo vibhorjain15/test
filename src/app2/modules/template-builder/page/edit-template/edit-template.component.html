@@ -1,0 +1,37 @@
+<div class="row clearfix" role="region" aria-label="Question Interface">
+  <div *ngIf="!isSidePanelOpened" class="side-panel-in-animation">
+    <div class="col-md-4">
+      <categories-list
+        [loading]="categoryLoading"
+        [categoryData]="categories"
+        [activeRow]="activeCategoryRow"
+      ></categories-list>
+    </div>
+
+    <div class="col-md-8">
+      <questions-list
+        [loading]="questionsLoading"
+        [questionsData]="questions"
+        [categoryList]="categories"
+        [isInvestor]="isInvestor"
+      ></questions-list>
+    </div>
+  </div>
+
+  <dv-drag-panel-list
+    [leftColumnWidthClass]="'col-md-7'"
+    [loading]="questionsLoading"
+    *ngIf="isSidePanelOpened"
+  >
+    <questions-list
+      leftPanel
+      [loading]="questionsLoading"
+      [questionsData]="questions"
+      [isInvestor]="isInvestor"
+      [activeRow]="activeQuestionRow"
+      [categoryList]="categories"
+    ></questions-list>
+    <side-panel [activePanelId]="activePanelId | async" rightPanel>
+    </side-panel>
+  </dv-drag-panel-list>
+</div>

@@ -1,0 +1,21 @@
+tinymce.addI18n("ca", {
+  "Advanced sort...": "Ordre avan\xe7at...",
+  "Advanced Sort": "Ordre avan\xe7at",
+  "Sort table by column ascending": "Ordenar la taula per columna ascendent",
+  "Sort table by column descending": "Ordenar la taula per columna descendent",
+  "Sort": "Ordenar",
+  "Order": "Ordre",
+  "Sort by": "Ordenar per",
+  "Ascending": "Ascendent",
+  "Descending": "Descendent",
+  "Selection": "Selecci\xf3",
+  "Table": "Taula",
+  "Column": "Columna",
+  "Row": "Fila",
+  "Column {0}": "Columna {0}",
+  "Row {0}": "Fila {0}",
+  "Row numbering": "Numeraci\xf3 de files",
+  "None": "Cap",
+  "Numeric": "Num\xe8ric",
+  "Alpha": "Alfa"
+});

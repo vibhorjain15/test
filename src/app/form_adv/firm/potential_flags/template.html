@@ -1,0 +1,92 @@
+<div data-ng-if="vm.Utils.isAngular()" >
+<ng2-potential-flags></ng2-potential-flags>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <spinner data-ng-hide="vm.formadv_firm"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel"
+           data-ng-show="vm.formadv_firm">
+        <div class="bordered-right cell">
+          <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+            {{::vm.formadv_firm.businessName}}
+          </h4>
+
+          <small class="text-muted">
+            Latest Filing: {{::vm.formadv_firm.filingDate|date}}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body padded-xxxl">
+
+      <span data-ng-if="vm.displayFlags">
+
+          <spinner broad-spinner spinner-height='80' data-ng-if="!vm.flags"></spinner>
+
+
+          <span data-ng-if="vm.flags && vm.flags.length && vm.displayFlags">
+
+            <div col="12" class="pa-lr-xxl">
+              <div col="12" class="space-on-top-lg padded-bottom-xl">
+                <div col="9">
+                  <div col="11" offset="1">
+                    <label class="control-label">Question</label>
+                  </div>
+                </div>
+                <div col="2" class="text-center">
+                  <label class="control-label">Response</label>
+                </div>
+                <div col="1" class="text-center">
+                  <label class="control-label">% of Total</label>
+                </div>
+              </div>
+            </div>
+
+            <div col="12" data-ng-repeat="group in vm.grouped_flags">
+
+              <div class="panel panel-default">
+                  <div class="panel-heading">
+                      <h5 class="panel-title">{{group.type}}</h5>
+                  </div>
+                  <div class="panel-body">
+                    <div col="12" class="pa-tb-lg threshold-item" data-ng-repeat="flag in group.flags">
+                      <div col="9">
+                          <h5 class="text-center inline-block" col="1"><span class="space-on-right-lg">{{$index+1}}.</span></h5>
+                          <h5 col="11" class="lh1-5 space-on-top">{{flag.text}}</h5>
+                      </div>
+                      <div col="2" class="text-center">
+                          <h5><span class="space-on-right-lg">{{flag.value}}</span></h5>
+                      </div>
+                      <div col="1" class="text-center">
+                        <dd-score score="flag.percentile"
+                                  show-total="true"
+                                  keep-watcher-on="true"
+                                  total="100"></dd-score>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </span>
+
+          <empty-state icon-name="smile-o" col="6" offset="3"
+                       message="Our algorithm came back empty. No flags found for {{::vm.formadv_firm.businessName}}."
+                       data-ng-if="vm.flags && !vm.flags.length"></empty-state>
+
+      </span>
+
+      <empty-state icon-name="smile-o" col="6" offset="3"
+                   message="Potential flags for {{::vm.formadv_firm.businessName}} available for analytics subscribers. To learn more, or to unlock this analysis, please get in touch with us at subscriptions@diligencevault.com"
+                   data-ng-if="!vm.displayFlags"></empty-state>
+
+
+    </div>
+  </div>
+</div>
+</div>

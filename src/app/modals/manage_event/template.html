@@ -1,0 +1,120 @@
+<form class="form-horizontal" name="vm.event_form" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Event' : 'Add New Event'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+    <form-group field-name="Event Name" class="col-sm-10">
+      <label for="event-name" class="control-label" col="4" col-type="sm">Name</label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="event-name"
+               name="event_name"
+               placeholder="What is this event about?" 
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.params.name"
+               required>
+      </div>
+    </form-group>
+
+    <form-group field-name="Entity" class="col-sm-10">
+      <label for="entity" class="control-label" col="4" col-type="sm">Associated with</label>
+      <div col="8" col-type="sm">
+        <div class="row">
+          <div col="12">
+            <select name="entity" id="entity" class="form-control" chosen required
+              data-ng-options="entity.id as entity.name for entity in vm.entities" data-ng-model="vm.params.entity_id">
+              <option value="">--Select--</option>
+            </select>
+          </div>
+          <div col="12" class="space-on-top-lg text-right">
+            <div class="btn-group">
+              <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Fund'}"
+                data-ng-click="vm.setEntityType('Fund')">
+                <icon name="fund" class="space-on-right"></icon>Product
+              </label>
+              <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Firm'}"
+                data-ng-click="vm.setEntityType('Firm')">
+                <icon name="institution" class="space-on-right"></icon>Firm
+              </label>
+              <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Strategy'}"
+                data-ng-click="vm.setEntityType('Strategy')">
+                <icon name="strategy" class="space-on-right"></icon>Strategy
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form-group>
+
+    <div class="col-sm-10">
+      <form-group field-name="Event Date" control-selector="dv-datepicker" class="col-sm-8">
+          <label for="event-date" class="control-label col-sm-6">
+            Date/Time
+          </label>
+
+          <div class="col-sm-6">
+            <dv-datepicker
+                id="event-date"
+                ng-required="true"
+                data-ng-model="vm.params.event_start_at"
+                min-date="vm.minDate">
+            </dv-datepicker>
+          </div>
+      </form-group>
+      <form-group field-name="Event Start Time" class="col-sm-2 no-margin manage-event" tooltip-placement="bottom">
+            <select name="start_at"
+                      id="start_at"
+                      class="form-control"
+                      chosen
+                      required
+                      data-ng-options="time.id as time.name for time in vm.times"
+                      data-ng-model="vm.params.start_time">
+                  <option value="">--Select start time--</option>
+              </select>
+      </form-group>
+      <form-group field-name="Event Duration" class="col-sm-2 no-margin clear-horizontal-padding manage-event">
+            <select name="duration"
+                      id="duration"
+                      class="form-control"
+                      chosen
+                      required
+                      data-ng-options="duration.id as duration.name for duration in vm.durations"
+                      data-ng-model="vm.params.duration">
+                  <option value="">--Select duration--</option>
+              </select>
+      </form-group>
+    </div>
+
+    <form-group field-name="Event Type" class="col-sm-10">
+      <label for="type" class="control-label" col="4" col-type="sm">Type</label>
+
+      <div col="8" col-type="sm">
+        <select name="type"
+                id="type"
+                class="form-control"
+                chosen
+                required
+                data-ng-options="type.id as type.value for type in vm.types"
+                data-ng-model="vm.params.event_type">
+          <option value="">--Select--</option>
+        </select>
+      </div>
+    </form-group>
+  </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving">{{vm.edit_mode ? 'Update Event' : 'Add Event'}}</button>
+    <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

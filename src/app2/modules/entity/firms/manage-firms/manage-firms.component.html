@@ -1,0 +1,77 @@
+<div class="panel panel-default relative">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Monitor Firm Relationship"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-body">
+    <div class="panel panel-default bg-sky-blue" *ngIf="show_bulk_actions">
+      <div class="panel-body padded-lg">
+        <h5 class="inline space-on-right-lg">
+          <strong
+            >Selected Records :
+            <span class="badge">{{ totalSelectedRecords }}</span></strong
+          >
+        </h5>
+        <a
+          tooltip="Assign Internal Contacts"
+          container="body"
+          class="btn btn-default space-on-right-lg"
+          [ngClass]="{
+            linkDisabled: totalSelectedRecords > 1000
+          }"
+          (click)="assignInternalContacts()"
+        >
+          <strong><span appIcon name="user"></span> </strong>
+        </a>
+        <a
+          tooltip="Close"
+          container="body"
+          class="btn pull-right text-black danger"
+          (click)="closeQuickActions()"
+        >
+          <strong><span appIcon name="close"></span></strong>
+        </a>
+      </div>
+    </div>
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="50"
+      *ngIf="!render_grid"
+    ></app-spinner>
+    <div *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="firms"
+        [name]="gridName"
+        [showCharacterFilter]="true"
+        [onRowClicked]="onRowClicked"
+        [noRowsTemplate]="
+          !initGridSection && !firms.length ? 'Loading...' : 'No results found'
+        "
+        [onRowSelected]="onRowSelected"
+        [onSelectionChanged]="onSelectionChanged"
+        [additionalColumns]="additionalColumns"
+        [filterData]="filterData"
+        [customFilterInitValue]="filterInitValue"
+        (onLoadView)="loadView($event)"
+        #firmsGrid
+      >
+        <div class="label-list" *ngIf="filterApplied">
+          <span *ngFor="let criterion of search_criterias; let $index = index">
+            <span
+              *ngIf="criterion.advance_filter_value"
+              class="btn btn-primary-outline text-uppercase space-on-right space-on-bottom"
+            >
+              <small>{{ displayFilter(criterion) }}</small>
+              <a
+                class="space-on-left clickable link-disguise"
+                (click)="removeFilterCriterion($index)"
+                >&times;</a
+              >
+            </span>
+          </span>
+        </div>
+      </app-dv-grid>
+    </div>
+  </div>
+</div>

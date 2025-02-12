@@ -1,0 +1,4 @@
+<div *ngIf="params.data">
+    <small *ngIf="!params.data[field]"><i>N/A</i></small>
+    <small *ngIf="params.data[field]">{{params.data[field] | date:'fullDate'}}</small>
+</div>

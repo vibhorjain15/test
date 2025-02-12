@@ -1,0 +1,108 @@
+<ng2-print-preview data-ng-if="vm.Utils.isQuestionnaireAngular()"></ng2-print-preview>
+
+<div data-ng-if="!vm.Utils.isQuestionnaireAngular()" class="panel panel-default borderless-top hide-in-print-view">
+  <div class="panel-body">
+    <spinner
+      broad-spinner
+      spinner-height="65"
+      data-ng-if="!vm.diligence"
+    ></spinner>
+
+    <div
+      class="dv-table dv-table-middle dd-info-panel"
+      data-ng-if="vm.diligence"
+    >
+      <div class="bordered-right text-center cell" col="4">
+        <h4
+          class="max-w-340 lh1-5 clear-margin word-break-break-all inline-block"
+        >
+          {{::vm.diligence.entity_name}}
+        </h4>
+      </div>
+
+      <div class="cell text-center bordered-right" col="2">
+        <div class="space-on-top-n" data-ng-if="vm.disable_print">
+          <spinner broad-spinner spinner-height="15"></spinner>
+          <small>Print</small>
+        </div>
+        <button
+          btn-type="transparent"
+          print-section
+          section-id="due-diligence-preview"
+          print-options="vm.printOptions"
+          data-ng-if="!vm.disable_print"
+        >
+          <div><icon name="print" size="2x"></icon></div>
+          <small>Print</small>
+        </button>
+      </div>
+
+      <div class="cell text-center bordered-right" col="2">
+        <button
+          btn-type="transparent"
+          data-ng-click="vm.getSections('Answered')"
+          data-ng-class="{'qa-na-active': vm.statusFilter == 'Answered'}"
+          data-ng-disabled="!vm.answeredCount"
+          uib-tooltip="{{vm.statusFilter == 'Answered' ? 'Showing answered questions. Click to reset the filter.' : 'View answered questions only'}}"
+        >
+          <span class="inline-block relative">
+            <icon name="check-circle" size="2x"></icon>
+            <small class="pos-abs stick-top-ve-sm space-on-left-3">
+              <strong>{{vm.answeredCount}}</strong>
+            </small>
+          </span>
+          <div>
+            <small data-ng-if="vm.statusFilter != 'Answered'"
+              >Show Answered Only</small
+            >
+            <small data-ng-if="vm.statusFilter == 'Answered'"
+              >Showing Answered Questions</small
+            >
+          </div>
+        </button>
+      </div>
+
+      <div class="cell text-center bordered-right" col="2">
+        <button
+          btn-type="transparent"
+          data-ng-click="vm.getSections('Unanswered')"
+          data-ng-class="{'qa-na-active': vm.statusFilter == 'Unanswered'}"
+          data-ng-disabled="!vm.unansweredCount"
+          uib-tooltip="{{vm.statusFilter == 'Unanswered' ? 'Showing unanswered questions. Click to reset the filter.' : 'View unanswered questions only'}}"
+        >
+          <span class="inline-block relative">
+            <icon name="radio-unchecked" size="2x"></icon>
+            <small class="pos-abs stick-top-ve-sm space-on-left-3">
+              <strong>{{vm.unansweredCount}}</strong>
+            </small>
+          </span>
+          <div>
+            <small data-ng-if="vm.statusFilter != 'Unanswered'"
+              >Show Unanswered Only</small
+            >
+            <small data-ng-if="vm.statusFilter == 'Unanswered'"
+              >Showing Unanswered Questions</small
+            >
+          </div>
+        </button>
+      </div>
+
+      <div class="cell text-center" col="2">
+        <a ui-sref="^.questionnaire" class="btn btn-transparent">
+          <div><icon name="arrow-back" size="2x"></icon></div>
+          <small>Back to Questionnaire</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div data-ng-if="!vm.Utils.isQuestionnaireAngular()" id="due-diligence-preview" class="due-diligence-preview dd-print">
+  <questionnaire
+    filters="vm.sectionFilters"
+    readonly
+    print-preview
+    no-response-controls
+    diligence="vm.diligence"
+  ></questionnaire>
+</div>

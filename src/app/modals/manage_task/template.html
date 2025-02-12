@@ -1,0 +1,91 @@
+<form class="form-horizontal" name="vm.task_form" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Task' : 'Add New Task'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Task Text">
+      <label for="new-task-section" class="control-label" col="4" col-type="sm">Enter Task</label>
+
+      <div col="7" col-type="sm">
+          <textarea id="new-task-section"
+                    ng-model="vm.params.text"
+                    placeholder="Enter Task Text"
+                    class="form-control"
+                    name="new-task-section"
+                    rows="3"
+                    ng-required="true"></textarea>
+      </div>
+    </form-group>
+
+    <form-group field-name="Assigned to" tooltip-placement="top">
+      <label for="assigned-to" class="control-label" col="4" col-type="sm">Assigned To</label>
+      <div col="7" col-type="sm">
+        <dv-subscriber-selection functions="vm.functions" selection="vm.params.assigned_to_user" single-mode="true" form-name="vm.task_form" required="true"></dv-subscriber-selection>
+      </div>
+    </form-group>
+
+    <form-group field-name="Type" tooltip-placement="top" class="space-on-right-lg">
+      <label for="task-type" class="control-label" col="4" col-type="sm">Type</label>
+      <div col="7" col-type="sm">
+        <select name="task-type"
+              id="task-type"
+              data-ng-options="task_type.id as task_type.value for task_type in vm.task_types"
+              required
+              chosen
+              data-ng-model="vm.params.type"
+              class="form-control"
+              ng-required="true">
+        <option value="">--Select--</option>
+      </select>
+    </div>
+    </form-group>
+
+    <form-group field-name="Due at" tooltip-placement="top" control-selector="dv-datepicker">
+      <label for="due-date" class="control-label" col="4" col-type="sm">Due Date</label>
+      <div col="7" col-type="sm">
+        <dv-datepicker data-ng-model="vm.params.due_date"
+                       ng-required="true"
+                       id="due-date"
+                       min-date="vm.minDate"></dv-datepicker>
+      </div>
+    </form-group>
+
+    <form-group field-name="Frequency" tooltip-placement="top">
+      <label for="frequency" class="dv-table control-label clear-vertical-padding" col="4" col-type="sm">
+        <div class="cell">Repeat Frequency (optional)</div>
+        <div class="cell">
+          <icon name="info"
+                    class="text-info space-on-left"
+                    uib-tooltip="Select frequency for a recurring task. A new task will be created at a pre-defined frequency">
+          </icon>
+        </div>
+      </label>
+
+      <div col="7" col-type="sm">
+        <select name="frequency"
+                id="frequency"
+                data-ng-options="frequency.id as frequency.value for frequency in vm.frequencies"
+                chosen
+                data-ng-model="vm.params.frequency"
+                class="form-control">
+          <option value="">--Select--</option>
+        </select>
+      </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving">
+      {{vm.edit_mode ? 'Update Task' : 'Add Task'}}
+    </button>
+    <button btn-type="default"
+            data-ng-click="vm.cancel()">Cancel
+    </button>
+  </div>
+</form>

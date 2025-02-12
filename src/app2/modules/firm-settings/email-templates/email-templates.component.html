@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    heading="Email Templates"
+    [controls]="panelHeadingControls"
+    class="panel-heading"
+  >
+  </dv-panel-heading>
+
+  <div class="panel-body">
+    <div *ngIf="!loading">
+      <app-dv-grid [rowData]="email_templates" [name]="gridName"></app-dv-grid>
+    </div>
+    <div class="text-center" *ngIf="loading">
+      <app-spinner></app-spinner>
+    </div>
+  </div>
+</div>

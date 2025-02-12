@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h3 class="modal-title">Add Question
+    <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+  </h3>
+</div>
+
+<div class="modal-body">
+  <template-question-builder on-save="vm.onSave(question)"
+                             template-id="vm.templateId"
+                             question-params="vm.question_params"
+                             single-question-mode
+                             readonly-title
+                             hide-panel-header
+                             on-cancel="vm.cancel()"
+                             on-error="vm.close()">
+  </template-question-builder>
+</div>

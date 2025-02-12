@@ -1,0 +1,8 @@
+<ui-grid-cell-contents>
+  <span ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+</span>
+  <span ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <span data-ng-if="row.entity.user_name" uib-tooltip="{{row.entity.user_name}}" tooltip-placement="top">{{ row.entity.user_name}}</span>
+  </span>
+</ui-grid-cell-contents>

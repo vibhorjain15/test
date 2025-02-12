@@ -1,0 +1,117 @@
+<div class="qa-main padded" role="region" aria-label="Question and Answer Main">
+  <div class="qa-heading" role="heading" aria-level="2">
+    <div
+      col="1"
+      *ngIf="headingIcon || isContentIconEnabled"
+      class="text-center qa-icon-container"
+    >
+      <span
+        appIcon
+        [name]="headingIcon?.name"
+        [tooltip]="headingIcon?.tooltip"
+        container="body"
+        [adaptivePosition]="true"
+        (click)="handleHeadingIconClick(headingIcon)"
+        *ngIf="headingIcon"
+        tabindex="0"
+        [attr.aria-label]="headingIcon?.tooltip"
+      ></span>
+    </div>
+    <div
+      [innerHtml]="heading"
+      [ngClass]="{ 'padded-left': headingIcon || isContentIconEnabled }"
+      class="word-break-break-word"
+      [col]="headingIcon || isContentIconEnabled ? 11 : 12"
+    ></div>
+  </div>
+
+  <div
+    class="qa-content space-on-top-lg"
+    *ngFor="let item of content"
+    role="group"
+    aria-label="Question and Answer Content"
+  >
+    <div class="d-flex">
+      <div
+        col="1"
+        *ngIf="headingIcon || isContentIconEnabled"
+        class="text-center qa-icon-container"
+      >
+        <span
+          *ngFor="let icon of item.icons"
+          appIcon
+          [name]="icon.name"
+          [tooltip]="tooltipTemplate"
+          container="body"
+          [adaptivePosition]="true"
+          [class]="icon.class"
+          (click)="handleIconClick(icon, item)"
+          tabindex="0"
+          [attr.aria-label]="tooltipTemplate"
+        >
+          <ng-template #tooltipTemplate> {{ icon?.tooltip }} </ng-template>
+        </span>
+      </div>
+      <div
+        col="11"
+        class="qa-content-text"
+        [ngClass]="{ 'padded-left': headingIcon || isContentIconEnabled }"
+        class="word-break-break-word"
+        [col]="headingIcon || isContentIconEnabled ? 11 : 12"
+      >
+        <span [innerHtml]="item.text"></span>
+        <div class="meta-data" *ngIf="item.metaData">
+          <div
+            class="approved-info"
+            *ngIf="
+              item.metaData.iconColor === 'default' ||
+              (item.metaData.approvedBy && item.metaData.approvedAt)
+            "
+            aria-label="Meta Data"
+          >
+            <span
+              appIcon
+              name="check-circle"
+              class="align-middle font-size-14 cursor-default"
+              [ngClass]="{
+                'text-success': item.metaData.iconColor === 'green',
+                'text-danger': item.metaData.iconColor === 'red'
+              }"
+            ></span>
+            <i *ngIf="item.metaData.iconColor === 'green'"
+              >Approved by {{ item.metaData.approvedBy }} on
+              {{ item.metaData.approvedAt | dvDate }}</i
+            >
+            <i *ngIf="item.metaData.iconColor === 'red'"
+              >Revision requested by {{ item.metaData.approvedBy }} on
+              {{ item.metaData.approvedAt | dvDate }}</i
+            >
+            <i *ngIf="item.metaData.iconColor === 'default'"
+              >Response is In Review</i
+            >
+          </div>
+          <div class="created-info" *ngIf="item.metaData.addedByMetaData">
+            {{ item.metaData.addedByMetaData }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div [class.padded-left]="headingIcon || isContentIconEnabled">
+      <div
+        [class]="metaClass"
+        [offset]="headingIcon || isContentIconEnabled ? 1 : 0"
+        class="word-break-break-word"
+        *ngIf="item.meta"
+        [col]="headingIcon || isContentIconEnabled ? 11 : 12"
+      >
+        {{ item.meta }}
+      </div>
+    </div>
+  </div>
+  <ng-content
+    class="qa-content space-on-top-lg"
+    select="[content]"
+    role="group"
+    aria-label="Question and Answer Content"
+  ></ng-content>
+</div>

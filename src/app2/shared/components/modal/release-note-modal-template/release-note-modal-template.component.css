@@ -1,0 +1,43 @@
+/* Modal controls */
+.release-note-modal-control {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -10px;
+}
+.release-note-modal-control
+.btn {
+  padding: 2px 4px;
+  background-color: transparent;
+  border: none;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+/* Modal container */
+.release-note-detail-container {
+  color: #625e5e;
+  margin-top: -26px;
+}
+
+/* Modal header */
+.release-note-detail-container
+.release-note-detail-header {
+  margin: 0 0 20px 0;
+  padding-right: 28px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Modal summary */
+.release-note-detail-container
+.release-note-detail-summary {
+  padding-left: 20px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* Footer */
+.release-note-footer {
+  position: relative;
+  text-align: center;
+}

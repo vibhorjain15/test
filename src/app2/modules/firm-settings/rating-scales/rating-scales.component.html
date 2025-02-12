@@ -1,0 +1,597 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    [heading]="'Define Rating/Score Scales'"
+    [controls]="panelHeadingControls"
+    class="panel-heading"
+  >
+  </dv-panel-heading>
+  <div class="panel-body">
+    <div class="row space-on-bottom-lg">
+      <div col="12">
+        <div col="6" class="rating-selection-list">
+          <span class="filter-input">
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="filterRatingScale"
+              placeholder="Search by name"
+              aria-label="Search by name"
+              autocomplete="off"
+            />
+          </span>
+          <div class="rating-scroll-view space-on-top-lg">
+            <ul col="12" tabindex="0">
+              <app-empty-state
+                [message]="
+                  'No Rating/Score scales added. Add one by clicking the add button above.'
+                "
+                *ngIf="!ratingScalesList?.length"
+              ></app-empty-state>
+              <li
+                *ngFor="
+                  let scale of ratingScalesList | filter : filterRatingScale;
+                  let $index = index
+                "
+                [ngClass]="{
+                  'active-selection': scale.id === selectedScale?.id
+                }"
+                (click)="selectRatingScale(scale)"
+                id="rating_scale_{{ scale.id }}"
+                [attr.aria-label]="scale.name"
+                tabindex="0"
+              >
+                <div class="row item">
+                  <span class="align-middle text">
+                    <span class="ratingText">{{ scale.name }}</span>
+                  </span>
+                  <div class="pull-right controls">
+                    <span
+                      [tooltip]="
+                        scale.is_system
+                          ? 'You cannot edit system level rating scale'
+                          : ''
+                      "
+                      container="body"
+                      class="control"
+                      (click)="onEditRatingScale($event, scale, $index)"
+                      [ngClass]="{ 'disabled-Element': scale.is_system }"
+                      role="button"
+                      [attr.aria-label]="
+                        scale.is_system
+                          ? 'You cannot edit system level rating scale'
+                          : 'edit system level rating scale'
+                      "
+                      clickable
+                    >
+                      <span appIcon name="pencil"></span>
+                    </span>
+                    <span
+                      [tooltip]="
+                        scale.is_system
+                          ? 'You cannot delete system level ratings'
+                          : ''
+                      "
+                      container="body"
+                      class="control-danger"
+                      (click)="
+                        confirmRatingScaleDeletion($event, scale, $index)
+                      "
+                      [ngClass]="{ 'disabled-Element': scale.is_system }"
+                      [attr.aria-label]="
+                        scale.is_system
+                          ? 'You cannot delete system level ratings'
+                          : 'delete system level ratings'
+                      "
+                      clickable
+                    >
+                      <span appIcon name="trashcan"></span>
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div col="6">
+          <div
+            class="panel panel-default"
+            *ngIf="selectedScale?.rating_scales?.length > 0"
+          >
+            <div class="panel-heading">
+              <h5 class="panel-title">Rating Scale Preview</h5>
+            </div>
+            <div class="panel-body">
+              <div
+                *ngIf="selectedScale?.scale_mode === ratingConstants?.Absolute"
+              >
+                <span
+                  *ngFor="
+                    let scale of selectedScale.rating_scales.slice(2);
+                    let index = index
+                  "
+                  class="dv-rating dvi dvi-square rating-level fa-lg level-off"
+                  (mouseover)="hoveringOver(index + 2)"
+                  (mouseleave)="resetHovering()"
+                  (click)="handleColorClick(index + 2)"
+                  [ngStyle]="
+                    previewRating > index + 2 && {
+                      color:
+                        scales.controls[index + 2]?.get('ratingColorControl')
+                          .value
+                    }
+                  "
+                  role="button"
+                  [attr.aria-label]="'Rating level ' + (index + 2)"
+                  tabindex="0"
+                ></span>
+                <span
+                  class="align-middle space-on-left"
+                  *ngIf="previewRating || hovering"
+                >
+                  <b
+                    >{{
+                      scales.controls[previewRating - 1]?.get(
+                        "scaleNameControl"
+                      ).value
+                    }}&nbsp;</b
+                  >
+                  <a
+                    tooltip="Clear Rating"
+                    container="body"
+                    role="button"
+                    class="align-middle link-disguise link-unstyled"
+                    *ngIf="previewRating && !hovering && clickedRating"
+                    (click)="resetRatingPreview()"
+                    aria-label="Clear Rating"
+                    tabindex="0"
+                  >
+                    <span appIcon name="times"></span>
+                  </a>
+                </span>
+              </div>
+              <div
+                *ngIf="selectedScale?.scale_mode === ratingConstants?.ScoreBand"
+              >
+                <div class="text-muted small">
+                  <div
+                    class="space-on-top-lg space-on-bottom-lg"
+                    *ngFor="
+                      let _ of selectedScale.rating_scales.slice(2);
+                      let i = index
+                    "
+                  >
+                    <span
+                      class="badge dd-score-legend space-on-right text-uppercase"
+                      [ngStyle]="{
+                        'background-color':
+                          scales?.controls[i + 2].get('ratingColorControl')
+                            .value
+                      }"
+                      >{{
+                        scales?.controls[i + 2].get("scaleNameControl").value
+                          | truncate : 30
+                      }}</span
+                    >
+                    Score between
+                    {{
+                      scales?.controls[i + 2].get("rangeMinValueControl").value
+                    }}
+                    &
+                    {{
+                      scales?.controls[i + 2].get("rangeMaxValueControl").value
+                    }}
+                  </div>
+                  <span
+                    ><strong
+                      >(If total exceeds 100, we will show the color of maximum
+                      scale)</strong
+                    ></span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="selectedScale" class="list-group-item">
+      <div class="text-center" *ngIf="loading_rating_scales">
+        <app-spinner></app-spinner>
+      </div>
+      <div
+        class="row clearfix space-on-top-lg"
+        *ngIf="
+          !loading_rating_scales &&
+          selectedScale?.rating_scales &&
+          !selectedScale?.rating_scales?.length
+        "
+      >
+        <div col="6" offset="3">
+          <app-empty-state
+            [message]="'No rating/score scales available'"
+            [actionLabel]="'Add Rating/Score Scale'"
+            (action)="incrementScale()"
+          ></app-empty-state>
+        </div>
+      </div>
+      <div
+        *ngIf="!loading_rating_scales && selectedScale?.rating_scales?.length"
+        class="row clearfix"
+      >
+        <div col="12">
+          <form novalidate [formGroup]="ratingScaleForm" autocomplete="off">
+            <table
+              class="table-transparent table clear-margin"
+              *ngIf="selectedScale?.rating_scales?.length"
+            >
+              <thead>
+                <tr>
+                  <th style="width: 30%">Rating Name</th>
+                  <th
+                    style="width: 40%"
+                    *ngIf="
+                      selectedScale?.scale_mode === ratingConstants?.ScoreBand
+                    "
+                    colspan="2"
+                  >
+                    Score Range
+                  </th>
+                  <th
+                    style="width: 20%"
+                    *ngIf="
+                      selectedScale?.scale_mode === ratingConstants?.Absolute
+                    "
+                  >
+                    <span id="ratingValueLabel"> Rating Value</span>
+                  </th>
+                  <th style="width: 30%">Rating Color</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container formArrayName="scales">
+                  <tr *ngFor="let _ of scales.controls; index as i">
+                    <ng-container [formGroupName]="i">
+                      <td>
+                        <dv-form-element
+                          [modelController]="
+                            scales.controls[i].get('scaleNameControl')
+                          "
+                          [fieldName]="'Scale Name'"
+                          [elementCol]="0"
+                        >
+                          <input
+                            type="text"
+                            class="form-control"
+                            maxlength="200"
+                            (ngModelChange)="handleNameChange()"
+                            formControlName="scaleNameControl"
+                            [attr.aria-label]="
+                              'Rating Name' +
+                              ' ' +
+                              scales.controls[i].get('scaleNameControl').value
+                            "
+                            autocomplete="off"
+                          />
+                          <div
+                            *ngIf="
+                              scales.controls[i].get('scaleNameControl')
+                                .touched &&
+                              scales.controls[i].get('scaleNameControl').errors
+                                ?.required
+                            "
+                            class="danger"
+                          >
+                            Scale Name is required
+                          </div>
+                          <div
+                            *ngIf="
+                              scales.controls[i].get('scaleNameControl')
+                                .touched &&
+                              scales.controls[i].get('scaleNameControl').errors
+                                ?.duplicateName
+                            "
+                            class="danger"
+                          >
+                            Scale Name is duplicate
+                          </div>
+                        </dv-form-element>
+                      </td>
+                      <td
+                        *ngIf="
+                          selectedScale?.scale_mode ===
+                          ratingConstants?.ScoreBand
+                        "
+                      >
+                        <dv-form-element
+                          [elementCol]="0"
+                          [showRightIcon]="false"
+                          [fieldName]="'Scale Min Value'"
+                          [elementClass]="'inline-block'"
+                          [modelController]="
+                            scales.controls[i].get('rangeMinValueControl')
+                          "
+                        >
+                          <div class="rating-scales-max-width">
+                            <input
+                              type="text"
+                              id="rangeMinValueControl"
+                              class="form-control"
+                              placeholder="Minimum Value"
+                              (input)="setScaleValidity(i)"
+                              formControlName="rangeMinValueControl"
+                              autocomplete="off"
+                            />
+                            <div
+                              *ngIf="
+                                scales.controls[i].get('rangeMinValueControl')
+                                  .touched &&
+                                scales.controls[i].get('rangeMinValueControl')
+                                  .errors?.required
+                              "
+                              class="danger"
+                            >
+                              Scale Min Value is required
+                            </div>
+                            <div
+                              *ngIf="
+                                scales.controls[i].get('rangeMinValueControl')
+                                  .touched &&
+                                scales.controls[i].get('rangeMinValueControl')
+                                  .errors?.rangeStartError
+                              "
+                              class="danger"
+                            >
+                              Range should start from 0
+                            </div>
+                            <div
+                              *ngIf="
+                                scales.controls[i].get('rangeMinValueControl')
+                                  .touched &&
+                                scales.controls[i].get('rangeMinValueControl')
+                                  .errors?.rangeError
+                              "
+                              class="danger"
+                            >
+                              Minimum range should be
+                              {{
+                                selectedScale.allow_decimal_score_bands
+                                  ? "0.01"
+                                  : "one"
+                              }}
+                              more than the last scale's max range
+                            </div>
+                          </div>
+                        </dv-form-element>
+                      </td>
+                      <td
+                        *ngIf="
+                          selectedScale?.scale_mode ===
+                          ratingConstants?.ScoreBand
+                        "
+                      >
+                        <dv-form-element
+                          [fieldName]="'Scale Max Value'"
+                          [elementClass]="'inline-block'"
+                          [modelController]="
+                            scales.controls[i].get('rangeMaxValueControl')
+                          "
+                          [showRightIcon]="false"
+                          [elementCol]="0"
+                        >
+                          <div class="rating-scales-max-width">
+                            <input
+                              type="text"
+                              class="form-control"
+                              placeholder="Maximum Value"
+                              (input)="setScaleValidity(i, false)"
+                              (blur)="onBlurMethod(i, false)"
+                              formControlName="rangeMaxValueControl"
+                              autocomplete="off"
+                            />
+                            <div
+                              *ngIf="
+                                scales.controls[i].get('rangeMaxValueControl')
+                                  .touched &&
+                                scales.controls[i].get('rangeMaxValueControl')
+                                  .errors?.required
+                              "
+                              class="danger"
+                            >
+                              Scale Max Value is required
+                            </div>
+                            <div
+                              *ngIf="
+                                scales.controls[i].get('rangeMaxValueControl')
+                                  .touched &&
+                                scales.controls[i].get('rangeMaxValueControl')
+                                  .errors?.rangeEndError
+                              "
+                              class="danger"
+                            >
+                              Maximum range should be 100
+                            </div>
+                            <div
+                              *ngIf="
+                                scales.controls[i].get('rangeMaxValueControl')
+                                  .touched &&
+                                scales.controls[i].get('rangeMaxValueControl')
+                                  .errors?.invalidRangeError
+                              "
+                              class="danger"
+                            >
+                              Max value should be greater than Min value
+                            </div>
+                          </div>
+                        </dv-form-element>
+                      </td>
+                      <td
+                        *ngIf="
+                          selectedScale?.scale_mode ===
+                          ratingConstants?.Absolute
+                        "
+                      >
+                        <dv-form-element
+                          [fieldName]="'Scale Value'"
+                          [elementClass]="'inline-block'"
+                          [modelController]="
+                            scales.controls[i].get('ratingScaleControl')
+                          "
+                          [elementCol]="0"
+                        >
+                          <input
+                            type="text"
+                            id="ratingScaleControl"
+                            class="form-control"
+                            title="Rating Scale"
+                            [attr.aria-label]="
+                              'Rating Scale' +
+                              '' +
+                              scales.getRawValue()[i].ratingScaleControl
+                            "
+                            autocomplete="off"
+                            [value]="
+                              scales.getRawValue()[i].ratingScaleControl == -1
+                                ? ''
+                                : scales.getRawValue()[i].ratingScaleControl
+                            "
+                            disabled
+                          />
+                        </dv-form-element>
+                      </td>
+                      <td>
+                        <dv-form-element
+                          [fieldName]="'Scale Color'"
+                          [modelController]="
+                            scales.controls[i].get('ratingColorControl')
+                          "
+                          [showRightIcon]="false"
+                          [elementCol]="0"
+                        >
+                          <input
+                            class="form-control text-uppercase"
+                            type="text"
+                            formControlName="ratingColorControl"
+                            (input)="setModelValidity(i)"
+                            [colorPicker]="
+                              scales.controls[i].get('ratingColorControl').value
+                            "
+                            [cpOKButton]="true"
+                            [cpOKButtonClass]="'btn btn-primary btn-xs'"
+                            (colorPickerChange)="onColorPickerChange($event, i)"
+                            [style.background]="
+                              scales.controls[i].get('ratingColorControl').value
+                            "
+                            [style.color]="
+                              getColor(
+                                scales.controls[i].get('ratingColorControl'),
+                                i
+                              )
+                            "
+                            [cpOutputFormat]="'hex'"
+                            [attr.aria-label]="
+                              'Rating Color' +
+                              '' +
+                              scales.controls[i].get('ratingColorControl').value
+                            "
+                            autocomplete="off"
+                          />
+                          <div
+                            *ngIf="
+                              scales.controls[i].get('ratingColorControl')
+                                .touched &&
+                              scales.controls[i].get('ratingColorControl')
+                                .errors?.required
+                            "
+                            class="danger"
+                          >
+                            Scale Color is required
+                          </div>
+                          <div
+                            *ngIf="
+                              scales.controls[i].get('ratingColorControl')
+                                .touched &&
+                              scales.controls[i].get('ratingColorControl')
+                                .errors?.pattern
+                            "
+                            class="danger"
+                          >
+                            Please enter a valid 6-digit color code starting
+                            with a #.
+                          </div>
+                          <div
+                            *ngIf="
+                              scales.controls[i].get('ratingColorControl')
+                                .errors?.duplicateColor
+                            "
+                            class="danger"
+                          >
+                            You can't have duplicate colors in the list.
+                          </div>
+                        </dv-form-element>
+                      </td>
+                    </ng-container>
+                  </tr>
+                </ng-container>
+                <tr>
+                  <td colspan="4" class="text-right">
+                    <dv-button
+                      [btnClass]="'rating-scale-button-width'"
+                      [btnType]="'default'"
+                      [size]="'sm'"
+                      (onClick)="incrementScale()"
+                      tooltip="Increment Rating Scale"
+                      container="body"
+                      placement="left"
+                      *ngIf="selectedScale?.rating_scales?.length < 10"
+                      [fontSizeType]="'small'"
+                      [ariaLabel]="'Increment Rating Scale button'"
+                    >
+                      <span appIcon name="plus"></span>
+                    </dv-button>
+                    <dv-button
+                      [btnClass]="'rating-scale-button-width space-on-left'"
+                      [btnType]="'default'"
+                      [size]="'sm'"
+                      (onClick)="decrementScale()"
+                      tooltip="Decrement Rating Scale"
+                      container="body"
+                      [disabled]="selectedScale?.rating_scales?.length <= 2"
+                      placement="left"
+                      [fontSizeType]="'small'"
+                      [ariaLabel]="'Decrement Rating Scale button'"
+                    >
+                      <span appIcon name="minus"></span>
+                    </dv-button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <dv-button
+                      [loader]="loading"
+                      (onClick)="save()"
+                      class="minwidth"
+                      [ariaLabel]="'Save'"
+                    >
+                      Save
+                    </dv-button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+          <helper-text>
+            <strong>{{
+              scales.controls[0].get("scaleNameControl").value
+            }}</strong>
+            marks items excluded from the final score, while
+            <strong>{{
+              scales.controls[1].get("scaleNameControl").value
+            }}</strong>
+            indicates items that have yet to be rated. If they remain unrated, a
+            value of 0 will be included in the final rating calculations.
+          </helper-text>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

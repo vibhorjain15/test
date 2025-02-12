@@ -1,0 +1,18 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">My Profile</h5>
+  </div>
+  <div class="panel-body settings">
+    <app-spinner *ngIf="loading"></app-spinner>
+    <div *ngIf="!loading">
+      <app-my-profile-edit
+        [userModel]="userModel"
+        [countries]="countries"
+        [loader]="saving"
+        [languageCode]="userLanguage.code"
+        (onSubmit)="submit($event)"
+        (cancelMode)="cancel()"
+      ></app-my-profile-edit>
+    </div>
+  </div>
+</div>

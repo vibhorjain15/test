@@ -1,0 +1,31 @@
+<div class="dv-wizard">
+  <!-- data-ng-class="{'m-b-60': currentStep.nextButtonIsFloating == 'true'}" -->
+
+  <!-- The navbar for the wizard -->
+  <div class="dv-wizard-header steps-{{ steps.length }}">
+    <span
+      class="dv-step-title"
+      *ngFor="let step of steps; let i = index"
+      [ngClass]="{
+        active: i == selectedIndex,
+        done: selectedIndex > i,
+      }"
+    >
+      <ng-container
+        *ngIf="step.stepLabel; else showLabelText"
+        [ngTemplateOutlet]="step.stepLabel.template"
+      >
+      </ng-container>
+      <ng-template #showLabelText>
+        <ng-container *ngIf="i >= selectedIndex">{{ i + 1 }}.</ng-container>
+        <span *ngIf="selectedIndex > i">
+          <span appIcon name="check"></span>
+        </span>
+        {{ step.label }}
+      </ng-template>
+    </span>
+  </div>
+  <div>
+    <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
+  </div>
+</div>

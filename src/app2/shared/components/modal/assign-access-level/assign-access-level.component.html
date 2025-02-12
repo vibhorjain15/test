@@ -1,0 +1,79 @@
+<app-modal
+  (onCancelClick)="handleCancelClick($event)"
+  (onFirstClick)="assignAccessLevel($event)"
+  [firstButtonLabel]="'Assign'"
+  [title]="'Assign Users'"
+  [initialTemplate]="assignAccessLevelModal"
+  [isLoading]="assigningAccessLevel"
+  [isFirstButtonDisabled]="selectedUser.length < 1"
+  cancelButtonLabel="Close"
+>
+  <ng-template #assignAccessLevelModal>
+    <form
+      class="form-horizontal"
+      #assignAccessLevelForm="ngForm"
+      autocomplete="off"
+    >
+      <dv-form-element label="Access Level" elementCol="6" labelPosition="top">
+        <input
+          type="text"
+          disabled
+          class="form-control"
+          name="accessLevelName"
+          [(ngModel)]="accessLevelName"
+          title="Access Level"
+        />
+      </dv-form-element>
+      <dv-form-element
+        *ngIf="assignedUsers && assignedUsers.length > 0"
+        label="Assigned Users"
+        elementCol="12"
+        labelPosition="top"
+        infoText="To remove a user, assign them to a different access level."
+      >
+        <div class="labels-container">
+          <span class="label-list">
+            <span
+              class="label label-default space-on-right text-uppercase"
+              *ngFor="let user of assignedUsers; trackBy: trackByIndex"
+            >
+              {{ user.fullName }}
+            </span>
+          </span>
+        </div>
+      </dv-form-element>
+      <dv-form-element label="Select Users" elementCol="12" labelPosition="top">
+        <app-dv-selector-list
+          [name]="resource_list"
+          [entity_type]="'User'"
+          [entities]="team_members"
+          [filter_params]="{ filterByRole: any }"
+          [displayParams]="teamSelectorDisplayParams"
+          (onChangeEntity)="handleOnChangeEntity($event)"
+          [KeepSelectionAfterOnChange]="true"
+          (onSearchChange)="onSearchChange($event)"
+          [useLocalSearch]="false"
+          [loading_entities]="reloading"
+        >
+          <div class="row" isCustomFilter>
+            <div col="6">
+              <dv-select
+                [(ngModel)]="fitlerByRole"
+                [appendTo]="'body'"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Select an access level"
+                clearable="true"
+                [error]=""
+                [list]="fitlerByRoleList"
+                bindLabel="alias"
+                bindValue=""
+                class="dropdown-sm space-on-top-2"
+                (onSelectChange)="onSelectFilterByRole($event)"
+              ></dv-select>
+            </div>
+          </div>
+        </app-dv-selector-list>
+      </dv-form-element>
+    </form>
+  </ng-template>
+</app-modal>

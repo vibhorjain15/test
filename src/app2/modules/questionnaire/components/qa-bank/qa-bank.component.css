@@ -1,0 +1,97 @@
+.qaBank-main {
+  display: flex;
+  flex-direction: column;
+}
+.qa-button-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.qa-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.qa-buttons ::ng-deep .dv-tab {
+  justify-content: space-evenly;
+  gap: 0px !important;
+}
+:host app-tab ::ng-deep .tab-bar.tab-space {
+  margin: 0px !important;
+}
+
+.qa-search-field {
+  display: flex;
+}
+.qa-search-field > input {
+  flex-basis: 99%;
+  border: 1px solid #a9a9a9;
+  border-radius: 4px;
+  padding: 0px 10px;
+}
+.search-icon {
+  background: #065768 0% 0% no-repeat padding-box;
+  border-radius: 8px;
+  width: 38px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-icon :hover {
+  cursor: pointer;
+}
+.search-icon > span {
+  color: white;
+}
+.qa-count {
+  font-style: italic;
+  margin-top: 15px;
+  opacity: 0.5;
+}
+
+.qa-divider {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.qa-search-sorting {
+  width: fit-content;
+}
+
+:host ::ng-deep .qa-search-btn > div {
+  justify-content: center;
+}
+.qa-search-count-bubble {
+  width: 20px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #43c59e;
+  color: white;
+  line-height: 14px;
+  text-align: center;
+  display: inline-block;
+  position: absolute;
+  top: 55%;
+  right: 7px;
+  margin-top: -8px;
+  font-size: 9px;
+  min-width: 13px;
+}
+
+.pagination-footer {
+  position: relative;
+  background-color: white;
+  overflow: auto;
+  bottom: 5px;
+}
+
+.pagination-footer ::ng-deep .dv-pagination-bar {
+  font-size: 12px;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+:host .qa-search-sidepanel ::ng-deep .side-panel-body {
+  max-height: calc(88vh - 125px) !important;
+}

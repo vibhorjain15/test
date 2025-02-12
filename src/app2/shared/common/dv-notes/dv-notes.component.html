@@ -1,0 +1,339 @@
+<div class="panel panel-default hide-in-print-view">
+  <div class="panel-heading">
+    <span>
+      <span appIcon name="notepad" class="space-on-right align-middle"></span>
+      <span *ngIf="!note_id" class="align-middle"> New Note </span>
+      <span *ngIf="note_id" class="align-middle"> Edit Note </span>
+    </span>
+  </div>
+  <form novalidate name="add_activities_form_new" autocomplete="off">
+    <div class="panel-body padded-xl">
+      <div
+        col="12"
+        id="new-notes-section-div"
+        class="clear-padding-left clear-padding-right space-on-bottom-xxl"
+      >
+        <dv-editor
+          [isMentions]="true"
+          [value]="add_new_activity.text"
+          [configObj]="init"
+          (onChange)="handleEditChange($event)"
+        ></dv-editor>
+      </div>
+      <div col="12" class="clear-padding-left">
+        <div
+          col="4"
+          class="clear-padding-left clear-padding-right space-on-top space-on-right-lg"
+          *ngIf="selected_action_type.value === 'note'"
+        >
+          <dv-form-element
+            fieldName="Note Type"
+            elementCol="12"
+            class="space-on-right-lg"
+            label="Note Type"
+            labelPosition="top"
+            [for]="'note-type'"
+          >
+            <dv-select
+              name="note-type"
+              [id]="'note-type'"
+              [list]="note_types"
+              [(ngModel)]="add_new_activity.type"
+              bindLabel="value"
+              bindValue="id"
+              [clearable]="false"
+              [searchable]="true"
+              placeholder="Please select note type"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+        <div
+          col="4"
+          class="clear-padding-left clear-padding-right space-on-top"
+        >
+          <dv-form-element
+            fieldName="Note Type"
+            elementCol="12"
+            class="space-on-right-lg"
+            label="Date"
+            labelPosition="top"
+            [for]="'date'"
+          >
+            <app-date-picker
+              [maxDate]="maxAsOfDate"
+              [value]="date"
+              (change)="setDateValue($event)"
+              [ariaLabel]="'Date'"
+              [id]="'date'"
+            >
+            </app-date-picker>
+          </dv-form-element>
+        </div>
+        <div col="3" class="pull-right">
+          <div class="notesActionDiv">
+            <dv-button
+              [loader]="saving_activity || uploading_image"
+              (onClick)="addActivity()"
+              class="space-on-right"
+              [disabled]="!note_types.length"
+            >
+              {{ note_id ? "Save" : "Add" }}
+              <span class="text-capitalize">{{
+                selected_action_type.value
+              }}</span>
+            </dv-button>
+            <dv-button
+              btnType="default"
+              *ngIf="note_id"
+              (onClick)="initAddActivityForm()"
+            >
+              Cancel
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading hide-in-print-view">
+    <span>
+      <span appIcon name="notepad" class="space-on-right align-middle"></span>
+      <span class="align-middle"> Timeline ({{ notesList.length }}) </span>
+    </span>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          tooltip="Print Notes"
+          container="body"
+          (click)="printSection()"
+        >
+          <span appIcon name="print"></span>
+          Print
+        </a>
+      </div>
+    </div>
+  </div>
+  <div
+    #noteContainer
+    class="panel-body"
+    [ngClass]="{ historyBodyScroll: notesList.length > 5 }"
+    [autoScroll]="newNoteId"
+    [autoScrollDelayTime]="0"
+    tabindex="0"
+  >
+    <app-empty-state
+      iconName="notepad"
+      message="No touchpoints / notes available for this {{
+        entityDisplayName.toLowerCase()
+      }}"
+      *ngIf="notesList && !notesList.length"
+    ></app-empty-state>
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="60"
+      *ngIf="loadingNotes"
+    ></app-spinner>
+    <ul
+      id="notes-print-section"
+      class="list-unstyled due-diligence-history row"
+      *ngIf="!loadingNotes && notesList.length"
+      tabindex="0"
+    >
+      <li
+        class="col-sm-12"
+        *ngFor="
+          let note of notesList;
+          trackBy: trackByIndex;
+          let $index = index
+        "
+        id="note_id_{{ note.id }}"
+      >
+        <div class="hide-in-print-view">
+          <div class="col-sm-1 padded icon-wrapper align-top text-center">
+            <span
+              tooltip="Phone or conference call"
+              container="body"
+              appIcon
+              name="phone"
+              *ngIf="note.type === 'PhoneCall'"
+              size="lg"
+            >
+            </span>
+            <span
+              appIcon
+              name="mail"
+              *ngIf="note.type === 'Email'"
+              size="lg"
+              tooltip="Email"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="coffee"
+              *ngIf="note.type === 'Coffee'"
+              size="lg"
+              tooltip="Coffee conversation"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="pencil"
+              *ngIf="note.type === 'General'"
+              tooltip="General"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="meeting"
+              *ngIf="note.type === 'Meeting' || note.type === 'Conference'"
+              tooltip="Conference / Meeting"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="institution"
+              *ngIf="note.type === 'FormADV'"
+              tooltip="FormADV"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="thumbs-o-down"
+              size="lg"
+              *ngIf="note.type === 'NotApproved'"
+              tooltip="Non Approval Reasons"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="ban"
+              size="lg"
+              *ngIf="note.type === 'Declined'"
+              tooltip="Reason for Declining DD Invitation"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="thunder"
+              size="lg"
+              *ngIf="note.type === 'Invitation'"
+              tooltip="Event trigger for due-diligence"
+              container="body"
+            ></span>
+            <span
+              appIcon
+              name="reviewed-document"
+              size="lg"
+              *ngIf="note.type == 'Review'"
+              tooltip="Event trigger for due-diligence"
+              container="body"
+            ></span>
+          </div>
+          <div class="col-sm-5 notes-content align-middle">
+            <small class="text-muted">
+              <span>{{ note.first_name }} {{ note.last_name }}</span
+              >&nbsp; <span>added on</span>&nbsp;
+              <span>{{ note.updated_at | dvDate : ["dvDateTime"] }}</span>
+              <span *ngIf="note.entity_type !== 'Firm' && note.entity_name"
+                >({{ note.entity_name }})</span
+              >
+            </small>
+          </div>
+          <div class="padding-right-xxl">
+            <small class="text-muted">
+              <span
+                >{{ note.type }} @{{
+                  note.as_of_date | dvDate : ["isLocaleDate"]
+                }}</span
+              >
+            </small>
+
+            <span
+              class="pull-right"
+              dropdown
+              container="body"
+              *ngIf="currentUser.id === note.created_by"
+            >
+              <dv-dropdown
+                type="default"
+                (onDropdownClick)="noteDropdownClick($event, note, $index)"
+                [toggleDropDown]="note.toggleDropdown"
+                [dropDownList]="note.options"
+                dropdownPlacement="right"
+                iconName="ellipsis-h"
+                iconSize="medium"
+                *ngIf="currentUser.id === note.created_by"
+              ></dv-dropdown>
+            </span>
+            <span
+              class="pull-right"
+              *ngIf="note.type === 'Email' && note.attachment_count"
+            >
+              <a
+                class="clickable btn btn-transparent"
+                (click)="openAttachmentModal(note.id)"
+                tooltip="View attachments"
+                container="body"
+              >
+                <div>
+                  <span appIcon name="attachment" size="1x"></span>
+                </div>
+                <small>
+                  <span [ngPlural]="note.attachment_count">
+                    <ng-template ngPluralCase="=1">1 attachment</ng-template>
+                    <ng-template ngPluralCase="few"
+                      >{{ note.attachment_count }} attachments</ng-template
+                    >
+                  </span>
+                </small>
+              </a>
+            </span>
+          </div>
+          <div class="col-sm-10">
+            <div class="clear-margin-bottom space-on-top">
+              <!-- TODO: dv-show-more show-more-height -->
+              <div dv-show-more show-more-height="84">
+                <span
+                  class="responsive-image"
+                  [innerHTML]="note.text | dvSafeHtml"
+                >
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="show-in-print-view row">
+          <div class="col-sm-10 col-sm-offset-1 space-on-top">
+            <div class="col-sm-8 notes-content align-middle">
+              <span class="text-muted">
+                <i>{{ note.first_name }} {{ note.last_name }}</i>
+                &nbsp; <span>added on</span> &nbsp;
+                <span>{{ note.updated_at | dvDate : ["dvDateTime"] }}</span>
+                <span *ngIf="note.entity_type !== 'Firm' && note.entity_name"
+                  >({{ note.entity_name }})</span
+                >
+              </span>
+            </div>
+            <div class="col-sm-4">
+              <span class="text-muted">
+                <span
+                  >{{ note.type }} @
+                  <b>{{ note.as_of_date | dvDate : ["isLocaleDate"] }}</b></span
+                >
+              </span>
+            </div>
+          </div>
+          <div class="col-sm-10 col-sm-offset-1">
+            <div class="clear-margin-bottom space-on-top">
+              <div>
+                <span [innerHTML]="note.text | dvSafeHtml"> </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

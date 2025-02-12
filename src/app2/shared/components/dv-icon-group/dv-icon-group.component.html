@@ -1,0 +1,9 @@
+<span
+  [style.color]="styleColor"
+  [ngClass]="{
+    'group-horizontal-huge': type === 'horizontal' && spacing === 'huge',
+    'group-horizontal-massive': type === 'horizontal' && spacing === 'massive'
+  }"
+>
+  <ng-content></ng-content>
+</span>

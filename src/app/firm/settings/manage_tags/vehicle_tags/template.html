@@ -1,0 +1,15 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-vehicle-tags></ng2-vehicle-tags> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Manage Vehicle Tags and Custom Fields</h5>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Manage all vehicle tags and custom fields that are relevant to your organization under this
+            section.</div>
+    </div>
+    <div class="panel-body">
+        <div>
+            <custom-field-viewer entity-type="'vehicle'" entity-type-id="1217" source="'vehicle'"></custom-field-viewer>
+        </div>
+    </div>
+</div>

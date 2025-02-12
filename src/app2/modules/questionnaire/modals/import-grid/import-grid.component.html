@@ -1,0 +1,23 @@
+<app-modal
+  [title]="'Edit & Import to Questionnaire'"
+  firstButtonLabel="Copy"
+  secondButtonLabel="Copy selection"
+  (onFirstClick)="import($event)"
+  (onSecondClick)="importSelection($event)"
+  [initialTemplate]="importGridRef"
+  [isSecondButtonDisabled]="false"
+>
+  <ng-template #importGridRef>
+    <dv-handsontable
+      [id]="handsOnTableId"
+      [rows]="rows"
+      [columns]="columns"
+      [dataset]="dataset"
+      [additionalHandsOnTableSettings]="additionalHandsOnTableSettings"
+      [isReadOnly]="false"
+      *ngIf="isModalReady"
+      #grid
+    >
+    </dv-handsontable>
+  </ng-template>
+</app-modal>

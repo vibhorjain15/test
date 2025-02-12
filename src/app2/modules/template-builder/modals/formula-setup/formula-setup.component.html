@@ -1,0 +1,105 @@
+<app-modal
+  [title]="'Formula Setup'"
+  [initialTemplate]="FormulaSetupref"
+  (onFirstClick)="handleSave($event)"
+  (onSecondClick)="handleCopy($event)"
+  firstButtonLabel="Save"
+  secondButtonLabel="Copy"
+  [isSecondButtonDisabled]="!handsontable"
+  [isLoading]="loading"
+  role="dialog"
+  aria-labelledby="modalTitle"
+  aria-describedby="modalDescription"
+>
+  <ng-template #FormulaSetupref>
+    <div class="row" role="region" aria-label="Formula Setup Information">
+      <helper-text>
+        Please find the supported formulas
+        <a
+          href="/supported_formulas.html"
+          target="_blank"
+          class="link-underline"
+          aria-label="Click to find the supported formulas here. (opens in a new window)"
+          >here</a
+        >. Click
+        <a
+          href="#/app/help/formula"
+          target="_blank"
+          class="link-underline"
+          aria-label="Click to view FAQ and commonly used examples. (opens in a new window)"
+          >here</a
+        >
+        to view FAQ and commonly used examples.
+        <span *ngIf="question.responseType == 'DynamicGrid'">
+          <br />This is a custom/dynamic grid. You can define formulas for cells
+          within a row. When the responder adds rows, the formulas will be
+          applied in the new rows. Additionally, you have the option to set an
+          aggregate row and provide a formula in that row for a consolidated
+          view of the results. Example: You can sum all of the cells in column A
+          by inputting SUM(A1:A1), and when a user adds a row it will
+          automatically include the new row in the formula ex. SUM(A1:A2).
+        </span>
+      </helper-text>
+    </div>
+    <div #formulaTable tabindex="0" role="table" aria-label="Formula Table">
+      <div class="hotTable" *ngIf="columns.length && rows.length">
+        <dv-handsontable
+          id="formulaSetup"
+          [rows]="rows"
+          [columns]="columns"
+          [excelFormulaOnly]="true"
+          [dataset]="dataset"
+          [additionalHandsOnTableSettings]="additionalHandsOnTableSettings"
+          [validatorFunction]="validatorFunction"
+          [isValidator]="true"
+          [columnHeaders]="columnHeaders"
+          [rowHeaders]="rowHeaders"
+          [autoRowsize]="false"
+          role="grid"
+          aria-labelledby="formulaTableTitle"
+          aria-describedby="formulaTableDescription"
+        >
+        </dv-handsontable>
+        <div *ngIf="question.responseType == 'DynamicGrid'">
+          <span class="space-on-left inline-block">
+            <dv-checkbox
+              name="aggregation"
+              [(ngModel)]="enable_aggregration"
+              (onValChange)="toggleAggregation($event)"
+              label="Include Aggregate Row"
+            >
+            </dv-checkbox>
+          </span>
+        </div>
+        <form
+          *ngIf="question.responseType == 'DynamicGrid' && enable_aggregration"
+          class="form-horizontal"
+          name="aggregation_form"
+          [formGroup]="aggregation_form"
+          autocomplete="off"
+        >
+          <dv-form-element
+            [modelController]="aggregation_form.get('aggregation_name')"
+            class="form-element"
+            label="Set Label for Aggregate Row"
+            elementCol="6"
+            errorMessage="Aggregate row label is required"
+            [isRequired]="
+              question.responseType == 'DynamicGrid' && enable_aggregration
+            "
+          >
+            <input
+              [id]="'aggregation_name'"
+              class="form-control"
+              type="text"
+              name="aggregation_name"
+              formControlName="aggregation_name"
+              required
+              aria-label="Aggregate Row Label"
+            />
+          </dv-form-element>
+        </form>
+      </div>
+    </div>
+  </ng-template>
+</app-modal>

@@ -1,0 +1,16 @@
+<div *ngIf="!params.node.group" class="text-center unstyledLink">
+  <span
+    [class]="type"
+    class="label text-uppercase"
+    [adaptivePosition]="false"
+    tooltip="{{ params?.value }}"
+    tooltip-placement="right"
+    container="body"
+  >
+    {{ params.value }}
+  </span>
+</div>
+
+<div *ngIf="params.node.group" aria-label="Group">
+  <span>{{ params.value }}</span>
+</div>

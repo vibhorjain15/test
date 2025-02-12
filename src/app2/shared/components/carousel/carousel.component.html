@@ -1,0 +1,63 @@
+<div
+  *ngIf="contents && contents.length"
+  class="carousel-container"
+>
+  <ng-container
+    *ngFor="let content of contents; index as i; trackBy: trackByUrl"
+  >
+    <ng-container [ngSwitch]="content.type">
+      <div
+        *ngSwitchCase="'image'"
+        class="content fade image-background"
+        [ngClass]="{ 'content-active': selectedIndex === i }"
+        [ngStyle]="{ 'background-image': 'url(' + content.src + ')' }"
+      >
+        <img
+          [src]="content.src"
+          [alt]="content.alt || 'image'"
+        />
+      </div>
+      <app-video-player
+        *ngSwitchCase="'video'"
+        [videoSrc]="content.src"
+        class="content fade"
+        [ngClass]="{ 'content-active': selectedIndex === i }"
+      ></app-video-player>
+    </ng-container>
+  </ng-container>
+  <div
+    *ngIf="indicators"
+    class="carousel-dot-container"
+  >
+    <span
+      *ngFor="let _ of contents; index as i; trackBy: trackByUrl"
+      class="dot"
+      [ngClass]="{ 'active-dot': selectedIndex === i }"
+      (click)="setActiveContent(i)"
+    ></span>
+  </div>
+  <button
+    *ngIf="controls"
+    class="btn-carousel btn-prev"
+    (click)="onPreviousClick()"
+    [attr.aria-label]="'Previous content'"
+  >
+    <span
+      appIcon
+      name="angle-left"
+      class="icon-carousel icon-prev"
+    ></span>
+  </button>
+  <button
+    *ngIf="controls"
+    class="btn-carousel btn-next"
+    (click)="onNextClick()"
+    [attr.aria-label]="'Next content'"
+  >
+    <span
+      appIcon
+      name="angle-right"
+      class="icon-carousel icon-next"
+    ></span>
+  </button>
+</div>

@@ -1,0 +1,24 @@
+.flex{
+    display: flex;
+}
+.space-between{
+    justify-content: space-between;
+}
+.space-around{
+    justify-content: space-around;
+}
+.flex-end{
+    align-items: flex-end;
+}
+.flex-start{
+    align-items: flex-start;
+}
+.full-width{
+    width: 100%;
+}
+.half-opacity{
+    opacity: 0.5;
+}
+.white-space-nowrap{
+    white-space: nowrap;
+}

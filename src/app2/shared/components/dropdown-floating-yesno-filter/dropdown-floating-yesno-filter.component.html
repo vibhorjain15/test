@@ -1,0 +1,15 @@
+<div class="form-group space-on-top">
+  <dv-select
+    class="dropdown-filter-caret"
+    [appendTo]="'body'"
+    (ngModelChange)="onFilterChange($event)"
+    [(ngModel)]="currentValue"
+    [clearable]="!!currentValue"
+    onkeypress="{return false;}"
+    [list]="selectOptions"
+    [bindLabel]="'label'"
+    [bindValue]="'value'"
+    [aria-label]="params?.column?.colDef.headerName"
+  >
+  </dv-select>
+</div>

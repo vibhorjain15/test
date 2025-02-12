@@ -1,0 +1,64 @@
+<side-panel-wrapper
+  [title]="'To-dos'"
+  [isLoading]="buttonLoader"
+  (onCancelClick)="onCancel()"
+  [isFooter]="true"
+  [isFirstButtonDisabled]="!todoItem || isReadOnly"
+  (onFirstClick)="addTodoItem($event)"
+  aria-label="To-dos Panel"
+>
+  <div>
+    <div class="more-text" aria-label="Question Text">
+      <span>
+        <b class="note-container-heading">Question: </b>
+        <span [innerHTML]="question?.text"></span>
+      </span>
+    </div>
+
+    <app-spinner
+      class="space-on-top-lg"
+      [broadSpinner]="true"
+      spinnerHeight="80"
+      *ngIf="loading"
+      aria-hidden="true"
+    ></app-spinner>
+    <div class="notes" *ngIf="!loading" aria-live="polite">
+      <ng-container *ngFor="let todo of todoItems; let i = index">
+        <dv-checkbox
+          (onValChange)="markTodoAsDone(todo)"
+          [(ngModel)]="todo.is_complete"
+          [label]="todo.text"
+          [disabled]="todo.is_complete"
+          class="space-on-top"
+          [ngClass]="{ disabled: todo.is_complete }"
+          [rightIcon]="todo.is_complete ? 'trashcan' : ''"
+          [iconClass]="todo.is_complete ? 'delete-icon' : ''"
+          (onIconClick)="handleDelete(todo)"
+          [attr.aria-label]="todo.text"
+        >
+        </dv-checkbox>
+        <div
+          class="completed-info"
+          *ngIf="todo.is_complete && !todo.loading"
+          aria-label="Completed Information"
+        >
+          {{ "Completed by " + todo.completed_by_name + " on " }}
+          {{ todo.completed_at | dvDate : ["dvDateTime"] }}
+        </div>
+      </ng-container>
+    </div>
+    <div class="space-on-top-lg">
+      <textarea
+        #area
+        class="form-control"
+        id="todoTextArea"
+        cols="30"
+        rows="5"
+        [ngModel]="todoItem"
+        placeholder="Enter a to-do item"
+        (ngModelChange)="handleTodoItemChange($event)"
+        aria-label="New To-do Item"
+      ></textarea>
+    </div>
+  </div>
+</side-panel-wrapper>

@@ -1,0 +1,289 @@
+<div class="grid-wrapper">
+  <div class="save-view-panel" *ngIf="showSaveView">
+    <div class="left-panel">
+      <ng-content></ng-content>
+    </div>
+    <div class="right-panel space-on-left-lg">
+      <ng-content select="[leftSide]"></ng-content>
+      <div class="view-selector" *ngIf="selectedView">
+        <dv-button
+          btnType="default"
+          [popover]="savedViewsTemplate"
+          popoverTitle=""
+          containerClass="saved-views-popover"
+          triggers=""
+          [btnClass]="isCustomViewPopoverOpen ? 'btnActive' : ''"
+          [placement]="popoverPlacement"
+          [isOpen]="isCustomViewPopoverOpen"
+          (onClick)="showSavedViews()"
+          container="body"
+          [outsideClick]="true"
+          (onHidden)="onPopoverHide()"
+        >
+          <span class="button-text">{{ selectedView.name }}</span
+          ><span
+            appIcon
+            name="chevron-down"
+            class="space-on-left"
+            *ngIf="!isCustomViewPopoverOpen"
+          ></span>
+          <span
+            appIcon
+            name="chevron-up"
+            class="space-on-left"
+            *ngIf="isCustomViewPopoverOpen"
+          ></span>
+        </dv-button>
+      </div>
+      <div class="save-button">
+        <span
+          *ngIf="
+            selectedView &&
+            (selectedView?.id === defaultViewId ||
+              selectedView?.created_by !== currentUser.id)
+          "
+        >
+          <dv-button
+            btnType="blue-border"
+            (onClick)="saveView()"
+            [disabled]="
+              !(
+                hasStateChanges ||
+                hasFilterChanges ||
+                hasCustomFilterChanges ||
+                hasGridPageSizeChanges
+              ) || !isGridRendered
+            "
+          >
+            <span appIcon name="grid-save"></span> Save View</dv-button
+          >
+        </span>
+        <span
+          class="save-button-dropdown"
+          *ngIf="
+            selectedView &&
+            selectedView?.id !== defaultViewId &&
+            selectedView?.created_by === currentUser.id
+          "
+        >
+          <div class="button-wrapper">
+            <dv-button
+              btnType="blue-border"
+              [btnClass]="'dropdown-toggle'"
+              (onClick)="
+                toggleSaveButtonDropdown = !toggleSaveButtonDropdown;
+                toggleDropdown = false
+              "
+              tooltip=""
+              container="body"
+              [disabled]="
+                !(
+                  hasStateChanges ||
+                  hasFilterChanges ||
+                  hasCustomFilterChanges ||
+                  hasGridPageSizeChanges
+                )
+              "
+            >
+              <span class="inline-block relative">
+                <span appIcon name="grid-save"></span>
+                Save View
+              </span>
+            </dv-button>
+            <dv-dropdown
+              type="default"
+              (onDropdownClick)="onSaveDropdownClick($event)"
+              (onDropdownToggle)="toggleSaveButtonDropdown = $event"
+              [toggleDropDown]="toggleSaveButtonDropdown"
+              [dropDownList]="saveViewDropdownList"
+              dropdownPlacement="right"
+            >
+            </dv-dropdown>
+          </div>
+        </span>
+      </div>
+      <ng-content select="[rightSide]"></ng-content>
+    </div>
+  </div>
+  <div class="bottom-panel">
+    <ng-content select="[bottomPanel]"></ng-content>
+  </div>
+  <ag-grid-angular
+    #myGrid
+    id="myGrid"
+    class="ag-theme-alpine"
+    pagination
+    paginationPageSize="10"
+    suppressPaginationPanel
+    rowSelection="multiple"
+    [suppressRowClickSelection]="true"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [components]="frameworkComponents"
+    [initialGroupOrderComparator]="initialGroupOrderComparator"
+    [sideBar]="sideBar"
+    [statusBar]="statusBar"
+    [autoGroupColumnDef]="autoGroupColumnDef"
+    [accentedSort]="true"
+    [suppressDragLeaveHidesColumns]="true"
+    [getMainMenuItems]="getMainMenuItems"
+    [suppressMenuHide]="true"
+    (gridReady)="onGridReady($event)"
+    (firstDataRendered)="onFirstDataRendered($event)"
+    (rowClicked)="onRowClickedEvent($event)"
+    (cellClicked)="onCellClickedEvent($event)"
+    [groupSelectsChildren]="true"
+    [groupSelectsFiltered]="true"
+    [suppressContextMenu]="true"
+    [allowDragFromColumnsToolPanel]="true"
+    [rowClass]="rowClass"
+    (rowSelected)="onRowSelected($event)"
+    (selectionChanged)="onSelectionChanged($event)"
+    (paginationChanged)="onPaginationChanged()"
+    groupDisplayType="singleColumn"
+    [overlayNoRowsTemplate]="noRowsTemplate"
+    [noRowsOverlayComponent]="noRowsOverlayComponent"
+    [noRowsOverlayComponentParams]="noRowsOverlayComponentParams"
+    (modelUpdated)="onModelUpdated($event)"
+    overlayLoadingTemplate="<i class='dvi dvi-spinner fa-spin'></i>"
+    rowBuffer="100"
+    [getRowClass]="getRowClass"
+    (displayedColumnsChanged)="gridColumnsChanged()"
+    (columnResized)="gridColumnsChanged()"
+    (sortChanged)="gridColumnsChanged()"
+    (filterChanged)="gridFiltersChanged()"
+  >
+  </ag-grid-angular>
+</div>
+<!-- <div *ngIf="showCharacterFilter">
+  <button
+    *ngFor="let character of alphabets"
+    (click)="filterRowDataByCharacter(character.char)"
+  >
+    {{ character.displayValue }}
+  </button>
+</div> -->
+
+<new-pagination-bar
+  *ngIf="showNewPagination"
+  (onPageSizeChanged)="onPageSizeChanged($event)"
+  (onFirstClicked)="onFirstClicked()"
+  (onLastClicked)="onLastClicked()"
+  (onPrevClicked)="onPrevClicked()"
+  (onNextClicked)="onNextClicked()"
+  [countData]="countData"
+  [gridPageSize]="gridPageSize"
+></new-pagination-bar>
+<div class="clear-margin-left space-on-top-xl" *ngIf="showCharacterFilter">
+  <div class="text-center">
+    <span class="space-on-top space-on-right-lg"
+      >Show names that begin with:
+    </span>
+    <div class="clear-margin-left btn-group btn-group-sm">
+      <!-- <button
+        class="btn btn-default"
+        data-ng-click="applyAlphabeticalFilters(null)"
+        data-ng-class="{'btn-primary': active_alphabet_filter == undefined}"
+        uib-tooltip="Show All"
+      >
+        A - Z
+      </button>
+      <button
+        class="btn btn-default"
+        data-ng-repeat="alphabet in alphabets"
+        data-ng-click="applyAlphabeticalFilters(alphabet)"
+        data-ng-class="{'btn-primary': alphabet == active_alphabet_filter}"
+      >
+        {{ alphabet }}
+      </button> -->
+      <button
+        class="btn btn-default"
+        *ngFor="let character of alphabets"
+        (click)="filterRowDataByCharacter(character.char)"
+        [ngClass]="{ 'btn-primary': character.char === active_alphabet_filter }"
+      >
+        {{ character.displayValue }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #savedViewsTemplate>
+  <div class="saved-views-popup">
+    <div class="saved-views-header">All Saved Views</div>
+    <div class="saved-view-scrollable-container" tabindex="0">
+      <div
+        class="saved-view-rows"
+        [ngClass]="{ active: view.selected }"
+        *ngFor="let view of savedViews; trackBy: $index"
+      >
+        <div class="view-container">
+          <div class="view-top">
+            <span class="view-name" (click)="onViewClick(view)">
+              <span
+                appIcon
+                name="bank"
+                *ngIf="view.level == VIEW_ACCESS_LEVELS.FIRM"
+              ></span>
+              <span
+                appIcon
+                name="user"
+                *ngIf="view.level == VIEW_ACCESS_LEVELS.USER"
+              ></span>
+              <span class="space-on-left">{{ view.name }}</span>
+            </span>
+            <span class="view-actions">
+              <span
+                appIcon
+                name="pushpin"
+                [class]="{
+                  'text-orange': view.is_default,
+                  'disabled-Element':
+                    view.is_default && view.id === defaultViewId
+                }"
+                (click)="markAsDefault(view)"
+                [tooltip]="
+                  view.is_default && view.id !== defaultViewId
+                    ? 'Unmark as Default'
+                    : !view.is_default
+                    ? 'Mark as Default'
+                    : ''
+                "
+                container="body"
+                [adaptivePosition]="false"
+              ></span>
+              <span
+                appIcon
+                name="pencil"
+                *ngIf="
+                  view.id !== defaultViewId &&
+                  view.created_by === currentUser.id
+                "
+                (click)="onDropdownClick('rename', view)"
+                tooltip="Edit View"
+                container="body"
+                [adaptivePosition]="false"
+              ></span>
+              <span
+                appIcon
+                name="trashcan"
+                *ngIf="
+                  view.id !== defaultViewId &&
+                  view.created_by === currentUser.id
+                "
+                (click)="onDropdownClick('delete', view)"
+                tooltip="Delete View"
+                container="body"
+                [adaptivePosition]="false"
+              ></span>
+            </span>
+          </div>
+          <div class="view-description">
+            {{ view.description }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

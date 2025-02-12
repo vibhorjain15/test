@@ -1,0 +1,415 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!strategy"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="strategy">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ strategy?.display_name }}
+              <span
+                class="space-on-left label label-warning"
+                tooltip="Deactivated by the owner firm"
+                container="body"
+                *ngIf="!strategy?.platform_active"
+                >{{ statusLabel.INACTIVE }}</span
+              >
+            </h4>
+            <small class="text-muted">
+              Parent Firm {{ strategy?.parentFirm.name }}
+            </small>
+          </div>
+          <div class="text-center cell" *ngIf="!is_manager">
+            <dv-button
+              [btnType]="'transparent'"
+              (onClick)="addContact()"
+              *ngIf="!(is_manager && isFreeSubscription)"
+              tooltipText="{{
+                isFreeSubscription
+                  ? 'This feature is available for premium users.'
+                  : 'Add new responder contact'
+              }}"
+              container="body"
+              triggers="mouseenter:mouseleave"
+              [btnClass]="isFreeSubscription ? 'route-link-disabled' : ''"
+            >
+              <div><span appIcon name="user" size="2x"></span></div>
+              <small>Add Contact</small>
+            </dv-button>
+            <dv-button
+              *ngIf="is_manager && isFreeSubscription"
+              container="body"
+              [btnType]="'transparent'"
+              triggers="mouseenter:mouseleave"
+              tooltip="This feature is available for premium users. Learn more"
+              (onClick)="gotoPremium()"
+              [btnClass]="'route-link-disabled'"
+            >
+              <div><span appIcon name="user" size="2x"></span></div>
+              <small>Add Contact</small>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix" *ngIf="!is_manager">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              {{ related_contacts.length }} Associated Contact(s)
+            </h5>
+          </div>
+          <div class="panel-body">
+            <div *ngIf="related_contacts && related_contacts.length">
+              <!-- TODO: tiles-adjuster="adjust_entity_list"
+                use-max-tile-width="true"
+                tile-selector="> li"-->
+              <ul
+                class="list-unstyled due-diligence-grid"
+                tiles-adjuster="adjust_entity_list"
+                use-max-tile-width="true"
+                tile-selector="> li"
+              >
+                <!-- TODO: on-render="adjust_entity_list = true"-->
+                <li
+                  class="inline-block pull-left max-w-320"
+                  on-render="adjust_entity_list = true"
+                  *ngFor="let entity of related_contacts"
+                  style="margin-right: 10px"
+                >
+                  <div class="panel panel-default relative">
+                    <div class="panel-body">
+                      <div>
+                        <!-- TODO: dv-limit-word="entity.fullName"
+                          char-limit="30" -->
+                        <a
+                          (click)="navigateToContacts(entity.id)"
+                          class="clickable"
+                        >
+                          {{ entity.fullName }}</a
+                        >
+                        <span
+                          class="space-on-left label label-warning"
+                          tooltip="Deactivated by the owner firm"
+                          container="body"
+                          *ngIf="!entity.platform_active"
+                          >{{ statusLabel.INACTIVE }}</span
+                        >
+                      </div>
+                      <ul
+                        class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons"
+                      >
+                        <li class="space-on-bottom">
+                          <span
+                            class="align-middle text-muted"
+                            *ngIf="entity.title"
+                          >
+                            {{ entity.title }}
+                          </span>
+                          <span
+                            class="align-middle text-white"
+                            *ngIf="!entity.title"
+                          >
+                            <i>*No title available*</i>
+                          </span>
+                        </li>
+                        <li></li>
+                        <li>
+                          <div
+                            class="max-w-400 inline-block space-on-top-lg"
+                            *ngIf="entity.tag_names_arr?.length"
+                          >
+                            <span class="label-list">
+                              <span
+                                class="label label-default space-on-right text-uppercase"
+                                *ngFor="
+                                  let tag of entity.tag_names_arr;
+                                  trackBy: trackByIndex
+                                "
+                              >
+                                <small>{{ tag }}</small>
+                              </span>
+                            </span>
+                          </div>
+                          <div
+                            class="align-middle text-white space-on-top-lg"
+                            *ngIf="!entity.tag_names_arr?.length"
+                          >
+                            <i>*No contact tags available*</i>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div
+              class="row clearfix"
+              *ngIf="!related_contacts || !related_contacts.length"
+            >
+              <div col="6" offset="3">
+                <app-empty-state
+                  *ngIf="!isFreeSubscription"
+                  iconName="user"
+                  (action)="addContact()"
+                  actionLabel="Add Contact"
+                  message="No contact(s) available for {{
+                    strategy?.name
+                  }}. Why not add?"
+                >
+                </app-empty-state>
+                <app-empty-state
+                  *ngIf="isFreeSubscription"
+                  iconName="user"
+                  message="No contact(s) available for {{
+                    strategy?.name
+                  }}. Why not add?"
+                >
+                </app-empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default" *ngIf="!related_contacts">
+          <div class="panel-body">
+            <app-spinner
+              [broadSpinner]="true"
+              [spinnerHeight]="100"
+            ></app-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              {{ public_contacts.length }}
+              {{ isFirmOwner ? "Internal" : "Visible" }} Contact(s)
+            </h5>
+            <div class="panel-controls" *ngIf="isFirmOwner">
+              <div class="panel-controls-wrapper">
+                <a
+                  class="panel-control"
+                  tooltip="Assign Internal Contacts"
+                  container="body"
+                  (click)="addPublicContact()"
+                  placement="left"
+                >
+                  <span appIcon name="plus"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div *ngIf="public_contacts && public_contacts.length">
+              <!-- TODO: tiles-adjuster="adjust_entity_list"
+                use-max-tile-width="true"
+                tile-selector="> li"-->
+              <ul
+                class="list-unstyled due-diligence-grid"
+                tiles-adjuster="adjust_entity_list"
+                use-max-tile-width="true"
+                tile-selector="> li"
+              >
+                <!-- TODO: on-render="adjust_entity_list = true"-->
+                <li
+                  class="inline-block pull-left pos-rel internal_contacts_li"
+                  on-render="adjust_entity_list = true"
+                  *ngFor="let entity of public_contacts"
+                  (mouseenter)="entity.display_action_buttons = true"
+                  (mouseleave)="entity.display_action_buttons = false"
+                  style="margin-right: 10px"
+                >
+                  <div class="panel panel-default space-on-right relative">
+                    <div class="panel-body">
+                      <div>
+                        <a
+                          class="clickable"
+                          (click)="goToUserPage(entity)"
+                          [tooltip]="entity.fullName"
+                          container="body"
+                        >
+                          {{ entity.fullName }}
+                        </a>
+                      </div>
+                      <ul
+                        class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons"
+                      >
+                        <li class="space-on-bottom">
+                          <small
+                            *ngIf="!entity.is_primary && !entity.is_public"
+                            class="visibility-hidden"
+                          >
+                            Contact Type:
+                          </small>
+                          <span
+                            class="label label-success space-on-right"
+                            *ngIf="entity.is_primary"
+                          >
+                            Primary
+                          </span>
+                          <span
+                            class="label label-primary space-on-right"
+                            *ngIf="entity.is_public"
+                          >
+                            Visible
+                          </span>
+                        </li>
+                        <li
+                          *ngIf="
+                            entity.internal_tags && entity.internal_tags.length
+                          "
+                        >
+                          <span
+                            class="label label-default space-on-right"
+                            *ngFor="let department of entity.internal_tags"
+                          >
+                            {{ getFunctionDescription(department) }}
+                          </span>
+                        </li>
+                      </ul>
+
+                      <div
+                        *ngIf="entity.display_action_buttons && isFirmOwner"
+                        class="pos-abs stick-right-lg stick-bottom-lg"
+                      >
+                        <dv-button
+                          [fontSizeType]="'medium'"
+                          [btnType]="'default'"
+                          [size]="'xs'"
+                          (onClick)="editPublicContact(entity)"
+                          tooltipText="Edit this contact"
+                          class="space-on-right"
+                        >
+                          <span appIcon name="pencil"></span>
+                        </dv-button>
+                        <dv-button
+                          [fontSizeType]="'medium'"
+                          [btnType]="'default'"
+                          [btnClass]="'text-danger'"
+                          [size]="'xs'"
+                          (onClick)="displayContactRemovalConfirmation(entity)"
+                          tooltipText="Remove this contact"
+                          class="space-on-right"
+                        >
+                          <span appIcon name="trashcan"></span>
+                        </dv-button>
+                      </div>
+                      <div
+                        class="pos-abs stick-right-lg stick-bottom-sm"
+                        *ngIf="!isFirmOwner"
+                      >
+                        <dv-button
+                          [fontSizeType]="'medium'"
+                          [btnType]="'default'"
+                          [size]="'xs'"
+                          (onClick)="addContactToPortfolio(entity)"
+                          tooltipText="{{
+                            entity.is_tracking
+                              ? 'You are already tracking this contact'
+                              : 'Add this contact to portfolio'
+                          }}"
+                          [ngClass]="{ disabled: entity.is_tracking }"
+                          [btnClass]="entity.is_tracking ? 'disabled' : ''"
+                        >
+                          <span appIcon name="plus"></span>
+                        </dv-button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ribbon right-0" *ngIf="entity.is_key_person">
+                    <span>Key Person</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div
+              class="row clearfix"
+              *ngIf="public_contacts && !public_contacts.length && isFirmOwner"
+            >
+              <div col="6" offset="3">
+                <app-empty-state
+                  iconName="user"
+                  (action)="addPublicContact()"
+                  actionLabel="Assign Internal Contact"
+                  message="No internal contact(s) available for {{
+                    strategy?.name
+                  }}. Why not add?"
+                >
+                </app-empty-state>
+              </div>
+            </div>
+            <div
+              class="row clearfix"
+              *ngIf="public_contacts && !public_contacts.length && !isFirmOwner"
+            >
+              <div col="6" offset="3">
+                <app-empty-state
+                  iconName="user"
+                  message="No visible contact(s) available"
+                >
+                </app-empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix" *ngIf="!public_contacts && isFirmOwner">
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <app-spinner
+              [broadSpinner]="true"
+              [spinnerHeight]="100"
+            ></app-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div class="panel-body">
+        <div class="col-sm-12 space-on-bottom">
+          <span class="label label-success space-on-right"> Primary </span>
+          <small
+            ><i
+              >These are primary contacts of the entity on the
+              {{ is_manager ? "your" : "manager" }} side. These contacts will be
+              notified of any activities related to their assigned entities.
+              Investor will not be able to remove these contacts while sending
+              out requests.</i
+            ></small
+          >
+        </div>
+        <div class="col-sm-12 space-on-bottom">
+          <span class="label label-primary space-on-right"> Visible </span>
+          <small
+            ><i
+              >These are the visible contacts of the entity setup by
+              {{ is_manager ? "your" : "manager" }} firm.
+              {{ is_manager ? "Investor" : "You" }} can add/remove them based on
+              the requirement.</i
+            ></small
+          >
+        </div>
+        <div class="col-sm-12" *ngIf="is_manager">
+          <span class="label label-warning space-on-right"> Key Person </span>
+          <small
+            ><i
+              >These are the key employees of a firm like CEO, CTO, COO etc of
+              the firm. You can mark all C level managers as a key person.</i
+            ></small
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

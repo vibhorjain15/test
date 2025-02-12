@@ -1,0 +1,65 @@
+<app-modal
+  [title]="'Upload Bulk AUM / TrackRecord Timeseries'"
+  firstButtonLabel="Upload File"
+  (onFirstClick)="upload($event)"
+  [initialTemplate]="uploadAumFileRef"
+  [isLoading]="is_uploading"
+  [isFirstButtonDisabled]="!files || files.length == 0"
+>
+</app-modal>
+
+<ng-template #uploadAumFileRef>
+  <div class="upload-aum-file-container">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <p>
+          <b>Step 1:</b> Download the file to populate historical AUM and Track
+          Record timeseries. If you have historical data on DiligenceVault, it
+          will be included in the downloaded file.
+        </p>
+        <div class="text-center">
+          <dv-button
+            btnType="default"
+            leftIcon="file-excel"
+            (onClick)="downloadFile()"
+            class="space-on-right-lg"
+            [loader]="is_downloading"
+          >
+            Download File
+          </dv-button>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <p><b>Step 2:</b> Upload the populated file below.</p>
+      </div>
+    </div>
+    <div class="space-on-top-lg">
+      <label for="period">Select Period</label>
+      <dv-select
+        [clearable]="false"
+        name="assets"
+        [(ngModel)]="selected_period"
+        (onSelectChange)="selected_period = $event"
+        [list]="period_options"
+        [id]="'period'"
+      >
+      </dv-select>
+    </div>
+    <div class="space-on-top-lg">
+      <dv-uploader
+        accept=".xlsx,.xlsm"
+        dragLabel="Drag & Drop your excel file here (.xlsx)"
+        [isMultiple]="false"
+        (onFileUpload)="handleFileUpload($event)"
+      ></dv-uploader>
+    </div>
+    <div
+      class="space-on-top text-center text-danger"
+      *ngIf="upload_error_message"
+    >
+      {{ upload_error_message }}
+    </div>
+  </div>
+</ng-template>

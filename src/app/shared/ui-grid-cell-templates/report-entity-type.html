@@ -1,0 +1,11 @@
+<ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+  class="text-left">
+  <span
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+  </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents  ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <!-- <span data-ng-if="row.entity.entity_type == 'Report'" class="label label-primary" uib-tooltip="This is word report">WORD REPORT</span> -->
+  <span class="label" data-ng-class="{'label-primary': row.entity.entity_type == 'Report', 'label-warning': row.entity.entity_type != 'Report'}" uib-tooltip="{{row.entity.entity_type == 'Report'? 'This is word report' : 'This is DV Report'}}">{{row.entity.entity_type_alias}}</span>
+
+</ui-grid-cell-contents>

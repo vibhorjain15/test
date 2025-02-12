@@ -1,0 +1,702 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="clear-margin">
+      <b>Export New Report</b>
+    </h4>
+  </div>
+  <div class="panel panel-info" *ngIf="selected_type == ReportTypes.QUESTION">
+    <div class="panel-heading">
+      Please select questions to export to Excel. Optionally, you can choose to
+      export responses only from specific firms.
+    </div>
+  </div>
+  <app-spinner *ngIf="loading_prefs"></app-spinner>
+  <div class="panel-body clearfix" *ngIf="!loading_prefs">
+    <div col="12" class="export_row_container">
+      <div class="row clearfix">
+        <div class="space-on-bottom-lg">
+          <span class="control-label fw-bolder"> Export Type </span>
+        </div>
+        <app-radio
+          type="info inline"
+          [id]="'radio1'"
+          class="space-on-right"
+          (click)="onTypeChange(ReportTypes.TEMPLATE)"
+          name="Type"
+          [value1]="ReportTypes.TEMPLATE"
+          [label]="'Entire Template'"
+          [(ngModel)]="selected_type"
+          ariaLabel="Entire Template radio button"
+        ></app-radio>
+
+        <app-radio
+          type="info inline"
+          class="space-on-left"
+          (click)="onTypeChange(ReportTypes.QUESTION)"
+          name="Type"
+          [id]="'radio2'"
+          [label]="'Selected Questions'"
+          [value1]="ReportTypes.QUESTION"
+          [(ngModel)]="selected_type"
+          ariaLabel="Selected Questions radio button"
+        >
+        </app-radio>
+      </div>
+    </div>
+    <div col="12" class="row">
+      <div
+        class="row col-xs-6 space-on-right"
+        col="3"
+        *ngIf="selected_type == ReportTypes.TEMPLATE"
+      >
+        <label for="template-selection-ede" class="control-label">
+          Select a Template
+        </label>
+        <dv-select
+          [id]="'template-selection-ede'"
+          name="template-selection"
+          (onSelectChange)="onFilterChange()"
+          [clearable]="false"
+          [searchable]="true"
+          [(ngModel)]="selected_template"
+          [list]="templates"
+          [bindValue]="null"
+          [aria-label]="'Select A Template'"
+        >
+        </dv-select>
+      </div>
+      <div col="2" *ngIf="selected_type != ReportTypes.TEMPLATE">
+        <dv-form-element
+          [showRightIcon]="false"
+          [label]="'Select Question(s)'"
+          labelPosition="top"
+        >
+          <dv-button (onClick)="openQuestionSelectionModal()">
+            {{
+              selectedQuestions.length
+                ? "Manage Selection"
+                : "Click to choose Questions"
+            }}
+          </dv-button>
+        </dv-form-element>
+      </div>
+      <div col="5" *ngIf="selected_type != ReportTypes.TEMPLATE">
+        <dv-form-element
+          [fieldName]="'Select Manager Firm'"
+          [showRightIcon]="false"
+          labelPosition="top"
+          [elementCol]="12"
+          [label]="'Select Responder Firm(s) (optional)'"
+          [for]="'manager_ids'"
+          infoText="Filter the export to include only responses from the selected firms and associated entities."
+        >
+          <dv-select
+            [id]="'manager_ids'"
+            class="placeholder-enable"
+            [multiple]="true"
+            [clearable]="false"
+            [(ngModel)]="manager_ids"
+            placeholder="Search Firm(s)"
+            bindValue="id"
+            bindLabel="name"
+            [list]="firms"
+          >
+          </dv-select>
+        </dv-form-element>
+      </div>
+
+      <div col="3">
+        <div class="col-sm-12">
+          <dv-form-element
+            [showRightIcon]="false"
+            [isRequired]="true"
+            [label]="'Select Dates'"
+            labelPosition="top"
+            [elementCol]="12"
+            [for]="'select_dates'"
+          >
+            <app-date-range-picker
+              [id]="'select_dates'"
+              [customDate]="dateRange"
+              (change)="onDateChange($event)"
+              (clearDateFilter)="onClearDateFilter()"
+            ></app-date-range-picker>
+          </dv-form-element>
+        </div>
+      </div>
+      <div
+        [ngClass]="{
+          'col-sm-4': selected_type == ReportTypes.TEMPLATE,
+          'col-sm-2': selected_type != ReportTypes.TEMPLATE
+        }"
+      >
+        <div
+          class="exportActionsContainer"
+          [ngClass]="{
+            'margin-left-50': selected_type != ReportTypes.TEMPLATE
+          }"
+        >
+          <dv-form-element
+            [modelController]=""
+            [fieldName]=""
+            [showRightIcon]="false"
+            [isRequired]="true"
+            [label]="'Action'"
+            labelPosition="top"
+          >
+            <dv-button
+              tooltipText="Reset the filters"
+              (onClick)="resetFilter()"
+              btnType="default"
+              ariaLabel="Reset the filters"
+              btnClass="space-on-right"
+            >
+              <span appIcon name="refresh"></span>
+            </dv-button>
+            <dv-button
+              tooltipText="Go Back"
+              (onClick)="goBack()"
+              btnType="default"
+              ariaLabel="Go Back"
+            >
+              <span appIcon name="arrow-back"></span>
+            </dv-button>
+          </dv-form-element>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col-md-12 space-on-top-lg space-on-bottom-lg"
+      *ngIf="selected_type == ReportTypes.TEMPLATE"
+    >
+      <a
+        class="link clickable pull-right"
+        (click)="showAdvanceOptions = !showAdvanceOptions"
+        clickable
+      >
+        <span
+          appIcon
+          [name]="showAdvanceOptions ? 'chevron-up' : 'chevron-down'"
+        ></span>
+
+        Set your preferences
+      </a>
+    </div>
+
+    <div
+      col="12"
+      class="row bordered-top space-on-top-xxl padded-top-xxl"
+      *ngIf="showAdvanceOptions && selected_type == ReportTypes.TEMPLATE"
+    >
+      <div class="space-on-bottom-lg">
+        <span for="template-selection" class="control-label fw-bolder">
+          Select data points you would like to include in this excel export
+          report
+        </span>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          label="Include responses"
+          [(ngModel)]="include_responses_excel_export"
+          ariaLabel="Include responses checkbox"
+        ></dv-checkbox>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          label="Include ratings/scores"
+          [(ngModel)]="include_ratings_excel_export"
+          ariaLabel="Include ratings/scores checkbox"
+        ></dv-checkbox>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          [(ngModel)]="include_internal_key"
+          label="Include internal key column"
+          ariaLabel="Include internal key column checkbox"
+        ></dv-checkbox>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          [(ngModel)]="include_comments_excel_export"
+          label="Include comments"
+          ariaLabel="Include comments checkbox"
+        >
+        </dv-checkbox>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          [(ngModel)]="transpose_excel_columns"
+          class="inline-block"
+          label="Transpose standard export"
+          ariaLabel="Transpose standard export checkbox"
+        >
+        </dv-checkbox>
+        &nbsp;
+        <span
+          appIcon
+          name="info"
+          class="align-middle"
+          tooltip="Transpose standard export to show questions in columns"
+          container="body"
+        ></span>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          [(ngModel)]="split_comments"
+          label="Split comments"
+          class="inline-block"
+          ariaLabel="Split comments checkbox"
+        >
+        </dv-checkbox>
+        &nbsp;
+        <span
+          appIcon
+          name="info"
+          class="align-middle"
+          tooltip="Split comments associated with responses in another cell"
+          container="body"
+        >
+        </span>
+      </div>
+      <div col="4">
+        <dv-checkbox
+          [(ngModel)]="include_flags_excel_export"
+          label="Include flags"
+          ariaLabel="Include flags checkbox"
+        >
+        </dv-checkbox>
+      </div>
+    </div>
+
+    <div
+      col="12"
+      class="text-center"
+      *ngIf="selected_type == ReportTypes.TEMPLATE"
+    >
+      <div col="12" class="filter_projects_button">
+        <div
+          *ngIf="selected_type == ReportTypes.TEMPLATE"
+          class="btn btn-default btn-xs space-on-right-lg space-on-top-lg"
+        >
+          <dv-checkbox
+            [(ngModel)]="selectedOnly"
+            label="Filter Projects"
+            (onValChange)="onSelectionChange($event)"
+            ariaLabel="Filter Projects checkbox"
+          ></dv-checkbox>
+        </div>
+        <button
+          appButton
+          type="submit"
+          (click)="generateReport()"
+          class="space-on-top-lg"
+          style="height: 3.1em"
+          aria-label="Generate Report button"
+        >
+          {{ exportButtonLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="panel-footer bg-white clearfix"
+    *ngIf="selectedOnly && selected_type == ReportTypes.TEMPLATE"
+  >
+    <div class="row clearfix">
+      <div col="6">
+        <div class="panel panel-default dd-multiselect">
+          <div class="panel-heading">
+            <div class="row clearfix">
+              <div col="6">
+                <div
+                  class="input-group-rename-this-class-when-filters-are-enabled"
+                >
+                  <div class="form-group">
+                    <input
+                      id="filterByString"
+                      type="text"
+                      [(ngModel)]="filterByString"
+                      class="form-control"
+                      placeholder="Search Projects by name"
+                      aria-label="Search Projects by name input field"
+                    />
+                    <span
+                      appIcon
+                      name="close"
+                      *ngIf="filterByString"
+                      (click)="filterByString = ''"
+                      class="cross"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Clear search input field button"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+              <div col="6">
+                <div>
+                  <button
+                    appButton
+                    btnType="default"
+                    class="space-on-top-2 space-on-right"
+                    size="sm"
+                    (click)="filterByString = ''"
+                    aria-label="Clear search input field button"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    appButton
+                    btnType="default"
+                    size="sm"
+                    [disabled]="!count"
+                    class="space-on-top-2 space-on-left"
+                    (click)="selectAll()"
+                    aria-label="Select All button"
+                  >
+                    <span class="align-middle">Select All</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="list-group clear-margin-bottom">
+            <div
+              class="list-group-item"
+              *ngFor="
+                let diligence of completedDiligences
+                  | filter : filterByString : filteredListMeta
+                  | orderBy : 'name';
+                index as i
+              "
+            >
+              <ng-container #myRef>
+                <div class="row clearfix">
+                  <span
+                    *ngIf="diligence.is_selected || select_all_entities"
+                    class="space-on-right"
+                  >
+                    <span
+                      appIcon
+                      name="check"
+                      size="lg"
+                      class="text-success"
+                    ></span>
+                  </span>
+                  <span
+                    [tippyTooltip]="'Select ' + diligence.entity_name"
+                    container="body"
+                    class="space-on-right"
+                    *ngIf="!(diligence.is_selected || select_all_entities)"
+                  >
+                    <span
+                      appIcon
+                      name="plus-circle"
+                      (click)="addToSelection(diligence, i)"
+                      size="lg"
+                      class="text-primary"
+                      [attr.aria-label]="'Select ' + diligence.entity_name"
+                      role="button"
+                      tabindex="0"
+                    ></span>
+                  </span>
+                  <span>{{ diligence.entity_name }}</span>
+                  <span>- {{ diligence.name }}</span>
+                  <span *ngIf="diligence.as_of_date"
+                    >- As of
+                    {{ diligence.as_of_date | dvDate : ["isLocaleDate"] }}</span
+                  >
+                  <span *ngIf="diligence.due_at"
+                    >- Due at
+                    {{ diligence.due_at | dvDate : ["isLocaleDate"] }}</span
+                  >
+                  <span
+                    class="space-on-left badge"
+                    [ngClass]="{
+                      'badge-info': diligence.entity_type === 'Strategy',
+                      'badge-success': diligence.entity_type === 'Fund',
+                      'badge-warning': diligence.entity_type === 'Firm',
+                      'badge-primary': diligence.entity_type === 'Vehicle'
+                    }"
+                  >
+                    {{
+                      diligence.entity_type === "Fund"
+                        ? "Product"
+                        : diligence.entity_type === "Vehicle"
+                        ? "Vehicle"
+                        : diligence.entity_type === "Strategy"
+                        ? "Strategy"
+                        : "Firm"
+                    }}</span
+                  >
+                </div>
+              </ng-container>
+            </div>
+            <div class="list-group-item" *ngIf="is_loading">
+              <div class="row clearfix">
+                <div>
+                  <app-spinner
+                    [broadSpinner]="true"
+                    [spinnerHeight]="'20'"
+                  ></app-spinner>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h5 class="pull-right" *ngIf="completedDiligences.length">
+            Total {{ count }} Projects available
+          </h5>
+          <div
+            class="panel-body"
+            *ngIf="
+              !filters_applied && !is_loading && !completedDiligences.length
+            "
+          >
+            <app-empty-state
+              message="Try changing your filters if you don't see what you're looking for"
+              *ngIf="!is_admin"
+              aria-live="polite"
+            ></app-empty-state>
+          </div>
+          <div
+            class="panel-body"
+            *ngIf="
+              !is_loading && filters_applied && completedDiligences.length === 0
+            "
+            aria-hidden="true"
+          >
+            <app-empty-state
+              message="No Projects match applied filters"
+              aria-live="polite"
+            ></app-empty-state>
+          </div>
+        </div>
+      </div>
+      <div class="dd-multiselect-selection" col="6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="row clearfix">
+              <div col="8">
+                <p class="form-control-static inline-block">
+                  <span
+                    appIcon
+                    name="briefcase"
+                    class="space-on-right align-middle"
+                    aria-hidden="true"
+                  ></span
+                  >Projects Selected
+                  <span *ngIf="selection_list.length > 0 || select_all_entities"
+                    >({{
+                      selection_list.length
+                        ? selection_list.length
+                        : count
+                        ? count
+                        : 0
+                    }})</span
+                  >
+                </p>
+              </div>
+              <div col="4">
+                <span class="pull-right">
+                  <button
+                    appButton
+                    btnType="default"
+                    size="sm"
+                    (click)="clearSelection()"
+                    aria-label="Clear Selection button"
+                  >
+                    Clear Selection
+                  </button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <ul
+            class="list-group clear-margin-bottom"
+            *ngIf="selection_list.length"
+            aria-hidden="true"
+          >
+            <li
+              class="list-group-item"
+              *ngFor="let diligence of selection_list"
+              [ngClass]="{ 'active-item': diligence.hoverState }"
+              (mouseover)="diligence.hoverState = true"
+              (mouseleave)="diligence.hoverState = false"
+            >
+              <div class="media">
+                <div class="media-body">
+                  <div class="dv-table full-width">
+                    <div class="cell align-middle">
+                      <div class="clearfix">
+                        <div class="inline-block">
+                          <span
+                            class="space-on-right"
+                            [adaptivePosition]="false"
+                            [tooltip]="
+                              'Remove ' +
+                              diligence.entity_name +
+                              '-' +
+                              diligence.name
+                            "
+                            container="body"
+                          >
+                            <span
+                              appIcon
+                              name="minus-circle"
+                              class="text-danger"
+                              aria-label="Remove selected entity button"
+                              size="lg"
+                              (click)="removeFromSelection(diligence)"
+                              clickable
+                            ></span>
+                          </span>
+                          <span class="space-on-right">{{
+                            diligence.entity_name
+                          }}</span>
+                          <span>- {{ diligence.name }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="panel-body text-center" *ngIf="select_all_entities">
+            All {{ data_length }} projects are selected.
+          </div>
+          <div
+            class="panel-body"
+            *ngIf="!selection_list.length && !select_all_entities"
+            aria-hidden="true"
+          >
+            <app-empty-state
+              message="You have not selected any projects. Please select them from the panel in the left"
+              aria-live="polite"
+            >
+            </app-empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="selected_type == ReportTypes.QUESTION && selectedQuestions.length"
+  >
+    <div class="panel panel-default" *ngIf="selected_entities_combined.length">
+      <div class="panel-heading">
+        <h5 class="panel-title">Selected Entities</h5>
+
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a
+              class="panel-control"
+              (click)="clearEntityFilters()"
+              tooltip="Clear Filters"
+              placement="left"
+              role="button"
+              tabindex="0"
+              aria-label="Clear Filters button"
+            >
+              <span appIcon name="close"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <span
+          class="label label-default space-on-right-lg entity_label"
+          *ngFor="let entity of selected_entities_combined"
+        >
+          <span class="entity_badge" [tooltip]="entity.type">{{
+            entity.type[0]
+          }}</span>
+          {{ entity.name }}
+          <span
+            (click)="removeSelectedEntity(entity)"
+            class="clickable space-on-left-lg danger"
+            aria-hidden="true"
+          >
+            <span appIcon name="trashcan"></span>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="questionSelector">
+      <div class="preview_search_div" *ngIf="selectedQuestions.length">
+        <input
+          placeholder="Search in selected Question(s)"
+          type="text"
+          id="searchText"
+          class="form-control"
+          [(ngModel)]="searchText"
+          aria-label="Search in selected Question(s) input field"
+          autocomplete="off"
+        />
+      </div>
+      <div *ngIf="selectedQuestions.length">
+        <table class="table table-condensed">
+          <tbody>
+            <tr
+              *ngFor="
+                let question of selectedQuestions | filter : searchText;
+                let i = index
+              "
+            >
+              <td width=" 10%" class="text-center">
+                <dv-checkbox
+                  id="{{ i }}"
+                  [(ngModel)]="question.is_selected"
+                  aria-labelledby="{{ i }}"
+                ></dv-checkbox>
+              </td>
+              <td width="90%">
+                <div [innerHTML]="question.question_text | cleanHtml"></div>
+                <div class="info_div">
+                  <span>
+                    <strong>Response Type</strong> :
+                    {{
+                      getResponseTypeById(question.response_type).description
+                    }}
+                    |
+                    <strong>Response(s)</strong> : {{ question.response_count }}
+                    |
+                    <span
+                      [tooltip]="formatTemplatesTooltip(question)"
+                      class="clickable"
+                    >
+                      <strong>Template(s)</strong> :
+                      {{ question.template_count }}
+                    </span>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        class="panel panel-info space-on-top-lg"
+        *ngIf="!selectedQuestions.length"
+        aria-hidden="true"
+      >
+        <div class="panel-heading">
+          <small>No Questions Selected</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="save_bar_exports text-center"
+    *ngIf="selected_type == ReportTypes.QUESTION && selectedQuestions.length"
+  >
+    <button appButton class="btn btn-primary" (click)="generateReport()">
+      {{ exportButtonLabel }}
+    </button>
+  </div>
+</div>

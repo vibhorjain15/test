@@ -1,0 +1,18 @@
+<ui-grid-cell-contents>
+    <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+        class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{grid.appScope.vm.displayGroupedHeaderName(grid, row, col)}}">
+        {{grid.appScope.vm.displayGroupedHeaderName(grid, row, col)}}
+    </div>
+    <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+        <div data-ng-if="row.entity.associated_investors && row.entity.associated_investors.length > 0">
+            <span class="space-on-right">{{row.entity.associated_investors[0]}}</span>
+            <span data-ng-show="row.entity.associated_investors.length > 1"> and {{row.entity.associated_investors.length - 1}} </span>
+            <span class="link-underline space-on-right"
+                data-ng-show="row.entity.associated_investors.length > 1"
+                uib-tooltip="{{grid.appScope.vm.formatSMETooltip(row.entity.associated_investors)}}">
+            more
+            </span>
+        </div>
+        <div data-ng-if="!row.entity.associated_investors">None</div>
+    </div>
+</ui-grid-cell-contents>

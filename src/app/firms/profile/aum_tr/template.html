@@ -1,0 +1,114 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-firms-aum-tr
+    (on-unsaved-table-count-change)="vm.handle_state_change($event)"
+    ng-init="vm.angular_init()"
+  ></ng2-firms-aum-tr>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner
+          broad-spinner
+          spinner-height="65"
+          data-ng-if="!vm.firm"
+        ></spinner>
+
+        <div
+          class="dv-table dv-table-middle dd-info-panel"
+          data-ng-show="vm.firm"
+        >
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{vm.firm.display_name}}
+            </h4>
+          </div>
+
+          <div class="cell bordered-right">
+            <button
+              btn-type="transparent"
+              data-ng-click="vm.openAddTableDialog()"
+            >
+              <div><icon name="table" size="2x"></icon></div>
+              <small>Add Track Record / AUM History</small>
+            </button>
+          </div>
+
+          <div class="cell text-center">
+            <a class="btn btn-transparent" ui-sref="app.monitor.firms">
+              <div><icon name="arrow-back" size="2x"></icon></div>
+              <small>Back to all {{vm.entity_type | standardPluralize}}</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="12">
+        <p class="alert alert-info" data-ng-show="vm.tables.length">
+          <small>
+            <strong>Instructions: </strong>
+            To delete a row, please right click when on the row. Copy and paste
+            values from excel or enter them directly in the cells.
+          </small>
+        </p>
+
+        <div
+          class="panel panel-default panel-hot"
+          data-ng-repeat="table in vm.tables"
+        >
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              <span data-ng-switch="table.type">
+                <span data-ng-switch-when="track_record"
+                  >{{table.name}} ({{table.currency_name && table.profile_type?
+                  table.currency_name+'/'+table.profile_type+' in ':''}}%)</span
+                >
+                <span data-ng-switch-when="aum"
+                  >{{table.name}} ({{table.currency_name? table.currency_name +'
+                  in ':''}} millions)</span
+                >
+              </span>
+            </h5>
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a
+                  class="panel-control"
+                  data-ng-disabled="vm.currentFirmId != table.firm_id"
+                  data-ng-click="vm.openEditTableDialog(table, $index)"
+                  uib-tooltip="Edit"
+                >
+                  <icon name="pencil"></icon>
+                </a>
+                <a
+                  class="panel-control"
+                  data-ng-disabled="vm.currentFirmId != table.firm_id"
+                  data-ng-click="vm.openDeleteConfirmation(table, $index)"
+                  uib-tooltip="Delete"
+                >
+                  <icon name="trashcan"></icon>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <share-class-table resource="table" share-class="vm.firm">
+          </share-class-table>
+        </div>
+
+        <spinner data-ng-show="!vm.tables"></spinner>
+
+        <div class="row clearfix" data-ng-show="vm.tables && !vm.tables.length">
+          <div col="6" offset="3">
+            <empty-state
+              icon-name="table"
+              message="Add a new Track Record or AUM History. No information available for this firm."
+            >
+            </empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

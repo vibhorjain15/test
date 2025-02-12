@@ -1,0 +1,12 @@
+<ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+  class="text-left">
+  <span  
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+  </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents  ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div ng-controller="DueDiligenceActionController as vm">
+    <span data-ng-if="row.entity.status != 'Sent'" diligence-status="row.entity.status"></span>
+    <span data-ng-if="row.entity.status == 'Sent'" diligence-status="'Sent'"></span>
+  </div>
+</ui-grid-cell-contents>

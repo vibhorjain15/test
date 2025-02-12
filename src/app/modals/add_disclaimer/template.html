@@ -1,0 +1,49 @@
+<form name="vm.add_disclaimer_form"
+      data-ng-submit="vm.save()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">Attach Disclaimer for {{vm.disclaimer.entity_name}}
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="disclaimer" data-ng-if="vm.disclaimers && vm.disclaimers.length">
+        <label for="fund" class="control-label col-sm-3" >
+          Disclaimer
+        </label>
+
+        <div class="col-sm-7" data-ng-if="vm.disclaimers && vm.disclaimers.length">
+            <select name="disclaimer"
+                    id="disclaimer"
+                    class="form-control"
+                    chosen
+                    data-ng-options="disclaimer.id as disclaimer.name for disclaimer in vm.disclaimers"
+                    data-ng-model="vm.disclaimer_id"
+                    required>
+              <option value="" disabled>--Select Disclaimer--</option>
+            </select>
+        </div>
+    </form-group>
+    <form-group data-ng-if="vm.disclaimers && !vm.disclaimers.length" >
+      <div col="12" col-type="sm" class="text-center">
+        <label for="" class="control-label text-muted ">
+          No disclaimers present, <a class="clickable" data-ng-click="vm.redirectToDisclaimerDefinitions()">click here</a> to add one
+        </label>
+        <br>
+        <br>
+      </div>
+    </form-group>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            data-ng-class="{'disabled': (!vm.disclaimers.length || !vm.disclaimer_id)}"
+            uib-tooltip="{{vm.disclaimers.length? '' : 'No disclaimers present'}}"
+            button-loader="vm.saving">Add Disclaimer</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

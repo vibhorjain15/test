@@ -1,0 +1,7 @@
+::ng-deep .fund-custom-field{
+  padding-left: 89px;
+}
+::ng-deep .fund-entity-contacts .addcontact-panel{
+  border: none;
+  box-shadow:none;
+}

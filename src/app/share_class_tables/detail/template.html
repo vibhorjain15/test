@@ -1,0 +1,19 @@
+<div class="panel panel-default panel-hot"
+     data-ng-show="vm.share_class && vm.share_class_table">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      <span data-ng-switch="vm.share_class_table.type">
+        <span data-ng-switch-when="track_record">Track Record (% Net)</span>
+        <span data-ng-switch-when="aum">AUM (millions)</span>
+        <span>for {{vm.share_class.name}}</span>
+      </span>
+    </h5>
+  </div>
+
+  <share-class-table resource="vm.share_class_table"
+                     share-class="vm.share_class"
+                     readonly="true">
+  </share-class-table>
+</div>
+
+<spinner data-ng-hide="vm.share_class && vm.share_class_table"></spinner>

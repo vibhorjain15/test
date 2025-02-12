@@ -1,0 +1,29 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">Unmarked Items
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <table class="table table-striped table-condensed">
+      <thead>
+        <tr>
+          <th width="15%">S.N.</th>
+          <th width="85%">Text</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="entry in vm.items track by $index">
+          <td width="15%" class="break-spaces">{{$index}}</td>
+          <td width="85%" class="break-spaces">{{entry.text}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  <div class="modal-footer">
+    <button btn-type="default" data-ng-click="vm.cancel()">Close</button>
+  </div>
+</div>

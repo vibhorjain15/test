@@ -1,0 +1,6 @@
+:host ::ng-deep div.ngx-file-drop__drop-zone {
+  border: none;
+}
+.minWidth {
+  min-width: 126px;
+}

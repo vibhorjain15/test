@@ -1,0 +1,12 @@
+<div
+  (click)="$event.stopPropagation()"
+  *ngIf="!params?.node?.group && params.value === 'Yes'; else plainText"
+>
+  <span>
+    <a [href]="url">{{ params.value }}</a>
+  </span>
+</div>
+
+<ng-template #plainText>
+  <span> {{ params.value }} </span>
+</ng-template>

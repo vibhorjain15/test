@@ -1,0 +1,70 @@
+<span
+  class="list-box-move"
+  [ngClass]="{
+    'box-hover': isHover,
+    'active-row': isActive
+  }"
+  (mouseenter)="mouseEnter()"
+  (mouseleave)="mouseLeave()"
+  (click)="handleRowClick($event)"
+>
+  <span class="move-lable-wrapper">
+    <span
+      *ngIf="!hideMoveIcon"
+      appIcon
+      class="move-right-margin space-on-top-3 move-icon-color"
+      name="th"
+      aria-hidden="true"
+    ></span>
+    <div
+      [class.boldTitleText]="boldTitleText"
+      class="row-text-hover"
+      [style.color]="isActive ? '#2c7485' : 'inherit'"
+      [innerHtml]="title | dvSafeHtml"
+    ></div>
+    <span
+      *ngIf="isConditionalQuestion"
+      class="badge badge-success min-width-fit-content cursor-default font-size-10 space-on-top-3 space-on-left-lg"
+      [tooltip]="tooltipMessage.ConditionalQuestion"
+      container="body"
+      [adaptivePosition]="false"
+      >Conditional</span
+    >
+  </span>
+
+  <span
+    *ngIf="iconList"
+    class="icon-wrapper move-icon-color"
+    [style.min-width]="iconList?.length * 30 + 'px'"
+  >
+    <ng-container *ngIf="showIcons || showIconsAlways">
+      <span
+        *ngFor="let iconData of iconList"
+        [style.height.px]="iconData.name === 'branches' ? 0 : ''"
+        container="body"
+        [ngClass]="{
+          'icon-span': iconData?.isDisabled
+        }"
+        [class]="iconData?.iconClass"
+      >
+        <span
+          appIcon
+          [class.customIconSize]="
+            iconData.name == 'branches' || iconData.name == 'formula'
+          "
+          [name]="iconData.name"
+          [tippyTooltip]="iconData.tooltip"
+          container="body"
+          (click)="handleIconClick($event, iconData)"
+          [ngClass]="{
+            'icon-disable disabled-element': iconData?.isDisabled,
+            'icon-active': iconData?.isactive,
+            'icon-highlighted': iconData?.isHighlighted
+          }"
+          [size]="iconData?.size"
+          clickable
+        ></span>
+      </span>
+    </ng-container>
+  </span>
+</span>

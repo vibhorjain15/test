@@ -1,0 +1,329 @@
+<form novalidate
+      name="vm.uploadDocumentForm"
+      data-ng-submit="vm.uploadDocument()"
+      class="form-horizontal">
+
+  <div class="modal-header">
+    <h3 class="modal-title">Add a New Document
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;
+        </a>
+    </h3>
+
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="Document Name" tooltip-placement="left">
+      <label for="attachment-name" class="col-md-4 control-label">
+        Document Name
+      </label>
+
+      <div class="col-md-8">
+        <input type="text"
+               id="attachment-name"
+               class="form-control"
+               data-ng-model="vm.params.attachment.name"
+               focus-me="vm.focusAttachmentName"
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               required />
+      </div>
+    </form-group>
+
+    <form-group field-name="Document Type" tooltip-placement="left">
+      <label for="attachment-type" class="col-md-4 control-label">
+        Document Types
+      </label>
+
+      <div class="col-md-8" data-ng-if="vm.attachmentTypes.length">
+        <select id="document-tag"
+                class="form-control"
+                chosen multiple
+                data-ng-model="vm.tags"
+                data-ng-disabled="!vm.attachmentTypes"
+                data-placeholder-text-multiple="'Select Document Tags'"
+                data-ng-options="type.id as type.name for type in vm.attachmentTypes">
+          <option value=""></option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="As of Date" tooltip-placement="left" control-selector="dv-datepicker">
+      <label for="as-of-date" class="col-md-4 control-label">
+        As of Date
+      </label>
+
+      <div class="col-md-8">
+        <dv-datepicker data-ng-model="vm.params.attachment.as_of_date"
+                       id="as-of-date"
+                       ng-required="true"
+                       max-date="vm.maxAsOfDate"></dv-datepicker>
+      </div>
+    </form-group>
+
+    <div class="form-group">
+      <label for="select-file" class="col-md-4 control-label">
+        Select File
+      </label>
+
+      <div class="col-md-8">
+        <div class="dd-doc-selection-wrapper">
+          <div class="panel panel-default dd-doc-drop-panel"
+               dv-file-handler
+               name="file-handler-one"
+               dv-droppable
+               dv-manual-upload
+               dv-fields="vm.params"
+               ngf-multiple="true"
+               ngf-select-disabled="true"
+               dv-bind-files-to="vm.files"
+               ngf-max-files="1"
+               dv-accept="::vm.allowed_file_extensions_str"
+               dv-pattern="::vm.allowed_file_extensions_str"
+               dv-max-file-size="::vm.maxFileSize"
+               dv-upload-url="/attachments"
+               dv-on-upload="vm.documentUploadComplete(response)"
+               ngf-drag-over-class="'panel-primary'">
+            <div class="panel-body">
+              <p class="text-muted text-center">
+                <strong>Drag & Drop your file here</strong>
+              </p>
+
+              <p class="text-muted text-center">
+                <icon name="upload" size="2x"></icon>
+              </p>
+
+              <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+            </div>
+          </div>
+
+          <div class="dd-doc-select-button-container">
+            <button btn-type="default"
+                    dv-file-handler
+                    dv-manual-upload
+                    dv-fields="vm.params"
+                    name="file-handler-two"
+                    dv-bind-files-to="vm.files"
+                    dv-upload-url="/attachments"
+                    dv-accept="::vm.allowed_file_extensions_str"
+                    dv-pattern="::vm.allowed_file_extensions_str"
+                    dv-max-file-size="::vm.maxFileSize"
+                    dv-on-upload="vm.documentUploadComplete(response)">
+              Select File
+            </button>
+            <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group" data-ng-if="!vm.is_freeSubscription">
+      <div class="col-md-offset-4 col-md-8 space-on-bottom-lg">
+        <a role="button"
+           data-ng-if="!vm.showShareOptions"
+           data-ng-click="vm.displaySharePanel()">
+          Show Share Options
+        </a>
+      </div>
+    </div>
+
+    <div class="panel panel-default" data-ng-if="vm.showShareOptions">
+      <div class="panel-body">
+        <form-group field-name="Share based on" tooltip-placement="left">
+          <label for="share-tag" class="col-md-4 control-label">
+            Share based on
+          </label>
+
+          <div class="col-md-8">
+            <div class="btn-group">
+              <label class="btn btn-default"
+                     ng-model="vm.shareBasis"
+                     uib-btn-radio="'status'">
+                Status Groups
+              </label>
+              <label class="btn btn-default"
+                     ng-model="vm.shareBasis"
+                     uib-btn-radio="'entities'">
+                {{vm.isManager ? 'Investors': 'Firms'}}
+              </label>
+            </div>
+          </div>
+        </form-group>
+
+        <div class="panel panel-default" data-ng-if="vm.shareBasis == 'status'">
+          <div class="panel-heading">
+            <h5 class="panel-title">Share with {{vm.isManager ? 'Investor': 'Manager'}} with following statuses</h5>
+          </div>
+
+          <div class="panel-body" data-ng-hide="vm.is_freeSubscription">
+            <form-group field-name="Share with" tooltip-placement="left">
+              <label for="share-tag" class="col-md-4 control-label">
+                Share with
+              </label>
+
+              <div class="col-md-8">
+                <select id="share-tag"
+                        class="form-control"
+                        chosen multiple
+                        data-ng-model="vm.selectedStatuses"
+                        data-ng-disabled="!vm.statuses"
+                        data-placeholder-text-multiple="vm.statusPlaceholder"
+                        data-ng-options="status.id as status.name for status in vm.statuses">
+                </select>
+              </div>
+            </form-group>
+          </div>
+        </div>
+
+        <div class="panel panel-default" data-ng-if="vm.shareBasis == 'entities'">
+          <div class="panel-body">
+            <div data-ng-if="vm.isManager">
+              <form-group field-name="Share with" tooltip-placement="left">
+                <label for="share-investor" class="col-md-4 control-label">
+                  Investor
+                </label>
+
+                <div class="col-md-8">
+                  <select id="share-investor"
+                          class="form-control"
+                          chosen
+                          data-ng-model="vm.selectedInvestor"
+                          data-ng-disabled="!vm.allInvestorsList"
+                          data-placeholder-text-single="'Select Investors'"
+                          data-ng-change="vm.addEntity()"
+                          data-ng-options="investor as investor.name for investor in vm.allInvestorsList">
+                    <option></option>
+                  </select>
+                </div>
+              </form-group>
+            </div>
+
+            <div data-ng-if="vm.isInvestor">
+              <form-group field-name="Share with" tooltip-placement="left">
+                <label for="share-firm" class="col-md-4 control-label">
+                  Firm
+                </label>
+
+                <div class="col-md-8">
+                  <select id="share-firm"
+                          class="form-control"
+                          chosen
+                          data-ng-model="vm.selectedFirm"
+                          data-ng-disabled="!vm.allFirmsList"
+                          data-placeholder-text-single="'Select Firms'"
+                          data-ng-change="vm.addEntity()"
+                          data-ng-options="firm as firm.name for firm in vm.allFirmsList">
+                    <option></option>
+                  </select>
+                </div>
+              </form-group>
+            </div>
+
+            <div class="panel panel-default space-on-top-lg" data-ng-if="vm.isManager">
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="8">
+                    <p class="form-control-static">
+                      Selected Firms
+                      <span data-ng-show="vm.selectedInvestors.length > 0">({{vm.selectedInvestors.length}})</span>
+                    </p>
+                  </div>
+
+                  <div col="4">
+                <span class="pull-right">
+                  <button btn-type="default"
+                          ng-disabled="!vm.selectedInvestors.length"
+                          data-ng-click="vm.clearSelection()">Clear Selection</button>
+                </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="list-group">
+                <div class="list-group-item"
+                     data-ng-repeat="investor in vm.selectedInvestors">
+                  <div class="clearfix">
+                <span class="space-on-right" uib-tooltip="Remove {{investor.name}}">
+                  <icon name="minus-circle"
+                        class="text-danger"
+                        role="button"
+                        size="lg"
+                        data-ng-click="vm.removeInvestor(investor, $index)"></icon>
+                </span>
+
+                    <span>{{investor.name}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-body" data-ng-if="!vm.selectedInvestors.length">
+                <empty-state message="You have not selected any firms. Please select them from the above dropdown."></empty-state>
+              </div>
+            </div>
+
+            <div class="panel panel-default space-on-top-lg" data-ng-if="vm.isInvestor">
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="8">
+                    <p class="form-control-static">
+                      Selected Firms
+                      <span data-ng-show="vm.selectedFirms.length > 0">({{vm.selectedFirms.length}})</span>
+                    </p>
+                  </div>
+
+                  <div col="4">
+                <span class="pull-right">
+                  <button btn-type="default"
+                          ng-disabled="!vm.selectedFirms.length"
+                          data-ng-click="vm.clearSelection()">Clear Selection</button>
+                </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="list-group">
+                <div class="list-group-item"
+                     data-ng-repeat="firm in vm.selectedFirms">
+                  <div class="clearfix">
+                <span class="space-on-right" uib-tooltip="Remove {{firm.name}}">
+                  <icon name="minus-circle"
+                        class="text-danger"
+                        role="button"
+                        size="lg"
+                        data-ng-click="vm.removeFirm(firm, $index)"></icon>
+                </span>
+
+                    <span>{{firm.name}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-body" data-ng-if="!vm.selectedFirms.length">
+                <empty-state message="You have not selected any firms. Please select them from the above dropdown."></empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-8 space-on-bottom-lg">
+            <a role="button"
+               data-ng-click="vm.hideSharePanel()">
+              Hide Share Options
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.uploadingDocument">Upload</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+
+</form>

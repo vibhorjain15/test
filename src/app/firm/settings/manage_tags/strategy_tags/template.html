@@ -1,0 +1,19 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-strategy-tags></ng2-strategy-tags> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Manage Strategy Tags and Custom Fields </h5>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Manage all strategy tags and custom fields that are relevant to your organization under this
+            section.</div>
+    </div>
+    <div class="panel-body">
+        <spinner broad-spinner spinner-height='60' data-ng-if="vm.loading"></spinner>
+        <div data-ng-if="!vm.loading">
+            <div>
+                <custom-field-viewer entity-type="'strategy'" entity-type-id="5004" source="'strategy'">
+                </custom-field-viewer>
+            </div>
+        </div>
+    </div>
+</div>

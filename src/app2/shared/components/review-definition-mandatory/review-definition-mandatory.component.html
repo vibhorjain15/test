@@ -1,0 +1,125 @@
+<div class="container-review">
+  <div class="row">
+    <div class="column col-extra heading-font">REVIEWER</div>
+    <div class="column heading-font center-align col-extra">
+      MANDATORY<span
+        appIcon
+        name="info"
+        tooltip="Mandatory reviewer(s) must approve their assigned responses in order for the review to be completed."
+        container="body"
+        class="space-on-left"
+        placement="right"
+        [adaptivePosition]="true"
+      ></span>
+    </div>
+    <div class="column-extra-date heading-font">
+      {{ type === "firm" ? "TIMELINE IN DAYS" : "DUE DATE" }}
+    </div>
+  </div>
+  <div class="row" *ngFor="let user of reviewerList; let i = index">
+    <div class="column col-extra">
+      <div class="align">
+        <initial-bubbles
+          [initials]="
+            user.type == 'User Roles'
+              ? (user.name | getFirstLetter)
+              : (user.firstName | getFirstLetter) +
+                (user.lastName | getFirstLetter)
+          "
+        ></initial-bubbles>
+        <dv-label
+          [label]="
+            user.type == 'User Roles'
+              ? user.name
+              : user.firstName + ' ' + user.lastName
+          "
+          [truncateLimit]="20"
+          type="bold"
+        ></dv-label>
+      </div>
+    </div>
+
+    <div class="column col-extra">
+      <div class="align" style="justify-content: center">
+        <ui-switch
+          size="small"
+          [disabled]="disabled"
+          [ngModel]="user.is_mandatory"
+          (change)="onMandatoryChange($event, i)"
+          [ngModelOptions]="{ standalone: true }"
+          title="is mandatory switch"
+          UiSwitchButton
+        ></ui-switch>
+      </div>
+    </div>
+
+    <div class="column-extra-date">
+      <ng-container *ngIf="type == 'firm'">
+        <input
+          type="number"
+          class="form-control"
+          required
+          name="timeLine"
+          #timeLine="ngModel"
+          [min]="1"
+          [max]="365"
+          placeholder="Enter the count"
+          [disabled]="disabled"
+          [(ngModel)]="user.duration"
+          aria-label="duration"
+          autocomplete="off"
+          pattern="^\d+$"
+        />
+        <div
+          class="text-danger"
+          *ngIf="
+            timeLine.control &&
+            (timeLine.control.dirty ||
+              timeLine.control.touched ||
+              formSubmitted)
+          "
+        >
+          <p *ngIf="timeLine.control.invalid">
+            Please enter valid number of days
+          </p>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="type == 'modal'">
+        <app-date-picker
+          (change)="handleDateChange($event, user, i)"
+          [value]="user.dueDate"
+          [minDate]="minDate"
+          format="DD-MMM-YYYY"
+          [disabled]="disabled"
+        ></app-date-picker>
+      </ng-container>
+    </div>
+
+    <div class="column">
+      <span
+        appIcon
+        name="trashcan"
+        class="icon-delete"
+        [ngClass]="{
+          disabled: disabled
+        }"
+        (click)="handleDelete(i)"
+      ></span>
+    </div>
+  </div>
+  <div class="team-list">
+    <span appIcon name="user" class="user"></span>
+    <dv-select
+      [list]="teamRoleList"
+      groupBy="type"
+      [ngModel]="selectedReviewer"
+      [disabled]="disabled"
+      placeholder=""
+      bindValue=""
+      (onSelectChange)="handleReviewerChange($event)"
+      appendTo="body"
+      [style.width]="32 + '%'"
+      [aria-label]="'Select reviewer'"
+    ></dv-select>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div role="tabpanel">
+  <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+    <li data-ng-class="{'active': $state.params.structure == 'hedge'}">
+      <a ui-sref="app.discover.structure({structure: 'hedge'})">
+        Hedge Funds
+      </a>
+    </li>
+   <li data-ng-class="{'active': $state.params.structure == 'private-equity'}">
+      <a ui-sref="app.discover.structure({structure: 'private-equity'})">
+        PE / Venture / Real Estate
+      </a>
+    </li>
+   <li data-ng-class="{'active': $state.params.structure == 'long-only'}">
+      <a ui-sref="app.discover.structure({structure: 'long-only'})">
+        Long-only Mandates
+      </a>
+    </li>
+
+  </ul>
+
+  <div class="tab-content">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <ui-view />
+      </div>
+    </div>
+  </div>
+</div>

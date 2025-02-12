@@ -1,0 +1,9 @@
+.no-hr-margin {
+  margin: 5px 0;
+}
+.vertical-line {
+  border: 1px solid #707070;
+  opacity: 0.25;
+  background-color: #707070;
+  border-radius: 2px;
+}

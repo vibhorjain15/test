@@ -1,0 +1,168 @@
+<form name="vm.add_ddq_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.modalTitle}}
+
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="text-center" data-ng-if="!vm.entity_name && !vm.is_manager">
+      <div class="btn-group">
+        <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Fund'}"
+          data-ng-click="vm.setEntityType('Fund')">
+          <icon name="fund" class="space-on-right"></icon>Products
+        </label>
+        <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Firm'}"
+          data-ng-click="vm.setEntityType('Firm')">
+          <icon name="institution" class="space-on-right"></icon>Firms
+        </label>
+      </div>
+    </div>
+    <br>
+
+    <form-group field-name="Investor Name" data-ng-if="vm.is_manager && vm.diligence_type != 'dd_profile' && vm.showInvestorSelection">
+      <label class="control-label" col="4">Pick an Investor</label>
+      <div col="6">
+        <select name="investor" id="investor" chosen 
+            data-ng-model="vm.investor_id"
+            class="form-control"
+            data-ng-options="investor.id as investor.name for investor in vm.firms"
+            data-ng-disabled="vm.request || vm.internalOnly"
+            data-ng-required="!vm.internalOnly">
+            <option value="">--Select--</option>
+        </select>
+        <div class="space-on-top pull-right" data-ng-if="vm.source == 'template'">
+          <dv-checkbox data-ng-model="vm.internalOnly" data-ng-disabled="vm.request"
+                  label="This request is not specific to an investor">
+          </dv-checkbox>
+        </div>
+      </div>
+    </form-group>
+
+    <form-group field-name="Template">
+      <label for="template" class="control-label col-sm-4">
+        Template
+      </label>
+
+      <div class="col-sm-6">
+        <select class="form-control" id="template" required chosen data-ng-disabled="vm.request"
+          data-ng-options="template.id as template.name for template in vm.templates" data-ng-model="vm.template_id">
+          <option value="">-- Select Template --</option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Strategy" data-ng-if="(vm.entity_type == 'Strategy') && (!vm.entity_name)">
+      <label for="strategy" class="control-label col-sm-4">
+        Strategy
+      </label>
+
+      <div class="col-sm-6">
+        <select name="strategy" id="strategy" class="form-control" chosen data-ng-disabled="vm.is_firm_dd || !vm.strategies"
+          data-ng-options="strategy.id as strategy.name for strategy in vm.strategies" data-ng-model="vm.entity_id"
+          ng-required="!vm.is_firm_dd">
+          <option selected disabled style="display:none" value="">--Select--</option>
+        </select>
+        <div class="space-on-top pull-right" data-ng-hide="vm.is_investor && vm.diligence_type == 'dd_profile'">
+          <dv-checkbox data-ng-model="vm.is_firm_dd" label="This is firm level DDQ">
+          </dv-checkbox>
+        </div>
+      </div>
+    </form-group>
+
+    <form-group field-name="Fund" data-ng-if="(vm.entity_type != 'Firm' && vm.entity_type != 'Strategy') && (!vm.entity_name)">
+      <label for="fund" class="control-label col-sm-4">
+        Product
+      </label>
+
+      <div class="col-sm-6">
+        <select name="fund" id="fund" class="form-control" chosen data-ng-disabled="vm.is_firm_dd || !vm.funds"
+          data-ng-options="fund.id as fund.name for fund in vm.funds" data-ng-model="vm.entity_id"
+          ng-required="!vm.is_firm_dd">
+          <option selected disabled style="display:none" value="">--Select--</option>
+        </select>
+        <div class="space-on-top pull-right" data-ng-hide="vm.is_investor && vm.diligence_type == 'dd_profile'">
+          <dv-checkbox data-ng-model="vm.is_firm_dd" label="This is firm level DDQ">
+          </dv-checkbox>
+        </div>
+      </div>
+    </form-group>
+
+    <form-group field-name="Firm" data-ng-if="(vm.entity_type == 'Firm') && (!vm.entity_name) && (!vm.is_manager)">
+      <label for="firm" class="control-label col-sm-4">
+        Firm
+      </label>
+
+      <div class="col-sm-6">
+        <select name="firm" id="firm" class="form-control" chosen data-ng-disabled="!vm.firms"
+          data-ng-options="firm.id as firm.name for firm in vm.firms" data-ng-model="vm.entity_id"
+          ng-required="!vm.is_firm_dd">
+          <option selected disabled style="display:none" value="">--Select--</option>
+        </select>
+        <div class="space-on-top pull-right" data-ng-hide="vm.is_investor && vm.diligence_type == 'dd_profile'">
+          <dv-checkbox data-ng-model="vm.is_firm_dd" label="This is firm level DDQ">
+          </dv-checkbox>
+        </div>
+      </div>
+    </form-group>
+
+    <form-group field-name="Fund" data-ng-if="vm.entity_name">
+      <label for="fund" class="control-label col-sm-4">
+        {{ (vm.entity_type == 'Firm') ? 'Firm' : (vm.entity_type == 'Strategy') ? 'Strategy' : 'Product'}}
+      </label>
+
+      <div col="6" col-type="sm" class="space-on-top">
+        <div class="space-on-top-2 space-on-left-3">{{vm.entity_name}}</div>
+      </div>
+    </form-group>
+
+    <form-group field-name="Name">
+      <label for="dd-name" class="control-label col-sm-4">
+        {{vm.is_manager?'Project':''}} Name
+      </label>
+
+      <div class="col-sm-6">
+        <input type="text" id="dd-name" class="form-control" data-ng-model="vm.name" required
+          dv-restrict-input="{type: 'avoidFirstSplCharacter'}" placeholder="Example: Investment Profile" />
+      </div>
+    </form-group>
+
+    <form-group field-name="Due Date" control-selector="dv-datepicker" data-ng-show="vm.diligence_type != 'dd_profile'">
+      <label for="due-date" class="control-label col-sm-4">
+        Due Date
+      </label>
+
+      <div class="col-sm-6">
+        <dv-datepicker
+            id="due-date"
+            data-ng-model="vm.due_at"
+            min-date="vm.minDate"
+            name="due-date"
+            data-ng-change="vm.validateDueDate()">
+        </dv-datepicker>
+      </div>
+    </form-group>
+    <form-group field-name="As of Date" control-selector="dv-datepicker">
+      <label for="as-of-date" class="control-label col-sm-4">
+        As of Date
+      </label>
+
+      <div class="col-sm-6">
+        <dv-datepicker
+            id="as-of-date"
+            data-ng-model="vm.as_of_date"
+            max-date="vm.maxAsOfDate"
+            name="as-of-date"
+            data-ng-change="vm.validateDueDate()">
+        </dv-datepicker>
+      </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.loading">Start</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

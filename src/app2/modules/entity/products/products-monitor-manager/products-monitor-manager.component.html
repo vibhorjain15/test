@@ -1,0 +1,130 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{ entity_type | standardPluralize }}</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          *ngIf="!is_freeSubscription"
+          (click)="openNewFundDialog()"
+          [tooltip]="'Add New ' + entity_type"
+          container="body"
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="60"
+      *ngIf="loading_funds"
+    ></app-spinner>
+    <div *ngIf="!loading_funds">
+      <!-- TODO: tiles-adjuster="adjust_fund_list" -->
+      <ul
+        class="list-unstyled due-diligence-grid"
+        tiles-adjuster="adjust_fund_list"
+        use-max-tile-width="true"
+        tile-selector="> li"
+        min-tile-width="180"
+        *ngIf="fund_list.length > 0"
+      >
+        <li
+          class="inline-block pull-left"
+          *ngFor="let fund of fund_list"
+          (mouseenter)="fund.display_action_buttons = true"
+          (mouseleave)="fund.display_action_buttons = false"
+        >
+          <!-- style="width: calc(20% - 22px); margin-right: 10px" -->
+          <div
+            class="panel panel-default relative"
+            [ngClass]="{ 'bg-light-gray-panel': fund.display_action_buttons }"
+          >
+            <div class="panel-body">
+              <div class="max-w-200 lh1-5 word-break-break-all">
+                <!-- truncate-text="40" -->
+                <a
+                  [tooltip]="fund.name"
+                  container="body"
+                  (click)="navigate(fund)"
+                >
+                  {{ fund.name }}
+                </a>
+              </div>
+              <ul
+                class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons"
+              >
+                <li class="space-on-bottom">
+                  <span class="align-middle text-muted">{{
+                    fund.strategyName
+                  }}</span>
+                </li>
+                <li class="space-on-bottom">
+                  <span class="align-middle text-muted"
+                    ><small
+                      ># VEHICLES: {{ fund.shareclass_Count }}</small
+                    ></span
+                  >
+                </li>
+                <li>
+                  <app-fund-return
+                    *ngIf="fund"
+                    [fundReturn]="fund.return"
+                    tooltip="Fund returns"
+                    container="body"
+                    [date]="fund.returnAsofDate"
+                  ></app-fund-return>
+                </li>
+              </ul>
+              <div
+                class="pos-abs stick-right-lg stick-bottom-lg"
+                *ngIf="fund.display_action_buttons"
+              >
+                <dv-button
+                  [fontSizeType]="'medium'"
+                  [btnType]="'default'"
+                  [size]="'xs'"
+                  (onClick)="editFund(fund)"
+                  [tooltipText]="'Edit this ' + entity_type"
+                  class="space-on-right"
+                  *ngIf="is_admin"
+                >
+                  <span appIcon name="pencil"></span>
+                </dv-button>
+                <dv-button
+                  [fontSizeType]="'medium'"
+                  [btnType]="'default'"
+                  [btnClass]="'text-danger'"
+                  [size]="'xs'"
+                  (onClick)="displayFundRemovalConfirmation(fund)"
+                  [tooltipText]="'Remove this ' + entity_type"
+                  class="space-on-right"
+                >
+                  <span appIcon name="trashcan"></span>
+                </dv-button>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div col="6" offset="3" *ngIf="fund_list.length === 0">
+        <app-empty-state
+          iconName="fund"
+          (action)="openNewFundDialog()"
+          actionLabel="Add New Product"
+          *ngIf="!is_freeSubscription"
+          message="No products available. Why not add?"
+        >
+        </app-empty-state>
+        <app-empty-state
+          iconName="fund"
+          *ngIf="is_freeSubscription"
+          message="No products available."
+        >
+        </app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>

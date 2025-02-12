@@ -1,0 +1,39 @@
+.label-top {
+  margin-left: 5px;
+  display: block;
+  text-align: left;
+  padding-bottom: 3px;
+}
+
+.form-label-padding {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.center-aligned {
+  display: flex;
+  align-items: center;
+}
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.info-icon {
+  /* vertical-align: super; */
+  font-size: inherit;
+}
+
+.font-normal {
+  font-size: inherit;
+}
+
+:host ::ng-deep .form-control[disabled],
+:host ::ng-deep .form-control[readonly],
+:host ::ng-deep fieldset[disabled] .form-control {
+  background-color: #f9f9f9 !important;
+  opacity: 1;
+}
+.has-success .control-label{
+  color:var(--dark-green) !important;
+}

@@ -1,0 +1,14 @@
+<div class="hotTable" *ngIf="columns.length && rows.length">
+  <dv-table-view-grid
+      [id]="idName"
+      [rows]="rows"
+      [columns]="columns"
+      [excelFormulaOnly]="true"
+      [dataset]="dataset"
+      [validatorFunction]="validatorFunction"
+      [isValidator]="true"
+      [columnHeaders]="columnHeaders"
+      [rowHeaders]="rowHeaders"
+    >
+  </dv-table-view-grid>
+</div>

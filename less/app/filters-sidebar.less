@@ -1,0 +1,317 @@
+.projectsParentDiv{
+  transition: all ease .3s;
+}
+
+.copy_response_div{
+  height: 0;
+  opacity: 0;
+}
+.filtersContainer{
+  .hideAdvanceFilter{
+    position: absolute;
+    right: 0;
+    bottom: 15px;
+  }
+  .input-group-btn{
+    z-index: 9999;
+  }
+  .input-group{
+    width: 100%;
+  }
+  mark{
+    background: #ffffa5 !important;
+  }
+  .panel{
+    border-color: #f5f5f5 !important;
+  }
+  .panel-body{
+    padding: 6px;
+    border-color: #f5f5f5;
+  }
+  .copyBtn{
+    // position: absolute;
+    // bottom: 5px;
+    // right: 32px;
+    // color: @dv-orange;
+  }
+  .viewBtn{
+    // color: @dv-orange;
+    // position: absolute;
+    // right: 2px;
+    // bottom: 5px;
+  }
+/* The side navigation menu */
+.sidenav {
+  z-index: 201; /*zindex greater than the tinymce toolbar, handsontable dropdowns but less than modals, savebar*/
+  height: 100%; /* 100% Full-height */
+  width: 65px; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  top: 40px; /* Stay at the top */
+  right: 0;
+  border-left: 1px solid #dcdcdc;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  transition: 0.4s; /* 0.5 second transition effect to slide in the sidenav */
+}
+#leftMenuBar{
+  transition: 0.4s;
+}
+/* The navigation menu links */
+.sidenav .menu_item .btn-transparent{
+  transition: all .3s ease-out;
+  font-size: 1.5em;
+  padding: 5px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  right: 0px;
+
+}
+.sidenav .menu_item .btn-transparent:hover{
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.225);
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.filterArrow{
+  transition: all ease .3s;
+  position: fixed;
+  height: 35px;
+  width: 35px;
+  right: 17px;
+  bottom: 10px;
+  z-index: 999;
+  padding: 8px;
+  color: #f57c00;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 50px;
+}
+
+.left-radius{
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  background: #fff;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+  transition: margin-left .5s;
+  padding: 20px;
+}
+.qa_button_icon{
+  background: url('/assets/images/QA.png') !important;
+  background-size: 77% !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+.info_div{
+  span{
+    font-size: 12px;
+    color: #888;
+  }
+}
+
+.search_result{
+  // position: relative;
+  // border: 1px solid #f5f5f5;
+  margin-bottom: 8px;
+  // border-right: 2px solid transparent;
+  // transition: all ease .3s;
+  // border-radius: 2px;
+  display: block;
+  float: left;
+  border-bottom: 1px solid #ccc;
+  width: 100%;
+  padding: 15px 0px;
+  }
+  .expired_result{
+    border-right: 2px solid @dv-orange;
+  }
+  .search_result:last-child{
+    margin-bottom: 40px;
+  }
+  .questionName{
+    color: #666;
+    padding: 4px;
+    font-size: 1.2em;
+  }
+  .questionName{
+    small{
+      color: #444;
+      font-weight: 600;
+    }
+  }
+  .responseText{
+    color: #555;
+    padding: 4px;
+    font-size: 1.2em;
+  }
+  .responseText{
+    img{
+      width: 100%;
+      max-width: 100%;
+    }
+    table{
+      table-layout: fixed;
+    }
+  }
+  .questionIcon{
+    color: @dv-blue;
+    font-weight: 900;
+    margin-right: 5px;
+  }
+  .answerIcon{
+    color: @dv-blue;
+    font-weight: 900;
+    margin-right: 5px;
+  }
+
+  .expiredDiv{
+    background: #f57c00;
+    color: #fff;
+    font-size: 11px;
+    position: relative;
+    font-weight: 900;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    bottom: -1px;
+  }
+  .expiryLabel{
+    position: absolute;
+    right: -2px;
+    bottom: 1px;
+    background: @dv-orange;
+    border-radius: 0;
+    box-shadow: -3px 3px 5px 0px #888;
+  }
+
+}
+.response_label{
+  img{
+    width: 100%;
+    max-width: 100%;
+  }
+  mark{
+    background: #ffff9d !important;
+  }
+}
+.response_label{
+  position: relative;
+  top: 6px;
+  white-space: normal;
+}
+.response_text_short{
+  height: 100px;
+  overflow: hidden;
+  position: relative;
+}
+.response_text_short{
+  .clickable{
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    left: 0;
+    text-align: center;
+    height: 40%;
+    padding: 14px;
+    color: #fff;
+    box-shadow: -1px -13px 20px 10px rgba(0, 0, 0, 0.7);
+}
+}
+
+.result_count{
+  background: #eee;
+  border-radius: 3px;
+  padding: 2px 10px;
+}
+
+.tagsDiv{
+  border-top: 1px solid #ccc;
+  padding: 4px 0px;
+  background: #f7f7f7;
+}
+.tagsDiv{
+  .label{
+    display: inline-block;
+    border: 1px solid #e4e4e4;
+    font-size: 12px;
+    margin: 2px 3px;
+    color: #333;
+    background: #fff
+  }
+}
+
+.entityBadge{
+  background: #737373;
+  display: inline-block;
+  padding: 2px;
+  border-radius: 31px;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  color: #fff;
+}
+.dvOrangeBg{
+  background-color: orange;
+}
+.dvBlueBg{
+  background-color: @dv-blue;
+}
+.investorBadge{
+  background: #737373;
+  display: inline-block;
+  padding: 2px;
+  border-radius: 31px;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  color: #fff;
+}
+
+.authorBadge{
+  background: #737373;
+  display: inline-block;
+  padding: 2px;
+  border-radius: 31px;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  color: #fff;
+}
+.expiry_label{
+  color: #FF9800!important;
+  border-color: #FF9800!important;
+  background: #fff !important;
+}
+
+.upperSeparator{
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+}
+.ht_clone_top{
+  z-index: 0 !important;
+}
+
+.responseText{
+  table{
+    table-layout: fixed !important;
+  }
+  td:nth-child(1){
+    width: 80px;
+  }
+  th:nth-child(1){
+    width: 80px;
+  }
+}

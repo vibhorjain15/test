@@ -1,0 +1,342 @@
+<app-modal
+  [title]="'Assign Reviewer'"
+  [firstButtonLabel]="review_started ? 'Assign Reviewers' : 'Start Review'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="verifiersRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #verifiersRef>
+  <div class="modal-body">
+    <div>
+      <div class="text-center">
+        <div class="btn-group">
+          <button
+            appButton
+            class="btn btn-default"
+            [ngClass]="{ 'btn-primary': tabType == 'assign_verifier' }"
+            (click)="setTabType('assign_verifier')"
+          >
+            Assign Reviewer
+          </button>
+          <button
+            appButton
+            class="btn btn-default"
+            [ngClass]="{ 'btn-primary': tabType == 'copy_verifier' }"
+            (click)="setTabType('copy_verifier')"
+          >
+            Copy Reviewer
+          </button>
+        </div>
+      </div>
+      <div *ngIf="tabType == 'assign_verifier'">
+        <form
+          class="copy_verifiers_form"
+          [formGroup]="assignForm"
+          autocomplete="off"
+        >
+          <div class="row padded-lg">
+            <app-form-group
+              [fieldName]="'Team Member Name'"
+              [modelController]="assignForm.get('assigned_to')"
+            >
+              <div class="row space-on-bottom">
+                <span for="teammemberName" col="4">
+                  Select Team Member / User role
+                </span>
+                <div class="" col="8">
+                  <app-dv-subscriber-selection
+                    [selection]="assigned_to_user"
+                    (selectionChanged)="actionChanged($event)"
+                    [functions]="functions"
+                    [singleMode]="true"
+                  >
+                  </app-dv-subscriber-selection>
+                </div>
+              </div>
+            </app-form-group>
+            <app-form-group
+              [fieldName]="'Due Date'"
+              class="space-on-bottom"
+              [showRightIcon]="false"
+              [modelController]="assignForm.get('due_date')"
+            >
+              <div class="row space-on-bottom">
+                <label for="dueDate" class="" col="4"> Due Date </label>
+
+                <div class="" col="8">
+                  <app-date-picker
+                    [id]="'dueDate'"
+                    [minDate]="minDate"
+                    [value]="assignForm.get('due_date').value"
+                    (change)="setDateValue($event)"
+                  >
+                  </app-date-picker>
+                </div>
+              </div>
+            </app-form-group>
+            <app-form-group
+              [fieldName]="'Filter'"
+              [showRightIcon]="false"
+              [modelController]="assignForm.get('selected_filter')"
+            >
+              <div class="row space-on-bottom">
+                <label for="filter" class="" col="4"> Select Filter </label>
+
+                <div class="" col="8">
+                  <ng-select
+                    chosen
+                    [clearable]="false"
+                    formControlName="selected_filter"
+                    id="filter"
+                    labelForId="selected_filter"
+                  >
+                    <ng-option
+                      *ngFor="let member of diligenceFilters"
+                      [value]="member.value"
+                    >
+                      {{ member.label }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            </app-form-group>
+            <div class="form-group" col="12">
+              <p class="alert alert-danger">
+                Any existing reviewers assigned will be overwritten.
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div *ngIf="tabType == 'copy_verifier'" class="space-on-top">
+        <form
+          class="copy_verifiers_form"
+          [formGroup]="copyForm"
+          autocomplete="off"
+        >
+          <div class="text-center" *ngIf="pref_loading">
+            <app-spinner></app-spinner>
+          </div>
+          <div *ngIf="!pref_loading">
+            <div class="bordered-bottom padded-lg">
+              <div class="w-210 inline-block">
+                <app-form-group
+                  [fieldName]="'Entity'"
+                  [modelController]="copyForm.get('entity_type')"
+                  [showRightIcon]="false"
+                >
+                  <ng-select
+                    chosen
+                    [clearable]="false"
+                    formControlName="entity_type"
+                    (change)="onEntityTypeChanged()"
+                    [labelForId]="'entity_type'"
+                  >
+                    <ng-option
+                      *ngFor="let entity_type of entity_types"
+                      [value]="entity_type.value"
+                    >
+                      {{ entity_type.name }}
+                    </ng-option>
+                  </ng-select>
+                </app-form-group>
+              </div>
+              <div
+                class="inline-block datefilter_position"
+                *ngIf="customDateFilter"
+              >
+                <!-- TODO TODO TODO -->
+                <!-- <dv-daterangepicker ng-model="customDateFilter" min-date="minDate"
+                                    max-date="maxDate" apply-method="applyMethod"></dv-daterangepicker> -->
+              </div>
+            </div>
+            <div class="padded-lg">
+              <app-form-group
+                [fieldName]="'entity_id'"
+                [modelController]="copyForm.get('entity_id')"
+                [showRightIcon]="false"
+              >
+                <label for="entity_type" class="">{{
+                  is_manager &&
+                  copyForm.get("entity_type").value == keywordConstants.MyFirm
+                    ? "Firm
+                                    Name"
+                    : "Select
+                                    " +
+                      Utils.getDisplayEntityType(
+                        copyForm.get("entity_type").value
+                      )
+                }}</label>
+                <div class="w-360 pull-right">
+                  <span
+                    *ngIf="
+                      copyForm.get('entity_type').value ==
+                      keywordConstants.Strategy
+                    "
+                  >
+                    <ng-select
+                      chosen
+                      [clearable]="false"
+                      formControlName="entity_id"
+                      (change)="onEntityChanged()"
+                      placeholder="No Results Match"
+                      id="entity_type"
+                      labelForId="entity_type"
+                    >
+                      <ng-option
+                        *ngFor="let strategy of strategies"
+                        [value]="strategy.id"
+                      >
+                        {{ strategy.name }}
+                      </ng-option>
+                    </ng-select>
+                  </span>
+                  <span
+                    *ngIf="
+                      copyForm.get('entity_type').value == keywordConstants.Firm
+                    "
+                  >
+                    <ng-select
+                      chosen
+                      [clearable]="false"
+                      formControlName="entity_id"
+                      (change)="onEntityChanged()"
+                      placeholder="No Results Match"
+                      labelForId="entity_type"
+                    >
+                      <ng-option *ngFor="let firm of firms" [value]="firm.id">
+                        {{ firm.name }}
+                      </ng-option>
+                    </ng-select>
+                  </span>
+                  <span
+                    *ngIf="
+                      copyForm.get('entity_type').value ==
+                      keywordConstants.Product
+                    "
+                  >
+                    <ng-select
+                      chosen
+                      [clearable]="false"
+                      formControlName="entity_id"
+                      (change)="onEntityChanged()"
+                      placeholder="No Results Match"
+                      labelForId="entity_type"
+                    >
+                      <ng-option *ngFor="let fund of funds" [value]="fund.id">
+                        {{ fund.name }}
+                      </ng-option>
+                    </ng-select>
+                  </span>
+                  <span
+                    *ngIf="
+                      copyForm.get('entity_type').value ==
+                      keywordConstants.Vehicle
+                    "
+                  >
+                    <ng-select
+                      chosen
+                      [clearable]="false"
+                      formControlName="entity_id"
+                      (change)="onEntityChanged()"
+                      placeholder="No Results Match"
+                      labelForId="entity_type"
+                    >
+                      <ng-option
+                        *ngFor="let vehicle of vehicles"
+                        [value]="vehicle.id"
+                      >
+                        {{ vehicle.name }}
+                      </ng-option>
+                    </ng-select>
+                  </span>
+                  <span
+                    *ngIf="
+                      copyForm.get('entity_type').value ==
+                      keywordConstants.MyFirm
+                    "
+                  >
+                    <span class="label label-default fw-bolder">{{
+                      current_user.firmInfo.display_name
+                    }}</span>
+                  </span>
+                </div>
+              </app-form-group>
+              <app-form-group
+                [fieldName]="'Projects'"
+                [modelController]="copyForm.get('source_diligence')"
+                [showRightIcon]="false"
+              >
+                <span
+                  appIcon
+                  name="info"
+                  tooltip="Copy reviewers from this project"
+                >
+                </span>
+                <label for="source_diligence" class="">Copy from Project</label>
+                <div class="w-360 pull-right">
+                  <ng-select
+                    chosen
+                    [clearable]="false"
+                    formControlName="source_diligence"
+                    (change)="getVerifiers()"
+                    placeholder="No Results Match"
+                    id="source_diligence"
+                    labelForId="source_diligence"
+                  >
+                    <ng-option
+                      *ngFor="let diligence of diligences"
+                      [value]="diligence"
+                    >
+                      {{ diligence.name }}
+                    </ng-option>
+                  </ng-select>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      copyForm.get('source_diligence').touched &&
+                      copyForm.get('source_diligence').errors?.required
+                    "
+                  >
+                    Project is required
+                  </div>
+                </div>
+              </app-form-group>
+              <div *ngIf="copyForm.get('source_diligence').value">
+                <label
+                  >Reviewers from
+                  <span class="text-underline">{{
+                    copyForm.get("source_diligence").value.name
+                  }}</span></label
+                >
+                <div class="list-group-item space-on-top">
+                  <div
+                    *ngIf="!loading_verifiers && verifiersForProject.length > 0"
+                  >
+                    <span
+                      class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                      *ngFor="let verifier of verifiersForProject"
+                    >
+                      <small>{{ verifier.fullName }}</small>
+                    </span>
+                  </div>
+                  <app-empty-state
+                    *ngIf="
+                      !loading_verifiers && verifiersForProject.length == 0
+                    "
+                    message="No reviewers found"
+                  ></app-empty-state>
+                  <div *ngIf="loading_verifiers" class="text-center">
+                    <app-spinner></app-spinner>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>

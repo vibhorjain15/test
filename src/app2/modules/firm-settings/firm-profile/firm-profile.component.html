@@ -1,0 +1,184 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Firm Profile</h5>
+  </div>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div col="8" id="js-firms-profile">
+        <form
+          class="form-horizontal"
+          [formGroup]="profileForm"
+          *ngIf="firm_profile_copy"
+          autocomplete="off"
+        >
+          <dv-form-element
+            [fieldName]="'Name'"
+            [modelController]="profileForm.get('nameControl')"
+            [isRequired]="true"
+            [label]="'Name'"
+            [labelCol]="4"
+            [errorMessage]="getErrorMessage('nameControl', 'Name')"
+            ariaLabel="Name"
+          >
+            <input
+              type="text"
+              class="form-control"
+              id="firmname"
+              formControlName="nameControl"
+              aria-label="Name"
+              autocomplete="given-name"
+              id="nameControl"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Description'"
+            [modelController]="profileForm.get('descriptionControl')"
+            [showRightIcon]="true"
+            [label]="'Description'"
+            [labelCol]="4"
+          >
+            <textarea
+              autosize
+              id="firmdescription"
+              placeholder="Few lines about your firm"
+              class="form-control"
+              formControlName="descriptionControl"
+              id="descriptionControl"
+            ></textarea>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Firm Website'"
+            [modelController]="profileForm.get('firmWebsiteControl')"
+            [label]="'Firm Website'"
+            [labelCol]="4"
+            [errorMessage]="
+              profileForm.get('firmWebsiteControl').errors?.required
+                ? 'Firm website is required'
+                : profileForm.get('firmWebsiteControl').errors?.pattern
+                ? 'Firm website is not valid'
+                : ''
+            "
+            [isRequired]="true"
+            ariaLabel="Firm Website"
+          >
+            <input
+              type="url"
+              id="firmWebsiteControl"
+              class="form-control"
+              formControlName="firmWebsiteControl"
+              maxlength="255"
+              aria-label="Firm Website"
+              autocomplete="url"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Firm Type'"
+            [modelController]="profileForm.get('firmTypeControl')"
+            [showRightIcon]="false"
+            [label]="' Firm Type'"
+            [labelCol]="4"
+          >
+            <dv-select
+              [list]="firm_types"
+              formControlName="firmTypeControl"
+              bindLabel="description"
+              bindValue="id"
+              [disabled]="false"
+              [clearable]="false"
+              [searchable]="true"
+              placeholder="-- Select Firm Type --"
+              [id]="'firmTypeControl'"
+            ></dv-select>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Default Currency'"
+            [modelController]="profileForm.get('defaultCurrencyControl')"
+            [showRightIcon]="false"
+            [label]="'Default Currency'"
+            [labelCol]="4"
+          >
+            <dv-select
+              [list]="currencies"
+              formControlName="defaultCurrencyControl"
+              bindLabel="value"
+              bindValue="id"
+              [clearable]="false"
+              [placeholder]="'-- Select Currency --'"
+              [id]="'defaultCurrencyControl'"
+            ></dv-select>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Assets Under Management'"
+            [modelController]="profileForm.get('assetsUnderManagementControl')"
+            [label]="assetLabel"
+            [errorMessage]="
+              profileForm.get('assetsUnderManagementControl').invalid
+                ? getErrorMessage(
+                    'assetsUnderManagementControl',
+                    'Assets Under Management'
+                  )
+                : ''
+            "
+            [labelCol]="4"
+          >
+            <input
+              type="text"
+              class="form-control"
+              id="assetsUnderManagementControl"
+              formControlName="assetsUnderManagementControl"
+              maxlength="18"
+              autocomplete="given-name"
+            />
+          </dv-form-element>
+          <div>
+            <ul
+              class="list-unstyled list-with-icons"
+              col="8"
+              offset="4"
+              *ngIf="firm_profile_copy?.contactPerson"
+            >
+              <li class="space-on-bottom">
+                <span appIcon name="briefcase" size="fw"></span>&nbsp;
+                {{ firm_profile_copy?.contactPerson.title }}
+                <small *ngIf="!firm_profile_copy?.contactPerson.title">
+                  <i class="text-muted">Not specified</i>
+                </small>
+              </li>
+              <li class="space-on-bottom">
+                <span appIcon name="phone" size="fw"></span>&nbsp;
+                {{ firm_profile_copy?.contactPerson.phone }}
+                <small *ngIf="!firm_profile_copy?.contactPerson.phone">
+                  <i class="text-muted">Not specified</i>
+                </small>
+              </li>
+              <li class="space-on-bottom">
+                <span appIcon name="mail" size="fw"></span>&nbsp;
+                <a
+                  href="mailto:{{ firm_profile_copy?.contactPerson.userName }}"
+                  class="link-disguise"
+                >
+                  {{ firm_profile_copy?.contactPerson.userName }}
+                </a>
+                <small *ngIf="!firm_profile_copy?.contactPerson.userName">
+                  <i class="text-muted">Not specified</i>
+                </small>
+              </li>
+            </ul>
+          </div>
+          <div class="form-group">
+            <div col="8" offset="4">
+              <dv-button
+                [disabled]="profileForm.invalid"
+                [loader]="saving"
+                (onClick)="submit()"
+                ariaLabel="Update Firm Profile"
+              >
+                Update Firm Profile
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

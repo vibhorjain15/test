@@ -1,0 +1,51 @@
+.right-options {
+  display: flex;
+}
+.project-grid-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.project-details {
+  display: flex;
+  flex: 1;
+  gap: 15px;
+}
+
+.w-400 {
+  width: 400px;
+}
+
+::ng-deep .document-dropdown-class {
+  right: -70px !important;
+  left: auto !important;
+}
+.closeIcon {
+  color: #818e9a !important;
+  font-size: 13px;
+}
+.badge {
+  border-radius: 30px;
+  background: #f0592b;
+  display: flex;
+  padding: 2px 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.selection-header {
+  display: flex;
+  align-items: center;
+}
+.selection-header-wrapper {
+  border-radius: 4px;
+  border: 1px solid #d2e5ea;
+  background: #ecf7f9;
+}
+.doc-grid ::ng-deep .ag-theme-alpine {
+  --ag-selected-row-background-color: rgb(24, 144, 175, 0.1);
+}
+.doc-grid ::ng-deep .ag-row-hover {
+  background-color: rgb(24, 144, 175, 0.1) !important;
+}

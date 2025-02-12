@@ -1,0 +1,13 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">Recent Flags / Scores / Ratings</h5>
+  </div>
+  <div class="panel-body">
+    <div class="text-center" *ngIf="loading">
+      <app-spinner></app-spinner>
+    </div>
+    <app-dv-grid *ngIf="gridDataSource.length > 0 && !loading" [rowData]="gridDataSource"
+      [name]="'investor-recent-flags-scores'">
+    </app-dv-grid>
+  </div>
+</div>

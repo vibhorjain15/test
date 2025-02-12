@@ -1,0 +1,23 @@
+.workflow-activity-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.workflow-activity-wrapper .date {
+  color: var(--Text-Grey-Subtext-400, #6b6e80);
+}
+
+.workflow-activity-wrapper .label {
+  color: var(--Text-Grey-Subtext-400, #6b6e80);
+  text-align: right;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Open Sans";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 19px; /* 158.333% */
+}

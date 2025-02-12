@@ -1,0 +1,19 @@
+<div data-ng-if="!datarows">
+  <spinner></spinner>
+</div>
+<div data-ng-if="datarows" class="padded-top-lg padded-left padded-right overflow-x-hidden">
+  <handsontable-grid grid-id="instance_id" settings="handsontable_settings" datarows="datarows" columns="columns" instance="vm.hotInstance"></handsontable-grid>
+</div>
+<div class="space-on-top-lg space-on-bottom-lg padded-left padded-right"
+     data-ng-hide="vm.readonly">
+  <button btn-type="default"
+          data-ng-disabled="!vm.hotInstance"
+          data-ng-click="vm.addRowForSpecificYear(vm.hotInstance)">
+    Insert Single Year
+  </button>
+  <button btn-type="default"
+          data-ng-disabled="!vm.hotInstance"
+          data-ng-click="vm.addRowsSinceInception(vm.hotInstance)">
+    Insert Since Inception
+  </button>
+</div>

@@ -1,0 +1,64 @@
+<app-modal
+  [title]="'Bulk Organize Documents'"
+  [firstButtonLabel]="'Apply'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="bulkOrganizeModalRef"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="loading || !isValid"
+  [firstButtonTooltip]="!isValid ? 'Please select a folder scheme' : null"
+></app-modal>
+
+<ng-template #bulkOrganizeModalRef>
+  <helper-text>
+    <span
+      >New folders will be created, and documents not currently in a folder will
+      be moved to appropriate folders based on the selected scheme.</span
+    ></helper-text
+  >
+  <form
+    class="form-horizontal"
+    [formGroup]="folderSchemeForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      [fieldName]="'name'"
+      label="Select a folder scheme"
+      labelPosition="top"
+      elementCol="12"
+    >
+      <div *ngFor="let folderScheme of folderSchemes">
+        <dv-radio
+          [label]="folderScheme.label"
+          [valueName]="folderScheme.id"
+          [checkedVal]=""
+          groupName="folder-scheme"
+          formControlName="id"
+          (innerValueEmitter)="handleFolderSchemeSelectionChange()"
+        >
+        </dv-radio>
+        <div
+          *ngIf="folderScheme.helpText"
+          class="space-on-top space-on-bottom folder-scheme-help-text space-on-left-xxxl"
+        >
+          <span>{{ folderScheme.helpText }}</span>
+        </div>
+        <div
+          *ngIf="
+            folderSchemeForm.get('id')?.value == folderScheme.id &&
+            [1, 3].includes(folderScheme.id)
+          "
+          class="space-on-top-lg space-on-left-xxxl space-on-bottom"
+        >
+          <div class="space-on-bottom-lg">
+            Choose the preferred As of Date format for folder creation:
+          </div>
+          <toggle-button-switch-multiple
+            [items]="asOfDateFolderTypes"
+            [style.height.px]="34"
+            [style.width.px]="360"
+          ></toggle-button-switch-multiple>
+        </div>
+      </div>
+    </dv-form-element>
+  </form>
+</ng-template>

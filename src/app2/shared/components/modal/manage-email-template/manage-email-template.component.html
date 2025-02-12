@@ -1,0 +1,103 @@
+<app-modal
+  [title]="isEdit ? 'Editing Email Template' : 'Add New Email Template'"
+  [firstButtonLabel]="isEdit ? 'Update Template' : 'Add Template'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="EmailTemplateRef"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #EmailTemplateRef>
+  <form
+    class="form-horizontal"
+    [formGroup]="emailTemplateForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      [fieldName]="'name'"
+      [modelController]="emailTemplateForm.get('name')"
+      [isRequired]="true"
+      elementCol="12"
+    >
+      <label for="name" class="control-label" col="3" col-type="sm">Name</label>
+
+      <div col="9" col-type="sm">
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          formControlName="name"
+          required
+          placeholder="Enter a template name"
+        />
+        <div
+          *ngIf="
+            emailTemplateForm.get('name').touched &&
+            (emailTemplateForm.get('name').errors?.required ||
+              emailTemplateForm.get('name').errors?.whitespace)
+          "
+          class="text-danger"
+        >
+          Name is required
+        </div>
+        <div
+          *ngIf="
+            emailTemplateForm.get('name').touched &&
+            emailTemplateForm.get('name').errors?.containsHtml
+          "
+          class="text-danger"
+        >
+          Please enter valid name
+        </div>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      [fieldName]="'text'"
+      [modelController]="emailTemplateForm.get('content')"
+      elementCol="12"
+      [isRequired]="true"
+      [showRightIcon]="false"
+    >
+      <label for="disclaimer-text" class="control-label" col="3" col-type="sm"
+        >Content</label
+      >
+
+      <div col="9" col-type="sm">
+        <dv-editor
+          [id]="'disclaimer-text'"
+          [value]="emailTemplateForm.value.content"
+          [configObj]="tinyMceInit"
+          (onChange)="handleEditChange($event)"
+        ></dv-editor>
+        <div
+          *ngIf="
+            emailTemplateForm.get('content').touched &&
+            emailTemplateForm.get('content').invalid
+          "
+          class="text-danger"
+        >
+          Content is required
+        </div>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      [fieldName]="'isDefaultTemplate'"
+      elementCol="12"
+      [showRightIcon]="false"
+    >
+      <div col="8" *ngIf="!isDefault" offset="3">
+        <dv-checkbox
+          formControlName="isDefaultTemplate"
+          label="Make this default"
+        ></dv-checkbox>
+      </div>
+      <div col="8" offset="3" col-type="sm" *ngIf="isDefault">
+        <small class="text-muted">
+          <i>This is default template</i>
+        </small>
+      </div>
+    </dv-form-element>
+  </form>
+</ng-template>

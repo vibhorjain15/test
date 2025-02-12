@@ -1,0 +1,18 @@
+.cell-folder-container {
+  align-items: center;
+  display: grid;
+  grid-template-columns: auto 20px;
+}
+.action-button {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+}
+.folder-class {
+  color: #34495e !important;
+}
+.asOfDates {
+  font-style: italic;
+  margin-left: 5px;
+  opacity: 0.6;
+}

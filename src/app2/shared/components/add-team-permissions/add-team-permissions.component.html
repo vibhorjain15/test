@@ -1,0 +1,219 @@
+<div *ngIf="!loading">
+  <form
+    class="form-horizontal"
+    [formGroup]="addPermissionForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      [fieldName]="'resourceType'"
+      [modelController]="addPermissionForm.get('resourceType')"
+      elementCol="12"
+      [showRightIcon]="false"
+      label="Entity Type"
+      labelPosition="top"
+    >
+      <dv-select
+        [id]="'resourceType'"
+        *ngIf="!editMode"
+        [list]="parentResources"
+        formControlName="resourceType"
+        bindLabel="display_name"
+        bindValue="name"
+        (onSelectChange)="getResources($event)"
+      ></dv-select>
+      <p *ngIf="editMode" class="space-on-top">
+        <span class="label label-default">{{
+          getEntityTypeName(addPermissionForm.value.resourceType)
+        }}</span>
+      </p>
+    </dv-form-element>
+
+    <div
+      formGroupName="entity"
+      *ngIf="
+        addPermissionForm.value.resourceType == 'DueDiligence' && !editMode
+      "
+    >
+      <dv-form-element
+        [fieldName]="'entity_type'"
+        [modelController]="addPermissionForm.get('entity').get('entity_type')"
+        elementCol="12"
+        [showRightIcon]="false"
+        label="Type"
+        labelPosition="top"
+      >
+        <dv-select
+          [id]="'entity_type'"
+          *ngIf="!editMode"
+          [list]="diligence_types"
+          bindLabel="name"
+          bindValue="value"
+          formControlName="entity_type"
+          (onSelectChange)="setDiligenceType($event)"
+        ></dv-select>
+
+        <p *ngIf="editMode" class="space-on-top">
+          <span class="label label-default">{{
+            getEntityTypeName(resources.entity_type)
+          }}</span>
+        </p>
+      </dv-form-element>
+      <dv-form-element
+        *ngIf="addPermissionForm.value.entity.entity_type && !editMode"
+        elementCol="12"
+        [showRightIcon]="false"
+        label="Entity"
+        labelPosition="top"
+        [for]="'entities'"
+      >
+        <dv-select
+          *ngIf="
+            addPermissionForm.value.entity.entity_type !=
+            keywordConstants.MyFirm
+          "
+          [list]="entities"
+          [id]="'entities'"
+          (onSelectChange)="onDiligenceEntityChange($event)"
+          #diligenceEntity
+        ></dv-select>
+
+        <p
+          *ngIf="
+            addPermissionForm.value.entity.entity_type ==
+            keywordConstants.MyFirm
+          "
+          class="space-on-top"
+        >
+          <span class="label label-default">{{
+            current_user.firmInfo.name
+          }}</span>
+        </p>
+      </dv-form-element>
+      <dv-form-element
+        *ngIf="customDateFilter && entity_type"
+        [fieldName]="'customDateFilter'"
+        [modelController]="
+          addPermissionForm.get('entity').get('customDateFilter')
+        "
+        elementCol="12"
+        [showRightIcon]="false"
+        label="Date range"
+        labelPosition="top"
+        for="customDateFilter"
+      >
+        <app-date-range-picker
+          id="customDateFilter"
+          [customDate]="dateRangeForDirectives"
+          (change)="onChange($event)"
+          (clearDateFilter)="onClearDateFilter()"
+        ></app-date-range-picker>
+      </dv-form-element>
+    </div>
+    <dv-form-element
+      [fieldName]="'resource_list'"
+      [modelController]="addPermissionForm.get('resource_list')"
+      elementCol="12"
+      [showRightIcon]="false"
+      label="Select Entities"
+      labelPosition="top"
+    >
+      <app-dv-selector-list
+        [name]="resource_list"
+        [entity_type]="'Firm'"
+        [entities]="entitySource"
+        [filter_params]="filters.Firm"
+        [displayParams]="entityDisplayParams"
+        *ngIf="
+          !editMode &&
+          addPermissionForm.value.resourceType == 'Firm' &&
+          entitySource
+        "
+        (onChangeEntity)="handleonChangeEntity($event)"
+        [showFilterModal]="true"
+      ></app-dv-selector-list>
+
+      <app-dv-selector-list
+        [name]="resource_list"
+        [entity_type]="'Product'"
+        [entities]="entitySource"
+        [filter_params]="filters.Fund"
+        [displayParams]="entityDisplayParams"
+        *ngIf="
+          !editMode &&
+          addPermissionForm.value.resourceType == 'Fund' &&
+          entitySource
+        "
+        (onChangeEntity)="handleonChangeEntity($event)"
+        [showFilterModal]="true"
+      ></app-dv-selector-list>
+      <app-dv-selector-list
+        [name]="resource_list"
+        [entity_type]="'Project'"
+        [entities]="entitySource"
+        [filter_params]="filters.DueDiligence"
+        [displayParams]="diligenceDisplayParams"
+        *ngIf="
+          !editMode && addPermissionForm.value.resourceType == 'DueDiligence'
+        "
+        (onChangeEntity)="handleonChangeEntity($event)"
+      ></app-dv-selector-list>
+      <app-dv-selector-list
+        [name]="resource_list"
+        [entity_type]="'Template'"
+        [entities]="entitySource"
+        [filter_params]="filters.Template"
+        [displayParams]="diligenceDisplayParams"
+        *ngIf="
+          !editMode &&
+          addPermissionForm.value.resourceType == 'Template' &&
+          entitySource
+        "
+        (onChangeEntity)="handleonChangeEntity($event)"
+      ></app-dv-selector-list>
+
+      <p *ngIf="editMode" class="space-on-top">
+        <span class="label label-default">{{ resources.entity_name }}</span>
+      </p>
+      <div *ngIf="entity_type == keywordConstants.MyFirm && selectMyFirm">
+        <span class="label label-default">{{
+          current_user.firmInfo.name
+        }}</span>
+      </div>
+      <p
+        class="text-muted space-on-top"
+        *ngIf="
+          entity_type &&
+          !editMode &&
+          entity_type != keywordConstants.MyFirm &&
+          entitySource == null
+        "
+      >
+        <small>No resources found</small>
+      </p>
+    </dv-form-element>
+
+    <div
+      class="space-on-bottom-xxl"
+      *ngIf="
+        (is_manager && addPermissionForm.value.resourceType == 'my_firm') ||
+        (!is_manager &&
+          addPermissionForm.value.resourceType == keywordConstants.Firm)
+      "
+    >
+      <dv-checkbox
+        [(ngModel)]="allowUnderlyingEntities"
+        [ngModelOptions]="{ standalone: true }"
+        name="allowUnderlyingEntities"
+        label="Auto assign underlying strategies/products for the selected firm(s)"
+        (onValChange)="onUnderlyingEntitiesOptionChange($event)"
+      >
+      </dv-checkbox>
+    </div>
+  </form>
+</div>
+
+<app-spinner
+  [broadSpinner]="true"
+  [spinnerHeight]="'50'"
+  *ngIf="loading"
+></app-spinner>

@@ -1,0 +1,45 @@
+<form class="form-horizontal" name="vm.workflow_form" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      Start New Workflow Process
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Workflow" tooltip-placement="top">
+      <label for="workflow" class="control-label" col="4" col-type="sm">Select Workflow Definition</label>
+      <div col="7" col-type="sm" data-ng-if="vm.workflows && vm.workflows.length">
+        <select name="workflow"
+                id="workflow"
+                chosen
+                data-ng-options="workflow.id as workflow.name for workflow in vm.workflows"
+                data-ng-model="vm.selectedWorkflowId"
+                class="form-control"
+                required
+                ng-required="true">
+          <option value="">Select a workflow definition</option>
+        </select>
+      </div>
+
+      <div col="7" col-type="sm" data-ng-if="vm.workflows && !vm.workflows.length">
+        No workflow definitions present, <a class="clickable" data-ng-click="vm.redirectToWorkflowDefinitions()">click here</a> to add one
+      </div>
+
+      <div col="7" col-type="sm" data-ng-if="!vm.workflows">
+        <spinner broad-spinner spinner-height='25'></spinner>
+      </div>
+    </form-group>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" data-ng-disabled="!vm.selectedWorkflowId">
+      Review Workflow
+    </button>
+    <button btn-type="default"
+            data-ng-click="vm.cancel()">Cancel
+    </button>
+  </div>
+</form>

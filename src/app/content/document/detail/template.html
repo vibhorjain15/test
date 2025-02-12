@@ -1,0 +1,388 @@
+<div data-ng-if="vm.Utils.isAngular()">
+<ng2-document-detail></ng2-document-detail>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner data-ng-hide="vm.document"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel full-width"
+             data-ng-show="vm.document">
+          <div class="bordered-right text-center cell col-sm-4">
+            <h4 class="clear-margin lh1-5 word-break-break-all" dv-limit-word="vm.document.name" char-limit="55"></h4>
+
+            <div class="space-on-top-lg">
+
+                <a class="space-on-left-lg" role="button" data-ng-click="vm.viewDocument(vm.document)">
+                  <attachment-icon filename="vm.document.file_name"
+                                 class="file-attachment-icon"></attachment-icon>
+
+                  {{vm.document.blob_name}} (Version {{vm.document.version}})
+                </a>
+                <icon name="tag"
+                      class="space-on-left-lg clickable"
+                      data-ng-if="vm.document.group_names.length"
+                      tooltip-placement="right"
+                      uib-tooltip="Grouped under {{vm.formatDocumentGroupTooltip(vm.document.group_names)}}"></icon>
+                <div data-ng-show="vm.document.updated_at">
+                  <small class="text-muted">(Last updated {{vm.document.updated_at|fromNow}})</small>
+                </div>
+
+            </div>
+          </div>
+
+          <div class="bordered-right cell text-center" data-ng-if="vm.document.tag_names.length">
+            <span>
+              <span class="label-list">
+                <span class="label label-default space-on-right text-uppercase"
+                      data-ng-repeat="tag in vm.document.tag_names">
+                  <small>{{tag}}</small>
+                </span>
+              </span>
+            </span>
+          </div>
+
+          <div class="cell text-center bordered-right">
+            <span uib-dropdown>
+              <a href="" class="dropdown-toggle btn btn-transparent"
+                  uib-dropdown-toggle
+                  uib-tooltip="update, delete, review and notate a document">
+                   <div><icon name="ellipsis-h" size="2x"></icon></div>
+                   <div class="space-on-top-n"><small>More Actions</small></div>
+
+              </a>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                  <li>
+                    <a data-ng-click="vm.viewDocument(vm.document)" role="button"><attachment-icon filename="vm.document.file_name" class="file-attachment-icon space-on-right-lg"></attachment-icon>View Document (V{{vm.document.version}})</a>
+                  </li>
+                  <li class="divider js-delete-button"></li>
+
+                  <li>
+                      <a data-ng-click="vm.displayNotesController()" role="button"><icon name="notepad" class="space-on-right-lg"></icon>Add a Note</a>
+                  </li>
+                  <li>
+                      <a data-ng-click="vm.addTask(vm.document.id)" role="button"><icon name="tasks" class="space-on-right-lg"></icon>Add a Task</a>
+                  </li>
+                  <li>
+                      <a data-ng-click="vm.displayAttachmentReviewConfirmation()" role="button"><icon name="check2" class="space-on-right-lg"></icon>Mark as Reviewed</a>
+                  </li>
+                  <li data-ng-show="vm.canUserModify" authorized-view hidden-from="FreeSubscription">
+                      <a data-ng-click="vm.openDocumentShareDialog(vm.document)" role="button"><b><span class="dvi dvi-share space-on-right-lg font-weight-600"></span></b>Share Document</a>
+                  </li>
+                  <li>
+                      <a data-ng-click="vm.triggerWorkflow()" role="button"><icon name="cogs" class="space-on-right-lg"></icon>Start Workflow Process</a>
+                  </li>
+                  <li>
+                      <a data-ng-click="vm.openDocumentUpdateDialog(vm.document)" role="button"><icon name="pencil" class="space-on-right-lg"></icon>Update Document</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-show="vm.canUserModify"></li>
+                  <li data-ng-show="vm.canUserModify">
+                      <a data-ng-click="vm.confirmDocumentDeletion(vm.document)" role="button"><icon name="trashcan" class="space-on-right-lg"></icon>Delete Document</a>
+                  </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="cell text-center">
+            <a class="btn btn-transparent"
+               data-ng-click="vm.goToPreviousPage()">
+              <div><icon name="arrow-back" size="2x"></icon></div>
+              <small>Go back</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row clearfix dv-notes-list-panel">
+  <div col="8">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>
+          <icon name="notepad" class="space-on-right align-middle"></icon>
+          <span class="align-middle">
+            Notes
+            <span data-ng-show="vm.documentNotes.length">
+              ({{vm.documentNotes.length}})
+            </span>
+          </span>
+        </span>
+
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control"
+               data-ng-click="vm.displayNotesController()"
+               uib-tooltip="Add New Note">
+              <icon name="plus"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body" data-ng-if="!vm.documentNotes">
+        <spinner></spinner>
+      </div>
+
+      <div class="panel-body"
+           data-ng-if="vm.documentNotes && vm.documentNotes.length == 0">
+        <empty-state message="There are no notes for this document"></empty-state>
+      </div>
+
+      <div class="panel-body has-notes-form"
+           data-ng-if="vm.documentNotes && vm.documentNotes.length != 0">
+        <ul class="list-unstyled clear-margin-bottom list-bordered-bottom">
+            <li data-ng-repeat="note in vm.documentNotes" data-ng-controller="ProjectAddNotesController as notes_ctrl">
+              <div class="media">
+                <div class="media-left padded-top">
+                  <span class="circled-initials">
+                    {{$index+1}}
+                  </span>
+                </div>
+
+                <div class="media-body">
+                  <p class="space-on-bottom">
+                    <small class="text-muted">
+                      {{::note.first_name}} {{::note.last_name}} added {{note.updated_at|fromNow}}
+                    </small>
+                    <span class="pull-right space-on-right-xxl" data-ng-if="!notes_ctrl.editing && vm.canEditNote(note)">
+                          <small class="text-muted v-align-text-top space-on-right" uib-tooltip="Edit this note">
+                            <a class="link-disguise clickable"
+                               data-ng-click="notes_ctrl.editNote(note)">edit</a>
+                          </small>
+                          <small class="text-muted v-align-text-top" uib-tooltip="Delete this note">
+                            <a class="link-disguise clickable"
+                               data-ng-click="notes_ctrl.deleteNote(note)">delete</a>
+                          </small>
+                    </span>
+                  </p>
+
+                  <p data-ng-if="!notes_ctrl.editing" class="clear-margin">
+                    <span ng-bind-html="note.text | cleanhtml"></span>
+                  </p>
+
+                  <div data-ng-if="notes_ctrl.editing" class="padded-right-sm">
+
+                    <textarea ng-model="note.text"
+                              ui-tinymce="notes_ctrl.tinymceOptionsEdit"
+                              ng-required="true"
+                              dv-input-change-alert
+                              dv-on-input-save="notes_ctrl.updateNote(note)"
+                              dv-input-alert-entity-type="'notes'"
+                              mentio
+                              mentio-id="'tinyMceNotesEditArea'"
+                              mentio-typed-text="notes_ctrl.typedTerm"
+                              mentio-iframe-element="notes_ctrl.tinymceEditEditor.iframeElement"
+                              mentio-require-leading-space="true"></textarea>
+
+                    <mentio-menu
+                            class="mention-menu-fixed"
+                            data-ng-if="notes_ctrl.tinymceEditEditor.iframeElement"
+                            mentio-for="'tinyMceNotesEditArea'"
+                            mentio-trigger-char="'@'"
+                            mentio-items="notes_ctrl.filteredTeamMembers"
+                            mentio-template-url="shared/directives/dvMention/template.html"
+                            mentio-select="notes_ctrl.getDisplayName(item)"
+                            mentio-search="notes_ctrl.filterTeamMembers(term)"
+                            ></mentio-menu>
+
+                    <div class="space-on-top">
+                      <button btn-type="primary"
+                              size="sm"
+                              button-loader="notes_ctrl.updating_note"
+                              data-ng-click="notes_ctrl.updateNote(note)">Update</button>
+                      <button btn-type="default"
+                              size="sm"
+                              data-ng-disabled="notes_ctrl.updating_note"
+                              data-ng-click="notes_ctrl.cancel(note)">Cancel</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </li>
+          </ul>
+      </div>
+    </div>
+
+    <dv-workflows data-ng-if="vm.document" entity-type="'Document'" entity-id="vm.documentId" entity-name="vm.document.name" page-url="vm.pageUrl"></dv-workflows>
+
+    <div class="panel panel-default" data-ng-if="vm.canUserModify">
+      <div class="panel-heading">
+        <span>
+          <icon name="key" class="space-on-right align-middle"></icon>
+          <span class="align-middle">
+            {{vm.counterparty}} Access Details
+            <span data-ng-show="vm.document_assignments.length">
+              ({{vm.document_assignments.length}})
+            </span>
+          </span>
+        </span>
+
+        <div class="panel-controls" data-ng-if="vm.canUserModify" authorized-view hidden-from="FreeSubscription">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control"
+               data-ng-click="vm.openDocumentShareDialog(vm.document)"
+               uib-tooltip="Share this document">
+              <b><span class="dvi dvi-share font-weight-600"></span></b>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body" data-ng-if="!vm.document_assignments">
+        <spinner></spinner>
+      </div>
+
+      <ul class="list-group" data-ng-show="vm.document_assignments">
+        <li class="list-group-item"
+            data-ng-repeat="assignment in vm.document_assignments">
+          <div class="clearfix">
+            <span class="pull-left">
+              {{assignment.firm_name}} ({{assignment.view_count}} Views)
+            </span>
+            <span class="pull-left" data-ng-show="assignment.last_view_date">
+              <strong>{{assignment.viewed_user_name}}</strong> last viewed {{assignment.last_view_date | fromNow}}
+            </span>
+            <span class="pull-right">
+              <button btn-type="default"
+                      size="sm"
+                      data-ng-click="vm.confirmAccessRevoke(assignment)"
+                      uib-tooltip="Revoke">
+                <icon name="close"></icon>
+              </button>
+            </span>
+          </div>
+
+          <div>
+            <small class="text-muted">
+              Granted by {{assignment.created_by_name}}: {{assignment.created_at | fromNow}}
+            </small>
+          </div>
+        </li>
+      </ul>
+      <div class="panel-body"
+           data-ng-if="vm.document_assignments && vm.document_assignments.length == 0">
+        <empty-state message="This document has not been shared with anyone"></empty-state>
+      </div>
+    </div>
+  </div>
+  <div col="4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>
+          <icon name="thumbs-o-up" class="space-on-right align-middle"></icon>
+          <span class="align-middle">
+            Review History
+            <span data-ng-show="vm.documentReviews.length">
+              ({{vm.documentReviews.length}})
+            </span>
+          </span>
+        </span>
+
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control"
+               data-ng-click="vm.displayAttachmentReviewConfirmation()"
+               uib-tooltip="Mark this document as reviewed">
+              <icon name="check"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body" data-ng-if="!vm.documentReviews">
+        <spinner></spinner>
+      </div>
+
+      <div class="panel-body"
+           data-ng-if="vm.documentReviews && vm.documentReviews.length == 0">
+        <empty-state message="There is no review history for this document"></empty-state>
+      </div>
+
+      <ul class="list-group" data-ng-show="vm.documentReviews">
+        <li class="list-group-item"
+            data-ng-repeat="review in vm.documentReviews">
+          <h5>Review {{$index + 1}}</h5>
+          <div>
+            <small class="text-muted">
+              Reviewed by {{review.created_by_name}} {{review.created_at | fromNow}}
+            </small>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <dv-tasks data-ng-if="vm.document" entity-type="'Attachment'" entity-id="vm.documentId" refresh-tasks="vm.refreshTasksList" page-url="vm.pageUrl"></dv-tasks>
+
+    <div class="panel panel-default" data-ng-if="vm.canUserModify">
+      <div class="panel-heading">
+        <span>
+          <icon name="history" class="space-on-right align-middle"></icon>
+          <span class="align-middle">
+            Version History
+            <span data-ng-show="vm.document_versions.length">
+              ({{vm.document_versions.length}})
+            </span>
+          </span>
+        </span>
+
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control"
+               data-ng-click="vm.openDocumentUpdateDialog(vm.document)"
+               uib-tooltip="Update this document">
+              <icon name="pencil"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body" data-ng-if="!vm.document_versions">
+        <spinner></spinner>
+      </div>
+
+      <div class="panel-body"
+           data-ng-if="vm.document_versions && vm.document_versions.length == 0">
+        <empty-state message="There is no version history for this document"></empty-state>
+      </div>
+
+      <ul class="list-group" data-ng-show="vm.document_versions">
+        <li class="list-group-item"
+            data-ng-repeat="version in vm.document_versions">
+          <a role="button" data-ng-click="vm.getVersionedDocument(version)">Version {{version.version}}</a>
+          <div>
+            <small class="text-muted">
+              As of {{version.as_of_date | fromNow}} by {{version.created_by_name}}
+            </small>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg" data-ng-class="{'in': vm.displaySidebarPanel}" data-ng-show="vm.displaySidebarPanel">
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5>
+        <b>{{vm.sidebarTitle}}</b>
+        <a class="pull-right clickable link-disguise"
+           data-ng-click="vm.displaySidebarPanel = false">
+          <icon name="close" size="lg"></icon>
+        </a>
+      </h5>
+    </div>
+
+    <div class="panel-body" data-ng-if="vm.displaySidebarPanel">
+      <ng-include src="vm.sidebarTemplate"></ng-include>
+    </div>
+  </div>
+</div>
+
+</div>

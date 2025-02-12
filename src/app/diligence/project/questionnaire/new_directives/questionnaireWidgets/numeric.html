@@ -1,0 +1,25 @@
+<!--
+  If you use type="number" & enter 10+++, then angular puts undefined as $modelValue
+  but the user sees 10+++. Since the code knows the value as undefined & not 10+++
+  we can't display a proper error message, also since the value is undefined, the user
+  see the gray tick mark which is shown when the value is empty. Since, we have to use
+  type="text", we do the numerica validation ourselves inside QuestionnaireResponseFactory
+
+  The angular way is to you know look for modelController.$error.number & display but we are
+  trying to by pass all the watchers & use manual validation for performance reasons
+-->
+<input type="text"
+       class="form-control"
+       data-ng-model-options="{ debounce: { 'default': 500 } }"
+       data-ng-change="vm.onResponseChange()"
+       dv-decimal-input
+       allow-negative="true"
+       decimal-upto="2"
+       allow-decimal="true"
+       data-ng-model="vm.response.attributes.numericResponseA"/>
+<!-- <input type="text"
+      class="form-control"
+      data-ng-model-options="{ debounce: { 'default': 500 } }"
+      data-ng-change="vm.onResponseChange()"
+      ui-number-mask="2"
+      data-ng-model="vm.response.attributes.numericResponseA"/> -->

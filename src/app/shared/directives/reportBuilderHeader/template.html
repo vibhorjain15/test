@@ -1,0 +1,75 @@
+<div class="report-builder-header panel panel-default">
+  <div class="panel-heading">
+    <div class="row clearfix space-on-bottom-lg">
+      <div col="2">
+        <span>
+          <span class="label-list">
+                  <span class="label text-uppercase"
+                        data-ng-class="{'label-warning': type_text == 'Report', 'label-info': type_text == 'Presentation Design'}">
+                    <small>{{type_text}}</small>
+                  </span>
+                </span>
+        </span>
+      </div>
+      <div col="7">
+        <p class="text-center">
+          <a role="button"
+             uib-popover-template="vm.renameTemplateUrl"
+             popover-is-open="vm.isPopoverOpen"
+             popover-placement="bottom"
+             popover-title="Rename Template"
+             data-ng-click="vm.displayTemplateRenamePopover()"
+             class="link-disguise link-unstyled">
+            <span class="align-middle">
+              <spinner data-ng-hide="::vm.template"></spinner>
+              {{vm.template.name}}
+            </span>
+
+            <span data-ng-show="::vm.template.updated_at">
+              <span class="align-middle">
+                &mdash;
+              </span>
+              <small class="text-muted align-middle">
+                Saved {{vm.template.updated_at|fromNow}}
+              </small>
+            </span>
+            <span class="align-middle space-on-left">
+              <icon name="angle-down"></icon>
+            </span>
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="2"></div>
+      <div col="8">
+        <div class="text-center">
+          <div class="report-component-control-group">
+            <report-component-control
+              component-control="component_control"
+              data-ng-repeat="component_control in vm.component_controls">
+            </report-component-control>
+          </div>
+
+          <div class="report-component-control-group">
+            <report-component-control
+              component-control="component_control"
+              data-ng-repeat="component_control in ::vm.component_controls_with_options">
+            </report-component-control>
+          </div>
+
+          <div class="report-component-control">
+            <a class="btn btn-default"
+               data-ng-click="vm.redirectToPreview()">
+              <icon name="eye"></icon>
+              <small class="btn-label">Preview</small>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div col="2"></div>
+    </div>
+  </div>
+</div>

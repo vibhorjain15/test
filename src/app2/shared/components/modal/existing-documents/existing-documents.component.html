@@ -1,0 +1,121 @@
+<app-modal
+  title="Choose Existing Attachment(s)"
+  [initialTemplate]="existingDocumentsRef"
+  [firstButtonLabel]="'Add Document(s)'"
+  (onFirstClick)="submit($event)"
+  [isFirstButtonDisabled]="
+    loadingData || !attachedAssignments.length || !attachments.length
+  "
+  [isLoading]="loading"
+  [showHeader]="showHeader"
+></app-modal>
+
+<ng-template #existingDocumentsRef>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-6">
+        <label class="text-muted" for="searchinput">Search:</label>
+        <div class="searchTextDiv">
+          <input
+            type="text"
+            [(ngModel)]="searchText"
+            class="form-control"
+            placeholder="Seach by name"
+            id="searchinput"
+          />
+          <span
+            appIcon
+            *ngIf="searchText.length >= 4"
+            class="closeIcon"
+            name="close"
+            (click)="searchText = ''"
+          ></span>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="customDateFilter">
+        <label class="text-muted" for="as_of_date">As of date:</label>
+        <app-date-range-picker
+          [customDate]="dateRangeForDirectives"
+          (change)="onDateChange($event)"
+          (clearDateFilter)="onClearDateFilter()"
+          [id]="'as_of_date'"
+        ></app-date-range-picker>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="pd-10">
+        <span class="control-label fw-bolder" role="text"
+          >Assign Documents</span
+        >
+      </div>
+      <div class="col-md-12">
+        <div *ngIf="loadingData" class="text-center">
+          <app-spinner></app-spinner>
+        </div>
+        <app-empty-state
+          *ngIf="!loadingData && attachments && attachments.length === 0"
+          message="No documents available. Once a document is attached, you can reuse it across investor requests"
+        >
+        </app-empty-state>
+        <ul
+          class="list-group dd-attachments-selector overflow-x-hidden m-h-300"
+          *ngIf="attachments?.length > 0"
+        >
+          <li
+            class="list-group-item clearfix"
+            *ngFor="
+              let attachment of attachments | filterBy : { name: searchText }
+            "
+          >
+            <div class="pull-left">
+              <a
+                document-viewer
+                [dd_document]="attachment"
+                [tooltip]="attachment.name"
+              >
+                {{ attachment.name }}
+              </a>
+              <small class="text-muted"
+                ><i>{{
+                  attachment.as_of_date | dvDate : ["isLocaleDate"]
+                }}</i></small
+              >
+              <span
+                *ngIf="attachment.reviews?.length"
+                customSize="big"
+                class="space-on-left"
+                appIcon
+                name="reviewed-document"
+              ></span>
+            </div>
+
+            <div class="pull-right">
+              <span
+                appIcon
+                name="check"
+                size="lg"
+                *ngIf="attachment.assigned"
+                tooltip="Unassign Document"
+                container="body"
+                (click)="removeAttachment(attachment)"
+                class="text-success clickable"
+              ></span>
+
+              <dv-button
+                btnType="default"
+                size="sm"
+                tooltipText="Assign Document"
+                container="body"
+                (onClick)="assignAttachment(attachment)"
+                *ngIf="!attachment.assigned"
+                btnClass="btn-attachment-selector"
+              >
+                <span appIcon name="plus"></span>
+              </dv-button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</ng-template>

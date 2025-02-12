@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">My Preferences</h5>
+  </div>
+  <div class="panel-body">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        Customize your landing page to quickly access the information that
+        matters most to you.
+      </div>
+    </div>
+    <form class="form-horizontal">
+      <dv-form-element
+        fieldName="Default Landing Page"
+        labelPosition="top"
+        [label]="'Default Landing Page'"
+        infoText="This will be your starting page after logging in"
+        infoTextPlacement="right"
+      >
+        <dv-radio-group type="vertical">
+          <dv-radio
+            groupName="DashType"
+            [valueName]="DashType.MY_WORK"
+            [(ngModel)]="current_dash"
+            (ngModelChange)="updateDashPref($event)"
+            name="My Work < Home (New Default Landing Page)"
+            [label]="'My Work < Home (New Default Landing Page)'"
+            [id]="'radio1'"
+          ></dv-radio>
+          <dv-radio
+            [label]="'Previous Default Landing Page'"
+            name="Previous Default Landing Page"
+            [valueName]="DashType.DEFAULT"
+            [(ngModel)]="current_dash"
+            (ngModelChange)="updateDashPref($event)"
+            [id]="'radio2'"
+            groupName="DashType"
+          ></dv-radio>
+        </dv-radio-group>
+      </dv-form-element>
+    </form>
+  </div>
+</div>

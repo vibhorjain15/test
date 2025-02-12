@@ -1,0 +1,40 @@
+
+  <div class="modal-header">
+    <h3 class="modal-title">Extend Due Date
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body"> 
+    <form novalidate
+      name="vm.extendDueDateForm"
+      data-ng-submit="vm.extendDueDate()">
+
+      <label>Reason</label>
+      <form-group field-name="Reason">
+        <input class="form-control"
+               data-ng-model="vm.dueDateExtensionParams.reason"
+               required
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               maxlength="150">
+      </form-group>
+
+      <label>{{vm.diligence.is_internal ? 'New Due Date' : 'Suggested Due Date'}}</label>
+      <form-group field-name="New Due Date" class="space-on-top" control-selector="dv-datepicker">
+        <dv-datepicker
+                data-ng-model="vm.dueDateExtensionParams.extendedDueDate"
+                min-date="vm.minDate"
+                required>
+        </dv-datepicker>
+      </form-group>
+
+      <div class="form-group">
+        <button btn-type="info" 
+                button-loader="vm.extending"
+                type="submit">{{vm.diligence.is_internal ? 'Update Due Date' : 'Request Extension'}} </button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+      </div>
+    </form>
+  </div>

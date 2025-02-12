@@ -1,0 +1,13 @@
+.add-question-button {
+  display: flex;
+  justify-content: center;
+}
+
+.add-question-new-more {
+  color: #126b82;
+  text-align: end;
+}
+
+.add-question-new-more > span {
+  cursor: pointer;
+}

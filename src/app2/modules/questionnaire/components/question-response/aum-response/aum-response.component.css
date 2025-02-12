@@ -1,0 +1,38 @@
+.aum-button {
+  width: 100%;
+}
+.aum-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.aum-wrapper > dv-divider {
+  padding: 0px 10px;
+}
+
+.aum-button > div:first-child {
+  justify-content: space-between;
+  background-color: #f7f7f7;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px;
+}
+
+.aum-button > div:last-child {
+  display: flex;
+  align-items: center;
+  padding: 10px 10px;
+}
+
+.aumTrSpan {
+  top: 0;
+}
+
+.aum-select {
+  display: block;
+}
+.text-orange {
+  color: var(--dark-orange) !important;
+}

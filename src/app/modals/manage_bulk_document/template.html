@@ -1,0 +1,97 @@
+<form class="form-horizontal" name="vm.documentForm" novalidate data-ng-submit="vm.submit()">
+
+  <div class="modal-header">
+    <h3 class="modal-title">
+      <span data-ng-if=" vm.actionType=='remove'">Remove </span> 
+      <span data-ng-if=" vm.actionType=='copy'">Copy </span>
+      <span data-ng-if=" vm.actionType=='move'">Move </span>Document(s) to:
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.close()">
+        &times;
+      </a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="Entity Type">
+      <label for="entity-type" class="col-md-4 control-label">
+        Entity Type
+      </label>
+
+      <div class="col-md-7">
+        <select id="entity-type" class="form-control" chosen required data-ng-model="vm.destinationEntityType"
+          data-placeholder-text-multiple="'Select Entity Type'">
+          <option value=""></option>
+          <option value="Firm">Firm</option>
+          <option value="Fund">Product</option>
+          <option value="Vehicle">Vehicle</option>
+          <option value="Strategy">Strategy</option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Associated Product" data-ng-if="vm.destinationEntityType == 'Fund'">
+      <label for="associated-product" class="col-md-4 control-label">
+        Associated Product
+      </label>
+
+      <div class="col-md-7">
+        <select id="associated-product" class="form-control" chosen data-ng-model="vm.destinationEntityId" ng-required="true"
+          data-ng-disabled="!vm.funds" data-ng-options="fund.id as fund.name for fund in vm.funds">
+          <option value=""></option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Associated Firm" data-ng-if="vm.destinationEntityType == 'Firm'">
+      <label for="associated-firm" class="col-md-4 control-label">
+        Associated Firm
+      </label>
+
+      <div class="col-md-7">
+        <select id="associated-firm" class="form-control" chosen data-ng-model="vm.destinationEntityId" ng-required="true"
+          data-ng-disabled="!vm.firms" data-ng-options="firm.id as firm.display_name for firm in vm.firms">
+          <option value=""></option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Associated Vehicle" data-ng-if="vm.destinationEntityType == 'Vehicle'">
+      <label for="associated-vehicle" class="col-md-4 control-label">
+        Associated Vehicle
+      </label>
+
+      <div class="col-md-7">
+        <select id="associated-vehicle" class="form-control" chosen data-ng-model="vm.destinationEntityId" ng-required="true"
+          data-ng-disabled="!vm.firms" data-ng-options="vehicle.id as vehicle.display_name for vehicle in vm.vehicles">
+          <option value=""></option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Associated Strategy" data-ng-if="vm.destinationEntityType == 'Strategy'">
+      <label for="associated-strategy" class="col-md-4 control-label">
+        Associated Strategy
+      </label>
+
+      <div class="col-md-7">
+        <select id="associated-strategy" class="form-control" chosen data-ng-model="vm.destinationEntityId" ng-required="true"
+          data-ng-disabled="!vm.strategies"
+          data-ng-options="strategy.id as strategy.name for strategy in vm.strategies">
+          <option value=""></option>
+        </select>
+      </div>
+    </form-group>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.savingDocument">
+      <span data-ng-if=" vm.actionType=='remove'">Remove </span> 
+      <span data-ng-if=" vm.actionType=='copy'">Copy </span>
+      <span data-ng-if=" vm.actionType=='move'">Move </span>
+    </button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+
+</form>

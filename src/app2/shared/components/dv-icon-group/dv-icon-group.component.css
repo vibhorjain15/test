@@ -1,0 +1,20 @@
+:host ::ng-deep .group-horizontal-huge > *:not(:last-child) {
+  margin-right: 20px;
+
+}
+:host ::ng-deep .group-horizontal-massive > *:not(:last-child) {
+  margin-right: 25px;
+}
+/* 
+commenting out for now as icons alignment is working without below code
+:host ::ng-deep .group-horizontal-huge,
+:host ::ng-deep .group-horizontal-massive {
+  display: inline-flex !important;  
+  align-items: center !important;
+} */
+
+
+.group-horizontal-huge{
+  display: flex;
+  align-items: center;
+}

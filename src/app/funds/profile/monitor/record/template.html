@@ -1,0 +1,46 @@
+<form novalidate
+      name="vm.record_investment_form"
+      data-ng-submit="vm.recordInvestment()">
+  <form-group field-name="Share Class" tooltip-placement="left">
+    <label for="share-class" class="control-label">Share Class</label>
+
+    <select class="form-control"
+            id="share-class"
+            data-ng-options="share_class.id as share_class.name for share_class in vm.share_classes"
+            required
+            chosen
+            data-ng-model="vm.investment.ShareclassID">
+        <option value="">-- Select Share Class --</option>
+    </select>
+  </form-group>
+
+  <form-group field-name="Investment Amount" tooltip-placement="left">
+    <label for="investment-amount" class="control-label">Investment Amount (in millions)</label>
+
+    <input type="number"
+           id="investment-amount"
+           class="form-control"
+           data-ng-model="vm.investment.Amount"
+           required
+           placeholder="Investment Amount in millions" />
+  </form-group>
+
+  <form-group field-name="Investment Date" tooltip-placement="left" control-selector="dv-datepicker">
+    <label for="investment-date" class="control-label">Investment Date</label>
+
+    <dv-datepicker data-ng-model="vm.investment.ActivityDateTime"
+                   ng-required="true"></dv-datepicker>
+  </form-group>
+
+  <div class="form-group">
+    <button type="submit"
+            button-loader="vm.saving_investment">Record Investment</button>
+
+    <p class="text-muted  space-on-top-lg">
+      <small>
+        <i>This records the process on the platform. No cash is transferred.</i>
+      </small>
+    </p>
+  </div>
+
+</form>

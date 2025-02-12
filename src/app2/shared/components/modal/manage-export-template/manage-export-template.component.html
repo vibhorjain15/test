@@ -1,0 +1,83 @@
+<app-modal
+  [title]="edit_mode ? 'Edit Export Template' : 'New Export Template'"
+  [firstButtonLabel]="edit_mode ? 'Update Template' : 'Create Template'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="ManageExportTempref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #ManageExportTempref>
+  <form
+    class="form-horizontal"
+    [formGroup]="manageExportForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      [fieldName]="'name'"
+      [modelController]="manageExportForm.get('name')"
+      [elementCol]="12"
+    >
+      <label for="name" class="col-md-4 control-label"
+        >Template Name</label
+      >
+      <div class="col-md-7">
+        <input
+          type="text"
+          class="form-control"
+          [id]="'name'"
+          placeholder="Template Name"
+          formControlName="name"
+          required
+        />
+        <div
+          *ngIf="
+            manageExportForm.get('name').touched &&
+            manageExportForm.get('name').invalid
+          "
+          class="text-danger"
+        >
+          <span
+            *ngIf="
+              !manageExportForm.get('name').errors.required &&
+              manageExportForm.get('name').errors.notUnique
+            "
+          >
+            {{ manageExportForm.get("name").errors.notUnique }}
+          </span>
+          <span *ngIf="manageExportForm.get('name').errors.required">
+            Template name is required
+          </span>
+          <span
+            *ngIf="
+              manageExportForm.get('name').errors.pattern &&
+              !manageExportForm.get('name').errors.notUnique
+            "
+          >
+            Invalid File extension</span
+          >
+        </div>
+      </div>
+    </dv-form-element>
+    <dv-form-element [elementCol]="12">
+      <div col="12">
+        <dv-uploader
+          [dragLabel]="'Drag & Drop your file here'"
+          [isMultiple]="false"
+          (onFileUpload)="dropped($event)"
+          [accept]="'.docx'"
+        ></dv-uploader>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element>
+      <a (click)="downloadTemplate()" *ngIf="edit_mode" class="link-disguise">
+        <dv-checkbox
+          [disabled]="true"
+          class="position"
+          formControlName="isEdit"
+          [label]="manageExportForm.value.name"
+        ></dv-checkbox>
+      </a>
+    </dv-form-element>
+  </form>
+</ng-template>

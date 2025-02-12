@@ -1,0 +1,15 @@
+<div class="dd-editable-score"
+        uib-tooltip="{{vm.score <= vm.maxScore?vm.score_tooltip:''}}">
+        <div class="input-group input-group-sm">
+            <input type="number" class="form-control" data-ng-model="vm.score" 
+                data-ng-style="{'background-color': vm.score_class, 'color': vm.font_color}"
+                data-ng-change="vm.onScoreChanged()"
+                min="0"
+                uib-tooltip="{{vm.score > vm.maxScore?'Score should be less than '+vm.maxScore: ''}}"
+                tooltip-is-open="vm.score_invalid" tooltip-placement="right" tooltip-trigger="none"
+                data-ng-disabled="vm.readonly" />
+            <div class="input-group-btn">
+                <button class="btn btn-default btn-xs"><icon name="pencil"></icon></button>
+            </div>
+        </div>
+</div>

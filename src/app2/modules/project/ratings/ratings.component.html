@@ -1,0 +1,847 @@
+<div
+  class="row clearfix"
+  *ngIf="
+    diligence &&
+    (diligence.status === 'Approved' ||
+      diligence.status === 'NotApproved' ||
+      diligence.status === 'Completed' ||
+      diligence.status === 'Evaluation' ||
+      diligence.diligence_type === 'dd_profile' ||
+      diligence.is_internal)
+  "
+  role="region"
+  aria-label="Diligence Information"
+>
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body clearfix">
+        <app-spinner *ngIf="!diligence" aria-hidden="true"></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ diligence.entity_name }}
+            </h4>
+            <div>
+              <small class="text-muted" *ngIf="diligence.last_updated_at">
+                Last updated
+                {{ diligence.last_updated_at | dvDate }}
+              </small>
+            </div>
+          </div>
+
+          <div class="text-center cell">
+            <span class="align-middle display-block">Status</span>
+            <span diligenceStatus [status]="diligence.status"></span>
+          </div>
+          <div *ngIf="!loading" class="cell space-on-right-lg">
+            <div
+              col="12"
+              class="rating-types-container default-toggle ng-scope text-center space-on-left-lg bordered-left"
+            >
+              <label class="control-label" for="ratingdropdown"
+                >{{ headerConstants.RATINGDEFINITION }} :&nbsp;</label
+              >
+              <div class="selectDiv" *ngIf="rating_types.length > 0">
+                <dv-select
+                  [list]="rating_types"
+                  (onSelectChange)="onSelectedRatingChange(selectedRatingType)"
+                  [(ngModel)]="selectedRatingType"
+                  bindLabel="name"
+                  [bindValue]="null"
+                  [disabled]="ratingsNotEditable"
+                  [clearable]="false"
+                  [searchable]="true"
+                  placeholder="--Select Rating Type --"
+                  [aria-label]="headerConstants?.RATINGDEFINITION"
+                  [id]="'ratingdropdown'"
+                ></dv-select>
+              </div>
+              <span class="empty-rating" *ngIf="rating_types.length == 0"
+                >No rating framework defined.
+                <a class="clickable" (click)="redirectToAddRatingTypes()"
+                  >Click here to add one</a
+                ></span
+              >
+            </div>
+          </div>
+
+          <div class="cell bordered-left" *ngIf="diligence.total_score != null">
+            <span class="control-label fw-bolder">Total Rating: &nbsp;</span>
+            <div>
+              <span
+                class="dd-score-display"
+                [ngStyle]="finalScoreColorCode"
+                *ngIf="diligence.total_score !== -1"
+                >{{ diligence.total_score | number : "1.2-2" }}</span
+              >&nbsp;
+              <span *ngIf="finalScoreScaleName" [ngStyle]="finalScoreColorCode">
+                <strong
+                  >&nbsp;( {{ finalScoreScaleName | uppercase }} )&nbsp;</strong
+                >
+              </span>
+            </div>
+          </div>
+          <div class="cell" *ngIf="diligence.isLocked && diligence.isReadOnly">
+            <helper-text role="status">
+              <small>
+                This project is now locked, or your access is limited. You
+                cannot update ratings.
+              </small>
+            </helper-text>
+          </div>
+          <div
+            class="cell bordered-left"
+            *ngIf="!loading && selectedRatingType"
+          >
+            <dv-button
+              [btnType]="'default'"
+              (onClick)="toggleView('heatmap'); loadHeatMap()"
+              *ngIf="view_mode == 'tabbed'"
+            >
+              Switch to Heatmap
+            </dv-button>
+            <dv-button
+              *ngIf="view_mode == 'heatmap'"
+              [btnType]="'default'"
+              (onClick)="
+                toggleView('tabbed'); loadRatings(selectedRatingType.id)
+              "
+            >
+              Switch to Rating View
+            </dv-button>
+          </div>
+          <div
+            class="cell bordered-left"
+            *ngIf="
+              !loading && selectedRatingType && diligence.recalculation_needed
+            "
+          >
+            <dv-button [btnType]="'default'" (onClick)="recalculateScores()">
+              <span appIcon name="refresh"></span>
+              Recalculate
+            </dv-button>
+          </div>
+          <div
+            class="cell bordered-left"
+            *ngIf="ratingChanged && view_mode == 'tabbed'"
+          >
+            <dv-button
+              [loader]="false"
+              [btnType]="'primary'"
+              (onClick)="reloadScores()"
+            >
+              <span appIcon name="refresh"></span>
+              Reload Scores
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-spinner *ngIf="loading" aria-hidden="true"></app-spinner>
+    <div *ngIf="!loading" class="row clearfix rating-container">
+      <div class="col-md-12">
+        <div id="chartWidthDiv" class="visibility-hidden"></div>
+        <div *ngIf="view_mode == 'heatmap'" class="panel panel-default">
+          <div class="panel-body">
+            <heatmap
+              *ngIf="heatmapColor"
+              [heatmapCompleteDataResponse]="heatmapResponse"
+              [heatmapColor]="heatmapColor"
+              [rating]="selectedRatingType"
+            >
+            </heatmap>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="view_mode == 'tabbed'">
+        <div *ngIf="selectedRatingType" [autoScroll]="categoryId">
+          <div
+            col="12"
+            *ngFor="let rating_subtype of ratings"
+            [id]="rating_subtype?.entity_id"
+          >
+            <div class="panel panel-default md-panel">
+              <div class="panel-heading space-on-bottom-lg">
+                <h5 class="panel-title">
+                  {{ rating_subtype.name }} ({{ rating_subtype.weightage }}%)
+                  <span
+                    class="text-primary pull-right"
+                    [tooltip]="'Aggregate Rating'"
+                    *ngIf="rating_subtype.aggregate_rating"
+                  >
+                    {{ rating_subtype.aggregate_rating }} |
+                    {{ rating_subtype.aggregate_rating_label }}
+                  </span>
+                </h5>
+                <div class="panel-controls">
+                  <div
+                    class="panel-controls-wrapper"
+                    [tooltip]="rating_subtype.description"
+                  >
+                    <span
+                      class="dd-score-display"
+                      [ngStyle]="rating_subtype.color_code"
+                      [tooltip]="
+                        !rating_subtype.rating_value &&
+                        getNoValueRatingName(rating_subtype).length > 7
+                          ? getNoValueRatingName(rating_subtype)
+                          : ''
+                      "
+                      >{{
+                        rating_subtype.rating_value
+                          ? (rating_subtype.score_value | number : "1.2-2")
+                          : (getNoValueRatingName(rating_subtype)
+                            | truncate : 7)
+                      }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel-body">
+                <div col="4" *ngFor="let category of rating_subtype.ratings">
+                  <div
+                    class="panel panel-default md-panel space-on-left-lg"
+                    *ngIf="ratingLevel == ratingLevels.Section"
+                  >
+                    <div class="panel-heading">
+                      <span
+                        >{{ category.name }} ({{ category.weightage }}%)</span
+                      >
+                      <div
+                        class="panel-controls"
+                        *ngIf="custom_fields.length > 0 || reviewEnabled"
+                      >
+                        <div
+                          class="panel-controls-wrapper"
+                          [tooltip]="category.description"
+                        >
+                          <span class="dd-score-display">
+                            <span
+                              class="dd-score-display inline-block"
+                              [ngStyle]="category.color_code"
+                              [tooltip]="
+                                !category.rating_value &&
+                                getNoValueRatingName(category).length > 7
+                                  ? getNoValueRatingName(category)
+                                  : ''
+                              "
+                              >{{
+                                category.rating_value
+                                  ? (category.score_value | number : "1.2-2")
+                                  : (getNoValueRatingName(category)
+                                    | truncate : 7)
+                              }}</span
+                            >
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      <span class="pull-right">
+                        <span
+                          *ngIf="
+                            (custom_fields.length || reviewEnabled) &&
+                            category.score_value != null &&
+                            category.score_value >= 0 &&
+                            ratingScaleDetailsMap.get(
+                              ratingDefinitionScaleIdMap.get(category.id)
+                            ).rating_scales[0].scale_mode ==
+                              ratingConstants.Absolute
+                          "
+                          class="space-on-right"
+                        >
+                          <span
+                            appIcon
+                            name="pencil"
+                            [tooltip]="category.description"
+                            class="clickable"
+                            [isDisable]="category.is_na"
+                            (click)="
+                              !category.is_na &&
+                                openCustomFieldModal(
+                                  category,
+                                  rating_subtype,
+                                  null,
+                                  ratingScaleDetailsMap.get(
+                                    ratingDefinitionScaleIdMap.get(category.id)
+                                  ).rating_scales[0].scale_mode
+                                )
+                            "
+                          >
+                          </span>
+                        </span>
+                        <span
+                          class="hover-container"
+                          [ngClass]="{ 'always-visible': category.is_na }"
+                        >
+                          <span
+                            appIcon
+                            name="ban"
+                            [tooltip]="
+                              category.is_na
+                                ? 'Include in rating'
+                                : 'Exclude from rating'
+                            "
+                            container="body"
+                            [isDisable]="disableRatings"
+                            [color]="!category.is_na ? 'black' : 'red'"
+                            class="clickable conditional-span"
+                            customSize="heading"
+                            (click)="
+                              toggleNARating(
+                                category,
+                                rating_subtype,
+                                null,
+                                ratingScaleDetailsMap.get(
+                                  ratingDefinitionScaleIdMap.get(category.id)
+                                ).rating_scales[0].scale_mode
+                              )
+                            "
+                          >
+                          </span>
+                        </span>
+                      </span>
+                      <div
+                        *ngIf="
+                          ratingScaleDetailsMap.get(
+                            ratingDefinitionScaleIdMap.get(category.id)
+                          ).rating_scales[0].scale_mode ==
+                          ratingConstants.Absolute
+                        "
+                      >
+                        <dv-rating
+                          [value]="category.rating_value"
+                          [readonly]="disableRatings || category.is_na"
+                          [max]="
+                            ratingScaleDetailsMap.get(
+                              ratingDefinitionScaleIdMap.get(category.id)
+                            ).rating_scales.length
+                          "
+                          [tooltip]="category.description"
+                          (onChange)="
+                            onChangeRatingValue(
+                              $event,
+                              category,
+                              rating_subtype,
+                              null,
+                              ratingConstants.Absolute
+                            )
+                          "
+                          [ratingScales]="
+                            ratingScaleDetailsMap.get(
+                              ratingDefinitionScaleIdMap.get(category.id)
+                            ).rating_scales
+                          "
+                          [id]="category.id"
+                        ></dv-rating>
+                      </div>
+                      <div
+                        *ngIf="
+                          ratingScaleDetailsMap.get(
+                            ratingDefinitionScaleIdMap.get(category.id)
+                          ).rating_scales[0].scale_mode ==
+                          ratingConstants.ScoreBand
+                        "
+                        [tooltip]="category.description"
+                      >
+                        <span>
+                          <div class="space-on-top">
+                            <app-editable-only-score
+                              [total]="100"
+                              [readonly]="disableRatings || category.is_na"
+                              [iconReadonly]="category.is_na"
+                              [naValue]="
+                                ratingScaleDetailsMap.get(
+                                  ratingDefinitionScaleIdMap.get(category.id)
+                                ).naValue
+                              "
+                              [ratingScale]="
+                                ratingScaleDetailsMap.get(
+                                  ratingDefinitionScaleIdMap.get(category.id)
+                                ).rating_scales
+                              "
+                              [score]="category.score_value"
+                              [id]="category.id"
+                              (onIconClick)="
+                                onScorebandIconClick(
+                                  category.score_value,
+                                  category,
+                                  rating_subtype,
+                                  null,
+                                  ratingConstants.ScoreBand
+                                )
+                              "
+                              (onChange)="
+                                onChangeRatingValue(
+                                  $event,
+                                  category,
+                                  rating_subtype,
+                                  null,
+                                  ratingConstants.ScoreBand
+                                )
+                              "
+                              #editableScore
+                            >
+                            </app-editable-only-score>
+                          </div>
+                        </span>
+                      </div>
+                      <p *ngIf="category.updated_by_name" class="rating-user">
+                        <ng-container *ngIf="category.source === 'Rule'">
+                          Auto-rated by rules
+                        </ng-container>
+                        <ng-container *ngIf="category.source !== 'Rule'">
+                          Last rated by {{ category.updated_by_name }} on
+                          {{ category.updated_at | date }}
+                        </ng-container>
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    class="panel panel-default md-panel space-on-left-lg"
+                    *ngIf="
+                      ratingLevel == ratingLevels.Question ||
+                      ratingLevel == ratingLevels.Default
+                    "
+                  >
+                    <div class="panel-heading">
+                      <h5 class="panel-title">
+                        {{ category.name }} ({{ category.weightage }}%)
+                        <span class="pull-right">
+                          <span
+                            class="text-primary pull-right"
+                            [tooltip]="'Aggregate Rating'"
+                            *ngIf="category.aggregate_rating"
+                          >
+                            {{ category.aggregate_rating }} |
+                            {{ category.aggregate_rating_label }}
+                          </span>
+                        </span>
+                      </h5>
+                      <div class="panel-controls">
+                        <div
+                          class="panel-controls-wrapper rating-item-container"
+                          [tooltip]="category.description"
+                        >
+                          <span
+                            class="bulk-rating-icon hover-container"
+                            [ngClass]="{ 'always-visible': category.is_na }"
+                          >
+                            <span
+                              appIcon
+                              name="ban"
+                              [tooltip]="
+                                category.is_na
+                                  ? 'All questions of this subcategory have been excluded from rating'
+                                  : 'Exclude all questions of this subcategory from rating'
+                              "
+                              container="body"
+                              [isDisable]="category.is_na || disableRatings"
+                              [color]="!category.is_na ? 'black' : 'red'"
+                              [keepColorWithDisableMode]="true"
+                              class="clickable conditional-span"
+                              customSize="heading"
+                              (click)="bulkMarkQuestionsAsNA(category)"
+                            >
+                            </span>
+                          </span>
+
+                          <span
+                            class="dd-score-display score-display-container"
+                            [ngStyle]="category.color_code"
+                            [tooltip]="
+                              !category.rating_value &&
+                              getNoValueRatingName(category).length > 7
+                                ? getNoValueRatingName(category)
+                                : ''
+                            "
+                          >
+                            {{
+                              category.rating_value
+                                ? (category.score_value | number : "1.2-2")
+                                : (getNoValueRatingName(category)
+                                  | truncate : 7)
+                            }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      <div class="panel panel-default md-panel">
+                        <ul class="list-group">
+                          <li
+                            class="list-group-item"
+                            *ngFor="let sub_category of category.ratings"
+                          >
+                            <div
+                              *ngIf="
+                                ratingScaleDetailsMap.get(
+                                  ratingDefinitionScaleIdMap.get(
+                                    sub_category.id
+                                  )
+                                ).rating_scales[0].scale_mode ==
+                                ratingConstants.ScoreBand
+                              "
+                            >
+                              <span
+                                class="width-75-pct inline-block"
+                                innerHTML="{{ sub_category.name }} ({{
+                                  sub_category.weightage
+                                }}%)"
+                              >
+                              </span>
+                              <span
+                                class="width-24-pct inline-block"
+                                [tooltip]="sub_category.description"
+                              >
+                                <span
+                                  class="pull-right hover-container"
+                                  [ngClass]="{
+                                    'always-visible': sub_category.is_na
+                                  }"
+                                >
+                                  <span
+                                    appIcon
+                                    name="ban"
+                                    [tooltip]="
+                                      sub_category.is_na
+                                        ? 'Include in rating'
+                                        : 'Exclude from rating'
+                                    "
+                                    container="body"
+                                    [isDisable]="disableRatings"
+                                    [color]="
+                                      !sub_category.is_na ? 'black' : 'red'
+                                    "
+                                    class="clickable conditional-span"
+                                    customSize="heading"
+                                    (click)="
+                                      toggleNARating(
+                                        sub_category,
+                                        category,
+                                        rating_subtype,
+                                        ratingConstants.ScoreBand
+                                      )
+                                    "
+                                  >
+                                  </span>
+                                </span>
+                                <span>
+                                  <div class="space-on-top">
+                                    <app-editable-only-score
+                                      [total]="100"
+                                      [readonly]="
+                                        sub_category.is_na ||
+                                        disableRatings ||
+                                        (ratingMappedToTemplate &&
+                                          !sub_category.response_id)
+                                      "
+                                      [iconReadonly]="
+                                        sub_category.is_na ||
+                                        (ratingMappedToTemplate &&
+                                          !sub_category.response_id)
+                                      "
+                                      [naValue]="
+                                        ratingScaleDetailsMap.get(
+                                          ratingDefinitionScaleIdMap.get(
+                                            sub_category.id
+                                          )
+                                        ).naValue
+                                      "
+                                      [ratingScale]="
+                                        ratingScaleDetailsMap.get(
+                                          ratingDefinitionScaleIdMap.get(
+                                            sub_category.id
+                                          )
+                                        ).rating_scales
+                                      "
+                                      [score]="sub_category.score_value"
+                                      [tooltip]="
+                                        ratingMappedToTemplate &&
+                                        !sub_category.response_id
+                                          ? 'No response available to rate'
+                                          : ''
+                                      "
+                                      [id]="sub_category.id"
+                                      (onIconClick)="
+                                        onScorebandIconClick(
+                                          sub_category.score_value,
+                                          sub_category,
+                                          category,
+                                          rating_subtype,
+                                          ratingConstants.ScoreBand
+                                        )
+                                      "
+                                      (onChange)="
+                                        onChangeRatingValue(
+                                          $event,
+                                          sub_category,
+                                          category,
+                                          rating_subtype,
+                                          ratingConstants.ScoreBand
+                                        )
+                                      "
+                                      #editableScore
+                                    >
+                                    </app-editable-only-score>
+                                  </div>
+                                </span>
+                              </span>
+                            </div>
+                            <div
+                              *ngIf="
+                                ratingScaleDetailsMap.get(
+                                  ratingDefinitionScaleIdMap.get(
+                                    sub_category.id
+                                  )
+                                ).rating_scales[0].scale_mode ==
+                                ratingConstants.Absolute
+                              "
+                            >
+                              <span
+                                innerHTML="{{ sub_category.name }} ({{
+                                  sub_category.weightage
+                                }}%)"
+                              ></span>
+                              <span>
+                                <span class="pull-right">
+                                  <span
+                                    *ngIf="
+                                      ratingScaleDetailsMap.get(
+                                        ratingDefinitionScaleIdMap.get(
+                                          sub_category.id
+                                        )
+                                      ).rating_scales &&
+                                      (custom_fields.length || reviewEnabled) &&
+                                      sub_category.score_value != null &&
+                                      sub_category.score_value >= 0
+                                    "
+                                    class="space-on-right"
+                                  >
+                                    <span
+                                      appIcon
+                                      name="pencil"
+                                      [tooltip]="sub_category.description"
+                                      [isDisable]="sub_category.is_na"
+                                      class="clickable"
+                                      (click)="
+                                        !sub_category.is_na &&
+                                          openCustomFieldModal(
+                                            sub_category,
+                                            category,
+                                            rating_subtype,
+                                            ratingConstants.Absolute
+                                          )
+                                      "
+                                    >
+                                    </span>
+                                  </span>
+                                  <span
+                                    class="hover-container"
+                                    [ngClass]="{
+                                      'always-visible': sub_category.is_na
+                                    }"
+                                  >
+                                    <span
+                                      appIcon
+                                      name="ban"
+                                      [tooltip]="
+                                        sub_category.is_na
+                                          ? 'Include in rating'
+                                          : 'Exclude from rating'
+                                      "
+                                      container="body"
+                                      [isDisable]="disableRatings"
+                                      [color]="
+                                        !sub_category.is_na ? 'black' : 'red'
+                                      "
+                                      customSize="heading"
+                                      class="clickable conditional-span"
+                                      (click)="
+                                        toggleNARating(
+                                          sub_category,
+                                          category,
+                                          rating_subtype,
+                                          ratingConstants.Absolute
+                                        )
+                                      "
+                                    >
+                                    </span>
+                                  </span>
+                                </span>
+                                <div class="space-on-top">
+                                  <dv-rating
+                                    [value]="sub_category.rating_value"
+                                    [readonly]="
+                                      sub_category.is_na ||
+                                      disableRatings ||
+                                      (ratingMappedToTemplate &&
+                                        !sub_category.response_id)
+                                    "
+                                    [max]="
+                                      ratingScaleDetailsMap.get(
+                                        ratingDefinitionScaleIdMap.get(
+                                          sub_category.id
+                                        )
+                                      ).rating_scales.length
+                                    "
+                                    [tooltip]="
+                                      ratingMappedToTemplate &&
+                                      !sub_category.response_id
+                                        ? 'No response available to rate'
+                                        : sub_category.description
+                                    "
+                                    (onChange)="
+                                      onChangeRatingValue(
+                                        $event,
+                                        sub_category,
+                                        category,
+                                        rating_subtype,
+                                        ratingConstants.Absolute
+                                      )
+                                    "
+                                    [ratingScales]="
+                                      ratingScaleDetailsMap.get(
+                                        ratingDefinitionScaleIdMap.get(
+                                          sub_category.id
+                                        )
+                                      ).rating_scales
+                                    "
+                                    [id]="sub_category.id"
+                                  ></dv-rating>
+                                </div>
+                              </span>
+                            </div>
+                            <p
+                              *ngIf="sub_category.updated_by_name"
+                              class="rating-user"
+                            >
+                              <ng-container
+                                *ngIf="sub_category.source === 'Rule'"
+                              >
+                                Auto-rated by rules
+                              </ng-container>
+                              <ng-container
+                                *ngIf="sub_category.source !== 'Rule'"
+                              >
+                                Last rated by
+                                {{ sub_category.updated_by_name }} on
+                                {{ sub_category.updated_at | date }}
+                              </ng-container>
+                            </p>
+                            <div class="text-right">
+                              <small
+                                class="text-success"
+                                *ngIf="
+                                  sub_category.rating_status ==
+                                    responseStatus.REVIEWSUCCESS &&
+                                  sub_category.review_assignments.length &&
+                                  sub_category.review_assignments[0].is_complete
+                                "
+                              >
+                                Last Reviewed by
+                                {{
+                                  sub_category.review_assignments[0]
+                                    .completed_by_name
+                                }}
+                                on
+                                {{
+                                  sub_category.review_assignments[0]
+                                    .completed_at | dvDate
+                                }}
+                              </small>
+                              <span
+                                class="label label-danger"
+                                tooltip="Revision requested by {{
+                                  sub_category.review_assignments[0]
+                                    .completed_by_name
+                                }} on {{
+                                  sub_category.review_assignments[0]
+                                    .completed_at | dvDate
+                                }}"
+                                *ngIf="
+                                  sub_category.rating_status ==
+                                    responseStatus.REVIEWFAILED &&
+                                  sub_category.review_assignments.length > 0 &&
+                                  sub_category.review_assignments[0].is_complete
+                                "
+                                >REVISION REQUESTED</span
+                              >
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div col="12" *ngIf="ratings && !ratings.length && !loading">
+              <div class="panel panel-default">
+                <div class="row clearfix">
+                  <div col="6" offset="3">
+                    <div class="panel-body">
+                      <app-empty-state
+                        icon-name="star"
+                        message="{{
+                          'Investment Ratings have not been setup for your organization.' +
+                            (is_admin
+                              ? ''
+                              : ' Please contact your administrator')
+                        }}"
+                        [actionLabel]="
+                          is_admin ? 'Setup Investment Ratings' : ''
+                        "
+                        (action)="redirectToInvestmentRatings()"
+                      >
+                      </app-empty-state>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="panel panel-default"
+  *ngIf="
+    diligence &&
+    !(
+      diligence.status === 'Approved' ||
+      diligence.status === 'NotApproved' ||
+      diligence.status === 'Completed' ||
+      diligence.status === 'Evaluation' ||
+      diligence.diligence_type === 'dd_profile' ||
+      diligence.is_internal
+    ) &&
+    !loading
+  "
+  role="region"
+  aria-label="Diligence Information"
+>
+  <div class="panel-body locked-notification">
+    <div class="row clearfix">
+      <helper-text class="text-center" role="status">
+        <small>
+          This project is now locked, or your access is limited. You cannot
+          update ratings.
+        </small>
+      </helper-text>
+      <div col="6" offset="3">
+        <app-empty-state
+          iconName="smile-o"
+          message="Nothing to rate as of now. Once the Manager submits this due diligence, you can rate."
+          (action)="redirectToSummary()"
+          actionLabel="Back to Summary"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>

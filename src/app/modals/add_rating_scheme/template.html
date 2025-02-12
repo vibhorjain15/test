@@ -1,0 +1,41 @@
+<form name="vm.add_rating_scheme_form" data-ng-submit="vm.submit()" class="form-horizontal">
+    <div class="modal-header">
+        <h3 class="modal-title">New Rating Scheme
+            <a class="pull-right clickable link-disguise link-unstyled"
+                data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="row clearfix">
+            <div col="12">
+                <form-group field-name="Rating Scheme Name">
+                    <label col="4" for="scheme_name" class="control-label">Rating Scheme Name</label>
+                    <div col="6">
+                        <input type="text" name="scheme_name" maxlength="20" data-ng-model="vm.editing_ratingscheme.name" class="form-control" placeholder="New rating scheme" required />
+                    </div>
+                </form-group>
+                <form-group field-name="rating scale">
+                    <label for="rating scale" class="control-label col-sm-4" >
+                      Select Rating Scale
+                    </label>
+                    <div class="col-sm-6">
+                        <select name="rating-scale"
+                                id="rating-scale"
+                                class="form-control"
+                                chosen
+                                data-ng-options="scale.id as scale.name for scale in vm.ratingScalesList"
+                                data-ng-model="vm.editing_ratingscheme.rating_scale_id"
+                                required
+                                data-ng-disabled="vm.editing_ratingscheme.has_ratings || vm.edit">
+                          <option value="" disabled>--Select Rating Scale--</option>
+                        </select>
+                    </div>
+                </form-group>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.updating_rating_type">{{vm.edit?'Update':'Add'}}</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,4 @@
+:host ::ng-deep dv-category-accordion-list .panel-heading,
+:host ::ng-deep dv-category-accordion-list .panel-body {
+  padding: 5px 1px !important;
+}

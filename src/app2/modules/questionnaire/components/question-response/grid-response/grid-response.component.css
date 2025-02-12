@@ -1,0 +1,16 @@
+.grid-container {
+  display: block;
+  overflow: auto;
+}
+
+.class-primary,
+.class-primary:active {
+  color: var(--primary);
+}
+
+.width-fit-content {
+  width: fit-content;
+}
+.main-grid-wrapper {
+  overflow: auto;
+}

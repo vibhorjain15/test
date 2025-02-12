@@ -1,0 +1,85 @@
+/* Need to restructure this area block as it is not properly set which is causing scroll issues */
+.area {
+  display: block;
+  float: left;
+  transition: width 0.2s;
+}
+
+.gutter {
+  width: 10px;
+  height: 100vh; /* Ensure the gutter spans the full height of the area */
+}
+.col-resize {
+  cursor: col-resize;
+}
+.overlayFromLeft {
+  z-index: 1001;
+  position: absolute;
+  width: 23%;
+  box-shadow: 2px 5px 5px lightgray;
+}
+.overlayFromRight {
+  box-shadow: -2px 5px 5px lightgray;
+  z-index: 1000;
+  position: absolute;
+  right: 0;
+  width: 30%;
+}
+.icon-link {
+  cursor: pointer;
+}
+.css-dw3ben {
+  width: 24px;
+  height: 24px;
+  margin-top: 52px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: rgba(9, 30, 66, 0.08) 0px 0px 0px 1px,
+    rgba(9, 30, 66, 0.08) 0px 2px 4px 1px;
+  color: #126b82;
+  cursor: pointer;
+  transition: background-color 100ms linear 0s, color 100ms linear 0s,
+    opacity 350ms cubic-bezier(0.2, 0, 0, 1) 0s;
+  transform: rotate(180deg);
+  transform-origin: 9px center;
+  z-index: 10001;
+}
+.css-dw3ben:hover {
+  background-color: #126b82;
+  color: white;
+}
+.blue-background {
+  background-color: #126b82 !important;
+  color: white !important;
+  height: 28px;
+  width: 28px;
+  transform-origin: 10px center;
+}
+.gutterAfterCollapsed {
+  background: white;
+  margin-right: -1px;
+  border-left: 1px solid #e9e9e9;
+  border-top: 1px solid #e9e9e9;
+  border-bottom: 1px solid #e9e9e9;
+}
+@media screen and (max-width: 980px) {
+  .overlayFromLeft,
+  .overlayFromRight {
+    width: 90% !important;
+    height: 100% !important;
+    position: fixed;
+  }
+}
+.disableSelection {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Standard */
+}
+.float-left {
+  float: left;
+}

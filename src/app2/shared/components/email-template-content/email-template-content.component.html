@@ -1,0 +1,12 @@
+<div *ngIf="params.data">
+  <span
+    [tooltip]="popTemplate"
+    container="body"
+    [adaptivePosition]="false"
+    [innerHtml]="params?.data?.content"
+  >
+  </span>
+  <ng-template #popTemplate
+    ><div [innerHtml]="params?.data?.content"></div
+  ></ng-template>
+</div>

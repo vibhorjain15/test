@@ -1,0 +1,140 @@
+<div class="panel panel-default space-on-bottom-xxl">
+    <div class="panel-heading">
+            <span>
+                  <icon name="document-question" class="space-on-right align-middle"></icon>
+                  <span class="align-middle">
+                        Questionnaire Options
+                  </span>
+            </span>
+    </div>
+
+    <div class="panel-body rb-questionnaire-settings">
+        <rb-component-width></rb-component-width>
+
+        <div class="form-group">
+            <label>Questionnaire Title</label>
+
+            <div>
+                <input type="text"
+                       class="form-control"
+                       focus-me="true"
+                       select-all-text
+                       data-ng-model-options="{ debounce: { 'default': 300 } }"
+                       data-ng-model="component.options.title">
+            </div>
+        </div>
+
+        <div data-ng-if="isFundAssociated">
+            <div class="form-group">
+                <label>Select Diligence</label>
+
+                <div>
+                    <select class="form-control"
+                            chosen
+                            data-ng-model="component.options.diligenceId"
+                            data-ng-options="diligence.id as diligence.name for diligence in diligenceList">
+                        <option value=""></option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="space-on-bottom-xl" data-ng-if="questionnaireTree">
+
+            <div data-ng-if="component.options.diligenceId">
+                <spinner broad-spinner spinner-height='35' data-ng-if="!questionnaireTree"></spinner>
+
+                <div class="form-group" data-ng-if="questionnaireTree">
+                    <dv-checkbox
+                            ng-model="selectEntireQuestionnaire"
+                            label="Select Entire Questionnaire"
+                            data-ng-change="toggleEntireQuestionnaireSelection()"></dv-checkbox>
+
+                    <hr class="space-on-top-xl space-on-bottom-xl">
+
+                    <label>Questionnaire Tree</label>
+
+                    <div ui-tree data-drag-enabled="false">
+                        <ol ui-tree-nodes="" ng-model="questionnaireTree">
+                            <li ng-repeat="section in questionnaireTree" ui-tree-node collapsed="true" data-ng-class="{'selected-node': section.isSelected}">
+                                <div ui-tree-handle data-ng-click="selectItem(section, $event)">
+                                    <a class="btn btn-clear btn-xs" data-ng-show="section.subSections.length || section.questions.length" ng-click="expandNode(this, $event)">
+                                        <i class="dvi" ng-class="{'dvi-chevron-right color-gray': collapsed, 'dvi-chevron-down color-blue': !collapsed}"></i>
+                                    </a>
+                                    <dv-checkbox
+                                            ng-model="section.isSelected"
+                                            data-type="info inline">
+                                        <dv-checkbox-label>
+                                            <span truncate-text="30" uib-tooltip="{{section.attributes.name}}" tooltip-placement="top">
+                                                {{section.attributes.name}}
+                                            </span>
+                                        </dv-checkbox-label>
+                                    </dv-checkbox>
+                                </div>
+                                <ol ui-tree-nodes ng-model="section.subSections" ng-class="{hidden: collapsed, displayed:!collapsed}">
+                                    <li ng-repeat="subSection in section.subSections" ui-tree-node collapsed="true" data-ng-class="{'selected-node': subSection.isSelected}">
+                                        <div ui-tree-handle data-ng-click="selectItem(subSection, $event)">
+                                            <a class="btn btn-clear btn-xs" data-ng-show="section.subSections.length || section.questions.length" ng-click="expandNode(this, $event)">
+                                                <i class="dvi" ng-class="{'dvi-chevron-right color-gray': collapsed, 'dvi-chevron-down color-blue': !collapsed}"></i>
+                                            </a>
+                                            <dv-checkbox
+                                                    ng-model="subSection.isSelected"
+                                                    data-type="info inline">
+                                                <dv-checkbox-label>
+                                                    <span truncate-text="30" uib-tooltip="{{subSection.attributes.name}}" tooltip-placement="top">
+                                                        {{subSection.attributes.name}}
+                                                    </span>
+                                                </dv-checkbox-label>
+                                            </dv-checkbox>
+                                        </div>
+                                        <ol ui-tree-nodes="" ng-model="subSection.questions" ng-class="{hidden: collapsed, displayed:!collapsed}" class="tree-questions">
+                                            <li ng-repeat="question in subSection.questions" ui-tree-node collapsed="true" data-ng-class="{'selected-node': question.isSelected}">
+                                                <div ui-tree-handle data-ng-click="selectItem(question, $event)" class="question-node">
+                                                    <dv-checkbox
+                                                            ng-model="question.isSelected"
+                                                            data-type="info inline">
+                                                        <dv-checkbox-label>
+                                                            <span truncate-text="40" uib-tooltip="{{question.attributes.text}}" tooltip-placement="top">
+                                                                {{question.attributes.text}}
+                                                            </span>
+                                                        </dv-checkbox-label>
+                                                    </dv-checkbox>
+                                                </div>
+                                            </li>
+                                        </ol>
+                                    </li>
+                                </ol>
+                                <ol ui-tree-nodes="" ng-model="section.questions" ng-class="{hidden: collapsed, displayed:!collapsed}" class="tree-questions">
+                                    <li ng-repeat="question in section.questions" ui-tree-node data-ng-class="{'selected-node': question.isSelected}">
+                                        <div ui-tree-handle data-ng-click="selectItem(question, $event)" class="question-node">
+                                            <div ui-tree-handle>
+                                                <dv-checkbox
+                                                        ng-model="question.isSelected"
+                                                        data-type="info inline">
+                                                    <dv-checkbox-label>
+                                                        <span truncate-text="40" uib-tooltip="{{question.attributes.text}}" tooltip-placement="top">
+                                                            {{question.attributes.text}}
+                                                        </span>
+                                                    </dv-checkbox-label>
+                                                </dv-checkbox>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-ng-if="!isFundAssociated">
+            <div class="form-group">
+                <label>Description</label>
+
+                <p>
+                    More options will be automatically added here once you associate a fund with this template.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

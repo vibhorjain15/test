@@ -1,0 +1,220 @@
+.report-panel {
+  .form-inline {
+  .form-control {
+      width: 250px;
+    }
+
+    .form-group {
+      margin-right: 5px;
+    }
+  }
+
+  .report-title {
+    font-size: 1.5em;
+  }
+
+  .toggle-collapse {
+    margin-top: 5px;
+    cursor: pointer;
+  }
+
+  .filter-summary, .content-block {
+    display: inline-block;
+  }
+
+  .content-block {
+  vertical-align: middle;
+
+    &.separator {
+      width: 1px;
+      background-color: #ddd;
+      height: 30px;
+      margin: 0 10px;
+    }
+  }
+
+  .category-checkbox {
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: 0;
+  }
+}
+
+.fund-profile-items {
+  width: 100%;
+  border: 1px solid transparent;
+
+  tr{
+    td {
+      text-align: center;
+      line-height: 14px;
+      width: 100/6%;
+      vertical-align: top;
+      height: 100%;
+
+      .inner{
+        border: 1px solid transparent;
+        margin-left: 5px;
+        margin-right: 5px;
+        height: 100%;
+      }
+
+      &.title-cell {
+        .inner{
+          border-bottom: none;
+          padding: 10px 0 0 0;
+        }
+      }
+
+      &.icon-cell {
+        .inner{
+          border-bottom: none;
+          border-top: none;
+        }
+      }
+
+      &.response-cell {
+        .inner{
+          border-top: none;
+          padding: 0 0 10px 0;
+
+        }
+      }
+    }
+
+    &.title-row {
+      td {
+        vertical-align: bottom;
+      }
+    }
+
+    &.icon-row {
+      td {
+        vertical-align: middle;
+        padding: 10px 0;
+      }
+    }
+
+    &.rb-icon-row {
+      td {
+        vertical-align: middle;
+        .inner{
+          padding: 10px 0;
+        }
+      }
+    }
+  }
+
+  .title-cell-hover {
+    .inner{
+      border: 1px solid #dcddde !important;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom: none !important;
+      background-color: rgba(55, 55, 55, 0.05);
+    }
+  }
+
+  .icon-cell-hover {
+    .inner{
+      border: 1px solid #dcddde !important;
+      border-bottom: none !important;
+      border-top: none !important;
+      background-color: rgba(55, 55, 55, 0.05);
+    }
+  }
+
+  .response-cell-hover {
+    .inner{
+      border: 1px solid #dcddde !important;
+      border-top: none !important;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      background-color: rgba(55, 55, 55, 0.05);
+    }
+  }
+
+  .title-cell-select {
+    .inner{
+      border: 1px solid @dv-blue !important;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom: none !important;
+      background-color: rgba(35, 201, 255, 0.05);
+    }
+  }
+
+  .icon-cell-select {
+    .inner{
+      border: 1px solid @dv-blue !important;
+      border-bottom: none !important;
+      border-top: none !important;
+      background-color: rgba(35, 201, 255, 0.05);
+    }
+  }
+
+  .response-cell-select {
+    .inner{
+      border: 1px solid @dv-blue !important;
+      border-top: none !important;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      background-color: rgba(35, 201, 255, 0.05);
+    }
+  }
+}
+
+.profile-info-panel {
+  .panel-body {
+    height: 160px;
+  }
+}
+
+.slickgrid-wrapper {
+  background: white;
+  outline: 0;
+  border: 1px solid gray;
+  font-size: 12px;
+}
+
+.js-search-panel.filter-search-panel{
+  .panel-heading{
+    background-color: white;
+    .content-wrapper{
+      .toggle-collapse{
+        color: @dv-orange;
+      }
+    }
+
+  }
+
+  .panel-heading:hover{
+    .content-wrapper{
+      .content-block{
+        color: @dv-orange;
+      }
+    }
+  }
+}
+
+.search-result-popover.popover {
+  max-width: 500px;
+}
+
+.search-string-panel {
+  .panel-heading {
+    background-color: white;
+  }
+}
+
+.search-panel-box {
+  form {
+    display: inline-block;
+    width: 250px;
+  }
+
+  a.search-filter-text {
+    position: absolute;
+    top: 8px;
+  }
+}

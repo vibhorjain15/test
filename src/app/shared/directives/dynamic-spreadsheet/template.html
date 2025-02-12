@@ -1,0 +1,30 @@
+<span data-ng-if="!datarows">
+    <spinner></spinner>
+</span>
+<span data-ng-if="datarows">
+    <div style="overflow-x: hidden;">
+        <handsontable-grid grid-id="instance_id" settings="handsontable_settings" datarows="datarows" columns="columns"
+            instance="vm.hotInstance"></handsontable-grid>
+    </div>
+    <span class="dropdown inline-block" uib-dropdown uib-tooltip="You can only add a total of 2000 rows" enable-tooltip="response_new.rows.length > 1999"
+        data-ng-if="(dynamic_element == 'Row' || dynamic_element == 'Column') && showInsertButton">
+        <button data-ng-disabled="response_new.rows.length > 1999" btn-type="default" class="dropdown-toggle space-on-top-lg" uib-dropdown-toggle>Insert
+            {{dynamic_element}} <span class="caret space-on-left"></span></button>
+        <ul class="dropdown-menu z-index-1010" uib-dropdown-menu>
+            <li data-ng-repeat="range in [1, 10, 50, 100, 200]">
+                <a class="clickable font-size-12" data-ng-click="confirmAddRowOrColumn(range)" role="menuitem">
+                    <span>
+                        Insert {{range}} <span data-ng-if="range==1">{{dynamic_element}}</span><span
+                            data-ng-if="range>1">{{dynamic_element | standardPluralize}}</span>
+                    </span>
+                </a>
+            </li>
+            <li class="text-center">
+                <a class="clickable font-size-12" data-ng-click="vm.addCustomRows()">
+                    <span>Enter number of rows</span>
+                </a>
+            </li>
+        </ul>
+    </span>
+    <!-- <button uib-tooltip="Enter the number of rows you want to insert" btn-type="default" class="space-on-top-lg" data-ng-click="vm.addCustomRows()">Enter Rows Count</button> -->
+</span>

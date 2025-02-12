@@ -1,0 +1,53 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+        <span>
+          <icon name="file" class="space-on-right align-middle"></icon>
+          <span class="align-middle">
+            Documents
+            <span data-ng-show="vm.documents.length">
+              ({{vm.documents.length}})
+            </span>
+          </span>
+        </span>
+
+      <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+              <a class="panel-control"
+                 data-ng-click="vm.addDocument()"
+                 uib-tooltip="Add New Document">
+                  <icon name="plus"></icon>
+              </a>
+          </div>
+      </div>
+  </div>
+
+  <div class="panel-body" data-ng-if="!vm.documents">
+    <spinner broad-spinner spinner-height='60'></spinner>
+  </div>
+
+   <div class="panel-body dash-recent-documents">
+      <table class="table table-borderless documents-table" data-ng-show="vm.documents && vm.documents.length">
+          <tr>
+              <th>Document</th>
+              <th class="text-center">Last Updated</th>
+          </tr>
+
+          <tr class="document-item" ng-repeat="doc in vm.documents" ui-sref="app.content.document.detail({documentId: doc.attachment_id})">
+              <td>
+                  <attachment-icon filename="doc.file_name"
+                                   class="file-attachment-icon align-middle" size="lg"></attachment-icon>
+                  <span uib-tooltip="{{doc.name}}"
+                     class="link-disguise align-middle">
+                      {{doc.name | limitTo: 27}}
+                  </span>
+              </td>
+              <td class="text-center">{{doc.as_of_date | date}}</td>
+          </tr>
+      </table>
+
+      <div class="padded-xl" data-ng-if="vm.documents && !vm.documents.length">
+          <empty-state icon-name="file"
+                       message="No documents available"></empty-state>
+      </div>
+  </div>
+</div>

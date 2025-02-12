@@ -1,0 +1,225 @@
+<section
+  class="q-a-bank-list-view-page"
+  role="region"
+  aria-label="Question and Answer Bank"
+>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div role="tabpanel" class="relative" *ngIf="!loader" aria-live="polite">
+        <helper-text>
+          <span
+            >Any new data added will auto-refresh in 5 minutes.
+            <span *ngIf="qaBankService.lastRefreshedAt"
+              >Data was last updated on
+              {{ qaBankService.lastRefreshedAt | dvDate : ["dvDateTime"] }}.
+            </span></span
+          >
+          <a (click)="checkIfQADataUpdated()" *ngIf="!updateLoader"
+            >(Refresh Now&nbsp;<span
+              appIcon
+              name="refresh"
+              class="align-middle"
+            ></span>
+            )</a
+          >
+          <br />
+          <br />
+          <b>
+            <span *ngIf="activeView === QaTabType.Library"
+              >Manage your Q/A Library content and add/update tags, SMEs, and
+              expiry dates in bulk.
+            </span>
+            <span *ngIf="activeView === QaTabType.ProjectHistory"
+              >Access your history of Q/As from investor requests, standard
+              DDQs, and opportunity vault projects. You can add Q/As to your
+              Library in bulk, associate tags, and archive Q/As to exclude them
+              from reuse.
+            </span>
+            <span *ngIf="activeView === QaTabType.Archives"
+              >Archived Q/As are not available for reuse when Auto-filling or
+              using Q/A Search and Suggested Responses. You can unarchive Q/As
+              and move them back into your library or project responses tabs to
+              make them available again.
+            </span>
+          </b>
+        </helper-text>
+
+        <div class="header-wrapper">
+          <div class="qa-header">
+            <div class="qa-tabs">
+              <dv-tabs
+                [list]="tabList"
+                [User]="currUser"
+                [loading]="loader"
+                (onTabClick)="handleTabChange($event)"
+              >
+              </dv-tabs>
+            </div>
+            <div class="qa-bank-actions">
+              <div class="QA-filter input-group advance-search-input-group">
+                <input
+                  type="text"
+                  [(ngModel)]="qaBankService.selectedQAfilter.name"
+                  class="form-control input-question-search input qainput"
+                  (ngModelChange)="handleSearchChange($event)"
+                  placeholder="Search by keyword"
+                  aria-label="Search Input"
+                />
+                <a
+                  *ngIf="qaBankService.selectedQAfilter.name"
+                  (click)="handleClearSearchFilter()"
+                  class="cancel-btn-clear-search-text"
+                  style="right: 133px; top: 9px"
+                  aria-label="Clear Search Filter"
+                  role="button"
+                  tabindex="0"
+                >
+                  <span appIcon name="close"></span>
+                </a>
+                <dv-select
+                  [list]="QuestionAnswerFilter"
+                  class="search-select"
+                  [(ngModel)]="qaBankService.selectedQAfilter.type"
+                  (onSelectChange)="handleQAfilterChange($event)"
+                  [searchable]="false"
+                  [aria-label]="'Filter Dropdown'"
+                ></dv-select>
+              </div>
+              <dv-button
+                tooltip="Apply Filters"
+                [disabled]="!qaBankService.filters_data_loaded"
+                btnType="default"
+                (onClick)="toggleFiltersSection()"
+                ariaLabel="Apply Filters"
+              >
+                <span
+                  appIcon
+                  name="filter"
+                  [ngClass]="{ 'text-orange': qaBankService.filterApplied }"
+                ></span>
+              </dv-button>
+              <dv-button
+                btnType="default"
+                size="sm"
+                tooltip="Clear all the applied filters"
+                [disabled]="
+                  !qaBankService.viewSimilarQuestionsVisible &&
+                  !qaBankService.dateFilterApplied &&
+                  !qaBankService.selectedQAfilter.name &&
+                  !qaBankService.filterApplied
+                "
+                (onClick)="resetFiltersData(true)"
+              >
+                Clear Filter(s)
+              </dv-button>
+              <dv-button
+                size="sm"
+                *ngIf="activeView === QaTabType.Library || is_freeSubscription"
+                (onClick)="
+                  !is_freeSubscription
+                    ? addNewQuestion()
+                    : handleGoToPremium($event)
+                "
+                [ngClass]="{ disabled: is_freeSubscription }"
+                [tippyTooltip]="
+                  is_freeSubscription
+                    ? 'Bulk import Q/A content from Word documents and build your Library with a premium subscription.'
+                    : ''
+                "
+              >
+                <span appIcon name="plus-circle"></span>
+                Add to Q/A Library
+              </dv-button>
+            </div>
+          </div>
+
+          <qa-filters
+            [questions]="questions"
+            [currUser]="currUser"
+            [activeView]="activeView"
+            role="region"
+            aria-label="Filters"
+          ></qa-filters>
+
+          <div class="divider" *ngIf="questions !== null" aria-hidden="true">
+            <dv-divider></dv-divider>
+          </div>
+        </div>
+        <div class="qa-bank-container">
+          <dv-drag-panel-list
+            [isSidePanelOpened]="isSidePanelOpened"
+            *ngIf="questions?.length"
+          >
+            <div leftPanel [class.space-on-right]="!isSidePanelOpened">
+              <qa-library
+                [questionList]="questions"
+                [currUser]="currUser"
+                [firmPreferences]="firmPreferences"
+                (onSelectChange)="checkIfAllSelected()"
+                *ngIf="activeView === 'Library'"
+                role="tabpanel"
+                aria-label="Library"
+              ></qa-library>
+              <qa-history
+                [questionList]="questions"
+                [currUser]="currUser"
+                *ngIf="activeView === QaTabType.ProjectHistory"
+                role="tabpanel"
+                aria-label="History"
+              ></qa-history>
+              <qa-archive
+                [questionList]="questions"
+                [currUser]="currUser"
+                *ngIf="activeView === 'Archived'"
+                role="tabpanel"
+                aria-label="Archived"
+              ></qa-archive>
+            </div>
+            <div class="side-panel-sticky" rightPanel *ngIf="isSidePanelOpened">
+              <side-panel
+                class="qa-bank-sidepanel"
+                [activePanelId]="activePanelId | async"
+                role="complementary"
+                aria-label="Side Panel"
+              >
+              </side-panel>
+            </div>
+          </dv-drag-panel-list>
+          <app-empty-state
+            *ngIf="questions && !questions.length"
+            message="No questions/responses found"
+            role="status"
+            aria-label="Empty State"
+          ></app-empty-state>
+          <app-spinner
+            *ngIf="!questions"
+            style="display: flex; justify-content: center"
+          ></app-spinner>
+          <div
+            class="qa-pagination"
+            *ngIf="!mainLoader"
+            role="navigation"
+            aria-label="Pagination"
+          >
+            <dv-pagination
+              [startCount]="qaBankService.start_point + 1"
+              [endCount]="qaBankService.end_point"
+              [loader]="!questions"
+              [totalCount]="qaBankService.questionsTotalCount"
+              (onPageSizeChanged)="handlePageSizeChange($event)"
+              (onNextClick)="handleOnNext()"
+              (onPrevClick)="handlePrevClick()"
+              (onFirstClick)="handleFirstClick()"
+              (onLastClick)="handleLastClick($event)"
+              [pageSize]="qaBankService.pageSize"
+              [pageSizes]="pageSizes"
+              tabindex="0"
+              role="navigation"
+              aria-label="Pagination Buttons"
+            ></dv-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

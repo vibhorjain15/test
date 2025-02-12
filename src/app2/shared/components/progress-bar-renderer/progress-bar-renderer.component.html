@@ -1,0 +1,7 @@
+<div *ngIf="params.data && !params.node.group">
+  <dv-progress-bar
+    [value]="value"
+    [count]="params.data?.isDash ? count : ''"
+    [spaceOnTop]="false"
+  ></dv-progress-bar>
+</div>

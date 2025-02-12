@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+
+     <link rel="stylesheet" href="test/dropdown-stylesTAGS.css">
+       <script src="test/dropdown-scriptTAGS.js"></script>
+
+<link rel="stylesheet" type="text/css" href="test/bootstrap-tagsinput/bootstrap-tagsinput.css">
+<script type="text/javascript" src="test/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+
+
+<script type="text/javascript" src="test/typeahead.bundle.js"></script>
+
+
+
+	<title></title>
+</head>
+<body>
+
+
+<input class="input1" type="text" style="width:500px;">
+
+<div id='cssmenuTAGS' style="display:inline-block;">
+  <ul>
+     <li class='active has-sub'><a href='#'><span>Fund Strategy / Structure</span></a>
+       <ul>
+         <li ><a class="it-growth"href='#'><span>Hedge Fund</span></a>
+         </li>
+         <li ><a class="it-income"href='#'><span>Infrastrcuture Fund</span></a>
+         </li>
+         <li ><a class="it-hedge"href='#'><span>Private Equity</span></a>
+         </li>
+         <li ><a class="it-realreturn"href='#'><span>Real Assets</span></a>
+         </li>
+         <li ><a class="it-liquidity"href='#'><span>All Fund Structures</span></a>
+         </li>
+        </ul>
+      </li>
+   </ul>
+ </div>
+ <script type="text/javascript">
+$(".it-growth").click(function(){
+	elt.tagsinput('add', { "id": 1, "text": "Hedge Fund"       });
+});
+$(".it-income").click(function(){
+	elt.tagsinput('add', { "id": 2, "text": "Infrastructure Fund"       });
+});
+$(".it-hedge").click(function(){
+	elt.tagsinput('add', { "id": 3, "text": "Private Equity"       });
+});
+$(".it-realreturn").click(function(){
+	elt.tagsinput('add', { "id": 4, "text": "Real Assets"       });
+});
+$(".it-liquidity").click(function(){
+	elt.tagsinput('add', { "id": 5, "text": "All Fund Structures"       });
+});
+</script>
+
+
+<div id='cssmenuTAGS' style="display:inline-block;">
+  <ul>
+     <li class='active has-sub'><a href='#'><span>Topic</span></a>
+       <ul>
+         <li ><a class="cl-buy"href='#'><span>All Due diligence</span></a>
+         </li>
+         <li ><a class="cl-sell"href='#'><span>Compliance</span></a>
+         </li>
+         <li ><a class="cl-hold"href='#'><span>Operational</span></a>
+         </li>
+        </ul>
+      </li>
+   </ul>
+ </div>
+
+<script type="text/javascript">
+$(".cl-buy").click(function(){
+    elt.tagsinput('add', { "id": 6, "text": "All Due diligence" });
+});
+$(".cl-sell").click(function(){
+	elt.tagsinput('add', { "id": 7, "text": "Compliance"       });
+});
+$(".cl-hold").click(function(){
+	elt.tagsinput('add', { "id": 8, "text": "Operational"       });
+});
+</script>
+
+<div id='cssmenuTAGS' style="display:inline-block;">
+  <ul>
+     <li class='active has-sub'><a href='#'><span>Other Category</span></a>
+       <ul>
+         <li ><a class="ic-publicmarkets" href='#'><span>CAT 1</span></a>
+         </li>
+         <li ><a class="ic-privatemarkets" href='#'><span>CAT 2</span></a>
+         </li>
+         <li ><a class="ic-absolutereturn" href='#'><span>CAT 3</span></a>
+         </li>
+         <li ><a class="ic-corefixedincome" href='#'><span>CAT 4</span></a>
+         </li>
+         <li ><a class="ic-other" href='#'><span>Other</span></a>
+         </li>
+        </ul>
+      </li>
+   </ul>
+ </div>
+
+<script type="text/javascript">
+$(".ic-publicmarkets").click(function(){
+	elt.tagsinput('add', { "id": 9, "text": "CAT 1"       });
+});	
+$(".ic-privatemarkets").click(function(){
+	elt.tagsinput('add', { "id": 10, "text": "CAT 2"       });
+});	
+$(".ic-absolutereturn").click(function(){
+	elt.tagsinput('add', { "id": 11, "text": "CAT 3"       });
+});	
+$(".ic-corefixedincome").click(function(){
+	elt.tagsinput('add', { "id": 12, "text": "CAT 4"       });
+});	
+$(".ic-other").click(function(){
+	elt.tagsinput('add', { "id": 13, "text": "Other"       });
+});	
+</script>
+
+
+<!-- <input type="text" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput">
+ -->
+
+<!-- <select multiple data-role="tagsinput">
+  <option value="Amsterdam">Amsterdam</option>
+  <option value="Washington">Washington</option>
+  <option value="Sydney">Sydney</option>
+  <option value="Beijing">Beijing</option>
+  <option value="Cairo">Cairo</option>
+</select> -->
+
+
+<script>
+
+
+
+
+var cities = new Bloodhound({
+  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  prefetch: 'assets/cities.json'
+});
+cities.initialize();
+
+var elt = $('.input1');
+
+elt.tagsinput({
+  itemValue: 'id',
+  itemText: 'text',
+  typeaheadjs: {
+    name: 'cities',
+    displayKey: 'text',
+    source: cities.ttAdapter()
+  }
+});
+
+
+
+
+</script>
+   
+</body>
+</html>

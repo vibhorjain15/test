@@ -1,0 +1,144 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-workflow-automation-preview></ng2-workflow-automation-preview>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default workflow-panel">
+    <div class="panel-heading">
+        <h4 class="clear-margin">
+            <b>Workflow Process Preview</b>
+        </h4>
+    </div>
+    <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-if="vm.loading_workflow_audits"></spinner>
+        <div data-ng-if="!vm.loading_workflow_audits && vm.workflow_audits">
+            <form name="vm.workflow_audit_preview_form">
+                <form-group field-name="name" tooltip-placement="top" class="col-md-4">
+                    <label for="name" class="control-label space-on-top" col="4">Name:</label>
+                    <div col="7">
+                        <input type="text" class="form-control" id="name" name="name"
+                            data-ng-model="vm.workflow.name" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                            required>
+                    </div>
+                </form-group>
+
+                <form-group field-name="Workflow" tooltip-placement="top" class="col-md-6">
+                    <label for="workflow" class="control-label space-on-top" col="5">Select Workflow Definition:</label>
+                    <div col="7">
+                        <select name="workflow" id="workflow" chosen
+                            data-ng-options="workflow.id as workflow.name for workflow in vm.workflows"
+                            data-ng-model="vm.workflow.workflow_id" class="form-control"
+                            data-ng-change="vm.getWorkflowAudits(vm.workflow.workflow_id)"
+                            required>
+                                <option value="">Select a workflow definition</option>
+                        </select>
+                    </div>
+                </form-group>
+
+                <form-group class="col-md-4" field-name="Due Date">
+                    <label col="4" class="control-label space-on-top">Workflow Due Date:</label>
+                    <div class="margin-auto" col="7">
+                        <label type="text" class="space-on-top text-danger">{{vm.workflow_due_date | date:'dd-MMMM-yyyy'}}</label>
+                    </div>
+                </form-group>
+
+                <form-group class="col-md-6" field-name="Process Owner">
+                    <label col="5" class="control-label space-on-top">Change Workflow Process Owner:</label>
+                    <div col="7">
+                        <select class="form-control padded-top" chosen data-ng-model="vm.workflow.owner_id"
+                            no-results-text="'Could not find any action items'" data-placeholder="Select an owner"
+                            data-ng-options="member.id as member.fullname for member in vm.teamMembers"
+                            required>
+                        </select>
+                    </div>
+                </form-group>
+
+            </form>
+            <hr col="12">
+            <table class="table table-borderless clear-margin-bottom workflow-preview-table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Workflow Steps</th>
+                        <th class="text-center">Actions for the Step</th>
+                        <th class="text-center">DueDate</th>
+                        <th class="text-center">Owner</th>
+                        <th class="text-center">Checklist</th>
+                    </tr>
+                </thead>
+
+                <tbody class="borderless" data-ng-repeat="step in vm.workflow.steps track by $index" data-ng-init="step.stepIndex = $index">
+                    <tr data-ng-repeat-start="action in step.actions track by $index" data-ng-init="action.actionIndex = $index">
+                        <td data-ng-class="{'vertical-border-td':step.stepIndex != vm.workflow.steps.length - 1,'relative':$index==0 && step.stepIndex == vm.workflow.steps.length - 1}">
+                            <div data-ng-show="$index==0" class="wordflow-step-action">
+                                {{action.name}}
+                                <icon name="info" class="space-on-left text-info"
+                                    data-ng-class="{'disableField':!action.description}"
+                                    uib-tooltip="{{action.description}}"></icon>
+                            </div>
+                            <!-- <div data-ng-hide="$index==0" class="vertical-line-outbound-one">&nbsp;</div> -->
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-default"
+                                uib-tooltip="{{action.action_id}}">
+                                <icon name="notepad" data-ng-if="action.action_id=='add_note'"></icon>
+                                <icon name="thumbs-up" data-ng-if="action.action_id=='approve'"></icon>
+                                <icon name="thumbs-down" data-ng-if="action.action_id=='non_approval'"></icon>
+                                <icon name="star" data-ng-if="action.action_id=='rate'"></icon>
+                                <icon name="mail" data-ng-if="action.action_id=='alert'"></icon>
+                                <icon name="file-pdf-o" data-ng-if="action.action_id=='extract_data'"></icon>
+                                <icon name="eye" data-ng-if="action.action_id=='review'"></icon>
+                                <icon name="check2" data-ng-if="action.action_id=='complete'"></icon>
+                                <icon name="hour-glass" data-ng-if="!action.action_id"></icon>
+                            </button>
+                        </td>
+                        <td>
+                            <dv-datepicker id="due-date" data-ng-model="action.due_at" required
+                                data-ng-change="vm.dueDateChanged(step,action);"
+                                min-date="vm.minDate">
+                            </dv-datepicker>
+                        </td>
+                        <td>
+                            <div data-ng-if="action.is_owner_task">
+                                <small class="w-210 text-muted">Assigned to Process Owner</small>
+                            </div>
+                            <div data-ng-if="!action.is_owner_task" class="ownerDiv">
+                                <span class="label text-uppercase label-default"
+                                    data-ng-repeat="user in action.users" uib-tooltip="{{vm.displayUserName(user, 'user')}}">
+                                    <small>{{vm.showInitials(user, 'user')}}</small>
+                                </span>
+                                <span class="label text-uppercase label-default"
+                                    data-ng-repeat="function in action.functions" uib-tooltip="{{vm.displayUserName(function, 'function')}}">
+                                    <small>{{vm.showInitials(function, 'function')}}</small>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div >
+                                <ul data-ng-if="action.checklist.length" class="todo-list">
+                                    <li data-ng-repeat="todo in action.checklist" data-ng-if="todo.is_active"
+                                        class="todo-list-item">
+                                        <small truncate-text="25" uib-tooltip="{{::todo.text}}">{{::todo.text}}</small>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-ng-repeat-end>
+                        <!-- <td>
+                            <div class="vertical-line-outbound-one">&nbsp;</div>
+                        </td>
+                        <td>
+                            <div class="vertical-line-outbound-one">&nbsp;</div>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td> -->
+                    </tr>
+                </tbody>
+            </table>
+            <div col="12" class="text-center">
+                <div class="preview-footer">
+                    <button type="submit" data-ng-click="vm.triggerWorkflow()" button-loader="vm.trigger_workflow" data-ng-disabled="vm.Utils.getObjectLength(vm.workflow.steps) < 1">Trigger Workflow</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

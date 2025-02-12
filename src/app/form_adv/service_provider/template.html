@@ -1,0 +1,144 @@
+<div data-ng-if="vm.Utils.isAngular()">
+<ng2-service-provider></ng2-service-provider>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <spinner broad-spinner spinner-height='20' data-ng-hide="vm.provider"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel"
+           data-ng-show="vm.provider">
+        <div class="bordered-right cell">
+          <h4 class="clear-margin max-w-350 lh1-5 word-wrap-break-word text-uppercase">
+            {{::vm.unique_name}} AS {{vm.type}}
+          </h4>
+        </div>
+
+        <div class="cell text-center">
+          <button btn-type="transparent" data-ng-click="vm.goBack()">
+            <div><icon name="arrow-back" size="2x"></icon></div>
+            <small>Go back</small>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div col="6" offset="3"
+       authorized-view
+       hidden-from="SmartSubscription, InstitutionalSubscription, ProductiveSubscription, FormADVAnalyticsSubscription, FullSubscription">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <empty-state icon-name="ban"
+                     message="This view is limited to analytics subscribers of ADV Module. To learn more, or to unlock this analysis, please get in touch with us at subscriptions@diligencevault.com"
+                     action="vm.goBack()"
+                    action-label="Go back"></empty-state>
+      </div>
+    </div>
+  </div>
+
+  <div class="clearfix" authorized-view hidden-from="FreeSubscription, FormADVSubscription">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span class="align-middle">
+          Profile Summary
+        </span>
+      </div>
+      <div class="panel-body full-height align-middle">
+        <spinner broad-spinner spinner-height='75' data-ng-hide="vm.provider"></spinner>
+        <table class="fund-profile-items space-on-top space-on-bottom" data-ng-show="vm.provider">
+          <tbody>
+            <tr class="title-row">
+              <td><small class="text-uppercase">Gross Assets</small></td>
+              <td><small class="text-uppercase">Top 10 Client Concentration</small></td>
+              <td><small class="text-uppercase"># of Fund Clients</small></td>
+              <td><small class="text-uppercase"># of Advisor Clients</small></td>
+            </tr>
+            <tr class="icon-row text-muted">
+                <td><icon name="tasks" size="2x"></icon></td>
+                <td><icon name="pie-chart" size="2x"></icon></td>
+                <td><icon name="fund" size="2x"></icon></td>
+                <td><icon name="institution" size="2x"></icon></td>
+            </tr>
+            <tr>
+                <td>
+                  <small>
+                    <span data-ng-if="vm.provider.gross_assets">{{::vm.provider.gross_assets | toMillion}}</span>
+                    <span data-ng-if="!vm.provider.gross_assets">N/A</span>
+                  </small>
+                </td>
+                <td>
+                  <small>
+                    <span data-ng-if="vm.provider.gross_assets && vm.sum_of_gross_assets">{{(vm.sum_of_gross_assets/vm.provider.gross_assets)*100 | number: 0}}%</span>
+                    <span data-ng-if="!(vm.provider.gross_assets && vm.sum_of_gross_assets)">N/A</span>
+                  </small>
+                </td>
+                <td><small>{{vm.provider.no_of_funds ? vm.provider.no_of_funds : 'N/A'}}</small></td>
+                <td><small>{{vm.provider.no_of_advisors ? vm.provider.no_of_advisors : 'N/A'}}</small></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row clearfix"  authorized-view hidden-from="FreeSubscription, FormADVSubscription">
+      <div col="4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">Fund Type Concentration</span>
+          </div>
+          <div class="panel-body">
+            <div class="space-on-top space-on-bottom" donut-chart config="vm.advClientBreakdownConfig"></div>
+          </div>
+        </div>
+      </div>
+
+      <div col="5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">
+              Top 10 Advisor Clients by Gross Assets
+            </span>
+          </div>
+          <div class="panel-body">
+            <spinner broad-spinner spinner-height='80' data-ng-hide="vm.clients"></spinner>
+            <ul class="list-unstyled due-diligence-history">
+              <li data-ng-repeat="client in vm.clients">
+                <small class="text-uppercase"><span dv-limit-word="client.label" char-limit="55" uib-tooltip="{{client.label}}"></span>
+                <span class="pull-right">{{client.value | toMillion}}</span></small></li>
+            </ul>
+            <div class="align-middle text-center" data-ng-show="vm.clients && vm.clients.length == 0">
+              No data available
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div col="3">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">
+              # of Fund Engagements
+            </span>
+          </div>
+          <div class="panel-body">
+            <spinner broad-spinner spinner-height='80' data-ng-hide="vm.roles"></spinner>
+            <ul class="list-unstyled due-diligence-history">
+              <li data-ng-repeat="role in vm.roles">
+                <a ui-sref="app.form_adv.service_provider({unique_name: vm.unique_name, type: role.label})">
+                  <small class="text-uppercase">{{role.label}}</small>
+                </a>
+                <span class="pull-right">{{role.value}}</span>
+              </li>
+            </ul>
+            <div class="align-middle text-center" data-ng-show="vm.roles && vm.roles.length == 0">
+              No data available
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+</div>

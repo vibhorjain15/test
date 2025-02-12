@@ -1,0 +1,269 @@
+<!-- navbar-fixed-top -->
+<nav class="navbar navbar-default js-navbar-default hide-in-print-view">
+  <div class="container-fluid relative">
+    <div class="navbar-header">
+      <a class="navbar-brand" (click)="navigate('app.home')">
+        <img
+          src="assets/images/DV_logo.png"
+          alt="DiligenceVault brand logo"
+          class="logo"
+        />
+      </a>
+      <button
+        appButton
+        type="button"
+        class="navbar-toggle bg-white"
+        data-toggle="collapse"
+        data-target="#js-navbar"
+        aria-label="Toggle Navbar"
+      >
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav class="collapse navbar-collapse" id="js-navbar">
+      <!-- TODO: Migrate menubar directive -->
+      <!-- <menubar></menubar> -->
+      <!-- menubar start -->
+      <ul class="nav navbar-nav menu-items navbar-menu" role="menu">
+        <ng-container *ngFor="let item of menu_items">
+          <!-- <ng-container > -->
+          <li class="dropdown dropdown-toggle js-menu-new-action" role="menuitem">
+            <app-menu-item-plus
+              *ngIf="item.submenu_items"
+              [menu_item]="item"
+            ></app-menu-item-plus>
+          </li>
+          <!-- </ng-container> -->
+          <!-- <ng-container *ngIf="!item.submenu_items"> -->
+          <li class="dropdown dropdown-toggle js-menu-new-action" role="menuitem">
+            <app-menu-item
+              *ngIf="!item.submenu_items"
+              [menu_item]="item"
+            ></app-menu-item>
+          </li>
+          <!-- </ng-container> -->
+        </ng-container>
+      </ul>
+      <!-- menubar end -->
+      <ul class="nav navbar-nav navbar-menu navbar-right" role="menu">
+        <!-- TODO: Replace 'uib-dropdown' -->
+        <!-- uib-dropdown  -->
+        <li class="dropdown notification-dropdown hidden-xs" dropdown role="menuitem">
+          <!-- uib-dropdown-toggle -->
+          <a role="button" tabindex="0" dropdownToggle>
+            <span appIcon name="bell" size="lg"></span>
+            <span class="notification-badge" *ngIf="unread_notification_count">
+              {{ unread_notification_count }}
+            </span>
+          </a>
+          <!-- uib-dropdown -->
+          <div class="dropdown-menu" *dropdownMenu>
+            <app-platform-activity-panel
+              [preview]="true"
+              name="platform_activity"
+            >
+            </app-platform-activity-panel>
+          </div>
+        </li>
+        <!-- uib-dropdown -->
+        <li class="dropdown js-settings-toggle" dropdown role="menuitem">
+          <!-- uib-dropdown-toggle -->
+          <a
+            dropdownToggle
+            id="settings-toggle"
+            class="clear-vertical-padding link-unstyled dropdown-toggle pa-lr-lg"
+            role="button"
+            tabindex="0"
+          >
+            <div class="profile-box">
+              <div class="profile-picture-wrapper">
+                <app-user-avatar
+                  [avatarIconSize]="'2x'"
+                  [avatarImgClass]="'img-responsive img-circle'"
+                >
+                </app-user-avatar>
+              </div>
+              <div class="user-info">
+                <b>{{ currentUser.firstName }} {{ currentUser.lastName }}</b>
+                <br />
+                <small>{{ currentUser.firmInfo.name }}</small>
+              </div>
+              <div class="cell align-middle padded">
+                <span appIcon name="angle-down" size="lg"></span>
+              </div>
+            </div>
+          </a>
+          <!-- uib-dropdown-menu -->
+          <ul class="dropdown-menu" *dropdownMenu role="menu">
+            <li role="menuitem">
+              <a
+                class="sub-menu-item"
+                (click)="navigate('app.settings.profile'); closeMenu()"
+              >
+                <span appIcon name="cogs" class="space-on-right"></span>
+                My Settings
+              </a>
+            </li>
+            <li class="no-space-divider" *ngIf="has_multiple_accounts"></li>
+            <li role="menuitem" *ngIf="has_multiple_accounts">
+              <a
+                class="sub-menu-item"
+                (click)="navigate('app.settings.my_accounts'); closeMenu()"
+              >
+                <icon name="institution" class="space-on-right"></icon>
+                Switch Accounts
+              </a>
+            </li>
+            <li class="no-space-divider" *ngIf="is_admin"></li>
+            <li role="menuitem" id="js-team-member-settings" *ngIf="is_admin">
+              <a
+                class="sub-menu-item"
+                (click)="navigate('app.firm.settings.employees'); closeMenu()"
+              >
+                <span appIcon name="meeting" class="space-on-right"></span>
+                Users & Teams
+              </a>
+            </li>
+            <li role="menuitem" id="js-firm-settings" *ngIf="is_admin">
+              <a
+                class="sub-menu-item"
+                (click)="navigate('app.firm.settings.profile'); closeMenu()"
+              >
+                <span appIcon name="institution" class="space-on-right"></span>
+                Firm Settings
+              </a>
+            </li>
+            <li
+              role="menuitem"
+              id="js-privacy-policy-settings"
+              *ngIf="is_admin"
+              (click)="closeMenu()"
+            >
+              <a
+                target="_blank"
+                href="https://diligencevault.com/privacy-policy/"
+                class="sub-menu-item"
+              >
+                <span appIcon name="secure" class="space-on-right"></span>
+                Privacy Policy
+                <span aria-hidden="true" class="sr-only">
+                  opens in a new window
+                </span>
+              </a>
+            </li>
+            <li role="menuitem" id="js-terms-and-conditions">
+              <a
+                target="_blank"
+                class="sub-menu-item"
+                role="link"
+                tabindex="0"
+                (click)="navigate('app.terms-and-conditions'); closeMenu()"
+              >
+                <span
+                  appIcon
+                  name="terms-and-conditions"
+                  class="space-on-right"
+                ></span>
+                Terms and Conditions
+              </a>
+            </li>
+            <li class="no-space-divider"></li>
+            <li role="menuitem">
+              <a
+                (click)="logout(); closeMenu()"
+                class="clickable sub-menu-item"
+              >
+                <span appIcon name="sign-out" class="space-on-right"></span>
+                Sign out
+              </a>
+            </li>
+          </ul>
+        </li>
+        <!-- uib-dropdown -->
+        <li class="dropdown notification-dropdown visible-xs" dropdown role="menuitem">
+          <!-- uib-dropdown-toggle -->
+          <a role="button" tabindex="0" dropdownToggle>
+            <span appIcon name="bell" size="lg"></span>
+            <span class="notification-badge" *ngIf="unread_notification_count">
+              {{ unread_notification_count }}
+            </span>
+          </a>
+          <!-- uib-dropdown -->
+          <div class="dropdown-menu padded-xl" *dropdownMenu>
+            <app-platform-activity-panel
+              [preview]="true"
+              name="platform_activity"
+            >
+            </app-platform-activity-panel>
+          </div>
+        </li>
+        <!-- uib-dropdown -->
+        <li class="dropdown js-help-toggle" dropdown role="menu">
+          <!-- uib-dropdown-toggle -->
+          <a
+            id="js-help-nav-btn"
+            dropdownToggle
+            role="button"
+            tabindex="0"
+            aria-label="help"
+          >
+            <span
+              appIcon
+              name="question-circle"
+              size="lg"
+              [ngClass]="{ 'text-orange': has_help }"
+            ></span>
+          </a>
+          <!-- uib-dropdown-menu -->
+          <ul
+            class="dropdown-menu dropdown-menu-right"
+            *dropdownMenu
+            role="menu"
+          >
+            <li role="menuitem" *ngIf="has_help && showPageHelp">
+              <a
+                role="button"
+                tabindex="0"
+                (click)="triggerHelp(); closeMenu()"
+                class="sub-menu-item"
+              >
+                View Help on this Page
+              </a>
+            </li>
+            <li role="menuitem" id="js-feedback-li">
+              <a
+                role="button"
+                tabindex="0"
+                (click)="toggleFeedbackPanel(); closeMenu()"
+                class="sub-menu-item"
+              >
+                Write to us
+              </a>
+            </li>
+            <li role="menuitem" (click)="closeMenu()">
+              <a
+                class="sub-menu-item"
+                target="_blank"
+                href="https://faq.diligencevault.com/hc/en-us"
+              >
+                FAQs
+              </a>
+            </li>
+            <li role="menuitem" id="js-product-tour" *ngIf="is_manager">
+              <a
+                class="sub-menu-item clickable"
+                (click)="productTour(); closeMenu()"
+              >
+                Product Tour
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</nav>
+ 
+

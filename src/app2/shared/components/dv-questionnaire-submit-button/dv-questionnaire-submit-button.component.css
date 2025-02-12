@@ -1,0 +1,7 @@
+.text-orange {
+  color: var(--text-orange) !important;
+}
+
+.text-orange:hover {
+  color: #16a1ab !important;
+}

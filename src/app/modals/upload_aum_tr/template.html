@@ -1,0 +1,121 @@
+<form
+  name="vm.table_form"
+  novalidate
+  class="form-horizontal"
+  data-ng-submit="vm.submit()"
+>
+  <div class="modal-header">
+    <h3 class="modal-title">
+      Upload File
+      <a
+        class="pull-right clickable link-disguise link-unstyled"
+        data-ng-click="vm.cancel()"
+        >&times;</a
+      >
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        Download the sample file to populate AUM & Track Record historical data
+        and upload the file below.
+      </div>
+    </div>
+    <div class="space-on-top-lg text-center">
+      <button
+        btn-type="default"
+        data-ng-click="vm.downloadSampleFile()"
+        button-loader="vm.is_downloading"
+      >
+        <icon name="file-excel"></icon> Download Sample File
+      </button>
+    </div>
+    <div>
+      <form-group field-name="Period">
+        <label class="control-label" for="period">Select Period</label>
+
+        <div>
+          <select
+            name="period"
+            id="return-period"
+            class="form-control"
+            chosen
+            data-ng-options="period as period.name for period in vm.periods track by period.id"
+            data-ng-model="vm.selected_period"
+          ></select>
+        </div>
+      </form-group>
+      <div class="dd-doc-selection-wrapper">
+        <div
+          class="panel panel-default dd-doc-drop-panel"
+          dv-file-handler
+          name="file-handler-one"
+          dv-droppable
+          dv-manual-upload
+          dv-fields="vm.params"
+          ngf-multiple="false"
+          ngf-select-disabled="true"
+          dv-bind-files-to="vm.files"
+          ngf-max-files="1"
+          dv-accept="'.xlsx'"
+          dv-pattern="'.xlsx'"
+          dv-max-file-size="'50MB'"
+          ngf-drag-over-class="'panel-primary'"
+          dv-on-drop="vm.selectFile()"
+        >
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your file here (.xlsx)</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button
+            btn-type="default"
+            dv-file-handler
+            dv-manual-upload
+            dv-fields="vm.params"
+            name="file-handler-two"
+            dv-bind-files-to="vm.files"
+            dv-accept="'.xlsx'"
+            dv-pattern="'.xlsx'"
+            dv-max-file-size="'50MB'"
+            dv-on-drop="vm.selectFile()"
+          >
+            Select File
+          </button>
+          <div
+            data-ng-repeat="file in vm.files"
+            dv-limit-word="file.name"
+            char-limit="30"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        class="space-on-top text-center text-danger"
+        ng-if="vm.upload_error_message"
+      >
+        {{vm.upload_error_message}}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="submit"
+      button-loader="vm.is_uploading"
+      ng-disabled="!vm.files || vm.files.length == 0"
+    >
+      Upload File
+    </button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

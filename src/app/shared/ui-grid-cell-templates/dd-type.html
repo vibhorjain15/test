@@ -1,0 +1,23 @@
+<!-- <ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+  class="text-left">
+  <span
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+  </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents  ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <span data-ng-if="row.entity.is_internal" class="label label-primary" uib-tooltip="This is internal DDQ">Internal DDQ / Project</span>
+  <span data-ng-if="!row.entity.is_internal && !grid.appScope.vm.is_investor" uib-tooltip="{{(row.entity.entity_type == 'Product' ? 'Investor' : 'Client')}}  Request">{{(row.entity.entity_type == 'Product' ? 'Investor' : 'Client')}}  Request</span>
+  <span data-ng-if="!row.entity.is_internal && grid.appScope.vm.is_investor" uib-tooltip="Manager Data Collection">Manager Data Collection</span>
+</ui-grid-cell-contents> -->
+<ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+  class="text-left">
+  <span
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+  </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents  ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <span data-ng-if="row.entity.is_internal && row.entity.type != 'dd_review' && row.entity.type != 'inbound'" class="label label-orange">Internal</span>
+  <span data-ng-if="row.entity.type == 'dd_review'" class="label label-excellent">Analyst Evaluation</span>
+  <span data-ng-if="row.entity.type == 'inbound'" class="label label-default">Opportunity</span>
+  <span data-ng-if="!row.entity.is_internal && row.entity.type != 'inbound'" class="label label-primary">External</span>
+</ui-grid-cell-contents>

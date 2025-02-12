@@ -1,0 +1,38 @@
+<div *ngIf="!rows">
+  <app-spinner></app-spinner>
+</div>
+<div></div>
+<div class="padded-top-lg padded-left padded-right table-container">
+  <div #container></div>
+</div>
+<div
+  class="space-on-top-lg space-on-bottom-lg padded-left padded-right text-center"
+  *ngIf="!readonly"
+>
+  <button
+    appButton
+    btnType="default"
+    [disabled]="!hotInstance"
+    (click)="addRowForSpecificYear(hotInstance)"
+  >
+    Insert Single Year
+  </button>
+  <button
+    appButton
+    btnType="default"
+    class="space-on-left"
+    [disabled]="!hotInstance"
+    (click)="addRowsSinceInception(hotInstance)"
+  >
+    Insert Since Inception
+  </button>
+  <dv-button
+    btnType="primary"
+    btnClass="space-on-left"
+    [disabled]="!hotInstance || is_saving_table || !is_table_state_changed"
+    (onClick)="saveTable(hotInstance)"
+    [loader]="is_saving_table"
+  >
+    Save
+  </dv-button>
+</div>

@@ -1,0 +1,13 @@
+<button
+  appButton
+  btnType="transparent"
+  [tooltip]="getFinishButtonToolTipText()"
+  container="body"
+  (click)="submit()"
+  [class]="btnClass"
+>
+  <div>
+    <span appIcon name="check" [customSize]="'massive'"></span>
+  </div>
+  <small>{{ submitText }}</small>
+</button>

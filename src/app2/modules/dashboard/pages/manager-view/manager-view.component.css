@@ -1,0 +1,3 @@
+::ng-deep .dashboard-panel-old .panel-heading {
+  background-color: unset !important;
+}

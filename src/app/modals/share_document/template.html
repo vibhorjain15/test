@@ -1,0 +1,193 @@
+<form novalidate
+      name="vm.uploadDocumentForm"
+      data-ng-submit="vm.shareDocument()"
+      class="form-horizontal">
+
+  <div class="modal-header">
+    <h3 class="modal-title">Share this Document
+    <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a></h3>
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="Share based on" tooltip-placement="left">
+      <label for="share-tag" class="col-md-4 control-label">
+        Share based on
+      </label>
+
+      <div class="col-md-6">
+        <div class="btn-group">
+          <label class="btn btn-default"
+                 ng-model="vm.shareBasis"
+                 uib-btn-radio="'status'">
+             {{vm.isManager ? 'Investor Status': 'Firm Status'}}
+          </label>
+          <label class="btn btn-default"
+                 ng-model="vm.shareBasis"
+                 uib-btn-radio="'entities'">
+            {{vm.isManager ? 'Individual Investors': 'Individual Firms'}}
+          </label>
+        </div>
+      </div>
+    </form-group>
+
+    <div class="panel panel-default" data-ng-if="vm.shareBasis == 'status'">
+      <div class="panel-heading">
+        <h5 class="panel-title">Share with following {{vm.isManager ? 'investors': 'managers'}}</h5>
+      </div>
+
+      <div class="panel-body">
+        <form-group field-name="Share with" tooltip-placement="left">
+          <div class="col-md-10">
+            <select id="share-tag"
+                    class="form-control"
+                    chosen multiple
+                    data-ng-model="vm.selectedStatuses"
+                    data-ng-disabled="!vm.statuses"
+                    data-placeholder-text-multiple="vm.statusPlaceholder"
+                    data-ng-options="status.id as status.name for status in vm.statuses">
+            </select>
+          </div>
+        </form-group>
+      </div>
+    </div>
+
+    <div class="panel panel-default" data-ng-if="vm.shareBasis == 'entities'">
+      <div class="panel-body">
+        <div data-ng-if="vm.isManager">
+          <form-group field-name="Share with" tooltip-placement="left">
+            <label for="share-investor" class="col-md-4 control-label">
+              Investor
+            </label>
+
+            <div class="col-md-6">
+              <select id="share-investor"
+                      class="form-control"
+                      chosen
+                      data-ng-model="vm.selectedInvestor"
+                      data-ng-disabled="!vm.allInvestorsList"
+                      data-placeholder-text-single="'Select Investor'"
+                      data-ng-change="vm.addEntity()"
+                      data-ng-options="investor as investor.name for investor in vm.allInvestorsList">
+                <option></option>
+              </select>
+            </div>
+          </form-group>
+        </div>
+
+        <div data-ng-if="vm.isInvestor">
+          <form-group field-name="Share with" tooltip-placement="left">
+            <label for="share-firm" class="col-md-4 control-label">
+              Firm
+            </label>
+
+            <div class="col-md-6">
+              <select id="share-firm"
+                      class="form-control"
+                      chosen
+                      data-ng-model="vm.selectedFirm"
+                      data-ng-disabled="!vm.allFirmsList"
+                      data-placeholder-text-single="'Select Firm'"
+                      data-ng-change="vm.addEntity()"
+                      data-ng-options="firm as firm.name for firm in vm.allFirmsList">
+                <option></option>
+              </select>
+            </div>
+          </form-group>
+        </div>
+
+        <div class="panel panel-default space-on-top-lg" data-ng-if="vm.isManager">
+          <div class="panel-heading">
+            <div class="row clearfix">
+              <div col="8">
+                <p class="form-control-static">
+                  Selected Firms
+                  <span data-ng-show="vm.selectedInvestors.length > 0">({{vm.selectedInvestors.length}})</span>
+                </p>
+              </div>
+
+              <div col="4">
+                <span class="pull-right">
+                  <button btn-type="default"
+                          ng-disabled="!vm.selectedInvestors.length"
+                          data-ng-click="vm.clearSelection()">Clear Selection</button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-group">
+            <div class="list-group-item"
+                 data-ng-repeat="investor in vm.selectedInvestors">
+              <div class="clearfix">
+                <span class="space-on-right" uib-tooltip="Remove {{investor.name}}">
+                  <icon name="minus-circle"
+                        class="text-danger"
+                        role="button"
+                        size="lg"
+                        data-ng-click="vm.removeInvestor(investor, $index)"></icon>
+                </span>
+
+                <span>{{investor.name}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body" data-ng-if="!vm.selectedInvestors.length">
+            <empty-state message="You have not selected any firms. Please select them from the above dropdown."></empty-state>
+          </div>
+        </div>
+
+        <div class="panel panel-default space-on-top-lg" data-ng-if="vm.isInvestor">
+          <div class="panel-heading">
+            <div class="row clearfix">
+              <div col="8">
+                <p class="form-control-static">
+                  Selected Firms
+                  <span data-ng-show="vm.selectedFirms.length > 0">({{vm.selectedFirms.length}})</span>
+                </p>
+              </div>
+
+              <div col="4">
+                <span class="pull-right">
+                  <button btn-type="default"
+                          ng-disabled="!vm.selectedFirms.length"
+                          data-ng-click="vm.clearSelection()">Clear Selection</button>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="list-group">
+            <div class="list-group-item"
+                 data-ng-repeat="firm in vm.selectedFirms">
+              <div class="clearfix">
+                <span class="space-on-right" uib-tooltip="Remove {{firm.name}}">
+                  <icon name="minus-circle"
+                        class="text-danger"
+                        role="button"
+                        size="lg"
+                        data-ng-click="vm.removeFirm(firm, $index)"></icon>
+                </span>
+
+                <span>{{firm.name}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body" data-ng-if="!vm.selectedFirms.length">
+            <empty-state message="You have not selected any firms. Please select them from the above dropdown."></empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.sharingDocument">Share</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+
+</form>

@@ -1,0 +1,128 @@
+.editor-container__sidebar {
+  overflow: hidden;
+}
+
+.sidebar__container {
+  height: calc(100vh - 270px);
+  overflow: auto;
+  position: relative;
+}
+
+.sidebar {
+  display: none;
+  font-size: 20px;
+  padding-right: 2px;
+  overflow: auto;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.sidebar.active {
+  display: block;
+}
+
+.sidebar--archive.active {
+  overflow: auto;
+}
+
+.comments-archive__list {
+  padding: 0;
+  margin: 0;
+}
+
+.comments__list:empty::before,
+::ng-deep .comments__list > div:empty::before,
+.comments-archive__list:empty::before {
+  display: block;
+  margin-top: 20px;
+  font-size: 13px;
+  text-align: center;
+  font-style: italic;
+  color: #555;
+}
+
+.comments__list:empty::before,
+::ng-deep .comments__list > div:empty::before {
+  content: "There are no comment threads.";
+}
+
+.comments-archive__list:empty::before {
+  content: "There are no archived comment threads.";
+}
+
+::ng-deep .comments-archive__list > .ck-annotation-wrapper {
+  margin-top: 10px;
+}
+
+::ng-deep .comments-archive__list:last-child {
+  margin-bottom: 10px;
+}
+
+.tabs {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 1px solid #d8d9e0;
+  border-radius: var(--ck-border-radius);
+}
+
+.tabs__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #fff;
+  color: #474954;
+  font-weight: 600;
+  width: 100%;
+  height: 100%;
+  min-height: 36px;
+  box-sizing: border-box;
+  padding: 0;
+  border: none;
+  border-radius: var(--ck-border-radius);
+}
+
+.tabs__item:first-child {
+  border-right: 1px solid #d8d9e0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tabs__item:nth-child(2) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tabs__item.active {
+  background: #4d6e8e;
+  color: #fff;
+  opacity: 1;
+}
+
+.sidebar__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  width: calc(100% - 20px);
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.hide--resolve-comment-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+::ng-deep .button-component > div {
+  justify-content: center;
+}
+
+.outside-editor-container-heading {
+  color: #27b098;
+}

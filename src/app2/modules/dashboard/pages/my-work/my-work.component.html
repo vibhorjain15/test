@@ -1,0 +1,464 @@
+<div class="row no-margin mt-5" *ngIf="!loading">
+  <div class="flex">
+    <div
+      class="min-width"
+      [@expandCollapse]="leftOpen ? 'expanded' : 'collapsed'"
+    >
+      <dv-segment
+        [title]="''"
+        [isSearch]="false"
+        [isAdd]="false"
+        class="side-action-header"
+        StickyDiv
+      >
+        <div class="wrapper">
+          <div>
+            <ng-container *ngFor="let menu of sidePanelCards">
+              <side-panel-card-component
+                [isExpanded]="leftOpen"
+                (onClick)="handleCardClick(menu)"
+                [item]="menu"
+              ></side-panel-card-component>
+            </ng-container>
+          </div>
+          <div>
+            <side-panel-card-component
+              [isExpanded]="leftOpen"
+              (onClick)="handleSettingClick()"
+              [item]="mySettingObj"
+            ></side-panel-card-component>
+          </div>
+        </div>
+      </dv-segment>
+    </div>
+
+    <div
+      class="gutter area"
+      [ngClass]="{
+        'col-resize': leftOpen,
+        gutterAfterCollapsed: !leftOpen
+      }"
+    >
+      <span
+        appIcon
+        [tooltip]="leftOpen ? 'Close left menu' : 'Expand left menu'"
+        placement="right"
+        container="body"
+        class="icon-link css-dw3ben"
+        [ngClass]="{ 'blue-background': !leftOpen }"
+        [name]="leftOpen ? 'angle-right' : 'angle-left'"
+        (click)="catToggle()"
+      ></span>
+    </div>
+    <div class="content">
+      <dv-segment
+        [title]="''"
+        [isSearch]="false"
+        [isAdd]="false"
+        class="sub-header"
+      >
+        <div class="content-filter-wrapper">
+          <div class="content-wrapper" *ngIf="currentMenu">
+            <header-card-component
+              *ngIf="currentMenu.id !== 'tasks'"
+              [title]="'ALL ' + titleMapper[currentMenu.id]"
+              [count]="currentMenu?.all?.[SubMenuFilter.TOTAL]"
+              [newCount]="currentMenu.new?.[SubMenuFilter.TOTAL]"
+              [isActive]="activeSubMenu == SubMenuFilter.TOTAL"
+              (onClick)="handleSubMenuClick(SubMenuFilter.TOTAL)"
+              icon="documents-col"
+            ></header-card-component>
+            <header-card-component
+              title="PENDING"
+              [count]="currentMenu?.all?.[SubMenuFilter.PENDING]"
+              [newCount]="currentMenu?.new?.[SubMenuFilter.PENDING]"
+              [isActive]="activeSubMenu == SubMenuFilter.PENDING"
+              (onClick)="handleSubMenuClick(SubMenuFilter.PENDING)"
+              icon="pending"
+            ></header-card-component>
+            <header-card-component
+              title="DUE IN 7 DAYS"
+              [count]="currentMenu?.all?.[SubMenuFilter.DUE_THIS_WEEK]"
+              [newCount]="0"
+              [isActive]="activeSubMenu == SubMenuFilter.DUE_THIS_WEEK"
+              (onClick)="handleSubMenuClick(SubMenuFilter.DUE_THIS_WEEK)"
+              icon="hour-glass"
+            ></header-card-component>
+            <header-card-component
+              title="OVERDUE"
+              [count]="currentMenu?.all?.[SubMenuFilter.OVERDUE]"
+              [newCount]="0"
+              [isActive]="activeSubMenu == SubMenuFilter.OVERDUE"
+              (onClick)="handleSubMenuClick(SubMenuFilter.OVERDUE)"
+              icon="overdue"
+            ></header-card-component>
+          </div>
+
+          <ng-container *ngTemplateOutlet="myProjectsTypeDropdownTemplate">
+          </ng-container>
+        </div>
+        <div class="content-grid">
+          <div
+            class="header"
+            *ngIf="
+              currentMenu.id === DashMenu.PROJECTS &&
+              activeSubMenu == SubMenuFilter.PENDING
+            "
+          >
+            <div
+              class="header-wrapper"
+              [style.width]="
+                activeSubMenu == SubMenuFilter.TOTAL ? 'inherit' : '100%'
+              "
+            >
+              <div
+                class="header-wrapper-gap"
+                *ngIf="activeSubMenu === SubMenuFilter.PENDING"
+              >
+                <dv-button
+                  [disabled]="!projectDetailCountMap[filter.key].pending"
+                  [btnType]="
+                    projectType == filter.key ? 'tab-selection' : 'default'
+                  "
+                  (onClick)="handleProjectClick(filter.key)"
+                  *ngFor="let filter of projects_pending_filters"
+                >
+                  <div class="button-gap-tag">
+                    <span>
+                      {{ filter.label }} ({{
+                        projectDetailCountMap[filter.key].pending
+                      }})
+                    </span>
+                    <dv-badge
+                      *ngIf="projectDetailCountMap[filter.key].new"
+                      status="info"
+                      spacingType="small"
+                      label="{{ projectDetailCountMap[filter.key].new }} New"
+                    ></dv-badge>
+                  </div>
+                </dv-button>
+              </div>
+
+              <ng-container *ngIf="activeSubMenu != SubMenuFilter.TOTAL">
+                <ng-container *ngTemplateOutlet="followUpDropdownTemplate">
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+          <div
+            class="pending-gap"
+            *ngIf="
+              selectedFollowUpFilters && activeSubMenu === SubMenuFilter.PENDING
+            "
+          >
+            <ng-container *ngTemplateOutlet="followUpFiltersTemplate">
+            </ng-container>
+          </div>
+
+          <ng-container *ngIf="currentMenu?.all?.[activeSubMenu] == 0">
+            <empty-state-content
+              [title]="
+                subEntityMapper[currentMenu.id + '-' + activeSubMenu]?.title
+              "
+              description="{{
+                subEntityMapper[currentMenu.id + '-' + activeSubMenu]
+                  ?.description
+              }}"
+              icon="circle-check"
+            ></empty-state-content>
+          </ng-container>
+          <ng-container *ngIf="currentMenu?.all?.[activeSubMenu] !== 0">
+            <app-dv-grid
+              *ngIf="currentMenu.id === 'tasks'"
+              [rowData]="tasksData"
+              [name]="'my-work-' + gridName"
+              [onRowClicked]="onRowClicked"
+              [noRowsTemplate]="gridLoading ? 'Loading...' : 'No results found'"
+              [getRowClass]="handleRowClass"
+              [showSaveView]="false"
+            ></app-dv-grid>
+
+            <app-dv-grid
+              *ngIf="currentMenu.id === 'projects'"
+              [rowData]="projectData"
+              [name]="'my-work-' + gridName"
+              [onRowClicked]="onRowClicked"
+              [noRowsTemplate]="gridLoading ? 'Loading...' : 'No results found'"
+              [getRowClass]="handleRowClass"
+              [showSaveView]="activeSubMenu === SubMenuFilter.TOTAL"
+            >
+              <div class="pending-gap" *ngIf="selectedFollowUpFilters">
+                <ng-container *ngTemplateOutlet="followUpFiltersTemplate">
+                </ng-container>
+              </div>
+              <ng-container rightSide *ngTemplateOutlet="viewAllTemplate">
+              </ng-container>
+              <div leftSide>
+                <div class="pending-gap wid-max-content">
+                  <ng-container
+                    rightSide
+                    *ngTemplateOutlet="myProjectsDropdownTemplate"
+                  >
+                  </ng-container>
+                  <ng-container *ngTemplateOutlet="followUpDropdownTemplate">
+                  </ng-container>
+                </div>
+              </div>
+            </app-dv-grid>
+            <app-dv-grid
+              *ngIf="currentMenu.id === 'workflows'"
+              [rowData]="workflowData"
+              [name]="'my-work-' + gridName"
+              [onRowClicked]="onRowClicked"
+              [noRowsTemplate]="gridLoading ? 'Loading...' : 'No results found'"
+              [getRowClass]="handleRowClass"
+              [showSaveView]="false"
+            ></app-dv-grid>
+            <dv-recommendations
+              *ngIf="currentMenu.id == 'recommendations'"
+              [onlyGrid]="true"
+              [isDashboard]="true"
+              [recommendationsData]="issuesData"
+              [getRowClass]="handleRowClass"
+              [dateRangeFilter]="null"
+              [onRowClicked]="onRowClicked"
+              (onUpdate)="handleOnUpdate($event)"
+            ></dv-recommendations>
+          </ng-container>
+        </div>
+
+        <p
+          class="alert alert-info"
+          *ngIf="currentMenu?.all?.[activeSubMenu] == 0 && currentMenu.id === DashMenu.RECOMMENDATION"
+        >
+          Note: Track recommendations, open items, or issues using tracker for
+          entities, projects, or individual questions.
+        </p>
+        <p
+          class="alert alert-info"
+          *ngIf="currentMenu?.all?.[activeSubMenu] == 0 && currentMenu.id === DashMenu.WORKFLOWS"
+        >
+          Note: Workflows are series of multi-user review steps, tasks, or
+          approvals for any project, entity, document or ADV. You can create new
+          workflow templates by going to Firm Settings > Workflow Definitions.
+        </p>
+      </dv-segment>
+    </div>
+  </div>
+</div>
+
+<app-spinner
+  broadSpinner="true"
+  spinnerHeight="250"
+  *ngIf="loading"
+></app-spinner>
+
+<ng-template #followUpFiltersTemplate>
+  <ng-container *ngFor="let pendingItem of followUpFilters">
+    <span
+      *ngIf="pendingItem.isSelected"
+      class="btn text-uppercase custom-button"
+    >
+      <small>{{ pendingItem.alias }} ({{ pendingItem.count }})</small>
+      <a
+        class="space-on-left clickable link-disguise"
+        (click)="onPendingItemsFilterChange(false, pendingItem)"
+        >&times;</a
+      >
+    </span>
+  </ng-container></ng-template
+>
+
+<ng-template #viewAllTemplate>
+  <div *ngIf="activeSubMenu == SubMenuFilter.TOTAL">
+    <dv-button btnType="secondary" (onClick)="handleViewAll()"
+      >View All Projects
+      <span appIcon name="chevron-right"></span>
+    </dv-button>
+  </div>
+</ng-template>
+
+<ng-template #followUpDropdownTemplate>
+  <span
+    *ngIf="
+      (activeSubMenu === SubMenuFilter.PENDING &&
+        projectType === 'followups') ||
+      activeSubMenu === SubMenuFilter.TOTAL
+    "
+    dropdown
+    container="body"
+    #dropdown="bs-dropdown"
+    (isOpenChange)="isToggled($event, 'follow-up-filter')"
+    [insideClick]="true"
+  >
+    <dv-button
+      btnType="default"
+      btnClass="pending-items-btn"
+      (onClick)="
+        isDropdownOpen = !isDropdownOpen;
+        isDropdownOpen ? dropdown.show() : dropdown.hide()
+      "
+      ariaLabel="First page"
+      dropdownToggle
+      aria-expanded="false"
+    >
+      <span>
+        Follow-ups & Awaiting Items ({{ totalPendingItems }})
+        <span
+          appIcon
+          [name]="isDropdownOpen ? 'chevron-up' : 'chevron-down'"
+          class="space-on-left"
+        ></span>
+      </span>
+    </dv-button>
+
+    <ul
+      class="dropdown-menu pending-items-dropdown-menu"
+      role="menu"
+      *dropdownMenu
+    >
+      <ng-container *ngFor="let item of followUpFilters; let last = last">
+        <li role="menuitem" class="padding-menu-list">
+          <dv-checkbox
+            label="{{ item.alias }} ({{ item.count }})"
+            [(ngModel)]="item.isSelected"
+            [ngModelOptions]="{ standalone: true }"
+            [rightIcon]="item.rightIcon"
+            iconClass="text-info space-on-left"
+            [iconTooltip]="item.iconTooltip"
+            (onValChange)="onPendingItemsFilterChange($event, item)"
+          ></dv-checkbox>
+        </li>
+        <li class="divider dropdown-divider" *ngIf="!last"></li>
+      </ng-container>
+      <li role="menuitem">
+        <a
+          class="text-muted pending-items-clear"
+          (click)="removeAllPendingItemsFilters()"
+          >Clear Selection</a
+        >
+      </li>
+    </ul>
+  </span>
+</ng-template>
+
+<ng-template #myProjectsDropdownTemplate>
+  <span
+    *ngIf="currentMenu.id === DashMenu.PROJECTS && current_user?.isInvestor"
+    dropdown
+    container="body"
+    #myProjectDropdown="bs-dropdown"
+    (isOpenChange)="isToggled($event, 'project-filter-type')"
+    [insideClick]="true"
+    class="project-type"
+  >
+    <dv-button
+      btnType="default"
+      btnClass=""
+      (onClick)="
+        myProjectIconDropdown = !myProjectIconDropdown;
+        myProjectIconDropdown
+          ? myProjectDropdown.show()
+          : myProjectDropdown.hide()
+      "
+      dropdownToggle
+      ariaLabel="First page"
+      aria-expanded="false"
+    >
+      <span>
+        {{
+          selectedMyProjectFilter +
+            " (" +
+            myProjectFilterCountMapper[selectedMyProjectFilter] +
+            ")"
+        }}
+        <span
+          appIcon
+          [name]="myProjectIconDropdown ? 'chevron-up' : 'chevron-down'"
+          class="space-on-left"
+        ></span>
+      </span>
+    </dv-button>
+
+    <ul
+      class="dropdown-menu pending-items-dropdown-menu"
+      role="menu"
+      *dropdownMenu
+    >
+      <ng-container *ngFor="let item of myProjectFilter; let last = last">
+        <li role="menuitem" class="padding-menu-list">
+          <dv-radio
+            [label]="
+              item.label + ' (' + myProjectFilterCountMapper[item.label] + ')'
+            "
+            [valueName]="item.label"
+            [(ngModel)]="selectedMyProjectFilter"
+            [checkedVal]="selectedMyProjectFilter === item.label"
+            groupName="myProjectFilter"
+            (innerValueEmitter)="handleSelectMyProjectFilter($event)"
+          >
+          </dv-radio>
+        </li>
+        <li class="divider dropdown-divider" *ngIf="!last"></li>
+        <li class="mb-9" *ngIf="last"></li>
+      </ng-container>
+    </ul>
+  </span>
+</ng-template>
+
+<ng-template #myProjectsTypeDropdownTemplate>
+  <span
+    *ngIf="currentMenu.id === DashMenu.PROJECTS && current_user?.isInvestor"
+    dropdown
+    container="body"
+    #myProjectFilterdropdown="bs-dropdown"
+    (isOpenChange)="isToggled($event, 'project-type')"
+    [insideClick]="true"
+    class="project-type"
+  >
+    <dv-button
+      btnType="default"
+      btnClass=""
+      (onClick)="
+        myProjectFilterIconDropdown = !myProjectFilterIconDropdown;
+        myProjectFilterIconDropdown
+          ? myProjectFilterdropdown.show()
+          : myProjectFilterdropdown.hide()
+      "
+      ariaLabel="First page"
+      dropdownToggle
+      aria-expanded="false" aria-controls="dropdown-menu" aria-haspopup="true"
+    >
+      <span>
+        Project Type: {{ selectedMyProjectTypeFilter }}
+        <span
+          appIcon
+          [name]="myProjectFilterIconDropdown ? 'chevron-up' : 'chevron-down'"
+          class="space-on-left"
+        ></span>
+      </span>
+    </dv-button>
+
+    <ul
+      class="dropdown-menu pending-items-dropdown-menu"
+      role="menu"
+      *dropdownMenu
+    >
+      <ng-container *ngFor="let item of myProjectTypeFilter; let last = last">
+        <li role="menuitem" class="padding-menu-list">
+          <dv-radio
+            [label]="item.label"
+            [valueName]="item.label"
+            [(ngModel)]="selectedMyProjectTypeFilter"
+            [checkedVal]="selectedMyProjectTypeFilter === item.label"
+            groupName="myProjectsTypeDropdown"
+            (innerValueEmitter)="handleSelectMyProjectTypeFilter($event)"
+          >
+          </dv-radio>
+        </li>
+        <li class="divider dropdown-divider" *ngIf="!last"></li>
+        <li class="mb-9" *ngIf="last"></li>
+      </ng-container>
+    </ul>
+  </span>
+</ng-template>

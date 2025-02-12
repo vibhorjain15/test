@@ -1,0 +1,48 @@
+<div
+  class="has-feedback"
+  [ngClass]="{
+    'has-success': control.touched && !control.errors,
+    'has-error': control.touched && control.errors,
+    'input-group': rightIcon
+  }"
+>
+  <input
+    class="form-control"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    autocomplete="off"
+  />
+  <div *ngIf="rightIcon" class="input-group-addon">{{ rightIcon }}</div>
+</div>
+<ng-container *ngIf="control.touched && showError">
+  <div
+    class="text-danger"
+    *ngFor="
+      let item of control.errors | keyvalue : originalOrder | slice : 0 : 1
+    "
+  >
+    {{ item.value }}
+  </div>
+</ng-container>
+<div
+  *ngIf="!isNotApplicable && control.touched && !control.value && showError"
+  class="text-danger"
+>
+  {{ error }}
+</div>
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>
+<p
+  *ngIf="!isNotApplicable && isReadOnly && control.value"
+  class="space-on-top-lg answer-text-color"
+  [innerHtml]="value"
+></p>
+<p
+  *ngIf="!isNotApplicable && isReadOnly && control.value"
+  class="space-on-top-lg"
+>
+  <i class="text-muted">
+    <small>*No response available*</small>
+  </i>
+</p>

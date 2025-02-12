@@ -1,0 +1,21 @@
+tinymce.addI18n("tr", {
+  "Advanced sort...": "Geli\u015fmi\u015f s\u0131ralama...",
+  "Advanced Sort": "Geli\u015fmi\u015f S\u0131ralama",
+  "Sort table by column ascending": "Tabloyu artan s\xfctun d\xfczeninde s\u0131rala",
+  "Sort table by column descending": "Tabloyu azalan s\xfctun d\xfczeninde s\u0131rala",
+  "Sort": "S\u0131rala",
+  "Order": "D\xfczen",
+  "Sort by": "S\u0131ralama parametresi",
+  "Ascending": "Artan",
+  "Descending": "Azalan",
+  "Selection": "Se\xe7im",
+  "Table": "Tablo",
+  "Column": "S\xfctun",
+  "Row": "Sat\u0131r",
+  "Column {0}": "S\xfctun {0}",
+  "Row {0}": "Sat\u0131r {0}",
+  "Row numbering": "Sat\u0131r numaralar\u0131",
+  "None": "Yok",
+  "Numeric": "Say\u0131sal",
+  "Alpha": "Alfabetik"
+});

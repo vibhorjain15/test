@@ -1,0 +1,154 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-firm-profile></ng2-firm-profile> </div>
+<div class="panel panel-default" data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel-heading">
+    <h5 class="panel-title">Firm Profile</h5>
+  </div>
+
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div col="8" id="js-firms-profile">
+
+        <form class="form-horizontal" name="vm.profile_form" data-ng-submit="vm.submit()">
+
+          <form-group field-name="Name">
+            <label for="firm-name" class="control-label" col="4">Name</label>
+
+            <div col="8">
+              <input type="text"
+                     class="form-control"
+                     id="firm-name"
+                     dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                     data-ng-model="vm.firm_profile_copy.name"
+                     required />
+            </div>
+          </form-group>
+
+          <form-group field-name="Description">
+            <label for="firm-description" class="control-label" col="4">
+              Description
+            </label>
+
+            <div col="8">
+              <textarea id="firm-description"
+                        rows="3"
+                        msd-elastic="\n"
+                        data-ng-model="vm.firm_profile_copy.firmDescription"
+                        placeholder="Few lines about your firm"
+                        class="form-control"></textarea>
+            </div>
+          </form-group>
+
+          <form-group field-name="Firm Website">
+            <label for="firm_website" class="control-label" col="4">
+              Firm Website
+            </label>
+
+            <div col="8">
+              <input type="url"
+                     id="firm_website"
+                     name="firm_website"
+                     protocol-prefix
+                     maxlength="255"
+                     data-ng-model="vm.firm_profile_copy.website"
+                     class="form-control" />
+            </div>
+          </form-group>
+
+          <form-group field-name="Firm Type">
+            <label for="firm-type" class="control-label" col="4">
+            Firm Type
+            </label>
+
+            <div col="8">
+              <select class="form-control"
+                      chosen
+                      id="firm-type"
+                      data-ng-model="vm.firm_profile_copy.firm_type_id"
+                      data-ng-options="type.id as type.description for type in vm.firm_types">
+                <option value="">-- Select Firm Type --</option>
+              </select>
+            </div>
+          </form-group>
+
+          <form-group field-name="Default Currency">
+            <label col="4" class="control-label" for="firm-currency">
+              Default Currency
+            </label>
+
+            <div col="8">
+              <select class="form-control"
+                      id="firm-currency"
+                      chosen
+                      data-ng-model="vm.firm_profile_copy.currencyID"
+                      data-ng-options="type.id as type.value for type in vm.currencies">
+                <option value="">-- Select Currency --</option>
+              </select>
+            </div>
+          </form-group>
+
+          <form-group field-name="Assets Under Management">
+            <label for="firm_aum" class="control-label" col="4">
+              Assets Under Management <br>
+              <small class="text-muted">(in millions)</small>
+            </label>
+
+            <div col="8">
+              <input type="text"
+                     class="form-control"
+                     id="firm_aum"
+                     name="firm_aum"
+                     maxlength="18"
+                     ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
+                     custom-pattern-message="Non-negative integers up to 2 decimals are allowed"
+                     data-ng-model="vm.firm_profile_copy.aum" />
+            </div>
+          </form-group>
+
+
+          <div>
+            <ul class="list-unstyled list-with-icons"
+                col="8"
+                offset="4"
+                data-ng-show="vm.firm_profile_copy.contactPerson">
+              <li class="space-on-bottom">
+                <icon name="briefcase" size="fw"></icon>&nbsp;
+                {{vm.firm_profile_copy.contactPerson.title}}
+
+                <small data-ng-hide="vm.firm_profile_copy.contactPerson.title">
+                  <i class="text-muted">Not specified</i>
+                </small>
+              </li>
+
+              <li class="space-on-bottom">
+                <icon name="phone" size="fw"></icon>&nbsp;
+                {{vm.firm_profile_copy.contactPerson.phone}}
+
+                <small data-ng-hide="vm.firm_profile_copy.contactPerson.phone">
+                  <i class="text-muted">Not specified</i>
+                </small>
+              </li>
+
+              <li class="space-on-bottom">
+                <icon name="mail" size="fw"></icon>&nbsp;
+                <a href="mailto:{{vm.firm_profile_copy.contactPerson.userName}}"
+                   class="link-disguise">
+                  {{vm.firm_profile_copy.contactPerson.userName}}
+                </a>
+
+                <small data-ng-hide="vm.firm_profile_copy.contactPerson.userName">
+                  <i class="text-muted">Not specified</i>
+                </small>
+              </li>
+            </ul>
+          </div>
+
+          <div class="form-group">
+            <div col="8" offset="4">
+              <button type="submit" button-loader="vm.saving">Update Firm Profile</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

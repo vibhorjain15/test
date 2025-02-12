@@ -1,0 +1,16 @@
+<form novalidate data-ng-submit="vm.submit()">
+  <div class="padding-30">
+    <h3 class="modal-title">
+      Are you sure you want to not approve this request and pass your feedback to the author. Document Reasons for your
+      decision.
+    </h3>
+    <br>
+    <textarea class="form-control height-100" focus-me="!!vm.params" data-ng-model="vm.params.value"
+      ui-tinymce="vm.tinymceOptions" class="form-control"></textarea>
+  </div>
+  <div class="text-center space-on-top-lg space-on-bottom-xxl">
+    <button class="padded-left-xxl padding-right-xxl space-on-right-xxl" type="submit">Yes</button>
+    <button btn-type="default" class="padded-left-xxl padding-right-xxl" data-ng-click="vm.cancel()">No</button>
+  </div>
+  <br>
+</form>

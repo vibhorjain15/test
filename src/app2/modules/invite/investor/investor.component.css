@@ -1,0 +1,50 @@
+.investor-link-display-block {
+  display: block;
+}
+
+.danger {
+  color: #cd3333;
+}
+.danger-icon:hover {
+  color: #cd3333;
+}
+
+.investor-request-width-fit {
+  width: fit-content;
+}
+
+.investor-button-right-margin {
+  margin-right: 4px;
+}
+
+.info-icon-right-space {
+  left: -22px;
+}
+
+.investor-request-schedule-request {
+  margin-right: 3px;
+}
+
+.investor-filter-offset-left {
+  margin-left: 51%;
+}
+
+::ng-deep  .request-confidential-checkbox .checkbox-fit-width {
+    display: inline-block;
+}
+::ng-deep .request-entity-checkbox .checkbox-bold{
+  line-height:19px!important;
+}
+::ng-deep .request-entity-checkbox .pull-right{
+  margin-left: 5px;
+}
+.p-0{
+  padding: 0;
+}
+::ng-deep .request-confidential-checkbox .panel-info{
+  display: inline-block;
+  margin-top: 1rem;
+}
+::ng-deep .request-confidential-checkbox .panel-heading{
+  padding: 8px 20px 0px 20px !important;
+}

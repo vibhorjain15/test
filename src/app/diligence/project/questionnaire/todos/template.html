@@ -1,0 +1,39 @@
+<spinner data-ng-hide="vm.todos" class="space-on-top"></spinner>
+
+<form novalidate
+      name="vm.todo_form"
+      class="sidebar-form fixed-top"
+      data-ng-hide="(vm.diligence.isLocked)"
+      data-ng-submit="vm.saveTodo()">
+  <form-group field-name="Todo title" validate-on="submit">
+    <input placeholder="Enter a new to-do"
+           class="form-control"
+           data-ng-disabled="vm.saving_todo"
+           data-ng-model="vm.new_todo.text"
+           required />
+  </form-group>
+</form>
+
+<p class="text-muted" data-ng-show="vm.todos && !vm.todos.length">
+  <i>
+    There are no to-dos for this question.
+  </i>
+</p>
+
+<ul data-ng-if="vm.todos.length" class="list-unstyled">
+  <li data-ng-repeat="todo in vm.todos | orderBy:'is_complete' track by todo.id"
+      class="padded-top padded-bottom bordered-bottom"
+      data-ng-hide="todo.is_complete">
+    <dv-checkbox
+      data-ng-model="todo.is_complete"
+      data-ng-change="vm.updateTodo(todo)"
+      data-ng-disabled="vm.diligence.isLocked">
+      <dv-checkbox-label>
+        <span data-ng-hide="todo.is_complete">{{::todo.text}}</span>
+        <span class="text-muted" data-ng-show="todo.is_complete">
+          <s>{{::todo.text}}</s>
+        </span>
+      </dv-checkbox-label>
+    </dv-checkbox>
+  </li>
+</ul>

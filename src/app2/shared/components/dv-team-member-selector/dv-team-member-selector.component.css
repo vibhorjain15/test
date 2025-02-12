@@ -1,0 +1,16 @@
+.team-member-section {
+  cursor: pointer;
+}
+
+.team-member-display-inline {
+  display: inline-flex !important;
+}
+
+.count-bubble {
+  top: 0%;
+  right: -3px;
+}
+
+.btn-sm {
+  padding: 0;
+}

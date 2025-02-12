@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <ul class="list-unstyled due-diligence-history">
+      <li *ngIf="is_investor && !diligence.is_internal">
+        <small class="text-muted text-uppercase">Sent To: </small>
+        <ng-container *ngIf="!sentToContactsList.length">
+          <span class="text-muted font-size-10"> No Subscribers Found </span>
+        </ng-container>
+        <ng-container *ngIf="sentToContactsList.length">
+          <span
+            class="btn btn-primary-outline text-uppercase space-on-right space-on-top space-on-bottom max-w-100-p"
+            *ngFor="let recipient of sentToContactsList"
+            tooltip="{{ recipient.fullName }}"
+          >
+            <small appIcon class="recipient-name">{{
+              recipient.fullName
+            }}</small>
+            <a
+              class="space-on-left clickable link-disguise"
+              appIcon
+              (click)="displaySubscriberRemovalConfirmation(recipient)"
+              >&times;</a
+            >
+          </span>
+        </ng-container>
+        <app-dv-sent-to-contact-selector
+          *ngIf="!saving_contact && contactsLoaded"
+          (onChange)="addContact($event)"
+          [diligence]="diligence"
+          [sentToContactsList]="sentToContactsList"
+        >
+        </app-dv-sent-to-contact-selector>
+        <app-spinner *ngIf="saving_contact"></app-spinner>
+      </li>
+    </ul>
+  </div>
+</div>

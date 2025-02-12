@@ -1,0 +1,72 @@
+<div
+  class="dv-dashboard-side-panel"
+  [ngClass]="{ 'bg-active': item?.isActive, 'smaller-panel': !isExpanded }"
+  (click)="handleMenuClick()"
+  tabindex="0"
+  (keydown.enter)="handleMenuClick()"
+  (keydown.space)="handleMenuClick()"
+>
+  <div [ngStyle]="{ 'margin-top': isExpanded ? '7px' : 0 }">
+    <span
+      appIcon
+      [name]="item?.icon"
+      [color]="item?.isActive ? 'primary' : 'grey'"
+      customSize="massive"
+    ></span>
+    <!--  projectPending is very specific to project pending tab as we dont show new tag over that -->
+    <span
+      *ngIf="item?.new?.pending || item?.new?.projectPending" 
+      class="dot-new"
+      [ngClass]="{
+        'dot-new-icon-expanded': isExpanded,
+        'dot-new-icon': !isExpanded
+      }"
+    >
+    </span>
+  </div>
+
+  <div
+    class="dv-dashboard-side-panel-data"
+    [ngStyle]="{ 'text-align': !isExpanded ? 'center' : 'inherit' }"
+  >
+    <div class="wrapper">
+      <div
+        class="heading"
+        [ngClass]="{
+          'color-update': item?.isActive,
+          'smaller-panel-heading': !isExpanded
+        }"
+      >
+        <span [tooltip]="item?.title" container="body">
+          {{ item?.title }}
+        </span>
+        <span
+          *ngIf="!!item?.infotext && isExpanded"
+          appIcon
+          name="info"
+          [tooltip]="item?.infotext"
+          container="body"
+          class="space-on-left "
+          placement="right"
+          [adaptivePosition]="adaptivePosition"
+        ></span>
+      </div>
+    </div>
+
+    <div *ngIf="isExpanded" class="dv-dashboard-side-panel-data-list">
+      <dv-badge
+        *ngIf="item?.all?.pending"
+        label="{{ item?.all?.pending }} Pending"
+        [status]="item?.isActive ? 'normal' : 'disable'"
+        height="huge"
+      ></dv-badge>
+
+      <dv-badge
+        *ngIf="item?.new?.pending"
+        label="{{ item?.new?.pending }} New"
+        spacingType="small"
+        height="huge"
+      ></dv-badge>
+    </div>
+  </div>
+</div>

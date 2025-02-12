@@ -1,0 +1,24 @@
+.ddl-button-transparent {
+  border: none;
+  background: none;
+}
+
+.minimum-Width-tag {
+  width: 315px;
+}
+
+.minimum-Width-template {
+  width: 283px;
+}
+
+.btn-padding {
+  padding-right: 20px;
+}
+
+.cell-date-top {
+  top: -7px;
+}
+.modalZindex{
+  position: relative;
+  z-index: 1;
+}

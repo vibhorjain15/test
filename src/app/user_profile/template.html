@@ -1,0 +1,118 @@
+<spinner data-ng-hide="vm.user"></spinner>
+
+<div class="panel" data-ng-show="vm.user">
+  <div class="panel-body">
+    <div class="clearfix">
+      <div class="profile-col-left">
+        <div class="profile-picture-wrapper">
+          <img src="{{vm.user.image_url}}" alt="{{vm.user.name}}">
+        </div>
+      </div>
+      <div class="profile-col-right space-on-left">
+        <div class="user-bio-wrapper">
+          <h3 class="clear-margin-top">About {{vm.user.name}}</h3>
+          <p data-ng-show="vm.user.bio">{{vm.user.bio}}</p>
+          <p data-ng-hide="vm.user.bio" class="text-muted">
+            {{vm.user.name}} choses to speak via {{vm.user.gender == 'male' ? 'his' : 'her'}} discussions
+          </p>
+          <div class="user-expertise-wrapper">
+            <div class="space-on-bottom">
+              <small><b>Knows about</b></small>
+            </div>
+
+            <ul class="list-unstyled">
+              <li data-ng-repeat="expertise_category in vm.user.categories">
+                <a ui-sref="app.discuss.explore({sort: 'popular', category: expertise_category})"
+                   class="label label-default">
+                  {{expertise_category}}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="clearfix">
+      <div class="profile-col-left">
+        <ul class="list-unstyled user-info-list">
+          <li>
+            <icon name="briefcase" class="fa-fw"></icon>
+            {{vm.user.role}}
+          </li>
+          <li class="clear-padding">
+            <a href="#" class="link-unstyled">
+              <icon name="university" class="fa-fw"></icon>
+              {{vm.user.organization}}
+            </a>
+          </li>
+          <li>
+            <icon name="location" class="fa-fw"></icon>
+            {{vm.user.location}}
+          </li>
+        </ul>
+
+        <ul class="list-unstyled user-info-list has-links">
+          <li>
+            <a href="#" class="link-unstyled">
+              <icon name="star-o" class="fa-fw"></icon>
+              {{vm.user.favorite_count || 'No'}} Favorites
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="link-unstyled">
+              <icon name="plus-circle" class="fa-fw"></icon>
+              {{vm.user.question_count || 'No'}} Discussions
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="link-unstyled">
+              <icon name="comments-o" class="fa-fw"></icon>
+              {{vm.user.answer_count || 'No'}} Answers
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="link-unstyled">
+              <icon name="plus-circle" class="fa-fw"></icon>
+              {{vm.user.contribution_count || 'No'}} Contributions
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="profile-col-right">
+        <p class="text-muted" data-ng-show="!vm.user.activities.length">
+          {{vm.user.name}} is still figuring things out on DV Discuss
+        </p>
+
+        <ul class="list-unstyled user-activity" data-ng-show="vm.user.activities.length">
+          <li data-ng-repeat="activity in vm.user.activities | limitTo:vm.current_page*10"
+              infinite-scroll="vm.loadNextPage()"
+              infinite-scroll-disabled="vm.is_loading_activities || vm.current_page >= vm.infinite_scroll_page_count">
+            <div>
+              <small class="text-muted">
+                <i class="dvi" data-ng-class="{'dvi-plus-circle': activity.type == 'question', 'dvi-comments-o': activity.type == 'answer', 'dvi-star': activity.type == 'favorite'}"></i>
+                <span data-ng-show="activity.type == 'answer'">answered</span>
+                <span data-ng-show="activity.type == 'question'">started</span>
+                <span data-ng-show="activity.type == 'favorite'">favorited</span>
+                <span am-time-ago="activity.created_at"></span>
+              </small>
+            </div>
+            <a ui-sref="app.discuss.detail({slug: activity.question.slug})" class="link-unstyled">
+              <b>{{activity.question.title}}</b>
+            </a>
+            <p data-ng-show="activity.answer" class="clear-margin-botton space-on-top">{{activity.answer}}</p>
+          </li>
+        </ul>
+
+        <spinner data-ng-show="vm.is_loading_activities"
+                 class="space-on-top">
+        </spinner>
+      </div>
+    </div>
+  </div>
+</div>

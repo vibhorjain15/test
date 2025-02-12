@@ -1,0 +1,123 @@
+.carousel-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  text-align: center;
+  border-radius: 6px;
+  box-shadow: 0 0 4px 0 #dce1e1;
+  background-color: #f7f7f7;
+  overflow: hidden;
+}
+
+/* Carousel content */
+.carousel-container img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.image-background {
+  background-color: #1b1b1b;;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.carousel-container
+.content {
+  display: none;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+}
+.carousel-container
+.content.content-active {
+  display: block;
+}
+.carousel-container
+.content.fade {
+  animation-name: fade;
+  animation-duration: 1.4s;
+  animation-fill-mode: forwards;
+}
+
+/* Carousel dots/indicators */
+.carousel-dot-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 0;
+  margin-bottom: 32px;
+}
+.carousel-dot-container
+.dot {
+  cursor: pointer;
+  height: 13px;
+  width: 13px;
+  background-color: #efefef;
+  border-radius: 50%;
+  box-shadow: 0 0 2px 0 #1b1b1b;
+  display: inline-block;
+  transition: opacity 0.4s ease;
+  opacity: 0.5;
+}
+.carousel-dot-container
+.dot.active-dot,
+.carousel-dot-container
+.dot:hover {
+  opacity: 1;
+}
+
+/* Carousel controls */
+.btn-carousel {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15%;
+  padding: 0;
+  color: #efefef;
+  text-align: center;
+  background: 0 0;
+  border: 0;
+  cursor: pointer;
+  transform: translate(0, -50%);
+}
+.btn-prev {
+  left: 0;
+}
+.btn-next {
+  right: 0;
+}
+.icon-prev,
+.icon-next {
+  font-size: 36px;
+}
+.icon-carousel {
+  padding: 20px;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+  filter: drop-shadow(#1b1b1b 0 0 1px);
+}
+.icon-carousel:hover {
+  opacity: 0.9;
+}
+.icon-carousel:active {
+  opacity: 0.5;
+}
+
+/* Animations */
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}

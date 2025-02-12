@@ -1,0 +1,524 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-firm-preference></ng2-firm-preference> </div>
+<div class="panel panel-default" data-ng-if="vm.Utils.isAngularJS()">
+    <div class="panel-heading">
+        <h5 class="panel-title">Firm Preferences</h5>
+    </div>
+
+    <div class="panel-body affix_bottom_parent">
+        <div class="row clearfix">
+            <div col="10">
+                <spinner data-ng-if="!vm.firm_preferences"></spinner>
+                <form class="form-horizontal" name="vm.preferences_form" data-ng-submit="vm.submit()"
+                    data-ng-if="vm.firm_preferences">
+
+                    <div offset="2">
+                        <h3 class="text-muted">Regulatory Filings</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label text-align-start" col="3" offset="2">Regulatory alert frequency</label>
+                        <div col="5">
+                            <select class="form-control" id="alert-frequency" chosen
+                                data-ng-model="vm.firm_preferences_copy.regulatory_alert_frequency"
+                                data-ng-options="frequency.id as frequency.value for frequency in vm.frequencies">
+                                <option value="">-- Modify Frequency --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.set_materialADV_default"
+                                label="Make <strong>material changes view default</strong> when reviewing ADV filing changes. <span class='text-info'>You can always toggle to view all changes</span>">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div offset="2">
+                        <h3 class="text-muted padded-top-xl">Questionnaire Defaults</h3>
+                        <h5 class='text-info'>Note: The policy will apply to all questionnaire templates.</h5>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_questionnaire_numbering"
+                                label="Enable <strong>auto-numbering of questions</strong> in questionnaire template">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.disable_response_followups"
+                                label="Disable <strong>follow-ups for responses</strong>. <span class='text-info'>You can respond when the other party initiates a follow-up</span>">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_system"
+                                label="Show <strong>system / industry questionnaires such as ILPA, PRI, InvestEurope</strong>. <span class='text-info'>This will show your questionnaires along with standard ones on the platform. Please reach out to our customer service at <a href='mailto:ask@diligencevault.com'>ask@diligencevault.com</a> to enable the AIMA template.<span>">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div col="7" offset="2">
+                            <label>Set your default word limit for question from here</label>
+                        </div>
+                        <div col="3">
+                            <input type="number" id="default_response_word_limit"
+                                data-ng-model="vm.firm_preferences_copy.default_response_word_limit" placeholder="0"
+                                ng-pattern="/^-?\d+$/" class="form-control" min="1" />
+                        </div>
+                    </div>
+
+                    <div offset="2" data-ng-if="!vm.is_investor">
+                        <h3 class="text-muted padded-top-xl">Q/A Content Defaults</h3>
+                    </div>
+
+                    <div class="form-group" data-ng-if="!vm.is_investor">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.set_preapproved_default"
+                                label="Set <strong>pre-approved answers as default view for Q/A Bank and available responses</strong>. <span class='text-info'>You can always toggle to all response view</span>">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group" data-ng-if="!vm.is_investor">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enableQASearch"
+                                label="Enable <strong>Q/A search</<strong> in questionnaire">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div offset="2" data-ng-if="vm.is_investor">
+                        <h3 class="text-muted padded-top-xl">Heatmap Display</h3>
+                        <h5 class='text-info'>Note: The policy will apply to all heatmaps across the platform.</h5>
+                    </div>
+                    <div class="form-group" data-ng-if="vm.is_investor">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_yaxis_entity"
+                                label="Show entity names on <strong>the y-axis</strong>">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group" data-ng-if="vm.is_investor">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.invert_color"
+                                label="Show high score in red and low score in green shades">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div id="js-firms-preferences">
+
+
+                        <!-- <div offset="2">
+                            <h3 class="text-muted padded-top-xl">Password Policy</h3>
+                            <h5 class='text-info'>Note: The policy will apply to all users.</h5>
+                        </div>
+                        <div class="form-group">
+                            <div col="7" offset="2">
+                                <label>Set password reset frequency in days (typically 60 - 365 days)</label>
+                            </div>
+                            <div col="3">
+                                <input type="number" id="password_expiration_frequency"
+                                    data-ng-model="vm.firm_preferences_copy.password_expiration_frequency"
+                                    placeholder="90" ng-pattern="/^-?\d+$/" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div col="7" offset="2">
+                                <label>Restrict # of historical password from reuse (typically 3-12)</label>
+                            </div>
+                            <div col="3">
+                                <input type="number" id="password_reuse_limit" ng-pattern="/^-?\d+$/"
+                                    data-ng-model="vm.firm_preferences_copy.password_reuse_limit" placeholder="5"
+                                    class="form-control" />
+                            </div>
+                        </div> -->
+
+                        <div id="js-firms-preferences">
+
+                            <div offset="2">
+                                <h3 class="text-muted padded-top-xl">Outbound Email Settings</h3>
+                            </div>
+
+                            <div class="form-group">
+                                <div col="10" offset="2">
+                                    <dv-checkbox
+                                        data-ng-model="vm.firm_preferences_copy.disable_accept_decline_outbound_emails"
+                                        label="<strong>Disable outbound system emails for project closure.</strong> <span class='text-info'>No reminder will be sent to managers when you accept / decline a project.</span>">
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+
+                            <div class="form-group" data-ng-if="vm.is_investor">
+                                <div col="10" offset="2">
+                                    <dv-checkbox data-ng-model="vm.firm_preferences_copy.disable_all_outbound_emails"
+                                        label="<strong>Disable all outbound system emails.</strong> <span class='text-info'>No reminder, follow-up or new request notification will be sent on your behalf.</span>">
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+
+                            <div class="form-group" data-ng-if="!vm.firm_preferences_copy.disable_all_outbound_emails">
+                                <div col="10" offset="2">
+                                    <dv-checkbox data-ng-model="vm.firm_preferences_copy.add_sender_email"
+                                        label="Set <strong>sender email address</strong> for all outbound notifications. <span class='text-info'>Please confirm with your administrator that your firm's DMARC policy supports this feature</span>">
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+                            <div class="form-group"
+                                data-ng-if="vm.firm_preferences_copy.add_sender_email && !vm.firm_preferences_copy.disable_all_outbound_emails">
+                                <div col="2" offset="2">
+                                    <label>Sender Emails</label>
+                                    <icon name="info" class="text-info"
+                                        uib-tooltip="Please enter email id's separated by a comma. Default sender is the first contact entered by you.">
+                                    </icon>
+                                </div>
+                                <div col="8" offset="2" class="input-group">
+                                    <span class="input-group-addon">
+                                        <icon name="mail"></icon>
+                                    </span>
+                                    <input type="text" id="sender-email"
+                                        data-ng-model="vm.firm_preferences_copy.sender_email"
+                                        placeholder="sender1@yourfirm.com,sender2@yourfirm.com" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group" data-ng-if="!vm.firm_preferences_copy.disable_all_outbound_emails">
+                                <div col="10" offset="2">
+                                    <dv-checkbox data-ng-model="vm.firm_preferences_copy.add_cc_email"
+                                        label="Enable <strong>copy/blind copy </strong> to all outbound notifications.</strong> <span class='text-info'>You can retain the emails for your records.</span>">
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+                            <div class="form-group"
+                                data-ng-if="vm.firm_preferences_copy.add_cc_email && !vm.firm_preferences_copy.disable_all_outbound_emails">
+                                <div col="2" offset="2">
+                                    <label>CC Emails</label>
+                                    <icon name="info" class="text-info"
+                                        uib-tooltip="Please enter email id's separated by a comma. Default cc is the first contact entered by you.">
+                                    </icon>
+                                </div>
+                                <div col="8" class="input-group">
+                                    <span class="input-group-addon">
+                                        <icon name="mail"></icon>
+                                    </span>
+                                    <input type="text" id="cc-email" data-ng-model="vm.firm_preferences_copy.cc_email"
+                                        placeholder="contact1@yourfirm.com,contact2@yourfirm.com"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group"
+                                data-ng-if="vm.firm_preferences_copy.add_cc_email && !vm.firm_preferences_copy.disable_all_outbound_emails">
+                                <div col="2" offset="2">
+                                    <label>BCC Email</label>
+                                    <icon name="info" class="text-info"
+                                        uib-tooltip="Please enter email id's separated by a comma. Default bcc is the first contact entered by you.">
+                                    </icon>
+                                </div>
+                                <div col="8" class="input-group">
+                                    <span class="input-group-addon">
+                                        <icon name="mail"></icon>
+                                    </span>
+                                    <input type="text" id="bcc-email" data-ng-model="vm.firm_preferences_copy.bcc_email"
+                                        placeholder="contact@yourfirm.com" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div col="10" offset="2">
+                                    <dv-checkbox data-ng-model="vm.firm_preferences_copy.customize_intro"
+                                        label="Manage the <strong>custom introduction</strong> about your firm. <span class='text-info'>Personalize your sent invitations.</span>">
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+
+
+                        <div class="form-group" data-ng-if="vm.firm_preferences_copy.customize_intro">
+                            <label class="control-label text-align-start" col="2" offset="2">Email Template</label>
+                            <div col="7" data-ng-if="vm.email_templates.length > 0">
+                                <select class="form-control" id="alert-frequency" chosen
+                                    data-ng-model="vm.firm_preferences_copy.default_email_template_message_id"
+                                    data-ng-options="template.id as template.name for template in vm.email_templates"
+                                    data-ng-change="vm.renderEmailTemplate(vm.firm_preferences_copy.default_email_template_message_id)">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div col="5" data-ng-if="vm.email_templates.length == 0">
+                                <p class="space-on-top">No email templates present, <a class="clickable"
+                                        ui-sref="app.firm.settings.email_templates">click here</a> to add one</p>
+                            </div>
+                        </div>
+                        <div class="form-group"
+                            data-ng-if="vm.firm_preferences_copy.customize_intro && vm.email_templates.length && vm.email_text">
+                            <label class="control-label text-align-start" col="2" offset="2">Email Msg</label>
+                            <div col="7">
+                                <div class="email-text-wrapper">
+                                    <span class="word-break-break-all" data-ng-bind-html="vm.email_text"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.disallow_custom_email_template_edit"
+                                    label="Disable user edits to custom introductions">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+
+                            <div offset="2">
+                                <h3 class="text-muted padded-top-xl">Inbound Email Notifications</h3>
+                            </div>
+                            <div class="form-group">
+                                <div col="10" offset="2">
+                                    <dv-checkbox data-ng-model="vm.firm_preferences_copy.add_generic_email"
+                                        label="Set <strong>generic email address</strong> for all inbound system notifications. <span class='text-info'>Individual team members will not receive notifications.</span>">
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+                            <div class="form-group" data-ng-if="vm.firm_preferences_copy.add_generic_email">
+                                <div col="2" offset="2">
+                                    <label>Generic Email</label>
+                                </div>
+                                <div col="8" offset="2" class="input-group">
+                                    <span class="input-group-addon">
+                                        <icon name="mail"></icon>
+                                    </span>
+                                    <input type="email" id="generic-email"
+                                        data-ng-model="vm.firm_preferences_copy.generic_email"
+                                        placeholder="contact@yourfirm.com" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div offset="2">
+                            <h3 class="text-muted padded-top-xl">Platform Defaults</h3>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label text-align-start" col="3" offset="2">Default Date Range</label>
+                            <div col="5">
+                                <select chosen data-ng-model="vm.firm_preferences_copy.default_daterange_months"
+                                    data-ng-options="range.value as range.label for range in vm.dateRanges">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.default_preference_firm"
+                                    label="Set <strong>firm as default entity for all views</strong>. <span class='text-info'>You can always toggle to product on the platform</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_system_rating"
+                                    label="Show <strong>system rating definitions</strong>. <span class='text-info'>This will show your rating definitions along with system ones on the platform</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.apply_ScoreRules_PreviousVersions"
+                                    label="Apply <strong>rating/score rules to all previous versions of the template.</strong> <span class='text-info'>This will auto-calculate the rating/score rules for all completed projects created using the template.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_system_document_tags"
+                                    label="Enable <strong>System Document Tags</strong>. <span class='text-info'>This will enable system document tags along with custom ones on the platform</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.copy_manager_tags"
+                                    label="Copy <strong>document tags added by manager</strong>. <span class='text-info'>This will show you system documents tags added by your managers while sharing documents with you.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_system_strategies"
+                                    label="Enable <strong>System Classification Tags</strong>. <span class='text-info'>This will enable default system product classifications along with custom ones on the platform</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.assignDefaultRole"
+                                label="Assign a default role to all new users added by your {{vm.is_investor ? 'managers' : 'investors'}}.">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.assignDefaultRole">
+                            <label class="control-label text-align-start" col="2" offset="2">Default Role:</label>
+                            <div col="7">
+                                <select class="form-control" chosen
+                                    data-ng-model="vm.firm_preferences_copy.default_user_access_role"
+                                    data-ng-options="role.id as role.alias for role in vm.roles"
+                                >
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div offset="2">
+                            <h3 class="text-muted padded-top-xl">Control Workflow Defaults</h3>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_Review_Workflow"
+                                    label="Enable <strong>Review Workflow for projects</strong>. <span class='text-info'>This will enable review workflow for the project to collaborate with reviewers</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.firm_preferences_copy.enable_Review_Workflow">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.review_workflow_mandatory_for_internal_diligence"
+                                    label="Make <strong>Review Workflow</strong> mandatory for internal diligence. <span class='text-info'>This will make the review workflow mandatory for all internal projects.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.firm_preferences_copy.enable_Review_Workflow">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.review_workflow_mandatory_for_external_diligence"
+                                    label="Make <strong>Review Workflow</strong> mandatory for external diligence. <span class='text-info'>This will make the review workflow mandatory for all external projects.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_rating_custom_fields_review"
+                                    label="Enable <strong>Review Workflow</strong> for ratings. <span class='text-info'>This will enable the review workflow for ratings in review projects.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_track_changes"
+                                    label="Enable <strong>Track Changes</strong>. <span class='text-info'>This will enable track changes for the response</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.enable_internal_project_to_external_option"
+                                    label="Enable <strong> internal projects to external </strong>. <span class='text-info'>This will allow users to send Internal projects to external managers.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.allow_review_template_in_standard_diligence"
+                                    label="Allow <strong> Analyst Evaluation Templates to be used in standard DDQs</strong>. <span class='text-info'>This will allow users to use the Analyst Evaluation template in a Standard DDQ.</span>">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.enable_approval_flow_information_request"
+                                    label="Enable approval requirement for new information request">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                            data-ng-if="vm.firm_preferences_copy.enable_approval_flow_information_request">
+                            <div col="3" offset="2">
+                                <label>
+                                    <span
+                                        uib-tooltip="Setup maximum number of requests that can be sent out without requiring approval."
+                                        tooltip-placement="right"><i class="dvi dvi-info"></i></span>&nbsp;
+                                    Threshold for approval requirement
+                                </label>
+                            </div>
+                            <div col="7">
+                                <input type="number" id="threshold_for_approval_flow"
+                                    data-ng-model="vm.firm_preferences_copy.threshold_for_approval_flow" placeholder="0"
+                                    ng-pattern="/^-?\d+$/" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                            data-ng-if="vm.firm_preferences_copy.enable_approval_flow_information_request">
+                            <div col="3" offset="2">
+                                <label>
+                                    <span
+                                        uib-tooltip="Selected users will be assigned as approvers and will have the final say before the request is sent out to external partners."
+                                        tooltip-placement="right"><i class="dvi dvi-info"></i></span>&nbsp;
+                                    Assign approver(s)
+                                </label>
+                            </div>
+                            <div col="7">
+                                <select class="form-control padded-top" chosen multiple
+                                    data-ng-model="vm.firm_preferences_copy.approver_list_for_information_request"
+                                    no-results-text="'Could not find any action items'"
+                                    data-placeholder="Select team member"
+                                    data-ng-options="member.id as member.fullName for member in vm.teamMembers">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.export_custom_report_all_checkboxes"
+                                    label="Include all checkboxes in Presentation Report. <span class='text-info'>This functionality will export all checkbox responses, irrespective of which ones are selected/not selected.</span>"
+                                >
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+                            <div col="10" offset="2">
+                                <dv-checkbox
+                                    data-ng-model="vm.firm_preferences_copy.export_custom_report_draft_responses"
+                                    label="Include draft responses in Presentation Report. <span class='text-info'>This will export all draft responses as well in the presentation report.</span>"
+                                >
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+                        <div class="form-group sticky_savebar" data-ng-init="vm.makeItSticky()">
+                            <div col="10" offset="2" class="space-on-top-xl space-on-bottom-xl">
+                                <button type="submit" button-loader="vm.saving_preferences">Save Firm
+                                    Preferences</button>
+                            </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

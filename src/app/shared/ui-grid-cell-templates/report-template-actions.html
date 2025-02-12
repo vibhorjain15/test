@@ -1,0 +1,34 @@
+<ui-grid-cell-contents data-ng-if="!row.groupHeader">
+  <button btn-type="default"
+          size="sm"
+          ng-show="row.entity.entity_type != 'Report'"
+          class="space-on-right"
+          data-ng-click="grid.appScope.vm.editReport(row.entity)"
+          uib-tooltip="Edit">
+    <icon name="pencil"></icon>
+  </button>
+  <button btn-type="default"
+          size="sm"
+          ng-show="row.entity.entity_type == 'Report'"
+          class="space-on-right"
+          data-ng-click="grid.appScope.vm.emailReport(row.entity)"
+          uib-tooltip="Email">
+    <icon name="mail"></icon>
+  </button>
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          uib-tooltip="Delete"
+          ng-click="grid.appScope.vm.deleteReport(row.entity)">
+    <icon name="trashcan"></icon>
+  </button>
+  <button btn-type="default"
+          ng-show="row.entity.entity_type == 'Report'"
+          size="sm"
+          class="space-on-right"
+          uib-tooltip="Download"
+          ng-click="grid.appScope.vm.downloadReport(row.entity)">
+    <strong><span class="dvi dvi-download3"></span>  </strong>
+  </button>
+
+</ui-grid-cell-contents>

@@ -1,0 +1,15 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Review Definitions"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+
+  <div class="panel-body">
+    <app-dv-grid
+      [rowData]="reviewDefinitions"
+      [name]="gridName"
+      [onCellClicked]="onCellClicked"
+    ></app-dv-grid>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<app-modal
+  [title]="
+    'Are you sure you want to send this request to managers? You will not be able to make any change.'
+  "
+  [firstButtonLabel]="'Yes'"
+  (onFirstClick)="submit()"
+  (onSecondClick)="closeModal()"
+  [initialTemplate]="confirmPendingRequests"
+  [isCancelButton]="false"
+  [secondButtonLabel]="'No'"
+  [isFirstButtonDisabled]="confirmPendingRequestForm.invalid"
+  [footerAlignment]="'center'"
+>
+</app-modal>
+
+<ng-template #confirmPendingRequests>
+  <form
+    class="form-horizontal"
+    [formGroup]="confirmPendingRequestForm"
+    autocomplete="off"
+  >
+    <div class="space-on-bottom">
+      <dv-editor
+        [configObj]="tinyMceInit"
+        (onChange)="handleEditorTextChange($event)"
+      ></dv-editor>
+    </div>
+  </form>
+</ng-template>

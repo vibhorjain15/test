@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+  <div class="panel-body clear-padded-bottom">
+    <div col="10">
+      <helper-text *ngIf="gridDatasource && gridDatasource.length > 0">
+        You are receiving {{ frequency }} alerts for filing changes for the
+        following {{ gridDatasource.length }} firms.
+        <a
+          (click)="redirectTo('app.form_adv.regulatory_monitor.explore')"
+          class="btn btn-default space-on-left"
+          ><strong>Modify Tracking List</strong></a
+        >
+        <a
+          (click)="ChangeAlertFrequency('app.firm.settings.preferences')"
+          class="btn btn-default space-on-left"
+          ><strong>Change Alert Frequency</strong></a
+        >
+      </helper-text>
+      <helper-text *ngIf="gridDatasource && gridDatasource.length == 0">
+        You are receiving {{ frequency }} alerts for filing changes for ALL
+        firms.
+        <a
+          (click)="redirectTo('app.form_adv.regulatory_monitor.explore')"
+          class="btn btn-default space-on-left"
+          ><strong>Create Tracking List</strong></a
+        >
+        <a
+          (click)="ChangeAlertFrequency('app.firm.settings.preferences')"
+          class="btn btn-default space-on-left"
+          ><strong>Change Alert Frequency</strong></a
+        >.
+      </helper-text>
+    </div>
+
+    <div
+      col="2"
+      class="text-center"
+      *ngIf="gridDatasource.length"
+      authorized-view
+      hiddenFrom="FreeSubscription, SmartSubscription"
+    >
+      <button
+        appButton
+        btnType="transparent"
+        class="space-on-top"
+        button-loader="downloading"
+        (click)="downloadMyPortfolioToExcel()"
+      >
+        <div><span appIcon name="external-link" size="2x"></span></div>
+        <small>Export To Excel</small>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <app-dv-grid
+      *ngIf="loading_grid"
+      [rowData]="gridDatasource"
+      [name]="'formadv-regulatory-monitor-portfolio'"
+    >
+    </app-dv-grid>
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="560"
+      *ngIf="!loading_grid"
+    ></app-spinner>
+  </div>
+</div>

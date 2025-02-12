@@ -1,0 +1,168 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      {{ "YOUR_ACTIVITY_ON_DILIGENCEVAULT" | translate }}
+    </h5>
+  </div>
+  <div class="panel-body">
+    <table class="table table-striped activity_table_settings">
+      <tbody>
+        <tr *ngIf="activity?.end_date">
+          <td width="25%">{{ "SUBSCRIPTION_EXPIRY" | translate }}</td>
+          <td width="15%">
+            <strong>{{
+              activity?.end_date | dvDate : ["isLocaleDate"]
+            }}</strong>
+          </td>
+          <td width="60%"></td>
+        </tr>
+        <tr>
+          <td width="25%"># {{ "OF_TEAMS" | translate }}</td>
+          <td width="15%">
+            <strong>{{ activity?.team_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%"></td>
+        </tr>
+        <tr>
+          <td width="25%"># {{ "OF_PROJECTS" | translate }}</td>
+          <td width="15%">
+            <strong
+              ><span [ngClass]="{ 'text-orange': upgradeNeeded }">{{
+                activity?.projects_count.toLocaleString()
+              }}</span></strong
+            >
+          </td>
+          <td width="60%">
+            <span *ngIf="upgradeNeeded && is_manager">
+              {{ "PLEASE_CONTACT_TO_UPGRADE_CAPACITY" | translate }}
+            </span>
+            <span *ngIf="!upgradeNeeded">
+              Take advantage of DiligenceVault's centralized content repo, user
+              collaboration and a user friendly platform across all request
+              types
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="is_manager">
+          <td width="25%"># of Investors</td>
+          <td width="15%">
+            <strong>{{ activity?.investor_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%">
+            Delight as more and more investors adopt digital diligence!
+          </td>
+        </tr>
+        <tr *ngIf="is_manager">
+          <td width="25%"># of Q/A library records</td>
+          <td width="15%">
+            <strong>{{ activity?.qna_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%">
+            Use Autofill, Recommendation Engine and Search functionality for
+            faster responses
+          </td>
+        </tr>
+        <tr>
+          <td width="25%"># {{ "OF_DOCUMENTS" | translate }}</td>
+          <td width="15%">
+            <strong>{{ activity?.document_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%">
+            {{ "REUSE_DOCUMENTS" | translate }}
+          </td>
+        </tr>
+        <tr *ngIf="is_manager">
+          <td width="25%"># of Images</td>
+          <td width="15%">
+            <strong>{{ activity?.image_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%">Reuse images across multiple investor requests</td>
+        </tr>
+        <tr *ngIf="is_manager">
+          <td width="25%"># of Disclaimers</td>
+          <td width="15%">
+            <strong>{{ activity?.disclaimer_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%">
+            Attach the right disclaimer for the right requests and always be
+            compliant.
+          </td>
+        </tr>
+        <tr *ngIf="is_manager">
+          <td width="25%"># of AUM/Track Record TimeSeries</td>
+          <td width="15%">
+            <strong>{{ activity?.aumtr_count.toLocaleString() }}</strong>
+          </td>
+          <td width="60%">
+            Share standard AUM and TrackRecord tables with all investors
+          </td>
+        </tr>
+        <tr
+          *ngIf="!is_manager && !is_freeSubscripton && activity?.lt_limit == 0"
+        >
+          <td width="25%"># of Entities</td>
+          <td width="15%">
+            <strong
+              ><span
+                class="space-on-right-lg"
+                [ngClass]="{ 'text-orange': FTupgradeNeeded }"
+                >{{ entity_count.toLocaleString() }}</span
+              ></strong
+            >
+          </td>
+          <td width="60%">
+            <span *ngIf="FTupgradeNeeded">
+              Please contact
+              <a href="mailto:ask@diligencevault.com?subject=upgrade"
+                >ask@diligencevault.com</a
+              >
+              to upgrade capacity
+            </span>
+          </td>
+        </tr>
+        <tr
+          *ngIf="!is_manager && !is_freeSubscripton && activity?.lt_limit > 0"
+        >
+          <td width="25%"># {{ "OF_FT_ENTITIES" | translate }}</td>
+          <td width="15%">
+            <strong
+              ><span
+                class="space-on-right-lg"
+                [ngClass]="{ 'text-orange': FTupgradeNeeded }"
+                >{{ entity_count.toLocaleString() }}</span
+              ></strong
+            >
+          </td>
+          <td width="60%">
+            <span *ngIf="FTupgradeNeeded">
+              <a href="mailto:ask@diligencevault.com?subject=upgrade"
+                >ask@diligencevault.com</a
+              >
+              to upgrade capacity -->
+              {{ "PLEASE_CONTACT_TO_UPGRADE_CAPACITY" | translate }}
+            </span>
+          </td>
+        </tr>
+        <tr
+          *ngIf="!is_manager && !is_freeSubscripton && activity?.lt_limit > 0"
+        >
+          <td width="25%"># {{ "OF_LT_ENTITIES" | translate }}</td>
+          <td width="15%">
+            <strong
+              ><span
+                class="space-on-right-lg"
+                [ngClass]="{ 'text-orange': LTupgradeNeeded }"
+                >{{ activity?.lighttouch_count.toLocaleString() }}</span
+              ></strong
+            >
+          </td>
+          <td width="60%">
+            <span *ngIf="LTupgradeNeeded">
+              {{ "PLEASE_CONTACT_TO_UPGRADE_CAPACITY" | translate }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

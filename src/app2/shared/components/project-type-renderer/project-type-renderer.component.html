@@ -1,0 +1,19 @@
+<span *ngIf="params.data && !params.node.group">
+  <span
+    *ngIf="params.data.is_internal && params.data.type != 'dd_review'"
+    class="label label-orange"
+    >Internal</span
+  >
+  <span *ngIf="params.data.type == 'dd_review'" class="label label-excellent"
+    >Analyst Evaluation</span
+  >
+  <span *ngIf="params.data.type == 'inbound'" class="label label-default"
+    >Opportunity</span
+  >
+  <span
+    *ngIf="!params.data.is_internal && params.data.type != 'inbound'"
+    class="label label-primary"
+    >External</span
+  >
+</span>
+<span *ngIf="params.node.group">{{ params.value }}</span>

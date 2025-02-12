@@ -1,0 +1,116 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top hide-in-print-view">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!meeting"
+        ></app-spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="meeting">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ meeting.name }}
+            </h4>
+            <p *ngIf="meeting.entity_name">{{ meeting.entity_name }}</p>
+          </div>
+
+          <div class="cell bordered-right">
+            At {{ localTime | dvDate : ["isLocaleDate"] }} from
+            {{ eventStartTime }} to
+            {{ eventEndTime }}
+          </div>
+          <div class="bordered-right cell">
+            {{ meeting?.event_type_name }}
+          </div>
+          <div class="cell">
+            <span class="pull-right" dropdown container="body">
+              <a
+                class="dropdown-toggle btn btn-transparent"
+                dropdownToggle
+                tooltip="Add documents, edit meeting"
+                container="body"
+                role="button"
+                tabindex="0"
+              >
+                <div><span appIcon name="ellipsis-h" size="2x"></span></div>
+                <div class="space-on-top-n"><small>More Actions</small></div>
+              </a>
+
+              <ul class="dropdown-menu" *dropdownMenu role="menu">
+                <li role="menuitem">
+                  <a (click)="useExistingDocument()" role="button" tabindex="0"
+                    ><span appIcon name="file" class="space-on-right-lg"></span
+                    >Add Existing Documents</a
+                  >
+                </li>
+                <li>
+                  <a
+                    (click)="addDocument()"
+                    role="button"
+                    ariaLabel="Upload New Document or Folder"
+                    ><span appIcon name="file" class="space-on-right-lg"></span
+                    >Upload New Document / Folder</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a (click)="editMeeting()" role="button" tabindex="0"
+                    ><span
+                      appIcon
+                      name="pencil"
+                      class="space-on-right-lg"
+                    ></span
+                    >Edit Meeting</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="text-danger"
+                    (click)="deleteMeeting()"
+                    role="button"
+                    tabindex="0"
+                    ><span
+                      appIcon
+                      name="trashcan"
+                      class="space-on-right-lg"
+                    ></span
+                    >Delete Meeting</a
+                  >
+                </li>
+              </ul>
+            </span>
+          </div>
+          <div class="cell bordered-left">
+            <a (click)="goBack()" class="btn btn-transparent" tabindex="0">
+              <div><span appIcon name="arrow-back" size="2x"></span></div>
+              <small> Go Back </small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="4" class="hide-in-print-view">
+        <dv-documents
+          [entityType]="entityType"
+          [entityId]="meetingId"
+          #documentWidget
+        ></dv-documents>
+      </div>
+
+      <div col="8">
+        <app-dv-notes
+          *ngIf="meeting && currentUser"
+          [entityType]="entityType"
+          [entityId]="meetingId"
+          [notesOptions]="notesOptions"
+          [entityName]="meeting.name"
+          [currentUser]="currentUser"
+          [dateFilter]="dateFilter"
+        ></app-dv-notes>
+      </div>
+    </div>
+  </div>
+</div>

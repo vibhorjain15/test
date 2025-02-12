@@ -1,0 +1,16 @@
+<ui-grid-cell-contents class="text-left" ng-mouseenter="showPreview=true" ng-mouseleave="showPreview=false">
+  <span
+     uib-tooltip="{{row.entity.name}}"
+     truncate-text="30">
+    {{row.entity.name}}
+  </span>
+  <button
+          btn-type="default"
+          size="xs"
+          class="space-on-left-lg"
+          data-ng-click="grid.appScope.vm.viewDisclaimer(row.entity)"
+          ng-show="showPreview"
+          uib-tooltip="Preview">
+    <icon name="eye"></icon>
+  </button>
+</ui-grid-cell-contents>

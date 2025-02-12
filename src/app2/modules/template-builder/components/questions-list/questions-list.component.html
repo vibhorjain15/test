@@ -1,0 +1,77 @@
+<dv-segment
+  [title]="title"
+  [dvTooltip]="'New Question(s)'"
+  [actionIconsList]="actionIconsList"
+  [actionButtonsList]="actionButtonsList"
+  (handleIconClick)="handleActionIconClick($event)"
+  (onSearchChange)="handleSearchChange($event)"
+>
+  <div class="text-center spinner-display" *ngIf="loading" aria-live="polite">
+    <app-spinner spinnerHeight="300" aria-hidden="true"></app-spinner>
+  </div>
+  <div
+    class="template-question-list-container"
+    id="template-edit"
+    *ngIf="!loading"
+  >
+    <ng-container *ngIf="!isMultiSelect && questionsDataCopy.length">
+      <div
+        *ngFor="
+          let question of questionsDataCopy;
+          let postion = index;
+          trackBy: trackByFn
+        "
+        [elemPosition]="postion"
+        [list]="questionsDataCopy"
+        dvListBox
+        id="question"
+        tabindex="0"
+        DvDragDrop
+        (returnUpdatedList)="handleUpdateList($event, postion)"
+      >
+        <dv-move-row
+          [iconList]="questionsIcons[question.id]"
+          [showIconsAlways]="true"
+          [title]="question.label | searchHighlight : search"
+          [isActive]="activeRow == question.id"
+          [isHover]="true"
+          [isConditionalQuestion]="question.isConditional"
+          (onIconClick)="handleIconClick($event, question)"
+          (onRowClick)="handleRowClick(question)"
+        ></dv-move-row>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="isMultiSelect">
+      <dv-checkbox-group>
+        <div
+          *ngFor="
+            let data of questionsDataCopy;
+            let postion = index;
+            trackBy: trackByFn
+          "
+          dvListBox
+        >
+          <dv-checkbox
+            [(ngModel)]="data.isSelected"
+            name="customize_intro"
+            [label]="data.label | searchHighlight : search"
+            [id]="data.id"
+            (onValChange)="handleQuestionCheckbox($event, data)"
+          >
+          </dv-checkbox>
+        </div>
+      </dv-checkbox-group>
+    </ng-container>
+    <div *ngIf="!questionsDataCopy.length" class="space-on-top" role="alert">
+      <app-empty-state message="No questions found"></app-empty-state>
+    </div>
+  </div>
+</dv-segment>
+
+<dv-infinite-scroll
+  *ngIf="!loading"
+  [id]="'template-edit'"
+  [currentPage]="pageNumber"
+  [data]="questionsData"
+  (handleQuestionListScroll)="loadQuestions($event)"
+></dv-infinite-scroll>

@@ -1,0 +1,76 @@
+<div class="note-main">
+  <div class="note-header">
+    <div class="note-info">
+      <span class="circled-initials" *ngIf="showNumber"> {{ index + 1 }} </span>
+      <div class="auth-name space-on-left-lg">
+        {{ firstName + " " + lastName }}
+      </div>
+      <div
+        class="last-edited"
+        [tooltip]="lastEdited | dvDate : ['calendarTime']"
+      >
+        {{ lastEdited | dvDate : ["dvDateTime"] }}
+      </div>
+    </div>
+    <div class="note-buttons">
+      <ng-container *ngIf="showIcons">
+        <span
+          appIcon
+          [isDisable]="!isEditable"
+          [tooltip]="isEditable ? 'Edit Note' : ''"
+          container="body"
+          [adaptivePosition]="false"
+          name="pencil"
+          [ngClass]="{ 'disabled-icon': !isEditable }"
+          (click)="onEdit()"
+        ></span>
+        <span
+          appIcon
+          [isDisable]="!isEditable"
+          [tooltip]="isEditable ? 'Delete Note' : ''"
+          container="body"
+          [adaptivePosition]="false"
+          [ngClass]="{ 'disabled-icon': !isEditable }"
+          name="trashcan"
+          class="space-on-left-lg"
+          (click)="onDelete()"
+        ></span>
+      </ng-container>
+      <ng-container *ngIf="!showIcons && customNoteButton">
+        <dv-label
+          label="Restore"
+          (click)="handleCustomButtonClick()"
+          color="primary"
+        >
+        </dv-label>
+      </ng-container>
+    </div>
+  </div>
+  <div class="note-content">
+    <ng-container *ngIf="!editMode">
+      <div *ngIf="note" [innerHtml]="note | sanitizeClass"></div>
+      <ng-content *ngIf="!note"></ng-content>
+    </ng-container>
+    <ng-container *ngIf="editMode">
+      <dv-editor
+        [value]="note"
+        [literVersion]="true"
+        (onChange)="onEditChange($event)"
+        [isMentions]="true"
+        [configObj]="tinyMceInit"
+      ></dv-editor>
+      <div class="edit-button">
+        <dv-button (onClick)="handleEdit()" [loader]="isSaving"
+          >Update</dv-button
+        >
+        <dv-button
+          btnType="default"
+          class="space-on-left"
+          (onClick)="onEdit()"
+          [disabled]="isSaving"
+          >Cancel</dv-button
+        >
+      </div>
+    </ng-container>
+  </div>
+</div>

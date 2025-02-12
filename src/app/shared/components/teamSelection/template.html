@@ -1,0 +1,89 @@
+<div class="space-on-top-lg">
+  <div class="list-group-item" data-ng-if="vm.loading_data">
+    <div class="row clearfix">
+      <div>
+        <spinner broad-spinner spinner-height='20'></spinner>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-group-item" data-ng-if="!vm.loading_data"
+    uib-tooltip="{{vm.disabled?'Please contact customer service in order to enable this feature for your firm':''}}">
+    <div data-ng-if="!vm.teams || vm.teams.length == 0">
+      <p class="clear-margin text-center">No teams present, <a class="clickable" data-ng-click="vm.onClose()"
+          ui-sref="app.firm.settings.teams">click here</a> to add one</p>
+    </div>
+    <div data-ng-if="vm.teams.length > 0">
+      <form name="vm.teamselectionForm">
+        <div class="row space-on-bottom-lg" col="12" data-ng-if="vm.type == 'Resource'">
+          <form-group field-name="Permission Mode" col="5">
+            <label for="team">Permission Mode</label>
+            <select id="permission-mode" name="permission-mode" class="form-control" chosen
+              data-ng-model="vm.selectedTeams.permissionType"
+              data-ng-options="permission.id as permission.name for permission in vm.permissionTypes"
+              data-ng-change="vm.onPermissionTypeChange()" data-ng-disabled="vm.disabled">
+              <option value=""></option>
+            </select>
+          </form-group>
+        </div>
+        <div data-ng-repeat="teams in vm.selectedTeams.permissions" class="space-on-top-lg">
+          <div class="row">
+            <div col="5" class="space-on-left space-on-right">
+              <form-group field-name="Team">
+                <label for="team">Team</label>
+                <select id="team" name="team" class="form-control" chosen data-ng-model="teams.team"
+                  data-ng-options="team.id as team.name for team in vm.teams" data-ng-change="vm.setValidationMessage()"
+                  data-ng-required="teams.access != null && !vm.selectedTeams.disableAssignmentDetails"
+                  data-ng-disabled="vm.disabled || vm.selectedTeams.disableAssignmentDetails">
+                  <option value=""></option>
+                </select>
+              </form-group>
+            </div>
+            <div col="5" data-ng-if="vm.type == 'User' || vm.selectedTeams.disableAssignmentDetails"
+              class="space-on-left space-on-right">
+              <form-group field-name="Access level">
+                <label for="role">Access Level</label>
+                <select id="roleselection" class="form-control" chosen data-ng-model="teams.access"
+                  data-ng-options="role.id as role.alias for role in vm.roles"
+                  data-ng-change="vm.setValidationMessage()" data-ng-required="teams.team != null"
+                  data-ng-disabled="vm.disabled">
+                  <option value=""></option>
+                </select>
+              </form-group>
+            </div>
+            <div col="5" data-ng-if="vm.type == 'Resource' && !vm.selectedTeams.disableAssignmentDetails"
+              class="space-on-left space-on-right">
+              <form-group field-name="Visibility">
+                <label for="role">Visibility</label>
+                <select id="visibility" class="form-control" chosen data-ng-model="teams.access"
+                  data-ng-options="visibility.name as visibility.alias for visibility in vm.accessList"
+                  data-ng-change="vm.setValidationMessage()" data-ng-required="teams.team != null"
+                  data-ng-disabled="vm.disabled">
+                  <option value=""></option>
+                </select>
+              </form-group>
+            </div>
+            <div col="1">
+              <button btn-type="transparent" data-ng-click="vm.removeAccess(teams)"
+                class="delete-control space-on-top-xxl" uib-tooltip="Remove access"
+                data-ng-disabled="vm.disabled || vm.selectedTeams.disableAssignmentDetails">
+                <icon name="trashcan"></icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="row space-on-top-lg">
+        <div col="12">
+          <span col="2" offset="10" class="padded-left">
+            <button class="center-block" btn-type="default" size="sm" uib-tooltip="Add access"
+              data-ng-click="vm.addNewAccess()"
+              data-ng-disabled="vm.disabled || vm.selectedTeams.disableAssignmentDetails">
+              <icon name="plus"></icon>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

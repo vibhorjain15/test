@@ -1,0 +1,75 @@
+<form name="vm.manage_export_template" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+        <h3 class="modal-title">{{vm.edit_mode ? 'Edit Export Template' : 'New Export Template'}}
+        <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a></h3>
+    </div>
+
+    <div class="modal-body">
+        <form-group field-name="Template Name">
+            <label class="col-md-4 control-label">
+                Template Name
+            </label>
+
+            <div class="col-md-7">
+                <input type="text" class="form-control" data-ng-model="vm.template.name"
+                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}" focus-me="vm.focusAttachmentName" required />
+            </div>
+        </form-group>
+
+        <div>
+            <div class="dd-doc-selection-wrapper">
+                <div class="panel panel-default dd-doc-drop-panel" dv-file-handler dv-droppable dv-manual-upload
+                    name="file-handler-one" ngf-multiple="true" ngf-select-disabled="true" dv-bind-files-to="vm.files"
+                    dv-accept="'.docx'" dv-pattern="'.docx'" dv-max-file-size="::vm.maxFileSize" ngf-max-files="1"
+                    ngf-drag-over-class="'panel-primary'" dv-fields="vm.documentParams" dv-upload-url="/DocumentExportTemplates"
+                    dv-on-upload="vm.documentUploadComplete(response)"
+                    dv-on-upload-error="vm.documentUploadFailed(response)">
+                    <div class="panel-body">
+                        <p class="text-muted text-center">
+                            <strong>Drag & Drop your file here</strong>
+                        </p>
+
+                        <p class="text-muted text-center">
+                            <icon name="upload" size="2x"></icon>
+                        </p>
+
+                        <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+                    </div>
+                </div>
+
+                <div class="dd-doc-select-button-container">
+                    <button btn-type="default" dv-file-handler dv-manual-upload dv-bind-files-to="vm.files"
+                        dv-upload-url="/DocumentExportTemplates" name="file-handler-two" dv-accept="'.docx'" dv-pattern="'.docx'"
+                        dv-fields="vm.documentParams" dv-max-file-size="::vm.maxFileSize"
+                        dv-on-upload="vm.documentUploadComplete(response)"
+                        dv-on-upload-error="vm.documentUploadFailed(response)">
+                        {{$parent.vm.edit_mode?'Upload Different File':'Select File'}}
+                    </button>
+                    <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+                </div>
+            </div>
+            <a data-ng-click="vm.downloadTemplate()"
+                data-ng-if="vm.edit_mode"
+                class="link-disguise">
+                <dv-checkbox
+                    disabled="disabled"
+                    checked="checked"
+                    data-ng-show="vm.template">
+                    <dv-checkbox-label>
+                        <span dv-limit-word="vm.template.name"
+                            char-limit="30"
+                            uib-tooltip="{{vm.template.name}}">
+                        </span>
+                    </dv-checkbox-label>
+                </dv-checkbox>
+            </a>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.saving_template">
+            {{vm.edit_mode ? 'Update Template' : 'Create Template'}}</button>
+    
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

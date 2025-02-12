@@ -1,0 +1,131 @@
+<spinner data-ng-if="!vm.is_data_loaded"></spinner>
+
+<div data-ng-if="!vm.tagsAvailable">
+  <empty-state data-ng-if="vm.is_admin"
+               icon-name="tag"
+               action="vm.redirectToFirmSettings()"
+               action-label="Set Firm Tags"
+               message="No tags available. Please get in touch with your admin to set your firm-specific tags">
+  </empty-state>
+  <empty-state data-ng-if="!vm.is_admin"
+                 icon-name="tag"
+                 message="No tags available. Please get in touch with your admin to set your firm-specific tags">
+  </empty-state>
+</div>
+
+<form novalidate
+      name="vm.tag_investment_form"
+      data-ng-if="vm.is_data_loaded && vm.tagsAvailable"
+      data-ng-submit="vm.saveTags()">
+
+  <form-group field-name="Asset Allocation"
+              data-ng-if="vm.tag_list.assettype.length">
+    <label for="assettype" class="control-label">
+      Asset Allocation
+    </label>
+
+    <tags-input data-ng-model="vm.investment.assets"
+                display-property="name"
+                key-property="id"
+                add-from-autocomplete-only=true
+                id="assets"
+                min-length="1">
+      <auto-complete source="vm.filterAssets($query)"
+                     load-on-focus=true
+                     load-on-down-arrow=true
+                     load-on-empty=true
+                     min-length="1"></auto-complete>
+    </tags-input>
+  </form-group>
+
+  <form-group field-name="Conviction Level"
+              data-ng-if="vm.tag_list.conviction.length">
+    <label for="conviction-level" class="control-label">
+      Conviction Level
+    </label>
+
+    <tags-input data-ng-model="vm.investment.conviction_levels"
+                display-property="name"
+                key-property="id"
+                add-from-autocomplete-only=true
+                id="conviction-level"
+                min-length="1">
+      <auto-complete source="vm.filterConvictionLevels($query)"
+                     load-on-focus=true
+                     load-on-down-arrow=true
+                     load-on-empty=true
+                     min-length="1"></auto-complete>
+    </tags-input>
+  </form-group>
+
+  <form-group field-name="Region"
+              data-ng-if="vm.tag_list.geography.length">
+    <label for="geography" class="control-label">
+      Geographic Focus
+    </label>
+
+    <tags-input data-ng-model="vm.investment.geographies"
+                display-property="name"
+                key-property="id"
+                add-from-autocomplete-only=true
+                id="geography"
+                min-length="1">
+      <auto-complete source="vm.filterGeographies($query)"
+                     load-on-focus=true
+                     load-on-down-arrow=true
+                     load-on-empty=true
+                     min-length="1"></auto-complete>
+    </tags-input>
+  </form-group>
+
+  <form-group field-name="Thesis"
+              data-ng-if="vm.tag_list.thesis.length">
+    <label for="theses" class="control-label">
+      Investment Thesis
+    </label>
+
+    <tags-input data-ng-model="vm.investment.theses"
+                display-property="name"
+                key-property="id"
+                add-from-autocomplete-only=true
+                id="theses"
+                min-length="1">
+      <auto-complete source="vm.filterTheses($query)"
+                     load-on-focus=true
+                     load-on-down-arrow=true
+                     load-on-empty=true
+                     min-length="1"></auto-complete>
+    </tags-input>
+  </form-group>
+
+  <form-group field-name="WatchList"
+              data-ng-if="vm.tag_list.watchlist.length">
+    <label for="watchlists" class="control-label">
+      Watch List
+    </label>
+
+    <tags-input data-ng-model="vm.investment.watchlists"
+                display-property="name"
+                key-property="id"
+                add-from-autocomplete-only=true
+                id="watchlists"
+                min-length="1">
+      <auto-complete source="vm.filterWatchLists($query)"
+                     load-on-focus=true
+                     load-on-down-arrow=true
+                     load-on-empty=true
+                     min-length="1"></auto-complete>
+    </tags-input>
+  </form-group>
+
+  <div class="form group">
+    <button type="submit"
+            button-loader="vm.saving_tags">Update Tags</button>
+
+    <p class="text-muted space-on-top-lg">
+      <small>
+        <i>This helps tag firms for easier tracking. Tags could be for geography, conviction, asset types or thesis.</i>
+      </small>
+    </p>
+  </div>
+</form>

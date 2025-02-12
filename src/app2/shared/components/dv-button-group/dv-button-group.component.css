@@ -1,0 +1,10 @@
+:host ::ng-deep .button-group > dv-button {
+  margin-left: 10px;
+}
+:host ::ng-deep .button-group > dv-button:first-child {
+  margin-left: 0;
+}
+
+.button-group {
+  display: flex;
+}

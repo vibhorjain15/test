@@ -1,0 +1,41 @@
+.container-header {
+  border: 1px solid #e9e9e9 !important;
+  background: white 0% 0% no-repeat padding-box;
+  padding: 10px;
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .group-wrapper {
+  border: 1px solid #e9e9e9 !important;
+  border-top: 0 !important;
+}
+
+::ng-deep .parent-question {
+  display: block !important;
+  padding-bottom: 10px !important;
+  padding-top: 10px !important;
+}
+
+.diligence-text-center {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.width-50 {
+  width: 50%;
+}
+
+.disabled {
+  display: none;
+}
+
+.margin-top-bottom {
+  margin: 10px 0px;
+}

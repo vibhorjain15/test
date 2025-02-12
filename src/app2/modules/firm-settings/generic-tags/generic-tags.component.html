@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Manage Tags and Custom Fields</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      Manage all tags and custom fields under this section.
+    </div>
+  </div>
+  <div class="panel-body">
+    <ng-container *ngFor="let tag of tagsList">
+      <ng-container *ngIf="userType !== tag.hidden_from">
+        <app-tags-manager
+          [tag]="tag"
+          [tagsValue]="tags[tag.name]"
+        ></app-tags-manager>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

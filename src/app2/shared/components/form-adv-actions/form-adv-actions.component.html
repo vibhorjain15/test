@@ -1,0 +1,24 @@
+<span *ngIf="params.data">
+  <div *ngIf="!params.data.is_tracking">
+    <button
+      appButton
+      btnType="primary"
+      size="sm"
+      (click)="addFirmCRD(params.data)"
+      button-loader="params.data.adding_mapping"
+    >
+      Track
+    </button>
+  </div>
+  <div *ngIf="params.data.is_tracking">
+    <button
+      appButton
+      btnType="default"
+      size="sm"
+      (click)="confirmMappingRemoval(params.data)"
+      button-loader="params.data.removing_mapping"
+    >
+      Untrack
+    </button>
+  </div>
+</span>

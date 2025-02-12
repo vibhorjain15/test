@@ -1,0 +1,46 @@
+diff --git a/node_modules/pdfmake/build/pdfmake.js b/node_modules/pdfmake/build/pdfmake.js
+index 3fa2ffb..647baef 100644
+--- a/node_modules/pdfmake/build/pdfmake.js
++++ b/node_modules/pdfmake/build/pdfmake.js
+@@ -71493,23 +71493,24 @@ function URLBrowserResolver(fs) {
+ }
+ 
+ URLBrowserResolver.prototype.resolve = function (url) {
+-	if (!this.resolving[url]) {
+-		var _this = this;
+-		this.resolving[url] = new Promise(function (resolve, reject) {
+-			if (url.toLowerCase().indexOf('https://') === 0 || url.toLowerCase().indexOf('http://') === 0) {
+-				fetchUrl(url).then(function (buffer) {
+-					_this.fs.writeFileSync(url, buffer);
+-					resolve();
+-				}, function (result) {
+-					reject(result);
+-				});
+-			} else {
+-				// cannot be resolved
+-				resolve();
+-			}
+-		});
+-	}
+-
++  if(url) {
++    if (!this.resolving[url]) {
++      var _this = this;
++      this.resolving[url] = new Promise(function (resolve, reject) {
++        if (url.toLowerCase().indexOf('https://') === 0 || url.toLowerCase().indexOf('http://') === 0) {
++          fetchUrl(url).then(function (buffer) {
++            _this.fs.writeFileSync(url, buffer);
++            resolve();
++          }, function (result) {
++            reject(result);
++          });
++        } else {
++          // cannot be resolved
++          resolve();
++        }
++      });
++    }
++  }
+ 	return this.resolving[url];
+ }
+ 

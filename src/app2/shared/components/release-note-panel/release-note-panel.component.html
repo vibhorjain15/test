@@ -1,0 +1,75 @@
+<div class="panel panel-default">
+  <div class="panel-heading" (click)="$event.stopPropagation()">
+    <h5 class="panel-title text-bold">Discover What's New</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          (click)="closeEvent()"
+          role="button"
+          tabindex="0"
+          aria-label="close release notes panel"
+        >
+          <span
+            appIcon
+            name="close-circle"
+            color="grey"
+            customSize="big"
+          ></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="releases" class="list-group notification-list">
+    <div
+      *ngFor="let release of releases"
+      class="release-note-item clickable"
+      (click)="openReleaseNote(release)"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="release.title"
+    >
+      <div class="release-note-item-timeline text-center">
+        <span
+          appIcon
+          [name]="release.category"
+          [color]="ModuleColor[release.category]"
+          shape="rectangle"
+          customSize="big"
+          background="light"
+          bgSpace="medium"
+        ></span>
+      </div>
+      <div class="release-note-item-overview">
+        <div class="release-note-item-overview-header text-bold">
+          <span class="release-title inline-block">
+            {{ release.title }}
+          </span>
+          <span
+            *ngIf="!release.read"
+            class="unread-red-dot inline-block"
+          ></span>
+        </div>
+        <div class="release-note-item-overview-content text-muted">
+          <small [innerHTML]="release.description | dvSafeHtml"> </small>
+        </div>
+        <div class="text-right text-muted half-opacity">
+          <small>
+            {{ release.release_date | dvDate : ["isLocaleDate"] }}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <a
+      class="btn btn-block btn-primary all-notifications"
+      (click)="handleViewAll()"
+      href="/#/app/releases/notes"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      View All
+    </a>
+  </div>
+</div>

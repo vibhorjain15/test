@@ -1,0 +1,326 @@
+<app-modal
+  [title]="modalTitle"
+  firstButtonLabel="Auto-fill as Drafts"
+  secondButtonLabel="Auto-fill"
+  (onSecondClick)="handleAutoFill($event)"
+  secondButtonType="primary"
+  (onFirstClick)="handleAutoFill($event, true)"
+  firstButtonType="secondary"
+  [isCancelButton]="false"
+  firstButtonTooltip="Auto-fill and save responses as drafts"
+  secondButtonTooltip="Please note that if the source responses are in draft, they will be auto-filled as drafts in this project."
+  leftActionButtonLabel="History"
+  (onLeftActionClick)="showAutofillHistory()"
+  [isLoading]="firstLoader"
+  [isSecondaryLoading]="secondLoader"
+  [initialTemplate]="autoFill"
+  [isSecondButtonDisabled]="
+    (selectedTab === TabType.Standard &&
+      selectedButton != AutoFill.Most_Recent &&
+      selectedButton != AutoFill.From_Mapped_Responses &&
+      !selectedEntityId &&
+      !selectedProjectId) ||
+    loader
+  "
+  [isFirstButtonDisabled]="
+    (selectedTab === TabType.Standard &&
+      selectedButton != AutoFill.Most_Recent &&
+      selectedButton != AutoFill.From_Mapped_Responses &&
+      !selectedEntityId &&
+      !selectedProjectId) ||
+    loader
+  "
+  #modal
+>
+  <ng-template #autoFill>
+    <dv-button-radio-group
+      class="justify-center space-on-bottom-lg"
+      [items]="tabTypes"
+      [(ngModel)]="selectedTab"
+      (onActiveButtonChange)="setSelectedTab($event)"
+      [disabled]="loading_data"
+      *ngIf="user.isManager"
+    ></dv-button-radio-group>
+
+    <div>
+      <autofill-help-text
+        [selectedButton]="selectedButton"
+        [selectedTab]="selectedTab"
+        [entityName]="selectedEntityName"
+        [firmName]="selectedFirmName"
+        [diligence]="diligence"
+      ></autofill-help-text>
+
+      <div [ngClass]="{ 'af-main': filterObj.id == 'select' }">
+        <div class="cat-list" *ngIf="filterObj.id == 'select'">
+          <dv-category-accordion-list
+            [categoryData]="categoryCopy"
+            [isCheckbox]="true"
+            role="region"
+            aria-label="Category list"
+          ></dv-category-accordion-list>
+        </div>
+
+        <div [ngClass]="{ 'af-content': filterObj.id == 'select' }">
+          <div class="af-response">
+            <div
+              class="panel panel-default tab-bar"
+              *ngIf="selectedTab === TabType.Standard"
+            >
+              <div class="panel-body list-wrapper dv-tab">
+                <ng-container
+                  *ngFor="let item of standardTabLabels; let i = index"
+                >
+                  <div *ngIf="item.condition" class="dv-border">
+                    <dv-label
+                      class="clickable tab-label"
+                      (click)="onButtonClick(item.name, i)"
+                      [label]="item.name"
+                      [type]="item.active ? 'bold' : ''"
+                      [color]="item.active ? 'primary' : 'default'"
+                      size="large"
+                      tabindex="0"
+                      [attr.aria-label]="'Tab: ' + item.name"
+                      role="tab"
+                      [attr.aria-selected]="item.active"
+                      (keydown.enter)="onButtonClick(item.name, i)"
+                    ></dv-label>
+                    <div class="border" *ngIf="item.active"></div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+
+            <dv-form-element
+              label="Auto-fill"
+              elementCol="12"
+              labelPosition="top"
+              [for]="'filter'"
+            >
+              <dv-select
+                [list]="filterList"
+                name="filter"
+                [id]="'filter'"
+                bindValue=""
+                [ngModel]="filterObj"
+                (onSelectChange)="handleFilterChange($event)"
+              >
+              </dv-select>
+            </dv-form-element>
+
+            <dv-divider
+              *ngIf="selectedButton != AutoFill.From_Mapped_Responses"
+              horizontalMargin="mini"
+            ></dv-divider>
+
+            <div *ngIf="selectedTab === TabType.Advanced" class="flex-column">
+              <autofill-content-settings
+                #contentSettings
+                role="region"
+                aria-label="Auto-fill content settings"
+              ></autofill-content-settings>
+              <dv-divider horizontalMargin="mini"> </dv-divider>
+            </div>
+
+            <div
+              *ngIf="
+                selectedTab === TabType.Advanced ||
+                (selectedButton !== AutoFill.From_Diligence_Project &&
+                  selectedButton !== AutoFill.From_Mapped_Responses)
+              "
+              class="flex-column"
+            >
+              <autofill-entity-settings
+                [diligence]="diligence"
+                [selectedButton]="selectedButton"
+                [selectedTab]="selectedTab"
+                #entitySettings
+                role="region"
+                aria-label="Auto-fill entity settings"
+              ></autofill-entity-settings>
+              <dv-divider horizontalMargin="mini"></dv-divider>
+            </div>
+
+            <div *ngIf="selectedTab === TabType.Advanced">
+              <dv-form-element
+                [showRightIcon]="false"
+                fieldName="tags"
+                label="Select Tag(s)"
+                labelPosition="top"
+                elementCol="12"
+                aria-label="Select Tag(s)"
+                [for]="'tags'"
+              >
+                <dv-select
+                  [clearable]="false"
+                  [searchable]="true"
+                  [placeholder]="'Select tags'"
+                  bindLabel="name"
+                  bindValue="id"
+                  [list]="tags"
+                  [id]="'tags'"
+                  [multiple]="true"
+                  [(ngModel)]="selectedTags"
+                  [aria-label]="'Tags dropdown'"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+
+            <ng-container *ngIf="selectedTab === TabType.Standard">
+              <div
+                *ngIf="selectedButton == AutoFill.From_Diligence_Project"
+                class="d-flex-column"
+              >
+                <autofill-project-selection
+                  [diligence]="diligence"
+                  [user]="user"
+                  #diligenceProjectSelection
+                  (onProjectSelected)="selectedProjectId = $event"
+                  role="region"
+                  aria-label="Project selection"
+                ></autofill-project-selection>
+                <dv-divider horizontalMargin="mini"></dv-divider>
+              </div>
+              <div *ngIf="selectedButton == AutoFill.From_a_Product">
+                <dv-form-element
+                  label="Select a Product"
+                  labelPosition="top"
+                  elementCol="12"
+                  aria-label="Select a Product"
+                >
+                  <dv-select
+                    [list]="products"
+                    bindValue=""
+                    (onSelectChange)="onEntitySelectionChange($event)"
+                    [loading]="entitiesLoading"
+                    [aria-label]="'Product selection'"
+                  ></dv-select>
+                </dv-form-element>
+              </div>
+              <div *ngIf="selectedButton == AutoFill.From_a_Strategy">
+                <dv-form-element
+                  label="Select a Strategy"
+                  labelPosition="top"
+                  elementCol="12"
+                  aria-label="Select a Strategy"
+                >
+                  <dv-select
+                    [list]="strategies"
+                    bindValue=""
+                    (onSelectChange)="onEntitySelectionChange($event)"
+                    [loading]="entitiesLoading"
+                    [aria-label]="'Strategy selection'"
+                  ></dv-select>
+                </dv-form-element>
+              </div>
+              <div *ngIf="selectedButton == AutoFill.From_a_Vehicle">
+                <dv-form-element
+                  label="Select a Vehicle"
+                  labelPosition="top"
+                  elementCol="12"
+                  aria-label="Select a Vehicle"
+                >
+                  <dv-select
+                    [list]="vehicles"
+                    bindValue=""
+                    (onSelectChange)="onEntitySelectionChange($event)"
+                    [loading]="entitiesLoading"
+                    [aria-label]="'Vehicle selection'"
+                  ></dv-select>
+                </dv-form-element>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="showMatchSettings">
+              <div
+                *ngIf="
+                  selectedTab === TabType.Advanced ||
+                  selectedButton !== AutoFill.Most_Recent
+                "
+              >
+                <dv-divider horizontalMargin="mini"></dv-divider>
+              </div>
+              <div
+                class="space-on-top"
+                *ngIf="
+                  selectedTab === TabType.Standard &&
+                  selectedButton === AutoFill.Most_Recent
+                "
+              ></div>
+              <dv-form-element
+                label="Match Settings"
+                elementCol="12"
+                labelPosition="top"
+                [infoText]="questionMatchInfoText"
+                [formElementTooltip]="questionMatchElementTooltip"
+                [disabled]="
+                  user.isFreeSubscription ||
+                  firmPreferences.autofill_restrict_modifications
+                "
+                aria-label="Match Settings"
+              >
+                <span
+                  col="6"
+                  class="match-text"
+                  [ngClass]="{
+                    'disabled-Element':
+                      user.isFreeSubscription ||
+                      firmPreferences.autofill_restrict_modifications
+                  }"
+                  >% Similarity Match</span
+                >
+                <dv-slider
+                  col="6"
+                  [value]="questionMatchValue"
+                  min="0"
+                  max="100"
+                  [showPercentage]="true"
+                  (onSliderChange)="onSliderChange($event)"
+                  [disabled]="
+                    user.isFreeSubscription ||
+                    firmPreferences.autofill_restrict_modifications
+                  "
+                  role="region"
+                  aria-label="Similarity Match Slider"
+                ></dv-slider>
+              </dv-form-element>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="lastAutofillDetails" class="space-on-top-lg space-on-left-lg">
+        Last Auto-filled {{ lastAutofillDetails.total_count }} most recent
+        responses<span *ngIf="lastAutofillDetails.source_entity_name">
+          from {{ lastAutofillDetails.source_entity_name_prefix }}
+          {{ lastAutofillDetails.source_entity_name }}</span
+        >.
+        <a
+          (click)="undoAutofill(lastAutofillDetails)"
+          class="cursor-pointer"
+          aria-label="Delete last auto-fill"
+          >Delete</a
+        >
+      </div>
+
+      <div class="space-on-top-lg">
+        <autofill-preview
+          [diligence]="diligence"
+          [selectedButton]="selectedButton"
+          [selectedTab]="selectedTab"
+          [previewData]="previewData"
+          [selectedEntity]="selectedEntityId"
+          [selectedProject]="selectedProjectId"
+          [loading]="previewLoading"
+          [showMatchText]="showMatchSettings && !user.isFreeSubscription"
+          (onAutoFillPreviewClick)="getAutofillPreviewCounts()"
+          *ngIf="
+            selectedTab === TabType.Advanced ||
+            selectedButton !== AutoFill.From_Mapped_Responses
+          "
+          aria-label="Auto-fill preview"
+        ></autofill-preview>
+      </div>
+    </div>
+  </ng-template>
+</app-modal>

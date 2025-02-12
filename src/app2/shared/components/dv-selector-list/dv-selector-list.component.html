@@ -1,0 +1,310 @@
+<div class="clearfix">
+  <div class="panel panel-default dd-multiselect" style="left: 0">
+    <div class="panel-heading">
+      <div class="row clearfix">
+        <div
+          [class]="isExistingQuestion ? 'col-md-4' : 'col-md-7'"
+          class="no-padding"
+        >
+          <div
+            class="input-group-rename-this-class-when-filters-are-enabled"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <input
+              type="text"
+              [(ngModel)]="filters.name"
+              class="form-control"
+              [disabled]="disabledSearch"
+              (keyup)="handleKeyUp()"
+              [placeholder]="placeholder"
+            />
+          </div>
+        </div>
+        <div
+          [class]="isExistingQuestion ? 'col-md-8' : 'col-md-5'"
+          class="no-padding"
+        >
+          <div
+            [class]="isExistingQuestion ? 'col-md-6' : 'col-md-12 text-right'"
+          >
+            <dv-button
+              btnType="default"
+              btnClass=" space-on-top-2"
+              *ngIf="objectLength > 0"
+              [tooltipText]="
+                filters_section.show ? 'Hide Filters' : 'Apply Filters'
+              "
+              (onClick)="toggleFiltersSection()"
+              triggers="mouseenter:mouseleave click click:mouseleave"
+              [ariaLabel]="
+                filters_section.show ? 'Hide Filters' : 'Apply Filters'
+              "
+            >
+              <span
+                appIcon
+                name="filter"
+                [ngClass]="{
+                  'text-orange':
+                    filters_section.show ||
+                    filters_section?.filterApplied ||
+                    filterApplied
+                }"
+              ></span>
+            </dv-button>
+            <dv-button
+              size="sm"
+              btnType="default"
+              *ngIf="!selectedAll && isMultiple"
+              [disabled]="!entities || entities.length == 0"
+              btnClass="space-on-top-2 space-on-left"
+              (onClick)="selectAll()"
+            >
+              <span class="align-middle">Select All</span>
+            </dv-button>
+            <dv-button
+              *ngIf="selectedAll && isMultiple"
+              [disabled]="!entities || entities.length == 0"
+              btnType="default"
+              btnClass="space-on-top-2 space-on-left"
+              (onClick)="unSelectAll()"
+            >
+              <span class="align-middle">Unselect All</span>
+            </dv-button>
+          </div>
+          <div
+            col="6"
+            *ngIf="isExistingQuestion"
+            class="space-on-top-2 no-padding"
+          >
+            <ng-content select="[isCustomAction]"></ng-content>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="panel-body padded-top-lg bg-sky-blue"
+      *ngIf="!showFilterModal && filters_section.show"
+    >
+      <div class="row clearfix">
+        <div
+          *ngIf="!isExistingQuestion"
+          class="pull-right space-on-right-xl space-on-top-lg"
+        >
+          <span>
+            <strong> Filters </strong>
+          </span>
+          <a
+            role="button"
+            tabindex="0"
+            class="link-disguise space-on-left"
+            tooltip="Clear Filters"
+            (click)="resetFilters()"
+            *ngIf="filters.section_id != null"
+          >
+            <u>Clear</u>
+          </a>
+        </div>
+        <div col="9" *ngIf="filter_params['section_id']" class="space-on-top">
+          <div
+            class="form-group clear-margin-bottom padded-left-sm padding-right-lg"
+          >
+            <div>
+              <dv-select
+                [(ngModel)]="filters.section_id"
+                placeholder="Select a sub category"
+                (onSelectChange)="applyFilters()"
+                [list]="sectionFilterSource"
+                name="section_id"
+                [id]="'section_id'"
+              >
+              </dv-select>
+            </div>
+          </div>
+        </div>
+        <div
+          col="9"
+          *ngIf="filter_params['tag_id']"
+          class="space-on-top space-on-bottom"
+        >
+          <div
+            class="form-group clear-margin-bottom padded-left-sm padding-right-lg"
+          >
+            <div>
+              <dv-select
+                [(ngModel)]="filters.tag_id"
+                (onSelectChange)="applyFilters()"
+                [placeholder]="'Select a ' + entity_type + ' Tag'"
+                [list]="tags"
+                [disabled]="!tags?.length"
+                name="tag_id"
+                id="tag_id"
+              >
+              </dv-select>
+            </div>
+          </div>
+        </div>
+
+        <div
+          col="9"
+          *ngIf="filter_params['relationship_status_id']"
+          class="space-on-top space-on-bottom"
+        >
+          <div
+            class="form-group clear-margin-bottom padded-left-sm padding-right-lg"
+          >
+            <div>
+              <dv-select
+                [(ngModel)]="filters.relationship_status_id"
+                (onSelectChange)="applyFilters()"
+                [placeholder]="'Select a Status'"
+                [list]="statusTags"
+                name="relationship_status_id"
+                id="relationship_status_id"
+              >
+              </dv-select>
+            </div>
+          </div>
+        </div>
+
+        <div
+          col="9"
+          *ngIf="filter_params['strategyID']"
+          class="space-on-top space-on-bottom"
+        >
+          <div
+            class="form-group clear-margin-bottom padded-left-sm padding-right-lg"
+          >
+            <div>
+              <dv-select
+                [(ngModel)]="filters.strategyID"
+                (onSelectChange)="applyFilters()"
+                [placeholder]="listPlaceholder"
+                [list]="strategies"
+                name="strategyID"
+                id="strategyID"
+              >
+              </dv-select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <ng-content select="[isCustomFilter]"></ng-content>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-group">
+      <div *ngIf="!loading_entities">
+        <app-empty-state
+          [message]="
+            emptyStateMessage
+              ? emptyStateMessage
+              : 'No ' + entity_type.toLowerCase() + ' found'
+          "
+          *ngIf="!entities || entities.length == 0"
+        ></app-empty-state>
+        <div class="list-group-item" *ngFor="let entity of entitiesInPage">
+          <div class="row clearfix">
+            <span class="space-on-right inline-block">
+              <span
+                appIcon
+                name="plus-circle"
+                *ngIf="!entity.is_selected"
+                (click)="selectEntity(entity)"
+                size="lg"
+                class="text-primary"
+                role="button"
+                aria-label="Add selected entity"
+                tabindex="0"
+              ></span>
+              <span
+                appIcon
+                name="check"
+                *ngIf="entity.is_selected"
+                (click)="unSelectEntity(entity)"
+                size="lg"
+                class="text-success"
+                role="button"
+                tabindex="0"
+                aria-label="unselect entity"
+              ></span>
+            </span>
+            <span
+              *ngIf="!isExistingQuestion"
+              [innerHtml]="entity[displayParams.name] | dvSafeHtml"
+            ></span>
+            <span
+              *ngIf="isExistingQuestion"
+              class="inline-block"
+              style="width: 95%"
+            >
+              <span class="flex">
+                <span class="full-width">
+                  <span
+                    class="space-on-bottom flex space-between flex-end full-width"
+                  >
+                    <span
+                      [innerHtml]="entity[displayParams.name] | dvSafeHtml"
+                    ></span>
+                    <span class="half-opacity white-space-nowrap"
+                      >Response(s) : <b>{{ entity?.response_count }}</b></span
+                    >
+                  </span>
+                  <span
+                    class="space-on-bottom flex space-between flex-end full-width half-opacity"
+                  >
+                    <span>
+                      Response Type :
+                      {{ responseTypeMap[entity?.response_type]?.description }}
+                    </span>
+                    <span>
+                      Template(s) : <b>{{ entity?.template_count }}</b>
+                    </span>
+                  </span>
+                </span>
+              </span>
+            </span>
+            <span
+              *ngIf="badgeLabel && entity[badgeLabel.label]"
+              [class]="'space-on-left badge ' + badgeLabel.class"
+            >
+              {{ badgeLabel.text }}
+            </span>
+            <span
+              class="pull-right clickable"
+              *ngIf="displayParams.showQuestionTags"
+              ><a (click)="viewQuestionTags(entity)">{{
+                displayParams.showQuestionTagsLabel
+                  ? displayParams.showQuestionTagsLabel
+                  : "View Question Tags"
+              }}</a></span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="list-group-item" *ngIf="loading_entities">
+        <div class="row clearfix text-center">
+          <div>
+            <app-spinner></app-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer justify-center">
+      <pagination
+        class="pagination-sm clear-margin"
+        [boundaryLinks]="true"
+        [(ngModel)]="current_page"
+        [totalItems]="entities?.length"
+        (pageChanged)="loadNextPage($event)"
+        [maxSize]="5"
+      ></pagination>
+    </div>
+  </div>
+
+  <div class="pull-right" *ngIf="showTotalEntitiesCount && entities?.length">
+    Total {{ entities.length }} {{ entity_type }} available
+  </div>
+</div>

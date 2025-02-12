@@ -1,0 +1,53 @@
+<app-modal
+  [title]="title ? title : 'Create New Rule'"
+  [firstButtonLabel]="title == 'Editing Rule' ? 'Save Rule' : 'Create Rule'"
+  [secondButtonLabel]="
+    title == 'Editing Rule' ? 'Save & Add Another' : 'Create & Add Another'
+  "
+  (onSecondClick)="createRule($event, true)"
+  (onFirstClick)="createRule($event, false)"
+  [initialTemplate]="addRule"
+  [isLoading]="loading"
+  [isSecondaryLoading]="createAnotherLoader"
+></app-modal>
+
+<ng-template #addRule>
+  <div id="rule-builder-label" class="sr-only">Rule Builder</div>
+  <dv-button-radio-group
+    class="space-on-bottom-xl justify-center"
+    [items]="tabs"
+    [(ngModel)]="selected_tab"
+    *ngIf="title != 'Editing Rule'"
+  ></dv-button-radio-group>
+  <div id="tab-selection-label" class="sr-only">Select Rule Builder Tab</div>
+  <ng-container [ngSwitch]="selected_tab">
+    <ng-container *ngSwitchCase="1">
+      <!-- Add accessibility improvements for simple-rule-builder component -->
+    </ng-container>
+    <ng-container *ngSwitchCase="2">
+      <advanced-rule-builder
+        [allQuestions]="allQuestions"
+        [displayQuestions]="displayQuestions"
+        [ruleData]="ruleData"
+        [templateRatingSchemeMapping]="templateRatingSchemeMapping"
+        [ratingScaleDefinition]="ratingScaleDefinition"
+        [questionWiseOptionList]="questionWiseOptionList"
+        [title]="title"
+        #advancedRuleBuilder
+      ></advanced-rule-builder>
+    </ng-container>
+    <ng-container *ngSwitchCase="3">
+      <advanced-rule-builder
+        [allQuestions]="allQuestions"
+        [displayQuestions]="displayQuestions"
+        [ruleData]="ruleData"
+        [templateRatingSchemeMapping]="templateRatingSchemeMapping"
+        [ratingScaleDefinition]="ratingScaleDefinition"
+        [questionWiseOptionList]="questionWiseOptionList"
+        [title]="title"
+        type="simple"
+        #advancedRuleBuilder2
+      ></advanced-rule-builder>
+    </ng-container>
+  </ng-container>
+</ng-template>

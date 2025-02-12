@@ -1,0 +1,242 @@
+<div>
+  <div class="panel panel-default">
+    <div class="panel-body clearfix">
+      <div class="forum-exploring-options">
+        <h5 class="clear-margin">
+          Explore in
+          <span class="dropdown space-on-left-lg" uib-dropdown>
+            <a href class="dropdown-toggle" uib-dropdown-toggle>
+              <b>
+                All Fund Types
+                <span class="caret"></span>
+              </b>
+            </a>
+            <ul class="dropdown-menu" uib-dropdown-menu>
+              <li>
+                <a ui-sref="app.discuss.explore({category: null})"
+                   role="menuitem">All Fund Types</a>
+              </li>
+
+              <li data-ng-repeat="fund_type in vm.fund_types">
+                <a ui-sref="app.discuss.explore({category: fund_type.value})"
+                   role="menuitem">{{fund_type.value}}</a>
+              </li>
+            </ul>
+          </span>
+
+          <span class="dropdown space-on-left-lg" uib-dropdown>
+            <a href class="dropdown-toggle" uib-dropdown-toggle>
+              <b>
+                All Categories
+                <span class="caret"></span>
+              </b>
+            </a>
+
+            <ul class="dropdown-menu category-dropdown-menu" uib-dropdown-menu>
+              <li>
+                <a ui-sref="app.discuss.explore({category: null})"
+                   role="menuitem">All Fund Types</a>
+              </li>
+
+              <li data-ng-repeat="category in vm.discussion_categories">
+                <a ui-sref="app.discuss.explore({category: category.value})"
+                   role="menuitem">{{category.value}}</a>
+              </li>
+            </ul>
+          </span>
+        </h5>
+      </div>
+
+      <div class="pull-right">
+        <a ui-sref="app.discuss.new" class="btn btn-primary pull-left">
+          <icon name="comment-o" class="space-on-right-sm align-middle"></icon>
+          <span class="align-middle">New Discussion</span>
+        </a>
+
+        <div class="search-form-group space-on-left pull-right">
+          <search-question-form on-submit="vm.performSearch(filters)"
+                                filters="vm.filters"></search-question-form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row clearfix">
+    <div class="col-md-8 padded-right-sm">
+      <div class="panel panel-default"
+           data-ng-show="(vm.applied_filters.category || vm.applied_filters.q) && !vm.is_loading_discussions">
+        <div class="panel-body">
+          <p class="clear-margin">
+            <span class="align-middle">
+              <b>{{vm.data_length || ''}}</b>
+              <ng-pluralize count="vm.data_length"
+                when="{'0': 'No matches',
+                       '1': 'match',
+                       'other': 'matches'}"></ng-pluralize>
+              found
+            </span>
+
+            <span data-ng-show="vm.applied_filters.category" class="align-middle">
+              tagged with the category <b>{{vm.applied_filters.category}}</b>
+            </span>
+
+            <span data-ng-show="vm.applied_filters.category && vm.applied_filters.q"
+                  class="align-middle">
+              and
+            </span>
+
+            <span data-ng-show="vm.applied_filters.q" class="align-middle">
+              containing the text <b>{{vm.applied_filters.q}}</b>
+            </span>
+
+            <a ui-sref="app.discuss.explore({category: null, q: null})"
+               class="link-muted space-on-left align-middle">
+              <icon name="times-circle-o" size="lg"></icon>
+              clear filters
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="pull-left space-on-top">
+            <h3 class="clear-margin">
+              Discussions
+            </h3>
+          </div>
+
+          <div class="right-tabs clearfix">
+            <ul class="nav nav-tabs" dv-nav-tabs-dropdown>
+              <li data-ng-class="{'active': vm.sort == 'Top'}">
+                <a ui-sref="app.discuss.explore({sort: 'Top'})">Top Discussions</a>
+              </li>
+
+              <li data-ng-class="{'active': vm.sort == 'Recent'}">
+                <a ui-sref="app.discuss.explore({sort: 'Recent'})">Recent Discussions</a>
+              </li>
+            </ul>
+
+            <div class="tab-content">
+              <ul class="list-unstyled discussion-list"
+                  infinite-scroll="vm.loadNextPage()"
+                  infinite-scroll-disabled="vm.is_loading_discussions || vm.current_page >= vm.total_pages">
+                <li data-ng-repeat="discussion in vm.discussions" class="clearfix discussion">
+                  <div class="text-muted space-on-bottom-xl"
+                       data-ng-show="discussion.categories.length">
+                    <span>
+                      <small class="align-middle space-on-right">
+                        <icon name="tag"></icon> Tagged as
+                      </small>
+
+                      <a ui-sref="app.discuss.explore({category: category})"
+                         class="label label-default align-middle"
+                         data-ng-repeat="category in discussion.categories">
+                        {{category}}
+                      </a>
+                    </span>
+                  </div>
+                  <div>
+                    <h4 class="discussion-title">
+                      <a ui-sref="app.discuss.detail({slug: discussion.slug, discussionId: discussion.id})"
+                         class="link-disguise">
+                        <span data-ng-hide="vm.applied_filters.q">{{discussion.text}}</span>
+                        <span class="word-break-break-all" ng-bind-html="vm.highlight(discussion.text)"
+                              data-ng-show="vm.applied_filters.q"></span>
+                      </a>
+                    </h4>
+
+                    <div class="space-on-top">
+                      <user-avatar user="discussion.author"
+                                   avatar-class="discussion-author-avatar"></user-avatar>
+                      <div class="align-middle inline-block space-on-left">
+                        <div>
+                          <span data-ng-if="!discussion.author.anonymous">
+                            {{discussion.author.firstName}} {{discussion.author.lastName}}
+                            <span data-ng-show="discussion.author.title">&middot; {{discussion.author.title}}</span>
+                          </span>
+
+                          <span class="text-muted" data-ng-if="discussion.author.anonymous">
+                            <b>Anonymous ({{discussion.author.type|capitalize}})</b>
+                          </span>
+                        </div>
+                        <small class="text-muted">
+                          started this {{discussion.insertTimeStamp|fromNow}}
+                        </small>
+                      </div>
+                    </div>
+
+                    <div class="followers hidden">
+                      <small class="text-muted">
+                        <span data-ng-repeat="follower in discussion.followers">
+                          <a ui-sref="app.user_profile({username: follower.username})"
+                             class="link-muted">
+                            {{follower.name}}
+                          </a>
+                          <span data-ng-hide="follower == discussion.followers[2]">,</span>
+                        </span>
+                        and 2 others follow this discussion
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="space-on-top-xl">
+                    <a ui-sref="app.discuss.detail({slug: discussion.slug, action: 'write_answer', discussionId: discussion.id})"
+                       class="btn btn-primary-outline btn-sm space-on-right">
+                      Write an answer
+                    </a>
+
+                    <discussion-follow discussion="discussion"></discussion-follow>
+
+                    <small class="space-on-left" data-ng-show="discussion.answerCount">
+                      <a ui-sref="app.discuss.detail({slug: discussion.slug, discussionId: discussion.id})" class="link-muted">
+                        <icon name="comments-o"></icon>
+
+                        <b>
+                          <ng-pluralize count="discussion.answerCount"
+                                        when="{'1': 'View 1 reply',
+                                               'other': 'View {} replies'}"></ng-pluralize>
+                        </b>
+                      </a>
+                    </small>
+                  </div>
+                </li>
+              </ul>
+
+              <div data-ng-show="vm.is_loading_discussions"
+                   class="space-on-top">
+                <spinner></spinner>
+              </div>
+
+              <div class="form-group text-center"
+                   data-ng-show="!vm.is_loading_discussions && vm.current_page >= vm.infinite_scroll_page_count && vm.current_page < vm.total_pages">
+                <button block="true" data-ng-click="vm.loadNextPage()" btn-type="default">
+                  Load more discussions
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 padded-left-sm">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <section class="discussion-group">
+            <h5 class="section-title">Help answer the below open discussions</h5>
+
+            <div data-ng-hide="vm.open_discussions">
+              <spinner></spinner>
+            </div>
+
+            <a ui-sref="app.discuss.detail({slug: discussion.slug, discussionId: discussion.id})"
+               class="discussion-title link-disguise"
+               data-ng-repeat="discussion in vm.open_discussions">{{discussion.text}}</a>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+.panel {
+  &.panel-default {
+    .make-panel-controls(@panel-default-heading-bg; @panel-default-border; @panel-default-text);
+  }
+
+  &.panel-primary {
+    .make-panel-controls(@panel-primary-heading-bg; @panel-primary-border; @panel-primary-text);
+  }
+
+  &.panel-success {
+    .make-panel-controls(@panel-success-heading-bg; @panel-success-border; @panel-success-text);
+  }
+
+  &.panel-info {
+    .make-panel-controls(@panel-info-heading-bg; @panel-info-border; @panel-info-text);
+  }
+
+  &.panel-warning {
+    .make-panel-controls(@panel-warning-heading-bg; @panel-warning-border; @panel-warning-text);
+  }
+
+  &.panel-danger {
+    .make-panel-controls(@panel-danger-heading-bg; @panel-danger-border; @panel-danger-text);
+  }
+}
+
+.md-panel { //master-detail panel
+  .panel-body {
+    .list-group {
+      margin: -15px;
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    .list-group-item {
+      padding: 15px;
+      border-left: none;
+      border-right: none;
+
+      .controls {
+        position: absolute;
+        // display: none;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        bottom: 5px;
+      }
+
+      &.active {
+        .control {
+          &:hover {
+            color: white;
+          }
+          &.control-danger {
+            &:hover, &:hover small {
+              color: lighten(@panel-danger-text, 10%);
+            }
+          }
+        }
+      }
+
+      .control {
+        opacity: 0.3;
+
+        &.active {
+          opacity: 1;
+        }
+
+        &:hover {
+          opacity: 1;
+          color: @dv-blue;
+        }
+
+        &.control-danger:hover {
+          color: lighten(@panel-danger-text, 10%);
+        }
+
+        &.disabled {
+          cursor: not-allowed;
+
+          &:hover {
+            opacity: 0.3;
+          }
+        }
+      }
+
+
+      &.has-controls {
+        padding-right: 30px;
+        position: relative;
+      }
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:first-child, &:last-child {
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+.fixed-height-panel {
+  overflow-y: scroll;
+
+  &.fixed-height-300 {
+    max-height: 300px;
+  }
+}
+
+.panel-hot {
+  .handsontable-container {
+    margin: -1px;
+  }
+}

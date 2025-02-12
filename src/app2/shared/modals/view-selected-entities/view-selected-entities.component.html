@@ -1,0 +1,43 @@
+<app-modal
+  title="Selected {{ entityType }}s ({{ filterDisplay }})"
+  [firstButtonLabel]="'Save'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="templateRef"
+  [isFirstButtonDisabled]="readonly"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div>
+    <div class="row">
+      <input
+        type="text"
+        class="form-control"
+        onkeydown="return event.keyCode !== 13"
+        placeholder="Search {{ entityType }} by name"
+        [(ngModel)]="searchEntity"
+      />
+    </div>
+    <ul
+      class="row list-group max-h-25-em min-h-10-em overflow-scroll-y-axis"
+      tabindex="0"
+    >
+      <li
+        *ngFor="let entity of entities | filter : searchEntity; let i = index"
+        class="list-group-item"
+      >
+        <dv-checkbox
+          [(ngModel)]="entity.selected"
+          [disabled]="readonly"
+          [id]="i"
+          [name]="i"
+          label="{{ entity.display_name }}"
+        ></dv-checkbox>
+      </li>
+      <li *ngIf="!entities.length">
+        <app-empty-state
+          message="No {{ entityType }}s available."
+        ></app-empty-state>
+      </li>
+    </ul>
+  </div>
+</ng-template>

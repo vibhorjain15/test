@@ -1,0 +1,160 @@
+div > hr {
+  margin: 05px 0px 5px 25px;
+}
+
+div > accordion {
+  margin: 0 0px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+:host ::ng-deep .accordion-header .checkbox label {
+  color: #126b82 !important;
+}
+
+:host ::ng-deep .panel-group {
+  margin-bottom: 0;
+}
+
+.icon-wrapper > span {
+  margin-left: 15px;
+}
+
+.accordion-header:hover {
+  text-decoration: none;
+}
+
+:host ::ng-deep .panel-body {
+  padding: 0;
+  border-top: none !important;
+}
+:host ::ng-deep .panel {
+  box-shadow: none;
+}
+:host ::ng-deep .panel-title {
+  font-size: 14px;
+}
+:host ::ng-deep .panel-heading {
+  /* padding: 5px 10px; */
+  padding: 0px;
+}
+:host ::ng-deep .checkbox {
+  margin: 0;
+}
+
+.move-icon-size {
+  font-size: 13px;
+}
+
+.add-sub {
+  padding: 5px 10px;
+  margin: 05px 0px 5px 25px;
+  display: flex;
+  align-items: center;
+}
+.add-sub:hover {
+  text-decoration: none;
+}
+.add-sub > span {
+  margin-right: 5px;
+}
+
+.spinner-display {
+  height: 400px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.disable {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.description {
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+.no-items {
+  font-style: italic;
+  border-radius: 4px;
+  padding: 5px 15px;
+  border: 1px dashed rgb(0 0 0 / 0.3);
+}
+.text-center {
+  text-align: center;
+}
+.header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.note-editor {
+  position: relative;
+}
+/* .editor-enter-button {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  z-index: 1;
+} */
+.footer-buttons {
+  padding: 10px;
+}
+.resolved {
+  cursor: no-drop;
+  opacity: 0.4;
+}
+:host ::ng-deep .tox-tinymce {
+  border-radius: 8px;
+  height: 200px !important;
+}
+:host ::ng-deep .tox .tox-edit-area {
+  border-top: 0 !important;
+}
+.comments-section {
+  padding-top: 8px;
+}
+.custom-divider {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: -10px;
+  margin-right: -10px;
+  border-top: 1px solid #ebebeb;
+}
+:host ::ng-deep ul,
+:host ::ng-deep li {
+  list-style: unset !important;
+}
+:host ::ng-deep .comments-container {
+  max-height: calc(100vh - 335px) !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 3px;
+  padding-right: 6px;
+}
+:host ::ng-deep .comments-container::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+:host ::ng-deep .comments-container::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 10px;
+}
+:host ::ng-deep .comments-container::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d4;
+}
+:host ::ng-deep .tox .tox-tbtn {
+  width: 30px !important;
+}
+.parent-reply-separator {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

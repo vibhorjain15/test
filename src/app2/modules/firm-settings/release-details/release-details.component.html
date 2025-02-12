@@ -1,0 +1,290 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title" id="releaseNoteHeading">Release Note</h5>
+  </div>
+  <div class="panel-info" role="alert">
+    <div class="panel-heading">
+      Caution: The changes applied will be universal for all users.
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <ng-container *ngIf="releaseNoteForm">
+        <form
+          class="form-horizontal"
+          [formGroup]="releaseNoteForm"
+          autocomplete="off"
+        >
+          <dv-form-element
+            [fieldName]="'Release Title'"
+            [modelController]="releaseNoteForm.get('title')"
+            [isRequired]="true"
+            [label]="'Release Title'"
+            [errorMessage]="getErrorMessage('title', 'Release Title')"
+          >
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              formControlName="title"
+              placeholder="Release Title"
+              aria-label="Release Title"
+              autocomplete="off"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Description'"
+            [modelController]="releaseNoteForm.get('description')"
+            [isRequired]="true"
+            [label]="'Description'"
+            [showRightIcon]="false"
+          >
+            <dv-editor
+              [value]="releaseNoteForm.get('description').value"
+              [configObj]="tinyMceInit"
+              [imageSelector]="false"
+              (onChange)="handleDescriptionChange($event)"
+              aria-label="Description"
+            ></dv-editor>
+            <div
+              *ngIf="
+                releaseNoteForm.get('description').touched &&
+                releaseNoteForm.get('description').invalid
+              "
+              class="text-danger"
+              role="alert"
+            >
+              Description is required
+            </div>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'faq_url'"
+            [modelController]="releaseNoteForm.get('faq_url')"
+            [label]="'FAQ URL'"
+            [errorMessage]="getErrorMessage('faq_url', 'FAQ URL')"
+          >
+            <input
+              type="text"
+              id="faq_url"
+              class="form-control"
+              formControlName="faq_url"
+              aria-label="FAQ URL"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'storylane_url'"
+            [modelController]="releaseNoteForm.get('storylane_url')"
+            [label]="'Storylane URL'"
+            [errorMessage]="getErrorMessage('storylane_url', 'Storylane URL')"
+          >
+            <input
+              type="text"
+              id="storylane_url"
+              class="form-control"
+              formControlName="storylane_url"
+              aria-label="Storylane URL"
+              autocomplete="off"
+            />
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'video_url'"
+            [modelController]="releaseNoteForm.get('video_url')"
+            [label]="'Video URL'"
+            [errorMessage]="getErrorMessage('video_url', 'Video URL')"
+          >
+            <input
+              type="text"
+              id="video_url"
+              class="form-control"
+              formControlName="video_url"
+              aria-label="Video URL"
+              autocomplete="off"
+            />
+          </dv-form-element>
+          <div
+            class="form-group has-feedback margin-bottom-0"
+            [ngClass]="{
+              'has-success':
+                imagesFormArray && imagesFormArray?.touched && imagesFormArray?.valid,
+            }"
+            [style.margin-bottom]="marginBottom"
+          >
+            <div class="control-label col-md-3">
+              <span class="fw-bolder"> Image(s) </span>
+            </div>
+            <ng-container formArrayName="image_urls">
+              <div
+                class="col-md-8"
+                [ngClass]="{
+                  'col-md-offset-3 space-on-top': !isFirst,
+                  'has-error':
+                    imagesFormArray.controls[i] &&
+                    imagesFormArray.controls[i]?.touched &&
+                    imagesFormArray.controls[i]?.invalid
+                }"
+                *ngFor="
+                  let _ of imagesFormArray.controls;
+                  index as i;
+                  first as isFirst
+                "
+              >
+                <div class="row">
+                  <div class="col-md-11">
+                    <input
+                      #imageInputField
+                      type="url"
+                      class="form-control"
+                      [formControlName]="i"
+                      placeholder="Add image link"
+                      aria-label="Image Link"
+                      autocomplete="off"
+                    />
+                    <i
+                      appIcon
+                      [name]="'check'"
+                      class="form-control-feedback"
+                      *ngIf="
+                        imagesFormArray.controls[i] &&
+                        imagesFormArray.controls[i]?.touched &&
+                        imagesFormArray.controls[i]?.valid
+                      "
+                      style="top: 0"
+                    ></i>
+                  </div>
+                  <div
+                    class="inline-block align-middle space-on-left space-on-top"
+                    *ngIf="imagesFormArray.controls.length > 1"
+                  >
+                    <dv-button
+                      btnType="secondary"
+                      btnClass="btn-close"
+                      (onClick)="removeImage(i)"
+                      ariaLabel="Remove Image"
+                    >
+                      <div class="space-on-left">&times;</div>
+                    </dv-button>
+                  </div>
+                </div>
+                <div
+                  *ngIf="
+                    imagesFormArray.controls[i] &&
+                    imagesFormArray.controls[i]?.touched &&
+                    imagesFormArray.controls[i]?.invalid
+                  "
+                  class="text-danger"
+                  role="alert"
+                >
+                  {{ getImageControlErrorMessage(i) }}
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          <div class="form-group">
+            <div class="col-md-3 col-md-offset-3 space-on-top">
+              <dv-button
+                btnType="link"
+                (onClick)="addNewImage()"
+                ariaLabel="Add more images"
+              >
+                + Add more
+              </dv-button>
+            </div>
+          </div>
+          <dv-form-element
+            [fieldName]="'Release Date'"
+            [modelController]="releaseNoteForm.get('release_date')"
+            [isRequired]="true"
+            [label]="'Release Date'"
+            [errorMessage]="getErrorMessage('release_date', 'Release date')"
+            [elementCol]="3"
+          >
+            <app-date-picker
+              [id]="'release_date'"
+              [maxDate]="today"
+              [value]="releaseNoteForm.get('release_date').value"
+              (change)="handleReleaseDateChange($event)"
+            ></app-date-picker>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Viewer Type'"
+            [modelController]="releaseNoteForm.get('user_type')"
+            [showRightIcon]="false"
+            [isRequired]="true"
+            [label]="'Viewer Type'"
+            [errorMessage]="getErrorMessage('user_type', 'Viewer Type')"
+            [elementCol]="3"
+          >
+            <dv-select
+              [id]="'user_type'"
+              formControlName="user_type"
+              [contoller]="releaseNoteForm.get('user_type')"
+              placeholder="-- Select Viewer Type --"
+              [list]="userTypes"
+              [searchable]="false"
+            ></dv-select>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Category'"
+            [modelController]="releaseNoteForm.get('category')"
+            [showRightIcon]="false"
+            [isRequired]="true"
+            [label]="'Category'"
+            [errorMessage]="getErrorMessage('category', 'Category')"
+            [elementCol]="3"
+          >
+            <dv-select
+              [id]="'category'"
+              formControlName="category"
+              contoller="releaseNoteForm.get('category')"
+              placeholder="-- Select Category --"
+              [list]="categories"
+              [searchable]="false"
+            ></dv-select>
+          </dv-form-element>
+          <dv-form-element elementCol="12">
+            <span class="control-label fw-bolder" col="3" col-type="sm"></span>
+            <div col="8" col-type="sm">
+              <dv-checkbox
+                label="Draft"
+                formControlName="is_draft"
+                ariaLabel="Draft Checkbox"
+                [id]="'draft'"
+              ></dv-checkbox>
+              <span class="space-on-top infoIconEmailTemplate">
+                <span
+                  appIcon
+                  name="info"
+                  placement="right"
+                  container="body"
+                  tooltip="This release note will not be published until the content is marked as Draft."
+                ></span>
+              </span>
+            </div>
+          </dv-form-element>
+          <div class="form-group">
+            <div col="8" offset="3">
+              <dv-button
+                btnType="default"
+                btnClass="space-on-right"
+                (onClick)="cancel()"
+                ariaLabel="Cancel Button"
+              >
+                Cancel
+              </dv-button>
+              <dv-button
+                [disabled]="releaseNoteForm.invalid"
+                [loader]="saving"
+                (onClick)="save()"
+                ariaLabel="{{
+                  activeReleaseNote ? 'Update Release Note' : 'Add Release Note'
+                }}"
+              >
+                {{ activeReleaseNote ? "Update" : "Add" }} Release Note
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>

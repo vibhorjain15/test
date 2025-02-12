@@ -1,0 +1,17 @@
+<div *ngIf="params.data">
+  <p class="my-admin-display-flex">
+    <a
+      class="unstyledLink my-admin-email-svg"
+      href="mailto:{{ params?.data?.email }}"
+      [attr.aria-label]="params?.data?.email"
+      ><span appIcon name="mail" size="fw"></span
+    ></a>
+    <span
+      [adaptivePosition]="false"
+      class="my-admin-email-cursor"
+      tooltip="{{ params?.data?.email }}"
+      container="body"
+      >{{ params?.data?.email }}</span
+    >
+  </p>
+</div>

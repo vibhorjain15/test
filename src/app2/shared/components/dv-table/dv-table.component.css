@@ -1,0 +1,40 @@
+td,
+th {
+  padding: 10px;
+  /* border: 1px solid; */
+  /* min-width: 350px; */
+  vertical-align: middle;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  color: #126b82;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.section-end {
+  border-bottom: 1px solid #dbdbdb;
+}
+
+:host accordion-group ::ng-deep .panel-body {
+  padding: 0px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.table-padding {
+  padding: 10px 20px;
+  vertical-align: middle;
+}
+
+.clickable-row:hover {
+  background-color: #edf6f6 !important;
+}

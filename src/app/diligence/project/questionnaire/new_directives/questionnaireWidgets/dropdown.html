@@ -1,0 +1,18 @@
+<select class="form-control"
+        data-ng-model="vm.response.attributes.listValueID"
+        data-ng-model-options="{ debounce: { 'default': 500 } }"
+        chosen
+        data-ng-change="vm.onResponseChange()"
+        data-ng-options="item.id as item.value for item in ::vm.list">
+  <option value="">--Select--</option>
+</select>
+
+<div data-ng-show="vm.otherOption && vm.response.attributes.listValueID == vm.otherOption.id"
+     class="space-on-top">
+  <textarea class="form-control"
+            placeholder="Please provide explanation"
+            data-ng-model-options="{ debounce: { 'default': 500 } }"
+            data-ng-change="vm.onResponseChange('textResponse')"
+            msd-elastic="\n"
+            data-ng-model="vm.response.attributes.textResponse"></textarea>
+</div>

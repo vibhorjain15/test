@@ -1,0 +1,49 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">{{vm.tag.label}}</h5>
+
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+          <a class="panel-control"
+            uib-popover-template="vm.templateUrl"
+            popover-placement="auto top-left"
+            data-ng-click="vm.initiateTagAddition(vm.tag)"
+            popover-is-open="vm.isPopoverOpen"
+            popover-title="Add tags">
+            <icon name="plus"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <spinner  broad-spinner spinner-height='60' data-ng-if="vm.loading_tags"></spinner>
+
+      <div data-ng-if="!vm.loading_tags">
+        <div data-ng-show="vm.tagsValue.length" class="label-list">
+          <span class="label label-default text-uppercase space-on-right"
+                data-ng-repeat="value in vm.tagsValue">
+            <small>{{value.name}}</small>
+
+            <a class="space-on-left clickable link-disguise"
+              data-ng-click="vm.displayTagRemovalConfirmation(value)"
+              data-ng-if="vm.is_admin">&times;</a>
+          </span>
+        </div>
+
+        <div col="8" offset="2" data-ng-if="!vm.tagsValue.length">
+          <empty-state icon-name="tag"
+                      data-ng-if="vm.is_admin"
+                      action="vm.initiateTagAddition(vm.tag)"
+                      action-label="Add a tag in {{vm.tag.label}}"
+                      message="No tags available. Why not add for {{vm.tag.desc}}?">
+          </empty-state>
+
+          <empty-state icon-name="tag"
+                      data-ng-hide="vm.is_admin"
+                      message="No tags available for this tag category. Please contact your admin to get started">
+          </empty-state>
+        </div>
+      </div>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="d-flex justify-center" role="toolbar">
+  <div class="col-md-6 d-flex justify-center">
+    <div class="btn-group justify-center">
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': tabType === 'new' }"
+        (click)="setTabType('new')"
+        tabindex="0"
+        role="button"
+        [attr.aria-pressed]="tabType === 'new' ? 'true' : 'false'"
+      >
+        New Upload
+      </span>
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': tabType === 'existing' }"
+        (click)="setTabType('existing')"
+        tabindex="0"
+        role="button"
+        [attr.aria-pressed]="tabType === 'new' ? 'true' : 'false'"
+      >
+        Use Existing
+      </span>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="tabType == 'existing'" role="region" aria-label="Assign Documents">
+  <div class="row">
+    <div class="pd-10 text-left">
+      <span class="control-label fw-bolder">Assign Documents</span>
+    </div>
+    <div class="col-md-12">
+      <app-dv-selector-list
+        [name]="'resource_list'"
+        [entity_type]="'Document'"
+        [entities]="attachments"
+        [filter_params]="{}"
+        [isMultiple]="false"
+        [displayParams]="QuestionSelectorDisplayParams"
+        [KeepSelectionAfterOnChange]="true"
+        (onChangeEntity)="handleSelectionChange($event)"
+      ></app-dv-selector-list>
+    </div>
+  </div>
+</div>
+<div *ngIf="tabType == 'new'" class="space-on-top-lg">
+  <div class="dd-doc-selection-wrapper space-on-top">
+    <dv-uploader
+      [isQuestionFileSelector]="true"
+      accept="*"
+      [sizeLimit]="maxFileSize"
+      dragLabel="Select File or Drop File"
+      [isMultiple]="false"
+      [showUploadedFiles]="question.filename"
+      (onFileUpload)="handleFileUploaded($event)"
+    ></dv-uploader>
+  </div>
+</div>
+<div *ngIf="fileProgress" role="status" aria-live="polite">
+  <div>
+    <small> Uploading {{ files.name }} </small>
+  </div>
+  <div class="mb-2">
+    <dv-progress-bar [value]="fileProgress" type="success"></dv-progress-bar>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<side-panel-wrapper
+  [title]="'Mapped Questions'"
+  [isFooter]="isAddToResponseAllowed"
+  [isCancelButton]="false"
+  firstButtonLabel=""
+  (onCancelClick)="closePanel()"
+  class="mapped-questions-sidepanel"
+>
+  <div class="space-on-top-xl space-on-bottom-xl">
+    <div *ngIf="isLoading">
+      <app-spinner
+        [broadSpinner]="true"
+        spinnerHeight="80"
+        aria-hidden="true"
+      ></app-spinner>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <div
+        *ngFor="let item of mappedResponses; let i = index"
+        class="space-on-bottom-lg"
+      >
+        <qa-preview [heading]="item.questionText">
+          <div content class="space-on-top-lg">
+            <div col="1" class="text-center mapped-questions-icon-container">
+              <span
+                appIcon
+                [name]="
+                  isAddToResponseAllowed ? addResponseIcon.name : copyIcon.name
+                "
+                class="btn btn-default icon"
+                (click)="addOrCopyResponse(item)"
+                *ngIf="item.allowCopy"
+                aria-label="Add or Copy Response"
+              ></span>
+            </div>
+            <div col="11" class="padded-left">
+              <question-response
+                [question]="item"
+                [isReadOnly]="true"
+                [isPlainRendering]="true"
+                [attr.questionId]="item.id"
+                [attr.responseId]="item.answer.id"
+                [useFullWidth]="true"
+                [isReadOnlyEditable]="false"
+                *ngIf="htmlRenderTypes.includes(item.responseType)"
+                #response
+              ></question-response>
+              <div *ngIf="!htmlRenderTypes.includes(item.responseType)">
+                <p
+                  class="answer-text-color"
+                  [innerHtml]="item.answer.attributes.responseText"
+                ></p>
+
+                <i
+                  class="text-muted"
+                  *ngIf="!item.answer.attributes.responseDisplay"
+                >
+                  <small>*No response available*</small>
+                </i>
+              </div>
+              <dv-question-comment
+                comment
+                [text]="item?.answer?.attributes?.textResponse"
+                *ngIf="
+                  item.showComment && item?.answer?.attributes?.textResponse
+                "
+                [isReadonly]="true"
+              ></dv-question-comment>
+              <p
+                *ngIf="
+                  !htmlRenderTypes.includes(item.responseType) &&
+                  !item?.answer?.attributes.responseDisplay &&
+                  !(item.showComment || item?.answer?.attributes?.textResponse)
+                "
+                class="space-on-top-lg"
+              >
+                <i class="text-muted">
+                  <small>*No response available*</small>
+                </i>
+              </p>
+              <div
+                *ngIf="item?.answer?.attributes?.responseTimeStamp"
+                class="space-on-top-lg"
+              >
+                <span>
+                  <i
+                    >Last updated
+                    {{ item.answer.attributes.responseTimeStamp }}</i
+                  >
+                </span>
+              </div>
+              <div
+                class="tags-container space-on-top-lg"
+                *ngIf="item.entityName || item.projectName || item.templateName"
+              >
+                <span
+                  tooltip="Source entity"
+                  container="body"
+                  class="meta-info color-black space-on-right"
+                  *ngIf="item.entityName"
+                  >{{ item.entityName }}</span
+                >
+                <span
+                  tooltip="Source project"
+                  container="body"
+                  class="meta-info color-black space-on-right"
+                  *ngIf="item.projectName"
+                  >{{ item.projectName }}</span
+                >
+                <span
+                  tooltip="Associated template"
+                  container="body"
+                  class="meta-info color-black"
+                  *ngIf="item.templateName"
+                >
+                  {{ item.templateName }}</span
+                >
+              </div>
+              <div>
+                <a
+                  [href]="item.url"
+                  target="_blank"
+                  aria-label="view project (opens in a new window)"
+                  rel="noopener noreferrer"
+                  >View Project</a
+                >
+              </div>
+              <!--Hidden plain table used for copying data without headers-->
+              <question-response
+                [question]="item"
+                [isReadOnly]="true"
+                [isPlainRendering]="true"
+                [enableHeaders]="false"
+                [attr.questionId]="item.id"
+                [attr.responseId]="item.answer.id"
+                [isReadOnlyEditable]="false"
+                [hidden]="true"
+                #copyGrid
+                *ngIf="
+                  (item.responseType === 'Grid' ||
+                    item.responseType === 'DynamicGrid') &&
+                  !isAddToResponseAllowed
+                "
+              ></question-response>
+            </div>
+          </div>
+        </qa-preview>
+      </div>
+      <ng-container *ngIf="!mappedResponses.length">
+        <app-empty-state message="No responses found"></app-empty-state>
+      </ng-container>
+    </div>
+  </div>
+  <div sidePanelFooter class="btn-footer" *ngIf="showCopyAllResponsesButton">
+    <div>
+      <dv-button
+        [disabled]="isLoading"
+        btnClass="btn btn-primary"
+        (onClick)="addAllResponses()"
+        ariaLabel="Copy All Responses"
+      >
+        Copy All Responses
+      </dv-button>
+    </div>
+  </div>
+</side-panel-wrapper>

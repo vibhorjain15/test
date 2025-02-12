@@ -1,0 +1,6 @@
+<ui-grid-cell-contents>
+  <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <div data-ng-hide="!row.entity.acknowledged_at">{{row.entity.acknowledged_at | fromNow}}</div>
+    <div data-ng-hide="row.entity.acknowledged_at">Not yet</div>
+  </div>
+</ui-grid-cell-contents>

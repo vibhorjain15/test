@@ -1,0 +1,22 @@
+<span *ngIf="!params.node.group">
+  <div
+    class="assignment-labels"
+    *ngIf="params.data.status"
+    container="body"
+    placement="left"
+  >
+    <dv-status-tag
+      [label]="params.data.statusDisplay"
+      [type]="params.data.status"
+    ></dv-status-tag>
+  </div>
+</span>
+
+<span *ngIf="params.node.group && params.node.childrenAfterGroup.length">
+  <div class="dv-table full-width full-height">
+    <div class="cell align-left align-middle">
+      <dv-progress-bar [value]="percentage_completed" type="success">
+      </dv-progress-bar>
+    </div>
+  </div>
+</span>

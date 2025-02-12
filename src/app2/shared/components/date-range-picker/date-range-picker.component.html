@@ -1,0 +1,40 @@
+<div>
+  <div class="input-group datepicker-group">
+    <input
+      role="combobox"
+      aria-haspopup="dialog"
+      aria-expanded="false"
+      type="text"
+      readonly
+      class="form-control"
+      bsDaterangepicker
+      [bsConfig]="config"
+      [maxDate]="maxDate"
+      [minDate]="minDate"
+      [(bsValue)]="dateRange"
+      (bsValueChange)="onChange($event)"
+      #dp="bsDaterangepicker"
+      placeholder="No Filter"
+      [container]="container"
+      [placement]="placement ?? 'auto'"
+      [attr.id]="id"
+      [attr.aria-label]="!ariaLabelledBy && !id ? ariaLabel : ''"
+      autocomplete="off"
+      [attr.aria-labelledby]="ariaLabelledBy || ''"
+      [attr.data-formcontrolname]="id"
+    />
+    <span class="input-group-btn">
+      <button
+        appButton
+        class="btn btn-default"
+        (click)="onClick(dp)"
+        aria-label="icon for calendar date-range-picker"
+      >
+        <span appIcon name="calendar"></span>
+      </button>
+    </span>
+  </div>
+  <div *ngIf="helpText">
+    <span class="help-text-secondary">{{ helpText }}</span>
+  </div>
+</div>

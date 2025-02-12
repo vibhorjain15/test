@@ -1,0 +1,7 @@
+:host ::ng-deep .col-list-wrapper > * {
+  padding: 10px;
+}
+
+:host ::ng-deep .checkbox {
+  margin: 0;
+}

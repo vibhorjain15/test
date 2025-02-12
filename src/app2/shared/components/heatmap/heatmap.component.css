@@ -1,0 +1,23 @@
+.sub-menu-item.sub-menu-item--toggler {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sub-menu-item.sub-menu-item--active {
+  background-color: #ecf7f9;
+}
+
+.heatmapContainer--fullscreen {
+  overflow: auto;
+  height: calc(100% - 60px);
+}
+
+.filter-menu {
+  max-height: max(230px, calc(100vh - 200px));
+  overflow-y: auto;
+}
+.badge.badge-info {
+  background-color:var(--light-blue-tint) !important;
+}

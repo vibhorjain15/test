@@ -1,0 +1,99 @@
+<!-- <div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Add Team Permissions</h5>
+  </div>
+
+  <div class="panel-body">
+
+  </div>
+</div> -->
+
+    <div>
+      <form-group field-name="Resource">
+        <label for="resource" class="control-label" col ="3" col-type="sm">Resource Type</label>
+        <div col="8" col-type="sm">
+          <select id="resource"
+                  data-ng-if="!vm.editMode"
+                  class="form-control"
+                  required
+                  data-ng-required="true"
+                  chosen
+                  data-ng-model="vm.resources.entity_type"
+                  data-ng-change="vm.getResources(vm.resources.entity_type); vm.onResourceTypeChanged()"
+                  data-ng-options="resource.name as resource.display_name for resource in vm.parentResources">
+            <option value=""></option>
+          </select>
+          <p data-ng-show="vm.editMode" class="space-on-top">
+            <span class="label label-default">{{vm.getEntityTypeName(vm.resources.entity_type)}}</span>
+          </p>
+        </div>
+      </form-group>
+
+      <form-group field-name="Diligence dates" tooltip-placement="left" control-selector="dv-datepicker" data-ng-if="vm.resources.entity_type == 'DueDiligence' && !vm.editMode">
+        <label for="as-of-date" class="col-md-3 control-label">
+        </label>
+
+        <div class="col-md-8" data-ng-if="vm.customDateFilter">
+          <div class="col-sm-12">
+            <label for="as-of-date" class="control-label">
+              Type
+            </label>
+            <select data-ng-hide="vm.editMode" id="types"
+                    class="form-control"
+                    required
+                    chosen
+                    data-ng-model="vm.entity_type"
+                    data-ng-change="vm.setDiligenceType(vm.entity_type)"
+                    data-ng-options="diligence_type.value as diligence_type.name for diligence_type in vm.diligence_types">
+              <option value=""></option>
+            </select>
+            <p data-ng-show="vm.editMode" class="space-on-top">
+              <span class="label label-default">{{vm.resources.entity_type}}</span>
+            </p>
+          </div>
+          <div class="col-sm-12 compact-picker" data-ng-if="vm.entity_type && !vm.editMode">
+            <label for="entity" class="control-label">
+              Entity
+            </label>
+            <div>
+              <select data-ng-if="vm.entity_type != 'MyFirm'" id="resource"
+                      class="form-control"
+                      required
+                      chosen
+                      data-ng-model="vm.entity_id"
+                      data-ng-change="vm.getDiligenceByEntity()"
+                      data-ng-options="item.id as item.name for item in vm.entities">
+                <option value=""></option>
+              </select>
+              <p data-ng-show="vm.entity_type == 'MyFirm'" class="space-on-top">
+                <span class="label label-default">{{vm.current_user.firmInfo.name}}</span>
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-12 space-on-top-lg" data-ng-if="vm.customDateFilter && vm.entity_type">
+            <label for="as-of-date" class="control-label">
+              Date range
+            </label>
+            <dv-daterangepicker ng-model="vm.customDateFilter" apply-method="vm.applyMethod"
+              ></dv-daterangepicker>
+          </div>
+
+        </div>
+      </form-group>
+      <form-group field-name="resource item" control-selector="dv-selector-list" data-ng-if="vm.resources.entity_type">
+        <label for="resource_list" class="control-label" col ="3" col-type="sm">Resource List</label>
+        <div col="8" col-type="sm">
+            <dv-selector-list name="resource_list" entity-type="'Firm'" entities="vm.entitySource" filter-params="vm.filters.Firm" display-params="vm.entityDisplayParams" data-ng-if="!vm.editMode && vm.resources.entity_type == 'Firm' && vm.entitySource" data-ng-hide="(vm.resources.entity_type && !vm.resources.length) || vm.resources.entity_type == 'my_firm'" selection="vm.resources.resource_list_ids"></dv-selector-list>
+            <dv-selector-list name="resource_list" entity-type="'Product'" entities="vm.entitySource" filter-params="vm.filters.Fund" display-params="vm.entityDisplayParams" data-ng-if="!vm.editMode && vm.resources.entity_type == 'Fund' && vm.entitySource" data-ng-hide="(vm.resources.entity_type && !vm.resources.length) || vm.resources.entity_type == 'my_firm'" selection="vm.resources.resource_list_ids"></dv-selector-list>
+            <dv-selector-list name="resource_list" entity-type="'Template'" entities="vm.entitySource" filter-params="vm.filters.Template" display-params="vm.templateDislayParams" data-ng-if="!vm.editMode && vm.resources.entity_type == 'Template' && vm.entitySource" data-ng-hide="(vm.resources.entity_type && !vm.resources.length) || vm.resources.entity_type == 'my_firm'" selection="vm.resources.resource_list_ids"></dv-selector-list>
+            <dv-selector-list name="resource_list" entity-type="'Project'" entities="vm.entitySource" filter-params="vm.filters.DueDiligence" display-params="vm.diligenceDisplayParams" data-ng-if="!vm.editMode && vm.resources.entity_type == 'DueDiligence' && vm.entitySource" data-ng-hide="(vm.resources.entity_type && !vm.resources.length) || vm.resources.entity_type == 'my_firm'" selection="vm.resources.resource_list_ids"></dv-selector-list>
+            <p data-ng-show="vm.editMode" class="space-on-top">
+              <span class="label label-default">{{vm.resources.entity_name}}</span>
+            </p>
+            <div data-ng-show="vm.resources.entity_type == 'my_firm' && vm.selectMyFirm">
+              <span class="label label-default">{{vm.current_user.firmInfo.name}}</span>
+            </div>
+            <p data-ng-if="vm.resources.entity_type" class="text-muted space-on-top" data-ng-show="!vm.editMode && (vm.resources.entity_type != 'my_firm') && (vm.resources.entity_type && vm.entitySource == null)"><small>No resources found</small></p>
+        </div>
+      </form-group>
+    </div>

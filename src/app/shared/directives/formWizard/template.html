@@ -1,0 +1,78 @@
+<div class="dv-wizard" data-ng-class="{'m-b-60': currentStep.nextButtonIsFloating == 'true'}">
+  <div class="dv-wizard-header steps-{{steps.length}}">
+    <span class="dv-step-title" data-ng-repeat="step in steps" data-ng-show="setExistInArray(step)"
+      data-ng-class="{'active': $index == currentStep.index, 'done': step.done}">
+      <span data-ng-hide="step.done">{{$index + 1}}.</span>
+      <span data-ng-show="step.done">
+        <icon name="check"></icon>
+      </span>
+      {{step.title}}
+    </span>
+  </div>
+
+  <div class="dv-wizard-content">
+    <div class="panel panel-default clear-margin-bottom">
+      <div class="panel-heading" data-ng-show="currentStep.contentTitle && !currentStep.contentTitleType" data-ng-class="{'no-tb-padding': (currentStep.index == 1 && currentStep.contentTitle == 'Pending Approval(s)') || currentStep.backButtonLabel}">
+        <div class="inline-block" data-ng-class="{'width-29-pct': currentStep.index == 1 && currentStep.contentTitle == 'Pending Approval(s)', 'width-70-pct': currentStep.backButtonLabel}">
+          <b uib-tooltip="{{currentStep.contentTitleTooltip}}">{{currentStep.contentTitle}}</b>
+        </div>
+        <div class="inline-block width-70-pct text-right"
+          data-ng-if="currentStep.index == 1 && currentStep.contentTitle == 'Pending Approval(s)'">
+          <a class="btn btn-transparent" data-ng-click="goToPreviousStep()">
+            <div><i class="dvi ng-isolate-scope dvi-arrow-back fa-2x" name="arrow-back" size="2x"></i></div>
+            <small>Back</small>
+          </a>
+        </div>
+        <div class="inline-block width-29-pct text-right"
+          data-ng-if="currentStep.backButtonLabel">
+          <a class="btn btn-transparent" data-ng-click="currentStep.onBackButtonClick()">
+            <div><i class="dvi ng-isolate-scope dvi-arrow-back fa-2x" name="arrow-back" size="2x"></i></div>
+            <small>{{currentStep.backButtonLabel}}</small>
+          </a>
+        </div>
+      </div>
+      <div class="panel-heading" data-ng-show="currentStep.contentTitle && currentStep.contentTitleType">
+        <span uib-tooltip="{{currentStep.contentTitleTooltip}}" ng-bind-html="currentStep.contentTitle"></span>
+      </div>
+
+      <div class="panel-body">
+        <div ng-transclude></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dv-wizard-footer" data-ng-show="displayFooter">
+    <div class="text-center" data-ng-hide="currentStep.nextButtonIsFloating == 'true'">
+      <button btn-type="default" data-ng-click="goToPreviousStep()" data-ng-show="currentStep.index !== 0">
+        <icon name="chevron-left" class="align-middle space-on-right"></icon>
+        {{ currentStep.previousButtonLabel || "Previous" }}
+      </button>
+
+      <button class="btn space-on-left save-as-draft-cta" data-ng-show="currentStep.draftButtonLabel"
+        data-ng-click="goToDraftsStep()" button-loader="draft_loading" data-ng-disabled="loading">
+        {{ currentStep.draftButtonLabel || (currentStep.index === steps.length - 1 ? 'Finish' : 'Next') }}
+      </button>
+
+      <button class="btn space-on-left"
+        data-ng-class="{'btn-orange': currentStep.nextButtonType == 'orange', 'btn-primary': !currentStep.nextButtonType}"
+        data-ng-click="goToNextStep()" data-ng-disabled="draft_loading" button-loader="loading">
+        {{ currentStep.nextButtonLabel || (currentStep.index === steps.length - 1 ? 'Finish' : 'Next') }}
+        <icon name="chevron-right" class="align-middle space-on-left"></icon>
+      </button>
+    </div>
+
+    <div class="panel panel-default floating-elem" data-ng-if="currentStep.nextButtonIsFloating == 'true'">
+      <button btn-type="default" data-ng-click="goToPreviousStep()" data-ng-show="currentStep.index !== 0">
+        <icon name="chevron-left" class="align-middle space-on-right"></icon>
+        {{ currentStep.previousButtonLabel || "Previous" }}
+      </button>
+
+      <button class="btn space-on-left space-on-top-xl"
+        data-ng-class="{'btn-orange': currentStep.nextButtonType == 'orange', 'btn-primary': !currentStep.nextButtonType}"
+        data-ng-click="goToNextStep()" button-loader="loading">
+        {{ currentStep.nextButtonLabel || (currentStep.index === steps.length - 1 ? 'Finish' : 'Next') }}
+        <icon name="chevron-right" class="align-middle space-on-left"></icon>
+      </button>
+    </div>
+  </div>
+</div>

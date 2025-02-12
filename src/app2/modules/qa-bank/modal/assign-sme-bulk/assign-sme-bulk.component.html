@@ -1,0 +1,66 @@
+<app-modal
+  firstButtonLabel="Update"
+  title="Manage SME"
+  [subTitle]="questions.length + ' questions selected'"
+  (onFirstClick)="handleOnClick($event)"
+  [isLoading]="loadingData"
+>
+  <div *ngIf="questions.length > 0">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        SME can be updated only for Library content
+      </div>
+    </div>
+    <div class="remove-all-action" *ngIf="IsRemoveAllTagsOption">
+      <a
+        (click)="removeAllSme()"
+        class="clickable danger text-danger pull-right"
+      >
+        Remove All SME(s)
+      </a>
+    </div>
+    <manage-bulk-tags
+      type="sme"
+      [questions]="questions"
+      [dropdownData]="teamMembers"
+      (onChangeTags)="handleChangetags($event)"
+      (OnRemoveQuestions)="handleRemoveQuestions($event)"
+      (OnBulkRemoveQuestions)="handleBulkRemoveQuestions($event)"
+    ></manage-bulk-tags>
+    <div class="space-on-top-xxl list-bulk-items width-50-pct">
+      <p class="space-on-bottom-xl">
+        Assign SME to all selected records
+        <span
+          appIcon
+          name="info"
+          class="space-on-left"
+          tooltip="To add SME(s) to all the selected questions at once."
+        >
+        </span>
+      </p>
+      <dv-select
+        id="smeBulkIds"
+        [(ngModel)]="smeBulkIds"
+        [clearable]="false"
+        [bindLabel]="'fullName'"
+        bindValue="id"
+        [list]="teamMembers"
+        [searchable]="true"
+        [multiple]="true"
+        placeholder="Select SME's"
+      >
+      </dv-select>
+    </div>
+  </div>
+
+  <div *ngIf="questions.length == 0">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        SME can be updated only for Library content
+      </div>
+    </div>
+    <app-empty-state
+      message="No Q/A Library Question Selected"
+    ></app-empty-state>
+  </div>
+</app-modal>

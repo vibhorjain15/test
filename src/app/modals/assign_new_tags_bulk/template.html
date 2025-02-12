@@ -1,0 +1,143 @@
+<div class="qa-bank-bulk-upload-modal">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+            Manage Tags
+            <p>
+                {{vm.tempQuestionsList.length}} questions selected
+            </p>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <p class="alert alert-info">
+            New tags can be created by Super Admins and Business Admins under Firm Settings > Manage Tags and Custom Fields.
+        </p>
+        <div data-ng-if="vm.addNewQuestionToggle" class="add-new-questions-wrapper">
+            <div class="space-on-bottom-xl">
+                <p class="title-txt">
+                    Add New Tags
+                </p>
+            </div>
+            <div>
+                <textarea data-ng-model="vm.tagsToBeAdded"></textarea>
+            </div>
+            <div class="hint-text">
+                Add a (,) in between to add multiple tags.
+            </div>
+        </div>
+        <div data-ng-if="vm.loadingData">
+            <div class="tab-spinner-div">
+                <spinner></spinner>
+            </div>
+        </div>
+        <div data-ng-if="!vm.loadingData">
+            <div class="remove-all-action" data-ng-if="!vm.hideRemoveAllTagsOption">
+                <a data-ng-click="vm.removeAllTagsBulk()" class="danger text-danger pull-right">
+                    Remove All Tags
+                </a>
+            </div>
+            <div class="qa-list-container" data-ng-if="!vm.addNewQuestionToggle">
+                <div class="qa-list-wrapper" data-ng-repeat="question in vm.tempQuestionsList">
+                    <div class="qa-list-left-p">
+                        <p>
+                            <span id="question_{{$index}}" class="responsive-image"
+                                ng-bind-html="question.question_text | cleanhtml">
+                            </span>
+                        </p>
+                    </div>
+                    <div data-ng-if="question.showAddTags" class="qa-list-right-p label-list customFieldList">
+                        <select id="tag" class="form-control" multiple chosen data-ng-model="question.temp_assigned_tags"
+                            no-results-text="'Could not find any tag matching : '" data-placeholder="Select tags"
+                            data-ng-options="tag as tag.name for tag in vm.tags">
+                            <option value=""></option>
+                        </select>
+                        <a class="hide-add-options-cta space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                            data-ng-click="question.showAddTags = false">
+                            &times;
+                        </a>
+                    </div>
+                    <div data-ng-if="!question.showAddTags" class="qa-list-right-p label-list customFieldList">
+                        <div class="tags-list"
+                            data-ng-repeat="tag in question.tags| limitTo : question.limit_to?question.limit_to : 2"
+                            data-ng-if="question.tags.length > 0" uib-tooltip="{{tag.value}}">
+                            <span data-ng-bind="tag.value | limitTo: 20">
+                            </span>
+                            <span data-ng-if="tag.value.length > 20">...</span>
+                            <span class="inline" uib-dropdown>
+                                <a class="space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                                    uib-dropdown-toggle>
+                                    &times;
+                                </a>
+                                <ul class="dropdown-menu sort-menu-options left-auto" uib-dropdown-menu role="menu">
+                                    <li>
+                                        <a class="text-capitalize"
+                                            data-ng-click="vm.markRemoveTagFromCurrentQuestion(tag,question,$index)"
+                                            role="button">
+                                            Remove from this question
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-capitalize" data-ng-click="vm.markRemoveAllTagsBulk(tag,$index)"
+                                            role="button">
+                                            Remove from all questions
+                                        </a>
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <span data-ng-if="!question.tags || question.tags.length == 0">
+                            No Tag
+                        </span>
+                        <a class="clickable" data-ng-click="question.limit_to = question.tags.length"
+                            data-ng-if="question.tags.length > 2 && question.limit_to != question.tags.length"
+                            style="color: #136A81;white-space: nowrap;">
+                            + {{question.tags.length - 2}} more
+                        </a>
+                        <div class="label label-default text-uppercase m-2-0 space-on-left-2">
+                            <a href>
+                                <small class="word-wrap-with-break-word">
+                                    <a class="clickable" data-ng-click="question.showAddTags = true">
+                                        + Add
+                                    </a>
+                                </small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="space-on-top-xxl list-bulk-items width-100-pct">
+            <div class="removed-tags-list" data-ng-repeat="item in vm.markedTagsToRemoveWIthQuestions">
+                <span>{{item.tag.value}} ({{item.question.length}})</span>
+                <a class="space-on-left-3" data-ng-click="vm.removeMarkedTagsToRemoveWIthQuestions($index)">
+                    <icon class="align-middle undo-tag-selected" name="undo" uib-tooltip="Undo"></icon>
+                </a>
+            </div>
+            <div class="removed-tags-list" data-ng-repeat="item in vm.markedTagsToRemoveBulk">
+                <span>{{item.tag.value}} ({{item.count}})</span>
+                <a class="space-on-left-3" data-ng-click="vm.removedMarkedTagsToRemoveBulk($index)">
+                    <icon class="align-middle undo-tag-selected" name="undo" uib-tooltip="Undo"></icon>
+                </a>
+            </div>
+        </div>
+        <div class="space-on-top-xxl list-bulk-items width-50-pct">
+            <p space-on-bottom-xl>
+                Add Tags to all selected records
+                <icon name="info" class="grey-info align-middle"
+                    uib-tooltip="To add tag(s) to all the selected questions at once.">
+                </icon>
+            </p>
+            <select id="tag" class="form-control" multiple chosen data-ng-model="vm.temp_assigned_tags_bulk"
+                no-results-text="'Could not find any tag matching : '" data-placeholder="Select tags"
+                data-ng-options="tag as tag.name for tag in vm.tags">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="space-on-top-xxl">
+            <div style="text-align: right;">
+                <button class="cancel-btn-action" data-ng-click="vm.cancel()">CANCEL</button>
+                <button class="update-btn-action" data-ng-click="vm.updateTagsBulkData()">UPDATE</button>
+            </div>
+        </div>
+    </div>
+</div>

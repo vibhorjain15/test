@@ -1,0 +1,65 @@
+<side-panel-wrapper
+  [title]="'Setup Smart Text'"
+  firstButtonLabel="Save"
+  [isLoading]="loading"
+  (onFirstClick)="handleSaveClick()"
+  (onCancelClick)="handleOnCancelClick()"
+>
+  <helper-text>
+    Smart text can only be used in Analyst Evaluation Diligence
+  </helper-text>
+  <form
+    class="form-horizontal"
+    [formGroup]="smartTextForm"
+    autocomplete="off"
+    aria-label="Smart Text Setup Form"
+  >
+    <dv-form-element
+      spacing="small"
+      labelPosition="top"
+      label="Smart Text"
+      elementCol="12"
+      [for]="'smart-text'"
+    >
+      <dv-editor
+        (onChange)="handleEditorChange($event)"
+        [value]="editor"
+        [configObj]="tinyMceInit"
+        #editorInstance
+      >
+      </dv-editor>
+    </dv-form-element>
+    <dv-form-element
+      spacing="small"
+      [modelController]="smartTextForm.get('isSmartText')"
+      elementCol="12"
+      [showRightIcon]="false"
+    >
+      <dv-checkbox
+        label="Include Smart Text Control"
+        formControlName="isSmartText"
+      >
+      </dv-checkbox>
+    </dv-form-element>
+    <dv-form-element elementCol="12" spacing="small">
+      <dv-divider role="separator"></dv-divider>
+    </dv-form-element>
+    <ng-container *ngIf="smartTextForm.value.isSmartText">
+      <question-tag-mapper
+        (onAdd)="handleAdd($event)"
+        (onSave)="handleSave($event)"
+        [questionId]="question.id"
+        [question]="question"
+        [isTouched]="editorCopy != editor"
+        [editorValue]="editor"
+      ></question-tag-mapper>
+    </ng-container>
+    <dv-form-element
+      labelPosition="top"
+      label="Smart Text Preview"
+      elementCol="12"
+    >
+      <div class="preview_div" [innerHtml]="preview | dvSafeHtml"></div>
+    </dv-form-element>
+  </form>
+</side-panel-wrapper>

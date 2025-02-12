@@ -1,0 +1,56 @@
+<app-modal
+  [title]="'Add Reviewer'"
+  [firstButtonLabel]="edit_mode ? 'Update Reviewer' : 'Add Reviewer'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="reviewerRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #reviewerRef>
+  <form class="form-horizontal" [formGroup]="reviewerForm" autocomplete="off">
+    <div class="modal-body">
+      <app-form-group
+        [fieldName]="'Team Member Name'"
+        [modelController]="reviewerForm.get('assigned_to')"
+      >
+        <span for="teammemberName" class="control-label col-sm-3 fw-bolder">
+          Select Team Member/User Role
+        </span>
+
+        <div class="col-sm-9">
+          <!-- <dv-subscriber-selection selection="vm.params.assigned_to_user" single-mode="true"
+                        functions="vm.functions"></dv-subscriber-selection> -->
+          <app-dv-subscriber-selection
+            [selection]="assigned_to_user"
+            (selectionChanged)="actionChanged($event)"
+            [functions]="functions"
+            [singleMode]="true"
+          >
+          </app-dv-subscriber-selection>
+        </div>
+      </app-form-group>
+
+      <app-form-group
+        [fieldName]="'Due Date'"
+        class="space-on-bottom"
+        [showRightIcon]="false"
+        [modelController]="reviewerForm.get('due_date')"
+      >
+        <label for="dueDate" class="control-label col-sm-3">
+          Due Date
+        </label>
+
+        <div class="col-sm-9">
+          <app-date-picker
+            [id]="'dueDate'"
+            [minDate]="minDate"
+            [value]="reviewerForm.get('due_date').value"
+            (change)="setDateValue($event)"
+          >
+          </app-date-picker>
+        </div>
+      </app-form-group>
+    </div>
+  </form>
+</ng-template>

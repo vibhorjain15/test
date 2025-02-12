@@ -1,0 +1,263 @@
+<app-modal
+  (onFirstClick)="submit()"
+  (onSecondClick)="invite_and_add_another()"
+  [firstButtonLabel]="edit_mode ? 'Save User' : 'Invite User'"
+  [secondButtonLabel]="!edit_mode && canAddUser ? 'Invite & add another' : ''"
+  [initialTemplate]="addUserModal"
+  [isLoading]="saving_user"
+  [isSecondaryLoading]="saving_user_add_another"
+  [isFirstButtonDisabled]="!edit_mode && !canAddUser"
+  [title]="
+    !edit_mode
+      ? 'Invite User to ' + firm_name + ' Team'
+      : 'Edit ' + existing_user.name
+  "
+  [isAngularJs]="true"
+  #modal
+>
+</app-modal>
+<ng-template #addUserModal>
+  <div class="panel panel-info" *ngIf="!edit_mode && !canAddUser">
+    <div class="panel-heading">
+      <span
+        >You do not have the required Access Level to add users to your team.
+        Please check <a (click)="redirectToMyAdmins()">My Admins</a> page to
+        view your firm's admins who can invite new users and/or change your
+        access level.</span
+      >
+    </div>
+  </div>
+
+  <form
+    *ngIf="edit_mode || canAddUser"
+    class="form-horizontal"
+    [formGroup]="new_user_form"
+    novalidate
+    autocomplete="off"
+  >
+    <div class="form-group" *ngIf="fund">
+      <strong>Product:</strong> {{ fund.name }}
+    </div>
+
+    <dv-form-element
+      fieldName="First Name"
+      [modelController]="new_user_form.get('firstName')"
+      label="First Name"
+      [isRequired]="true"
+      errorId="firstNameErrors"
+    >
+      <input
+        type="text"
+        id="firstName"
+        formControlName="firstName"
+        placeholder="First Name"
+        required
+        class="form-control"
+      />
+      <div
+        id="firstNameErrors"
+        class="text-danger"
+        *ngIf="new_user_form.get('firstName').touched"
+      >
+        {{
+          new_user_form.get("firstName").errors?.pattern &&
+            "Please enter a valid first Name"
+        }}
+        {{
+          new_user_form.get("firstName").errors?.required &&
+            "First Name is required"
+        }}
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="Last Name"
+      [modelController]="new_user_form.get('lastName')"
+      label="Last Name"
+      [isRequired]="true"
+      errorId="lastNameErrors"
+    >
+      <input
+        type="text"
+        id="lastName"
+        placeholder="Last Name"
+        formControlName="lastName"
+        required
+        dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+        class="form-control"
+      />
+
+      <div
+        id="lastNameErrors"
+        class="text-danger"
+        *ngIf="new_user_form.get('lastName').touched"
+      >
+        {{
+          new_user_form.get("lastName").errors?.pattern &&
+            "Please enter a valid last Name"
+        }}
+        {{
+          new_user_form.get("lastName").errors?.required &&
+            "Last Name is required"
+        }}
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="Email"
+      label="Email"
+      [showRightIcon]="false"
+      [modelController]="new_user_form.get('userName')"
+      [isRequired]="true"
+      [errorId]="'userNameError'"
+    >
+      <div class="input-group">
+        <span class="input-group-addon">
+          <span appIcon name="mail"></span>
+        </span>
+        <input
+          type="email"
+          [readonly]="edit_mode"
+          id="userName"
+          formControlName="userName"
+          placeholder="Email"
+          class="form-control"
+        />
+      </div>
+      <div
+        id="userNameError"
+        class="text-danger"
+        *ngIf="
+          new_user_form.get('userName').touched &&
+          new_user_form.get('userName').errors?.required
+        "
+      >
+        {{ errorMessageMap.required | interpolate : "Email" }}
+      </div>
+      <div
+        id="userNameError"
+        class="text-danger"
+        *ngIf="
+          new_user_form.get('userName').touched &&
+          new_user_form.get('userName').errors?.pattern
+        "
+      >
+        {{ errorMessageMap.email | interpolate : "Email" }}
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      fieldName="Email"
+      [showRightIcon]="false"
+      [modelController]="new_user_form.get('functions')"
+      label="User Roles"
+      infoText="User Roles will allow you to categorise your team members effortlessly. Once team members are added to a user role you can assign tasks/ assignments/workflow easily."
+    >
+      <dv-select
+        name="role"
+        [id]="'functions'"
+        formControlName="functions"
+        (onSelectChange)="setRoleText()"
+        [clearable]="false"
+        [searchable]="true"
+        placeholder="Select user roles(s)"
+        [multiple]="true"
+        [list]="functions"
+        [bindValue]="'function_id'"
+        [bindLabel]="'function_name'"
+      >
+      </dv-select>
+    </dv-form-element>
+    <dv-form-element [label]="'&nbsp;'" [labelCol]="3">
+      <dv-checkbox
+        label="Key person?"
+        formControlName="is_key_person"
+        rightIcon="info"
+        iconClass="align-middle float-none space-on-left"
+        iconTooltip="This contact will be the key employee of the firm like CEO, CTO, COO etc. You can mark all C level managers as a key person."
+      >
+      </dv-checkbox>
+    </dv-form-element>
+    <dv-form-element
+      *ngIf="is_manager"
+      [label]="'&nbsp;'"
+      [labelCol]="3"
+      [modelController]="new_user_form.get('is_public')"
+      [showRightIcon]="false"
+    >
+      <dv-checkbox
+        label="Visible contact?"
+        [labelClass]="'text-black'"
+        formControlName="is_public"
+        rightIcon="info"
+        iconClass="align-middle float-none space-on-left"
+        iconTooltip="This contact would be visible to the investors once you assign it to an entity. To assign this contact to an entity navigate to Monitor > Firm/Product > Associated contacts > Assign Internal Contact"
+      >
+      </dv-checkbox>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="Role"
+      [modelController]="new_user_form.get('firmwide_role')"
+      *ngIf="!edit_mode"
+      [showRightIcon]="false"
+      label="Access Level"
+    >
+      <dv-select
+        name="role"
+        [id]="'firmwide_role'"
+        formControlName="firmwide_role"
+        (onSelectChange)="setRoleText()"
+        [clearable]="false"
+        [searchable]="true"
+        [loading]="loadingRoles"
+        placeholder="Please select an access level"
+        [list]="roles"
+        [bindLabel]="'alias'"
+        [bindValue]="'id'"
+      >
+      </dv-select>
+
+      <div class="space-on-top">
+        <a
+          (click)="handleAccessLevelClick()"
+          role="link"
+          tabindex="0"
+          target="_blank"
+          aria-label="View access level configurations. (opens in a new window)"
+          >View access level configuration</a
+        >
+      </div>
+    </dv-form-element>
+    <div
+      class="panel panel-info user_role_text_pannel"
+      *ngIf="!loadingRoles && !edit_mode"
+    >
+      <div class="panel-heading">
+        <span [innerHtml]="roleText"></span>
+      </div>
+    </div>
+    <div
+      class="form-group space-on-top-lg"
+      *ngIf="!edit_mode && permissions_enabled"
+    >
+      <a
+        class="link clickable pull-right"
+        (click)="showAdvanceOptions = !showAdvanceOptions"
+      >
+        Add Team Permissioning
+      </a>
+    </div>
+    <div
+      class="form-group"
+      *ngIf="showAdvanceOptions && !edit_mode && permissions_enabled"
+    >
+      <app-team-selection
+        [type]="'User'"
+        [disabled]="!permissions_enabled"
+        [teams]="teams"
+        (onErrors)="handleTeamSelectionErrors($event)"
+        #NewUser
+      ></app-team-selection>
+    </div>
+  </form>
+</ng-template>

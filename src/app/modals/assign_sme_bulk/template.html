@@ -1,0 +1,141 @@
+<div class="qa-bank-bulk-upload-modal">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+            Manage SME
+            <p>
+                {{vm.tempQuestionsList.length}} questions selected
+            </p>
+        </h3>
+    </div>
+    <div class="modal-body" data-ng-if="vm.tempQuestionsList.length > 0">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                SME can be updated only for pre approved content
+            </div>
+        </div>
+        <div data-ng-if="vm.loadingData">
+            <div class="tab-spinner-div">
+                <spinner></spinner>
+            </div>
+        </div>
+        <div data-ng-if="!vm.loadingData">
+            <div class="remove-all-action" data-ng-if="!vm.hideRemoveAllTagsOption">
+                <a data-ng-click="vm.removeAllSme()" class="clickable danger text-danger pull-right">
+                    Remove All SME(s)
+                </a>
+            </div>
+            <div class="qa-list-container">
+                <div class="qa-list-wrapper" data-ng-repeat="question in vm.tempQuestionsList">
+                    <div class="qa-list-left-p">
+                        <p>
+                            <span id="question_{{$index}}" class="responsive-image"
+                                ng-bind-html="question.question_text | cleanhtml">
+                            </span>
+                        </p>
+                    </div>
+                    <div data-ng-if="!question.showAddSme" class="qa-list-right-p label-list customFieldList">
+                        <div class="tags-list"
+                            data-ng-repeat="sme in question.question_sme| limitTo : question.limit_to_sme?question.limit_to_sme : 2"
+                            data-ng-if="question.question_sme.length > 0" uib-tooltip="{{sme.value}}">
+                            <span data-ng-bind="sme.value | limitTo: 20">
+                            </span>
+                            <span data-ng-if="sme.value.length > 20">...</span>
+                            <span class="inline" uib-dropdown>
+                                <a class="space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                                    uib-dropdown-toggle>
+                                    &times;
+                                </a>
+                                <ul class="dropdown-menu sort-menu-options left-auto" uib-dropdown-menu role="menu">
+                                    <li>
+                                        <a class="text-capitalize"
+                                            data-ng-click="vm.markRemoveSMEFromCurrentQuestion(sme,question,$index)"
+                                            role="button">
+                                            Remove from this question
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-capitalize" data-ng-click="vm.markRemoveAllSMEsBulk(sme,$index)"
+                                            role="button">
+                                            Remove from all questions
+                                        </a>
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <span data-ng-if="!question.question_sme || question.question_sme.length == 0">
+                            No SME
+                        </span>
+                        <a class="clickable" data-ng-click="question.limit_to_sme = question.question_sme.length"
+                            data-ng-if="question.question_sme.length > 2 && question.limit_to_sme != question.question_sme.length"
+                            style="color: #136A81;white-space: nowrap;">
+                            + {{question.question_sme.length - 2}} more
+                        </a>
+                        <div class="label label-default text-uppercase m-2-0">
+                            <small class="word-wrap-with-break-word">
+                                <a class="clickable" data-ng-click="question.showAddSme = true">
+                                    + Add
+                                </a>
+                            </small>
+                        </div>
+                    </div>
+                    <div data-ng-if="question.showAddSme" class="qa-list-right-p label-list customFieldList">
+                        <div class="m-2-0">
+                            <select id="teammemberName" class="form-control" multiple chosen
+                                data-ng-model="question.smeIds" no-results-text="'Could not find any members'"
+                                data-placeholder="Select Team Member"
+                                data-ng-options="member as member.fullname for member in vm.teamMembers">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <a class="hide-add-options-cta space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                            data-ng-click="question.showAddSme = false">
+                            &times;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="space-on-top-xxl list-bulk-items width-100-pct">
+            <div class="removed-tags-list" data-ng-repeat="item in vm.markedSmesToRemoveWIthQuestions">
+                <span>{{item.sme.value}} ({{item.question.length}})</span>
+                <a class="space-on-left-3" data-ng-click="vm.removeMarkedSmesToRemoveWIthQuestions($index)">
+                    <icon class="align-middle undo-tag-selected" name="undo" uib-tooltip="Undo"></icon>
+                </a>
+            </div>
+            <div class="removed-tags-list" data-ng-repeat="item in vm.markedSmesToRemoveBulk">
+                <span>{{item.sme.value}} ({{item.count}})</span>
+                <a class="space-on-left-3" data-ng-click="vm.removedMarkedSmesToRemoveBulk($index)">
+                    <icon class="align-middle undo-tag-selected" name="undo" uib-tooltip="Undo"></icon>
+                </a>
+            </div>
+        </div>
+        <div class="space-on-top-xxl list-bulk-items width-50-pct">
+            <p space-on-bottom-xl>
+                Assign SME to all selected records
+                <icon name="info" class="grey-info align-middle"
+                    uib-tooltip="To add SME(s) to all the selected questions at once.">
+                </icon>
+            </p>
+            <select id="teammemberName" class="form-control" multiple chosen data-ng-model="vm.smeBulkIds"
+                no-results-text="'Could not find any members matching : '" data-placeholder="Select Team Member"
+                data-ng-options="member as member.fullname for member in vm.teamMembers">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="space-on-top-xxl">
+            <div style="text-align: right;">
+                <button class="cancel-btn-action" data-ng-click="vm.cancel()">CANCEL</button>
+                <button class="update-btn-action" data-ng-click="vm.updateSmesBulkData()">UPDATE</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body" data-ng-if="vm.tempQuestionsList.length == 0">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                SME can be updated only for pre approved content
+            </div>
+        </div>
+        <empty-state message="No Pre-approved Question Selected"></empty-state>
+    </div>
+</div>

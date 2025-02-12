@@ -1,0 +1,36 @@
+<div class="panel panel-default bg-sky-blue" *ngIf="show_bulk_actions">
+  <div class="panel-body padded-lg">
+    <h5 class="inline space-on-right-lg">
+      <strong
+        >Selected Records :
+        <span class="badge">{{ totalSelectedRecords }}</span></strong
+      >
+    </h5>
+    <a
+      tooltip="Delete Selected"
+      container="body"
+      class="btn btn-default danger space-on-right-lg"
+      (click)="confirmBulkResourceDeletion()"
+    >
+      <strong><span appIcon name="trashcan"></span> </strong>
+    </a>
+    <a
+      tooltip="Close"
+      container="body"
+      class="btn pull-right text-black danger"
+      (click)="closeQuickActions()"
+    >
+      <strong><span appIcon name="close"></span></strong>
+    </a>
+  </div>
+</div>
+<div>
+  <app-dv-grid
+    [rowData]="rowData"
+    [name]="gridName"
+    [onSelectionChanged]="onSelectionChanged"
+    [onRowSelected]="onRowSelected"
+    [noRowsTemplate]="loading ? 'Loading...' : 'No results found'"
+    #inboundGrid
+  ></app-dv-grid>
+</div>

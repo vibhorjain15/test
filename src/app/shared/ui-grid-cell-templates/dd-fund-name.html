@@ -1,0 +1,49 @@
+<ui-grid-cell-contents class="text-left" >
+
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <div ng-controller="DueDiligenceActionController as vm">
+    <div data-ng-if="(row.entity.status != 'Sent' && row.entity.status != 'Deleted' && row.entity.status != 'Withdrawn')">
+      <p data-ng-class="{'text-bold': row.entity.status == 'Invited'}">
+        <!-- <span ng-hide="row.entity.type == 'dd_review'" class="internal_dd_icon" uib-tooltip="Internal DDQ / Project" tooltip-placement="top" data-ng-class="{'visiblity-hidden': (!row.entity.is_internal)}"></span> -->
+        <!-- <span class="text-center space-on-left-lg review-icon" uib-tooltip="Review/Opinion Project" tooltip-placement="top" ng-show="row.entity.type == 'dd_review'" ><icon name="notepad" ></icon></span> -->
+        <a data-ng-if="row.entity.entity_type == 'Fund'"
+           uib-tooltip="{{row.entity.entity_name}}"
+           tooltip-placement="top"
+           ui-sref="app.diligence.firms.funds.project.summary({fromfirmId: row.entity.fromfirm_id, tofirmId:row.entity.tofirm_id, fundId: row.entity.entity_id, diligenceId: row.entity.id})">
+          {{row.entity.entity_name}}
+        </a>
+        <a data-ng-if="row.entity.entity_type == 'Firm'"
+           uib-tooltip="{{row.entity.entity_name}}"
+           tooltip-placement="top"
+           ui-sref="app.diligence.firms.project.summary({fromfirmId: row.entity.fromfirm_id, tofirmId:row.entity.entity_id ,diligenceId: row.entity.id})">
+          {{row.entity.entity_name}}
+        </a>
+        <a data-ng-if="row.entity.entity_type == 'Vehicle'"
+           uib-tooltip="{{row.entity.entity_name}}"
+           tooltip-placement="top"
+           ui-sref="app.diligence.project.summary({diligenceId: row.entity.id})">
+          {{row.entity.entity_name}}
+        </a>
+        <a data-ng-if="row.entity.entity_type == 'Review'"
+           uib-tooltip="{{row.entity.name}}"
+           tooltip-placement="top"
+           ui-sref="app.diligence.project.summary({diligenceId: row.entity.id})">
+          {{row.entity.name}}
+        </a>
+        <a class="js-projects-dd-name" data-ng-if="row.entity.entity_type == 'Strategy'"
+            ui-sref="app.diligence.project.summary({fromfirmId: row.entity.fromfirm_id, tofirmId:row.entity.entity_id ,diligenceId: row.entity.id})"
+            uib-tooltip="{{row.entity.fromfirm_name}}"
+            tooltip-placement="top">
+          {{row.entity.entity_name}}
+        </a>
+      </p>
+    </div>
+    <div data-ng-if="(row.entity.status == 'Sent') || row.entity.status == 'Deleted' || row.entity.status == 'Withdrawn'">
+      {{COL_FIELD CUSTOM_FILTERS}}
+    </div>
+  </div>
+
+</ui-grid-cell-contents>

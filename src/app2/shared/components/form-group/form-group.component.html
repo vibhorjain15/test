@@ -1,0 +1,79 @@
+<div
+  class="form-group has-feedback"
+  [ngClass]="{
+    'has-success':
+      modelController && modelController?.touched && modelController?.valid,
+    'has-error':
+      modelController && modelController?.touched && modelController?.invalid
+  }"
+  [ngStyle]="{ 'margin-bottom': tabClass ? '0' : '15px' }"
+>
+  <div *ngIf="!label" [class]="tabClass">
+    <ng-container *ngTemplateOutlet="tempOutlet"></ng-container>
+    <i
+      appIcon
+      [name]="'check'"
+      class="form-control-feedback"
+      *ngIf="
+        modelController &&
+        modelController?.touched &&
+        modelController?.valid &&
+        showRightIcon
+      "
+      style="top: 0"
+    ></i>
+    <i
+      appIcon
+      [name]="'check'"
+      class="form-control-feedback"
+      *ngIf="
+        modelController &&
+        modelController?.touched &&
+        modelController?.invalid &&
+        showWrongIcon
+      "
+    ></i>
+  </div>
+
+  <div *ngIf="label">
+    <label [class]="labelClass" [col]="labelCol">
+      {{ label }}
+      <span *ngIf="isRequired" class="font-size-10 text-orange align-top"
+        >*</span
+      >
+    </label>
+    <div [col]="elementCol" class="elementClass">
+      <ng-container *ngTemplateOutlet="tempOutlet"></ng-container>
+      <i
+        appIcon
+        [name]="'check'"
+        class="form-control-feedback"
+        *ngIf="
+          modelController &&
+          modelController?.touched &&
+          modelController?.valid &&
+          showRightIcon
+        "
+        style="top: 0"
+      ></i>
+      <i
+        appIcon
+        [name]="'check'"
+        class="form-control-feedback"
+        *ngIf="
+          modelController &&
+          modelController?.touched &&
+          modelController?.invalid &&
+          showWrongIcon
+        "
+      ></i>
+      <div *ngIf="errorMessage" class="text-danger">
+        {{ errorMessage }}
+      </div>
+    </div>
+  </div>
+
+  <ng-template #tempOutlet>
+    <ng-content></ng-content>
+  </ng-template>
+</div>

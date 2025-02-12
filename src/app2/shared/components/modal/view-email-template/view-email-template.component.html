@@ -1,0 +1,11 @@
+<app-modal
+  [title]="title"
+  [isCancelButton]="false"
+  [initialTemplate]="ViewEmailModalref"
+></app-modal>
+
+<ng-template #ViewEmailModalref>
+  <div class="padding-10 view-template">
+    <span [innerHtml]="text"></span>
+  </div>
+</ng-template>

@@ -1,0 +1,10 @@
+<span>
+    <!-- <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="div"
+        title="TOOLTIP" uib-tooltip="{{grid.appScope.vm.getEntityGroupHeaderName(grid, row, col)}}">
+        {{grid.appScope.vm.getEntityGroupHeaderName(grid, row, col)}}
+    </div> -->
+    <span *ngIf="params.data" [adaptivePosition]="false" tooltip="{{getEntityTypeName(params.data.entity_type)}}" container="body"
+        placement="right">
+        {{getEntityTypeName(params.data.entity_type)}}
+    </span>
+</span>

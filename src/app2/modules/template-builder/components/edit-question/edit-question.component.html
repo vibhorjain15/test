@@ -1,0 +1,161 @@
+<form class="form-horizontal" [formGroup]="questionForm" autocomplete="off">
+  <dv-form-element
+    spacing="small"
+    [modelController]="questionForm.get('questionTitle')"
+    labelPosition="top"
+    label="Question text"
+    elementCol="12"
+    [errorMessage]="
+      questionForm.get('questionTitle').errors?.required
+        ? 'Question text is required'
+        : questionForm.get('questionTitle').errors?.containsHtml
+        ? 'Please enter a valid question'
+        : null
+    "
+  >
+    <textarea
+      autofocus
+      name=""
+      class="form-control"
+      id=""
+      cols="30"
+      rows="5"
+      formControlName="questionTitle"
+      aria-label="Question text"
+      id="questionTitle"
+    ></textarea>
+  </dv-form-element>
+  <dv-form-element
+    spacing="small"
+    [modelController]="questionForm.get('isMandatory')"
+    [showRightIcon]="false"
+  >
+    <div col="10">
+      <dv-checkbox
+        [id]="'isMandatory'"
+        label="Mark question as mandatory"
+        formControlName="isMandatory"
+        (onValChange)="handleMarkChange($event)"
+      >
+      </dv-checkbox>
+    </div>
+  </dv-form-element>
+  <dv-form-element elementCol="12" spacing="small">
+    <dv-divider role="separator"></dv-divider>
+  </dv-form-element>
+  <dv-form-element
+    label="Response type"
+    labelPosition="top"
+    elementCol="12"
+    [showRightIcon]="false"
+    spacing="small"
+    [modelController]="questionForm.get('responseType')"
+  >
+    <div class="space-on-bottom-xl">
+      <dv-select
+        [id]="'responseType'"
+        [contoller]="questionForm.get('responseType')"
+        [appendTo]="'body'"
+        [error]=""
+        [list]="responseType"
+        bindLabel="description"
+        bindValue=""
+        formControlName="responseType"
+        (onSelectChange)="handleChange($event)"
+      ></dv-select>
+    </div>
+
+    <dv-response-type-preview
+      *ngIf="responseType.length"
+      [question]="previewData"
+      [onSaveClick]="onSaveClick"
+      [editable]="true"
+      [editMode]="true"
+    ></dv-response-type-preview>
+  </dv-form-element>
+  <dv-form-element elementCol="12" spacing="small">
+    <helper-text *ngIf="question.has_response">
+      <a (click)="showEditQuestionFAQ()">Following edits</a> are not possible
+      once a question has active responses.
+    </helper-text>
+  </dv-form-element>
+  <dv-form-element elementCol="12" spacing="small">
+    <dv-divider role="separator"></dv-divider>
+  </dv-form-element>
+  <dv-form-element
+    label="Instructions and tips"
+    labelPosition="top"
+    elementCol="12"
+    spacing="small"
+    [showRightIcon]="false"
+    [modelController]="questionForm.get('hintText')"
+    [for]="'hintText'"
+  >
+    <dv-editor
+      [configObj]="tinyMceInit"
+      [value]="questionForm.value.hintText"
+      (onChange)="handleEditorChange($event)"
+      [imageSelector]="false"
+    ></dv-editor>
+    <div col="12" class="space-on-top-lg text-right">
+      <span
+        [ngClass]="{
+          'text-success':
+            hintClass === 'hintTextVaild' &&
+            questionForm?.get('hintText')?.touched,
+          'text-danger bold-text': hintClass === 'hintTextInVaild'
+        }"
+      >
+        <span *ngIf="hintTextLength > 0">
+          {{ hintTextLength }} characters
+        </span>
+        (maximum {{ DvTextLimits.HELP_TEXT_LIMIT }} characters)
+      </span>
+    </div>
+  </dv-form-element>
+  <dv-form-element
+    *ngIf="
+      questionForm.get('responseType')?.value?.id == 5 ||
+      questionForm.get('responseType')?.value?.id == 1
+    "
+    label="Word count limit"
+    labelPosition="top"
+    elementCol="12"
+    spacing="small"
+    [modelController]="questionForm.get('wordCount')"
+    [errorMessage]="
+      'Word count should be a number and between 1 and ' +
+      DvTextLimits.HELP_TEXT_LIMIT
+    "
+    infoText="Set the maximum word count limit for answering this question. You can set default limit from Firm settings."
+    iconClass="space-on-left"
+  >
+    <input
+      id="wordCount"
+      formControlName="wordCount"
+      placeholder="No word count limit set"
+      class="form-control"
+      aria-label="Word count limit"
+    />
+  </dv-form-element>
+  <dv-form-element elementCol="12" spacing="small">
+    <div class="side-panel-footer">
+      <dv-button
+        [disabled]="loading"
+        btnClass="btn btn-primary"
+        (onClick)="confirmOptionSaveChange()"
+        [loader]="loading"
+      >
+        Save
+      </dv-button>
+
+      <button
+        type="button"
+        class="btn btn-default"
+        (click)="handleOnCancelClick()"
+      >
+        Cancel
+      </button>
+    </div>
+  </dv-form-element>
+</form>

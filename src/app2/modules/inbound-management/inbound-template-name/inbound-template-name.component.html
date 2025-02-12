@@ -1,0 +1,13 @@
+<div *ngIf="params.data">
+  <span
+    class="space-on-right"
+    [adaptivePosition]="false"
+    [tooltip]="params.data?.template_name"
+    container="body"
+  >
+    {{ params.data?.template_name }}
+  </span>
+</div>
+<p *ngIf="params.node.group">
+  {{ params.value }}
+</p>

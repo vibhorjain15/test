@@ -1,0 +1,72 @@
+/* .feedback-panel-container {
+  box-shadow: -1px -1px 5px #0003;
+  position: fixed;
+  max-width: 650px;
+  width: 650px;
+  right: 0;
+  bottom: auto;
+  margin: 0;
+  z-index: 1020;
+} */
+.panel {
+  /* margin-bottom: 20px; */
+  background-color: #fff;
+  border: 1px solid #0000;
+  border-radius: 0;
+  /* box-shadow: 0 1px 1px #0000000d; */
+}
+.feedback-panel {
+  display: table;
+}
+.feedback-panel .feedback-request-type {
+  width: 200px;
+}
+.feedback-panel .feedback-comments {
+  position: relative;
+}
+.feedback-panel .feedback-comments .has-feedback {
+  position: static;
+}
+form .form-group:last-child, p:last-child, p:only-child {
+  margin-bottom: 0;
+}
+::ng-deep .feedback-panel .feedback-request-type .has-feedback.has-error .btn-group-vertical .btn.active {
+    color: #a52828;
+    border-color: #a52828;
+    border-right:none
+}
+
+/* ::ng-deep .feedback-panel .feedback-request-type .has-feedback.has-success .btn-group-vertical .btn.active {
+  color: green;
+  border-color: green;
+  border-right:none
+} */
+/* ::ng-deep .has-success .form-control{
+  border-color: #5ecce9;
+} */
+/* ::ng-deep .feedback-panel .feedback-request-type .btn-group-vertical .btn{
+  border-bottom: none;
+} */
+
+.feedback-panel .feedback-comments textarea {
+  box-shadow: none!important;
+  -webkit-box-shadow: none!important;
+  -mox-box-shadow: none!important;
+  -o-box-shadow: none!important;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  height: 100%;
+}
+.has-feedback .form-control {
+  padding-right: 20px;
+}
+.has-feedback .form-control {
+  padding-right: 42.5px;
+}
+textarea.form-control {
+  resize: none;
+}

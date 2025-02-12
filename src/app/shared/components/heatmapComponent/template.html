@@ -1,0 +1,108 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Heatmap
+        <div class="panel-controls" data-ng-show="vm.heatmapResponse.data.length > 0">
+            <div class="panel-controls-wrapper" uib-dropdown>
+                <a id="js-help-nav-btn" uib-dropdown-toggle role="button" class="panel-control"
+                    data-ng-click="vm.heatmapActions()" uib-tooltip="Actions">
+                    <i class="dvi ng-isolate-scope dvi-ellipsis-h fa-2x" name="ellipsis-h" size="2x"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+                    <li data-ng-show="vm.SORT_STATE == 'H2L'">
+                        <a role="button" data-ng-click="vm.sortHeatmap('L2H');vm.closeMenu();" class="sub-menu-item">
+                            Sort : Low to High
+                        </a>
+                    </li>
+                    <li data-ng-show="vm.SORT_STATE == 'L2H'">
+                        <a role="button" data-ng-click="vm.sortHeatmap('H2L');vm.closeMenu();" class="sub-menu-item">
+                            Sort : High to Low
+                        </a>
+                    </li>
+                    <li>
+                        <hr>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.toggleAverageFirst();vm.closeMenu();"
+                            class="sub-menu-item">
+                            Show Average {{vm.showAverageFirst?'Last':'First'}}
+                        </a>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.toggleWeightage();vm.closeMenu();"
+                            class="sub-menu-item">
+                            {{vm.showWeightages?'Hide':'Show'}} Weightage
+                        </a>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.toggleDecimalPlaces(true);vm.closeMenu();"
+                            class="sub-menu-item">
+                            {{vm.showDecimalPlaces?'Hide':'Show'}} Decimal Places
+                        </a>
+                    </li>
+                    <li data-ng-show="!vm.categoryOnly">
+                        <a role="button" data-ng-click="vm.toggleCategoryOnly(true);vm.closeMenu();"
+                            class="sub-menu-item">
+                            Show Category only
+                        </a>
+                    </li>
+                    <li data-ng-show="vm.categoryOnly">
+                        <a role="button" data-ng-click="vm.toggleCategoryOnly(false);vm.closeMenu();"
+                            class="sub-menu-item">
+                            Show Subcategories along with categories
+                        </a>
+                    </li>
+                    <li data-ng-show="vm.heatmapOptions.heatmap_orientation == 'X'">
+                        <a role="button" data-ng-click="vm.toggleOrientation('Y');vm.closeMenu();"
+                            class="sub-menu-item">
+                            Show Entity names on the y-axis
+                        </a>
+                    </li>
+                    <li data-ng-show="vm.heatmapOptions.heatmap_orientation == 'Y'">
+                        <a role="button" data-ng-click="vm.toggleOrientation('X');vm.closeMenu();"
+                            class="sub-menu-item">
+                            Show Entity names on the x-axis
+                        </a>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.toggleTextDisplay(vm.TEXT_DISPLAY_STATE);vm.closeMenu();"
+                            class="sub-menu-item">
+                            Toggle text display
+                        </a>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.toggleDatesDisplay(vm.DATES_DISPLAY_STATE);vm.closeMenu();"
+                            class="sub-menu-item">
+                            Toggle date display
+                        </a>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.svg_to_pdf();vm.closeMenu();" class="sub-menu-item">
+                            Save as PDF
+                        </a>
+                    </li>
+                    <li>
+                        <a role="button" data-ng-click="vm.saveAsPng();vm.closeMenu();" class="sub-menu-item">
+                            Save as PNG
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div data-ng-show="vm.heatmapResponse.data.length > 0 && !vm.loading">
+            <div class="heatmapContainer" id="heatmapChartContainer" heatmap set-fn="vm.setDirectiveFn(theDirFn)"></div>
+        </div>
+
+        <div class="text-center" data-ng-if="vm.loading">
+            <spinner></spinner>
+        </div>
+        <div class="es-message-wrapper panel-body text-center horizontal-scroll"
+            data-ng-show="vm.heatmapResponse.data.length == 0 && !vm.loading">
+            <p class="es-message">No data available for your filter criteria. Please select a different rating scheme or
+                view.</p>
+        </div>
+    </div>
+
+</div>

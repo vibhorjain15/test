@@ -1,0 +1,43 @@
+<div class="password-criteria">
+  <div class="criteria-container">
+    <ul class="criteria-list list-unstyled">
+      <li ng-class="{'text-success': password_popover_properties.ngModel.$dirty && !password_popover_properties.ngModel.$error.required &&  !password_popover_properties.ngModel.$error.passwordRequiredLength, 'text-muted': password_popover_properties.ngModel.$error.required || password_popover_properties.ngModel.$error.passwordRequiredLength}">
+        <span class="icon"><icon name="check-circle"></icon></span>
+
+        <span class="desc">
+          {{password_popover_properties.errorMessageMap.passwordRequiredLength}}
+        </span>
+      </li>
+      <li ng-class="{'text-success': password_popover_properties.ngModel.$dirty && !password_popover_properties.ngModel.$error.required &&  !password_popover_properties.ngModel.$error.passwordUppercaseChar, 'text-muted': password_popover_properties.ngModel.$error.required || password_popover_properties.ngModel.$error.passwordUppercaseChar}">
+        <span class="icon"><icon name="check-circle"></icon></span>
+        <span class="desc">
+          {{password_popover_properties.errorMessageMap.passwordUppercaseChar}}
+        </span>
+      </li>
+      <li ng-class="{'text-success': password_popover_properties.ngModel.$dirty && !password_popover_properties.ngModel.$error.required &&  !password_popover_properties.ngModel.$error.passwordLowercaseChar, 'text-muted': password_popover_properties.ngModel.$error.required || password_popover_properties.ngModel.$error.passwordLowercaseChar}">
+        <span class="icon"><icon name="check-circle"></icon></span>
+        <span class="desc">
+          {{password_popover_properties.errorMessageMap.passwordLowercaseChar}}
+        </span>
+      </li>
+      <li ng-class="{'text-success': password_popover_properties.ngModel.$dirty && !password_popover_properties.ngModel.$error.required && !password_popover_properties.ngModel.$error.passwordSpecialChar, 'text-muted': password_popover_properties.ngModel.$error.required || password_popover_properties.ngModel.$error.passwordSpecialChar}">
+        <span class="icon"><icon name="check-circle"></icon></span>
+        <span class="desc">
+          {{password_popover_properties.errorMessageMap.passwordSpecialChar}}
+        </span>
+      </li>
+      <li ng-class="{'text-success': password_popover_properties.ngModel.$dirty && !password_popover_properties.ngModel.$error.required && !password_popover_properties.ngModel.$error.passwordNumber, 'text-muted': password_popover_properties.ngModel.$error.required || password_popover_properties.ngModel.$error.passwordNumber}">
+        <span class="icon"><icon name="check-circle"></icon></span>
+        <span class="desc">
+          {{password_popover_properties.errorMessageMap.passwordNumber}}
+        </span>
+      </li>
+      <li ng-class="{'text-success': password_popover_properties.ngModel.$dirty && !password_popover_properties.ngModel.$error.required && !password_popover_properties.ngModel.$error.passwordNoWhitespace, 'text-muted': password_popover_properties.ngModel.$error.required || password_popover_properties.ngModel.$error.passwordNoWhitespace}">
+        <span class="icon"><icon name="check-circle"></icon></span>
+        <span class="desc">
+          {{password_popover_properties.errorMessageMap.passwordNoWhitespace}}
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

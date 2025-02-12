@@ -1,0 +1,223 @@
+<div class="tab-content" data-ng-if="vm.Utils.isAngular()">
+  <ng2-projects-layout></ng2-projects-layout>
+</div>
+<div data-ng-show="vm.Utils.isAngularJS()">
+<div data-ng-hide="vm.is_loading">
+  <div data-ng-hide="vm.no_dds" trigger-grid-refresh="vm.no_dds == false"> <!-- !vm.no_dds will run when it is null/undefined -->
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div role="tabpanel" class="relative">
+          <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist" data-ng-class="{'visibility-hidden': vm.show_bulk_actions && vm.type != 'all'}">
+            <li data-ng-class="{'active': $state.params.type == count_info.type}"
+                data-ng-repeat="count_info in vm.due_diligence_counts">
+              <a id="js-projects-{{count_info.type}}" ui-sref="app.diligence.projects.activity({type: count_info.type})">
+                <span class="align-middle">{{count_info.id}}</span>
+                <span class="align-middle label label-orange inline-block"
+                      data-ng-show="count_info.new_counts">
+                  <small>{{count_info.new_counts}} new</small>
+                </span>
+              </a>
+            </li>
+            <div class="pull-right" data-ng-if="vm.customDateFilter">
+              <button btn-type="default" data-ng-if="vm.filters_data_loaded" class="space-on-top-2" uib-tooltip="Apply Filters"
+                data-ng-click="vm.toggleFiltersSection()">
+                <icon name="filter" data-ng-class="{'text-orange': vm.filterApplied}"></icon>
+              </button>
+              <button btn-type="default" class="space-on-top-2" uib-tooltip="Clear Filters" data-ng-click="vm.resetFiltersData()" data-ng-if="vm.filterApplied">
+                <icon name="refresh"></icon>
+              </button>
+              <dv-daterangepicker class="va-middle" ng-model="vm.customDateFilter" min-date="vm.minDate" max-date="vm.maxDate"
+                apply-method="vm.applyMethod">
+              </dv-daterangepicker>
+            </div>
+          </ul>
+
+
+          <div col="12" class="panel panel-default pos-abs stick-top bg-sky-blue" data-ng-if="vm.show_bulk_actions && vm.type != 'all'">
+            <div class="panel-body padded-lg" data-ng-if="!vm.show_bulk_edit_actions">
+              <h5 class="inline space-on-right-xl">
+                <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+              </h5>
+              <h5 class="inline space-on-right-lg">
+                <strong>Quick actions:</strong>
+              </h5>
+              <a class="btn btn-default space-on-right-lg" data-ng-if="vm.is_investor && (vm.type != 'closed')"
+                uib-tooltip="Remind" data-ng-click="vm.confirmBulkAction('remind')">
+                <strong>
+                  <icon name="history"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default space-on-right-lg" data-ng-if="vm.is_investor && (vm.type == 'sent')"
+                uib-tooltip="Withdraw requests" data-ng-click="vm.confirmBulkAction('withdraw')">
+                <strong>
+                  <icon name="close"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default success space-on-right-lg"
+                data-ng-if="vm.is_investor && ((vm.type == 'in-progress') || (vm.type == 'my projects'))"
+                uib-tooltip="Approve projects (only projects after manager completion will be approved)"
+                data-ng-click="vm.confirmBulkAction('approve')">
+                <strong>
+                  <icon name="check"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default success space-on-right-lg"
+                data-ng-if="(vm.is_manager) && ((vm.type == 'in-progress') || (vm.type == 'my projects'))"
+                uib-tooltip="Submit requests" data-ng-click="vm.confirmBulkAction('complete')">
+                <strong>
+                  <icon name="check"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default success space-on-right-lg" data-ng-if="vm.is_manager && (vm.type == 'invites')"
+                uib-tooltip="Accept requests" data-ng-click="vm.confirmBulkAction('accept')">
+                <strong>
+                  <icon name="check"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default success space-on-right-lg" data-ng-if="vm.is_manager && (vm.type == 'invites')"
+                uib-tooltip="Decline requests" data-ng-click="vm.confirmBulkAction('decline')">
+                <strong>
+                  <icon name="close"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default danger space-on-right-lg"
+                data-ng-if="vm.is_investor && ((vm.type == 'in-progress') || (vm.type == 'my projects') || (vm.type == 'closed'))"
+                uib-tooltip="Delete Selected" data-ng-click="vm.confirmBulkAction('delete')">
+                <strong>
+                  <icon name="trashcan"></icon>
+                </strong>
+              </a>
+
+              <a class="btn btn-default space-on-right-lg" uib-tooltip="Edit Selected"
+                data-ng-click="vm.editSentdDDBulkActionActive()" data-ng-if="vm.is_investor && (vm.type == 'sent' || vm.type == 'in-progress' || vm.type == 'my projects')">
+                <strong>
+                  <icon name="pencil"></icon>
+                </strong>
+              </a>
+              <a class="btn btn-default space-on-right-lg" uib-tooltip="Export selected Project(s)"
+                data-ng-click="vm.exportSelectedQuestions()">
+                <strong>
+                  <strong><span class="dvi dvi-download3"></span>  </strong>
+                </strong>
+              </a>
+
+              <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+                <strong>
+                  <icon name="close"></icon>
+                </strong>
+              </a>
+            </div>
+            <div class="panel-body padded-lg" data-ng-if="vm.show_bulk_edit_actions">
+              <div class="row">
+                <div col="6" class="clear-padding text-align-right">
+                  <span>
+                    <h5 class="inline space-on-right">
+                      <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+                    </h5>
+                  </span>
+                  <span>Select As of Date:</span>
+                  <a style="width:45%;" class="btn btn-default clear-padding borderless space-on-right-lg">
+                    <dv-datepicker min-date="vm.minDateEditSection" data-ng-model="vm.sent_diligences_as_of_date"
+                      ng-required="true" id="as-of-date" max-date="vm.maxAsOfDate">
+                    </dv-datepicker>
+                  </a>
+                </div>
+                <div col="5" class="clear-padding">
+                  <span>Select Due Date:</span>
+                  <a style="width:45%;" class="btn btn-default space-on-right-lg clear-padding borderless">
+                    <dv-datepicker min-date="vm.minDateEditSection" data-ng-model="vm.sent_diligences_due_date"
+                      ng-required="true" id="due-date" name="due-date"tooltip-placement="right" uib-tooltip="Due date should be greater than or equal to as of date." tooltip-trigger="none" tooltip-is-open="vm.showDueDateValidation()">
+                    </dv-datepicker>
+                  </a>
+                  <a class="btn btn-default space-on-right-lg clear-padding borderless"
+                    data-ng-click="vm.editSentDDBulkAction()">
+                    <button button-loader="vm.loading" class="btn btn-primary btn-loader" btn-type="submit">Save</button>
+                  </a>
+                  <a class="btn btn-default clear-padding borderless" data-ng-click="vm.cancelQuickActions()">
+                    <button btn-type="default">Cancel</button>
+                  </a>
+                </div>
+                <div col="1">
+                  <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+                    <strong>
+                      <icon name="close"></icon>
+                    </strong>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div col="12" class="panel panel-default pos-abs stick-top bg-sky-blue" data-ng-if="vm.show_bulk_actions && vm.type == 'all'">
+            <div class="panel-body padded-lg" data-ng-if="!vm.show_bulk_edit_actions">
+              <h5 class="inline space-on-right-xl">
+                <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+              </h5>
+              <h5 class="inline space-on-right-lg">
+                <strong>Quick actions:</strong>
+              </h5>
+              <a class="btn btn-default space-on-right-lg" uib-tooltip="Export selected Project(s)"
+                data-ng-click="vm.exportSelectedQuestions()">
+                <strong>
+                  <strong><span class="dvi dvi-download3"></span>  </strong>
+                </strong>
+              </a>
+
+              <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+                <strong>
+                  <icon name="close"></icon>
+                </strong>
+              </a>
+            </div>
+          </div>
+          <div class="label-list space-on-bottom-lg" data-ng-if="vm.filterApplied">
+            <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+               data-ng-repeat="criterion in vm.search_criterias" data-ng-if="criterion.advance_filter_value">
+               <small>{{vm.displayFilter(criterion)}}</small>
+               <a class="space-on-left clickable link-disguise" data-ng-click="vm.removeFilterCriterion($index)">&times;</a>
+            </span>
+         </div>
+
+          <div class="tab-content">
+            <div class="space-on-top-lg">
+              <div ui-view=""></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div ui-view="dd_status_legend"></div>
+  </div>
+
+  <div class="panel panel-default" data-ng-show="vm.no_dds">
+    <div class="panel-body">
+      <div class="row clearfix">
+        <div col="6" offset="3" class="js-projects-no-dds">
+          <div authorized-view accessible-to="FreeSubscription">
+            <empty-state icon-name="briefcase"
+                         message="There are no projects right now. Please contact your admin"></empty-state>
+          </div>
+
+          <div authorized-view hidden-from="FreeSubscription">
+            <empty-state icon-name="briefcase"
+                         message="There are no projects right now. Let's add one"
+                         action="vm.showInviteDDHelp()"
+                         action-label="Invite "></empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<spinner data-ng-show="vm.is_loading && !vm.showNudges"></spinner>
+<div data-ng-show="vm.is_loading && vm.showNudges">
+  <dv-nudges nudges="vm.selectedNudge"></dv-nudges>
+</div>
+</div>

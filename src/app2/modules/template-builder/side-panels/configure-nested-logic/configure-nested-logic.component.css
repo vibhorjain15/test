@@ -1,0 +1,27 @@
+:host ::ng-deep .alert {
+  margin-bottom: 0px;
+  padding: 10px;
+}
+.template-segment {
+  border: 1px solid #bfbfbf;
+  border-radius: 2px;
+  padding: 5px 10px 10px 10px;
+  background: white;
+  margin-bottom: 10px;
+}
+.header-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.template-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 28px;
+  margin-bottom: 5px;
+}

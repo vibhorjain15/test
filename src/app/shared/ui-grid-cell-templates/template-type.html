@@ -1,0 +1,10 @@
+<ui-grid-cell-contents class="unstyledLink">
+    <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+        class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{grid.appScope.vm.getTemplateType(grid, row, col)}}">
+        <span class="label text-uppercase label-default">{{grid.appScope.vm.getTemplateType(grid, row, col)}}</span>
+        <span>({{row.treeNode.children.length}})</span>
+    </div>
+    <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+        <span class="label text-uppercase label-default">{{grid.appScope.vm.getTemplateType(grid, row, col)}}</span>
+    </div>
+</ui-grid-cell-contents>

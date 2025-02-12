@@ -1,0 +1,122 @@
+<div class="panel panel-default">
+  <div class="panel-heading bordered-top">
+    <h5 class="panel-title">Add Owner(s)</h5>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">Any previously assigned DV owners will now show as Primary owners</div>
+  </div>
+
+  <div class="panel-body">
+    <div class="text-center" data-ng-if="vm.loading_data">
+      <spinner></spinner>
+    </div>
+    <div data-ng-if="!vm.loading_data">
+      <form-group field-name="Primary Owner">
+        <label for="Primary-Owner"
+              class="control-label"
+              col="4"
+              col-type="sm">
+              Primary Owner
+              <icon name="info"  uib-tooltip="You can auto subscribe primary owners to receive all notifications while sending a new request.">
+              </icon>
+            </label>
+
+        <div col="8" col-type="sm">
+          <tags-input data-ng-model="vm.params.primary_owners"
+                      display-property="fullName"
+                      key-property="id"
+                      placeholder="Select owner(s)"
+                      add-from-autocomplete-only=true
+                      id="Primary-Owner"
+                      replace-spaces-with-dashes="false">
+              <auto-complete source="vm.filterMembers($query)"
+                            load-on-focus=true
+                            load-on-down-arrow=true
+                            load-on-empty=true
+                            min-length="1"></auto-complete>
+          </tags-input>
+        </div>
+      </form-group>
+      <form-group field-name="Secondary Owner">
+        <label for="Secondary-Owner"
+              class="control-label"
+              col="4"
+              col-type="sm">Secondary Owner</label>
+
+        <div col="8" col-type="sm">
+          <tags-input data-ng-model="vm.params.secondary_owners"
+                      display-property="fullName"
+                      key-property="id"
+                      placeholder="Select owner(s)"
+                      add-from-autocomplete-only=true
+                      id="Secondary-Owner"
+                      replace-spaces-with-dashes="false">
+              <auto-complete source="vm.filterMembers($query)"
+                            load-on-focus=true
+                            load-on-down-arrow=true
+                            load-on-empty=true
+                            min-length="1"></auto-complete>
+          </tags-input>
+        </div>
+      </form-group>
+      <div ng-repeat="entry in vm.owners" col="12" class="space-on-bottom-lg">
+        <form-group field-name="Owners_{{$index}}">
+          <div for="strategy-type" col="4">
+            <div>
+              <label for="functionInput">
+                User Role
+                <icon name="info" uib-tooltip="Assign a user role when you want multiple people to receive and manage requests for tasks, workflows and projects. List of users and user roles can be managed from firm settings>users and teams> user roles">
+                </icon>
+              </label>
+            </div>
+            <div>
+              <select name="user-role"
+                      id="functionInput"
+                      class="form-control"
+                      chosen
+                      data-ng-options="function.function_id as function.function_name disable when function.disabled for function in entry.functions"
+                      data-ng-model="entry.selectedFunction"
+                      ng-change="vm.onFunctionChange(entry)">
+                <option value="">--Select--</option>
+              </select>
+            </div>
+          </div>
+
+          <div col="5">
+            <div><label for="">Team Member(s)</label></div>
+            <tags-input data-ng-model="entry.selected_function_users"
+                        display-property="user_name"
+                        key-property="user_id"
+                        placeholder="Select Team Member(s)"
+                        ng-disabled="entry.autoAssign"
+                        add-from-autocomplete-only=true
+                        id="Function-members"
+                        replace-spaces-with-dashes="false">
+                <auto-complete source="vm.filterMembersInFunction($query, entry.selectedFunction)"
+                              load-on-focus=true
+                              load-on-down-arrow=true
+                              load-on-empty=true
+                              min-length="1"></auto-complete>
+            </tags-input>
+          </div>
+          <div col="3">
+            <label for="" class="block-display">Auto-assign</label>
+            <!-- <div><label for="" class="visibility-hidden">.</label></div> -->
+            <div>
+              <dv-checkbox data-ng-model="entry.autoAssign" data-ng-disabled="!entry.selectedFunction" uib-tooltip="Click to Auto-assign all users in this user role">
+              </dv-checkbox>
+            </div>
+          </div>
+        </form-group>
+        <div class="ownerDeleteBtn">
+          <button ng-show="vm.owners.length > 1" class="btn btn-default btn-sm danger" uib-tooltip="Delete" data-ng-click="vm.removeOwnerList(entry)">
+              <strong><icon name="trashcan"></icon></strong>
+          </button>
+          <button ng-show="$last" class="btn btn-default success btn-sm" uib-tooltip="Add" data-ng-click="vm.addMoreOwners()">
+              <strong><icon name="plus"></icon></strong>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

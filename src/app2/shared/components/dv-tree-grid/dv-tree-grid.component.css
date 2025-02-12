@@ -1,0 +1,172 @@
+.table {
+  padding: 20px;
+  background-color: white;
+}
+ag-grid-angular {
+  width: 100%;
+  height: 600px !important;
+}
+
+.margin-left-auto {
+  margin-left: auto;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.hide-filter-toggle {
+  position: absolute;
+  right: 0px;
+  z-index: 999;
+}
+
+.ag-theme-alpine {
+  --ag-selected-row-background-color: none;
+}
+:host ::ng-deep .ag-group-value {
+  flex-grow: 1;
+}
+
+.save-view-panel {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: start;
+}
+
+:host ::ng-deep .save-view-panel .btn {
+  height: 36px;
+}
+
+.save-view-panel .left-panel {
+  flex: 1;
+}
+
+.save-view-panel .right-panel {
+  flex: 0;
+  display: flex;
+}
+
+.save-view-panel .right-panel .view-selector {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.save-view-panel .right-panel .view-selector dv-button {
+  display: flex;
+}
+
+:host
+  ::ng-deep
+  .save-view-panel
+  .right-panel
+  .view-selector
+  dv-button
+  button
+  .dv-button-content {
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .save-view-panel .right-panel .view-selector .btnActive {
+  color: #157d98;
+  background: #eaf0f5 0% 0% no-repeat padding-box;
+  border: 1px solid #157d98;
+}
+
+.save-view-panel .right-panel .view-selector .button-text {
+  max-width: 150px;
+  text-align: start;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: "no-wrap";
+}
+
+.save-view-panel .right-panel .save-button {
+  display: inline-block;
+}
+
+.save-view-panel .right-panel .more-actions {
+  display: inline-block;
+}
+
+:host
+  ::ng-deep
+  .save-button-dropdown
+  .button-wrapper
+  dv-dropdown
+  .dropdown-link:hover {
+  color: #fff !important;
+}
+
+.saved-views-popover {
+  width: 320px;
+}
+
+.saved-views-popup .saved-views-header {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19px;
+}
+
+.saved-view-scrollable-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.saved-view-rows {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  flex-direction: row;
+}
+
+.saved-view-rows:hover {
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.saved-view-rows.active {
+  background-color: #ecf7f9;
+  color: #1890af;
+  border-bottom: #eee;
+}
+
+.saved-view-rows .view-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.saved-view-rows .view-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.saved-view-rows .view-top .view-name {
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 19px;
+  flex: 1;
+}
+
+.saved-view-rows .view-top .view-name .dvi {
+  font-size: 12px;
+}
+
+.saved-view-rows .view-description {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  color: #333;
+}
+
+.saved-view-rows .view-top .view-actions span {
+  padding-left: 5px;
+  padding-right: 5px;
+  cursor: pointer;
+  color: #333;
+}

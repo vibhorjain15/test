@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+    <div class="panel-body full-height align-middle" data-ng-if="vm.singleMode">
+        <div data-ng-show="vm.selection" class="label-list">
+            <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top">
+                <small>{{vm.selection.fullName}}</small>
+
+                <a class="space-on-left clickable link-disguise"
+                    data-ng-click="vm.displaySubscriberRemovalConfirmation(vm.selection)">&times;</a>
+            </span>
+            
+            <dv-team-member-selector functions="vm.functions" on-change="vm.addSubscriber(user, type)" clear-selection-allowed="false">
+            </dv-team-member-selector>
+        </div>
+        <div data-ng-hide="vm.selection">
+            <small class="text-muted">No Subscribers Found</small>
+            <dv-team-member-selector functions="vm.functions" on-change="vm.addSubscriber(user,type)" clear-selection-allowed="false">
+            </dv-team-member-selector>
+        </div>
+    </div>
+    <div class="panel-body full-height align-middle" data-ng-if="!vm.singleMode">
+        <div data-ng-show="vm.selection.length" class="label-list">
+            <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                data-ng-repeat="subscriber in vm.selection">
+                <small>{{subscriber.fullName}}</small>
+
+                <a class="space-on-left clickable link-disguise"
+                    data-ng-click="vm.displaySubscriberRemovalConfirmation(subscriber)">&times;</a>
+            </span>
+            
+            <dv-team-member-selector functions="vm.functions" on-change="vm.addSubscriber(user, type)" clear-selection-allowed="false">
+            </dv-team-member-selector>
+        </div>
+        <div data-ng-hide="vm.selection.length">
+            <small class="text-muted">No Subscribers Found</small>
+            <dv-team-member-selector functions="vm.functions" on-change="vm.addSubscriber(user,type)" clear-selection-allowed="false">
+            </dv-team-member-selector>
+        </div>
+    </div>
+</div>

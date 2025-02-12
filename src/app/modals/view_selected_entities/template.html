@@ -1,0 +1,28 @@
+<form name="vm.vehicleDiligencesForm" data-ng-submit="vm.submit()">
+    <div class="modal-header">
+      <h3 class="modal-title">Selected {{vm.entityType}}s ({{vm.filterDisplay}})
+  
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            <div class="row">
+                <input type="text" class="form-control" onkeydown="return event.keyCode !== 13" placeholder="Search {{vm.entityType}} by name" data-ng-model="vm.searchEntity" />
+            </div>
+            <ul class="row list-group max-h-25-em min-h-10-em overflow-scroll-y-axis">
+                <li data-ng-repeat="entity in vm.entities | filter: vm.searchEntity" class="list-group-item">
+                    <dv-checkbox data-ng-model="entity.selected" data-ng-disabled="vm.readonly" label="{{entity.display_name}}"></dv-checkbox>
+                </li>
+                <li class="" data-ng-show="vm.entities.length == 0">
+                    <empty-state message="No {{vm.entityType}}s available."></empty-state>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" data-ng-hide="vm.readonly">Save</button>
+        <button class="btn btn-default" data-ng-click="vm.cancel()">Close</button>
+      </div>
+</form>

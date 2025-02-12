@@ -1,0 +1,19 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Release Note"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-info">
+    <div
+      class="panel-heading"
+      aria-label="Caution: The changes applied will be universal for all users."
+      clickable
+    >
+      Caution: The changes applied will be universal for all users.
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-dv-grid [rowData]="releases" [name]="gridName"></app-dv-grid>
+  </div>
+</div>

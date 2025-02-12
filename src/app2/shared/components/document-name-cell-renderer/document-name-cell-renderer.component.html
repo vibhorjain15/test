@@ -1,0 +1,84 @@
+<div
+  class="text-left"
+  (mouseenter)="showPreview = true"
+  (mouseleave)="showPreview = false"
+  *ngIf="params.data"
+  class="d-flex align-items-center"
+>
+  <!-- <span
+    [style.color]="colorTheme.primary"
+    appIcon
+    name="file-doc-grid"
+    [style.paddingRight.px]="5"
+  ></span> -->
+  <app-attachment-icon
+    [filename]="params.data.document.file_name"
+    class="file-attachment-icon"
+    [color]="'#1d9c5a'"
+    class="space-on-right"
+  ></app-attachment-icon>
+  <a
+    [tippyTooltip]="
+      params.data.document.name?.length > 34 ? params.data.document.name : ''
+    "
+    container="body"
+    [adaptivePosition]="false"
+    class="more-text flex-grow-1 no-underline"
+    href="{{ href }}"
+    [style.fontWeight]="params.data.document.is_unread ? 'bold' : 'normal'"
+  >
+    <span (click)="click($event)">{{ params.data.document.name }}</span>
+  </a>
+
+  <div class="actionIcons">
+    <span
+      *ngIf="params.data.document.reviews?.length"
+      customSize="big"
+      class="space-on-left"
+      appIcon
+      name="reviewed-document"
+    ></span>
+    <button
+      appButton
+      btnType="default"
+      size="xs"
+      class="space-on-left-lg"
+      *ngIf="showPreview || isDropdownOpen"
+      tooltip="View"
+      aria-label="View"
+      container="body"
+      [adaptivePosition]="false"
+      (click)="previewClicked($event, params.data.document)"
+    >
+      <span appIcon name="eye"></span>
+    </button>
+    <button
+      appButton
+      aria-label="Search"
+      btnType="default"
+      size="xs"
+      class="space-on-left"
+      *ngIf="
+        (showPreview || isDropdownOpen) && showPreviewIcon(params.data.document)
+      "
+    >
+      <span appIcon name="search"></span>
+    </button>
+    <dv-dropdown
+      type="default"
+      (onDropdownClick)="handleActionClick($event)"
+      (onIconClick)="handleActionClick($event)"
+      [dropDownList]="actions"
+      iconName="dots-three-vertical"
+      [isIconLabel]="false"
+      iconSize="large"
+      dropdownPlacement="left"
+      tippyTooltip="More Actions"
+      [style.display]="showPreview || isDropdownOpen ? null : 'none'"
+      (onDropdownToggle)="isDropdownOpen = !isDropdownOpen"
+      class="dropdown-doc-class"
+      *ngIf="actions?.length"
+    >
+    </dv-dropdown>
+  </div>
+</div>

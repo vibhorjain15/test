@@ -1,0 +1,13 @@
+{
+  "name": "d3.punchcard",
+  "homepage": "https://github.com/DiligenceVault/d3.punchcard",
+  "_release": "a481844f9b",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "a481844f9bc2204211c974d09c0349fc9ea74ea6"
+  },
+  "_source": "https://github.com/DiligenceVault/d3.punchcard.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/DiligenceVault/d3.punchcard.git"
+}

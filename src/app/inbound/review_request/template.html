@@ -1,0 +1,196 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-review-request></ng2-review-request>
+</div>
+<div class="panel panel-default" data-ng-if="vm.Utils.isAngularJS()">
+    <div class="panel-heading">
+      <h5 class="panel-title">Review Opportunity</h5>
+    </div>
+    <div class="panel-body">
+      <div class="row clearfix">
+        <div>
+          <div data-ng-if="vm.showSpinner">
+            <spinner broad-spinner spinner-height='100'></spinner>
+          </div>
+          <div data-ng-if="!vm.showSpinner && vm.opportunities.length == 0">
+            <empty-state message="No Opportunities Found."></empty-state>
+          </div>
+          <div data-ng-if="!vm.showSpinner && vm.opportunities.length > 0">
+            <div class="alert alert-info">
+              Select opportunity from the dropdown, use search to narrow
+              down the entity for which you want to apply.
+            </div>
+            <div col="8" offset="2">
+              <form name="vm.opportunityForm" class="form-horizontal" data-ng-submit="vm.submit()" novalidate>
+                <div col="6">
+                  <form-group
+                    field-name="Investor Firm">
+                    <div class="inbound-logo-wrapper inline-block space-on-right-lg">
+                      <img ng-src="{{vm.logoLink}}" alt="Logo" data-ng-if="vm.logoLink" />
+                    </div>
+                    <div class="inline-block va-middle">
+                      <label for="investor-firm" class="control-label"
+                        >Investor Firm</label>
+                      <b class="block-display font-size-16"
+                        data-ng-bind="vm.params.investor_firm"
+                      ></b>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="5" data-ng-if="!vm.redirectId">
+                  <form-group
+                    field-name="Opportunity" validate-on="submit"
+                  >
+                    <div col="12">
+                      <label for="opportunity-name" class="control-label">Select an Opportunity</label>
+                      <select class="form-control" id="template" 
+                          required chosen
+                          data-ng-change="vm.onOpportunityChanged()"
+                          data-ng-options="opportunity.id as opportunity.name for opportunity in vm.opportunities" 
+                          data-ng-model="vm.params.opportunity_id"
+                          data-ng-disabled="vm.redirectId">
+                          <option value="">-- Select Opportunity --</option>
+                      </select>
+                      
+                    </div>
+                  </form-group>
+                </div>
+                <div col="12" data-ng-if="vm.params.opportunity_id">
+                  <form-group
+                    field-name="Description"
+                  >
+                    <label for="description" class="control-label"
+                      >Description</label
+                    >
+                    <div>
+                      <div
+                        data-ng-if="vm.params.descriptionContent.length>0"
+                        class="inbound-editable"
+                        data-ng-bind-html="vm.params.descriptionContent"
+                      ></div>
+                      <div class="inbound-editable" data-ng-if="!vm.params.descriptionContent">
+                        <span data-ng-if="vm.params.opportunity_id">No description was provided.</span>
+                      </div>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="5" data-ng-if="vm.params.opportunity_id">
+                  <form-group
+                    field-name="As of Date" control-selector="dv-datepicker"
+                  >
+                    <div>
+                      <label for="as-of-date" class="control-label"><span
+                          uib-tooltip="The data you are providing for this project is as of the date selected here"><i class="dvi dvi-info"></i></span>&nbsp;As of Date</label>
+                      <dv-datepicker data-ng-model="vm.params.as_of_date"
+                              id="as-of-date"
+                              name="as-of-date"
+                              min-date="vm.minDate"
+                              data-ng-change="vm.validateDueDate()">
+                      </dv-datepicker>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="5" offset="1" data-ng-if="vm.params.opportunity_id">
+                  <form-group
+                    field-name="Due Date" control-selector="dv-datepicker"
+                  >
+                    <div>
+                      <label for="opportunity-name" class="control-label"
+                        >Due Date</label>
+                      <dv-datepicker data-ng-model="vm.params.due_date"
+                        id="due-date"
+                        name="due-date"
+                        min-date="vm.minDate"
+                        data-ng-change="vm.validateDueDate()">
+                      </dv-datepicker>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="5" data-ng-if="vm.params.opportunity_id">
+                  <form-group
+                    field-name="Submission for" validate-on="submit"
+                  >
+                    <div>
+                      <label for="entity-type" class="control-label">
+                        Submission for
+                      </label>
+                      <select class="form-control" id="entity-type" 
+                          required chosen
+                          data-ng-disabled="(vm.redirectId && vm.defaultOpportunity && vm.defaultOpportunity.entity_type) || (vm.selectedOpportunity && vm.selectedOpportunity.entity_type && vm.isFreeManager)"
+                          data-ng-change="vm.onEntityTypeChanged()"
+                          data-ng-model="vm.params.entity_type">
+                          <option value="">-- Select --</option>
+                          <option value="{{vm.keywordConstants.Firm}}">My Firm</option>
+                          <option value="{{vm.keywordConstants.Strategy}}">Strategy</option>
+                          <option value="{{vm.keywordConstants.Product}}">Product</option>
+                      </select>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="5" offset="1" data-ng-if="vm.params.entity_type && vm.params.entity_type == vm.keywordConstants.Product">
+                  <form-group validate-on="submit"
+                    field-name="Associated {{vm.entityTypeName}}">
+                    <div>
+                      <label for="associated-entity" class="control-label">
+                        {{ vm.entityText }}
+                      </label>
+                      <select id="product"
+                        class="form-control"
+                        data-ng-required="vm.params.entity_type == vm.keywordConstants.Product"
+                        chosen
+                        data-ng-model="vm.params.entity_id"
+                        data-ng-options="fund.id as fund.name for fund in vm.funds">
+                        <option value="">-- Select Product --</option>
+                      </select>
+                      <div
+                        class="pull-right inbound-mt-10 clickable"
+                        data-ng-click="vm.openNewDialog()">
+                        Add {{vm.entityTypeName}}
+                      </div>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="5" offset="1" data-ng-if="vm.params.entity_type && vm.params.entity_type == vm.keywordConstants.Strategy">
+                  <form-group validate-on="submit"
+                    field-name="Associated {{vm.entityTypeName}}">
+                    <div>
+                      <label for="associated-entity" class="control-label">
+                        {{ vm.entityText }}
+                      </label>
+                      <select id="strategy"
+                          class="form-control"
+                          data-ng-required="vm.params.entity_type == vm.keywordConstants.Strategy"
+                          chosen
+                          data-ng-model="vm.params.entity_id"
+                          data-ng-options="strategy.id as strategy.name for strategy in vm.strategies">
+                          <option value="">-- Select Strategy --</option>
+                      </select>
+                      <div
+                        class="pull-right inbound-mt-10 clickable"
+                        data-ng-click="vm.openNewDialog()">
+                        Add {{vm.entityTypeName}}
+                      </div>
+                    </div>
+                  </form-group>
+                </div>
+                <div col="8" offset="2" class="space-on-top-lg">
+                  <div class="text-center">
+                    <button class="btn btn-primary" data-ng-disabled="!vm.params.opportunity_id" type="submit" button-loader="vm.loading">
+                      Next
+                    </button>
+                    <button
+                      class="btn btn-default"
+                      data-ng-click="vm.onBack()"
+                      data-ng-if="!vm.redirectId"
+                      class="space-on-left">
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

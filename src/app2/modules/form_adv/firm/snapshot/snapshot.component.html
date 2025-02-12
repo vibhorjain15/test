@@ -1,0 +1,401 @@
+<div id="js-print-area">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <app-spinner
+        [broadSpinner]="true"
+        [spinnerHeight]="560"
+        *ngIf="!loading_grid"
+      ></app-spinner>
+      <div
+        class="dv-table dv-table-middle dd-info-panel full-width"
+        *ngIf="loading_grid"
+      >
+        <div class="bordered-right cell max-w-320">
+          <h4 class="clear-margin lh1-5 word-break-break-all">
+            {{ formadv_firm.businessName }}
+          </h4>
+
+          <div class="lh1-5">
+            <small class="text-muted"> ({{ profile.legal_address }}) </small>
+          </div>
+        </div>
+
+        <div class="cell bordered-right">
+          <span class="align-middle">CRD #</span>
+          {{ formadv_firm.id }}<br />
+          <small class="text-muted">
+            Latest Filing:
+            {{ formadv_firm.filingDate | dvDate : ["isLocaleDate"] }}
+          </small>
+        </div>
+
+        <div class="cell bordered-right">
+          <span class="align-middle">SEC #</span>
+          {{ formadv_firm.secNb }}
+        </div>
+
+        <div class="cell bordered-right">
+          <span class="align-middle space-on-right">Registration:</span
+          ><span class="label text-uppercase label-success">{{
+            formadv_firm.firmType
+          }}</span>
+          /
+          <span class="label text-uppercase label-success">{{
+            formadv_firm.status
+          }}</span>
+          <br />
+          <small class="text-muted">
+            Registration Date:
+            {{ formadv_firm.registration_Date | dvDate : ["isLocaleDate"] }}
+          </small>
+        </div>
+        <div class="cell bordered-right">
+          <span class="cursor-pointer">
+            <dv-logo-label
+              *ngIf="formadv_firm.is_tracking"
+              icon="close"
+              label="Untrack"
+              type="normal"
+              class="text-muted"
+              previewLabel="Untrack this firm"
+              (onClick)="toggleADVTracking()"
+              [isLoading]="toggling_ADV_tracking"
+            ></dv-logo-label>
+          </span>
+          <span class="cursor-pointer">
+            <dv-logo-label
+              *ngIf="!formadv_firm.is_tracking"
+              icon="bookmark-add-fill"
+              label="Track"
+              type="normal"
+              previewLabel="Track this firm"
+              class="text-muted"
+              (onClick)="toggleADVTracking()"
+              [isLoading]="toggling_ADV_tracking"
+            ></dv-logo-label>
+          </span>
+          <!-- <button
+            class="clickable btn btn-transparent"
+            appButton
+            (click)="toggleADVTracking()"
+            button-loader="toggling_ADV_tracking"
+          >
+            <div
+              *ngIf="formadv_firm.is_tracking"
+              tooltip="UnTrack this firm"
+              container="body"
+            >
+              <div>
+                <span appIcon name="close" class="text-muted"></span>
+              </div>
+              <small>UnTrack</small>
+            </div>
+            <div
+              *ngIf="!formadv_firm.is_tracking"
+              tooltip="Track this firm"
+              container="body"
+            >
+              <div>
+                <span
+                  appIcon
+                  name="bookmark"
+                  size="2x"
+                  class="text-muted"
+                ></span>
+              </div>
+              <small>Track</small>
+            </div>
+          </button> -->
+        </div>
+        <div class="cell text-center">
+          <button appButton btnType="transparent" (click)="goBack()">
+            <div>
+              <span appIcon name="arrow-back" size="2x"></span>
+            </div>
+            <small>Go back</small>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="align-middle"> Firm Summary </span>
+    </div>
+    <div class="panel-body full-height align-middle">
+      <app-spinner
+        [broadSpinner]="true"
+        [spinnerHeight]="560"
+        *ngIf="!loading_grid"
+      ></app-spinner>
+      <table
+        class="fund-profile-items space-on-top space-on-bottom"
+        *ngIf="loading_grid"
+      >
+        <tbody>
+          <tr class="title-row">
+            <td><small class="text-uppercase">RAUM</small></td>
+            <td><small class="text-uppercase"># of Funds</small></td>
+            <td><small class="text-uppercase">GAV</small></td>
+            <td><small class="text-uppercase">Employees</small></td>
+            <td><small class="text-uppercase"># of Offices</small></td>
+            <td><small class="text-uppercase">Disclosures / DRPs</small></td>
+          </tr>
+          <tr class="icon-row text-muted">
+            <td><span appIcon name="tasks" size="2x"></span></td>
+            <td><span appIcon name="funds" size="2x"></span></td>
+            <td><span appIcon name="fund" size="2x"></span></td>
+            <td><span appIcon name="users" size="2x"></span></td>
+            <td><span appIcon name="institution" size="2x"></span></td>
+            <td>
+              <span
+                appIcon
+                name="flag"
+                size="2x"
+                [ngClass]="{ 'text-danger': profile.disclosure_count > 1 }"
+              ></span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <small>{{
+                profile.raum ? (profile.raum | toMillion) : "N/A"
+              }}</small>
+            </td>
+            <td>
+              <small>{{
+                profile.fund_count ? profile.fund_count : "N/A"
+              }}</small>
+            </td>
+            <td>
+              <small>{{
+                profile.fund_gav ? (profile.fund_gav | toMillion) : "N/A"
+              }}</small>
+            </td>
+            <td>
+              <small
+                >{{ profile.employee_count }}<br />({{
+                  profile.investment_employee_count
+                }}
+                Investment)</small
+              >
+            </td>
+            <td>
+              <small>{{
+                profile.office_count ? profile.office_count : "N/A"
+              }}</small>
+            </td>
+            <td>
+              <small>{{
+                profile.disclosure_count ? profile.disclosure_count : "N/A"
+              }}</small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row clearfix">
+    <div col="4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title">Asset Breakdown</h5>
+        </div>
+        <div class="panel-body">
+          <div
+            class="space-on-top space-on-bottom"
+            id="advAssetBreakdown"
+            config="advAssetBreakdownConfig"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div col="4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title">Investor Breakdown</h5>
+        </div>
+        <div class="panel-body">
+          <div
+            class="space-on-top space-on-bottom"
+            id="advClientBreakdown"
+            config="advClientBreakdownConfig"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div col="4">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="align-middle"> Investor Summary </span>
+        </div>
+        <div class="panel-body full-height align-middle">
+          <app-spinner
+            [broadSpinner]="true"
+            [spinnerHeight]="560"
+            *ngIf="!loading_grid"
+          ></app-spinner>
+          <table
+            class="fund-profile-items space-on-top space-on-bottom"
+            *ngIf="loading_grid"
+          >
+            <tbody>
+              <tr class="title-row">
+                <td><small class="text-uppercase"># of Investors</small></td>
+                <td><small class="text-uppercase"># of Accounts</small></td>
+              </tr>
+              <tr class="icon-row text-muted">
+                <td>
+                  <span appIcon name="investor" size="2x"></span>
+                </td>
+                <td>
+                  <span appIcon name="bank-account-fill" size="2x"></span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <small
+                    >{{ profile.investor_count }} ({{ profile.pct_foreign }}%
+                    Foreign)</small
+                  >
+                </td>
+                <td>
+                  <small>{{ profile.account_count }}</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title">Compensation</h5>
+        </div>
+        <div class="panel-body">
+          <app-spinner
+            [broadSpinner]="true"
+            [spinnerHeight]="560"
+            *ngIf="!loading_grid"
+          ></app-spinner>
+          <div
+            class="panel panel-default clear-margin-bottom"
+            *ngIf="loading_grid"
+          >
+            <div class="panel-body full-height align-middle">
+              <table class="fund-profile-items">
+                <tbody>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">% of AUM</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom">
+                        <span class="sr-only">% of AUM status</span>
+                        <i
+                          appIcon
+                          class="dvi"
+                          [ngClass]="{
+                            'text-muted dvi-close': !profile.comp_pct_AUM,
+                            'text-success dvi-check': profile.comp_pct_AUM
+                          }"
+                        ></i>
+                      </h4>
+                    </td>
+                  </tr>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">Fixed fees</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom">
+                        <span class="sr-only">Fixed fees status</span>
+                        <i
+                          class="dvi"
+                          [ngClass]="{
+                            'text-muted dvi-close': !profile.comp_fixed_fee,
+                            'text-success dvi-check': profile.comp_fixed_fee
+                          }"
+                        ></i>
+                      </h4>
+                    </td>
+                  </tr>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">
+                      Performance-based fees
+                    </td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom">
+                        <span class="sr-only"
+                          >Performance-based fees status</span
+                        >
+                        <i
+                          class="dvi"
+                          [ngClass]="{
+                            'text-muted dvi-close': !profile.comp_performance,
+                            'text-success dvi-check': profile.comp_performance
+                          }"
+                        ></i>
+                      </h4>
+                    </td>
+                  </tr>
+                  <tr class="title-row">
+                    <td class="text-uppercase align-middle">Other fees</td>
+                    <td>
+                      <h4 class="space-on-top space-on-bottom">
+                        <span class="sr-only">Other fees status</span>
+
+                        <i
+                          class="dvi"
+                          [ngClass]="{
+                            'text-muted dvi-close': !profile.comp_other_fee,
+                            'text-success dvi-check': profile.comp_other_fee
+                          }"
+                        ></i>
+                      </h4>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row clearfix">
+    <div col="6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="align-middle"> Service Providers </span>
+        </div>
+        <div class="panel-body">
+          <!-- <dv-grid grid-resource="service_providers_resource" grid-name="''"></dv-grid> -->
+          <app-dv-grid
+            *ngIf="loading_grid"
+            [rowData]="gridServiceDatasource"
+            [name]="'formadv-firm-service-providers'"
+          >
+          </app-dv-grid>
+        </div>
+      </div>
+    </div>
+    <div col="6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span class="align-middle"> Regulators </span>
+        </div>
+        <div class="panel-body">
+          <!-- <dv-grid grid-resource="regulators_resource" grid-name="''"></dv-grid> -->
+          <app-dv-grid
+            *ngIf="loading_grid"
+            [rowData]="gridRegulatorsDatasource"
+            [name]="'formadv-firm-regulators'"
+          >
+          </app-dv-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

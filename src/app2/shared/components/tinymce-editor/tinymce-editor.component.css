@@ -1,0 +1,44 @@
+:host ::ng-deep .tox .tox-toolbar__primary {
+  background: #e7eaf4 0% 0% no-repeat padding-box;
+}
+:host ::ng-deep .tox-tinymce {
+  border-radius: 8px;
+}
+.lite-tinyMce {
+  border: 1px solid #cbcbcb;
+  border-radius: 6px;
+  padding: 10px;
+  max-height: 250px;
+  word-break: break-word;
+  overflow: auto;
+}
+.resize {
+  resize: vertical;
+}
+.resize[style*="height"] {
+  min-height: 200px;
+  max-height: 650px;
+}
+
+.placeholder {
+  color: var(--sub-text);
+}
+.lite-tinyMce:focus {
+  -webkit-box-shadow: 0px 2px 8px 2px #126b82;
+  -moz-box-shadow: 0px 2px 8px 2px#126b82;
+  box-shadow: 0px 2px 8px 2px #126b82;
+}
+.space-exactly {
+  white-space: pre-wrap;
+}
+:host::ng-deep .tox .tox-tbtn:hover {
+  background: rgb(24, 144, 175, 0.15) !important;
+}
+.disabled {
+  opacity: 0.5 !important;
+}
+
+.mymention {
+  color: var(--primary) !important;
+  background: var(--light-blue) !important;
+}

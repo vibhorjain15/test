@@ -1,0 +1,15 @@
+<dv-tabs
+  [list]="tabList"
+  size="large"
+  (onTabClick)="handleTabChange($event)"
+></dv-tabs>
+<ng-container>
+  <router-outlet></router-outlet>
+  <!-- <ng-container [ngSwitch]="currentTab">
+  <app-snapshot *ngSwitchCase="advFirmTabState.Snapshot"></app-snapshot>
+  <app-potential-flags *ngSwitchCase="advFirmTabState.PotentialFlags"></app-potential-flags>
+  <app-private-funds *ngSwitchCase="advFirmTabState.PrivateFunds"></app-private-funds>
+  <app-related-entities *ngSwitchCase="advFirmTabState.OwnersOrAffiliates"></app-related-entities>
+  <app-filings-history *ngSwitchCase="advFirmTabState.History"></app-filings-history>
+  <app-question-history *ngSwitchCase="advFirmTabState.QuestionHistory"></app-question-history> -->
+</ng-container>

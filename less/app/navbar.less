@@ -1,0 +1,228 @@
+.navbar {
+  .transition(all 0.3s ease);
+
+  @profile-picture-padding: 5px;
+  @profile-picture-width: @navbar-height - 2 * @profile-picture-padding;
+
+  border-bottom: 0;
+
+  .container-fluid {
+    max-width: inherit;
+  }
+
+  .navbar-nav {
+    > li.active {
+      position: relative;
+
+      // @media (min-width: @screen-sm-min) {
+      //   &:after {
+      //     content: "";
+      //     position: absolute;
+      //     left: 0;
+      //     right: 0;
+      //     bottom: 0;
+      //     height: 2px;
+      //     // background-color: @dv-orange;
+      //   }
+      // }
+    }
+  }
+
+  .navbar-menu {
+    .sub-menu-item {
+      padding: 15px;
+    }
+
+    .dropdown-menu {
+      li {
+        a {
+          color: @menubar-dropdown-color;
+          display: inline-block;
+
+          &,
+          &:focus,
+          &:hover {
+            color: @menubar-dropdown-color;
+            background-color: transparent;
+          }
+        }
+
+        &:hover {
+          background-color: @menubar-dropdown-hover-bg;
+        }
+
+        &.active {
+          a {
+            color: @dv-orange;
+          }
+        }
+      }
+    }
+
+    .dropdown-menu {
+      margin-top: -1px;
+      padding: 0;
+      min-width: 185px;
+
+      @media (min-width: @screen-sm-min) {
+        &:before,
+        &:after {
+          position: absolute;
+          display: inline-block;
+          content: "";
+        }
+
+        &:before {
+          top: -7px;
+          left: 9px;
+          border-right: 7px solid transparent;
+          border-bottom: 7px solid #ccc;
+          border-left: 7px solid transparent;
+          border-bottom-color: rgba(0, 0, 0, 0.2);
+        }
+
+        &:after {
+          position: absolute;
+          top: -6px;
+          left: 10px;
+          border-right: 6px solid transparent;
+          border-bottom: 6px solid #fff;
+          border-left: 6px solid transparent;
+        }
+      }
+
+      & .no-space-divider {
+        height: 1px;
+        overflow: hidden;
+        background-color: #e5e5e5;
+      }
+    }
+
+    .dropdown-menu-right {
+      &:before {
+        left: auto;
+        right: 9px;
+      }
+
+      &:after {
+        left: auto;
+        right: 10px;
+      }
+    }
+  }
+
+  .navbar-brand {
+    padding: 0;
+
+    &:hover,
+    &:focus,
+    & {
+      background-color: white;
+    }
+  }
+
+  .profile-box {
+    color: #efffff;
+    display: table;
+    width: 100%;
+
+    &:hover {
+      color: @navbar-default-link-hover-color;
+    }
+  }
+
+  .profile-picture-wrapper,
+  .user-info {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .user-info {
+    white-space: nowrap;
+    max-width: 120px;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+  }
+
+  .profile-picture-wrapper {
+    .square(@profile-picture-width + 2 * @profile-picture-padding);
+
+    text-align: center;
+  }
+
+  .profile-picture {
+    .square(@profile-picture-width);
+    border-radius: 4px;
+  }
+
+  &.chardinjs-show-element {
+    opacity: 1;
+    background: rgba(18, 107, 130, 0.4);
+
+    .navbar-header {
+      opacity: 0.4;
+    }
+
+    .navbar-nav {
+      > li {
+        opacity: 0.4;
+
+        &.chardinjs-show-element {
+          opacity: 1;
+          background: @navbar-default-bg;
+        }
+      }
+    }
+  }
+}
+
+.nav .nav-icon {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  height: 40px;
+  padding: 10px 15px;
+}
+
+.add_team_member_button {
+  color: #fff;
+  display: inline-block;
+  font-size: 25px;
+  position: relative;
+  top: 3px;
+  cursor: pointer;
+  padding: 0px 5px;
+  border-radius: 3px;
+}
+.add_team_member_button:hover {
+  background-color: #0f596c;
+}
+
+.download-view {
+  color: #fff;
+  display: inline-block;
+  font-size: 25px;
+  position: relative;
+  cursor: pointer;
+  border-radius: 3px;
+
+  i {
+    font-size: 22px;
+  }
+}
+
+.download-view:hover {
+  background-color: #0f596c;
+}
+
+.upgradeIcon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sub-menu-item {
+  display: block !important;
+  position: relative;
+}

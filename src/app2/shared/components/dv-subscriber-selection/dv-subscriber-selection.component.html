@@ -1,0 +1,71 @@
+<div class="panel panel-default">
+  <div class="panel-heading align-items-center" *ngIf="showHeader">
+    Subscribers
+    <span
+      *ngIf="infoTooltipText"
+      appIcon
+      name="info"
+      [tippyTooltip]="infoTooltipText"
+      class="space-on-left"
+    ></span>
+  </div>
+  <div class="panel-body full-height align-middle" *ngIf="singleMode">
+    <div *ngIf="selection" class="label-list">
+      <span
+        class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+      >
+        <small>{{ selection.fullName }}</small>
+        <a
+          class="space-on-left clickable link-disguise"
+          (click)="displaySubscriberRemovalConfirmation(selection)"
+          >&times;</a
+        >
+      </span>
+      <app-dv-team-member-selector
+        [functions]="functions"
+        (onChange)="addSubscriber($event)"
+        [clearSelectionAllowed]="false"
+      >
+      </app-dv-team-member-selector>
+    </div>
+    <div *ngIf="!selection">
+      <small class="text-muted space-on-right">No Subscribers Found</small>
+      <app-dv-team-member-selector
+        [functions]="functions"
+        (onChange)="addSubscriber($event)"
+        [clearSelectionAllowed]="false"
+      >
+      </app-dv-team-member-selector>
+    </div>
+  </div>
+  <div class="panel-body full-height align-middle" *ngIf="!singleMode">
+    <div *ngIf="selection?.length" class="label-list">
+      <span
+        class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+        *ngFor="let subscriber of selection"
+      >
+        <small>{{ subscriber.fullName }}</small>
+        <a
+          class="space-on-left clickable link-disguise"
+          (click)="displaySubscriberRemovalConfirmation(subscriber)"
+          >&times;</a
+        >
+      </span>
+      <app-dv-team-member-selector
+        [functions]="functions"
+        (onChange)="addSubscriber($event)"
+        [clearSelectionAllowed]="false"
+      >
+      </app-dv-team-member-selector>
+    </div>
+    <div *ngIf="!selection?.length">
+      <small class="text-muted space-on-right">No Subscribers Found</small>
+      <app-dv-team-member-selector
+        [functions]="functions"
+        (onChange)="addSubscriber($event)"
+        [clearSelectionAllowed]="false"
+      >
+      </app-dv-team-member-selector>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+tinymce.addI18n("ro", {
+  "Advanced sort...": "Ordonare avansat\u0103...",
+  "Advanced Sort": "Ordonare avansat\u0103",
+  "Sort table by column ascending": "Ordonare tabel ascendent \xeen func\u021bie de coloane",
+  "Sort table by column descending": "Ordonare tabel descendent \xeen func\u021bie de coloane",
+  "Sort": "Ordonare",
+  "Order": "Ordine",
+  "Sort by": "Ordonare dup\u0103",
+  "Ascending": "Cresc\u0103tor",
+  "Descending": "Descresc\u0103tor",
+  "Selection": "Selec\u021bie",
+  "Table": "Tabel",
+  "Column": "Coloan\u0103",
+  "Row": "R\xe2nd",
+  "Column {0}": "Coloan\u0103 {0}",
+  "Row {0}": "R\xe2nd {0}",
+  "Row numbering": "Numerotare r\xe2nduri",
+  "None": "Nu se utilizeaz\u0103 (acest c\xe2mp)",
+  "Numeric": "Numeric\u0103",
+  "Alpha": "Alfabetic\u0103"
+});

@@ -1,0 +1,61 @@
+<dv-editor
+  *ngIf="!isNotApplicable"
+  class="editor-scroll-margin"
+  [attr.id]="'question-editor-' + question.id"
+  [isTinyMceEditor]="isTinymceEditor"
+  [configObj]="!isTinymceEditor ? ckEditorInitConfig : tinyMceInit"
+  [isLite]="
+    !question.answer.attributes.is_validation_required &&
+    status.currentActiveQuestionId !== question.sequenceID + '-' + question.id
+  "
+  [wordLimit]="question.response_word_limit"
+  [focusOnInit]="true"
+  [enableAI]="true"
+  [id]="id"
+  [uniqueQuestionId]="question.uniqueQuestionId"
+  #editor
+  [freeUser]="currentUser?.isFreeSubscription"
+  [isComments]="commentEnabled"
+  [isTrackChange]="isTrackChange"
+  [isTrackChangeEnabled]="isTrackChangeEnabled"
+  [isReadonly]="isReadOnly"
+  [value]="value"
+  (onChange)="handleChange($event, false, true)"
+  (onReviewCommentFocused)="handleReviewCommentFocused()"
+  (onAiButtonClick)="handleAiButton($event)"
+  (onAddReviewComment)="handleAddReviewComment($event)"
+  (click)="updateEditorInstance()"
+></dv-editor>
+
+<div
+  class="space-on-top-lg text-right"
+  *ngIf="question.response_word_limit && onlyTextValue && !isNotApplicable"
+  role="status"
+  aria-live="polite"
+>
+  <span
+    [ngClass]="{
+      'text-success': onlyTextValue <= question.response_word_limit,
+      'text-danger': onlyTextValue > question.response_word_limit,
+      'bold-text': onlyTextValue > question.response_word_limit
+    }"
+  >
+    <span *ngIf="onlyTextValue && onlyTextValue > 0">
+      {{ onlyTextValue }} words
+    </span>
+    (maximum {{ question.response_word_limit }} words)
+  </span>
+</div>
+
+<div
+  class="space-on-top-lg text-right"
+  *ngIf="!question.response_word_limit && onlyTextValue && !isNotApplicable"
+  role="status"
+  aria-live="polite"
+>
+  <span> {{ onlyTextValue }} words </span>
+</div>
+
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>

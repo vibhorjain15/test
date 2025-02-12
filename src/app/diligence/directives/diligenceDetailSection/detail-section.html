@@ -1,0 +1,93 @@
+<div class="panel panel-default dd-question-panel">
+  <div class="panel-heading">
+    <div class="clearfix">
+      <div class="pull-left header-component">
+        <b>{{::section.name}}</b>
+      </div>
+
+      <div class="header-component bordered" uib-dropdown dropdown-append-to-body>
+        <div class="dropdown-toggle clickable"
+             uib-dropdown-toggle
+             data-ng-if="teamMembers">
+          <spinner data-ng-show="assigning_user"></spinner>
+
+          <span data-ng-show="!assigning_user && assignedUser">
+            <user-avatar user="assignedUser"
+                         avatar-img-class="img-circle user-avatar-xs"
+                         avatar-icon-size="1x"></user-avatar>
+
+            <small class="space-on-left">
+              {{assignedUser.firstName}} {{assignedUser.lastName}}
+            </small>
+          </span>
+
+          <span data-ng-hide="assigning_user || assignedUser" class="text-muted">
+            <icon name="add-user-4" class="font-size-16"></icon>
+            <small>Unassigned</small>
+          </span>
+        </div>
+
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+          <li data-ng-repeat="user in teamMembers"
+              data-ng-if="user != assignedUser">
+            <a class="clickable" data-ng-click="assignUser(user)">
+              <user-avatar user="user"
+                           avatar-img-class="img-circle user-avatar-xs"
+                           avatar-icon-size="1x"></user-avatar>
+              {{::user.firstName}} {{::user.lastName}}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="header-component pull-right">
+        <small class="text-muted">
+          <i>
+            <ng-pluralize count="section.questions.length"
+                          when="{'one': '1 question', 'other': '{} questions'}"></ng-pluralize>
+          </i>
+        </small>
+      </div>
+
+      <div class="header-component pull-right" data-ng-show="isEditable">
+        <a class="clickable" data-ng-click="mode = (mode == 'ro' ? 'rw' : 'ro')">
+          <icon name="pencil" uib-tooltip="Edit responses" data-ng-if="mode == 'ro'"></icon>
+          <icon name="readonly" data-ng-if="mode == 'rw'"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <spinner data-ng-hide="sequencesInitialized"></spinner>
+
+    <div data-ng-show="sequencesInitialized">
+      <div class="alert alert-info" data-ng-show="section.headerText">
+        <div data-ng-bind-html="section.headerText | cleanhtml"></div>
+      </div>
+
+      <div>
+        <form class="form-horizontal">
+          <response-sequence data-ng-repeat="sequence in sequences"></response-sequence>
+        </form>
+      </div>
+
+      <div data-ng-show="section.isMultiple && mode == 'rw'">
+        <hr>
+        <div class="clearfix">
+          <div class="pull-right">
+            <button btn-type="primary"
+                    size="sm"
+                    button-loader="saving_sequence"
+                    data-ng-click="addNewSequence()">Add More</button>
+            <button btn-type="default"
+                    size="sm"
+                    button-loader="removing_sequence"
+                    data-ng-click="removeLastSequence()"
+                    data-ng-disabled="sequences.length == 1">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

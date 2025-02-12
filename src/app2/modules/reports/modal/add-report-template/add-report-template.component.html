@@ -1,0 +1,116 @@
+<app-modal
+  [title]="
+    editMode ? 'Edit Presentation Design' : 'Add New Presentation Design'
+  "
+  firstButtonLabel="Save"
+  (onFirstClick)="submit($event)"
+  [isLoading]="loading"
+  [isAngularJs]="isAngularJs"
+>
+  <form
+    name="add_report_template_form"
+    [formGroup]="reportTemplateForm"
+    class="form-horizontal"
+    novalidate
+    autocomplete="off"
+  >
+    <!-- <div class="row clearfix">
+      <div class="text-center space-on-bottom-lg">
+        <div class="btn-group">
+          <label
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': active_tab == 'word_report' }"
+            >Custom Report</label
+          >
+        </div>
+      </div>
+    </div> -->
+    <div class="row clearfix" *ngIf="active_tab == 'word_report'">
+      <div col="12">
+        <dv-form-element
+          [modelController]="reportTemplateForm.get('report_name')"
+          label="Name"
+          field-name="Name"
+          [isRequired]="true"
+          [errorMessage]="
+            reportTemplateForm.get('report_name').touched &&
+            reportTemplateForm.get('report_name').invalid
+              ? 'Name is required'
+              : ''
+          "
+        >
+          <input
+            type="text"
+            id="report_name"
+            formControlName="report_name"
+            class="form-control"
+            placeholder="Presentation Design Name"
+            maxlength="{{ maxLengthReportName }}"
+            aria-label="presentation design name"
+          />
+        </dv-form-element>
+        <div class="row clearfix">
+          <div class="col-md-3"></div>
+          <div class="col-md-8">
+            <div class="panel panel-info">
+              <div class="panel-heading">
+                <small
+                  >Copy DV tags corresponding to selected data points and place into your custom presentation design. DV tags will be replaced by actual responses at the report generation time.</small
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="col-md-3 fw-bolder control-label">
+            Source Template(s)
+          </span>
+          <div class="col-md-8">
+            <app-dv-selector-list
+              [name]="'add-report-template'"
+              [entity_type]="'Template'"
+              [entities]="templateList"
+              [filter_params]="{}"
+              [displayParams]="templateSelectorDisplayParams"
+              (onChangeEntity)="handledSelectedEntities($event)"
+              [KeepSelectionAfterOnChange]="true"
+              [canSort]="false"
+            ></app-dv-selector-list>
+          </div>
+        </div>
+        <div class="form-group">
+          <span class="col-md-3 fw-bolder control-label">
+            Upload Output File
+          </span>
+          <div class="col-sm-8">
+            <dv-uploader
+              [sizeLimit]="maxFileSize"
+              accept=".docx"
+              dragLabel="Drag & Drop your report word file with tags"
+              [isMultiple]="false"
+              [showUploadedFiles]="false"
+              (onFileUpload)="handleFileUploaded($event)"
+            ></dv-uploader>
+            <div class="space-on-top-xxl" *ngIf="files.length > 0">
+              <div
+                class="space-on-bottom-lg"
+                *ngFor="let file of files; let index = index"
+              >
+                <span class="space-on-right-lg">{{ index + 1 }}.</span>
+                <span> {{ file.name | truncate : 30 }}</span>
+                <button
+                  class="btn btn-sm btn-default danger space-on-left-lg"
+                  tooltip="Delete File"
+                  aria-label="Delete File"
+                  (click)="deleteFile(index)"
+                >
+                  <span appIcon name="trashcan"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-modal>

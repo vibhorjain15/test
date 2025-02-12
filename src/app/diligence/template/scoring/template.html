@@ -1,0 +1,144 @@
+<ng2-scoring-template data-ng-if="vm.Utils.isTemplateAngular()"></ng2-scoring-template>
+<div data-ng-if="!vm.Utils.isTemplateAngular()" class="row clearfix form-adv-score">
+    <div col="12">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">Define rules for creating flags, setting scores, or both</h5>
+
+                <div class="panel-controls">
+                    <div class="panel-controls-wrapper">
+                        <a class="panel-control"
+                           data-ng-click="vm.addNewRule()"
+                           uib-tooltip="Add new rule"
+                           data-ng-class="{'linkDisabled': !vm.rules || vm.loadingRatingScales}">
+                            <icon name="plus"></icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <spinner broad-spinner spinner-height='80' data-ng-if="!vm.rules"></spinner>
+
+                      <span data-ng-if="vm.rules && vm.rules.length">
+                          <div class="form-horizontal">
+                              <div col="12" class="space-on-top-xl padded-bottom-xl bordered-bottom">
+                                  <div col="9" class="pa-lr-lg">
+                                      <div col="8">
+                                          <label class="control-label" offset="1">Condition</label>
+                                      </div>
+                                  </div>
+                                  <div col="1" class="pa-lr-lg text-center">
+                                      <label class="control-label">Flag</label>
+                                  </div>
+                                  <div col="1" class="pa-lr-lg text-center">
+                                      <label class="control-label">Score</label>
+                                  </div>
+                                  <div col="1" class="pa-lr-lg text-center">
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div col="12" class="pa-tb-lg bordered-right bordered-bottom bordered-left threshold-item"
+                               data-ng-repeat="rule in vm.rules track by $index" data-ng-class="{'active bg-light-gray-panel': rule.hoverState}" ng-mouseover="rule.hoverState = true;" ng-mouseleave="rule.hoverState = false;">
+
+                              <div col="9">
+                                  <div col="8">
+                                      <h5 class="text-center inline-block lh1-7" col="1"><span class="space-on-right-lg">{{$index+1}}.</span></h5>
+                                      <h5 class="inline-block padding-right-xl lh1-7" col="11"><span class="space-on-right-lg">{{rule.questionObj.text}}</span></h5>
+                                  </div>
+
+
+                                  <div col="2">
+                                      <h5 class="space-on-right-lg">{{rule.operatorText}}</h5>
+                                  </div>
+
+                                  <div col="2">
+                                      <h5 data-ng-if="(rule.questionObj.responseType == 'Boolean' || rule.questionObj.responseType == 'BooleanPlus' || rule.questionObj.responseType == 'NoPlus')">
+                                          {{(rule.value == true) ? 'Yes' : 'No'}}
+                                      </h5>
+
+                                      <h5 data-ng-if="(rule.questionObj.responseType == 'Date')">
+                                          {{rule.value|date:'dd-MMMM-yyyy'}}
+                                      </h5>
+
+                                      <h5 data-ng-if="(rule.questionObj.responseType == 'Dropdown' || rule.questionObj.responseType == 'CheckBox')">
+                                          <spinner data-ng-if="!rule.optionText"></spinner>
+                                          <span data-ng-if="rule.optionText">{{rule.optionText}}</span>
+                                      </h5>
+
+                                      <h5 data-ng-if="(rule.questionObj.responseType == 'Numeric' || rule.questionObj.responseType == 'Integer' || rule.questionObj.responseType == 'Percentage' || rule.questionObj.responseType == 'Text' || rule.questionObj.responseType == 'TextMultiLine' || rule.questionObj.responseType == 'TextEmail' || rule.questionObj.responseType == 'TextPhone')">
+                                          {{rule.value}}
+                                      </h5>
+                                  </div>
+                              </div>
+
+
+                              <div col="1" class="text-center">
+                                  <icon class="align-middle space-on-top-lg" name="flag"
+                                        uib-tooltip="{{rule.has_flag ? 'Flag wil be triggered if this condition is met': 'No flag set'}}"
+                                        data-ng-class="{'dd-no-flag-set': !rule.has_flag, 'text-danger': rule.has_flag}"></icon>
+                              </div>
+                              <div col="1" class="text-center">
+                                  <div class="space-on-top">
+                                    <dd-rated-score score="rule.score"
+                                        keep-watcher-on="true"
+                                        rating-scale="rule.ratingScaleDefinition"
+                                        na-value="rule.naValue"
+                                        total="100"
+                                        rating-value="rule.score"
+                                        use-rating-value="vm.associatedRatingMapping.rating_scale_mode == vm.ratingConstants.Absolute"></dd-rated-score>
+                                  </div>
+
+                                  <!--<div class="dd-score-display from-dir"
+                                       data-ng-class="{'na-score': !rule.score, 'bad-score': (rule.score < 50), 'ok-score': ((50 <= rule.score) && (rule.score < 75)), 'good-score': (rule.score >= 75)}">{{rule.score ? rule.score : 'N/A'}}</div>-->
+                              </div>
+
+                              <div col="1" class="space-on-top-3">
+                                      <span data-ng-if="rule.hoverState">
+                                          <button class="space-on-top-xm space-on-right-sm btn-sm btn btn-default"
+                                                  uib-tooltip="Edit rule"
+                                                  data-ng-click="vm.editRule(rule, $index)"
+                                                  type="button">
+                                              <icon name="pencil"></icon>
+                                          </button>
+
+                                          <button class="space-on-top-xm btn-sm btn btn-default danger"
+                                                  uib-tooltip="Remove rule"
+                                                  data-ng-click="vm.removeRule(rule, $index)"
+                                                  type="button">
+                                              <icon name="trashcan"></icon>
+                                          </button>
+                                      </span>
+                              </div>
+                          </div>
+
+                          <div col="12" class="space-on-top-xxl">
+
+                              <div offset="10" col="2">
+                                  <div class="pull-right">
+                                      <button btn-type="primary"
+                                              size="sm"
+                                              uib-tooltip="Add new rule"
+                                              data-ng-click="vm.addNewRule()">
+                                          <icon name="plus"></icon>
+                                          <h5 class="space-on-left clear-margin-top clear-margin-bottom inline-block">Add New Rule</h5>
+                                      </button>
+                                  </div>
+                              </div>
+                              <div col="1" class="pa-lr-lg">
+                                  &nbsp;
+                              </div>
+
+                          </div>
+                      </span>
+
+                <empty-state icon-name="warning" col="6" offset="3"
+                             message="No rules defined for this template"
+                             action="vm.addNewRule()"
+                             action-label="Add rules"
+                             data-ng-if="vm.rules && !vm.rules.length"></empty-state>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<ng-container [ngSwitch]="helperTextThemeVersion">
+  <ng-container *ngSwitchCase="'v1'">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <ng-content></ng-content>
+        <span *ngIf="innerHtml" [innerHtml]="innerHtml"></span>
+        <span *ngIf="!showMore">...</span>
+        <ng-container *ngIf="secondaryText && showMore">
+          <span [innerHtml]="secondaryText"></span>
+        </ng-container>
+        <div
+          *ngIf="secondaryText"
+          (click)="showMore = !showMore"
+          class="text-bold cursor-pointer space-on-top"
+        >
+          <span *ngIf="!showMore">{{ showMoreLabel }} </span>
+          <span *ngIf="showMore">{{ showLessLabel ?? showMoreLabel }} </span>
+          <span appIcon name="chevron-down" *ngIf="!showMore"></span>
+          <span appIcon name="chevron-up" *ngIf="showMore"></span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    <div class="panel {{ panelClass }}">
+      <div class="panel-heading helper">
+        <ng-content></ng-content>
+        <span *ngIf="innerHtml" [innerHtml]="innerHtml"></span>
+        <span
+          *ngIf="secondaryText"
+          (click)="showMore = !showMore"
+          class="text-bold cursor-pointer"
+        >
+          <span>&nbsp;{{ showMoreLabel }}&nbsp;</span
+          ><span appIcon name="chevron-down" *ngIf="!showMore"></span>
+          <span appIcon name="chevron-up" *ngIf="showMore"></span
+        ></span>
+        <ng-container *ngIf="secondaryText && showMore">
+          <br />
+          <br />
+          <span [innerHtml]="secondaryText"></span>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

@@ -1,0 +1,109 @@
+<div class="panel-body has-notes-form">
+  <dv-editor
+    [value]="text"
+    (onChange)="handleEditorTextChange($event)"
+    [configObj]="tinyMceInit"
+    [literVersion]
+    [isMentions]="true"
+  >
+  </dv-editor>
+
+  <br />
+
+  <div class="text-right">
+    <dv-button btnType="primary" [loader]="saving_notes" (onClick)="saveNotes()"
+      >Add Note
+    </dv-button>
+  </div>
+
+  <hr class="space-on-bottom" />
+  <app-spinner *ngIf="loading_attachment_notes"></app-spinner>
+
+  <p
+    class="text-muted"
+    *ngIf="!loading_attachment_notes && !attachment_notes.length"
+  >
+    <i> There are no notes for this document. </i>
+  </p>
+
+  <ul *ngIf="attachment_notes?.length" class="list-unstyled">
+    <li
+      *ngFor="
+        let note of attachment_notes;
+        let $index = index;
+        trackBy: trackById
+      "
+      class="bordered-bottom"
+    >
+      <div class="media">
+        <div class="media-left padded-top">
+          <span class="circled-initials">
+            {{ $index + 1 }}
+          </span>
+        </div>
+
+        <div class="media-body">
+          <p class="space-on-bottom">
+            <small class="text-muted">
+              {{ note.first_name }} {{ note.last_name }} added on
+              {{ note.updated_at | dvDate }}
+            </small>
+            <span
+              class="pull-right space-on-right-xxl"
+              *ngIf="!note.editing && note.can_edit && !diligence?.isLocked"
+            >
+              <small
+                class="text-muted v-align-text-top space-on-right"
+                tooltip="Edit this note"
+              >
+                <a class="link-disguise clickable" (click)="editNote(note)"
+                  >edit</a
+                >
+              </small>
+              <small
+                class="text-muted v-align-text-top"
+                tooltip="Delete this note"
+              >
+                <a class="link-disguise clickable" (click)="deleteNote(note)"
+                  >delete</a
+                >
+              </small>
+            </span>
+          </p>
+
+          <p class="clear-margin" *ngIf="!note.editing">
+            <span [innerHtml]="note.text | cleanHtml"></span>
+          </p>
+
+          <div *ngIf="note.editing" class="padded-right-sm">
+            <dv-editor
+              [value]="note.text"
+              (onChange)="handleEditorTextChangeForExistingNotes(note, $event)"
+              [configObj]="tinyMceInit"
+              [literVersion]
+            ></dv-editor>
+
+            <div class="space-on-top">
+              <dv-button
+                btnType="primary"
+                size="sm"
+                [loader]="note.updating_note"
+                [btnClass]="'space-on-right'"
+                (onClick)="updateNote(note)"
+                >Update
+              </dv-button>
+              <dv-button
+                btnType="default"
+                size="sm"
+                [disabled]="note.updating_note"
+                (onClick)="cancel(note)"
+              >
+                Cancel
+              </dv-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

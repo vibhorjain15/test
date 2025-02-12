@@ -1,0 +1,11 @@
+<ng-container *ngIf="!params.node.group">
+  <span diligenceStatus [status]="params.value"></span>
+  <span
+    diligenceStatus
+    [status]="secondaryStatus"
+    class="space-on-left"
+    *ngIf="secondaryStatus"
+  >
+  </span
+></ng-container>
+<span *ngIf="params.node.group">{{ params.value }}</span>

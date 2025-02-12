@@ -1,0 +1,19 @@
+<div class="dv-grid-wrapper">
+  <span class="js-grid-elem"></span>
+  <p class="alert alert-info dv-grid-alert" data-ng-show="!loading && !gridApi.core.getVisibleRows().length">No results found</p>
+  <spinner class="dv-grid-spinner" data-ng-show="loading"></spinner>
+
+  <div class="container clear-margin-left space-on-top-xl" data-ng-show="showAlphabetFilteringPanel">
+    <div class="text-center">
+      <span class="space-on-top space-on-right-lg">Show names that begin with: </span>
+      <div class="clear-margin-left btn-group btn-group-sm">
+        <button class="btn btn-default" data-ng-click="applyAlphabeticalFilters(null)"
+                data-ng-class="{'btn-primary': active_alphabet_filter == undefined}"
+                uib-tooltip="Show All">A - Z</button>
+        <button class="btn btn-default" data-ng-repeat="alphabet in alphabets"
+                data-ng-click="applyAlphabeticalFilters(alphabet)"
+                data-ng-class="{'btn-primary': alphabet == active_alphabet_filter}">{{alphabet}}</button>
+      </div>
+    </div>
+  </div>
+</div>

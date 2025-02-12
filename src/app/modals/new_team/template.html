@@ -1,0 +1,264 @@
+<form class="form-horizontal" name="vm.new_team_form">
+  <div class="modal-header" data-ng-hide="vm.fund">
+    <h3 class="modal-title" data-ng-show="!vm.user">{{vm.edit_role_mode? 'Edit Access Level': 'Create Team'}}
+      <a data-ng-show="vm.teamCreated" class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.closeTeamModal()">&times;</a>
+      <a data-ng-hide="vm.teamCreated" class="pull-right clickable link-disguise link-unstyled"
+        data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+    <h3 class="modal-title" data-ng-show="vm.user">Add User To Team
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-header" data-ng-show="vm.fund">
+    <h3 class="modal-title">Add team</h3>
+  </div>
+  <div class="modal-body">
+    <div data-ng-show="!vm.user && !vm.edit_role_mode">
+
+      <form-group field-name="Team Name" data-ng-if="vm.editingName">
+        <label for="team-name" class="control-label" col ="3" col-type="sm">Team Name</label>
+        <div col="6" col-type="sm">
+          <input type="text" data-ng-model="vm.formData.team_name" placeholder="Enter team name" class="form-control">
+        </div>
+        <div col="2" col-type="sm" class="space-on-right">
+          <button class="btn btn-primary space-on-right" data-ng-click="vm.saveTeam()" button-loader="vm.saving_team">Save</button>
+          <button data-ng-show="vm.teamCreated" class="btn btn-default" data-ng-click="vm.cancelNameEdit()" >Cancel</button>
+        </div>
+      </form-group>
+      <form-group field-name="Team Name" data-ng-if="vm.teamCreated && !vm.editingName">
+        <div class="padding-left-100">
+          <label for="team-name" class="control-label" col ="2" col-type="sm">Team Name</label>
+          <div col="8" col-type="sm">
+            <p class="space-on-top text-muted team_name">
+              {{vm.createdTeam.name}}
+              <icon name="pencil clickable" data-ng-click="vm.editTeamName()"></icon>
+            </p>
+          </div>
+        </div>
+      </form-group>
+      <div class="text-center" data-ng-show="vm.loading_resources">
+        <spinner></spinner>
+      </div>
+      <uib-accordion close-others="true" data-ng-if="vm.createdTeam && !vm.editingName && !vm.loading_resources">
+          <div uib-accordion-group class="panel panel-default" is-open="status.isFirstOpen">
+            <uib-accordion-heading>
+              <h4 class="panel-title accordian-title">Add Team Members</h4>
+            </uib-accordion-heading>
+            <div>
+              <form-group field-name="Role" tooltip-placement="left">
+                <label class="control-label" col="3">Access Level</label>
+                <div col="8" col-type="sm">
+                  <select id="role"
+                          class="form-control"
+                          data-ng-required="true"
+                          chosen
+                          data-ng-model="vm.membersObject.role_id"
+                          persistent-create-option="true"
+                          skip-no-results="true"
+                          data-ng-change="vm.setRoleText(vm.membersObject.role_id)"
+                          data-ng-options="role.id as role.alias for role in vm.roles">
+                    <option value=""></option>
+                  </select>
+                  <div class="panel panel-info space-on-top-lg" data-ng-show="vm.roleText">
+                    <!-- Admin's will have read & write access to all the resources. -->
+                    <div class="panel-heading">{{vm.roleText}}</div>
+                  </div>
+                </div>
+              </form-group>
+
+              <form-group field-name="Member" tooltip-placement="left" data-ng-if="vm.team_members">
+                <label class="control-label" col="3">Members</label>
+                <div col="8">
+                  <dv-selector-list name="resource_list" entity-type="'Users'" entities="vm.team_members" filter-params="{}" display-params="vm.teamSelectorDisplayParams" selection="vm.membersObject.memberNames"></dv-selector-list>
+                </div>
+              </form-group>
+              <form-group>
+                <label class="control-label" col="3"></label>
+                <div col="8" class="new_team_buttons text-right">
+                  <button type="button" class="btn btn-primary btn-sm" button-loader="vm.adding_new_members" data-ng-click="vm.addMembersRow()">Add Members</button>
+                </div>
+              </form-group>
+            </div>
+
+
+            <div data-ng-if="vm.existing_members.length" class="panel panel-info space-on-bottom space-on-top-lg">
+              <div class="panel-heading">Existing Members</div>
+            </div>
+            <div data-ng-if="vm.existing_members.length" style="height: 230px; overflow-y: auto">
+
+              <table class="table table-bordered table-hover table-condensed">
+                <tbody>
+                  <tr data-ng-repeat="member in vm.existing_members">
+                    <td>{{member.user_name}}</td>
+                    <td>{{member.role_name}}</td>
+                    <td>
+                      <span class="control js-delete-category"
+                            data-ng-click="vm.removeUserConfirm(member, $index)"
+                            role="button"
+                            uib-tooltip="Remove"
+                            stop-event-propagation
+                            prevent-default>
+                        <icon name="trashcan"></icon>
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div uib-accordion-group class="panel panel-default" is-open="status.isSecondOpen">
+            <uib-accordion-heading>
+              <h4 class="panel-title accordian-title">Add Permissions</h4>
+            </uib-accordion-heading>
+            <div class="modal-body text-center" data-ng-show="vm.loading">
+              <spinner></spinner>
+            </div>
+            <div data-ng-hide="vm.loading">
+              <form novalidate name="vm.add_team_permissions_form">
+                <div class="space-on-bottom-lg">
+                  <add-team-permissions on-resource-type-changed="vm.onResourceTypeChanged()" resources="vm.permissions" selected-entities="vm.resources" loading="vm.loading"></add-team-permissions>
+                </div>
+                <form-group field-name="Visibility">
+                  <label for="private_access" class="control-label" col ="3" col-type="sm">Visibility</label>
+                  <div col="8" col-type="sm">
+                    <select id="private_access"
+                            class="form-control"
+                            data-ng-required="true"
+                            chosen
+                            data-ng-model="vm.permissions.private_access"
+                            persistent-create-option="true"
+                            skip-no-results="true"
+                            data-ng-options="visibility as visibility.alias for visibility in vm.accessList">
+                      <option value=""></option>
+                    </select>
+                    <div class="panel panel-info space-on-top-lg" data-ng-show="vm.permissions.private_access.description">
+                      <div class="panel-heading">{{vm.permissions.private_access.description}}</div>
+                    </div>
+                  </div>
+                </form-group>
+                <form-group>
+                  <label class="control-label" col ="3" col-type="sm"></label>
+                  <div col="8" col-type="sm" class="text-right">
+                    <button type="button" class="btn btn-primary btn-sm" button-loader="vm.adding_resources" data-ng-click="vm.submit()">Add Permissions</button>
+                  </div>
+                </form-group>
+                <div data-ng-if="vm.resources.length" class="panel panel-info space-on-bottom">
+                  <div class="panel-heading">Existing Resources</div>
+                </div>
+                <div data-ng-if="vm.resources.length" style="height: 230px; overflow-y: auto">
+
+                  <table class="table table-striped table-hover table-condensed">
+                    <tbody>
+                      <tr data-ng-repeat="resource in vm.resources">
+                        <td>{{resource.entity_name}}</td>
+                        <td>{{resource.access_level=='Private'? 'TeamOwned' : resource.access_level}}</td>
+                        <td>
+                          <span class="control js-delete-category"
+                                data-ng-click="vm.revokeAccessModal(resource, $index)"
+                                role="button"
+                                uib-tooltip="Remove"
+                                stop-event-propagation
+                                prevent-default>
+                            <icon name="trashcan"></icon>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </form>
+            </div>
+          </div>
+    </uib-accordion>
+    </div>
+<div data-ng-if="vm.user && !vm.edit_role_mode">
+  <form-group field-name="User">
+    <label for="user" class="control-label" col ="3" col-type="sm">User</label>
+    <div col="8" col-type="sm">
+      <p  class="space-on-top">
+        <span class="label label-default">{{vm.user.name}}</span>
+      </p>
+    </div>
+  </form-group>
+  <form-group field-name="Role">
+    <label for="role" class="control-label" col ="3" col-type="sm">Access Level</label>
+    <div col="8" col-type="sm">
+      <select id="role"
+              class="form-control"
+              data-ng-required="true"
+              chosen
+              data-ng-model="vm.addToTeam.role_id"
+              persistent-create-option="true"
+              skip-no-results="true"
+              data-ng-change="vm.setRoleText(vm.addToTeam.role_id)"
+              data-ng-options="role.id as role.alias for role in vm.roles">
+        <option value=""></option>
+      </select>
+      <div class="panel panel-info space-on-top-lg" data-ng-show="vm.roleText">
+        <div class="panel-heading">{{vm.roleText}}</div>
+      </div>
+    </div>
+  </form-group>
+  <form-group field-name="Team">
+    <label for="team" class="control-label" col ="3" col-type="sm">Team</label>
+    <div col="8" col-type="sm">
+      <select id="role"
+              class="form-control"
+              data-ng-required="true"
+              chosen
+              data-ng-model="vm.addToTeam.team"
+              persistent-create-option="true"
+              skip-no-results="true"
+              data-ng-options="team as team.name for team in vm.teams">
+        <option value=""></option>
+      </select>
+      <p data-ng-hide="vm.teams.length" class="text-muted space-on-top">No teams found</p>
+    </div>
+  </form-group>
+  </div>
+    <!--  ******************************************************************************** -->
+      <div data-ng-show="vm.edit_role_mode">
+        <form-group field-name="User">
+          <label for="role" class="control-label" col ="4" col-type="sm">User</label>
+          <div col="7" col-type="sm">
+            <p class="text-muted space-on-top">{{vm.entityData.user_name}}</p>
+          </div>
+        </form-group>
+          <form-group field-name="Team">
+            <label for="role" class="control-label" col ="4" col-type="sm">Team</label>
+            <div col="7" col-type="sm">
+              <p class="text-muted space-on-top">{{vm.entityData.team_name}}</p>
+            </div>
+          </form-group>
+          <form-group field-name="Role">
+            <label for="role" class="control-label" col ="4" col-type="sm">Access Level</label>
+            <div col="7" col-type="sm">
+              <select id="role"
+                      class="form-control"
+                      data-ng-required="true"
+                      chosen
+                      data-ng-model="vm.formData.role_id"
+                      persistent-create-option="true"
+                      skip-no-results="true"
+                      data-ng-change="vm.setRoleText(vm.formData.role_id)"
+                      data-ng-options="role.id as role.alias for role in vm.roles">
+                <option value=""></option>
+              </select>
+              <div class="panel panel-info space-on-top-lg" data-ng-show="vm.roleText">
+                <!-- Admin's will have read & write access to all the resources. -->
+                <div class="panel-heading">{{vm.roleText}}</div>
+              </div>
+            </div>
+          </form-group>
+      </div>
+  </div>
+  <div class="modal-footer">
+    <button data-ng-if="vm.addToTeam.role_id" type="button" class="btn btn-primary space-on-right" button-loader="vm.adding_user_to_teams" data-ng-click="vm.addUserToTeam()">Add to team</button>
+    <button data-ng-if='vm.entityData' class="btn btn-primary" data-ng-click="vm.updateRole()" button-loader="vm.updating_role">Update Access Level</button>
+    <button data-ng-hide="vm.teamCreated" btn-type="default" data-ng-click="vm.cancel()">Close</button>
+    <button data-ng-show="vm.teamCreated" btn-type="default" data-ng-click="vm.closeTeamModal()">Close</button>
+  </div>
+</form>

@@ -1,0 +1,56 @@
+<spinner data-ng-hide="vm.followup_responses"></spinner>
+<p class="text-muted" data-ng-if="!vm.followup_responses.length">
+  <i>
+    Start or continue a conversation with your {{vm.is_investor?'manager':'investor'}}. Ask questions or address follow-ups here.
+  </i>
+</p>
+
+<ul class="list-unstyled chat-bubbles">
+  <li data-ng-repeat="response in vm.followup_responses track by response.id" class="padding-right-xxl">
+    <div class="bubble"
+         id="followup-response-{{response.id}}"
+         data-ng-class="{'bubble-primary': response.firm_id == vm.current_user.firmInfo.id, 'bubble-default': response.firm_id != vm.current_user.firmInfo.id, 'pull-right': response.created_by == vm.current_user.id, 'pull-left': response.created_by != vm.current_user.id}">
+      <div class="bubbler">
+        <span data-ng-show="response.created_by == vm.current_user.id">You</span>
+
+        <span data-ng-hide="response.created_by == vm.current_user.id">
+          {{::response.first_name}} {{::response.last_name}} ({{::response.firm_name}})
+        </span>
+      </div>
+
+      <div class="bubble-message" uib-tooltip="{{vm.formatDateTimeFormat(response.updated_at)}}">
+        <span class="pre-wrap">{{::response.text}}</span>
+
+        <div class="bubble-meta clearfix">
+          <span class="pull-right">
+             {{::response.updated_at | fromNow}}
+          </span>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>
+
+<form novalidate
+      name="vm.followup_form"
+      class="sidebar-form fixed-bottom"
+      data-ng-hide="(vm.diligence.isLocked)"
+      data-ng-submit="vm.saveFollowupResponse()">
+  <form-group field-name="Response" validate-on="submit">
+    <textarea placeholder="Enter response here"
+              class="form-control"
+              msd-elastic="\n"
+              data-ng-model="vm.new_followup_response.text"
+              required></textarea>
+  </form-group>
+
+  <button type="submit"
+          block
+          button-loader="vm.saving_followup_response"
+          data-ng-class="{'disabled':(vm.disable_response_followups && !vm.followup_responses.length)}"
+          uib-tooltip="{{(vm.disable_response_followups && !vm.followup_responses.length) ? 'This functionality is disbled by your admin' : 'Investment partner will be notified'}}"
+          tooltip-append-to-body="false">
+      Follow up <span data-ng-if="vm.DVEntityDisplayName">with {{vm.DVEntityDisplayName}}</span>
+  </button>
+
+</form>

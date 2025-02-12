@@ -1,0 +1,11 @@
+.custom-view-group-row:not(:last-child) {
+  padding-bottom: 5px;
+}
+
+.custom-view-group-radio-container {
+  border: 1px solid #ccc;
+  border-radius: 0px 5px 5px 5px;
+  padding: 5px;
+  max-height: 180px;
+  overflow-y: auto;
+}

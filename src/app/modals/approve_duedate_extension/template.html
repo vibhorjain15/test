@@ -1,0 +1,77 @@
+
+  <div class="modal-header">
+    <h3 class="modal-title">Due Date Management
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+      <div class="spacing-at-top-xl">
+        <label>Requested Due Date:</label> {{vm.dueDateDetails.requested_at | date:'fullDate'}} <br>
+        <label>Reason:</label> {{vm.dueDateDetails.reason}}
+      </div>
+
+      <hr class="space-on-top space-on-bottom-xl">
+
+      <div>
+        <button btn-type="success"
+                button-loader="vm.extending"
+                ng-click="vm.acceptExtendedDueDate()">
+          Accept
+        </button>
+      </div>
+
+      <div class="space-on-top-lg small">
+        <a class="clickable" ng-click="vm.showRejectDueDatePanel()">
+          Decline
+        </a>
+        <span class="padding-lr-xl">|</span>
+        <a class="clickable" ng-click="vm.showExtendDueDatePanel()">
+          Suggest New Date
+        </a>
+      </div>
+
+      <hr class="space-on-top-xl space-on-bottom-xl" ng-if="vm.isRejectDueDatePanelOpen">
+
+      <form novalidate
+            ng-if="vm.isRejectDueDatePanelOpen"
+            name="vm.rejectDueDateExtensionForm"
+            data-ng-submit="vm.rejectDueDateExtension()">
+
+        <label>Reason for Declining</label>
+        <form-group field-name="Reason">
+          <input class="form-control"
+                 data-ng-model="vm.dueDateRejectionReason"
+                 required
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 maxlength="150">
+        </form-group>
+
+        <div class="form-group">
+          <button btn-type="info" type="submit">Confirm</button>
+        </div>
+      </form>
+
+      <form novalidate
+            ng-if="vm.isExtendDueDatePanelOpen"
+            name="vm.modifyDueDateExtensionForm"
+            data-ng-submit="vm.extendDueDateExtension()">
+
+        <label>Suggested Due Date</label>
+        <form-group class="space-on-top" field-name="New Due Date" control-selector="dv-datepicker">
+          <dv-datepicker
+                  data-ng-model="vm.newDueDate"
+                  min-date="vm.minDate"
+                  required>
+          </dv-datepicker>
+        </form-group>
+
+        <div class="form-group">
+          <button btn-type="info" type="submit">Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,241 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-ratings></ng2-ratings>
+</div>
+
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div class="row clearfix" data-ng-show="vm.diligence.status === 'Approved' || vm.diligence.status === 'NotApproved' || vm.diligence.status === 'Completed' || vm.diligence.status === 'Evaluation' || vm.diligence.diligence_type === 'dd_profile' || vm.diligence.is_internal">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner data-ng-if="!vm.diligence"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{::vm.diligence.entity_name}}
+            </h4>
+            <div>
+                <small class="text-muted" data-ng-if="vm.diligence.last_updated_at">
+                 Last Updated {{::vm.diligence.last_updated_at|date}}
+                </small>
+            </div>
+          </div>
+
+          <div class="text-center cell">
+            <span class="align-middle">Status:</span>
+            <span diligence-status="vm.diligence.status"></span>
+          </div>
+          <div class="cell space-on-right-lg">
+            <div col="12" class="rating-types-container default-toggle ng-scope text-center space-on-left-lg bordered-left">
+              <label class="control-label">{{vm.headerConstants.RATINGDEFINITION}} : </label>
+              <div class="selectDiv" data-ng-show="vm.rating_types.length > 0">
+                <select id="opts"
+                        class="form-control"
+                        chosen
+                        allow-single-deselect="true"
+                        data-ng-model="vm.selectedRatingType"
+                        data-ng-change="vm.onSelectedRatingChange(vm.selectedRatingType)"
+                        data-placeholder="placeholder"
+                        data-ng-disabled="vm.ratingsNotEditable || vm.loading"
+                        data-ng-options="rating as rating.name for rating in vm.rating_types">
+                  <option disabled value=""> -- Select Rating Type --</option>
+                </select>
+              </div>
+              <span class="empty-rating" data-ng-if="vm.rating_types.length == 0">No rating framework defined. <a class="clickable" ui-sref="app.firm.settings.investment_rating.types">Click here to add one</a></span>
+            </div>
+          </div>
+
+          <div class="cell bordered-left" data-ng-if="vm.diligence.total_score">
+              <label class="control-label">Total Rating:</label>
+              <span class="dd-score-display" data-ng-style="vm.color_code">{{vm.diligence.total_score | number:2}}</span>
+          </div>
+          <div class="cell" data-ng-if="vm.diligence.isLocked && vm.diligence.isReadOnly">
+            <p class="alert alert-info">
+              <small>
+                This project is now locked, or your access is limited. You cannot update ratings.
+              </small>
+            </p>
+          </div>
+          <div class="cell bordered-left">
+            <button ng-disabled="vm.loading && vm.selectedRatingType" class="btn btn-default" data-ng-click="vm.toggleView('heatmap'); vm.getHeatmapResponse()" data-ng-if="vm.view_mode == 'tabbed'">
+              Switch to Heatmap
+            </button>
+            <button ng-disabled="vm.loading && vm.selectedRatingType" class="btn btn-default" data-ng-click="vm.toggleView('tabbed'); vm.loadRatings(vm.selectedRatingType.id)" data-ng-if="vm.view_mode == 'heatmap'">
+              Switch to Rating View
+            </button>
+          </div>
+          <div class="cell bordered-left" data-ng-if="!vm.loading && vm.selectedRatingType && vm.diligence.recalculation_needed">
+            <button class="btn btn-default" data-ng-click="vm.recalculateScores()">
+              <icon name="refresh"></icon>
+              Recalculate
+            </button>
+          </div>
+          <div class="cell bordered-left" data-ng-if="vm.ratingChanged && vm.view_mode == 'tabbed'">
+            <button class="btn btn-primary" data-ng-click="vm.reloadScores()">
+              <icon name="refresh"></icon>
+              Reload Scores
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <spinner data-ng-show="vm.loading"></spinner>
+    <div class="row clearfix rating-container">
+      <div id="chartWidthDiv" class="visibility-hidden"></div>
+      <div data-ng-if="vm.view_mode == 'heatmap'">
+        <heatmap-component heatmap-options="vm.heatmap_options"
+          heatmap-response="vm.heatmapResponse"
+          rating-scales="vm.rating_scales"
+          na-color="vm.naValue"
+          display-attr="vm.selectedRatingType.rating_scale_mode == vm.ratingConstants.ScoreBand?'score_value':'value'"
+          display-total-attr="vm.selectedRatingType.rating_scale_mode == vm.ratingConstants.ScoreBand?'total_score':'total_rating'">
+        </heatmap-component>
+      </div>
+      <div data-ng-if="vm.view_mode == 'tabbed'">
+        <div col="12" data-ng-repeat="rating_subtype in vm.ratings" data-ng-if="vm.selectedRatingType">
+          <div class="panel panel-default md-panel">
+            <div class="panel-heading space-on-bottom-lg">
+              <h5 class="panel-title">
+                  {{rating_subtype.name}}
+                  <span class="text-primary pull-right" uib-tooltip="Aggregate Rating" data-ng-show="rating_subtype.aggregate_rating">
+                  {{rating_subtype.aggregate_rating}} | {{rating_subtype.aggregate_rating_label}}
+                  </span>
+
+              </h5>
+              <div class="panel-controls">
+                <div class="panel-controls-wrapper" uib-tooltip="{{rating_subtype.description}}">
+                  <span class="dd-score-display" data-ng-style="rating_subtype.color_code">{{rating_subtype.rating_value? (rating_subtype.score_value | number:2) : 'N/A'}}</span>
+                </div>
+              </div>
+            </div>
+
+              <div class="panel-body">
+
+                <div col="4" data-ng-repeat="category in rating_subtype.ratings">
+                  <div class="panel panel-default md-panel space-on-left-lg" data-ng-if="vm.selectedRatingType.rating_level.toLowerCase() == 'section'">
+                    <div class="panel-heading">
+                      <span>{{category.name}}</span>
+                      <div class="panel-controls" data-ng-if="vm.custom_fields.length > 0 || vm.reviewEnabled">
+                        <div class="panel-controls-wrapper" uib-tooltip="{{category.description}}">
+                          <span class="dd-score-display">
+                            <span class="dd-score-display inline-block" data-ng-style="category.color_code">{{category.rating_value?(category.score_value | number:2):'N/A'}}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      <span class="pull-right" data-ng-if="(vm.custom_fields.length  || vm.reviewEnabled) && category.score_value != null && category.score_value >= 0">
+                        <icon name="customize" uib-tooltip="{{category.description}}" class="clickable" data-ng-click="vm.openCustomFieldModal(category, rating_subtype, null, vm.selectedRatingType.rating_scale_mode)"></icon>
+                      </span>
+                      <div data-ng-if="vm.selectedRatingType.rating_scale_mode == vm.ratingConstants.Absolute">
+                        <dv-rating data-ng-model="category.rating_value"
+                                    readonly="vm.diligence.isLocked || vm.ratingsNotEditable"
+                                    max="{{vm.rating_scales.length}}"
+                                    uib-tooltip="{{category.description}}"
+                                    data-ng-change="vm.openCustomFieldModal(category, rating_subtype, null, vm.selectedRatingType.rating_scale_mode)"
+                                    rating-scales="vm.rating_scales"></dv-rating>
+                      </div>
+                      <div data-ng-if="vm.selectedRatingType.rating_scale_mode == vm.ratingConstants.ScoreBand" uib-tooltip="{{category.description}}">
+                        <span class="dd-score-display" data-ng-style="category.color_code">{{category.rating_value? (category.score_value | number:2) : 'N/A'}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel panel-default md-panel space-on-left-lg" data-ng-if="vm.selectedRatingType.rating_level.toLowerCase() != 'section'">
+                    <div class="panel-heading">
+                      <h5 class="panel-title">
+                        {{category.name}}
+                        <span class="text-primary pull-right"
+                              uib-tooltip="Aggregate Rating"
+                              data-ng-show="category.aggregate_rating">
+                          {{category.aggregate_rating}} | {{category.aggregate_rating_label}}
+                        </span>
+
+                      </h5>
+                      <div class="panel-controls">
+                        <div class="panel-controls-wrapper" uib-tooltip="{{category.description}}">
+                          <span class="dd-score-display" data-ng-style="category.color_code">{{category.rating_value?(category.score_value | number:2):'N/A'}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel-body">
+                      <div class="panel panel-default md-panel">
+                        <ul class="list-group">
+                          <li class="list-group-item" data-ng-repeat="sub_category in category.ratings">
+                            <div data-ng-if="vm.selectedRatingType.rating_scale_mode == vm.ratingConstants.ScoreBand">
+                              <span class="width-75-pct inline-block" data-ng-bind-html="sub_category.name"></span>
+                              <span class="width-24-pct inline-block" uib-tooltip="{{sub_category.description}}">
+                                <icon name="customize" data-ng-if="vm.custom_fields.length > 0 || vm.reviewEnabled" uib-tooltip="{{sub_category.description}}" class="space-on-right va-middle clickable" data-ng-click="vm.openCustomFieldModal(sub_category, category, rating_subtype, vm.ratingConstants.ScoreBand)"></icon>
+                                <span class="dd-score-display inline-block" data-ng-style="sub_category.color_code">{{sub_category.rating_value?(sub_category.score_value | number:2):'N/A'}}</span>
+                              </span>
+                            </div>
+                            <div data-ng-if="vm.selectedRatingType.rating_scale_mode == vm.ratingConstants.Absolute">
+                              <span data-ng-bind-html="sub_category.name"></span>
+                              <span>
+                                <span class="pull-right" data-ng-if="vm.ratingScaleMap[category.id].rating_scales && (vm.custom_fields.length  || vm.reviewEnabled) && sub_category.score_value != null && sub_category.score_value >= 0">
+                                  <icon name="customize" uib-tooltip="{{sub_category.description}}" class="clickable" data-ng-click="vm.openCustomFieldModal(sub_category, category, rating_subtype, vm.ratingConstants.Absolute)"></icon>
+                                </span>
+                                <div class="space-on-top">
+                                  <dv-rating data-ng-model="sub_category.rating_value"
+                                              readonly="vm.diligence.isLocked || vm.ratingsNotEditable || (vm.ratingMappedToTemplate && !sub_category.response_id)"
+                                              max="{{vm.rating_scales.length}}"
+                                              uib-tooltip="{{sub_category.description}}"
+                                              data-ng-change="vm.openCustomFieldModal(sub_category, category, rating_subtype, vm.ratingConstants.Absolute)"
+                                              rating-scales="vm.rating_scales"></dv-rating>
+                                </div>
+                              </span>
+                            </div>
+                            <div class="text-right">
+                              <small class="text-success" data-ng-if="(sub_category.rating_status == vm.responseStatus.REVIEWSUCCESS) && sub_category.review_assignments.length && sub_category.review_assignments[0].is_complete">
+                                Last Reviewed by {{sub_category.review_assignments[0].completed_by_name}} on {{sub_category.review_assignments[0].completed_at | date}}
+                              </small>
+                              <span class="label label-danger" uib-tooltip="Revision requested by {{sub_category.review_assignments[0].completed_by_name}} on {{sub_category.review_assignments[0].completed_at | date}}" tooltip-placement="auto top" ng-if="(sub_category.rating_status == vm.responseStatus.REVIEWFAILED) && sub_category.review_assignments.length > 0 && sub_category.review_assignments[0].is_complete">REVISION REQUESTED</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+
+      <div col="12" data-ng-show="vm.ratings && !vm.ratings.length && !vm.loading">
+        <div class="panel panel-default">
+          <div class="row clearfix">
+            <div col="6" offset="3">
+              <div class="panel-body">
+                <empty-state icon-name="star"
+                             message="{{'Investment Ratings have not been setup for your organization.' + (vm.is_admin ? '' : ' Please contact your administrator')}}"
+                             action-label="{{vm.is_admin ? 'Setup Investment Ratings' : ''}}"
+                             action="vm.redirectToInvestmentRatings()">
+                </empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<div  class="col-md-12 text-center"  data-ng-if="vm.diligence.status !== 'Approved' && vm.diligence.status !== 'NotApproved' && vm.diligence.status !== 'Completed' && vm.diligence.status !== 'Evaluation' && vm.diligence.diligence_type !== 'dd_profile' && !vm.diligence.is_internal && !vm.loading">
+  <p class="alert alert-info">
+  <small>
+    This project is now locked, or your access is limited. You cannot update ratings.
+  </small>
+</p>
+</div>
+</div>
+<div class="panel panel-default" data-ng-if="!(vm.diligence.status === 'Approved' || vm.diligence.status === 'NotApproved' || vm.diligence.status === 'Completed' || vm.diligence.status === 'Evaluation' || vm.diligence.diligence_type === 'dd_profile' || vm.diligence.is_internal) && !vm.loading">
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div col="6" offset="3">
+        <empty-state icon-name="smile-o"
+                     message="Nothing to rate as of now. Once the Manager submits this due diligence, you can rate."
+                     action="vm.redirectToSummary()"
+                     action-label="Back to Summary"></empty-state>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

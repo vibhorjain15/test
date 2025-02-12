@@ -1,0 +1,66 @@
+<div class="panel panel-default" data-ng-if="!vm.question">
+    <div class="panel-body">
+        <spinner></spinner>
+    </div>
+</div>
+
+<div class="panel panel-default"
+     infinite-scroll="vm.loadFilingsHistory()"
+     data-ng-if="vm.question"
+     infinite-scroll-disabled="!vm.pagination_enabled || vm.is_loading || vm.current_page >= vm.total_pages">
+    <div class="panel-heading" data-ng-class="{'has-material-changes': vm.question.has_material_changes}">
+        <p class="clear-margin">
+            <icon name="warning" class="space-on-right text-orange font-size-16 align-middle"
+                  uib-tooltip="Has Material Changes"
+                  data-ng-if="vm.question.has_material_changes"></icon>
+            {{vm.question.text}}
+        </p>
+    </div>
+
+    <table class="table table-bordered"
+           data-ng-show="vm.view_mode == 'table'">
+        <thead>
+        <tr>
+            <!-- if anchor question flag is on show anchor extra column<td></td>
+            <th>
+
+            </th>-->
+            <th data-ng-repeat="filing_history in vm.filings_histories">
+                {{filing_history.filingDate|date}}
+            </th>
+            <th>
+                Changes
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr data-ng-repeat="row in vm.rows track by $index">
+            <!-- if anchor question flag is on show anchor value<td></td>-->
+            <td data-ng-repeat="cell in row track by $index">
+                <span ng-bind-html="cell.responseDisplay"></span>
+            </td>
+            <td>
+                <span jsdiff current="row[0].responseDisplay" previous="row[1].responseDisplay" consider-null
+                      data-ng-if="!((row[0].response_type == 'Numeric' || row[0].response_type == 'Integer' || row[0].response_type == 'Percentage') && (row[1].response_type == 'Numeric' || row[1].response_type == 'Integer' || row[1].response_type == 'Percentage'))"></span>
+
+                <span numericdiff current="row[0].numericResponseA" previous="row[1].numericResponseA"
+                      data-ng-if="(row[0].response_type == 'Numeric' || row[0].response_type == 'Integer' || row[0].response_type == 'Percentage') && (row[1].response_type == 'Numeric' || row[1].response_type == 'Integer' || row[1].response_type == 'Percentage')"></span>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="panel-footer"
+         data-ng-show="vm.total_pages > 1 && !vm.pagination_enabled">
+        <div class="clearfix">
+            <a ui-sref="app.form_adv.firm.question_history({firmCRD: vm.firmCrd, questionId: vm.question.id, start_at: vm.dateRange.start_at, end_at: vm.dateRange.end_at})"
+               class="pull-right btn btn-default">See More &raquo;</a>
+        </div>
+    </div>
+
+    <div class="panel-body" data-ng-show="vm.is_loading">
+        <spinner></spinner>
+    </div>
+</div>

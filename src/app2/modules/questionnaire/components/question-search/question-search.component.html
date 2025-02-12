@@ -1,0 +1,84 @@
+<div>
+  <div class="input-group search-questions search-wrapper">
+    <div class="QA-filter input-group advance-search-input-group">
+      <input
+        [(ngModel)]="search"
+        [placeholder]="
+          'Search ' + (filterType === 'Search' ? 'question' : 'response')
+        "
+        class="form-control input-question-search input qainput"
+        (keydown.enter)="updateQuestion()"
+        autofocus
+        aria-label="Search question input"
+      />
+
+      <a
+        class="cancel-btn-clear-search-text"
+        style="right: 111px; top: 9px"
+        (click)="resetFilter()"
+        *ngIf="search"
+        tippyTooltip="Clear search"
+        [ariaLabel]="'Clear search'"
+        role="button"
+        tabindex="0"
+      >
+        <span appIcon name="close"></span>
+      </a>
+      <dv-select
+        [list]="questionAnswerFilter"
+        class="search-select"
+        [(ngModel)]="filterType"
+        [searchable]="false"
+        [appendTo]="'body'"
+        [aria-label]="'Filter Dropdown'"
+      ></dv-select>
+    </div>
+    <span class="input-group-btn search-wrapper">
+      <dv-button
+        btnType="default"
+        btnClass="btn-default"
+        (onClick)="updateQuestion()"
+        tippyTooltip="Search"
+        [ariaLabel]="'Search'"
+      >
+        <span
+          appIcon
+          class="text-primary dvi ng-isolate-scope dvi-search"
+          name="search"
+        ></span>
+      </dv-button>
+    </span>
+  </div>
+
+  <!-- Type a head implementation -->
+  <!-- <span class="input-group-btn">
+        <dv-button
+          class="btn btn-default primary"
+          btnType="default"
+          submit-style-override=""
+          type="submit"
+          data-ng-click="vm.searchQuestions()"
+        >
+          <span appIcon name="search" color="primary"></span>
+        </dv-button>
+      </span> -->
+  <!-- </div> -->
+  <h5 class="space-on-top clear-margin-bottom lh1-7" *ngIf="search">
+    Showing {{ total_questions_count }}
+    {{ filterType === "Search" ? "questions" : "responses" }} matching "<b
+      ><u
+        ><span char-limit="15">{{ search | truncate : 15 }}</span></u
+      ></b
+    >" (<a
+      class="clickable"
+      (click)="redirectToSinglePageView()"
+      tooltip="View all results on a single page"
+      placement="top"
+      aria-label="View all results on a single page"
+      tabindex="0"
+      (keydown.enter)="redirectToSinglePageView()"
+    >
+      View All </a
+    >)
+  </h5>
+</div>

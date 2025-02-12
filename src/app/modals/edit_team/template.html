@@ -1,0 +1,57 @@
+<form class="form-horizontal" name="vm.new_team_form" novalidate data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.adding_member? 'Add Members' : 'Edit  Team'}}
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+
+    <form-group field-name="Team Name">
+      <label for="team-name" class="control-label" col="3" col-type="sm">Team Name</label>
+      <div col="8" col-type="sm">
+        <input type="text" name="team_name" data-ng-model="vm.teamData.team.name" class="form-control" data-ng-hide="vm.adding_member">
+        <p data-ng-show="vm.adding_member" class="space-on-top">
+          <span class="label label-default">{{vm.teamData.team.name}}</span>
+        </p>
+      </div>
+    </form-group>
+    <div data-ng-if="vm.adding_member">
+      <form-group field-name="Role" tooltip-placement="left">
+        <label class="control-label" col="3">Access Level</label>
+        <div col="8" col-type="sm">
+          <select id="role"
+                  class="form-control"
+                  data-ng-required="true"
+                  chosen
+                  data-ng-model="vm.membersObject.role_id"
+                  persistent-create-option="true"
+                  skip-no-results="true"
+                  data-ng-change="vm.setRoleText(vm.membersObject.role_id)"
+                  data-ng-options="role.id as role.alias for role in vm.roles">
+            <option value=""></option>
+          </select>
+          <div class="panel panel-info space-on-top-lg" data-ng-show="vm.roleText">
+            <!-- Admin's will have read & write access to all the resources. -->
+            <div class="panel-heading">{{vm.roleText}}</div>
+          </div>
+        </div>
+      </form-group>
+      <form-group field-name="Member" tooltip-placement="left" data-ng-if="vm.team_members">
+        <label class="control-label" col="3">Members</label>
+        <div col="8">
+          <dv-selector-list name="resource_list" entity-type="'Users'" entities="vm.team_members" filter-params="{}" display-params="vm.teamSelectorDisplayParams" selection="vm.membersObject.memberNames"></dv-selector-list>
+        </div>
+      </form-group>
+    </div>
+
+  </div>
+
+
+  <div class="modal-footer" data-ng-hide="!vm.team_members.length && vm.adding_member">
+    <button data-ng-show="vm.adding_member" class="btn btn-primary" button-loader="vm.adding_new_members" data-ng-click="vm.addMembersRow()">Add Members</button>
+    <button data-ng-hide="vm.adding_member" type="submit"
+            button-loader="vm.saving_team">Save Team</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

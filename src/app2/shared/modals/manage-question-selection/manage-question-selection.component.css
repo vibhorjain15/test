@@ -1,0 +1,18 @@
+.checkbox input[type="checkbox"] {
+  position: absolute;
+  margin-left: -30px !important;
+}
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  position: absolute;
+  margin-top: 4px;
+  margin-left: -30px;
+}
+
+::ng-deep .manageCheckbox .checkbox input[type="checkbox"],
+.manageChaekbox .checkbox input[type="radio"] {
+  z-index: unset !important;
+}

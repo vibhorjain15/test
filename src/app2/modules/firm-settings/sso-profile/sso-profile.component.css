@@ -1,0 +1,10 @@
+.danger {
+  color: #cd3333;
+}
+.minwidth {
+  min-width: 55px;
+}
+
+.sso-profile-radio-label {
+  margin-right: 25px;
+}

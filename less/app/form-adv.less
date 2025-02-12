@@ -1,0 +1,99 @@
+.status-tracker {
+  .overflow-container{
+    min-height: 100px;
+    overflow-x: auto;
+    margin-top: 15px;
+  }
+  .progress-meter {
+    li {
+      min-width: 135px;
+      &.datepicker-inactive {
+        color: lighten(@dv-black, 10%);
+        border-bottom-color: @dv-gray;
+
+        .bubble {
+          border: 3px solid @dv-gray;
+          background-color: #FFF;
+        }
+      }
+
+      &.datepicker-active {
+        color: var(--text-orange);
+        border-bottom-color: @dv-gray;
+
+        .bubble {
+          background-color: @dv-gray;
+          border: none;
+          &:before {
+            content: "\00b0";
+            position: relative;
+            top: -8px;
+            color: #fff;
+            font-size: 32px;
+          }
+        }
+      }
+    }
+  }
+}
+.edit-timeline{
+  background: lighten(@brand-primary, 59%);
+
+  .status-tracker{
+    .progress-meter {
+      li {
+        &.datepicker-active{
+          color: var(--orange-900) !important;
+          .bubble:hover  {
+            cursor: pointer;
+          }
+        }
+        &.datepicker-inactive{
+          .bubble:hover  {
+            cursor: pointer;
+            background-color: @dv-gray;
+            border: none;
+            &:before {
+              content: "\00b0";
+              position: relative;
+              top: -8px;
+              color: #fff;
+              font-size: 32px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.form-adv-threshold{
+
+  .threshold-item {
+    border-right: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    border-left: 1px solid #eee;
+
+    &.first-threshold {
+      border-top: 1px solid #eee;
+    }
+  }
+
+  .threshold-item:nth-child(even) {
+    background: rgba(242, 242, 242, 0.27);
+  }
+
+  .active{
+    background: @dv-sky-blue !important;
+  }
+}
+
+.has-material-changes{
+  background-color: #fcf8e3 !important;
+}
+
+.filing_dates_label{
+  position: relative;
+  top: 8px;
+  right: -20px;
+}

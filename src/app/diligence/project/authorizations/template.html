@@ -1,0 +1,49 @@
+<div class="panel">
+  <div class="panel-body">
+    <div class="row clearfix" ng-repeat="check in vm.authorize" ng-show="vm.is_investor">
+      <div col="12">
+        <label>{{check.targetType}}: {{check.targetName}} was approved on {{check.AuthorizationdateTime}} by {{check.AuthoriedbyUser.FirstName}} {{check.AuthoriedbyUser.LastName}}</label>
+      </div>
+    </div>
+    <div class="row clearfix" ng-show="!vm.is_investor">
+      <div col="4">
+        <label>Firm</label>
+      </div>
+      <div col="4">
+        <label>Fund</label>
+      </div>
+      <div col="4">
+        <label>Employees</label>
+      </div>
+    </div>
+    <div class="row clearfix" ng-show="!vm.is_investor">
+      <div col="4">
+        <div class="panel panel-default">
+            <div class="panel-body text-center">
+              <div class="row">
+                {{vm.user.firmInfo.name}} <a class="clickable" ng-click="vm.processCheck('firm', vm.user.firmInfo.id)"><icon name="file-add"></icon></a>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div col="4">
+        <div class="panel panel-default">
+            <div class="panel-body text-center">
+              <div class="row" ng-repeat="fund in vm.fund">
+                {{fund.name}} <a class="clickable" ng-click="vm.processCheck('fund', fund.id)"><icon name="file-add"></icon></a>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div col="4">
+        <div class="panel panel-default">
+            <div class="panel-body text-center">
+              <div class="row" ng-repeat="employee in vm.team">
+                {{employee.firstName}} {{employee.lastName}} <a class="clickable" ng-click="vm.processCheck('user', employee.id)"><icon name="file-add"></icon></a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

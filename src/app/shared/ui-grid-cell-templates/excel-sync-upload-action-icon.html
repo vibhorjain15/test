@@ -1,0 +1,18 @@
+<ui-grid-cell-content ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)"s>
+    <div>
+        <button type="submit" size="sm" class="btn btn-primary"
+                dv-file-handler
+                dv-fields="row.entity.upload_params"
+                dv-bind-files-to="row.entity.upload_files"
+                dv-upload-url="/excel_sync/upload"
+                dv-accept="::grid.appScope.vm.allowed_file_extensions_str"
+                dv-pattern="::grid.appScope.vm.allowed_file_extensions_str"
+                dv-max-file-size="::grid.appScope.vm.maxFileSize"
+                dv-on-upload="grid.appScope.vm.excelUploadComplete(row.entity, response)"
+                dv-on-upload-error="grid.appScope.vm.excelUploadError(response)"
+                uib-tooltip="Upload completed Excel"
+                button-loader="row.entity.processing_excel">
+            <icon name="upload3"></icon>
+        </button>
+    </div>
+</ui-grid-cell-contents>

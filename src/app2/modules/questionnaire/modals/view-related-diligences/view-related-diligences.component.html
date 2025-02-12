@@ -1,0 +1,47 @@
+<app-modal
+  [title]="'Related Projects' + ' (' + projects?.length + ')'"
+  [firstButtonLabel]="firstButtonEnable ? firstButtonLabel : ''"
+  (onFirstClick)="submit($event)"
+  (onSecondClick)="handleGotoMainProject()"
+  [initialTemplate]="relatedProjects"
+  [isLoading]="submittingDiligence"
+  [isFirstButtonDisabled]="!canSubmit || disabled"
+  [secondButtonLabel]="secondButtonEnable ? 'Redirect to Main Project' : ''"
+  [firstButtonTooltip]="
+    disabled
+      ? disabledTooltip
+      : !canSubmit
+      ? 'Please complete the project(s)'
+      : ''
+  "
+  [isSecondButtonDisabled]="!secondButtonEnable"
+>
+</app-modal>
+
+<ng-template #relatedProjects>
+  <ng-container *ngIf="loading">
+    <app-spinner class="text-center"> </app-spinner>
+  </ng-container>
+
+  <input
+    class="form-control"
+    type="text"
+    ngModel
+    *ngIf="!loading && (projects.length || projectsCopy.length)"
+    (ngModelChange)="handleSearchQuery($event)"
+    (onChange)="handleSearchQuery($event)"
+    placeholder="Search and Select"
+    aria-label="Search and Select related projects"
+  />
+  <ng-container *ngIf="!loading && projects.length">
+    <div class="projects wrapper" *ngFor="let project of projects">
+      <related-project-status [project]="project"></related-project-status>
+    </div>
+  </ng-container>
+  <div class="empty">
+    <app-empty-state
+      *ngIf="!loading && !projects.length"
+      message="No more related projects"
+    ></app-empty-state>
+  </div>
+</ng-template>

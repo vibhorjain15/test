@@ -1,0 +1,16 @@
+<app-modal
+  [title]="'Disclaimer'"
+  [isCancelButton]="false"
+  [isFooter]="isManager"
+  [initialTemplate]="ViewDisclaimerModalref"
+  [firstButtonLabel]="'Edit'"
+  [secondButtonLabel]="'Delete'"
+  (onFirstClick)="showUpdateDisclaimerModal($event)"
+  (onSecondClick)="handleDeleteClick($event)"
+></app-modal>
+
+<ng-template #ViewDisclaimerModalref>
+  <div class="padding-10 disclaimerContainer view-template">
+    <span class="overflow" [innerHtml]="text"></span>
+  </div>
+</ng-template>

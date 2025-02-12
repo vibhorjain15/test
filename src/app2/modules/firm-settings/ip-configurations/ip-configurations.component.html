@@ -1,0 +1,133 @@
+<div class="panel panel-default relative">
+  <dv-panel-heading
+    [heading]="'IP Address Whitelisting'"
+    [controls]="panelHeadingControls"
+    class="panel-heading"
+  ></dv-panel-heading>
+  <div class="panel-body">
+    <app-spinner
+      broad-spinner
+      spinner-height="100"
+      *ngIf="!ip_configurations"
+    ></app-spinner>
+    <div
+      class="space-on-top-lg"
+      col="6"
+      offset="3"
+      *ngIf="ip_configurations && !ip_configurations.length"
+      aria-label="No IP Configurations"
+      role="region"
+    >
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <app-empty-state
+            [message]="'IP whitelisting not activated'"
+            (action)="addIPConfig()"
+            [actionLabel]="'Add IP Whitelisting'"
+          ></app-empty-state>
+        </div>
+      </div>
+    </div>
+    <span *ngIf="ip_configurations && ip_configurations.length">
+      <div class="form-horizontal">
+        <div col="12" class="space-on-top-xl padded-bottom-xl bordered-bottom">
+          <div col="3" class="pa-lr-lg">
+            <div col="12">
+              <span class="control-label fw-bolder" offset="1"
+                >Whitelist Name</span
+              >
+            </div>
+          </div>
+          <div col="3" class="pa-lr-lg text-center">
+            <span class="control-label fw-bolder">Start IP</span>
+          </div>
+          <div col="3" class="pa-lr-lg text-center">
+            <span class="control-label fw-bolder">End IP</span>
+          </div>
+          <div col="2" class="pa-lr-lg text-center">
+            <span class="control-label fw-bolder"># of IPs included</span>
+          </div>
+          <div col="1" class="pa-lr-lg text-center"></div>
+        </div>
+      </div>
+      <div
+        col="12"
+        class="pa-tb-lg bordered-right bordered-bottom bordered-left threshold-item"
+        *ngFor="
+          let configuration of ip_configurations;
+          let $index = index;
+          trackBy: trackByIndex
+        "
+        [ngClass]="{ 'active bg-light-gray-panel': configuration.hoverState }"
+        (mouseenter)="configuration.hoverState = true"
+        (mouseleave)="configuration.hoverState = false"
+      >
+        <div col="3">
+          <div col="12">
+            <h5 class="text-center inline-block lh1-7" col="1">
+              <span class="space-on-right-lg">{{ $index + 1 }}.</span>
+            </h5>
+            <h5 class="inline-block padding-right-xl lh1-7" col="11">
+              <span class="space-on-right-lg">{{ configuration.name }}</span>
+            </h5>
+          </div>
+        </div>
+        <div col="3" class="text-center">
+          <h5>{{ configuration.start_ip }}</h5>
+        </div>
+        <div col="3" class="text-center">
+          <h5>{{ configuration.end_ip }}</h5>
+        </div>
+        <div col="2" class="text-center">
+          <h5 class="text-info">
+            {{ configuration.number_of_IPs }}
+          </h5>
+        </div>
+        <div col="1" class="space-on-top-3">
+          <span *ngIf="configuration.hoverState">
+            <dv-button
+              [btnClass]="'space-on-top-xm btn-sm btn btn-default danger'"
+              [btnType]="'default'"
+              (onClick)="confirmRemoveIP(configuration, $index)"
+              tooltip="Remove this IP whitelisting"
+              container="body"
+              [fontSizeType]="'medium'"
+              ariaLabel="Remove this IP whitelisting"
+            >
+              <span appIcon name="trashcan"></span>
+            </dv-button>
+          </span>
+        </div>
+      </div>
+      <div
+        col="12"
+        class="space-on-top-xxl space-on-bottom clear-padding-right"
+      >
+        <div class="pull-left" *ngIf="currentIP">
+          <small class="text-muted">
+            Your current IP Address: {{ currentIP }}
+          </small>
+        </div>
+        <div class="pull-right">
+          <dv-button
+            triggers="mouseenter:mouseleave"
+            tooltip="Add new whitelisting"
+            [loader]="false"
+            [disabled]="false"
+            [btnClass]="
+              'space-on-left clear-margin-top clear-margin-bottom inline-block'
+            "
+            [leftIcon]="'plus'"
+            [btnType]="'primary'"
+            [size]="'sm'"
+            [fontSizeType]="'medium'"
+            (onClick)="addIPConfig()"
+            ariaLabel="Add new whitelisting"
+          >
+            Add IP Whitelisting
+          </dv-button>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>

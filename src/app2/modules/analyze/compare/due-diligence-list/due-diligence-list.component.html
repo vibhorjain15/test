@@ -1,0 +1,167 @@
+<div class="panel panel-default compareTopPannel modalZindex">
+  <div class="panel-heading">
+    <h5 class="panel-title">Comparisons</h5>
+  </div>
+  <div class="panel-body">
+    <app-spinner *ngIf="loading_prefs"></app-spinner>
+    <div class="dv-table full-width dd-info-panel" *ngIf="!loading_prefs">
+      <form class="form-horizontal" [formGroup]="ddlForm" autocomplete="off">
+        <div class="cell bordered-right" col="3">
+          <dv-form-element
+            [fieldName]="'Template Name'"
+            [label]="'Select a Template'"
+            labelPosition="top"
+            [modelController]="ddlForm.get('templateName')"
+            [elementCol]="12"
+            [elementClass]="'no-padding'"
+            *ngIf="!is_manager"
+            [showRightIcon]="false"
+          >
+            <dv-select
+              [id]="'templateName'"
+              formControlName="templateName"
+              [clearable]="false"
+              [searchable]="true"
+              placeholder="Select an Option"
+              (onSelectChange)="onTemplateChange()"
+              [list]="templates"
+              [aria-label]="'Select a Template'"
+              [virtualScroll]="false"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+        <div col="3" class="cell bordered-right">
+          <dv-form-element
+            [fieldName]="'classification'"
+            [label]="'Select a Classification'"
+            labelPosition="top"
+            [modelController]="ddlForm.get('entity_sub_type')"
+            [showRightIcon]="false"
+            [elementCol]="12"
+            [elementClass]="'no-padding'"
+          >
+            <dv-select
+              [id]="'entity_sub_type'"
+              formControlName="entity_sub_type"
+              [clearable]="false"
+              [searchable]="true"
+              placeholder="Filter by Template"
+              [value]="-1"
+              [list]="strategies"
+              [aria-label]="'Select a Classification'"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+        <div class="cell max-w-320" col="3">
+          <dv-form-element
+            [label]="'Select Dates'"
+            labelPosition="top"
+            [showRightIcon]="false"
+            [elementCol]="12"
+            [elementClass]="'no-padding'"
+            [for]="'select_date'"
+          >
+            <app-date-range-picker
+              [id]="'Select Dates'"
+              [customDate]="dateRangeRatingScheme"
+              (change)="onDateChange($event)"
+              (clearDateFilter)="onClearDateFilter()"
+              [ariaLabel]="'Select Dates'"
+              #dateRangePicker
+              [id]="'select_date'"
+            ></app-date-range-picker>
+          </dv-form-element>
+        </div>
+        <div col="3" class="space-on-top-lg">
+          <dv-button btnType="transparent" (onClick)="clearFilters()">
+            <div>
+              <span appIcon name="refresh" tooltip="Reset the filters"></span>
+            </div>
+            Reset Filters
+          </dv-button>
+        </div>
+      </form>
+      <div class="col-md-12 text-center space-on-top-xxl">
+        <div class="inline-block">
+          <dv-button
+            btnType="primary"
+            (onClick)="fetchDiligences(false)"
+            [loader]="isLoading"
+          >
+            <span appIcon name="search"></span>
+            Show Results
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" *ngIf="due_diligences.length > 0">
+  <div class="panel-body pd-13">
+    <div class="dv-table dv-table-middle full-width dd-info-panel">
+      <div class="cell bordered-right text-center" col="6">
+        <i *ngIf="due_diligences.length > 0" class="text-muted"
+          ><small
+            >You are viewing {{ due_diligences.length }} projects matching
+            {{ selectedTemplateName }}</small
+          ></i
+        >
+      </div>
+      <div class="cell bordered-right text-center" col="3">
+        <a
+          (click)="selectedDueDiligences.length < 2 ? null : saveSelections()"
+          tooltip="{{
+            selectedDueDiligences.length < 2
+              ? 'Select at least 2 due diligences to compare'
+              : 'Compare selected due diligences'
+          }}"
+          [ngClass]="{
+            disabled: selectedDueDiligences.length < 2,
+            'btn-transparent-cta': selectedDueDiligences.length >= 2
+          }"
+          class="btn btn-transparent dv-compare"
+        >
+          <div><span appIcon name="compare" size="2x"></span></div>
+          <small>Compare</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-spinner *ngIf="isLoading"></app-spinner>
+
+<div
+  class="panel panel-default compareListContainer"
+  *ngIf="showPannel && due_diligences.length > 0 && !isLoading"
+  id="itemsContainer"
+  tabindex="0"
+>
+  <div class="panel-body">
+    <due-diligence-list-card
+      class="due-diligence-grid"
+      [cardData]="due_diligences"
+      [isScore]="rating_scales && naValue"
+      (onSelectData)="handleSelectedData($event)"
+      [selectedData]="selectedDueDiligences"
+      [ratingScales]="rating_scales"
+      [naValue]="naValue"
+      [ratingScheme]="ratingScheme"
+    >
+    </due-diligence-list-card>
+  </div>
+</div>
+
+<div
+  class="panel panel-default"
+  *ngIf="showPannel && due_diligences.length == 0 && !isLoading"
+>
+  <div class="panel-body">
+    <div class="text-center text-muted">
+      <small><i>*No match found*</i></small>
+    </div>
+  </div>
+</div>

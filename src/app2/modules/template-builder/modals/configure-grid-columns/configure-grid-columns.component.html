@@ -1,0 +1,116 @@
+<app-modal
+  [title]="'Configure Column'"
+  [initialTemplate]="GridColumnConfig"
+  (onFirstClick)="handleSave($event)"
+  firstButtonLabel="Save"
+  (onSecondClick)="handleCancel($event)"
+  secondButtonLabel="Cancel"
+  [isCancelButton]="false"
+  [isLoading]="loading"
+  role="dialog"
+  aria-labelledby="modalTitle"
+  aria-describedby="modalDescription"
+>
+  <ng-template #GridColumnConfig>
+    <div class="row clearfix">
+      <form [formGroup]="gridColumnConfigForm" autocomplete="off">
+        <dv-form-element
+          *ngIf="ColumnTypes"
+          [modelController]="gridColumnConfigForm.get('column_types')"
+          label="Select Column Type"
+          labelPosition="left"
+          [labelCol]="4"
+          [labelClass]="'text-right space-on-top'"
+          [elementCol]="6"
+          [showRightIcon]="false"
+          spacing="small"
+        >
+          <dv-select
+            [id]="'column_types'"
+            [contoller]="gridColumnConfigForm.get('column_types')"
+            [appendTo]="'body'"
+            [error]=""
+            [list]="ColumnTypes"
+            bindLabel="label"
+            bindValue=""
+            formControlName="column_types"
+            (onSelectChange)="handleColumnTypeChange($event)"
+            [aria-label]="'Select Column Type'"
+          ></dv-select>
+        </dv-form-element>
+        <ng-container
+          *ngIf="
+            gridColumnConfigForm &&
+            gridColumnConfigForm.get('column_types').value.value == 'dropdown'
+          "
+        >
+          <div col="4"></div>
+          <div col="8">
+            <span class="space-on-left inline-block">
+              <dv-checkbox
+                formControlName="enable_multiselection"
+                (onValChange)="handleMultiSelectionChange($event)"
+                label="Enable Multiple Selection"
+                rightIcon="info"
+                iconClass="space-on-left float-none align-middle"
+                iconTooltip="Click to enable multiple field selection within column"
+              >
+              </dv-checkbox>
+            </span>
+          </div>
+        </ng-container>
+        <dv-form-element
+          [hidden]="
+            gridColumnConfigForm &&
+            gridColumnConfigForm.get('column_types').value.value != 'dropdown'
+          "
+          label="Populate Dropdown Items"
+          labelPosition="left"
+          [labelCol]="4"
+          [labelClass]="'text-right space-on-top'"
+          [elementCol]="6"
+          [showRightIcon]="false"
+          spacing="small"
+        >
+          <dv-option-selector-new
+            [editable]="editable"
+            [question]="previewData"
+            [allowOtherOption]="false"
+            [fieldName]="type"
+            option_label="Dropdown Item"
+          ></dv-option-selector-new>
+        </dv-form-element>
+        <br />
+        <br />
+        <dv-form-element
+          [hidden]="
+            gridColumnConfigForm &&
+            gridColumnConfigForm.get('column_types').value.value != 'date'
+          "
+          label="Format"
+          labelPosition="left"
+          [labelCol]="4"
+          [labelClass]="'text-right space-on-top'"
+          [elementCol]="6"
+          [showRightIcon]="false"
+          spacing="small"
+          [modelController]="gridColumnConfigForm.get('date_format')"
+          *ngIf="gridColumnConfigForm.get('date_format')"
+          errorMessage="Date format is required"
+        >
+          <dv-select
+            [id]="'date_format'"
+            [contoller]="gridColumnConfigForm.get('date_format')"
+            [appendTo]="'body'"
+            [error]=""
+            [list]="supportedFormats"
+            bindLabel="label"
+            bindValue=""
+            formControlName="date_format"
+            aria-label="Select Date Format"
+          ></dv-select>
+        </dv-form-element>
+      </form>
+    </div>
+  </ng-template>
+</app-modal>

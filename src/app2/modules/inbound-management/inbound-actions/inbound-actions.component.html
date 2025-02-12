@@ -1,0 +1,28 @@
+<div *ngIf="params.data">
+  <dv-button
+    btnType="default"
+    btnClass="grid-action-button"
+    [adaptivePosition]="false"
+    tooltip="Edit"
+    container="body"
+    class="space-on-right"
+    (onClick)="edit()"
+    size="sm"
+    ariaLabel="Edit"
+  >
+    <span appIcon name="pencil"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    btnClass="grid-action-button"
+    [adaptivePosition]="false"
+    tooltip="Remove"
+    container="body"
+    class="space-on-right"
+    (onClick)="delete()"
+    size="sm"
+    ariaLabel="Delete"
+  >
+    <span appIcon name="trashcan"></span>
+  </dv-button>
+</div>

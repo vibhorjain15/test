@@ -1,0 +1,14 @@
+<div *ngIf="is_investor; else managerSummary">
+  <app-investor-summary
+    (reviewerAssigned)="navigateToPendingReview($event)"
+    aria-label="Requestor Summary"
+    role="region"
+  ></app-investor-summary>
+</div>
+<ng-template #managerSummary>
+  <app-manager-summary
+    (reviewerAssigned)="navigateToPendingReview($event)"
+    aria-label="Manager Summary"
+    role="region"
+  ></app-manager-summary>
+</ng-template>

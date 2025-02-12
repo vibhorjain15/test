@@ -1,0 +1,139 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!fund"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="fund">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ fund.display_name }}
+            </h4>
+          </div>
+          <dv-button
+            (onClick)="is_add_menu_open = !is_add_menu_open"
+            [btnType]="'transparent'"
+          >
+            <div>
+              <img
+                src="/assets/images/upload_icon_black.svg"
+                alt="upload image icon"
+                class="height-30"
+              />
+            </div>
+            <small
+              ><div class="text-center inline-block space-on-right">
+                <div>Add / Upload</div>
+                <div>AUM / Track Record</div>
+              </div>
+              <span
+                appIcon
+                [name]="is_add_menu_open ? 'chevron-up' : 'chevron-down'"
+              ></span>
+            </small>
+          </dv-button>
+          <dv-dropdown
+            type="default"
+            (onDropdownClick)="onDropdownClick($event)"
+            (onDropdownToggle)="is_add_menu_open = $event"
+            [toggleDropDown]="is_add_menu_open"
+            [dropDownList]="dropdownItems"
+            dropdownPlacement="bottom"
+          ></dv-dropdown>
+          <div class="cell text-center">
+            <dv-button btnType="transparent" (onClick)="backToProducts()">
+              <div><span appIcon name="arrow-back" size="2x"></span></div>
+              <small>Back to all Products</small>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="12">
+        <helper-text *ngIf="tables.length">
+          <small>
+            <strong>Instructions: </strong>
+            <div>
+              Please make sure to press the save button to update all changes.
+            </div>
+            <div>
+              To delete a row, please right click when on the row. Copy and
+              paste values from excel or enter them directly in the cells.
+            </div>
+            <div>
+              To add additional AUM / Track Record, please click on Add AUM /
+              Track Record or Upload via Excel button.
+            </div>
+          </small>
+        </helper-text>
+        <div
+          class="panel panel-default panel-hot"
+          *ngFor="let table of tables; let $index = index"
+        >
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              <span [ngSwitch]="table.type">
+                <span *ngSwitchCase="'track_record'"
+                  >{{ table.name }} ({{
+                    table.currency_name && table.profile_type
+                      ? table.currency_name + "/" + table.profile_type + " in "
+                      : ""
+                  }}
+                  %)</span
+                >
+                <span *ngSwitchCase="'aum'"
+                  >{{ table.name }} ({{
+                    table.currency_name ? table.currency_name + " in " : ""
+                  }}
+                  millions)</span
+                >
+              </span>
+            </h5>
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a
+                  class="panel-control"
+                  [disabled]="currentFirmId !== table.firm_id"
+                  (click)="openEditTableDialog(table, $index)"
+                  tooltip="Edit"
+                  container="body"
+                >
+                  <span appIcon name="pencil"></span>
+                </a>
+                <a
+                  class="panel-control"
+                  [disabled]="currentFirmId !== table.firm_id"
+                  (click)="openDeleteConfirmation(table, $index)"
+                  tooltip="Delete"
+                  container="body"
+                >
+                  <span appIcon name="trashcan"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <app-share-class-table
+            [resource]="table"
+            [shareClass]="fund"
+            (has_unsaved_changes)="set_has_unsaved_changes(table, $event)"
+          >
+          </app-share-class-table>
+        </div>
+        <app-spinner *ngIf="!tables"></app-spinner>
+        <div class="row clearfix" *ngIf="tables && !tables.length">
+          <div col="6" offset="3">
+            <app-empty-state
+              iconName="table"
+              message="Two ways to get started... Add directly on the platform, or upload via Excel sheet."
+            >
+            </app-empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

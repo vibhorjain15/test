@@ -1,0 +1,169 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Manage Investor Requests</h5>
+  </div>
+
+    <div class="panel-heading pa-tb-xl">
+        <h5 class="font-bold">If your investors are not on the platform, then upload documents on their behalf. We'll extract the questions and suggest best answers, saving you hours of Copy & Paste!</h5>
+    </div>
+
+  <div class="panel-body">
+
+    <div class="row clearfix space-on-top">
+      <div col="6">
+        <div class="dd-doc-selection-wrapper">
+        <div class="panel panel-default dd-doc-drop-panel"
+             dv-file-handler
+             dv-droppable
+             ngf-multiple="true"
+             ngf-select-disabled="true"
+             dv-on-upload="vm.gotoDocumentUploadDetail(response)"
+             dv-accept="'.docx'"
+             dv-pattern="'.docx'"
+             dv-max-file-size="::vm.maxFileSize"
+             dv-upload-url="/dd_documents"
+             ngf-drag-over-class="'panel-primary'">
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your file here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button btn-type="default"
+                  dv-accept="'.docx'"
+                  dv-pattern="'.docx'"
+                  dv-max-file-size="::vm.maxFileSize"
+                  dv-file-handler
+                  ngf-multiple="true"
+                  ngf-max-files="5"
+                  ngf-drop-disabled="true"
+                  dv-on-upload="vm.gotoDocumentUploadDetail(response)"
+                  dv-upload-url="/dd_documents">
+            Select File
+          </button>
+        </div>
+      </div>
+        <br/>
+        <p class="alert alert-info">
+            Upload documents with just questions (NO answers) please. If you would like to backload your historical answers, please email the document to upload@diligencevault.com           
+        </p>
+      </div>
+
+      <div col="6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              Pending Requests
+              <span data-ng-show="vm.total_records">
+                ({{vm.total_records}})
+              </span>
+            </h5>
+          </div>
+
+          <div class="panel-body" data-ng-if="vm.loading">
+            <spinner></spinner>
+          </div>
+
+          <div class="panel-body"
+               data-ng-if="!vm.loading && !vm.uploaded_documents.length">
+            <empty-state message="You don't have any pending uploads. "></empty-state>
+          </div>
+
+          <div class="list-group" data-ng-hide="vm.loading || !vm.uploaded_documents.length">
+            <div class="list-group-item"
+                 data-ng-repeat="document in vm.uploaded_documents">
+              <div class="clearfix">
+                <span class="pull-left space-on-top">
+                  <strong>{{document.fileName}}</strong>
+                    <small class="text-info">
+                        <i>(uploaded {{document.insertTimeStamp|fromNow}})</i>
+                    </small>
+                </span>
+              </div>
+
+              <div class="space-on-top">
+                <div class="clearfix">
+                  <span class="pull-left">
+                    <span data-ng-show="document.resumable">
+                      <span class="dddd-upload-progress-circle"
+                            data-ng-class="{'bg-primary': document.progress_state.index == progress_state.index,
+                            'bg-green': document.progress_state.index > progress_state.index,
+                            'bg-gray': document.progress_state.index < progress_state.index}"
+                            uib-tooltip="{{progress_state.title}}"
+                            data-ng-repeat="progress_state in vm.progress_states">
+                        {{progress_state.index}}
+                      </span>
+                    </span>
+
+                    <!--Below needs to match the final status being used in the controller-->
+                    <span data-ng-hide="document.resumable"
+                          data-ng-switch="document.status_summary">
+                      <small data-ng-switch-when="extraction_in_progress"
+                             class="text-muted">
+                        <i>The document is being processed</i>
+                      </small>
+                      <small data-ng-switch-when="fund_selection_pending"
+                             class="text-danger">
+                        <icon name="warning"></icon>
+                        Pending Fund/Investor Selection
+                      </small>
+                      <small data-ng-switch-when="mapping_in_progress"
+                             class="text-muted">
+                        <i>The document is being processed for Question mapping</i>
+                      </small>
+                    </span>
+                  </span>
+
+                  <span class="pull-right">
+                    <button btn-type="primary"
+                            size="sm"
+                            data-ng-click="vm.resumeDocumentProcess(document)">
+                      <span data-ng-switch="document.status_summary">
+                        <small data-ng-switch-when="extraction_in_progress">
+                          View Progress
+                        </small>
+                        <small data-ng-switch-when="mapping_in_progress">
+                          View Progress
+                        </small>
+                        <small data-ng-switch-when="fund_selection_pending">
+                          Select Fund/Investor
+                        </small>
+                        <small data-ng-switch-default>Resume</small>
+                      </span>
+                    </button>
+                    <button btn-type="default"
+                        size="sm"
+                        class="danger" 
+                        uib-tooltip="Remove document"
+                        data-ng-click="vm.displayDocumentRemovalConfirmation(document)">
+                      <span>
+                        <icon name="trashcan"></icon>
+                      </span>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-footer" data-ng-if="vm.total_records">
+            <uib-pagination total-items="vm.total_records"
+                            data-ng-model="vm.current_page"
+                            class="pagination-sm clear-margin"
+                            max-size="5"
+                            boundary-links="true"
+                            data-ng-change="vm.loadPendingDocumentUploads()">
+            </uib-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

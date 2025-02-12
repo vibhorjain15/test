@@ -1,0 +1,31 @@
+.switch {
+  height: 20px;
+  width: 40px;
+
+  small {
+    .square(20px);
+  }
+
+  &.switch-blue-green {
+    background: @brand-primary;
+    border-color: @brand-primary;
+
+    &.checked {
+      background: rgb(100, 189, 99);
+      border-color: rgb(100, 189, 99);
+    }
+  }
+
+  &.switch-orange {
+    &.checked {
+      background: @brand-warning;
+      border-color: @brand-warning;
+    }
+  }
+
+  &.hide-switch-text {
+    .switch-text {
+      display: none;
+    }
+  }
+}

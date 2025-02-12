@@ -1,0 +1,47 @@
+.due-diligence-history {
+  margin-bottom: 0;
+
+  > li {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-bottom: 1px solid #efefef;
+
+    .icon-wrapper {
+      width: 40px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+  }
+}
+
+.notes-navbar{
+  .nav > li > a{
+    color: @dv-blue;
+  }
+
+  .nav > li > a:hover, .nav > li > a:focus,  .nav > li > a.active{
+    border-bottom: 2px solid #f57c00;
+    background-color: transparent;
+    color: darken(@dv-blue, 10%);
+  }
+
+  .nav > li{
+    padding-right: 4px;
+  }
+}
+
+.notes-content{
+  table {
+    width:100%;
+
+    tr{
+      td{
+        width:auto !important;
+      }
+    }
+  }
+
+}

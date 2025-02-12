@@ -1,0 +1,19 @@
+<div>
+    <div class="space-on-bottom" data-ng-if="vm.response.attributes.response_status == vm.responseStatus.REVIEWFAILED && vm.response.attributes.track_change_status == vm.trackChangeStatus.STARTED">
+        <button class="btn review-track-changes success btn-xs" data-ng-click="vm.acceptChanges()">Accept</button>
+        <button class="btn review-track-changes danger btn-xs" data-ng-click="vm.rejectChanges()">Reject</button>
+        <button class="btn btn-default btn-xs" data-ng-click="vm.editResponse()">Edit</button>
+    </div>
+    <div class="table-responsive">
+        <p class="clear-margin word-break-break-all"
+            htmldiff consider-null
+            previous="vm.response.previousGrid"
+            current="vm.response.newGrid">
+        </p>
+        <p class="space-on-top-lg clear-margin word-break-break-all"
+            htmldiff consider-null
+            previous="vm.response.responses_history.responseDisplay"
+            current="vm.response.attributes.responseDisplay">
+        </p>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<ui-grid-cell-contents>
+  <button btn-type="default"
+          size="sm"
+          data-ng-disabled="grid.appScope.vm.disclaimers_type == 'inactive'"
+          uib-tooltip="{{((!row.entity.usage) || (row.entity.usage <= 0)) ? 'Edit Disclaimer' : 'This is already in use '}}"
+          data-ng-class="{'disabled': (row.entity.usage > 0)}"
+          ng-click="grid.appScope.vm.editDisclaimer(row.entity)"><icon name="pencil"></icon></button>
+  <button btn-type="default"
+          size="sm"
+          class="danger"
+          uib-tooltip="Delete Disclaimer"
+          data-ng-disabled="grid.appScope.vm.disclaimers_type == 'inactive'"
+          ng-click="grid.appScope.vm.confirmDisclaimerDeletion(row.entity)"><icon name="trashcan"></icon></button>
+</ui-grid-cell-contents>

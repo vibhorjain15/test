@@ -1,0 +1,198 @@
+<form class="form-horizontal" name="vm.threshold_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            {{vm.edit_mode ? 'Editing ' : 'Add New '}} Threshold
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <form-group field-name="Type" class="space-on-top space-on-bottom-xxl">
+            <label for="type" class="control-label" col="3" col-type="sm">Type</label>
+
+            <div col="4" col-type="sm">
+                <select class="form-control"
+                        id="type"
+                        name="type"
+                        chosen
+                        required
+                        data-ng-model="vm.threshold_params.type"
+                        data-placeholder="Select type"
+                        data-ng-change="vm.conditionChanged(vm.threshold_params)"
+                        data-ng-options="type.id as type.text for type in vm.types">
+                    <option value=""></option>
+                </select>
+            </div>
+        </form-group>
+
+        <form-group field-name="Question" class="space-on-top space-on-bottom-xxl">
+            <label for="question" class="control-label" col="3" col-type="sm">Question</label>
+
+            <div col="7" col-type="sm">
+                <select class="form-control"
+                        id="question"
+                        name="question"
+                        chosen
+                        required
+                        data-ng-model="vm.threshold_params.question_id"
+                        data-placeholder="Select a question"
+                        data-ng-change="vm.conditionChanged(vm.threshold_params)"
+                        data-ng-options="option.id as option.displayText for option in vm.questions">
+                    <option value=""></option>
+                </select>
+
+                <p class="alert alert-info clear-margin-bottom space-on-top-xl" data-ng-if="vm.threshold_params.questionObj">
+                    {{vm.threshold_params.questionObj.displayText}}
+                </p>
+            </div>
+        </form-group>
+
+        <form-group field-name="Question" class="space-on-top space-on-bottom-xxl" data-ng-if="vm.threshold_params.questionObj">
+            <label for="question" class="control-label" col="3" col-type="sm">Section</label>
+
+            <div col="7" col-type="sm" class="space-on-top">
+                <div class="space-on-top-2 space-on-left-3">{{vm.threshold_params.questionObj.section_name}}</div>
+            </div>
+        </form-group>
+
+        <form-group field-name="Condition" class="space-on-bottom-xxl">
+            <label for="condition" class="control-label" col="3" col-type="sm">Condition</label>
+
+            <div col="4" col-type="sm">
+                <select class="form-control padded"
+                        id="condition"
+                        name="condition"
+                        required
+                        data-ng-model="vm.threshold_params.operator_id">
+                    <option value="" disabled hidden>Select condition</option>
+                    <option value="ac" data-ng-if="vm.threshold_params.type==1">Any change</option>
+                    <option value="gt"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Numeric'||vm.threshold_params.questionObj.response_type == 'Integer'||vm.threshold_params.questionObj.response_type == 'Percentage'||vm.threshold_params.questionObj.response_type == 'Date'">
+                        Greater Than
+                    </option>
+                    <option value="gte"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Numeric'||vm.threshold_params.questionObj.response_type == 'Integer'||vm.threshold_params.questionObj.response_type == 'Percentage'||vm.threshold_params.questionObj.response_type == 'Date'">
+                        Greater Than or Equal To
+                    </option>
+                    <option value="lt"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Numeric'||vm.threshold_params.questionObj.response_type == 'Integer'||vm.threshold_params.questionObj.response_type == 'Percentage'||vm.threshold_params.questionObj.response_type == 'Date'">
+                        Lesser Than
+                    </option>
+                    <option value="lte"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Numeric'||vm.threshold_params.questionObj.response_type == 'Integer'||vm.threshold_params.questionObj.response_type == 'Percentage'||vm.threshold_params.questionObj.response_type == 'Date'">
+                        Lesser Than or Equal To
+                    </option>
+                    <option value="eq">Equals</option>
+                    <option value="noteq">Not Equals</option>
+                    <option value="cont"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Text'||vm.threshold_params.questionObj.response_type == 'TextMultiLine'||vm.threshold_params.questionObj.response_type == 'TextEmail'||vm.threshold_params.questionObj.response_type == 'TextPhone'|| vm.threshold_params.questionObj.response_type == 'Dropdown' || vm.threshold_params.questionObj.response_type == 'CheckBox'">
+                        Contains
+                    </option>
+                </select>
+            </div>
+        </form-group>
+
+        <div class="space-on-bottom-lg">
+            <div class="space-on-top" data-ng-if="vm.threshold_params.operator_id != 'ac'">
+
+                <form-group field-name="Value" data-ng-if="(!vm.threshold_params.questionObj.response_type) || (vm.threshold_params.questionObj.response_type == 'Dropdown') || (vm.threshold_params.questionObj.response_type == 'CheckBox')">
+                    <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                    <div col="4" col-type="sm">
+                        <input type="text"
+                               id="value"
+                               name="value"
+                               data-ng-model="vm.threshold_params.threshold_value"
+                               required
+                               placeholder="Enter a value"
+                               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                               class="form-control" />
+                    </div>
+                </form-group>
+
+                <form-group field-name="Value" data-ng-if="vm.threshold_params.questionObj.response_type == 'Date'" control-selector="dv-datepicker">
+                    <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                    <div col="4" col-type="sm">
+                        <dv-datepicker id="value"
+                                       name="value"
+                                       data-ng-model="vm.threshold_params.threshold_value"
+                                       ng-required="true"></dv-datepicker>
+                    </div>
+                </form-group>
+
+                <form-group field-name="Value"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Integer' || vm.threshold_params.questionObj.response_type == 'Percentage' || vm.threshold_params.questionObj.response_type == 'Numeric'">
+                    <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                    <div col="4" col-type="sm">
+                        <input type="number"
+                               id="value"
+                               name="value"
+                               placeholder="Enter a value"
+                               data-ng-model="vm.threshold_params.threshold_value"
+                               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                               class="form-control"
+                               required />
+                    </div>
+                </form-group>
+
+                <form-group field-name="Value"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'TextEmail' || vm.threshold_params.questionObj.response_type == 'Text' || vm.threshold_params.questionObj.response_type == 'TextMultiLine' || vm.threshold_params.questionObj.response_type == 'TextPhone'">
+                    <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                    <div col="4" col-type="sm">
+                        <input type="text"
+                               id="value"
+                               name="value"
+                               placeholder="Enter a value"
+                               data-ng-model="vm.threshold_params.threshold_value"
+                               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                               class="form-control"
+                               required />
+                    </div>
+                </form-group>
+
+                <form-group field-name="Value"
+                            data-ng-if="vm.threshold_params.questionObj.response_type == 'Boolean' || vm.threshold_params.questionObj.response_type == 'BooleanPlus' || vm.threshold_params.questionObj.response_type == 'NoPlus'">
+                    <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                    <div col="4" col-type="sm">
+                        <select class="form-control"
+                                chosen
+                                id="value"
+                                name="value"
+                                required
+                                data-ng-model="vm.threshold_params.threshold_value"
+                                data-ng-options="option.value as option.label for option in vm.boolean_value_options">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </form-group>
+
+            </div>
+
+            <div class="space-on-top" data-ng-if="vm.threshold_params.operator_id == 'ac'">
+
+                <form-group field-name="Value">
+                    <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                    <div col="4" col-type="sm">
+                        <input type="text"
+                               id="value"
+                               name="value"
+                               data-ng-disabled="true"
+                               placeholder="Value Not Required"
+                               class="form-control" />
+                    </div>
+                </form-group>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.saving" ng-disabled="vm.savingAnother">{{vm.edit_mode ? 'Update ' : 'Add '}} Threshold</button>
+        <button btn-type="default" button-loader="vm.savingAnother" ng-disabled="vm.saving" data-ng-click="vm.addAnotherThreshold()">{{vm.edit_mode ? 'Update ' : 'Create '}}& Add Another</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>
+

@@ -1,0 +1,53 @@
+.left-panel-padding {
+  padding: 0px 5px;
+}
+:host ::ng-deep .template-body {
+  max-height: 85vh;
+  overflow: auto;
+  padding-right: 4px;
+  margin-right: -6px;
+}
+:host ::ng-deep .side-panel-body {
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-right: -6px;
+}
+:host ::ng-deep category-list .template-segment,
+:host ::ng-deep side-panel .panel-segment {
+  height: calc(100vh - 105px) !important;
+  min-height: calc(100vh - 105px) !important;
+  max-height: calc(100vh - 105px) !important;
+  margin-bottom: 0px !important;
+  overflow: hidden !important;
+}
+:host ::ng-deep category-list .template-segment .template-body,
+:host ::ng-deep side-panel .panel-segment .side-panel-body {
+  height: 95% !important;
+  overflow: auto !important;
+}
+:host ::ng-deep .template-segment,
+:host ::ng-deep .panel-segment,
+:host ::ng-deep .panel-default {
+  border: 1px solid #e9e9e9 !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .group-wrapper {
+  border: 1px solid #e9e9e9 !important;
+  border-top: 0 !important;
+}
+quick-view-header {
+  box-shadow: 0 -10px 0 #f5f7fa !important;
+}
+.projectsParentDiv {
+  margin-right: 0px !important;
+}
+.width-20-percent-only {
+  width: 20% !important;
+}
+
+.width-23-percent-only {
+  width: 23% !important;
+}

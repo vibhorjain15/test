@@ -1,0 +1,31 @@
+<div>
+    <!-- <div class="btn-group">
+        <label class="btn btn-default" data-ng-class="{'btn-primary': dynamicElement == 'Row'}" uib-btn-radio="'Row'" ng-model="dynamicElement" data-ng-click="assignValueToParent()">Dynamic Rows</label>
+        <label class="btn btn-default" data-ng-class="{'btn-primary': dynamicElement == 'Column'}" uib-btn-radio="'Column'" ng-model="dynamicElement" data-ng-click="assignValueToParent()">Dynamic Columns</label>
+    </div> -->
+    <!-- <div class="center-align">
+      <switch id="enabled"
+        name="enabled"
+        ng-model="dynamicSwitch"
+        on=""
+        off=""
+        class="blue align-middle"></switch>
+    </div> -->
+    <!-- <div class="center-align space-on-top-lg">
+      <span class="space-on-left dynamicAttributeHeader" ng-if="dynamicElement == 'Row'">Dynamic Row</span>
+      <span class="space-on-left dynamicAttributeHeader" ng-if="dynamicElement == 'Column'">Dynamic Column</span>
+    </div> -->
+    <!-- <div data-ng-hide="dynamicElement == 'Row'">
+      <div class="space-on-top-lg space-on-bottom-lg dynamic-Header">
+        <span>Please add row headers here</span>
+      </div>
+      <dv-option-selector options="rows" option-label="Row" editable></dv-option-selector>
+    </div> -->
+
+    <div data-ng-hide="dynamicElement == 'Column'">
+      <div class="space-on-top-lg space-on-bottom-lg dynamic-Header">
+        <span>Please add column headers and the user can add customized rows based on their data requirement.</span>
+      </div>
+      <dv-option-selector options="columns" option-label="Column" column-options="true" editable ></dv-option-selector>
+    </div>
+  </div>

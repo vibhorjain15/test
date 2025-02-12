@@ -1,0 +1,12 @@
+<p class="form-control-static textmultiline-preview">
+  <span class="word-wrap-break-word" ng-bind-html="response.attributes.responseDisplay | trusthtml"></span>
+
+  <i class="text-muted" data-ng-show="!response.attributes.responseDisplay">
+    <small>*No Response Available*</small>
+  </i>
+
+  <i class="text-danger" data-ng-show="response.is_na">
+    <small>*Marked as Not Applicable*</small>
+    (<span ng-bind-html="response.attributes.textResponse" class="inline word-break-break-all"></span>)
+  </i>
+</p>

@@ -1,0 +1,16 @@
+<ui-grid-cell-contents class="text-left">
+  <div data-ng-if="row.entity.flag_count">	
+    <a class="js-projects-dd-name" ui-sref="app.diligence.project.questionnaire({diligenceId: row.entity.duediligence_id, status:'Flagged'})"
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+       {{row.entity.entity_name}}
+    </a>
+  </div>
+  <div data-ng-if="!row.entity.flag_count">	
+    <a class="js-projects-dd-name" ui-sref="app.diligence.project.questionnaire({diligenceId: row.entity.duediligence_id, status:'Scored'})"
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+       {{row.entity.entity_name}}
+    </a>
+  </div>
+</ui-grid-cell-contents>

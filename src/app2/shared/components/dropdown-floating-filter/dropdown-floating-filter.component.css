@@ -1,0 +1,28 @@
+.cross {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.form-group {
+  position: relative;
+  width: 115px;
+  margin-bottom: 0;
+}
+
+.dropdown-filter-caret {
+  caret-color: rgba(0, 0, 0, 0);
+}
+
+.pt-6 {
+  padding-top: 6px;
+}
+.pt-8 {
+  padding-top: 8px;
+}
+
+::ng-deep .dropdown-filter-caret .ng-select-container {
+  height: 34px !important;
+  min-height: 34px !important;
+}

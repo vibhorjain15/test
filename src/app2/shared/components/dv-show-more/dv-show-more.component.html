@@ -1,0 +1,8 @@
+<div class="text-code" [class.collapsed]="isCollapsed">
+  <span class="word-break-break-word" [innerHtml]="text | dvSafeHtml"></span>
+</div>
+<div *ngIf="canShow" class="margin-top">
+  <a class="text-primary clickable margin-top" (click)="OnClickHandle()">
+    {{ isCollapsed ? "Expand..." : "Show less" }}
+  </a>
+</div>

@@ -1,0 +1,13 @@
+<div *ngIf="params.data">
+  <span
+    [tooltip]="popTemplate"
+    container="body"
+    [adaptivePosition]="false"
+    class="inline-block more-text max-width-100-pct"
+    [innerHtml]="params?.data?.description | dvSafeHtml"
+  >
+  </span>
+  <ng-template #popTemplate>
+    <div [innerHtml]="params?.data?.description | dvSafeHtml"></div>
+  </ng-template>
+</div>

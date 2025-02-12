@@ -1,0 +1,34 @@
+<div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <app-spinner
+        [broadSpinner]="true"
+        [spinnerHeight]="560"
+        *ngIf="!loading_grid"
+      ></app-spinner>
+      <div class="dv-table dv-table-middle dd-info-panel" *ngIf="loading_grid">
+        <div class="bordered-right cell">
+          <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+            {{ formadv_firm.businessName }}
+          </h4>
+
+          <small class="text-muted">
+            Latest Filing:
+            {{ formadv_firm.filingDate | dvDate : ["isLocaleDate"] }}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <app-dv-grid
+        *ngIf="loading_grid"
+        [rowData]="gridDatasource"
+        [name]="'formadv-related-entities'"
+      >
+      </app-dv-grid>
+    </div>
+  </div>
+</div>

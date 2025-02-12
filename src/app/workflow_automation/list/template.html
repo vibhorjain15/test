@@ -1,0 +1,28 @@
+<div role="tabpanel">
+    <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+        <li ui-sref-active="active">
+            <a ui-sref="app.monitor.documents">
+                Document Queue
+            </a>
+        </li>
+        <li ui-sref-active="active">
+            <a ui-sref="app.workflow_automation.list">
+                Workflow Status
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="row clearfix">
+            <div col="12">
+                <div class="panel panel-default borderless-top">
+                    <div class="panel-body">
+                        <dv-grid grid-resource="vm.audits" grid-name="'workflow-automation-list'"></dv-grid>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

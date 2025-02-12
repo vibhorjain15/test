@@ -1,0 +1,140 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel="Save"
+  [initialTemplate]="template"
+  (onFirstClick)="updateTemplate($event)"
+  [isFirstButtonDisabled]="disableUpdateButton"
+  [isLoading]="firstLoading"
+  role="dialog"
+  aria-labelledby="modalTitle"
+  aria-describedby="modalDescription"
+>
+  <ng-template #template>
+    <div class="main" role="region" aria-label="Template Information">
+      <dv-info
+        *ngIf="templateMetaData"
+        type="templateInfo"
+        [template]="templateData"
+        [templateMetaData]="templateMetaData"
+      ></dv-info>
+      <div class="accordion-wrapper">
+        <accordion [isAnimated]="true">
+          <div class="accordions">
+            <accordion-group panelClass="customClass" [(isOpen)]="accgroup">
+              <button
+                class="accordion-header"
+                accordion-heading
+                type="button"
+                aria-expanded="{{ accgroup }}"
+              >
+                <div class="lable-wrapper">
+                  <span> View Template Summary </span>
+                </div>
+                <span
+                  appIcon
+                  [ngClass]="{
+                    'accordion-dropdown-icon': true,
+                    'rotate-icon': accgroup
+                  }"
+                  name="chevron-down"
+                  size="1x"
+                  aria-hidden="true"
+                ></span>
+              </button>
+              <dv-info
+                *ngIf="templateMetaData"
+                type="questionInfo"
+                [template]="templateData"
+                [templateMetaData]="templateMetaData"
+              ></dv-info>
+            </accordion-group>
+          </div>
+        </accordion>
+      </div>
+      <dv-form-element
+        labelPosition="top"
+        label="Template Name"
+        elementCol="12"
+        [isRequired]="true"
+      >
+        <input
+          class="form-control"
+          type="text"
+          [(ngModel)]="templateTitle"
+          ngModel
+          maxlength="140"
+          required
+          (ngModelChange)="handleNameChange($event)"
+          #templateName="ngModel"
+          [disabled]="isSystemTemplate"
+          dvHtmlTagValidator
+          aria-label="Template Name"
+        />
+        <span class="text-danger" *ngIf="!templateTitle"
+          >*Template name is required</span
+        >
+        <span class="text-danger" *ngIf="templateName.errors?.containsHtml"
+          >*Template name is not valid</span
+        >
+      </dv-form-element>
+      &nbsp;
+      <dv-form-element
+        labelPosition="top"
+        label="Classification &nbsp;"
+        elementCol="12"
+      >
+        <dv-select
+          [error]=""
+          [appendTo]="'body'"
+          [list]="strategies"
+          bindLabel="name"
+          bindValue="id"
+          [(ngModel)]="classification"
+          placeholder="Select Classification"
+          [disable]="disableUpdateButton"
+          [aria-label]="'Classification'"
+        ></dv-select>
+      </dv-form-element>
+      &nbsp;
+      <dv-form-element
+        labelPosition="top"
+        label="Frequency &nbsp;"
+        elementCol="12"
+        [for]="'Frequency'"
+        infoText="The diligence requests for this template will be auto-scheduled at selected frequency"
+      >
+        <dv-select
+          [error]=""
+          [appendTo]="'body'"
+          [list]="frequencyList"
+          bindLabel="value"
+          [clearable]="true"
+          bindValue=""
+          [(ngModel)]="frequencySelected"
+          placeholder="Select Frequency"
+          [disable]="disableUpdateButton"
+          [aria-label]="'Frequency'"
+          [id]="'Frequency'"
+        ></dv-select>
+      </dv-form-element>
+      &nbsp;
+      <dv-form-element
+        label="Add Description &nbsp;"
+        labelPosition="top"
+        elementCol="12"
+        infoText="Description / tips will be displayed before the asset managers start
+        populating the responses"
+        for="description"
+      >
+        <dv-editor
+          [id]="'description'"
+          [configObj]="tinyMceInit"
+          [value]="description"
+          (onChange)="handleEditorChange($event)"
+          [disabled]="disableUpdateButton"
+          aria-label="Description"
+        ></dv-editor>
+      </dv-form-element>
+    </div>
+  </ng-template>
+</app-modal>

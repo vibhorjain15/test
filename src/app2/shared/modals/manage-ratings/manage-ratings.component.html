@@ -1,0 +1,221 @@
+<app-modal
+  [title]="'Manage Rating'"
+  [firstButtonLabel]="'Save'"
+  (onFirstClick)="submit($event)"
+  (onCancelClick)="closeModal($event)"
+  [initialTemplate]="ratingsRef"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="readonly"
+>
+</app-modal>
+
+<ng-template #ratingsRef>
+  <div class="rating-modal">
+    <div class="form-horizontal">
+      <div class="modal-body rating-custom-fields-review">
+        <div *ngIf="rating" class="bordered-bottom padded-lg">
+          <div
+            class="inline-block ratingClass"
+            *ngIf="rating.mode == ratingConstants.Absolute"
+          >
+            <dv-rating
+              [value]="rating.attributes.rating_value"
+              [readonly]="!checkConditionsForDisplayingReview('editable')"
+              [max]="ratingScales.length"
+              [ratingTooltip]="rating.attributes.description"
+              [ratingScales]="ratingScales"
+              (onChange)="onRatingChange($event)"
+            ></dv-rating>
+          </div>
+
+          <div
+            class="inline-block"
+            *ngIf="rating.mode == ratingConstants.ScoreBand"
+          >
+            <app-editable-only-score
+              [total]="100"
+              [readonly]="!checkConditionsForDisplayingReview('editable')"
+              [naValue]="naValue"
+              [ratingScale]="ratingScales"
+              [score]="rating.attributes.score_value"
+              (onChange)="onScoreChange($event)"
+              #editableScore
+            >
+            </app-editable-only-score>
+          </div>
+          <div class="verify-controls inline-block" *ngIf="enableReview">
+            <span
+              *ngIf="checkConditionsForDisplayingReview('edit')"
+              [tooltip]="'Edit ratings'"
+              placement="top"
+            >
+              <dv-button
+                btnType="transparent"
+                ariaLabel="Edit Response"
+                (onClick)="editResponse()"
+              >
+                <span appIcon name="pencil" class="font-size-18"></span>
+              </dv-button>
+            </span>
+            <span
+              *ngIf="checkConditionsForDisplayingReview('accept')"
+              tooltip="Accept ratings"
+              placement="top"
+            >
+              <dv-button
+                btnType="transparent"
+                ariaLabel="Verify Request"
+                (onClick)="verifyRequest()"
+              >
+                <span appIcon name="check2" class="font-size-18"></span>
+              </dv-button>
+            </span>
+            <span
+              *ngIf="checkConditionsForDisplayingReview('sendForVerify')"
+              [tooltip]="'Send for Review'"
+              placement="top"
+            >
+              <dv-button
+                btnType="transparent"
+                ariaLabel="Review Again"
+                (onClick)="reviewAgain()"
+              >
+                <span appIcon name="arrow-back" class="font-size-18"></span>
+              </dv-button>
+            </span>
+            <span
+              *ngIf="
+                checkConditionsForDisplayingReview('addverifier') ||
+                checkConditionsForDisplayingReview('updateverifier')
+              "
+            >
+              <dv-button
+                btnType="transparent"
+                tabindex="-1"
+                [btnClass]="rating.assignments ? 'icon-brand-color' : ''"
+                [tooltip]="
+                  (rating.assignments ? 'Update Reviewer' : 'Add Reviewer') +
+                  (isFree ? '' : '(s)')
+                "
+                [ariaLabel]="
+                  (rating.assignments ? 'Update Reviewer' : 'Add Reviewer') +
+                  (isFree ? '' : '(s)')
+                "
+                placement="left"
+                [disabled]="!rating.attributes[value_attr]"
+                (onClick)="openVerifierModal()"
+              >
+                <span appIcon class="font-size-18" name="user-check"></span>
+              </dv-button>
+            </span>
+            <span
+              *ngIf="checkConditionsForDisplayingReview('decline')"
+              [tooltip]="
+                isReadonlyEditable ? 'Request revision' : 'Reject request'
+              "
+              placement="top"
+            >
+              <dv-button
+                btnType="transparent"
+                ariaLabel="reject Rating"
+                (onClick)="rejectRating()"
+              >
+                <span appIcon name="mail-forward" class="font-size-18"></span>
+              </dv-button>
+            </span>
+          </div>
+        </div>
+
+        <div *ngIf="loading_custom_fields">
+          <app-spinner [broadSpinner]="true" [spinnerHeight]="20"></app-spinner>
+        </div>
+
+        <app-custom-field-selection
+          *ngIf="!loading_custom_fields"
+          [customUrl]="'investment_rating.types'"
+          [disabled]="false"
+          [fields]="customFields"
+          [enable_tracking]="false"
+          [readonly]="!checkConditionsForDisplayingReview('editable')"
+          #fields
+        >
+        </app-custom-field-selection>
+      </div>
+      <div class="review-updates" *ngIf="rating.assignments">
+        <dv-link
+          name="Review Status"
+          icon="expand"
+          color="primary"
+          (onClick)="reviewStatusPanel()"
+        ></dv-link>
+        <ng-container
+          *ngIf="
+            !rating.timeDiff || rating.timeDiff >= dvThresholds.REVIEW_TIMELIMIT
+          "
+        >
+          <dv-link
+            [name]="
+              'Revision Requested by ' +
+              Utils.getAssignedToName(rejectedRating[0])
+            "
+            [tooltip]="
+              'Revision Requested by ' +
+              Utils.getAssignedToName(rejectedRating[0]) +
+              ' on ' +
+              (rejectedRating[0].completed_at | dvDate)
+            "
+            *ngIf="rejectedRating.length"
+            color="red"
+          ></dv-link>
+          <dv-link
+            [name]="
+              'Last approved by ' +
+              Utils.getAssignedToName(
+                approvedRating[approvedRating.length - 1]
+              ) +
+              (approvedRating.length > 1
+                ? '& ' + approvedRating.length - 1 + ' others'
+                : '')
+            "
+            *ngIf="approvedRating.length"
+          ></dv-link>
+        </ng-container>
+        <div *ngIf="checkConditionsForDisplayingReview('undo')">
+          <small
+            class="text-success"
+            *ngIf="rating.assignmentObj.status == responseStatus.REVIEWSUCCESS"
+          >
+            Last Reviewed by
+            {{ rating.assignmentObj?.completed_by_name }} on
+            {{ rating.assignmentObj?.completed_at | dvDate }}
+          </small>
+          <span
+            class="label label-danger"
+            tooltip="Revision Requested by {{
+              rating.assignmentObj?.completed_by_name
+            }} on {{ rating.assignmentObj?.completed_at | dvDate }}"
+            placement="top"
+            *ngIf="rating.assignmentObj.status == responseStatus.REVIEWFAILED"
+            >REVISION REQUESTED</span
+          >
+          &nbsp;
+          <span
+            class="label label-default clickable"
+            tooltip="undo"
+            container="body"
+            (click)="undoVerification('undo')"
+          >
+            <span appIcon name="undo"></span>
+            {{ time }} seconds left
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="review-status-panel" *ngIf="showReviewStatusPanel">
+      <multiple-reviewer-accordion
+        [steps]="rating?.assignments?.steps"
+        [diligence]="diligence"
+      ></multiple-reviewer-accordion>
+    </div>
+  </div>
+</ng-template>

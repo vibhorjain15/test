@@ -1,0 +1,15 @@
+<div class="text-left" *ngIf="params.data">
+  <!-- <span ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="ui-grid-cell-contents"
+        title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+    </span> -->
+  <span
+    class="text-left"
+    [adaptivePosition]="false"
+    tooltip="{{ params.data.due_at }}"
+    container="body"
+    [ngClass]="Utils.getExpiryClass(params.data.due_at, false).class"
+  >
+    {{ Utils.getExpiryClass(params.data.due_at, false).text }}
+    {{ params.data.due_at }}
+  </span>
+</div>

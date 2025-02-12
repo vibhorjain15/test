@@ -1,0 +1,38 @@
+import { ColorTheme } from 'src/app2/shared/themes/color.themes';
+import { RatingScaleDefType } from './rating-scale-def.type';
+
+export type IconTypes = {
+  key: string;
+  name: string;
+  disabled?: boolean;
+  color?: ColorTheme;
+  tooltip?: string;
+  count?: number;
+  countColor?: ColorTheme | string;
+  countIcon?: string;
+  member?: any;
+  date?: any;
+  minDate?: Date;
+  type?: string;
+  status?: 'ReviewPassed' | 'InReview' | 'ReviewFailed';
+  isScoreband?: boolean;
+  rating?: RatingScaleDefType[];
+  ratingChange?: any;
+  disableNaRatingIcon?: boolean;
+  naValue?: any;
+  isNotDropDown?: boolean;
+  reviewEnabled?: boolean;
+  label: string;
+  selection?: any;
+  readonly?: boolean;
+  isSection?: boolean;
+  noHoverEffect?: boolean;
+  isSvg?: boolean;
+  path?;
+  class?: string;
+  size?: string;
+  showProgressDot?: boolean;
+  keepColorWithDisableMode?: boolean;
+  value?: any;
+  list?: any;
+};

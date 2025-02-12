@@ -1,0 +1,30 @@
+<div class="text-left" *ngIf="params.data && !params?.node?.group">
+  <a
+    [href]="params.url"
+    *ngIf="params.data.entity_name && !linkFlag"
+    tooltip="{{ params.data.entity_name }}"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    class="project-row-name"
+  >
+    {{ params.data.entity_name }}
+  </a>
+  <span
+    *ngIf="params.data.entity_name && linkFlag"
+    [adaptivePosition]="false"
+    tooltip="{{ params.data.entity_name }}"
+    container="body"
+    class="project-row-name"
+    >{{ params.data.entity_name }}</span
+  >
+
+  <span *ngIf="params?.data?.isNew" class="badge dv-badge-info relative-tag"
+    >New
+  </span>
+</div>
+<div *ngIf="params?.node?.group" class="text-uppercase tag-wrapper">
+  <span>
+    {{ params.value }}
+  </span>
+</div>

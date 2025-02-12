@@ -1,0 +1,41 @@
+<ui-grid-cell-contents>
+  <div class="controls-wrapper">
+
+      <a uib-tooltip="{{ row.entity.id == grid.appScope.vm.current_user.id ? 'We care about our users, so no self deletion. If you want to deactivate your account, please contact your admin listed under My Settings.' : 'Remove this user' }}"
+         data-ng-class="{'disabled': row.entity.id == grid.appScope.vm.current_user.id, danger: row.entity.id != grid.appScope.vm.current_user.id}"
+         data-ng-show="grid.appScope.vm.is_admin && row.entity.status != grid.appScope.vm.userFilter.Inactive"
+         data-ng-click="grid.appScope.vm.displayUserRemovalConfirmation(row.entity)"
+         class="btn btn-xs btn-default">
+          <icon name="trashcan"></icon>
+      </a>
+
+      <a uib-tooltip="Unlock user account immediately."
+         data-ng-show="row.entity.isLocked"
+         data-ng-click="grid.appScope.vm.unlockUser(row.entity)"
+         class="btn btn-xs btn-default">
+          <icon name="unlock-alt"></icon>
+      </a>
+
+      <a uib-tooltip="Resend activation"
+         data-ng-show="grid.appScope.vm.is_admin && (row.entity.status == grid.appScope.vm.userFilter.Invited)"
+         data-ng-click="grid.appScope.vm.resendActivation(row.entity)"
+         class="btn btn-xs btn-default">
+          <icon name="refresh"></icon>
+      </a>
+
+      <a uib-tooltip="Approve the user"
+         data-ng-if="grid.appScope.vm.is_admin && (row.entity.status == grid.appScope.vm.userFilter.Pending)"
+         data-ng-click="vm.approveUser(row.entity)"
+         class="btn btn-xs btn-orange">
+          <icon name="check"></icon>
+      </a>
+
+      <span class="pull-right" data-ng-show="row.entity.twoFactorEnabled">
+        <icon name="secure"
+              tooltip-placement="left"
+              size="lg"
+              uib-tooltip="Two-factor authentication enabled"
+              class="text-success"></icon>
+      </span>
+  </div>
+</ui-grid-cell-contents>

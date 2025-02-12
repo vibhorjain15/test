@@ -1,0 +1,48 @@
+<div class="panel panel-default avoid-page-break-inside">
+  <div class="panel-heading">
+    <span>
+      <b>{{::section.name}}</b>
+
+      <small class="text-muted space-on-left">
+        <ng-pluralize count="section.questions.length"
+                      when="{'one': '(1 question)', 'other': '({} questions)'}"></ng-pluralize>
+      </small>
+    </span>
+  </div>
+
+  <div class="panel-body">
+    <div class="alert alert-info"
+       data-ng-class="{'hidden-print': !section.headerText}"
+       data-ng-show="section.headerText">
+      <div data-ng-bind-html="section.headerText | cleanhtml"></div>
+    </div>
+
+    <form class="form-horizontal">
+      <div>
+        <template-response-sequence data-ng-repeat="sequence in section.sequences">
+        </template-response-sequence>
+      </div>
+
+      <span class="text-muted" data-ng-if="!section.questions.length">
+        <i>There are no questions on this section</i>
+      </span>
+    </form>
+
+    <div data-ng-show="section.isMultiple && section.questions.length" class="hidden-print">
+      <hr>
+      <div class="clearfix">
+        <div class="pull-right">
+          <button btn-type="primary"
+                  size="sm"
+                  button-loader="saving_sequence"
+                  data-ng-click="addNewSequence()">Add More</button>
+          <button btn-type="default"
+                  size="sm"
+                  button-loader="removing_sequence"
+                  data-ng-click="removeLastSequence()"
+                  data-ng-disabled="section.sequences.length == 1">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

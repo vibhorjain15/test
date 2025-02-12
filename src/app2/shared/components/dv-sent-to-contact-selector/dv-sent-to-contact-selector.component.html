@@ -1,0 +1,104 @@
+<div class="team-member-section">
+  <div class="dropdown-toggle clickable">
+    <span
+      class="btn-sm btn btn-transparent"
+      tippyTooltip="Assign to manager firm contact(s)"
+    >
+      <a
+        class="panel-control"
+        [popover]="popTemplate"
+        #pop="bs-popover"
+        popoverClass="max-w-f-c"
+        placement="right"
+        popoverTitle="Add Contact"
+        container="body"
+      >
+        <span appIcon name="add-user-4" class="font-size-16"></span>
+      </a>
+    </span>
+  </div>
+</div>
+
+<ng-template #popTemplate>
+  <div>
+    <div class="add-contact-popover-close-btn">
+      <a class="space-on-left clickable link-disguise" (click)="pop.hide()"
+        >×</a
+      >
+    </div>
+
+    <div class="input-box t-a-right">
+      <form
+        name="add_new_contact_form"
+        #contactForm="ngForm"
+        autocomplete="off"
+      >
+        <dv-form-element
+          [fieldName]="'email'"
+          [elementCol]="0"
+          [showRightIcon]="false"
+        >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            style="display: inline-block; vertical-align: bottom"
+            ngModel
+            placeholder="contact@yourfirm.com"
+            class="form-control"
+            #email="ngModel"
+            required
+            email
+          />
+          <div *ngIf="!email?.valid && email?.touched" class="danger">
+            Please enter valid email
+          </div>
+        </dv-form-element>
+        <dv-button
+          [loader]="saving_contact"
+          [btnType]="'primary'"
+          (onClick)="addNewContactEmail()"
+          [btnClass]="'space-on-top space-on-bottom'"
+          [fontSizeType]="'medium'"
+        >
+          Add New Contact
+        </dv-button>
+      </form>
+    </div>
+
+    <div class="input-box" *ngIf="contacts.length">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by name"
+        [(ngModel)]="textFilter"
+      />
+    </div>
+
+    <div
+      class="dv-sent-to-contact-selector-list space-on-top"
+      id="dv-sent-to-contact-selector"
+      *ngIf="contacts.length"
+    >
+      <ul class="list-unstyled">
+        <li
+          role="menuitem"
+          *ngFor="let user of contacts | filterBy : { joinedName: textFilter }"
+          (click)="select(user)"
+          class="dv-contact-list-item"
+        >
+          <a
+            class="recipient-name"
+            role="button"
+            tabindex="0"
+            tooltip="Assign to {{ user.firstName }} {{ user.lastName }}"
+          >
+            <span class="space-on-left"
+              >{{ user.firstName }} {{ user.lastName }}</span
+            >
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</ng-template>

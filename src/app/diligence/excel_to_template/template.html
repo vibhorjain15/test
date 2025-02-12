@@ -1,0 +1,96 @@
+<ng2-excel-to-template-convertor data-ng-if="vm.Utils.isParserAngular()"></ng2-excel-to-template-convertor>
+<div class="parser-main panel panel-default"  data-ng-if="!vm.Utils.isParserAngular()">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{(vm.templateParams.sourceType == 'questionnaire')?'Build Questionnaire':'Build Template from excel'}}</h5>
+    <span class="text-primary pull-right excel_file_name"><strong>{{vm.templateParams.name}}</strong></span>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control"
+           data-ng-click="vm.changeExcelFile()"
+           tooltip-placement="left"
+           uib-tooltip="Change excel file">
+          <icon name="pencil"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-12 margin-bottom-0">
+    <div class="panel panel-info margin-bottom-0">
+      <div class="panel-heading">
+        <small>Mark following items by right clicking in any cell</small>
+      </div>
+    </div>
+    <table class="table table-condensed margin-bottom-0">
+      <tbody>
+        <tr>
+          <td ng-repeat="step in vm.selectionSteps" ng-class="{'text-bold text-primary': step.is_active, 'text-muted': !step.is_active}" data-ng-mouseenter="showControls = true" data-ng-mouseleave="showControls = false" class="pos-rel">
+            <span class="list_icon list_icon_{{step.name}}"></span> {{step.alias}} <small ng-show="step.is_visible" class="text-info">
+              <strong>({{vm.showStepCount(step)}})</strong>
+              <a class="btn btn-default btn-xs success excel_edit_buttons"
+                 data-ng-show="showControls && step.is_visible"
+                 data-ng-click="vm.openEditModal(step)"
+                 button-loader="vm.creating_version"
+                 uib-tooltip="Edit">
+                <small><icon name="pencil"></icon></small>
+              </a>
+            </small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div  class="panel-body excel_sheet_container affix_bottom_parent_in_excel">
+    <div class="row clearfix">
+      <div class="col-sm-12">
+        <dv-checkbox
+          data-ng-model="vm.markSheetAsSection"
+          label="Mark sheets as category"
+          ng-change="vm.markSheetsAsSection()">
+        </dv-checkbox>
+      </div>
+      <div class="col-sm-12">
+        <ul class="nav nav-tabs">
+          <li>
+            <a class="btn btn-transparent btn-xs"
+               data-ng-click="vm.openEditSheetModal()"
+               button-loader="vm.creating_version"
+               tooltip-placement="right"
+               uib-tooltip="Edit Working Sheets">
+              <small><icon name="pencil"></icon></small>
+            </a>
+          </li>
+          <li ng-repeat="entry in vm.excelData" ng-class="{'active': entry.sheet_no == vm.selectedSheet.sheet_no, 'sectionsClass': entry.is_section}">
+            <a data-toggle="tab" data-target="#sheet_{{entry.sheet_no}}" data-ng-class="{'active_sheet': entry.is_active, 'inactive_sheet disabled': !entry.is_active}" ng-click="vm.setSelectedSheet(entry)">
+              <span class="space-on-right text-muted" data-ng-class="{'sheets_check_icon_pending': !entry.is_done, 'sheets_check_icon_done': entry.is_done}"><icon name="check"></icon></span>
+              {{entry.sheet_name}}
+            </a>
+          </li>
+        </ul>
+        <div class="col-sm-12" style="overflow:auto" >
+          <div class="tab-content" id="element" ng-repeat="sheet in vm.excelData" ng-show="sheet.sheet_no == vm.selectedSheet.sheet_no" data-ng-if="sheet.is_active">
+            <div ng-bind-html="sheet.html | trusthtml" id="table_{{sheet.sheet_no}}" ng-right-click="vm.saveClickedElement($event)" contextmenu="html5polyfill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 sticky_savebar">
+      <div class="row clearfix">
+        <div class="col-sm-6 text-center">
+          <!-- <switch id="enabled"
+                name="enabled"
+                ng-model="vm.auto_select_in_selected"
+                on=""
+                off=""
+                ng-change="vm.toggleApplyStyle()"
+                class="green align-middle"></switch>
+            <span>Apply same style in other sheets</span> -->
+          <button class="btn btn-default" data-ng-click="vm.toggleApplyStyle()">Apply same style in other sheets</button>
+        </div>
+        <div class="col-sm-6 text-center">
+          <button class="btn btn-warning" data-ng-click="vm.clearSelectedSheet()">Reset Sheet</button>
+          <button class="btn btn-primary" data-ng-click="vm.openImportModal()">Preview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,33 @@
+<!-- data-ng-if="!row.groupHeader" -->
+<div *ngIf="params.data">
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right"
+    (click)="edit()"
+    [tooltip]="editTooltip"
+    container="body"
+    [adaptivePosition]="false"
+    placement="left"
+    [disabled]="disableEditButton"
+    aria-label="Edit"
+  >
+    <span appIcon name="pencil"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    class="space-on-right"
+    [tooltip]="deleteTooltip"
+    container="body"
+    [adaptivePosition]="false"
+    placement="left"
+    (click)="delete()"
+    [disabled]="disableDeleteButton"
+    aria-label="Delete"
+  >
+    <span appIcon name="trashcan"></span>
+  </button>
+</div>

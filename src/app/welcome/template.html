@@ -1,0 +1,122 @@
+<div class="panel panel-default space-on-top-xxl welcome_to_dv" data-ng-hide="vm.help_mode">
+  <div class="panel-body">
+    <h1 class="text-center">Welcome to DiligenceVault</h1>
+
+    <p class="lead text-center">
+      Now you can review due diligence materials, take notes, collaborate with team members, and export data and documents on an interactive, secure and centralized platform.
+    </p>
+
+    <div class="text-center">
+      <!-- <button btn-type="primary" size="lg" chardin="vm.chardin_config" reveal-on-keypress>Take the product tour</button> -->
+      <button btn-type="primary" size="lg" data-ng-click="vm.navigateToDashboard()">Take me to dashboard</button>
+    </div>
+  </div>
+</div>
+
+<ng2-faqs></ng2-faqs>
+<!-- <h3 class="text-center space-on-top-xxl space-on-bottom">Frequently Asked <strong class="text-orange">Questions</strong></h3> -->
+<!-- <div class="panel panel-default" data-ng-show="vm.help_mode"> -->
+  <!-- <div class="panel-body">
+    <h1 class="text-center clear-margin-top">Frequently Asked Questions</h1>
+  </div> -->
+<!-- </div> -->
+<!-- <div class="faqSearch container text-center space-on-top-xxl">
+  <input type="text" class="form-control" placeholder="Search FAQs" data-ng-model="vm.search_text">
+</div>
+<div data-ng-if="vm.faqs.length" ng-repeat="faq in vm.faqs | filter: vm.search_text" class="faqCollapse container">
+  <h3 class="text-primary space-on-top space-on-bottom-xxl" data-ng-if='faq.section_id'>{{faq.section_title}}</h3>
+<div ng-repeat="question in faq.questions">
+  <uib-accordion close-others="true">
+      <div uib-accordion-group is-open="question.isOpen" class="{{question.isOpen?'accordion-selected':''}}">
+          <uib-accordion-heading>
+              <h4 class="panel-title pos-rel">
+                  <a role="button" class="link-unstyled">
+                      <span class="badge">{{question.id}}</span>
+                      <span class="space-on-left question_text"><strong>{{question.text}}</strong></span>
+                  </a>
+                <span class="indicating-icons">
+                  <icon data-ng-if="question.isOpen" class="dvi dvi-chevron-up"></icon>
+                  <icon data-ng-if="!question.isOpen" class="dvi dvi-chevron-down"></icon>
+                </span>
+              </h4>
+          </uib-accordion-heading>
+          <div>
+            <span data-ng-bind-html="question.answer"></span>
+          </div>
+      </div>
+  </uib-accordion>
+</div>
+</div>
+<div class="faqCollapse container">
+  <h3 class="text-primary space-on-top space-on-bottom-xxl">All Things Help</h3>
+  <uib-accordion close-others="true">
+      <div uib-accordion-group is-open="vm.isLastOneOpen" class="{{vm.isLastOneOpen?'accordion-selected':''}}">
+          <uib-accordion-heading>
+              <h4 class="panel-title pos-rel">
+                  <a role="button" class="link-unstyled">
+                      <span class="badge">39</span>
+                      <span class="space-on-left question_text"><strong>I need help, how do I get in touch with you?</strong></span>
+                  </a>
+                <span class="indicating-icons">
+                  <icon data-ng-if="vm.isLastOneOpen" class="dvi dvi-chevron-up"></icon>
+                  <icon data-ng-if="!vm.isLastOneOpen" class="dvi dvi-chevron-down"></icon>
+                </span>
+              </h4>
+          </uib-accordion-heading>
+          <div>
+            <span<p> Access the help icon at the top right corner, and we have a multiple resources for you:</p> <ol><li><a data-ng-click="vm.toggleFeedbackPanel()" role="button">Write to us </a> about issues, queries, to request a demo or just give us feedback, or even say hello :)</li><li>Review the FAQs</li><li>We are a phone call or email away: Call us at +1 646 546 5087 or email us at ask@diligencevault.com</li></ol></span>
+          </div>
+      </div>
+  </uib-accordion>
+</div>
+
+<div class="faqFooter">
+  <h4 class="text-center">For any further queries or issues: Call us at <a href="tel:+16465465087">+16465465087</a> or Email us at <a <a href="mailto:ask@diligencevault.com?subject=faq">ask@diligencevault.com</a></a> </h4>
+</div> -->
+
+<!-- <div class="faq-section">
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/account-security.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/team-members.html'"></div>
+  </div>
+
+  <div class="feature-help-block" data-ng-if="!vm.is_investor">
+    <div ng-include="'welcome/templates/due-diligence.html'"></div>
+  </div>
+
+  <div class="feature-help-block" data-ng-if="vm.is_investor">
+    <div ng-include="'welcome/templates/due-diligence-investor.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/document.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/q-and-a-bank.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/template.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/product.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/adv.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/preferences.html'"></div>
+  </div>
+
+  <div class="feature-help-block">
+    <div ng-include="'welcome/templates/help.html'"></div>
+  </div>
+
+</div> -->

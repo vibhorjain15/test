@@ -1,0 +1,51 @@
+<div data-ng-if="vm.Utils.isAngular()"><ng2-report-templates-list></ng2-report-templates-list></div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div class="row clearfix">
+  <div col="4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="panel-title">Presentation Design</h5>
+
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control"
+               modal-button="add_report_template"
+               uib-tooltip="New Report Definition">
+              <icon name="plus"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body" data-ng-if="!vm.templates">
+        <spinner></spinner>
+      </div>
+
+      <div class="panel-body"
+           data-ng-if="vm.templates.length == 0">
+        <empty-state message="You don't have any report definition"
+                     action="vm.redirectToNewTemplate()"
+                     action-label="Create a new report definition">
+        </empty-state>
+      </div>
+
+      <div class="list-group">
+        <div class="list-group-item" data-ng-repeat="template in vm.templates">
+          <a class="clickable"
+             ng-click="vm.redirectToTemplate(template)"
+             data-ng-class="{'active': $state.params.templateId == template.id}"]>
+            {{template.name}}
+          </a>
+          <span class="space-on-left-lg label" ng-class="{'label-success': !template.is_new_report,  'label-warning': template.is_new_report}">{{template.is_new_report? 'Custom': 'Designer'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div col="8">
+    <ui-view />
+  </div>
+  </div>
+</div>
+</div>
+</div>

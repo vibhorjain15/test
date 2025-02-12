@@ -1,0 +1,11 @@
+<ui-grid-cell-contents>
+  <div data-ng-show="row.entity.functions.length">
+    <span class="label label-default space-on-right text-uppercase">{{row.entity.functions[0].function_name}}</span>
+    <span class="label label-default text-uppercase" data-ng-show="row.entity.functions.length > 1"> and {{row.entity.functions[1].function_name}} </span>
+    <span class="link-underline clickable space-on-right"
+          data-ng-show="row.entity.functions.length > 2"
+          uib-tooltip="{{grid.appScope.vm.formatTagsTooltip(row.entity.functions)}}">
+      more
+    </span>
+  </div>
+</ui-grid-cell-contents>

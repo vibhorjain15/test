@@ -1,0 +1,61 @@
+<form class="form-horizontal">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            View Email Attachments
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+
+        <spinner data-ng-if="!vm.attachments"></spinner>
+
+        <div data-ng-show="vm.attachments.length" class="space-on-bottom-lg">
+            <i class="text-muted">
+                Showing
+                <ng-pluralize count="vm.attachments.length"
+                              when="{'1': '1 attachment', 'other': '{} attachments'}"></ng-pluralize>
+            </i>
+        </div>
+
+        <ul class="list-unstyled list-inline clear-margin"
+            tiles-adjuster="vm.adjust_attachments"
+            tile-selector="> li"
+            data-ng-if="vm.attachments">
+            <li data-ng-repeat="attachment in vm.attachments"
+                class="align-top dd-file-attachment-card clear-padding"
+                on-render="vm.adjust_attachments = true"> <!-- Add track by when the attachmentID returns unique value -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="clearfix">
+
+
+              <span class="pull-right">
+                <attachment-icon filename="attachment.file_name"
+                                 size="2x"
+                                 class="file-attachment-icon"></attachment-icon>
+              </span>
+                        </div>
+
+                        <div class="break-all text-center space-on-top-lg">
+                            <strong>
+                                <a class="link-disguise clickable"
+                                   data-ng-click="vm.openAttachment(attachment.attachment_id)">
+                                    {{::attachment.file_name}}
+                                </a>
+                            </strong>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+    </div>
+</form>
+    
+    
+    
+

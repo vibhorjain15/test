@@ -1,0 +1,52 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">All Partners</h5>
+  </div>
+  <div class="panel-body partner-portal-min-height">
+    <div class="partner-portal-action-wrapper">
+      <div class="partner-input">
+        <input
+          type="text"
+          id="search"
+          placeholder="Search partners"
+          class="form-control"
+          [(ngModel)]="name"
+          (ngModelChange)="handleChange()"
+        />
+      </div>
+
+      <div class="partner-report-report-button">
+        <div>
+          <i>Select one or multiple providers.</i>
+        </div>
+
+        <dv-button
+          [loader]="buttonLoader"
+          btnType="orange"
+          leftIcon="bg-check"
+          (onClick)="handleRequestClick()"
+        >
+          Request information
+        </dv-button>
+      </div>
+    </div>
+    <div class="partner-portal-wrapper" *ngIf="partners">
+      <ng-container *ngFor="let partner of partners">
+        <dv-partnership-card
+          [showCheckbox]="true"
+          [partner]="partner"
+          (onClick)="handleCardClick(partner)"
+        ></dv-partnership-card>
+      </ng-container>
+    </div>
+
+    <div *ngIf="partners && !partners.length">
+      <app-empty-state message="No partners found"> </app-empty-state>
+    </div>
+    <app-spinner
+      *ngIf="loader"
+      broadSpinner="true"
+      spinnerHeight="250"
+    ></app-spinner>
+  </div>
+</div>

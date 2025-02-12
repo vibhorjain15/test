@@ -1,0 +1,26 @@
+<ui-grid-cell-contents>
+  <span data-ng-if="!row.groupHeader">
+    <div class="assignment-labels" data-ng-if="row.entity.status"
+         uib-tooltip="{{row.entity.status}}" tooltip-placement="top">
+      <icon name="check" class="text-success font-size-20" data-ng-if="row.entity.status == 'Answered'"></icon>
+      <icon name="under-construction-2" class="font-size-20 text-orange" data-ng-if="row.entity.status == 'WIP'"></icon>
+      <icon name="check" class="text-muted font-size-20" data-ng-if="row.entity.status == 'Unanswered'"></icon>
+    </div>
+    <span class="label label-success" data-ng-if="!row.entity.status">
+      N/A
+    </span>
+  </span>
+  <span data-ng-if="row.groupHeader && row.treeNode.children.length>0">
+    <div class="dv-table full-width full-height">
+      <div class="cell align-left align-middle">
+        <uib-progressbar value="grid.appScope.vm.getPercentageCompleted(grid, row, col)"
+                         type="success"
+                         class="bs-progress">
+          <small data-ng-class="{'text-black': grid.appScope.vm.getPercentageCompleted(grid, row, col) == 0}">
+            {{grid.appScope.vm.getPercentageCompleted(grid, row, col)}} %
+          </small>
+        </uib-progressbar>
+      </div>
+    </div>
+  </span>
+</ui-grid-cell-contents>

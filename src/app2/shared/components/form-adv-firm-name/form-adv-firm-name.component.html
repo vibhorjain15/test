@@ -1,0 +1,11 @@
+<span *ngIf="params.data">
+  <a
+    (click)="navigateToUrl(params.data.firmCRD, $event)"
+    [adaptivePosition]="false"
+    [tooltip]="params.data[field]"
+    container="body"
+    tooltip-placement="right"
+  >
+    {{ params.data[field] }}
+  </a>
+</span>

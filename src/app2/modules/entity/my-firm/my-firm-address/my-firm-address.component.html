@@ -1,0 +1,99 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!firm"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="firm">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{ firm.name }}
+            </h4>
+          </div>
+          <div class="cell text-center">
+            <dv-button
+              [fontSizeType]="'large'"
+              [btnType]="'transparent'"
+              (onClick)="openAddressDialog()"
+            >
+              <div><span appIcon name="location" size="2x"></span></div>
+              <small>Add Address</small>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-spinner *ngIf="!addresses"></app-spinner>
+    <div class="clearfix" *ngIf="addresses && addresses.length">
+      <div
+        class="panel panel-default col-md-12 clear-padding-left clear-padding-right"
+      >
+        <div class="panel-heading">
+          <h5 class="panel-title">Address Details</h5>
+        </div>
+        <ul class="list-group">
+          <li
+            class="list-group-item col-md-12 padded-xl"
+            *ngFor="let address of addresses"
+          >
+            <div
+              class="col-md-11"
+              [ngClass]="{ 'text-primary': address.is_headquarter }"
+            >
+              <p *ngIf="address.is_headquarter">
+                <strong>(Headquarter)</strong>
+              </p>
+              <p>
+                <strong>Street Address:</strong> {{ address.address_line_1 }},
+                {{ address.address_line_2 }} |
+                <strong>City, State, Zipcode:</strong> {{ address.city }},
+                {{ address.state }}, {{ address.zip_code }} |
+                <strong>Country:</strong> {{ address.country_name }} |
+                <strong>Phone(s):</strong> {{ address.phone_1 }},
+                {{ address.phone_2 }} | <strong>Fax:</strong> {{ address.fax }}
+              </p>
+            </div>
+            <span class="pull-right" dropdown container="body">
+              <dv-button
+                [btnClass]="'dropdown-toggle js-response-control-more-actions'"
+                [fontSizeType]="'large'"
+                [ngClass]="{ active: active_actions }"
+                [btnType]="'transparent'"
+                [size]="'sm'"
+                (onClick)="toggleDropdownActions(address)"
+                [ariaLabel]="
+                  address.isOpen ? 'Hide more options' : 'Show more options'
+                "
+              >
+                <span appIcon name="ellipsis-h"></span>
+              </dv-button>
+              <dv-dropdown
+                [dropDownList]="addressActionList"
+                (onDropdownClick)="handleDropdownClick($event, address)"
+                (onDropdownToggle)="address.isOpen = $event"
+                container="body"
+                [toggleDropDown]="address.isOpen"
+                [dropdownPlacement]="'right'"
+              >
+              </dv-dropdown>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="row clearfix" *ngIf="addresses && !addresses.length">
+      <div col="6" offset="3">
+        <app-empty-state
+          iconName="location"
+          (action)="openAddressDialog()"
+          actionLabel="Add address"
+          message="No address available for {{ firm?.name }}. Why not add ?"
+        >
+        </app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>

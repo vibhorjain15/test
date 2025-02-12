@@ -1,0 +1,16 @@
+.class-default {
+  padding: 2px;
+}
+.class-horizontal {
+  display: flex;
+  align-items: center;
+}
+.class-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+:host ::ng-deep .class-horizontal > dv-radio:not(:last-child) {
+  margin-right: 10px;
+}

@@ -1,0 +1,131 @@
+.date-quarter-picker-wrapper {
+  position: relative;
+}
+.date-quarter-picker-wrapper .btn-select,
+.quarter-container li {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+}
+.date-quarter-picker-wrapper .btn-select {
+  height: 34px;
+  padding: 0 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  justify-content: space-between;
+  background-color: #dfdfdf;
+}
+.date-quarter-picker-wrapper.active .btn-select,
+.btn-select:hover {
+  background-color: #c7c7c7;
+}
+.btn-select .dvi {
+  transition: transform 0.1s linear;
+}
+.date-quarter-picker-wrapper.active .btn-select .dvi {
+  transform: rotate(-180deg);
+}
+.date-quarter-picker-wrapper .content {
+  display: none;
+  padding: 6px;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 0 4px 0 #c3c3c3;
+}
+.date-quarter-picker-wrapper.active .content {
+  display: block;
+}
+.content .year-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.content .year-container::-webkit-scrollbar {
+  display: none;
+}
+.year-container .item {
+  cursor: pointer;
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.btn-date-quarter-picker-container {
+  position: relative;
+}
+.btn-date-quarter-picker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background-color: transparent;
+}
+.btn-left {
+  left: -5px;
+  background-image: linear-gradient(
+    to left,
+    transparent,
+    #fff,
+    #fff,
+    #fff,
+    #fff
+  );
+}
+.btn-right {
+  right: -5px;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    #fff,
+    #fff,
+    #fff,
+    #fff
+  );
+}
+
+.year-container .item.active span {
+  border-bottom: 2px solid #f57c00;
+  padding-bottom: 2px;
+}
+
+.quarter-container li.active,
+.year-container .item.active span {
+  color: #126b82;
+  font-weight: bold;
+}
+
+.year-container .item:hover,
+.quarter-container li:hover {
+  background-color: #f2f2f2;
+}
+
+.content .quarter-container {
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s linear;
+}
+.content .quarter-container.active {
+  margin-top: 10px;
+  max-height: 400px;
+}
+.quarter-container li {
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 2px;
+}

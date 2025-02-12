@@ -1,0 +1,48 @@
+<app-modal
+  (onCancelClick)="handleCancelClick($event)"
+  (onFirstClick)="saveMapping($event)"
+  [firstButtonLabel]="'Save'"
+  [title]="'Save Mapping'"
+  [initialTemplate]="saveMappingModal"
+  [isLoading]="isLoading"
+  cancelButtonLabel="Close"
+>
+  <ng-template #saveMappingModal>
+    <form class="form-horizontal" [formGroup]="mappingForm" autocomplete="off">
+      <dv-form-element
+        fieldName="Name"
+        [modelController]="mappingForm.get('name')"
+        label="Name"
+        [isRequired]="true"
+        errorMessage="Name is required"
+      >
+        <input
+          type="text"
+          id="name"
+          formControlName="name"
+          placeholder="Mapping Name"
+          required
+          class="form-control"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        fieldName="Description"
+        [modelController]="mappingForm.get('description')"
+        label="Description"
+        [isRequired]="true"
+        errorMessage="Description is required"
+      >
+        <textarea
+          type="text"
+          id="description"
+          placeholder="Description"
+          row="3"
+          formControlName="description"
+          required
+          class="form-control"
+        ></textarea>
+      </dv-form-element>
+    </form>
+  </ng-template>
+</app-modal>

@@ -1,0 +1,76 @@
+<div *ngIf="loading" class="print-preview-spinner" role="alert">
+  <app-spinner aria-hidden="true"></app-spinner>
+</div>
+<ng-container *ngIf="!loading">
+  <dv-segment [isSearch]="false" [isAdd]="false" role="navigation">
+    <div class="print-header-wrapper">
+      <div class="print-header-left-part">
+        <dv-label [label]="diligenceData.entity_name" size="big"> </dv-label>
+      </div>
+
+      <div class="print-header-right-part">
+        <dv-logo-label (onClick)="handlePrint()" icon="print" label="Print">
+        </dv-logo-label>
+        <dv-logo-label
+          (onClick)="handleFilter('AnsweredTotal')"
+          icon="check-circle"
+          [label]="'Show Answered only (' + answeredCount + ')'"
+          [isEnabled]="answeredCount > 0"
+          [iconColor]="
+            filter == 'Answered'
+              ? 'primary'
+              : answeredCount > 0
+              ? 'default'
+              : 'disabled'
+          "
+        >
+        </dv-logo-label>
+
+        <dv-logo-label
+          (onClick)="handleFilter('UnAnsweredTotal')"
+          icon="radio-unchecked"
+          [label]="'Show Unanswered only (' + unansweredCount + ')'"
+          [iconColor]="
+            filter == 'Unanswered'
+              ? 'primary'
+              : unansweredCount > 0
+              ? 'default'
+              : 'disabled'
+          "
+          [isEnabled]="unansweredCount > 0"
+        >
+        </dv-logo-label>
+        <dv-logo-label
+          (onClick)="handleBack()"
+          icon="arrow-back"
+          label="Back to Questionnaire"
+        >
+        </dv-logo-label>
+      </div>
+    </div>
+  </dv-segment>
+
+  <div>
+    <ng-container #outlet [ngTemplateOutlet]="content"> </ng-container>
+  </div>
+
+  <ng-template #content>
+    <div
+      class="subsectionPrint"
+      id="subsectionPrint"
+      role="region"
+      aria-labelledby="subsectionPrint"
+    >
+      <ng-container *ngFor="let cat of category">
+        <ng-container *ngFor="let subCat of cat.list">
+          <div class="subsection" id="subsectionId" role="region">
+            <questionnaire-print-preview
+              [section]="subCat"
+              [catName]="cat.name"
+            ></questionnaire-print-preview>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </ng-template>
+</ng-container>

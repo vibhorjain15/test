@@ -1,0 +1,5 @@
+.input-group-btn .clear-text {
+  position: absolute;
+  z-index: 1000;
+  right: 35px;
+}

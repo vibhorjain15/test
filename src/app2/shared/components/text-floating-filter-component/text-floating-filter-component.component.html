@@ -1,0 +1,16 @@
+<div class="form-group pt-8">
+  <input
+    #search
+    [(ngModel)]="currentValue"
+    [placeholder]="placeHolder"
+    (input)="onInputBoxChanged()"
+    class="form-control"
+  />
+  <span
+    appIcon
+    name="close"
+    *ngIf="currentValue"
+    (click)="clearFilter()"
+    class="cross"
+  ></span>
+</div>

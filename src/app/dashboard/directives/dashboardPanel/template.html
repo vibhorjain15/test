@@ -1,0 +1,29 @@
+<div class="dashboard-panel">
+  <div class="panel-heading">
+    <h5 class="panel-title" data-ng-show="widgetTitle">{{widgetTitle}}</h5>
+
+    <div class="dashboard-panel-controls">
+      <button btn-type="default" uib-tooltip="Apply Filters" tooltip-placement="left" class="hidden">
+        <icon name="filter"></icon>
+      </button>
+
+      <button btn-type="default"
+              data-ng-hide="fullscreen_mode"
+              uib-tooltip="Enter Fullscreen Mode"
+              tooltip-placement="left"
+              data-ng-click="enterFullscreenMode()">
+        <icon name="expand"></icon>
+      </button>
+
+      <button btn-type="default"
+              data-ng-show="fullscreen_mode"
+              uib-tooltip="Exit Fullscreen Mode"
+              tooltip-placement="left"
+              data-ng-click="exitFullscreenMode()">
+        <icon name="compress"></icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="js-widget-container"></div>
+</div>

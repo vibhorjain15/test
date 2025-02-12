@@ -1,0 +1,15 @@
+<div *ngIf="isAuthenticated">
+  <dv-nav-bar *ngIf="!['app/premium','app/releases/notes' ].includes(currentRoute)"></dv-nav-bar>
+  <app-feedback></app-feedback>
+
+  <div class="relative">
+    <div class="content-main js-content-main" id="page-container-wrapper">
+      <div class="container-fluid" id="page-container">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="!isAuthenticated">
+  <dv-nudge [nudge]="selectedNudge"></dv-nudge>
+</div>

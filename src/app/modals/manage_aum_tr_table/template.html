@@ -1,0 +1,96 @@
+<form name="vm.table_form"
+      novalidate
+      class="form-horizontal"
+      data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.edit_mode ? 'Editing' : 'Add New'}} AUM / Track Record Table
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Name">
+      <label class="control-label col-sm-4">Name</label>
+      <div class="col-sm-8">
+        <input type="text"
+               class="form-control"
+               required
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.params.name" />
+      </div>
+    </form-group>
+
+    <form-group field-name="Period">
+      <label class="control-label col-sm-4"
+             for="period">Reporting Frequency</label>
+
+      <div class="col-sm-8">
+        <select name="period"
+                id="return-period"
+                class="form-control"
+                chosen
+                data-ng-disabled="vm.edit_mode && vm.params.period"
+                data-ng-options="period as period for period in vm.periods"
+                data-ng-model="vm.params.period">
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Type">
+      <label for="type" class="control-label col-sm-4">Type of History</label>
+
+      <div class="col-sm-8">
+        <select name="type"
+                id="type"
+                class="form-control"
+                chosen
+                data-ng-disabled="vm.edit_mode && vm.params.type"
+                data-ng-options="types.value as types.label for types in vm.types"
+                data-ng-model="vm.params.type">
+        </select>
+      </div>
+    </form-group>
+    <form-group field-name="Currency">
+      <label class="control-label col-sm-4">Currency</label>
+
+      <div class="col-sm-8">
+        <select class="form-control"
+                chosen
+                required
+                data-ng-model="vm.params.currency_id"
+                data-ng-options="currency.id as currency.value for currency in vm.currencies">
+          <option value="">-- Select Currency --</option>
+        </select>
+      </div>
+    </form-group>
+    <form-group field-name="Profile" ng-if="vm.params.type == 'track_record'">
+      <label class="control-label col-sm-4">Gross/Net</label>
+      <div class="col-sm-8">
+        <dv-radio
+          type="info inline"
+          data-ng-value="'Gross'"
+          data-ng-model="vm.params.profile_type"
+          label="Gross"
+          required>
+        </dv-radio>
+
+        <dv-radio
+          type="info inline"
+          data-ng-value="'Net'"
+          class="space-on-left"
+          data-ng-model="vm.params.profile_type"
+          label="Net"
+          required>
+        </dv-radio>
+      </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving_table">Save</button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

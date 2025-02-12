@@ -1,0 +1,20 @@
+<div class="text-left" *ngIf="params.data">
+  <a [routerLink]="url">
+    <span (click)="click($event)">
+      {{ params.data.entity.fullName || params.data.entity.email }}</span
+    >
+
+    <small
+      *ngIf="params.data.entity.has_bounce_history"
+      class="text-danger"
+      [adaptivePosition]="false"
+      tooltip="Emails to this contact have bounced in the past."
+      container="body"
+    >
+      <span appIcon name="warning"></span>
+    </small>
+  </a>
+</div>
+<div class="text-left unstyledLink" *ngIf="!params.data">
+  {{ params.value }}
+</div>

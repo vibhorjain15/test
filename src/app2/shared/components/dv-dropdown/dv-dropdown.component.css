@@ -1,0 +1,86 @@
+.dropdown-link:hover {
+  color: #16a1ab;
+}
+
+.active-class {
+  color: #16a1ab;
+}
+
+.class-primary {
+  color: #126b82;
+}
+.class-default {
+  color: black;
+}
+
+.dropdown-a {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-a:hover {
+  background-color: rgba(56, 145, 166, 0.1);
+}
+
+.dropdownHover {
+  background-color: rgba(56, 145, 166, 0.1);
+}
+
+.dropdown-divider-new {
+  height: 1px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
+
+.disabled {
+  opacity: 0.5 !important;
+  cursor: no-drop;
+}
+.disabled > span {
+  pointer-events: none;
+}
+
+.is-empty {
+  border: 1px dashed;
+  margin: 10px;
+  border-radius: 5px;
+}
+.copy {
+  font-size: 18.81px !important;
+}
+.max-height-300 {
+  max-height: 300px !important;
+  overflow: auto !important;
+}
+
+.icon-logo-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dropdown-children-class {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.width-dropdown {
+  width: inherit;
+  display: flex;
+}
+
+.showCursorIfDisabled {
+  cursor: pointer !important;
+}
+
+
+.hover-transform {
+  transition: all 0.1s ease-in-out; /* Adds smooth transition */
+}
+
+.hover-transform:hover {
+  color: #16a1ab !important;
+}

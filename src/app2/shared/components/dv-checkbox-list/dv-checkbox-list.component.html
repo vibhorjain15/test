@@ -1,0 +1,26 @@
+<div class="panel panel-default checkbox-container">
+  <dv-checkbox
+    *ngFor="let checkbox of checkboxes_in_page"
+    [label]="checkbox.label || checkbox.name"
+    [disabled]="disabled"
+    [name]="checkbox.name"
+    [id]="checkbox.id"
+    [(ngModel)]="checkbox.is_checked"
+    (onValChange)="handleValChange(checkbox, $event)"
+    class="space-on-top-lg"
+  ></dv-checkbox>
+  <div
+    class="panel-footer justify-center space-on-top-lg"
+    *ngIf="is_pagination_enabled"
+  >
+    <pagination
+      class="pagination-sm clear-margin"
+      [boundaryLinks]="true"
+      [(ngModel)]="current_page"
+      [totalItems]="checkboxes?.length ?? 0"
+      (pageChanged)="loadPage($event)"
+      [maxSize]="max_size"
+      [itemsPerPage]="items_per_page"
+    ></pagination>
+  </div>
+</div>

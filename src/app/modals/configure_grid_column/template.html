@@ -1,0 +1,80 @@
+<form class="form-horizontal" name="vm.grid_column_config_form" novalidate data-ng-submit="vm.submit()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Configure Column
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <form-group field-name="Column Type">
+            <label for="column-type" class="control-label" col="5">
+                Select Column Type
+            </label>
+
+            <div col="4">
+                <select id="column-type"
+                        class="form-control"
+                        chosen
+                        required
+                        data-ng-model="vm.type_options.type"
+                        data-ng-options="type.value as type.label for type in vm.columnTypes">
+                    <option value=""></option>
+                </select>
+            </div>
+        </form-group>
+        <form-group field-name="Dropdown multiselection" data-ng-show="vm.type_options.type == 'dropdown'">
+            <label class="control-label" col="5">
+                <icon name="info" class="text-info"
+                    uib-tooltip="Click to enable multiple field selection within column">
+                </icon>
+                Enable Multiple Selection
+            </label>
+            <div col="4">
+                <dv-checkbox data-ng-model="vm.enable_multiselection"></dv-checkbox>
+            </div>
+        </form-group>
+        <form-group data-ng-show="vm.type_options.type == 'dropdown'">
+            <label for="column-type" class="control-label" col="5">
+                Populate Dropdown Items
+            </label>
+            <div col="5">
+                <dv-option-selector options="vm.selectOptions" option-label="Dropdown Item" editable></dv-option-selector>
+            </div>
+        </form-group>
+        <form-group field-name="Dropdown multiselection" data-ng-show="vm.type_options.type == 'date'">
+            <label class="control-label" col="5">
+                Format
+            </label>
+            <div col="4">
+                <select id="column-type"
+                        class="form-control"
+                        chosen
+                        data-ng-required="vm.type_options.type == 'date'"
+                        data-ng-model="vm.dateFormat"
+                        data-ng-options="type for type in vm.supportedFormats">
+                    <option value=""></option>
+                </select>
+            </div>
+        </form-group>
+        <!-- <div data-ng-show="!vm.useSingleOptionsMode && vm.type_options.type == 'dropdown'">
+          <p class="alert alert-info">Please add one or more options here - <b>one option per line</b></p>
+          <form-group field-name="Bulk option addition">
+              <dv-bulk-list-builder ng-model="vm.selectOptions" current-length="0" type="'option'" value-required="false"></dv-bulk-list-builder>
+          </form-group>
+        </div>
+        <br>
+        <div data-ng-show="vm.type_options.type == 'dropdown'">
+          <dv-checkbox
+              data-ng-model="vm.useSingleOptionsMode">
+              <dv-checkbox-label>
+                  <span>Add one option at a time instead</span>
+              </dv-checkbox-label>
+          </dv-checkbox>
+        </div> -->
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit">Save</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,28 @@
+<div *ngIf="!loading" class="my-work-header-wrapper">
+  <span class="text-wrapper">Welcome to My Work!</span>
+  <div class="display-flex">
+    <app-date-range-picker
+      class="w-320 project-date-picker rangePicker"
+      [customDate]="dateRange"
+      (change)="onDateRangeChange($event)"
+      (clearDateFilter)="onClearDateFilter()"
+      [minDate]="minDate"
+      [maxDate]="maxDate"
+      *ngIf="customDateFilter"
+      containerClass="range-picker-grid-placement"
+    ></app-date-range-picker>
+  </div>
+</div>
+
+<dv-notification-panel
+  (onClose)="handleOnClose()"
+  *ngIf="!loading && canShowBanner"
+  icon="banner-noti"
+  text="This new landing page consists of <b>Your Projects & Tasks</b> that are <b>pending and assigned to you or created by you</b>. Get started with your projects."
+></dv-notification-panel>
+
+<app-spinner
+  broadSpinner="true"
+  spinnerHeight="250"
+  *ngIf="loading"
+></app-spinner>

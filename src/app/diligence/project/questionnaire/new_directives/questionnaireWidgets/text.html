@@ -1,0 +1,6 @@
+<input type="text"
+       class="form-control"
+       data-ng-change="vm.onResponseChange()"
+       data-ng-init="vm.checkInputLimitExceded(vm.response.attributes.textResponse,$event)"
+       data-ng-keyup="vm.checkInputLimitExceded(vm.response.attributes.textResponse,$event)"
+       data-ng-model="vm.response.attributes.textResponse"/>

@@ -1,0 +1,30 @@
+<table class="spreadsheet-table">
+  <thead>
+    <tr>
+      <th data-ng-repeat="column in columns track by $index">
+        {{column}}
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr data-ng-repeat="row in rows track by $index">
+      <td data-ng-repeat="column in columns track by $index"
+          data-ng-class="{'control-cell': !$first}">
+        <span data-ng-if="$first">
+          {{row}}
+        </span>
+
+        <span data-ng-if="!$first"></span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="dynamic-Header" ng-if="dynamicElement == 'Row'">
+  Users will be able to add rows dynamically to match their data
+</p>
+
+<p class="dynamic-Header" ng-if="dynamicElement == 'Column'">
+  Users will be able to add columns dynamically to match their data
+</p>

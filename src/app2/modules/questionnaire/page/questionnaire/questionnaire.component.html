@@ -1,0 +1,105 @@
+<div class="row" role="region" aria-labelledby="questionnaire-header">
+  <div class="col-md-12">
+    <questionnaire-header
+      [diligenceData]="diligenceData"
+      id="questionnaire-header"
+    ></questionnaire-header>
+    <quick-view-header
+      *ngIf="diligenceData"
+      [usertype]="usertype"
+      [diligence]="diligenceData"
+    ></quick-view-header>
+  </div>
+</div>
+
+<ng-container
+  *ngIf="
+    diligenceData &&
+    (!diligenceData.notVisible || diligenceData.allowOnlyFollowups)
+  "
+  role="main"
+>
+  <div class="panel panel-default" *ngIf="!categoryData?.length && query">
+    <div class="panel-body">
+      <div class="row clearfix">
+        <div col="6" offset="3">
+          <app-empty-state
+            iconName="smile-o"
+            message="No results matched your search criteria."
+            (action)="handleResetFilter()"
+            actionLabel="Click to Reset"
+          ></app-empty-state>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="row no-margin"
+    *ngIf="(categoryData?.length || categoryLoading) && !loading"
+  >
+    <div class="col-md-12">
+      <dv-resizable-split
+        [rightOpen]="isSidePanelOpened"
+        [leftOpen]="device.isWebDevice || device.isDesktopDevice"
+        [overlay]="!(device.isWebDevice || device.isDesktopDevice)"
+        [initialLeftPanelWidth]="23"
+        [initialCenterPanelWidth]="47"
+        [initialRightPanelWidth]="30"
+        top="95px"
+      >
+        <div leftPanel>
+          <category-list></category-list>
+        </div>
+        <div centerPanel>
+          <questions-container
+            [diligence]="diligenceData"
+            [user]="user | async"
+            [activeSection]="activeSection | async"
+            [silentReload]="silentReload"
+            [isSidePanelOpened]="isSidePanelOpened"
+          ></questions-container>
+          <dv-draft></dv-draft>
+        </div>
+        <div rightPanel>
+          <side-panel
+            *ngIf="isSidePanelOpened"
+            [activePanelId]="activePanelId | async"
+          >
+          </side-panel>
+        </div>
+      </dv-resizable-split>
+    </div>
+  </div>
+</ng-container>
+
+<div
+  class="panel panel-default"
+  *ngIf="
+    !categoryLoading &&
+    diligenceData &&
+    diligenceData.notVisible &&
+    !diligenceData.allowOnlyFollowups
+  "
+>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div col="6" offset="3">
+        <app-empty-state
+          iconName="smile-o"
+          message="Nothing to review. But have patience, the manager is working hard on getting you the responses. We'll send you a notification once the status changes to completed."
+          (action)="redirectToSummary()"
+          actionLabel="Go to summary page"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="categoryLoading || loading"
+  class="print-preview-spinner"
+  role="alert"
+>
+  <app-spinner aria-hidden="true"></app-spinner>
+</div>

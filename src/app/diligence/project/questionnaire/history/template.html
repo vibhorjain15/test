@@ -1,0 +1,23 @@
+<spinner data-ng-hide="vm.response_history"></spinner>
+
+<p class="text-muted" data-ng-if="vm.response_history && !vm.response_history.length">
+  <i>
+    No history available for this question.
+  </i>
+</p>
+
+<ul data-ng-if="::vm.response_history.length"
+    class="list-unstyled">
+  <li data-ng-repeat="response in ::vm.response_history"
+      class="padded-top padded-bottom bordered-bottom">
+    <small class="text-muted">
+      <strong>
+        {{::response.responseAuthor.firstName}} {{::response.responseAuthor.lastName}} ({{::response.responseAuthor.firmInfo.name}}):
+      </strong>
+    </small>
+
+    <p class="clear-margin" data-ng-bind-html="::response.responseDisplay"></p>
+
+    <small class="text-muted">{{::response.responseTimeStamp|fromNow}}</small>
+  </li>
+</ul>

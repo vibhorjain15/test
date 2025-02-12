@@ -1,0 +1,188 @@
+<form name="vm.copy_verifiers_form" novalidate data-ng-submit="vm.submit()" class="copy_verifiers_form">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        Assign Reviewer
+      </h3>
+    </div>
+
+    <div class="modal-body">
+        <div>
+            <div class="text-center">
+                <div class="btn-group">
+                    <button class="btn btn-default" data-ng-class="{'btn-primary': vm.tabType == 'assign_verifier'}" data-ng-click="vm.setTabType('assign_verifier')">Assign Reviewer</button>
+                    <button class="btn btn-default" data-ng-class="{'btn-primary': vm.tabType == 'copy_verifier'}" data-ng-click="vm.setTabType('copy_verifier')">Copy Reviewer</button>
+                </div>
+            </div>
+            <div data-ng-if="vm.tabType == 'assign_verifier'">
+                <div class="row padded-lg">
+                    <form-group field-name="Team Member Name" class="space-on-bottom">
+                        <div class="row space-on-bottom">
+                            <label for="teammemberName" col="4">
+                                Select Team Member / User role
+                            </label>
+
+                            <div class="" col="8">
+                                <dv-subscriber-selection selection="vm.assigned_to_user" single-mode="true" functions="vm.functions"></dv-subscriber-selection>
+                            </div>
+                        </div>
+                    </form-group>
+                    <form-group field-name="Due Date" class="space-on-bottom">
+                        <div class="row space-on-bottom">
+                            <label for="dueDate" class="" col="4">
+                            Due Date
+                            </label>
+
+                            <div class="" col="8">
+                                <dv-datepicker data-ng-model="vm.due_date"
+                                        id="dueDate"
+                                        min-date="vm.minDate"
+                                        data-ng-required="vm.review_started">
+                                </dv-datepicker>
+                            </div>
+                        </div>
+                    </form-group>
+                    <form-group field-name="Filter">
+                        <div class="row space-on-bottom">
+                            <label for="filter" class="" col="4">
+                                Select Filter
+                            </label>
+
+                            <div class="" col="8">
+                                <select id="filter"
+                                        class="form-control"
+                                        chosen
+                                        data-ng-model="vm.selected_filter"
+                                        data-ng-options="member.value as member.label for member in vm.diligenceFilters"
+                                        data-ng-required="vm.review_started">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                    </form-group>
+                    <div class="form-group" col="12">
+                        <p class="alert alert-danger">
+                            Any existing reviewers assigned will be overwritten.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div data-ng-if="vm.tabType == 'copy_verifier'" class="space-on-top">
+                <div class="text-center" data-ng-if="vm.loading">
+                    <spinner></spinner>
+                </div>
+                <div data-ng-if="!vm.loading">
+                    <div class="bordered-bottom padded-lg">
+                        <div class="w-210 inline-block">
+                            <select data-ng-hide="vm.editMode" id="types"
+                                    class="form-control"
+                                    required
+                                    chosen
+                                    data-ng-model="vm.entity_type"
+                                    data-ng-change="vm.onEntityTypeChanged(vm.entity_type)"
+                                    data-ng-options="entity_type.value as entity_type.name for entity_type in vm.entity_types">
+                            <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="inline-block datefilter_position" data-ng-if="vm.customDateFilter">
+                            <dv-daterangepicker ng-model="vm.customDateFilter"
+                                    min-date="vm.minDate" max-date="vm.maxDate"
+                                    apply-method="vm.applyMethod"></dv-daterangepicker>
+                        </div>
+                    </div>
+                    <div class="padded-lg">
+                        <form-group field-name="{{vm.entity_type}}">
+                            <label class="">{{vm.is_manager && vm.entity_type == vm.keywordConstants.MyFirm?'Firm Name':'Select '+vm.Utils.getDisplayEntityType(vm.entity_type)}}</label>
+                            <div class="w-360 pull-right">
+                                <span data-ng-if="vm.entity_type == vm.keywordConstants.Strategy">
+                                    <select id="resource"
+                                            class="form-control"
+                                            chosen
+                                            data-ng-model="vm.entity_id"
+                                            data-ng-change="vm.onEntityChanged()"
+                                            data-ng-options="strategy.id as strategy.name for (key,strategy) in vm.strategies"
+                                            data-ng-required="vm.review_started">
+                                        <option value=""></option>
+                                    </select>
+                                </span>
+                                <span data-ng-if="vm.entity_type == vm.keywordConstants.Firm">
+                                    <select id="firm"
+                                            class="form-control"
+                                            chosen
+                                            data-ng-model="vm.entity_id"
+                                            data-ng-change="vm.onEntityChanged()"
+                                            data-ng-options="firm.id as firm.name for (key,firm) in vm.firms"
+                                            data-ng-required="vm.review_started">
+                                        <option value=""></option>
+                                    </select>
+                                </span>
+                                <span data-ng-if="vm.entity_type == vm.keywordConstants.Product">
+                                    <select id="product"
+                                            class="form-control"
+                                            chosen
+                                            data-ng-model="vm.entity_id"
+                                            data-ng-change="vm.onEntityChanged()"
+                                            data-ng-options="fund.id as fund.name for (key,fund) in vm.funds"
+                                            data-ng-required="vm.review_started">
+                                        <option value=""></option>
+                                    </select>
+                                </span>
+                                <span data-ng-if="vm.entity_type == vm.keywordConstants.Vehicle">
+                                    <select id="resource"
+                                            class="form-control"
+                                            chosen
+                                            data-ng-model="vm.entity_id"
+                                            data-ng-change="vm.onEntityChanged()"
+                                            data-ng-options="vehicle.id as vehicle.name for (key,vehicle) in vm.vehicles"
+                                            data-ng-required="vm.review_started">
+                                        <option value=""></option>
+                                    </select>
+                                </span>
+                                <span data-ng-if="vm.entity_type == vm.keywordConstants.MyFirm">
+                                    <label class="label label-default">{{vm.current_user.firmInfo.display_name}}</label>
+                                </span>
+                            </div>
+                        </form-group>
+                        <form-group field-name="Projects">
+                            <icon name="info" class="text-info" uib-tooltip="Copy reviewers from this project"></icon>
+                            <label class="">Copy from Project</label>
+                            <div class="w-360 pull-right">
+                                <select id="project"
+                                        class="form-control"
+                                        chosen
+                                        data-ng-model="vm.source_diligence"
+                                        data-ng-options="diligence as diligence.name for diligence in vm.diligences"
+                                        data-ng-change="vm.getVerifiers()"
+                                        data-ng-required="vm.review_started">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </form-group>
+                        <div data-ng-if="vm.source_diligence">
+                            <label>Reviewers from <span class="text-underline">{{vm.source_diligence.name}}</span></label>
+                            <div class="list-group-item space-on-top">
+                                <div data-ng-if="!vm.loading_verifiers && vm.verifiersForProject.length > 0">
+                                    <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                                            data-ng-repeat="verifier in vm.verifiersForProject">
+                                        <small>{{verifier.fullName}}</small>
+                                    </span>
+                                </div>
+                                <empty-state data-ng-if="!vm.loading_verifiers && vm.verifiersForProject.length == 0" message="No reviewers found"></empty-state>
+                                <div data-ng-if="vm.loading_verifiers" class="text-center">
+                                    <spinner></spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit"
+              button-loader="vm.starting_review">{{vm.review_started?'Assign Reviewers':'Start Review'}}</button>
+
+      <button btn-type="default"
+              data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+  </form>

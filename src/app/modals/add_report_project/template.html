@@ -1,0 +1,228 @@
+<form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">Generate Report
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="text-center space-on-top space-on-bottom-lg">
+        <div class="btn-group">
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Fund'}" data-ng-click="vm.setEntityType('Fund')">Products</label>
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Firm'}" data-ng-click="vm.setEntityType('Firm')">Firms</label>
+        </div>
+      </div>
+        <div class="row clearfix">
+            <div col="12">
+              <form-group>
+                  <label for="template-selection" class="col-md-3 control-label">
+                    Report Template
+                  </label>
+                  <div class="col-md-8">
+                    <select id="template-selection"
+                            class="form-control"
+                            chosen
+                            required
+                            data-ng-model="vm.user_template"
+                            no-results-text="'Could not find any templates'"
+                            data-placeholder="Filter by Templates"
+                            data-ng-options="template as template.file_name for template in vm.mapping_templates track by template.document_id"
+                            data-ng-change="vm.getInnerReportTemplates()">
+                    </select>
+                  </div>
+              </form-group>
+              <form-group>
+                  <label for="strategy-selection" class="col-md-3 control-label">Report Name:</label>
+                  <div col="8">
+                    <input type="text" class="form-control" placeholder="Example: Investment Profile" data-ng-model="vm.report_name" required>
+                  </div>
+              </form-group>
+                <form-group field-name="Entity" data-ng-if="vm.report_name">
+                    <label for="document-name" class="col-md-3 control-label">
+                        {{vm.entity_type == 'Fund'? 'Product' : 'Firm'}}
+                    </label>
+
+                    <div class="col-md-8" data-ng-if="vm.entity_type == 'Fund'">
+                        <!-- <tags-input  data-ng-model="vm.formData.selected_entities"
+                                    display-property="display_name"
+                                    data-ng-required="true"
+                                    key-property="id"
+                                    placeholder="Select Products"
+                                    add-from-autocomplete-only=true
+                                    min-length="1"
+                                    id="user">
+                            <auto-complete source="vm.filterFunds($query)"
+                                           load-on-focus=true
+                                           load-on-down-arrow=true
+                                           load-on-empty=true
+                                           min-length="1"
+                                           max-results-to-show="{{vm.funds.length}}"></auto-complete>
+                        </tags-input> -->
+                        <select id="template-selection" col="4"
+                                class="form-control"
+                                chosen
+                                data-ng-model="vm.formData.selected_entity"
+                                no-results-text="'Could not find any Products'"
+                                data-placeholder="Filter by Products"
+                                data-ng-options="fund as fund.display_name for fund in vm.funds track by fund.id"
+                                data-ng-change="vm.resetTemplate()">
+                        </select>
+                    </div>
+                    <div class="col-md-8" data-ng-if="vm.entity_type == 'Firm'">
+                        <!-- <tags-input  data-ng-model="vm.formData.selected_entities"
+                                    display-property="display_name"
+                                    data-ng-required="true"
+                                    key-property="id"
+                                    placeholder="Select Firms"
+                                    add-from-autocomplete-only=true
+                                    min-length="1"
+                                    id="user">
+                            <auto-complete source="vm.filterFirms($query)"
+                                           load-on-focus=true
+                                           load-on-down-arrow=true
+                                           load-on-empty=true
+                                           min-length="1"
+                                           max-results-to-show="{{vm.firms.length}}"></auto-complete>
+                        </tags-input> -->
+                        <select id="template-selection" col="4"
+                                class="form-control"
+                                chosen
+                                data-ng-model="vm.formData.selected_entity"
+                                no-results-text="'Could not find any templates'"
+                                data-placeholder="Filter by Firms"
+                                data-ng-options="firm as firm.display_name for firm in vm.firms track by firm.id"
+                                data-ng-change="vm.resetTemplate()">
+                        </select>
+                    </div>
+                </form-group>
+                <form-group field-name="Report definition" data-ng-if="vm.selected_templates.length">
+                    <label for="document-name" class="col-md-3 control-label">
+                        Report Definition
+                    </label>
+
+                    <div class="col-md-8">
+                        <!-- <tags-input data-ng-model="vm.formData.selected_templates"
+                                    display-property="name"
+                                    data-ng-required="true"
+                                    key-property="id"
+                                    placeholder="Select Templates"
+                                    add-from-autocomplete-only=true
+                                    min-length="1"
+                                    id="user">
+                            <auto-complete source="vm.filterTemplates($query)"
+                                           load-on-focus=true
+                                           load-on-down-arrow=true
+                                           load-on-empty=true
+                                           min-length="1"
+                                           max-results-to-show="{{vm.selected_templates.length}}"></auto-complete>
+                        </tags-input> -->
+                        <select id="template-selection" col="4"
+                                class="form-control"
+                                chosen
+                                data-ng-model="vm.formData.selected_template"
+                                no-results-text="'Could not find any templates'"
+                                data-placeholder="Filter by Firms"
+                                data-ng-options="template as template.name for template in vm.selected_templates track by template.id"
+                                data-ng-change="vm.getDiligences()">
+                        </select>
+                    </div>
+                </form-group>
+                <form-group data-ng-if="vm.formData.selected_template.id">
+                  <label class="col-md-3 control-label">Date Range</label>
+                  <div class="col-md-8">
+                    <dv-daterangepicker ng-model="vm.customDateFilter" apply-method="vm.applyMethod"></dv-daterangepicker>
+                  </div>
+                </form-group>
+                <form-group data-ng-if="vm.formData.selected_template.id">
+                  <label class="col-md-3 control-label"></label>
+                  <div class="col-md-8">
+                      <dv-checkbox
+                        data-ng-model="vm.formData.include_custom_review_diligences"
+                        data-ng-change="vm.getDiligences()"
+                        label="Include custom review">
+                     </dv-checkbox>
+                  </div>
+                </form-group>
+                <form-group data-ng-if="vm.formData.selected_template.id && !vm.diligences.length">
+                    <label class="col-md-3 control-label"></label>
+                    <div class="col-md-8">
+                        <p><i>No Projects found for selected combination. Please try some other combination</i></p>
+                    </div>
+                </form-group>
+                <form-group field-name="Report Name" data-ng-if="vm.formData.selected_template.id && vm.diligences.length">
+                    <label for="document-name" class="col-md-3 control-label">
+                        Projects
+                    </label>
+
+                    <div class="col-md-8">
+                        <select id="template-selection" col="4"
+                            class="form-control"
+                            chosen
+                            data-ng-model="vm.formData.selected_diligence"
+                            no-results-text="'Could not find any diligences'"
+                            data-placeholder="Filter by Templates"
+                            data-ng-options="diligence as diligence.name for diligence in vm.diligences track by diligence.id">
+                        </select>
+                        <!-- <tags-input data-ng-model="vm.formData.selected_diligences"
+                                    display-property="name"
+                                    data-ng-required="true"
+                                    key-property="id"
+                                    placeholder="Select Projects"
+                                    add-from-autocomplete-only=true
+                                    min-length="1"
+                                    id="user">
+                            <auto-complete source="vm.filterDiligences($query)"
+                                           load-on-focus=true
+                                           load-on-down-arrow=true
+                                           load-on-empty=true
+                                           min-length="1"
+                                           max-results-to-show="{{vm.diligences.length}}"></auto-complete>
+                        </tags-input> -->
+                    </div>
+                </form-group>
+                <form-group data-ng-if="vm.formData.selected_template.id && vm.formData.selected_diligence.id">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-8 text-right space-on-top">
+                        <button type="button" class="btn btn-default btn-sm" ng-click="vm.compileData()">Add Project</button>
+                    </div>
+                </form-group>
+            </div>
+        </div>
+        <div class="row clearfix" data-ng-if="vm.combinedData.length">
+            <table class="table space-on-top-lg">
+                <thead>
+                    <tr>
+                        <th>Template</th>
+                        <th>Entity</th>
+                        <th>Project</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="entry in vm.combinedData track by $index">
+                        <td>{{entry.template_name}}</td>
+                        <td>{{entry.entity_name}}</td>
+                        <td>{{entry.diligence_name}}</td>
+                        <td>
+                            <button btn-type="default"
+                                size="sm"
+                                class="danger"
+                                uib-tooltip="Remove"
+                                data-ng-click="vm.removeSelectedEntry(entry, $index)">
+                                <span>
+                                <icon name="trashcan"></icon>
+                                </span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.loading" data-ng-if="vm.combinedData.length">Export</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

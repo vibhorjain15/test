@@ -1,0 +1,59 @@
+<span>
+    <!--Legacy Upload Attachment Code-->
+    <!--<dv-file-uploader label="Upload Attachment"
+                      attachments="vm.response.attachments"
+                      stub-upload></dv-file-uploader>-->
+
+
+    <!--Drag n Drop New Code below-->
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">Attachments</h5>
+            </div>
+            <div class="panel-body">
+                <div class="dd-doc-selection-wrapper padded-right">
+                    <div class="panel panel-default dd-doc-drop-panel"
+                         dv-file-handler
+                         name="file-handler-one"
+                         dv-droppable
+                         dv-manual-upload
+                         ngf-multiple="true"
+                         ngf-select-disabled="true"
+                         dv-accept="::vm.allowed_file_extensions_str"
+                         dv-pattern="::vm.allowed_file_extensions_str"
+                         dv-max-file-size="::vm.maxFileSize"
+                         ngf-drag-over-class="'panel-primary'"
+                         ngf-model-invalid="vm.rejectedFiles">
+                        <div class="panel-body">
+                            <p class="text-muted text-center">
+                                <strong>Drag & Drop your file here</strong>
+                            </p>
+
+                            <p class="text-muted text-center">
+                                <icon name="upload" size="2x"></icon>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="dd-doc-select-button-container">
+                        <button btn-type="default"
+                                ngf-select
+                                ngf-accept="'{{::vm.allowed_file_extensions_str}}'"
+                                ngf-pattern="'{{::vm.allowed_file_extensions_str}}'"
+                                ngf-max-size="'{{::vm.maxFileSize}}'"
+                                ngf-model-invalid="vm.rejectedFiles">
+                            <icon name="upload" class="align-middle"></icon>
+                            Upload File
+                        </button>
+                        <div class="text-center" data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</span>
+

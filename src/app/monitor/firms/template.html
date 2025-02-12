@@ -1,0 +1,44 @@
+<div data-ng-if="vm.Utils.isAngular()">
+   <ng2-manage-firms></ng2-manage-firms>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+   <div class="panel-heading">
+      <h5 class="panel-title">
+         Monitor Firm Relationship
+      </h5>
+      <div class="panel-controls">
+         <div class="panel-controls-wrapper">
+            <a class="panel-control full-height" data-ng-if="vm.filters_data_loaded" uib-tooltip="Apply Filters"
+               data-ng-click="vm.toggleFiltersSection()">
+               <icon name="filter" data-ng-class="{'text-orange': vm.filterApplied}"></icon>
+            </a>
+            <a class="panel-control full-height" data-ng-click="vm.resetFiltersData()" uib-tooltip="Clear Filters"
+               data-ng-if="vm.filterApplied">
+               <icon name="refresh"></icon>
+            </a>
+            <a ng-if="!vm.isFreeManager" class="panel-control"
+               data-ng-class="{'route-link-disabled':vm.isFreeSubscription}" data-ng-click="vm.addFirm()"
+               uib-tooltip="{{vm.isFreeSubscription?'This feature is available for premium users.':'Add New Firm'}}" tooltip-placement="left">
+               <icon name="plus"></icon>
+            </a>
+            <a ng-if="vm.isFreeManager" ui-sref="app.premium" class="panel-control route-link-disabled"
+               uib-tooltip="This feature is available for premium users. Learn more" tooltip-placement="left">
+               <icon name="plus"></icon>
+            </a>
+         </div>
+      </div>
+   </div>
+   <div class="panel-body">
+      <div class="label-list space-on-bottom-lg" data-ng-if="vm.filterApplied">
+         <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+            data-ng-repeat="criterion in vm.search_criterias" data-ng-if="criterion.advance_filter_value">
+            <small>{{vm.displayFilter(criterion)}}</small>
+            <a class="space-on-left clickable link-disguise" data-ng-click="vm.removeFilterCriterion($index)">&times;</a>
+         </span>
+      </div>
+      <spinner data-ng-if="!vm.initGridSection"></spinner>
+      <div data-ng-if="vm.initGridSection">
+         <dv-grid grid-resource="vm.firms" dynamic-grid-columns="vm.dynamicGridColumns" grid-name="'firms'"></dv-grid>
+      </div>
+   </div>
+</div>

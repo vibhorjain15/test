@@ -1,0 +1,24 @@
+<div>
+  <dv-radio
+    type="info inline"
+    data-ng-value="true"
+    data-ng-model="response.booleanResponse"
+    label="Yes">
+  </dv-radio>
+
+  <dv-radio
+    type="info inline"
+    data-ng-value="false"
+    class="space-on-left"
+    data-ng-model="response.booleanResponse"
+    label="No">
+  </dv-radio>
+
+  <div data-ng-show="response.booleanResponse == false" class="space-on-top">
+    <textarea class="form-control"
+              placeholder="Please provide explanation"
+              msd-elastic="\n"
+              data-ng-model="response.textResponse"
+              required></textarea>
+  </div>
+</div>

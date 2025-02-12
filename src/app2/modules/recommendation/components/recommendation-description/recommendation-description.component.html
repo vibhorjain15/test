@@ -1,0 +1,20 @@
+<div tabindex="0" aria-label="Comments section">
+  <ng-container>
+    <div class="text-center spinner-display" *ngIf="loading" tabindex="-1">
+      <app-spinner spinnerHeight="300"></app-spinner>
+    </div>
+    <div *ngIf="comments && !loading">
+      <comments
+        [comments]="comments"
+        [issue]="issue"
+        [showDesc]="false"
+        [showHeaderIcon]="false"
+        (onSaveComment)="HandleOnSaveComment($event)"
+        (onDeleteComment)="HandleOnDeleteComment($event)"
+        (onUpdateComment)="HandleOnUpdateComment($event)"
+        (onSaveReply)="HandleOnSaveReply($event)"
+        (onCancelClick)="handleOnCancelClick()"
+      ></comments>
+    </div>
+  </ng-container>
+</div>

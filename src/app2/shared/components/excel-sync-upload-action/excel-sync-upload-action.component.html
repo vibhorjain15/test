@@ -1,0 +1,27 @@
+<div *ngIf="params.data">
+  <div>
+    <ngx-file-drop [accept]="params.accept"
+    (onFileDrop)="dropped($event)"
+    [multiple]="false">
+      <div class="ngx-file-drop__drop-zone">
+        <ng-template
+          ngx-file-drop-content-tmp
+          let-openFileSelector="openFileSelector"
+        >
+          <button appButton
+            type="submit"
+            size="sm"
+            class="btn btn-primary"
+            [adaptivePosition]="false"
+            tooltip="Upload completed Excel"
+            container="body"
+            (click)="openFileSelector()"
+            aria-label="upload"
+          >
+            <span appIcon name="upload3" aria-hidden="true" ></span>
+          </button>
+        </ng-template>
+      </div>
+    </ngx-file-drop>
+  </div>
+</div>

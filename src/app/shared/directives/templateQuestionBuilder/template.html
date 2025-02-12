@@ -1,0 +1,517 @@
+<div>
+  <div class="btn-group space-on-bottom-xxl"
+    data-ng-hide="(vm.useSingleQuestionMode || vm.single_question_mode || vm.allowRules)">
+    <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': !vm.showAddNewQuestion}"
+      data-ng-click="vm.addNewQuestion()">
+      Use Existing Questions
+    </label>
+    <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.showAddNewQuestion}"
+      data-ng-click="vm.addNewQuestion()">
+      Add New Questions
+    </label>
+  </div>
+  <div class="row clearfix">
+    <p class="alert alert-danger" data-ng-show="vm.display_alert_to_add_atleast_one_question">
+      Please add at least one question
+    </p>
+    <div class="numberOfUnsavedQuestions space-on-bottom" data-ng-if="vm.questions.length && vm.allowRules">
+      <p class="alert alert-warning">
+        <small>
+          <icon name="warning" size="1x"></icon>
+        </small>
+        You have <strong>{{vm.questions.length}}</strong> unsaved questions. Please click Save below to confirm your
+        changes.
+      </p>
+    </div>
+    <div data-ng-class="{'col-md-7': !vm.single_question_mode, 'col-md-12': vm.single_question_mode}">
+      <div class="panel" data-ng-show="vm.useSingleQuestionMode || vm.single_question_mode || vm.allowRules"
+        data-ng-class="{'panel-primary': vm.edit_mode, 'panel-default': !vm.edit_mode}">
+        <div class="panel-heading" data-ng-hide="vm.hide_panel_header">
+          <h5 class="panel-title">
+            <span data-ng-if="vm.edit_mode">Editing Question</span>
+            <span data-ng-if="!vm.edit_mode" ng-bind-html="vm.title"></span>
+          </h5>
+        </div>
+        <div class="panel-body">
+          <spinner data-ng-show="vm.loading"></spinner>
+          <div data-ng-hide="vm.loading">
+            <form class="form-horizontal" novalidate name="vm.question_form">
+              <div class="form-group" data-ng-if="vm.allowRules">
+                <label class="control-label" col="4">Reveal this question when response is</label>
+                <div col="8">
+                  <div class="row clearfix">
+                    <div col="6">
+                      <select class="form-control" required chosen data-ng-model="vm.question.rule.operator"
+                        data-ng-options="operator as operator.display_label for operator in vm.operators">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                    <div col="6">
+                      <form-group field-name="Value" data-ng-if="vm.parentQuestionResponseType == 'Date'"
+                        control-selector="dv-datepicker">
+                        <dv-datepicker data-ng-model="vm.question.rule.value" ng-required="true"></dv-datepicker>
+                      </form-group>
+                      <form-group field-name="Value" data-ng-if="vm.parentQuestionResponseType == 'Dropdown'">
+                        <select class="form-control" chosen required data-ng-model="vm.question.rule.value"
+                          data-ng-options="option.id as option.value for option in vm.parentQuestionOptions">
+                          <option value=""></option>
+                        </select>
+                      </form-group>
+                      <form-group field-name="Value"
+                        data-ng-if="vm.parentQuestionResponseType == 'Integer' || vm.parentQuestionResponseType == 'Percentage' || vm.parentQuestionResponseType == 'Numeric' || vm.parentQuestionResponseType == 'Identifier' || vm.parentQuestionResponseType == 'TextPhone'">
+                        <input type="number" maxlength="500" data-ng-model="vm.question.rule.value" class="form-control" required />
+                      </form-group>
+                      <form-group field-name="Value"
+                        data-ng-if="vm.parentQuestionResponseType == 'TextEmail' || vm.parentQuestionResponseType == 'Text' || vm.parentQuestionResponseType == 'TextMultiLine'">
+                        <input type="text" maxlength="500" data-ng-model="vm.question.rule.value" class="form-control" required />
+                      </form-group>
+                      <form-group field-name="Value"
+                        data-ng-if="vm.parentQuestionResponseType == 'Boolean' || vm.parentQuestionResponseType == 'BooleanPlus' || vm.parentQuestionResponseType == 'NoPlus'">
+                        <select class="form-control" chosen required data-ng-model="vm.question.rule.value"
+                          data-ng-options="option.value as option.label for option in vm.boolean_value_options">
+                          <option value=""></option>
+                        </select>
+                      </form-group>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <form-group field-name="Question Title" validate-on="submit">
+                <label class="control-label" col="4" for="question-title">
+                  Question Title
+                </label>
+                <div col="8">
+                  <textarea class="form-control" id="question-title" placeholder="Example: What is your firm name?"
+                    focus-me="vm.edit_mode" data-ng-disabled="vm.readonly_title" data-ng-model="vm.question.text"
+                    msd-elastic="\n" dv-restrict-input="{type: 'avoidFirstSplCharacter'}" style="min-height:60px;"
+                    required></textarea>
+                  <a role="button" data-ng-if="!vm.adding_advance_options" data-ng-click="vm.revealAdvanceOptions()">
+                    Add Help Text / Mandatory Flag / Word Count Limit
+                  </a>
+                </div>
+              </form-group>
+              <div class="panel panel-default" data-ng-show="vm.adding_advance_options">
+                <div class="panel-body">
+                  <form-group field-name="Question Hint Text" validate-on="submit">
+                    <label class="control-label" col="4" for="question-hint-text">
+                      Instructions / Tips
+                    </label>
+                    <div col="8">
+                      <textarea class="form-control" id="question-hint-text" ui-tinymce="vm.tinymceOptions"
+                        placeholder="Examples, guidelines on answering" focus-me="vm.edit_mode" data-ng-disabled="vm.readonly_title"
+                        data-ng-model="vm.question.hint_text" msd-elastic="\n"></textarea>
+                    </div>
+                    <div col="12" class="space-on-top-lg text-right">
+                      <span
+                          data-ng-class="{'text-success':vm.question.hint_text.length < vm.dvTextLimits.HELP_TEXT_LIMIT, 'text-danger':vm.question.hint_text.length >= vm.dvTextLimits.HELP_TEXT_LIMIT, 'bold-text':vm.question.hint_text.length >= 10000 }">
+                          <span data-ng-if="vm.question.hint_text.length > 0">
+                              {{vm.question.hint_text.length}} characters
+                          </span>
+                          (maximum {{vm.dvTextLimits.HELP_TEXT_LIMIT}} characters)
+                      </span>
+                  </div>
+                  </form-group>
+                  <div class="alert alert-danger" data-ng-if="vm.question.hint_text.length > vm.dvTextLimits.HELP_TEXT_LIMIT">
+                    Instructions / Tips is limited to {{vm.dvTextLimits.HELP_TEXT_LIMIT}} characters, you entered {{vm.question.hint_text.length}}
+                  </div>
+                  <form-group field-name="Word Count Limit"
+                    data-ng-show="vm.question.responseType.id == 1 || vm.question.responseType.id == 5">
+                    <label for="word-count-limit" class="control-label" col="4">
+                      Word Count Limit
+                      <icon name="info" class="text-info"
+                        uib-tooltip="Set the maximum word count limit for answering this question. You can set default limit from Firm settings.">
+                      </icon>
+                    </label>
+                    <div col="8" data-ng-show="!vm.resettingDefaultResponsesState">
+                      <input type="number" data-ng-model="vm.question.response_word_limit"
+                        class="form-control padded-left-sm font-size-12" data-ng-model-options="{'debounce': 500}"
+                        placeholder="No word count limit set" min="1" />
+                    </div>
+                    <div col="8" data-ng-if="vm.resettingDefaultResponsesState">
+                      <spinner broad-spinner spinner-height='35'></spinner>
+                    </div>
+                  </form-group>
+                  <form-group field-name="Mandatory Question" validate-on="submit">
+                    <div col="8" class="col-md-offset-4">
+                      <dv-checkbox data-ng-model="vm.question.is_mandatory" label="Mark this question as mandatory">
+                      </dv-checkbox>
+                      <a role="button" data-ng-if="vm.adding_advance_options" data-ng-click="vm.hideAdvanceOptions()">
+                        Hide Options
+                      </a>
+                    </div>
+                  </form-group>
+                </div>
+              </div>
+              <form-group field-name="Response Type">
+                <label for="response-type" class="control-label" col="4">
+                  Response Type
+                </label>
+                <div col="8" data-ng-if="!vm.resettingDefaultResponsesState">
+                  <select class="form-control" required chosen data-ng-model="vm.question.responseType"
+                    data-ng-options="responseType as responseType.description for responseType in vm.responseTypes"
+                    data-ng-change="vm.onResponseTypeChange(vm.question.responseType)">
+                    <option value=""></option>
+                  </select>
+                </div>
+                <div col="8" data-ng-if="vm.resettingDefaultResponsesState">
+                  <spinner broad-spinner spinner-height='35'></spinner>
+                </div>
+              </form-group>
+              <div class="form-group">
+                <div class="col-md-offset-4" col="8">
+                  <div class="space-on-bottom-lg" data-ng-if="vm.question.responseType.text == 'Attachment'">
+                    <dv-checkbox class="inline-block" data-ng-model="vm.question.attachmentUploadEnabled"
+                      label="Add a source file for responders"></dv-checkbox>
+                    <icon name="info" class="text-info"
+                      uib-tooltip="Attached file will be available for responders to download, complete, and re-attach">
+                    </icon>
+                  </div>
+                  <div class="well well-sm clear-margin"
+                    data-ng-class="{'bordered-blue': vm.question.attachmentUploadEnabled}">
+                    <field-preview question="vm.question" editable></field-preview>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-info" data-ng-if="vm.single_question_mode && vm.question_params.has_response">
+                <a data-ng-click="vm.showEditQuestionFAQ()">Following edits</a> are not possible once a question has active responses.
+              </div>
+              <div class="form-group" data-ng-hide="vm.single_question_mode">
+                <div col="8" class="col-md-offset-4">
+                  <button type="submit" data-ng-disabled="vm.question.hint_text.length >= vm.dvTextLimits.HELP_TEXT_LIMIT" data-ng-click="vm.addOrSaveQuestion()" data-ng-hide="vm.edit_mode">Add</button>
+                  <button type="submit" data-ng-disabled="vm.question.hint_text.length >= vm.dvTextLimits.HELP_TEXT_LIMIT" data-ng-click="vm.addOrSaveQuestion()" data-ng-show="vm.edit_mode">Save</button>
+                  <button btn-type="default" data-ng-show="vm.edit_mode" class="space-on-left"
+                    data-ng-click="vm.cancelEdit()">Cancel</button>
+                </div>
+              </div>
+            </form>
+            <div class="text-right space-on-top" data-ng-show="vm.edit_multiple_questions">
+              <button type="submit" class="space-on-right" data-ng-click="vm.save()"
+                button-loader="vm.saving_questions">Save</button>
+              <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-ng-hide="(vm.useSingleQuestionMode || vm.single_question_mode || vm.allowRules)">
+        <div data-ng-if="!vm.showAddNewQuestion">
+          <div class="panel panel-default">
+            <div class="panel-heading pa-lr-3-px">
+              <div class="row clearfix">
+                <div col="4">
+                  <div class="input-group-rename-this-class-when-filters-are-enabled space-on-left">
+                    <input type="text" data-ng-model="vm.filters.name" class="form-control padded-left-sm font-size-12"
+                      data-ng-model-options="{'debounce': 500}" data-ng-change="vm.applyNameFilter()"
+                      placeholder="Search by question text" />
+                  </div>
+                </div>
+                <div col="8">
+                  <div col="6">
+                    <button btn-type="default" class="space-on-top-2" size="sm" data-ng-if="vm.filters_data_loaded"
+                      uib-tooltip="{{vm.showFilters ? 'Hide' : 'Apply' }} Filters"
+                      data-ng-click="vm.toggleFiltersSection()">
+                      <icon name="filter" data-ng-class="{'text-orange': vm.filterApplied}"></icon>
+                    </button>
+                    <button btn-type="default" size="sm" data-ng-disabled="vm.disable_select_all"
+                      class="space-on-top-2 space-on-left" data-ng-click="vm.selectALLQuestions()">
+                      <span class="align-middle">Select All</span>
+                    </button>
+                    <button btn-type="default" size="sm" data-ng-disabled="vm.disable_select_all"
+                      class="space-on-top-2 space-on-left" data-ng-click="vm.removeALLQuestions()">
+                      <span class="align-middle">Remove All</span>
+                    </button>
+                  </div>
+                  <div col="6" class="no-margin">
+                    <select class="form-control" id="criteria_sort_filter" name="criteria_sort_filter" chosen
+                      data-placeholder="Select a filter" data-ng-model="vm.currentSortFilterSelected"
+                      data-ng-change="vm.selectSortCriteriaFilter()">
+                      <option value=""></option>
+                      <option value="ma-false">
+                        <span>
+                          Sort by: most answered ↑
+                        </span>
+                      </option>
+                      <option value="ma-true">
+                        <span>
+                          Sort by: most answered ↓
+                        </span>
+                      </option>
+                      <option value="fu-false">
+                        <span>
+                          Sort by: frequently used ↑
+                        </span>
+                      </option>
+                      <option value="fu-true">
+                        <span>
+                          Sort by: frequently used ↓
+                        </span>
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="space-on-top-lg" data-ng-if="vm.showFilters">
+              <div class="row">
+                <div col="12">
+                  <form class="form-horizontal" name="vm.custom_search_form" novalidate>
+                    <div class=" space-on-bottom-lg space-on-top-lg" col="12">
+                      <div col="12" class="space-on-top-xl"
+                        data-ng-repeat="criteria in vm.search_criterias track by $index">
+                        <div col="4" class="padding-right-lg">
+                          <form-group field-name="Criteria" tooltip-placement="left">
+                            <label for="criteria_{{$index}}" class="control-label text-capitalize"
+                              data-ng-if="$index==0">Filters</label>
+                            <select class="form-control" id="criteria_{{$index}}" name="criteria_{{$index}}" chosen
+                              data-ng-model="criteria.criteria_obj" data-placeholder="Select a criteria"
+                              data-ng-change="vm.selectCriteria(criteria, $index)"
+                              data-ng-options="option as option.filter_label for option in vm.allSearchFilterOptions">
+                              <option value=""></option>
+                            </select>
+                          </form-group>
+                        </div>
+                        <div col="3" class="padding-right-lg">
+                          <label class="control-label" data-ng-if="$index == 0">Condition</label>
+                          <form-group field-name="condition" tooltip-placement="left">
+                            <select class="form-control" data-ng-model="criteria.condition"
+                              data-ng-init="vm.setOptionsDefaultValue(criteria, $index)">
+                              <option data-ng-repeat="operation in criteria.criteria_obj.search_type track by $index"
+                                value="{{operation.value}}">
+                                {{operation.label}}
+                              </option>
+                            </select>
+                          </form-group>
+                        </div>
+                        <div col="5">
+                          <div class="width-90-pct inline-block padding-right-lg">
+                            <form-group field-name="Value" tooltip-placement="left"
+                              data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.BOOLEAN">
+                              <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                              <select allow-single-deselect="true" class="form-control" id="value_{{$index}}" chosen
+                                data-ng-init="criteria.advance_filter_value = true"
+                                data-ng-model="criteria.advance_filter_value" disabled>
+                                <option ng-value="true">Yes</option>
+                              </select>
+                            </form-group>
+                            <form-group field-name="Value"
+                              data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.NUMBER || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.INT || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.NUMERIC || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.INTEGER"
+                              tooltip-placement="left">
+                              <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                              <input type="number" data-ng-model="criteria.advance_filter_value" class="form-control" />
+                            </form-group>
+                            <form-group field-name="Value"
+                              data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.STRING || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.TEXT || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.PARAGRAPH || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.MULTILINE || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.LINK"
+                              tooltip-placement="left">
+                              <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                              <input type="text" id="value_{{$index}}" data-ng-model="criteria.advance_filter_value"
+                                placeholder="Type a value" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                class="form-control" />
+                            </form-group>
+                            <form-group field-name="Value"
+                              data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DYNAMIC || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.RANGE || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DROPDOWN || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.CHECKBOX || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DROP"
+                              tooltip-placement="left">
+                              <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                              <select allow-single-deselect="true" class="form-control" id="value_{{$index}}" chosen
+                                data-ng-model="criteria.advance_filter_value"
+                                data-ng-options="option.id as option.value for option in criteria.criteria_obj.options">
+                                <option value=""></option>
+                              </select>
+                            </form-group>
+                            <form-group field-name="Value"
+                              data-ng-if="criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DATE && criteria.condition == 'between'"
+                              control-selector="dv-daterangepicker">
+                              <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                              <div col="12">
+                                <dv-daterangepicker data-ng-model="criteria.advance_filter_value"
+                                  name="daterangefilter_{{$index}}" min-date="vm.minDate" max-date="vm.maxDate"
+                                  apply-method="vm.applyMethod">
+                                </dv-daterangepicker>
+                              </div>
+                            </form-group>
+                            <form-group field-name="Value"
+                              data-ng-if="(criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DATE || criteria.criteria_obj.filter_type.toLowerCase() == vm.FILTER_TYPES.DATETIME) && criteria.condition != 'between'"
+                              control-selector="dv-datepicker">
+                              <label for="value_{{$index}}" class="control-label" data-ng-if="$index==0">Value</label>
+                              <dv-datepicker data-ng-model="criteria.advance_filter_value" name="datefilter_{{$index}}"
+                                data-ng-change="vm.setModelValidity()">
+                              </dv-datepicker>
+                            </form-group>
+                          </div>
+                          <a data-ng-style="$index == 0 && {'top':'33px'}"
+                            data-ng-if="criteria.advance_filter_value.toString() != '' && (criteria.advance_filter_value || criteria.advance_filter_value.toString() == '0')"
+                            data-ng-click="vm.removeCurrentFilter(criteria,$index)" class="clickable clear-filter-btn">
+                            <icon name="close" class="color-danger"></icon>
+                          </a>
+                        </div>
+                      </div>
+                      <div col="12" class="space-on-top-xxl">
+                        <div offset="10" col="2" class="">
+                          <div class="pull-right ">
+                            <button btn-type="default" size="sm" class="space-on-right" uib-tooltip="Add Criteria"
+                              data-ng-click="vm.addNewCriteria()">
+                              <icon name="plus"></icon>
+                            </button>
+                          </div>
+                          <div class="space-on-bottom-lg space-on-top-lg pull-right" style="width: 253px;">
+                            <button type="submit" block="true" class="btn btn-primary btn-block-overwrite"
+                              data-ng-click="vm.searchByFilters()">
+                              Start Searching
+                            </button>
+                            <button btn-type="default" data-ng-click="vm.resetFilters()">
+                              Reset & Search
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <spinner broad-spinner spinner-height='60' data-ng-show="vm.processing_data"></spinner>
+            <div data-ng-show="!vm.processing_data && vm.oldQuestionsList.length > 0" class="list-group">
+              <div class="overflow-y-scroll">
+                <div class="list-group-item" data-ng-repeat="question in vm.oldQuestionsList">
+                  <div class="row clearfix">
+
+                    <span uib-tooltip="Remove Question" class="space-on-right"
+                      data-ng-show="question.is_selected || vm.select_all_entities">
+                      <icon name="minus-circle" class="text-danger" role="button" size="lg"
+                        data-ng-click="vm.removeFromSelection(question)"></icon>
+                    </span>
+
+                    <span class="space-on-right" uib-tooltip="Select {{question.question_text}}"
+                      data-ng-hide="question.is_selected || vm.select_all_entities">
+                      <icon name="plus-circle" data-ng-click="vm.addToSelection(question)" size="lg"
+                        class="text-primary" role="button"></icon>
+                    </span>
+
+                    <span>
+                      {{question.question_text}}
+                      <br>
+                      <span class="space-on-left-xxxxl">
+                        <strong>Response Type</strong> : {{vm.getResponseTypeById(question.response_type).description}}
+                        |
+                        <strong>Response(s)</strong> : {{question.response_count}}
+                        |
+                        <span uib-tooltip="{{vm.showTemplatesNames(question.templates)}}" class="clickable">
+                          <strong>Template(s)</strong> : {{question.template_count}}
+                        </span>
+                      </span>
+                    </span>
+
+                    <div class="newly-added-tag" data-ng-if="question.newly_added">
+                      <span class="label label-orange text-uppercase space-on-right">
+                        New
+                      </span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body" data-ng-show="!vm.oldQuestionsList.length && !vm.processing_data">
+              <empty-state message="No questions available.">
+              </empty-state>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default" data-ng-if="vm.showAddNewQuestion">
+          <div class="panel-heading" data-ng-hide="vm.hide_panel_header">
+            <h5 class="panel-title">
+              Add multiple questions
+            </h5>
+          </div>
+          <div class="panel-body">
+            <form>
+              <form-group field-name="Response Type">
+                <label for="response-type" class="control-label space-on-top" col="3">
+                  Response Type:
+                </label>
+                <div col="7">
+                  <select class="form-control" required chosen
+                    data-ng-change="vm.responseTypeChanged(vm.selectedResponseTypeForBulk)"
+                    data-ng-model="vm.selectedResponseTypeForBulk"
+                    data-ng-options="responseType as responseType.description for responseType in vm.responseTypes">
+                    <option value=""></option>
+                  </select>
+                </div>
+                <div col="8" data-ng-if="vm.resettingDefaultResponsesState">
+                  <spinner broad-spinner spinner-height='35'></spinner>
+                </div>
+              </form-group>
+            </form>
+            <br>
+            <br>
+            <div class="space-on-top">
+              <dv-bulk-list-builder id-key="'id'" text-key="'text'" ng-model="vm.newQuestions"
+                current-length="vm.questions.length" type="'Question'" value-required="true"></dv-bulk-list-builder>
+            </div>
+            <br>
+            <button class="btn btn-primary" data-ng-click="vm.addBulkQuestions()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div col="5" data-ng-hide="vm.single_question_mode">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title">Preview of questions</h5>
+        </div>
+        <div class="panel-body overflow-auto max-height-400">
+          <empty-state data-ng-if="!vm.showAddNewQuestion"
+            message="Hola! Select questions from the left panel, you can preview them here. You can also add multiple questions & save all at once using the save button at the bottom right"
+            icon-name="document-question" data-ng-hide="vm.questions.length"></empty-state>
+          <empty-state data-ng-if="vm.showAddNewQuestion"
+            message="Hola! Add questions using the form on the left, you can preview them here. You can also add multiple questions & save all at once using the save button at the bottom right"
+            icon-name="document-question" data-ng-hide="vm.questions.length"></empty-state>
+          <ul class="question-preview-list">
+            <li data-ng-repeat="question in vm.questions"
+              data-ng-class="{'active': vm.question == question, 'widerPreviewList': vm.getQuestionType(question)}"
+              class="relative">
+              <div class="pos-abs stick-right-xxl stick-top-sm">
+                <button btn-type="default" size="sm" data-ng-click="vm.editQuestion(question , $index)">
+                  <icon name="pencil"></icon>
+                </button>
+                <button btn-type="default" size="sm" class="danger space-on-left"
+                  data-ng-click="vm.removeQuestion(question,$index)">
+                  <icon name="trashcan"></icon>
+                </button>
+              </div>
+              <label class="control-label" ng-bind-html="question.text"></label>
+              <icon name="info" class="text-info" data-ng-if="question.hint_text" uib-tooltip-html="question.hint_text | cleanhtml">
+              </icon>
+              <field-preview question="question"></field-preview>
+              <div class="space-on-top" data-ng-show="question.is_mandatory">
+                <small class="text-info">
+                  <i>This is a mandatory question</i>
+                </small>
+              </div>
+              <div data-ng-show="question.rule" class="space-on-top">
+                <small class="text-info">
+                  <i>
+                    This question is revealed when the response {{question.rule.operator.display_symbol}}
+                    {{question.rule.display_value}}
+                  </i>
+                </small>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-ng-show="!vm.single_question_mode && !vm.allowRules">
+    <dv-checkbox data-ng-change="vm.checkboxValueChanged(vm.useSingleQuestionMode)"
+      data-ng-model="vm.useSingleQuestionMode">
+      <dv-checkbox-label>
+        <p>Add one question at a time instead</p>
+      </dv-checkbox-label>
+    </dv-checkbox>
+  </div>
+  <hr data-ng-hide="vm.edit_multiple_questions">
+  <div class="text-right" data-ng-hide="vm.edit_multiple_questions">
+    <button type="submit" class="space-on-right" data-ng-click="vm.save()"
+      button-loader="vm.saving_questions">Save</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</div>

@@ -1,0 +1,112 @@
+<div class="form-horizontal my-profile">
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <user-avatar avatar-icon-size="4x"
+                   avatar-icon-class="avatar"
+                   avatar-img-class="img-thumbnail avatar"></user-avatar>
+    </div>
+    <div class="col-md-10">
+      <h3 class="clear-margin-top">{{vm.user.basicUserInfo.firstName}} {{vm.user.basicUserInfo.lastName}}</h3>
+
+      <ul class="list-unstyled user-info-list">
+        <li>
+          <span data-ng-if="vm.user.userContact.title">
+            <icon name="briefcase" size="fw"></icon>
+            {{vm.user.userContact.title}}
+          </span>
+          <small data-ng-if="!vm.user.userContact.title" class="text-muted">
+            <i>**Title not set**</i>
+          </small>
+        </li>
+
+        <li>
+          <icon name="mail" size="fw"></icon>
+          {{vm.user.basicUserInfo.userName}}
+        </li>
+
+        <li>
+          <icon name="institution" size="fw"></icon>
+          {{vm.user.basicUserInfo.firmInfo.name}}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <label>Date of Birth</label>
+    </div>
+    <div class="col-md-10">
+      <span>{{vm.user.birthDate | date:"dd MMMM, yyyy"}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.birthDate">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <label>Phone</label>
+    </div>
+    <div class="col-md-10">
+      <span>{{vm.user.userContact.phone}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.userContact.phone">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <label>Street Address</label>
+    </div>
+    <div class="col-md-10">
+      <span>{{vm.user.userContact.streetAddress}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.userContact.streetAddress">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <label>City</label>
+    </div>
+    <div class="col-md-10">
+      <span>{{vm.user.userContact.city}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.userContact.city">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <label>Zipcode</label>
+    </div>
+    <div class="col-md-10">
+      <span>{{vm.user.userContact.zipcode}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.userContact.zipcode">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <label>Country</label>
+    </div>
+    <div class="col-md-10">
+      <span>{{vm.user.userContact.country}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.userContact.country">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group clear-margin">
+    <div class="col-md-10 col-md-offset-2">
+      <button btn-type="primary" data-ng-click="vm.switchMode('edit')">Edit Profile</button>
+    </div>
+  </div>
+</div>

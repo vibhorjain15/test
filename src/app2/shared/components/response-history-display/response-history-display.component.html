@@ -1,0 +1,78 @@
+<ng-container *ngIf="currentResponse.is_na">
+  <small class="text-muted">*Marked as Not Applicable*</small>
+  <p
+    class="clear-margin word-break-break-all revisions-responsive-image"
+    htmlDiff
+    consider-null
+    [previous]="prevResponse?.responseDisplay"
+    [current]="currentResponse?.responseDisplay"
+  ></p>
+</ng-container>
+
+<ng-container *ngIf="!currentResponse.is_na">
+  <ng-container *ngIf="response_type === ResponseTypes.Grid && gridLoaded">
+    <div [style]="{ maxHeight: maxHeight }" class="overflow-auto">
+      <table class="table table-bordered table-condensed">
+        <thead *ngIf="groupedColRowData.Column?.length > 0">
+          <tr>
+            <th *ngIf="groupedColRowData.Row?.length > 0"></th>
+            <th *ngFor="let header of groupedColRowData.Column">
+              {{ header.name }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of data; let i = index">
+            <td *ngIf="groupedColRowData.Row?.length > i">
+              <strong>{{ groupedColRowData.Row[i].name }}</strong>
+            </td>
+            <td
+              *ngFor="let cell of row"
+              htmlDiff
+              [previous]="cell.previous?.value"
+              [current]="cell.current?.value"
+            ></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <ng-container
+    *ngIf="response_type === ResponseTypes.DynamicGrid && gridLoaded"
+  >
+    <div [style]="{ maxHeight: maxHeight }" class="overflow-auto">
+      <table class="table table-bordered table-condensed">
+        <thead *ngIf="gridData.rows_columns.length > 0">
+          <tr>
+            <th *ngIf="data?.length > 0"></th>
+            <th *ngFor="let header of gridData.rows_columns">
+              {{ header.name }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of data; let i = index">
+            <td>
+              <strong>{{ i + 1 }}</strong>
+            </td>
+            <td
+              *ngFor="let cell of row"
+              htmlDiff
+              [previous]="cell.previous?.value"
+              [current]="cell.current?.value"
+            ></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <p
+    class="clear-margin word-break-break-all revisions-responsive-image"
+    htmlDiff
+    consider-null
+    [previous]="prevResponse?.responseDisplay"
+    [current]="currentResponse?.responseDisplay"
+  ></p>
+</ng-container>

@@ -1,0 +1,5 @@
+<div data-ng-hide="vm.is_loading">
+    <div data-ng-if="vm.requestsList && !vm.loading_data">
+        <dv-grid grid-resource="vm.requestsList" refresh-data="vm.refreshGridData" name="vm.requests_grid"></dv-grid>
+    </div>
+</div>

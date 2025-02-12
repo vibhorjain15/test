@@ -1,0 +1,15 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-document-groups></ng2-document-groups> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Document Tags</h5>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Manage all Document tags that are relevant to your organization under this
+            section.</div>
+    </div>
+    <div class="panel-body">
+        <div>
+            <tags-manager tag="vm.contactInfo" tags-value="vm.documentTags"></tags-manager>
+        </div>
+    </div>
+</div>

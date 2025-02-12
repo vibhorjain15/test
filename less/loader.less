@@ -1,0 +1,29 @@
+.loader-wrapper {
+  @logo-width: 200px;
+  @logo-height: 60px;
+  @body-padding-top: 60px;
+  @artboard-width: 130px;
+  @artboard-height: 105px;
+
+  .loader-logo, .artboard {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+
+  .loader-logo {
+    margin-left: -@logo-width/2;
+    margin-top: 0;
+  }
+
+  .artboard {
+    margin-left: -@artboard-width / 2;
+    margin-top: -(@artboard-height / 2) - @body-padding-top;
+
+    canvas {
+      position: absolute;
+      top: 0px;
+      left: 8px;
+    }
+  }
+}

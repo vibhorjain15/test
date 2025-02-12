@@ -1,0 +1,2 @@
+class ExcelSyncManageAumTrController extends BaseController
+  @register 'ExcelSyncManageAumTrController'

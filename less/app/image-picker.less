@@ -1,0 +1,45 @@
+.dv-image-picker {
+  margin-left: -5px;
+  margin-right: -5px;
+  max-height: 400px;
+  overflow-y: auto;
+
+  > li {
+    margin: 5px;
+
+    > a {
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    &.active {
+      > a {
+        position: relative;
+
+        &:after {
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          content: "";
+          z-index: 10;
+          opacity: 0.8;
+          position: absolute;
+          background: @brand-primary;
+        }
+      }
+    }
+  }
+}
+
+.dv-image-placeholder {
+  background: #efefef;
+  padding: 50px 15px;
+}
+
+.image-controls {
+  position: absolute;
+  z-index: 20;
+  right: 5px;
+  top: 4px;
+}

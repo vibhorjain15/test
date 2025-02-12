@@ -1,0 +1,48 @@
+  <form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+      <div class="modal-header">
+        <h3 class="modal-title">Setup Smart Text For "{{vm.question.text}}"
+          <a class="pull-right clickable link-disguise link-unstyled"
+             data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+      </div>
+      <div class="panel panel-info">
+            <div class="panel-heading">Smart text can be only used in Analyst Evaluation diligence</div>
+      </div>
+      <div class="modal-body">
+        <div class="row clearfix standardizedTextArea">
+            <div col="12">
+                <form-group field-name="Name">
+                    <label for="document-name" class="col-md-2 control-label">
+                        Text
+                    </label>
+
+                    <div class="col-md-9">
+                      <textarea id="email-text"
+                              ui-tinymce="vm.tinymceOptions"
+                              class="form-control"
+                              data-ng-model="vm.params.text"
+                              ng-change="vm.setPreviewText(vm.params.text)"
+                              ng-model-options="{ debounce: { 'default': 500 } }"></textarea>
+                    </div>
+                </form-group>
+            </div>
+            <div col="12" class="space-on-top-lg" ng-if="vm.previewString && vm.previewString.length">
+                <form-group field-name="Name">
+                    <label for="document-name" class="col-md-2 control-label">
+                        Preview
+                    </label>
+
+                    <div class="col-md-9">
+                      <div ng-bind-html="vm.previewString | trusthtml" class="preview_div"></div>
+                      <!-- <textarea class="form-control space-on-top-lg" rows="5" ng-model="vm.params.text"></textarea> -->
+                    </div>
+                </form-group>
+            </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+          <button type="submit" button-loader="vm.loading">Save</button>
+          <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+      </div>
+  </form>

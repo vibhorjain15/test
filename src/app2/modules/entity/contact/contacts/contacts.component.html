@@ -1,0 +1,305 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top hide-in-print-view">
+      <div class="panel-body clearfix">
+        <app-spinner *ngIf="!contact"></app-spinner>
+        <div class="display-flex justify-space-between">
+          <div class="dv-table dv-table-middle dd-info-panel" *ngIf="contact">
+            <div class="bordered-right cell">
+              <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                {{ contact.fullName }}
+                <span
+                  class="space-on-left label label-warning"
+                  tooltip="Deactivated by the owner firm"
+                  container="body"
+                  *ngIf="!contact.platform_active && contact.active"
+                  >{{ statusLabel.INACTIVE }}</span
+                >
+                <span
+                  class="dot-success"
+                  tooltip="Active DiligenceVault user"
+                  container="body"
+                  *ngIf="contact.conversionDateTime && !contact.bounced_at"
+                ></span>
+                <span *ngIf="contact.bounced_at">
+                  <small
+                    class="text-danger"
+                    tooltip="Emails to this contact have bounced in the past."
+                    container="body"
+                  >
+                    <span appIcon name="warning"></span>
+                  </small>
+                </span>
+              </h4>
+              <small class="text-muted">
+                {{ contact.title }} at
+                <a (click)="navigateToAssociatedFirm()">{{
+                  contact.firmInfo.name
+                }}</a>
+              </small>
+              <div *ngIf="!contact.active" class="space-on-top">
+                <span class="label label-danger"> INACTIVE </span>
+              </div>
+            </div>
+            <div class="cell text-center bordered-right">
+              <h4 class="clear-margin">
+                {{ contact.owner_name }}
+              </h4>
+              <small class="text-muted"> DiligenceVault Owner </small>
+            </div>
+            <div class="cell">
+              <dv-button
+                [fontSizeType]="'large'"
+                [leftIcon]="null"
+                [btnType]="'transparent'"
+                [tooltipText]="'Edit / Inactive'"
+                (onClick)="
+                  contact.isMoreOptionsVisible = !contact.isMoreOptionsVisible
+                "
+              >
+                <div><span appIcon name="ellipsis-h" size="2x"></span></div>
+                <div class="space-on-top-n"><small>More Actions</small></div>
+              </dv-button>
+              <dv-dropdown
+                type="default"
+                (onDropdownClick)="onDropdownClick($event)"
+                (onDropdownToggle)="contact.isMoreOptionsVisible = $event"
+                [toggleDropDown]="contact.isMoreOptionsVisible"
+                [dropDownList]="contactActions"
+                dropdownPlacement="bottom"
+              ></dv-dropdown>
+            </div>
+          </div>
+          <div class="dv-table dv-table-middle dd-info-panel" *ngIf="contact">
+            <div class="bordered-right w-320 cell" *ngIf="customDateFilter">
+              <app-date-range-picker
+                [maxDate]="maxDate"
+                [customDate]="dateRangeForDirectives"
+                (change)="onChange($event)"
+                (clearDateFilter)="onClearDateFilter()"
+              ></app-date-range-picker>
+            </div>
+            <div class="cell text-center">
+              <a
+                class="btn btn-transparent"
+                (click)="navigateToMonitorContacts()"
+              >
+                <div><span appIcon name="arrow-back" size="2x"></span></div>
+                <small>Back to all contacts</small>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="4" class="dv-notes-list-panel hide-in-print-view">
+        <div class="dv-notes-list-panel">
+          <app-dv-custom-fields
+            entityType="Vehicle"
+            [entityId]="vehicleId"
+            [customFields]="customFields"
+            (onAdd)="manageCustomfield()"
+          ></app-dv-custom-fields>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span>
+              <span
+                appIcon
+                name="fund"
+                class="space-on-right align-middle"
+              ></span>
+              <span class="align-middle">
+                Associated Products
+                <span *ngIf="all_products.length"
+                  >(Top {{ associated_products.length }} of
+                  {{ all_products.length }} products)</span
+                >
+              </span>
+            </span>
+          </div>
+          <div class="panel-body has-notes-form clear-padding">
+            <app-spinner
+              [broadSpinner]="true"
+              spinnerHeight="80"
+              *ngIf="!associated_products"
+            ></app-spinner>
+            <ul
+              class="list-group clear-margin-bottom tasks-list"
+              *ngIf="associated_products && associated_products.length"
+            >
+              <li
+                class="list-group-item pa-tb-xl pa-lr-xxl task-item"
+                *ngFor="
+                  let product of associated_products;
+                  let $index = index;
+                  trackBy: trackByIndex
+                "
+              >
+                <div class="media">
+                  <div class="media-left">
+                    <span class="circled-initials clear-margin-left">
+                      {{ $index + 1 }}
+                    </span>
+                  </div>
+                  <div class="media-body">
+                    <div class="dv-table full-width">
+                      <div class="cell align-middle">
+                        <span>
+                          <a
+                            class="link-disguise"
+                            *ngIf="is_manager"
+                            (click)="navigateToProfileSummary(product.id)"
+                          >
+                            <!-- TODO:dv-limit-word="product.name"
+                              char-limit="40"  -->
+                            <span
+                              dv-limit-word="product.name"
+                              char-limit="40"
+                              [tooltip]="product.name"
+                              container="body"
+                              class="word-break-break-all"
+                              >{{ product.name }}</span
+                            >
+                          </a>
+                          <a
+                            class="link-disguise"
+                            *ngIf="!is_manager"
+                            (click)="navigateToProfileMonitor(product.id)"
+                          >
+                            <!-- TODO: dv-limit-word="product.name"
+                              char-limit="40" -->
+                            <span
+                              dv-limit-word="product.name"
+                              char-limit="40"
+                              [tooltip]="product.name"
+                              container="body"
+                              class="word-break-break-all"
+                              >{{ product.name }}</span
+                            >
+                          </a>
+                        </span>
+                        <dv-button
+                          [loader]="false"
+                          tooltipText="Remove product association"
+                          [btnType]="'default'"
+                          [btnClass]="'danger pull-right'"
+                          [fontSizeType]="'medium'"
+                          [size]="'xs'"
+                          (onClick)="
+                            confirmRemoveProductAssociation(product, $index)
+                          "
+                        >
+                          <span appIcon name="close"></span>
+                        </dv-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <div
+              class="text-muted padded-xl"
+              *ngIf="associated_products && !associated_products.length"
+            >
+              <i>**No products associated**</i>
+            </div>
+          </div>
+        </div>
+        <app-dv-tasks
+          *ngIf="contact"
+          [entityType]="'User'"
+          [entityId]="contactId"
+          [pageUrl]="pageUrl"
+          [dateFilter]="dateRangeForDirectives"
+        ></app-dv-tasks>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span>
+              <span
+                appIcon
+                name="bookmark"
+                class="space-on-right align-middle"
+              ></span>
+              <span class="align-middle"> Contact Details </span>
+            </span>
+          </div>
+          <div class="panel-body">
+            <app-spinner *ngIf="!contact"></app-spinner>
+            <ul class="list-unstyled due-diligence-history" *ngIf="contact">
+              <li>
+                <small class="text-muted text-uppercase">Email:</small>
+                {{ contact.userName }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">Phone:</small>
+                {{ contact.phone_1 }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">Phone 2:</small>
+                {{ contact.phone_2 }}
+              </li>
+              <li>
+                <div>
+                  <small class="text-muted text-uppercase">Contact Type:</small>
+                </div>
+                <span *ngIf="contact.contact_types">
+                  <span class="label-list">
+                    <span
+                      class="label label-default space-on-right text-uppercase"
+                      *ngFor="
+                        let tag of contact.contact_types;
+                        trackBy: trackByIndex
+                      "
+                    >
+                      <small>{{ tag.name }}</small>
+                    </span>
+                  </span>
+                </span>
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">Street Address:</small>
+                {{ contact.street_address_1 }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase"
+                  >Street Address 2:</small
+                >
+                {{ contact.street_address_2 }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">City:</small>
+                {{ contact.city }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">State:</small>
+                {{ contact.state }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">Zipcode:</small>
+                {{ contact.zipcode }}
+              </li>
+              <li>
+                <small class="text-muted text-uppercase">Country:</small>
+                {{ contact.country }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div col="8">
+        <app-dv-notes
+          *ngIf="contact"
+          [entityType]="entityType"
+          [entityId]="contactId"
+          [notesOptions]="notesOptions"
+          [entityName]="contact.fullName"
+          [dateFilter]="dateRangeForDirectives"
+          [pageUrl]="pageUrl"
+          [currentUser]="current_user"
+        ></app-dv-notes>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<p>
+    <p class="space-on-top-lg answer-text-color" data-ng-bind-html="::response.attributes.textResponse">
+    </p>
+  
+    <i class="text-muted" data-ng-show="!response.attributes.responseDisplay">
+      <small>*No Response Available*</small>
+    </i>
+   
+    <i class="text-danger" data-ng-show="response.is_na">
+      <small>*Marked as Not Applicable*</small>
+      (<span ng-bind-html="response.attributes.textResponse" class="inline word-break-break-all"></span>)
+    </i>
+  
+  </p>
+  

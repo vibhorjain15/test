@@ -1,0 +1,4 @@
+<ui-grid-cell-contents>
+  <div data-ng-show="!row.entity.latest_step_name">--</div>
+  <div data-ng-show="row.entity.latest_step_name" truncate-text="40" uib-tooltip="{{row.entity.latest_step_name}}">{{ row.entity.latest_step_name}}</div>
+</ui-grid-cell-contents>

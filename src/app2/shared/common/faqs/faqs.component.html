@@ -1,0 +1,74 @@
+<h3 class="text-center space-on-top-xxl space-on-bottom">Frequently Asked <strong class="text-orange">Questions</strong>
+</h3>
+<div class="faqSearch container text-center space-on-top-xxl">
+  <input type="text" class="form-control" placeholder="Search FAQs" [(ngModel)]="search_text">
+</div>
+<div *ngFor="let faq of faqs | filter: search_text;" class="faqCollapse container">
+  <h3 class="text-primary space-on-top space-on-bottom-xxl" *ngIf='faq.section_id'>{{faq.section_title}}</h3>
+  <div>
+    <accordion [closeOthers]="true">
+      <div *ngFor="let question of faq.questions ;
+      let $index = index">
+        <accordion-group [isOpen]="question.isOpen" (isOpenChange)="isOpenChange($event, question)"
+          class="{{ question.isOpen ? 'accordion-selected' : '' }}">
+          <div accordion-heading>
+            <h4 class="panel-title">
+              <a role="button" class="link-unstyled">
+                <span class="badge">{{question.id}}</span>
+                <span class="space-on-left question_text"><strong>{{question.text}}</strong></span>
+              </a>
+              <span class="indicating-icons">
+                <span appIcon *ngIf="question.isOpen" class="dvi dvi-chevron-up"></span>
+                <span appIcon *ngIf="!question.isOpen" class="dvi dvi-chevron-down"></span>
+              </span>
+            </h4>
+          </div>
+          <div>
+            <span [innerHtml]="question.answer"></span>
+          </div>
+        </accordion-group>
+      </div>
+    </accordion>
+  </div>
+</div>
+<div class="faqCollapse container">
+  <h3 class="text-primary space-on-top space-on-bottom-xxl">All Things Help</h3>
+  <div>
+    <accordion [closeOthers]="true">
+      <div>
+        <accordion-group [isOpen]="isLastOneOpen" (isOpenChange)="isLastOneOpenEvent($event)"
+          class="{{ isLastOneOpen ? 'accordion-selected' : '' }}">
+          <div accordion-heading>
+            <h4 class="panel-title">
+              <a role="button" class="link-unstyled">
+                <span class="badge">36</span>
+                <span class="space-on-left question_text"><strong>I need help, how do I get in touch with
+                    you?</strong></span>
+              </a>
+              <span class="indicating-icons">
+                <span appIcon *ngIf="isLastOneOpen" class="dvi dvi-chevron-up"></span>
+                <span appIcon *ngIf="!isLastOneOpen" class="dvi dvi-chevron-down"></span>
+              </span>
+            </h4>
+          </div>
+          <div>
+            <span>
+              <p> Access the help icon at the top right corner, and we have a multiple resources for you:</p>
+              <ol>
+                <li><a (click)="toggleFeedbackPanel()" class="clickable">Write to us </a> about issues, queries, to
+                  request a demo or just give us feedback, or even say hello :)</li>
+                <li>Review the FAQs</li>
+                <li>We are a phone call or email away: Call us at +1 646 546 5087 or email us at ask@diligencevault.com
+                </li>
+              </ol>
+            </span>
+          </div>
+        </accordion-group>
+      </div>
+    </accordion>
+  </div>
+</div>
+<div class="faqFooter">
+  <h4 class="text-center">For any further queries or issues: Call us at <a href="tel:+16465465087">+16465465087</a> or
+    Email us at <a><a href="mailto:ask@diligencevault.com?subject=faq">ask@diligencevault.com</a></a> </h4>
+</div>

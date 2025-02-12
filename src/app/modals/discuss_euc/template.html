@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    End User Certification for Discuss
+  </h3>
+</div>
+
+<div class="modal-body euc-content" on-scroll-complete="vm.read_tac = true">
+  <div data-ng-include="vm.template" data-onload="vm.templateLoaded = true"></div>
+</div>
+
+<div class="modal-footer">
+  <button type="submit"
+          data-ng-click="vm.acceptAgreement()"
+          data-ng-disabled="!vm.templateLoaded || !vm.read_tac"
+          button-loader="vm.loading">Agree</button>
+
+  <button btn-type="default"
+          data-ng-click="vm.cancel()"
+          data-ng-disabled="!vm.templateLoaded">Disagree</button>
+</div>

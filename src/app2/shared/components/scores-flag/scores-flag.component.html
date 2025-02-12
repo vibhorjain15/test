@@ -1,0 +1,5 @@
+<div *ngIf="params.data">
+    {{params.data[field]}}
+    <span appIcon class="align-middle space-on-left" [adaptivePosition]="false" tooltip="{{tooltipStr}}" container="body" name="flag"
+        [ngClass]="{'dd-no-flag-set': !params.data[field], 'text-danger': params.data[field]}"></span>
+</div>

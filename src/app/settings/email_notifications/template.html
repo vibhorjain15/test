@@ -1,0 +1,24 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-email></ng2-email> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Email Notifications</h5>
+  </div>
+
+  <div class="panel-body">
+    <spinner data-ng-hide="vm.notification_settings"></spinner>
+    <form novalidate
+          name="vm.notifications_form"
+          data-ng-show="vm.notification_settings"
+          data-ng-submit="vm.submit()">
+
+      <dv-checkbox
+        data-ng-class="{'clear-margin-top': $first}"
+        ng-repeat="(key, value) in vm.notification_settings.descriptions"
+        data-ng-model="vm.notification_settings[key]"
+        label="{{value}}">
+      </dv-checkbox>
+
+      <button type="submit" button-loader="vm.saving">Update Notifications</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<form name="vm.strategy_form"
+      data-ng-submit="vm.save()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.getModalTitle()}}
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body" data-ng-hide="vm.loading">
+    <div class="panel-body">
+      <form-group field-name="User Role" ng-repeat="entry in vm.ownerList track by $index" ng-init="entry.index = $index">
+        <div for="strategy-type" col="4">
+          <div>
+            <label for="">User Roles:</label>
+          </div>
+          <select name="functionInput"
+                  id="functionInput"
+                  class="form-control"
+                  chosen
+                  ng-disabled="vm.edit_mode"
+                  data-ng-options="function.function_id as function.function_name disable when function.disabled for function in entry.functions"
+                  data-ng-model="entry.selectedFunction"
+                  ng-change="vm.onFunctionChange(entry)"
+                  required>
+            <option value="">--Select--</option>
+          </select>
+        </div>
+
+        <div col="7">
+          <div>
+            <label for="">Team Member(s):</label>
+          </div>
+          <tags-input data-ng-model="entry.users"
+                      display-property="fullName"
+                      key-property="id"
+                      placeholder="Select Team Member(s)"
+                      add-from-autocomplete-only=true
+                      id="Primary-Owner">
+              <auto-complete source="vm.filterMembers($query)"
+                             load-on-focus=true
+                             load-on-down-arrow=true
+                             load-on-empty=true
+                             max-results-to-show="{{vm.team_members.length}}"
+                             min-length="1"></auto-complete>
+          </tags-input>
+        </div>
+        <div col="1">
+          <div class="ownerDeleteBtn"  ng-hide="vm.edit_mode">
+            <button ng-show="vm.ownerList.length > 1" class="btn btn-default btn-sm danger" uib-tooltip="Delete" data-ng-click="vm.removeOwnerList(entry)">
+                <strong><icon name="trashcan"></icon></strong>
+            </button>
+            <button ng-show="$last" class="btn btn-default success btn-sm" uib-tooltip="Add" data-ng-click="vm.addMoreOwners()">
+                <strong><icon name="plus"></icon></strong>
+            </button>
+          </div>
+        </div>
+      </form-group>
+      <!-- <div class="text-right" ng-hide="vm.edit_mode">
+        <a class="btn btn-default" uib-tooltip="Add" data-ng-click="vm.addMoreOwners()">
+            <strong><icon name="plus"></icon></strong>
+        </a>
+        <a ng-show="vm.ownerList.length > 1" class="btn btn-default danger" uib-tooltip="Delete" data-ng-click="vm.removeOwnerList()">
+            <strong><icon name="trashcan"></icon></strong>
+        </a>
+      </div> -->
+    </div>
+  </div>
+  <div class="modal-body text-center" data-ng-show="vm.loading">
+    <spinner></spinner>
+  </div>
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">{{vm.getButtonText()}}</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

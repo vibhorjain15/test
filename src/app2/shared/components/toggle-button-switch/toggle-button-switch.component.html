@@ -1,0 +1,52 @@
+<div class="clickable btn-group d-flex toggleSwitch">
+  <div
+    class="toggleSwitchButton tick-wrapper"
+    [ngClass]="{
+      selectedToggle: selectedSwitch == (firstLabel || firstIcon)
+    }"
+    (click)="handleButtonClick(firstLabel || firstIcon)"
+  >
+    <span
+      *ngIf="selectedSwitch == (firstLabel || firstIcon) && showActiveTick"
+      appIcon
+      name="check-new"
+      [style.color]="labelColor"
+      [style.font-size.px]="12"
+    >
+    </span>
+    <span
+      *ngIf="firstLabel || firstIcon"
+      appIcon
+      [name]="firstIcon"
+      [style.color]="labelColor"
+      [style.font-size.px]="firstIconSize"
+    >
+      {{ firstLabel }}
+    </span>
+  </div>
+  <div
+    class="toggleSwitchButton tick-wrapper"
+    [ngClass]="{
+      selectedToggle: selectedSwitch == (secondLabel || secondIcon)
+    }"
+    (click)="handleButtonClick(secondLabel || secondIcon)"
+  >
+    <span
+      *ngIf="selectedSwitch == (secondLabel || secondIcon) && showActiveTick"
+      appIcon
+      name="check-new"
+      [style.color]="labelColor"
+      [style.font-size.px]="12"
+    >
+    </span>
+    <span
+      *ngIf="secondLabel || secondIcon"
+      appIcon
+      [name]="secondIcon"
+      [style.color]="labelColor"
+      [style.font-size.px]="secondIconSize"
+    >
+      {{ secondLabel }}
+    </span>
+  </div>
+</div>

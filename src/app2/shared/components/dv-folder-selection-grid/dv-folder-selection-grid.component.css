@@ -1,0 +1,26 @@
+ag-grid-angular {
+  width: 100%;
+  height: 422px !important;
+}
+
+:host ::ng-deep .ag-header {
+  display: none;
+}
+
+:host ::ng-deep .ag-root-wrapper {
+  border-radius: 4px;
+}
+
+:host ::ng-deep .ag-row-group-leaf-indent.ag-row-group-indent-0 {
+  margin-left: 28px !important;
+}
+
+:host ::ng-deep .ag-group-value {
+  flex-grow: 1;
+}
+.ag-theme-alpine {
+  --ag-selected-row-background-color: rgb(24, 144, 175, 0.1) !important;
+}
+.doc-grid ::ng-deep .ag-row-hover {
+  background-color: rgb(24, 144, 175, 0.1) !important;
+}

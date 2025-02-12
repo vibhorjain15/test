@@ -1,0 +1,13 @@
+accordion-group.input-accordion-title ::ng-deep .panel-default .panel-heading {
+  padding: 5px 15px;
+}
+
+accordion-group.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+accordion-group.disabled ::ng-deep a,
+accordion-group.disabled ::ng-deep .accordion-toggle {
+  cursor: not-allowed;
+}

@@ -1,0 +1,24 @@
+<form novalidate data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.modal_title}}
+    </h3>
+  </div>
+
+  <div class="modal-body">
+      <div class="form-group">
+        <input type="text"
+               class="form-control"
+               focus-me="!!vm.params"
+               data-ng-model="vm.params.value" />
+      </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.loading">OK</button>
+
+    <button btn-type="default"
+            data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

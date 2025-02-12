@@ -1,0 +1,6 @@
+::ng-deep .notes-activity {
+  background-color:var(--bg-color);
+}
+::ng-deep .dashboard-panel-old .panel-heading {
+  background-color: unset !important;
+}

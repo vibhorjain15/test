@@ -1,0 +1,9 @@
+.minwidth {
+  min-width: 245px;
+}
+.danger {
+  color: #cd3333;
+}
+.space-bottom {
+  margin-bottom: 15px;
+}

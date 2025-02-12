@@ -1,0 +1,5 @@
+<div class="label" [ngClass]="return_class">
+  <span *ngIf="fundReturn">
+    {{ formatted_date | date: "MMM YYYY" | uppercase }} : {{ fundReturn }}
+  </span>
+</div>

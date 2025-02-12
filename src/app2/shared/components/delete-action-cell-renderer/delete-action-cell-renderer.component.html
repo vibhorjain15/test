@@ -1,0 +1,15 @@
+<button
+  appButton
+  btnType="default"
+  size="sm"
+  class="space-on-right delete-hover"
+  [tooltip]="tooltip"
+  container="body"
+  [adaptivePosition]="false"
+  triggers="mouseenter:mouseleave"
+  (click)="deleteConfirm()"
+  *ngIf="params.data"
+  [attr.aria-label]="tooltip"
+>
+  <span appIcon name="trashcan"></span>
+</button>

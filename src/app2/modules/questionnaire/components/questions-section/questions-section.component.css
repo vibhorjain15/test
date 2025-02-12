@@ -1,0 +1,14 @@
+.container-header > dv-label {
+  margin-right: 30px;
+}
+:host ::ng-deep .rating-dropdown .show {
+  display: inherit !important;
+}
+
+.icon-hover:hover {
+  color: #126b82 !important;
+}
+.review-timer {
+  display: flex;
+  gap: 5px;
+}

@@ -1,0 +1,43 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Email Notifications</h5>
+  </div>
+  <div class="panel-body">
+    <app-spinner *ngIf="!notification_settings"></app-spinner>
+    <form
+      novalidate
+      name="notifications_form"
+      class="d-flex-column gap-10"
+      *ngIf="notification_settings"
+      autocomplete="off"
+    >
+      <div
+        *ngFor="let item of notification_settings.descriptions"
+        class="d-flex gap-10 align-items-center"
+      >
+        <ui-switch
+          size="small"
+          [(ngModel)]="notification_settings[item.id]"
+          [ngModelOptions]="{ standalone: true }"
+          [title]="item.description"
+          UiSwitchButton
+        ></ui-switch>
+
+        <div class="d-flex-column">
+          <strong>{{ item.name }}</strong>
+          <div
+            [style.font-size]="'small'"
+            [innerHtml]="item.description | dvSafeHtml"
+          ></div>
+        </div>
+      </div>
+      <dv-button
+        [loader]="saving"
+        (onClick)="submit()"
+        class="minwidth space-on-top-lg"
+      >
+        Update Notifications
+      </dv-button>
+    </form>
+  </div>
+</div>

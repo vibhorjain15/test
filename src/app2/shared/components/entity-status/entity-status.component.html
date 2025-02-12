@@ -1,0 +1,27 @@
+<div class="unstyledLink" *ngIf="params.data">
+  <a
+    tooltip="{{
+      params.data.entity.platform_active
+        ? 'Active'
+        : 'Deactivated by the owner firm'
+    }}"
+    container="body"
+    [adaptivePosition]="false"
+  >
+    <span
+      class="space-on-left label label-warning-light"
+      *ngIf="!params.data.entity.platform_active"
+      >Deactivated</span
+    >
+    <span
+      class="space-on-left label label-default-light"
+      *ngIf="params.data.entity.platform_active"
+      >Active</span
+    >
+  </a>
+</div>
+<div *ngIf="params.node.group">
+  <span>
+    {{ params.value }}
+  </span>
+</div>

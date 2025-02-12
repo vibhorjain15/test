@@ -1,0 +1,15 @@
+<form name="vm.edit_template_form" novalidate data-ng-submit="vm.updateTemplate()">
+  <form-group field-name="Template Name">
+    <input type="text"
+           class="form-control"
+           placeholder="Name of the template"
+           required
+           data-ng-model="vm.template_copy.templateInfo.name" />
+  </form-group>
+
+  <div class="form-group">
+    <button type="submit"
+            button-loader="vm.updating_template">Save</button>
+    <button btn-type="default" data-ng-click="vm.isPopoverOpen = false">Cancel</button>
+  </div>
+</form>

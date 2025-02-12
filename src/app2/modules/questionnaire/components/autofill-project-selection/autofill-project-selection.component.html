@@ -1,0 +1,98 @@
+<div
+  (click)="filterProjects = !filterProjects"
+  class="text-bold space-on-bottom-lg cursor-pointer"
+  tabindex="0"
+  role="button"
+  aria-label="Toggle filter projects"
+  (keydown.enter)="filterProjects = !filterProjects"
+>
+  <span appIcon name="chevron-down" *ngIf="!filterProjects"></span>
+  <span appIcon name="chevron-up" *ngIf="filterProjects"></span>
+  <span>&nbsp;Filter projects</span>
+</div>
+<div *ngIf="filterProjects">
+  <dv-form-element
+    label="Entities"
+    [for]="'entityType'"
+    elementCol="6"
+    labelPosition="top"
+  >
+    <dv-select
+      [list]="entityTypes"
+      [(ngModel)]="entityType"
+      name="entityType"
+      [id]="'entityType'"
+      (onSelectChange)="setEntityType($event)"
+      [aria-label]="'Select entity type'"
+    >
+    </dv-select>
+  </dv-form-element>
+  <br *ngIf="entityTypeName !== 'My Firm'" />
+  <dv-form-element
+    label=""
+    elementCol="12"
+    *ngIf="entityTypeName !== 'My Firm'"
+  >
+    <dv-select
+      [(ngModel)]="entityId"
+      (onSelectChange)="onEntityChanged($event)"
+      [list]="entities"
+      name="entity"
+      [loading]="loadingProjects"
+      [disabled]="entityTypeName === 'My Firm'"
+      [placeholder]="
+        entityTypeName === 'My Firm'
+          ? (entityTypeName | lowercase)
+          : 'Select a ' + (entityTypeName | lowercase)
+      "
+      [aria-label]="
+        entityTypeName === 'My Firm'
+          ? (entityTypeName | lowercase)
+          : 'Select a ' + (entityTypeName | lowercase)
+      "
+    ></dv-select>
+  </dv-form-element>
+  <br *ngIf="entityTypeName !== 'My Firm'" />
+  <br />
+  <br />
+  <dv-form-element
+    label="Date Range"
+    elementCol="12"
+    labelPosition="top"
+    *ngIf="customDateFilter"
+    [for]="'date-range'"
+  >
+    <app-date-range-picker
+      [id]="'date-range'"
+      [customDate]="dateRange"
+      (change)="onDateRangeChange($event)"
+      (clearDateFilter)="onClearDateFilter()"
+      [minDate]="minDate"
+      [maxDate]="maxDate"
+      placement="top"
+    ></app-date-range-picker>
+  </dv-form-element>
+  <br />
+  <br />
+</div>
+
+<dv-form-element
+  label="Select a Project"
+  [for]="'projects'"
+  labelPosition="top"
+  elementCol="12"
+  infoText="All projects will load by default. 
+  If you'd like to filter by a specific entity and date range, please apply filters 
+  under 'Filter projects'."
+>
+  <dv-select
+    [list]="projects"
+    [id]="'projects'"
+    [(ngModel)]="projectId"
+    (onSelectChange)="onProjectSelection($event)"
+    [loading]="loadingProjects"
+    placeholder="Select a project"
+    bindLabel="display_name"
+    [aria-label]="'Select project'"
+  ></dv-select>
+</dv-form-element>

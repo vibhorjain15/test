@@ -1,0 +1,67 @@
+<ng-container>
+  <div class="statusbar" *ngIf="type == 'both' || type == 'templateInfo'">
+    <div class="status-section">
+      <span>Status</span>
+      <dv-status-tag [label]="templateStatus" [type]="tagType"></dv-status-tag>
+    </div>
+    <dv-divider type="vertical"></dv-divider>
+    <div class="status-section">
+      <span>Categories</span>
+      <span>{{ totalCategories }}</span>
+    </div>
+    <dv-divider type="vertical"></dv-divider>
+    <div class="status-section">
+      <span>Sub-categories</span>
+      <span>{{ totalSubCategories }}</span>
+    </div>
+    <dv-divider type="vertical" *ngIf="!isManager"></dv-divider>
+    <div class="status-section" *ngIf="!isManager">
+      <span>Frequency</span>
+      <span>{{ frequency }}</span>
+    </div>
+  </div>
+
+  <div
+    class="info-main-wrapper"
+    *ngIf="type == 'both' || type == 'questionInfo'"
+    [ngClass]="{ dottedBorder: type == 'both' }"
+  >
+    <div class="info-main">
+      <span
+        ><span class="lighter"
+          >{{ isProject ? "Project" : "Template" }} has</span
+        >
+        <span [style.color]="colorTheme['blue']"
+          ><b> {{ totalQuestions }} questions </b></span
+        >
+        <span class="lighter"> of which:</span></span
+      >
+      <ul>
+        <li>
+          <b>{{ mandatoryQuestions }}</b>
+          <span class="lighter"> are mandatory</span>
+        </li>
+        <li>
+          <b>{{ requireAttachments }}</b>
+          <span class="lighter"> require attachments</span>
+        </li>
+        <li>
+          <b>{{ textResponse }}</b>
+          <span class="lighter"> are text response with word count limit</span>
+        </li>
+        <li>
+          <b>{{ areYesNo }}</b>
+          <span class="lighter"> are yes/no</span>
+        </li>
+        <li>
+          <b>{{ areConditionalLogic }}</b>
+          <span class="lighter"> are conditional logic</span>
+        </li>
+        <li>
+          <b>{{ areGrid }}</b>
+          <span class="lighter"> are grids</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</ng-container>

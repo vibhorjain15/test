@@ -1,0 +1,21 @@
+tinymce.addI18n("nb_NO", {
+  "Advanced sort...": "Avansert sortering\u2026",
+  "Advanced Sort": "Avansert sortering",
+  "Sort table by column ascending": "Sorter tabell etter kolonne i stigende rekkef\xf8lge",
+  "Sort table by column descending": "Sortert tabellen etter kolonne i synkende rekkef\xf8lge",
+  "Sort": "Sorter",
+  "Order": "Rekkef\xf8lge",
+  "Sort by": "Sorter etter",
+  "Ascending": "Stigende",
+  "Descending": "Synkende",
+  "Selection": "Utvalg",
+  "Table": "Tabell",
+  "Column": "Kolonne",
+  "Row": "Rad",
+  "Column {0}": "Kolonne {0}",
+  "Row {0}": "Rad {0}",
+  "Row numbering": "Radnummerering",
+  "None": "Ingen",
+  "Numeric": "Numerisk",
+  "Alpha": "Alfabetisk"
+});

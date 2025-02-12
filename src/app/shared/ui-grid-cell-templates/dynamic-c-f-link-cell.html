@@ -1,0 +1,17 @@
+<ui-grid-cell-contents>
+    <div>
+        <div data-ng-show="row.entity[col.field].length > 0">
+            <span class="label label-default space-on-right" uib-tooltip="{{row.entity[col.field][0]}}"
+                ng-click="$event.stopPropagation();">
+                <a href="{{row.entity[col.field][0]}}" target="_blank">
+                    <span truncate-text="25">
+                        {{row.entity[col.field][0]}}
+                    </span>
+                </a>
+            </span>
+            <span data-ng-show="row.entity[col.field].length > 1"> and </span>
+            <span class="link-underline clickable space-on-right" data-ng-show="row.entity[col.field].length > 1"
+                uib-tooltip="{{row.entity[col.field].slice(1).toString()}}">{{row.entity[col.field].length - 1}} more</span>
+        </div>
+    </div>
+</ui-grid-cell-contents>

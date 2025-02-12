@@ -1,0 +1,33 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel="Save"
+  (onFirstClick)="handleSaveClick($event)"
+  [initialTemplate]="createEditViewRef"
+  [isLoading]="isSaving"
+>
+</app-modal>
+
+<ng-template #createEditViewRef>
+  <form
+    class="form-horizontal"
+    [formGroup]="customViewGroupForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      errorMessage="Please enter a name"
+      label="Enter a name for this group"
+      labelPosition="top"
+      elementCol="12"
+      [modelController]="customViewGroupForm.get('name')"
+      [showRightIcon]="false"
+    >
+      <input
+        id="name"
+        formControlName="name"
+        placeholder="Enter a name"
+        class="form-control"
+        name="custom-view-name"
+      />
+    </dv-form-element>
+  </form>
+</ng-template>

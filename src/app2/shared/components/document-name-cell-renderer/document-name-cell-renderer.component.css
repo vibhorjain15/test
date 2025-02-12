@@ -1,0 +1,23 @@
+.d-flex {
+  display: flex !important;
+}
+
+.align-items-center {
+  align-items: center;
+}
+.dropdown-doc-class {
+  rotate: 90deg;
+  margin-bottom: -4px;
+}
+.actionIcons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.flex-grow-1 {
+  flex: 1;
+}
+.no-underline {
+  text-decoration: none;
+}

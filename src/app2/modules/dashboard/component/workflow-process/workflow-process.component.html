@@ -1,0 +1,16 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">{{ title }}</h5>
+  </div>
+  <div class="panel-body">
+    <app-dv-grid
+      *ngIf="gridDataSource.length > 0"
+      [rowData]="gridDataSource"
+      [name]="'investor-dash-workflow-process'"
+      [onRowClicked]="onRowClicked"
+    >
+    </app-dv-grid>
+
+    <helper-text *ngIf="gridDataSource.length == 0">No Data.</helper-text>
+  </div>
+</div>

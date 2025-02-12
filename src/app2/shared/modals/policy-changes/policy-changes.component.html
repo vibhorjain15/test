@@ -1,0 +1,21 @@
+<app-modal
+  [title]="title"
+  [initialTemplate]="policy"
+  titleIcon="file-doc-grid"
+  [titleIconColor]="colorTheme.primary"
+  [firstButtonLabel]="acknowledge ? 'Acknowledge' : 'Accept'"
+  (onFirstClick)="handleApprove($event)"
+  [firstButtonTooltip]="
+    !canAccept && type == 'acceptable'
+      ? 'Please read the entire policy before accepting'
+      : ''
+  "
+  [isFirstButtonDisabled]="!canAccept"
+  [isCancelButton]="!acknowledge"
+></app-modal>
+
+<ng-template #policy>
+  <div id="policyContent" class="policy-content" (scroll)="onScroll($event)">
+    <p [innerHtml]="policyDoc | cleanHtml"></p>
+  </div>
+</ng-template>

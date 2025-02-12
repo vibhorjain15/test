@@ -1,0 +1,541 @@
+<app-spinner
+  spinnerHeight="50"
+  broadSpinner="true"
+  *ngIf="!is_data_loaded"
+></app-spinner>
+<dv-stepper #dvStepper>
+  <dv-step
+    label="Contact & Due Date"
+    [discription]="
+      '<b>Select associated contacts to whom you would like to send this diligence</b>'
+    "
+    [isBackButton]="true"
+    (onBackClick)="backbutton()"
+    nextLabel="Next"
+    (onNextClick)="canProceedToTemplateStep(dvStepper)"
+    [editorTempRef]="reviewDdScheduledRef1"
+  >
+    <ng-template #reviewDdScheduledRef1>
+      <div class="row">
+        <div col="5" offset="3">
+          <form
+            class="form-horizontal row"
+            [formGroup]="sendToManagerForm"
+            autocomplete="off"
+          >
+            <dv-form-element
+              [modelController]="sendToManagerForm.get('contactsControl')"
+              label="Select Contacts"
+              labelPosition="top"
+              elementCol="12"
+              [showRightIcon]="false"
+              [isRequired]="true"
+              errorMessage="Contact is required"
+            >
+              <dv-select
+                [id]="'contactsControl'"
+                class="padded-top"
+                [multiple]="true"
+                [clearable]="false"
+                formControlName="contactsControl"
+                placeholder="--Select--"
+                bindValue="value"
+                bindLabel="display"
+                [list]="teamMembers"
+              >
+              </dv-select>
+            </dv-form-element>
+            <dv-form-element
+              [modelController]="sendToManagerForm.get('asOfDateControl')"
+              label="As of Date"
+              labelPosition="top"
+              [errorMessage]="
+                sendToManagerForm.get('asOfDateControl').touched &&
+                sendToManagerForm.get('asOfDateControl').invalid
+                  ? 'As of Date is required'
+                  : ''
+              "
+              elementCol="12"
+            >
+              <app-date-picker
+                [id]="'asOfDateControl'"
+                [minDate]="today"
+                [maxDate]="maxAsOfDate"
+                [value]="sendToManagerForm.get('asOfDateControl').value"
+                (change)="setDateValue($event, 'asOfDateControl')"
+                [class]="
+                  sendToManagerForm.get('asOfDateControl').touched &&
+                  sendToManagerForm.get('asOfDateControl').invalid
+                    ? 'has-error'
+                    : ''
+                "
+              >
+              </app-date-picker>
+            </dv-form-element>
+            <dv-form-element
+              [modelController]="sendToManagerForm.get('dueDateControl')"
+              label="Due Date"
+              labelPosition="top"
+              elementCol="12"
+            >
+              <app-date-picker
+                [id]="'dueDateControl'"
+                [minDate]="sendToManagerForm.get('asOfDateControl').value"
+                [value]="sendToManagerForm.get('dueDateControl').value"
+                (change)="setDateValue($event, 'dueDateControl')"
+                [class]="
+                  sendToManagerForm.controls['dueDateControl'].errors
+                    ?.inValidDueDate
+                    ? 'has-error'
+                    : ''
+                "
+              >
+              </app-date-picker>
+              <div
+                *ngIf="
+                  issubmitContactForm &&
+                  sendToManagerForm.controls['dueDateControl'].errors?.required
+                "
+                class="danger"
+              >
+                Due Date is required
+              </div>
+              <div
+                *ngIf="
+                  sendToManagerForm.controls['dueDateControl'].errors
+                    ?.inValidDueDate
+                "
+                class="danger"
+              >
+                Due date should be greater than or equal to as of date
+              </div>
+              <div class="space-on-top-sm">
+                Suggested due date is:
+                <a class="clickable" (click)="setSuggestedDueDate()">
+                  {{ getSuggestedDueDate() | dvDate : ["isLocaleDate"] }}
+                </a>
+              </div>
+            </dv-form-element>
+          </form>
+        </div>
+      </div>
+    </ng-template>
+  </dv-step>
+
+  <dv-step
+    label="Please review your due diligence request"
+    [discription]="'<b>Send Request</b>'"
+    previousLabel="Previous"
+    finishLabel="Send Request"
+    (onBackClick)="handleScheduleRequestPrevious(dvStepper)"
+    (onFinishClick)="sendDueDiligenceRequest()"
+    [isLoading]="loading"
+    [editorTempRef]="reviewDdScheduledRef"
+  >
+    <ng-template #reviewDdScheduledRef>
+      <div class="row clearfix">
+        <div col="6" class="bordered-right">
+          <div col="10" offset="1">
+            <form
+              class="form-horizontal row"
+              [formGroup]="templateSelectionForm"
+              novalidate
+              class="row"
+              autocomplete="off"
+            >
+              <dv-form-element
+                [modelController]="templateSelectionForm?.get('project_name')"
+                label="Project Name"
+                labelPosition="top"
+                [errorMessage]="
+                  templateSelectionForm?.get('project_name')?.errors?.required
+                    ? 'Project Name is required'
+                    : templateSelectionForm?.get('project_name')?.errors
+                        ?.containsHtml
+                    ? 'Project Name is not valid'
+                    : null
+                "
+                elementCol="12"
+              >
+                <input
+                  [autofocus]
+                  class="form-control space-on-bottom-xl"
+                  type="text"
+                  id="project_name"
+                  formControlName="project_name"
+                  placeholder="Project Name"
+                />
+              </dv-form-element>
+              <div class="space-on-top">
+                <div class="col-sm-12 checkbox-margin">
+                  <div class="pos-rel">
+                    <small
+                      class="space-on-left infoIconEmailTemplate info-icon-right-space"
+                    >
+                      <span
+                        appIcon
+                        name="info"
+                        tooltip="Documents attached to responses will always be shared with the manager. enabling this option will share internally uploaded documents from documents tab with the manager."
+                        container="body"
+                        placement="right"
+                      >
+                      </span>
+                    </small>
+                    <dv-checkbox
+                      formControlName="share_documents"
+                      [ngModelOptions]="{ standalone: true }"
+                      label="Share internal project documents with manager"
+                    >
+                    </dv-checkbox>
+                  </div>
+                </div>
+              </div>
+              <br />
+
+              <div class="space-on-top">
+                <div class="col-sm-5 checkbox-margin">
+                  <div class="pos-rel">
+                    <small
+                      class="space-on-left infoIconEmailTemplate info-icon-right-space"
+                    >
+                      <span
+                        appIcon
+                        name="info"
+                        tooltip="Firm admins can create additional templates from Firm Settings"
+                        container="body"
+                        placement="right"
+                      >
+                      </span>
+                    </small>
+                    <dv-checkbox
+                      formControlName="use_email_templates"
+                      [ngModelOptions]="{ standalone: true }"
+                      label="Use email templates"
+                      (ngModelChange)="
+                        getDefaultEmailTemplate(
+                          templateSelectionForm?.get('use_email_templates')
+                            .value
+                        )
+                      "
+                      [disabled]="disallow_custom_edits"
+                    >
+                    </dv-checkbox>
+                  </div>
+                </div>
+                <div
+                  class="col-sm-6"
+                  *ngIf="
+                    email_templates?.length == 0 &&
+                    templateSelectionForm?.get('use_email_templates').value
+                  "
+                >
+                  <p>
+                    No email templates present,
+                    <a class="clickable" (click)="routeToEmailTemp()"
+                      >click here</a
+                    >
+                    to add one
+                  </p>
+                </div>
+                <div
+                  class="col-sm-6 space-on-top"
+                  *ngIf="
+                    email_templates?.length > 0 &&
+                    templateSelectionForm?.get('use_email_templates').value
+                  "
+                >
+                  <dv-select
+                    [list]="email_templates"
+                    bindLabel="name"
+                    bindValue="id"
+                    placeholder="Select an Option"
+                    [aria-label]="'Select an Option'"
+                    [clearable]="false"
+                    [searchable]="true"
+                    formControlName="default_email_template_message_id"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="renderEmailTemplate($event)"
+                  >
+                  </dv-select>
+                </div>
+              </div>
+              <br />
+              <div *ngIf="!disallow_custom_edits">
+                <span class="col-sm-12 fw-bolder">Email Message</span>
+                <div class="col-sm-12">
+                  <dv-editor
+                    [value]="email_text"
+                    (onChange)="handleEditorTextChange($event)"
+                  ></dv-editor>
+                </div>
+              </div>
+            </form>
+            <div
+              class="col-md-12 space-on-top-lg space-on-bottom-lg"
+              *ngIf="!request.is_internal"
+            >
+              <a
+                class="link clickable pull-right"
+                (click)="showAdvanceOptions = !showAdvanceOptions"
+              >
+                <span
+                  appIcon
+                  name="chevron-up"
+                  *ngIf="showAdvanceOptions"
+                ></span>
+                <span
+                  appIcon
+                  name="chevron-down"
+                  *ngIf="!showAdvanceOptions"
+                ></span>
+                {{ showAdvanceOptions ? "Hide" : "Show" }} Advanced Options
+              </a>
+            </div>
+            <div
+              class="bordered-bottom padded-top padded-bottom space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span class="text-muted">Optional Fields</span>
+            </div>
+            <div
+              class="padded-left"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <small class="text-dark-blue text-bold"
+                >Note: Default email is set to
+                <span class="link-underline"
+                  >notifications@diligencevault.com</span
+                >.<br />
+                To change, go to Firm Settings > Preferences > Firm Preferences
+                > Outbound email notifications</small
+              >
+            </div>
+            <div
+              col="12"
+              class="space-on-top space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span
+                class="control-label col-sm-3 space-on-top fw-bolder"
+                *ngIf="
+                  sender_emails.length == 0 ||
+                    !firm_preferences.add_sender_email;
+                  else emailTemplate
+                "
+              >
+                Sender Email
+              </span>
+              <ng-template #emailTemplate>
+                <label
+                  for="labelOfSenderEmail"
+                  [attr.for]="
+                    sender_emails.length > 0 &&
+                    firm_preferences.add_sender_email
+                      ? 'sender_mails'
+                      : ''
+                  "
+                  class="control-label col-sm-3 space-on-top"
+                  >Sender Email</label
+                >
+              </ng-template>
+              <div
+                class="col-sm-9"
+                *ngIf="
+                  sender_emails.length > 0 && firm_preferences.add_sender_email
+                "
+              >
+                <dv-select
+                  [list]="sender_emails"
+                  [id]="'sender_mails'"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [(ngModel)]="selected_sender_email"
+                  [ngModelOptions]="{ standalone: true }"
+                >
+                </dv-select>
+              </div>
+              <div
+                class="col-sm-8 space-on-top"
+                *ngIf="
+                  sender_emails.length == 0 ||
+                  !firm_preferences.add_sender_email
+                "
+              >
+                <p class="clear-margin">
+                  No sender emails present,
+                  <a class="clickable fw-bolder" (click)="handleEmailRouter()"
+                    >click here</a
+                  >
+                  to add one
+                </p>
+              </div>
+            </div>
+            <div
+              col="12"
+              class="space-on-top space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span
+                *ngIf="
+                  cc_emails.length == 0 || !firm_preferences.add_cc_email;
+                  else ccEmailTemplate
+                "
+                class="control-label col-sm-3 space-on-top font-bold"
+                >CC Email List</span
+              >
+              <ng-template #ccEmailTemplate>
+                <label
+                  for="cc-email"
+                  [attr.for]="
+                    cc_emails.length > 0 && firm_preferences.add_cc_email
+                      ? 'cc-email-list'
+                      : ''
+                  "
+                  class="control-label col-sm-3 space-on-top font-bold"
+                  >CC Email List</label
+                >
+              </ng-template>
+              <div
+                class="col-sm-9"
+                *ngIf="cc_emails.length > 0 && firm_preferences.add_cc_email"
+              >
+                <dv-select
+                  [list]="cc_emails"
+                  [id]="'cc-email-list'"
+                  placeholder="Select Some Options"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [(ngModel)]="selected_cc_email_list"
+                  [ngModelOptions]="{ standalone: true }"
+                  [multiple]="true"
+                >
+                </dv-select>
+              </div>
+              <div
+                class="col-sm-8 space-on-top"
+                *ngIf="cc_emails.length == 0 || !firm_preferences.add_cc_email"
+              >
+                <p class="clear-margin">
+                  No cc emails present,
+                  <a class="clickable fw-bolder" (click)="handleEmailRouter()"
+                    >click here</a
+                  >
+                  to add one
+                </p>
+              </div>
+            </div>
+            <div
+              col="12"
+              class="space-on-top space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span
+                *ngIf="
+                  bcc_emails.length == 0 || !firm_preferences.add_cc_email;
+                  else ccEmailTemplate
+                "
+                class="control-label col-sm-3 space-on-top font-bold"
+                >BCC Email List</span
+              >
+              <ng-template #ccEmailTemplate>
+                <label
+                  for="cc-email"
+                  [attr.for]="
+                    cc_emails.length > 0 && firm_preferences.add_cc_email
+                      ? 'bcc-email-list'
+                      : ''
+                  "
+                  class="control-label col-sm-3 space-on-top font-bold"
+                  >BCC Email List</label
+                >
+              </ng-template>
+              <div
+                class="col-sm-9"
+                *ngIf="bcc_emails.length > 0 && firm_preferences.add_cc_email"
+              >
+                <dv-select
+                  [list]="bcc_emails"
+                  [id]="'bcc-email-list'"
+                  placeholder="Select Some Options"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [(ngModel)]="selected_bcc_email_list"
+                  [ngModelOptions]="{ standalone: true }"
+                  [multiple]="true"
+                >
+                </dv-select>
+              </div>
+              <div
+                class="col-sm-8 space-on-top"
+                *ngIf="bcc_emails.length == 0 || !firm_preferences.add_cc_email"
+              >
+                <p class="clear-margin">
+                  No bcc emails present,
+                  <a class="clickable fw-bolder" (click)="handleEmailRouter()"
+                    >click here</a
+                  >
+                  to add one
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div col="6">
+          <h4
+            class="alert alert-info text-center clear-margin-top space-on-left-lg"
+          >
+            Information Request Preview
+          </h4>
+          <div col="11">
+            <dl class="dl-horizontal clear-margin-bottom">
+              <dt>From</dt>
+              <dd>{{ current_user.firstName }} {{ current_user.lastName }}</dd>
+              <dt>As of Date</dt>
+              <dd>
+                {{
+                  sendToManagerForm.get("asOfDateControl").value
+                    | dvDate : ["isLocaleDate"]
+                }}
+              </dd>
+              <dt>Due Date</dt>
+              <dd>
+                {{
+                  sendToManagerForm.get("dueDateControl").value
+                    | dvDate : ["isLocaleDate"]
+                }}
+              </dd>
+              <dt [ngClass]="{ 'space-on-top-lg': email_text }">Email Msg</dt>
+              <dd class="word-break-break-all">
+                <div *ngIf="email_text" class="email-text-wrapper">
+                  <span
+                    class="word-break-break-all"
+                    [innerHtml]="email_text"
+                  ></span>
+                </div>
+                <span *ngIf="!email_text">--</span>
+              </dd>
+            </dl>
+          </div>
+        </div>
+        <div
+          col="10"
+          offset="1"
+          class="text-center request-confidential-checkbox"
+        >
+        <!-- Changes as per DV-10912 -->
+          <hr />
+            <helper-text>
+              <dv-checkbox
+                [(ngModel)]="accept_confidential_agreement"
+                [ngModelOptions]="{ standalone: true }"
+                label="I certify that our firm will share the information received only with authorized personnel and clients."
+                isBold="true"
+              >
+              </dv-checkbox>
+            </helper-text>
+        <!--Changes End-->
+        </div>
+      </div>
+    </ng-template>
+  </dv-step>
+</dv-stepper>

@@ -1,0 +1,9 @@
+:host ::ng-deep > .group-wrapper > * > dv-question-card:not(:last-child) {
+  margin-bottom: 25px;
+  display: inherit;
+}
+
+.group-wrapper {
+  background: white;
+  padding: 10px;
+}

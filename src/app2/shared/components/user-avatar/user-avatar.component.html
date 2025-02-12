@@ -1,0 +1,16 @@
+<span *ngIf="user.avatarURL">
+  <img
+    [src]="user.avatarURL"
+    [ngClass]="avatarImgClass || avatarClass || 'img-responsive'"
+    [alt]="user.firstName + ' ' + user.lastName"
+  />
+</span>
+<span *ngIf="!user.avatarURL">
+  <span
+    appIcon
+    [name]="user.type"
+    [size]="avatarIconSize"
+    [ngClass]="avatarIconClass || avatarClass"
+    [aria-label]="user.firstName + ' ' + user.lastName"
+  ></span>
+</span>

@@ -1,0 +1,140 @@
+.section-selection {
+  padding: 15px;
+
+  .search-area {
+    margin-bottom: 10px;
+  }
+  .section-list {
+    .section {
+      background-color: #f0f4f5;
+      margin-top: 10px;
+      border-radius: 5px;
+
+      .header {
+        display: block;
+        padding: 5px;
+
+        label {
+          margin-bottom: 5px;
+          cursor: pointer;
+        }
+      }
+
+      hr {
+        border-top: 1px solid #ddd;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .subsection {
+        span.subsection-name {
+          display: block;
+          padding: 5px;
+        }
+      }
+
+      .padded-left {
+        padding-left: 3em !important;
+      }
+
+      .active {
+        background-color: #126b82;
+        display: block;
+
+        .text-light-blue {
+          color: white !important;
+        }
+      }
+    }
+  }
+}
+
+.template-move-checkbox {
+  .checkbox {
+    margin: 0;
+  }
+}
+
+.move-border {
+  border: 1px solid @dv-blue;
+}
+
+.panel {
+  .panel-heading {
+    .panel-controls {
+      .active-color {
+        color: @dv-blue !important;
+      }
+
+      .activeButton {
+        background-color: @brand-primary !important;
+        color: white !important;
+        &:hover {
+          color: black !important;
+        }
+      }
+    }
+  }
+}
+
+.selectedListing {
+  .overflow-y-scroll {
+    max-height: 200px;
+  }
+}
+
+.mapped-questions {
+  .controls {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    width: 20px;
+    bottom: 5px;
+
+    .control-danger {
+      opacity: 0.3;
+    }
+    .control-danger:hover {
+      opacity: 1;
+      color: lighten(@panel-danger-text, 10%);
+    }
+  }
+}
+
+.mappedQuestions {
+  padding-left: 0px;
+  list-style-type: none;
+
+  li {
+    padding: 10px;
+  }
+  .question-group-header {
+    position: relative;
+    color: #545454;
+    margin-bottom: 0;
+    background: #f5f5f5;
+    padding: 10px;
+    border: 1px solid #eee;
+
+    .header-text {
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .list-group {
+    margin-bottom: 0px;
+  }
+}
+
+.formula-setup-modal {
+  .customFormula {
+    border: 1px solid #ddd;
+  }
+  .ht_master {
+    .wtHolder {
+      // height: inherit !important;
+    }
+  }
+}

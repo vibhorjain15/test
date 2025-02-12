@@ -1,0 +1,13 @@
+<ui-grid-cell-contents class="text-left unstyledLink">
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="ui-grid-cell-contents"
+    title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <a ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    {{row.entity.fullName}}
+    <small data-ng-if="row.entity.has_bounce_history" class="text-danger"
+      uib-tooltip="Emails to this contact have bounced in the past.">
+      <icon name="warning"></icon>
+    </small>
+  </a>
+</ui-grid-cell-contents>

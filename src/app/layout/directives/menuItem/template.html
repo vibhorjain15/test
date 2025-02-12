@@ -1,0 +1,10 @@
+<li data-ng-class='{"active": is_active}' uib-tooltip="{{menu_item.tooltip}}" tooltip-placement="right">
+  <a data-ng-click="closeMenu()">
+    <span class="menu-label">{{::menu_item.label}}</span>
+    <span role="text" class="btn btn-xs customTag" data-ng-show="::menu_item.customTagLabel">{{::menu_item.customTagLabel}}</span>
+    <span class="dvi dvi-dv-crown upgradeIcon"  ng-if="menu_item.freeuser_icon && menu_item.is_freeSubscription && menu_item.is_manager"><span class="path1"></span><span class="path2"></span></span>
+  </a>
+  <!-- <button class="upgrade_btn" ng-click="goToUpgradePage()"> -->
+    <!-- <span class="dvi dvi-dv-crown"></span> -->
+  <!-- </button> -->
+</li>

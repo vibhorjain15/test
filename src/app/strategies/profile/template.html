@@ -1,0 +1,62 @@
+<div role="tabpanel">
+  <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+    <li ui-sref-active="active" authorized-view hidden-from="FreeSubscription">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".summary"> Summary </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".monitor"> Monitor </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".aum_tr"> AUM & Track Record </a>
+    </li>
+
+    <li ui-sref-active="active" authorized-view hidden-from="investor">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".ddq"> DDQ </a>
+    </li>
+
+    <!-- We check with endsWith since the child state of the new routes will remain the same -->
+    <li
+      data-ng-class="{'active': $state.$current.parent.parent.name.endsWith('.documents') || $state.$current.parent.name.endsWith('.documents')}"
+      authorized-view
+      hidden-from="FreeSubscription"
+    >
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".documents.list"> Documents </a>
+    </li>
+
+    <li
+      ui-sref-active="active"
+      authorized-view
+      hidden-from="FreeSubscription, manager"
+    >
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".related_entities"> Related Strategies </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.strategy.profile" -->
+      <a ui-sref=".contacts"> Associated Contacts </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref=".associated_entities"> Associated Products </a>
+    </li>
+    <li ui-sref-active="active">
+      <a ui-sref=".recommendations">
+        <span data-ng-if="vm.issue_tracker_default_name"
+          >{{vm.issue_tracker_default_name}}</span
+        >
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <ui-view />
+  </div>
+</div>

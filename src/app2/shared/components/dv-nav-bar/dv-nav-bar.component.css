@@ -1,0 +1,55 @@
+.menuitem-box {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-li:hover {
+  /* color: #fff; */
+  background-color: #002b3e;
+}
+
+.sub-menu-item {
+  padding: 15px;
+}
+
+.active:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-color: #f57c00;
+}
+
+.caret {
+  margin-left: 5px;
+}
+
+.sub-active {
+  color: #f57c00;
+}
+
+.notification-badge {
+  color: white;
+  background-color: #f57c00;
+  display: inline-block;
+  font-size: 9px;
+  line-height: 9px;
+  padding: 4px;
+  position: absolute;
+  top: 5px;
+  left: 25px;
+  border-radius: 3px;
+}
+
+.nav-bar-highlight {
+  background-color: #002b3e;
+}
+
+.new-nav-icon {
+  font-size: 22px;
+}

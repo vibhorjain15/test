@@ -1,0 +1,174 @@
+<ng2-activate></ng2-activate>
+<!-- <div class="container">
+  <div class="row clearfix">
+
+    <div class="authentication-form-wrapper max-width-50-pct">
+      <div class="logo-wrapper">
+        <img src="/assets/images/logo.png" alt="DiligenceVault" class="logo">
+      </div>
+
+      <spinner data-ng-hide="vm.user"></spinner>
+
+      <p class="alert alert-danger" data-ng-show="vm.messageShown">
+        {{vm.alertMessage}}
+      </p>
+
+      <div data-ng-show="vm.user && !vm.user.conversionDateTime">
+        <p class="alert alert-info space-on-bottom">
+          You are activating your account with email <strong>{{vm.user.userName}}</strong>.
+          <br>
+          {{vm.message}}
+        </p>
+
+        <form autocomplete="off" novalidate name="vm.activation_form" data-ng-submit="vm.activate()">
+          <div class="row">
+            <div class="col-md-6 space-on-top-xl col-sm-12">
+<form-group field-name="Email">
+            <label for="email" class="control-label">Account Email Address</label>
+
+          <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="mail"></icon>
+              </span>
+              <input type="text"
+                   class="form-control"
+                   name="email"
+                   id="email"
+                   ng-model="vm.user.userName"
+                   readonly
+                   uib-tooltip="You are activating your account with this email address">
+            </div>
+          </form-group>
+            </div>
+          <div class="col-md-6 space-on-top-xl col-sm-12">
+            <form-group field-name="Firm name">
+            <label for="firm-name" class="control-label">Name of Your Firm</label>
+                       <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="institution"></icon>
+              </span>
+              <input type="text" class="form-control" value="{{vm.user.firmInfo.name}}" disabled> -->
+              <!-- <label class="label label-default">{{vm.user.firmInfo.name}}</label> -->
+                <!-- <select name="parent_firm"
+                        id="parent-firm"
+                        class="form-control"
+                        chosen
+                        ng-required="true"
+                        data-ng-disabled="!vm.enable_firm_selection"
+                        data-ng-options="firm.id as firm.name for firm in vm.firms"
+                        data-ng-model="vm.user.firmInfo.id">
+                  <option value="">--Select a firm--</option>
+                </select> -->
+            <!-- </div>
+          </form-group>
+            </div>
+            </div>
+            <div class="row">
+          <div class="col-md-6 space-on-top-xl col-sm-12">
+ <form-group field-name="First name">
+            <label for="first-name" class="control-label">First Name</label>
+             <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="user"></icon>
+              </span>
+              <input type="text"
+                     class="form-control"
+                     name="firstName"
+                     id="first-name"
+                     dv-restrict-input="{type: 'validPersonName'}"
+                     ng-model="vm.user.firstName"
+                     required>
+            </div> -->
+            <!-- <p class="error-message" data-ng-if="vm.activation_form.firstName && vm.activation_form.firstName.$invalid">Please enter a valid first name</p> -->
+          <!-- </form-group>
+            </div>
+          <div class="col-md-6 space-on-top-xl col-sm-12">
+ <form-group field-name="Last name">
+            <label for="last-name" class="control-label">Last Name</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="user"></icon>
+              </span>
+              <input type="text"
+                     class="form-control"
+                     name="lastName"
+                     id="last-name"
+                     dv-restrict-input="{type: 'validPersonName'}"
+                     ng-model="vm.user.lastName"
+                     required>
+            </div> -->
+            <!-- <p class="error-message" data-ng-if="vm.activation_form.lastName && vm.activation_form.lastName.$invalid">Please enter a valid last name</p> -->
+          <!-- </form-group>
+            </div>
+             </div>
+            <div class="row">
+          <div class="col-md-6 space-on-top-xl col-sm-12">
+ <form-group field-name="Password" data-ng-if="!vm.user.is_saml_enabled && vm.user.is_default">
+            <label for="password" class="control-label">Choose a Password</label>
+
+           <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="key"></icon>
+              </span>
+              <dv-password-field id="password" type="{{vm.passwordElementType}}" password="vm.user.password"
+                  placeholder="Password"></dv-password-field>
+              <a class="password-style-element clickable" data-ng-click="vm.showPasswordToggle()">
+                <icon name="eye" data-ng-if="vm.passwordNotVisible"></icon>
+                <icon name="view-hide" data-ng-if="!vm.passwordNotVisible"></icon>
+              </a>
+            </div>
+          </form-group>
+            </div>
+             <div class="col-md-6 space-on-top-xl col-sm-12">
+<form-group field-name-map="{'validateEquals': 'Passwords', 'required': 'Confirm Password'}" data-ng-if="!vm.user.is_saml_enabled && vm.user.is_default">
+            <label for="confirm-password" class="control-label">Confirm Password</label>
+
+           <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="key"></icon>
+              </span>
+              <input type="{{vm.passwordElementType2}}"
+                     class="form-control"
+                     name="confirmPassword"
+                     id="confirm-password"
+                     ng-model="vm.user.confirmPassword"
+                     placeholder="Password Confirmation"
+                     validate-equals="vm.user.password"
+                     required>
+              <a class="password-style-element clickable" ng-style="{ 'right' : (vm.user.password == vm.user.confirmPassword && vm.user.password) ? '35px' : '12px' }"  data-ng-click="vm.showPasswordToggle2()">
+                <icon name="eye" data-ng-if="vm.passwordNotVisible2"></icon>
+                <icon name="view-hide" data-ng-if="!vm.passwordNotVisible2"></icon>
+              </a>
+            </div>
+          </form-group>
+             </div>
+              </div>
+            <div class="row">
+
+          <div class="col-md-offset-3 col-md-6 space-on-top-xl">
+ <div class="form-group">
+            <button type="submit" block="true" button-loader="vm.loading">
+              Activate My DiligenceVault Account
+            </button>
+          </div>
+          </div>
+
+
+          </div>
+
+        </form>
+      </div>
+
+      <div data-ng-show="vm.user.conversionDateTime">
+        <p class="alert alert-success">
+          Congratulations {{vm.user.firstName}}, your account email {{vm.user.userName}} is already activated
+        </p>
+<div class="col-md-offset-3 col-md-6 space-on-top">
+<a class="btn btn-primary btn-block"
+           ui-sref="authentication.login">Login</a>
+</div>
+
+      </div>
+    </div>
+  </div>
+</div> -->

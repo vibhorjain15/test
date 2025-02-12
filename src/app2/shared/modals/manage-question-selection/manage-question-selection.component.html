@@ -1,0 +1,389 @@
+<app-modal
+  [title]="'Select Questions'"
+  [firstButtonLabel]="'Save Selection'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="questionsRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #questionsRef>
+  <form class="form-horizontal" name="contact_form" autocomplete="off">
+    <div class="panel panel-info" *ngIf="questions && questions.length">
+      <div class="panel-heading">
+        Showing {{ questions.length }} questions only. You can apply filters to
+        narrow your search.
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <div class="panel panel-default">
+        <div class="panel-heading pa-lr-3-px">
+          <div class="row clearfix">
+            <div col="12">
+              <div col="6">
+                <button
+                  appButton
+                  btnType="default"
+                  class="space-on-right space-on-top-2"
+                  size="sm"
+                  *ngIf="filters_data_loaded"
+                  tooltip="{{ showFilters ? 'Hide' : 'Apply' }} Filters"
+                  triggers="mouseenter:mouseleave"
+                  (click)="toggleFiltersSection()"
+                  [attr.aria-label]="
+                    showFilters ? 'hide' : 'apply' + ' Filters'
+                  "
+                >
+                  <span
+                    appIcon
+                    name="filter"
+                    [ngClass]="{ 'text-orange': filterApplied }"
+                  ></span>
+                </button>
+                <button
+                  appButton
+                  btnType="default"
+                  size="sm"
+                  [disabled]="disable_select_all"
+                  class="space-on-top-2 space-on-right space-on-left"
+                  (click)="toggleSelectAll(true)"
+                >
+                  <span class="align-middle">Select All</span>
+                </button>
+                <button
+                  appButton
+                  btnType="default"
+                  size="sm"
+                  [disabled]="disable_select_all"
+                  class="space-on-top-2 space-on-left"
+                  (click)="toggleSelectAll(false)"
+                >
+                  <span class="align-middle">Remove All</span>
+                </button>
+              </div>
+              <div col="6" class="no-margin">
+                <dv-select
+                  id="criteria_sort_filter"
+                  name="criteria_sort_filter"
+                  [aria-label]="'criteria sort filter'"
+                  chosen
+                  [clearable]="false"
+                  [(ngModel)]="currentSortFilterSelected"
+                  [list]="currentSortFilters"
+                  (onSelectChange)="selectSortCriteriaFilter($event)"
+                >
+                </dv-select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-on-top-lg" *ngIf="showFilters">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="space-on-left-lg">
+                <small
+                  ><label
+                    for="question-matching"
+                    class="control-label clear-margin-bottom inline-block space-on-right"
+                    >Questions matching</label
+                  ></small
+                >
+                <dv-select
+                  class="inline-block w-80"
+                  [(ngModel)]="global_ternary_operator"
+                  name="operator"
+                  [clearable]="false"
+                  [list]="questionMatchingList"
+                  (onSelectChange)="global_ternary_operator = $event"
+                  [id]="'question-matching'"
+                >
+                </dv-select>
+                <small
+                  ><span
+                    class="control-label clear-margin-bottom inline-block space-on-left"
+                    >of the following criteria</span
+                  ></small
+                >
+              </div>
+            </div>
+            <div col="12">
+              <form
+                class="form-horizontal"
+                name="custom_search_form"
+                autocomplete="off"
+              >
+                <div class="space-on-bottom-lg space-on-top-lg" col="12">
+                  <div
+                    col="12"
+                    class="space-on-top-xl"
+                    *ngFor="
+                      let criteria of search_criterias;
+                      let $index = index
+                    "
+                  >
+                    <div col="4" class="padding-right-lg">
+                      <dv-form-element
+                        [fieldName]="'Criteria'"
+                        [elementCol]="12"
+                      >
+                        <label
+                          for="criterias_{{ $index }}"
+                          class="control-label text-capitalize"
+                          *ngIf="$index == 0"
+                          >Filters</label
+                        >
+                        <dv-select
+                          (onSelectChange)="selectCriteria(criteria, $index)"
+                          [clearable]="false"
+                          [searchable]="false"
+                          [(ngModel)]="criteria.criteria_obj"
+                          name="criterias_{{ $index }}"
+                          id="criterias_{{ $index }}"
+                          [list]="allSearchFilterOptions"
+                          [bindLabel]="'filter_label'"
+                          [bindValue]="null"
+                        >
+                        </dv-select>
+                      </dv-form-element>
+                    </div>
+                    <div col="3" class="padding-right-lg">
+                      <label
+                        class="control-label"
+                        for="condition_{{ $index }}"
+                        *ngIf="$index == 0"
+                        >Condition</label
+                      >
+                      <dv-form-element
+                        [fieldName]="'condition'"
+                        [elementCol]="12"
+                      >
+                        <dv-select
+                          (onSelectChange)="
+                            setOptionsDefaultValue(criteria, $index)
+                          "
+                          [clearable]="false"
+                          [searchable]="false"
+                          [(ngModel)]="criteria.condition"
+                          name="condition_{{ $index }}"
+                          id="condition_{{ $index }}"
+                          [list]="criteria.criteria_obj.search_type"
+                          [bindLabel]="'label'"
+                          [bindValue]="'value'"
+                        >
+                        </dv-select>
+                      </dv-form-element>
+                    </div>
+                    <div col="5">
+                      <div class="width-90-pct inline-block padding-right-lg">
+                        <dv-form-element
+                          fieldName="Value"
+                          [elementCol]="12"
+                          *ngIf="
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.STRING ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.TEXT ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.PARAGRAPH ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.MULTILINE ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.LINK
+                          "
+                          [elementCol]="12"
+                        >
+                          <label
+                            for="value_{{ $index }}"
+                            class="control-label"
+                            *ngIf="$index == 0"
+                            >Value</label
+                          >
+                          <input
+                            type="text"
+                            [(ngModel)]="criteria.advance_filter_value"
+                            name="value_{{ $index }}"
+                            id="value_{{ $index }}"
+                            placeholder="Type a value"
+                            class="form-control"
+                          />
+                        </dv-form-element>
+                        <dv-form-element
+                          [fieldName]="'Value'"
+                          [elementCol]="12"
+                          *ngIf="
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.DYNAMIC ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.RANGE ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.DROPDOWN ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.CHECKBOX ||
+                            criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.DROP
+                          "
+                        >
+                          <label
+                            for="value_{{ $index }}"
+                            class="control-label"
+                            *ngIf="$index == 0"
+                            >Value</label
+                          >
+                          <dv-select
+                            [clearable]="false"
+                            [searchable]="true"
+                            [(ngModel)]="criteria.advance_filter_value"
+                            name="criteria_{{ $index }}"
+                            id="value_{{ $index }}"
+                            [list]="criteria.criteria_obj.options"
+                            [bindLabel]="'value'"
+                            [placeholder]="'Select an Option'"
+                            (onSelectChange)="
+                              criteria.advance_filter_value = $event
+                            "
+                          >
+                          </dv-select>
+                        </dv-form-element>
+                        <dv-form-element
+                          [elementCol]="12"
+                          [fieldName]="'Value'"
+                          *ngIf="
+                            (criteria.criteria_obj.filter_type.toLowerCase() ==
+                              FILTER_TYPES.DATE ||
+                              criteria.criteria_obj.filter_type.toLowerCase() ==
+                                FILTER_TYPES.DATETIME) &&
+                            criteria.condition != 'between'
+                          "
+                        >
+                          <label
+                            for="value_{{ $index }}"
+                            class="control-label"
+                            *ngIf="$index == 0"
+                            >Value</label
+                          >
+                          <app-date-picker
+                            [value]="criteria.advance_filter_value"
+                            (change)="setDateValue($event, criteria)"
+                            placeholder="Select a Date"
+                            id="value_{{ $index }}"
+                          >
+                          </app-date-picker>
+                        </dv-form-element>
+                      </div>
+                      <a
+                        [ngStyle]="$index == 0 && { top: '33px' }"
+                        *ngIf="
+                          criteria.advance_filter_value &&
+                          criteria.advance_filter_value.toString() != '0'
+                        "
+                        (click)="removeCurrentFilter(criteria, $index)"
+                        class="clickable clear-filter-btn"
+                      >
+                        <span appIcon name="close" class="color-danger"></span>
+                      </a>
+                    </div>
+                  </div>
+                  <div col="12" class="space-on-top-xxl">
+                    <div offset="10" col="2" class="">
+                      <div class="pull-right">
+                        <button
+                          appButton
+                          btnType="default"
+                          size="sm"
+                          class="space-on-right"
+                          tooltip="Add Criteria"
+                          aria-label="Add Criteria"
+                          (click)="addNewCriteria()"
+                        >
+                          <span appIcon name="plus"></span>
+                        </button>
+                      </div>
+                      <div
+                        class="space-on-bottom-lg space-on-top-lg pull-right"
+                        style="width: 260px"
+                      >
+                        <dv-button
+                          [loader]="processing_data"
+                          btnClass="btn btn-primary btn-block-overwrite"
+                          (onClick)="searchByFilters()"
+                        >
+                          Start Searching
+                        </dv-button>
+                        <dv-button
+                          btnType="default"
+                          btnClass="space-on-left"
+                          (onClick)="resetFilters()"
+                        >
+                          Reset & Search
+                        </dv-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="60"
+          *ngIf="processing_data"
+        ></app-spinner>
+        <div
+          *ngIf="!processing_data && questions?.length > 0"
+          class="questions_container"
+        >
+          <table class="table table-condensed">
+            <tbody>
+              <tr
+                *ngFor="
+                  let question of questions | filter : searchText;
+                  let index = index
+                "
+              >
+                <td width=" 10%">
+                  <dv-checkbox
+                    class="manageCheckbox"
+                    [(ngModel)]="question.is_selected"
+                    name="modal_{{ index }}"
+                    id="modal_{{ index }}"
+                    [ariaLabel]="question.question_text"
+                  >
+                  </dv-checkbox>
+                </td>
+                <td width="90%">
+                  <div [innerHTML]="question.question_text | dvSafeHtml"></div>
+                  <div class="info_div">
+                    <span>
+                      <strong>Response Type</strong> :
+                      {{
+                        getResponseTypeById(question.response_type).description
+                      }}
+                      |
+                      <strong>Response(s)</strong> :
+                      {{ question.response_count }}
+                      |
+                      <span
+                        [tooltip]="formatTemplatesTooltip(question)"
+                        class="clickable"
+                      >
+                        <strong>Template(s)</strong> :
+                        {{ question.template_count }}
+                      </span>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-body" *ngIf="!questions?.length && !processing_data">
+          <app-empty-state message="No questions available."> </app-empty-state>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

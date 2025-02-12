@@ -1,0 +1,7 @@
+<ui-grid-cell-contents>
+
+    <span class="label text-uppercase"
+          data-ng-class="{'label-success': row.entity.status=='Scheduled', 'label-warning': row.entity.status=='paused', 'label-default': row.entity.status!='paused' && row.entity.status!='Scheduled'}">
+        <small>{{row.entity.status}}</small>
+    </span>
+</ui-grid-cell-contents>

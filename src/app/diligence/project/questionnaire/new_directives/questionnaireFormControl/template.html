@@ -1,0 +1,744 @@
+<div
+  class="qa-form-control avoid-page-break-inside full-width"
+  data-ng-class="{'dashed-border-at-bottom': readonly}"
+  data-ng-mouseenter="vm.isMouseInside = true"
+  data-ng-mouseleave="vm.isMouseInside = false"
+>
+  <div class="full-width">
+    <div class="row clearfix space-on-bottom">
+      <div col="7">
+        <div class="qa-question js-qa-question">
+          <div class="btn-group qafc-indicator js-qafc-indicator" role="group">
+            <!-- If the value is empty & the same is saved to the server -->
+            <icon
+              name="check"
+              class="text-danger js-mandatory-icon hidden"
+              uib-tooltip="Mandatory question"
+              tooltip-placement="left"
+            ></icon>
+
+            <icon name="check" class="text-muted js-empty-icon hidden"></icon>
+
+            <!-- If the value is valid & has not yet been saved to the server -->
+            <icon
+              name="hour-glass"
+              class="text-orange js-dirty-icon hidden"
+              uib-tooltip="You have unsaved changes on this question"
+              tooltip-placement="left"
+            ></icon>
+
+            <!-- If the value entered by the user is invalid -->
+            <icon
+              name="warning"
+              class="text-danger js-error-icon hidden"
+              uib-tooltip="{{vm.response.error}}"
+              tooltip-placement="left"
+            ></icon>
+
+            <!-- If the value is valid && it's not empty && the same is saved to the server -->
+            <icon
+              name="check"
+              class="text-success js-valid-icon hidden"
+              uib-tooltip="{{vm.response.attributes.responseTimeStamp?'Updated '+(vm.response.attributes.responseTimeStamp | fromNow) +' by
+                              '+vm.response.attributes.responseAuthor.fullName :''}}"
+            ></icon>
+          </div>
+
+          <span
+            data-ng-if="is_numbered && !vm.response.question.isNested && response.question.attributes.indexCount"
+            class="question-text-color"
+            >{{response.question.attributes.indexCount}}. </span
+          ><span
+            class="question-text-color clickable"
+            bind-html-compile="vm.response.question.attributes.text"
+          ></span>
+        </div>
+      </div>
+
+      <div col="5" class="text-right">
+        <icon
+          data-ng-if="(vm.is_investor && (isReadonlyNotEditable || questionnaireController.diligence.status == vm.diligenceStatusConstant.COMPLETED || questionnaireController.diligence.isLocked || vm.type == 'dd_review'))"
+          class="align-middle clickable space-on-right-lg"
+          name="flag"
+          data-ng-class="{'text-danger': vm.response.attributes.is_flagged,'disabled-Element':!vm.response.id || vm.response.attributes.is_WIP}"
+          uib-tooltip="{{!vm.response.id?'No response available to set flag':vm.response.attributes.is_flagged?'This question is flagged':'Click here to flag this question'}}"
+          data-ng-click="vm.toggleFlag()"
+        ></icon>
+        <div
+          class="inline-block"
+          data-ng-if="(vm.is_investor && (isReadonlyNotEditable || questionnaireController.diligence.status == vm.diligenceStatusConstant.COMPLETED || questionnaireController.diligence.isLocked || vm.type == 'dd_review')) && vm.response.question.rating && questionnaireController.selectedRatingScheme && questionnaireController.rating_scales && vm.response.sequence.id == vm.response.sequence.section.sequences[0].id"
+        >
+          <rating-dropdown
+            data-ng-if="questionnaireController.selectedRatingScheme.rating_scale_mode == vm.ratingConstants.Absolute"
+            selection="vm.response.question"
+            rating-scales="questionnaireController.rating_scales"
+            response-id="vm.response.id"
+            readonly="questionnaireController.diligence.isLocked || vm.ratingsNotEditable || !vm.response.id"
+            with-custom-fields="questionnaireController.custom_fields.length > 0"
+            review-enabled="questionnaireController.firm_preferences.enable_rating_custom_fields_review && questionnaireController.diligence.status == vm.diligenceStatusConstant.PRECOMPLETIONREVIEW"
+            enable-track-changes="questionnaireController.firm_preferences.enable_track_changes && vm.response.sequence.section.isReadonlyEditable && vm.response.attributes.response_status != vm.responseStatus.STARTED"
+            rating-level="'Questions'"
+            functions="questionnaireController.entityFunctions"
+            assigned-functions="questionnaireController.myFunctions"
+            uib-tooltip="{{!vm.response.id?'No responses available to rate':''}}"
+          ></rating-dropdown>
+
+          <dd-editable-score
+            data-ng-if="questionnaireController.selectedRatingScheme.rating_scale_mode == vm.ratingConstants.ScoreBand"
+            selection="vm.response.question.rating"
+            diligence-id="questionnaireController.diligence.id"
+            rating-id="vm.response.question.rating.attributes.rating_id"
+            response-id="vm.response.id"
+            total="100"
+            keep-watcher-on="true"
+            readonly="questionnaireController.diligence.status == 'Approved' || questionnaireController.diligence.status == 'NotApproved' || !vm.response.id"
+            na-value="vm.response.sequence.section.naValue"
+            review-enabled="questionnaireController.firm_preferences.enable_rating_custom_fields_review && questionnaireController.diligence.status == vm.diligenceStatusConstant.PRECOMPLETIONREVIEW"
+            rating-scale="vm.response.sequence.section.rating_scales"
+            enable-track-changes="questionnaireController.firm_preferences.enable_track_changes && vm.response.sequence.section.isReadonlyEditable && vm.response.attributes.response_status != vm.responseStatus.STARTED"
+            functions="questionnaireController.entityFunctions"
+            assigned-functions="questionnaireController.myFunctions"
+            uib-tooltip="{{!vm.response.id?'No responses available to score':''}}"
+          ></dd-editable-score>
+        </div>
+
+        <!-- response controls-->
+        <div
+          id="js-collaborate-with-team"
+          class="qafc-btn-group js-response-controls inline-block"
+        >
+          <div class="verify-controls inline-block">
+            <button
+              data-ng-if="vm.checkConditionsForDisplayingReview('edit')"
+              uib-tooltip="{{vm.response.attributes.is_WIP?'Response is marked as draft':'Edit Response'}}"
+              tooltip-placement="auto top"
+              btn-type="transparent"
+              data-ng-disabled="vm.response.attributes.is_WIP"
+              data-ng-click="vm.editResponse()"
+            >
+              <icon name="pencil" class="font-size-18"></icon>
+            </button>
+            <button
+              data-ng-if="vm.checkConditionsForDisplayingReview('accept')"
+              uib-tooltip="Approve response"
+              tooltip-placement="auto left"
+              btn-type="transparent"
+              data-ng-disabled="vm.response.attributes.is_WIP"
+              data-ng-click="vm.verifyRequest()"
+            >
+              <icon name="thumbs-up" class="font-size-18"></icon>
+            </button>
+            <button
+              data-ng-if="vm.checkConditionsForDisplayingReview('sendForVerify')"
+              uib-tooltip="{{vm.response.attributes.is_WIP ? 'Response is marked as draft' : 'Send for review'}}"
+              tooltip-placement="auto left"
+              btn-type="transparent"
+              data-ng-class="{'disabled':vm.response.attributes.is_WIP}"
+              data-ng-click="vm.reviewAgain()"
+            >
+              <icon name="arrow-back" class="font-size-18"></icon>
+            </button>
+            <button
+              data-ng-if="vm.checkConditionsForDisplayingReview('reverify')"
+              uib-tooltip="Review again"
+              tooltip-placement="auto left"
+              btn-type="transparent"
+              tabindex="-1"
+              data-ng-class="{'disabled':!vm.response.id || vm.response.attributes.is_WIP}"
+              data-ng-click="vm.reviewAgain()"
+            >
+              <icon class="font-size-18" name="refresh"></icon>
+            </button>
+            <button
+              data-ng-if="vm.checkConditionsForDisplayingReview('addverifier') || vm.checkConditionsForDisplayingReview('updateverifier')"
+              uib-tooltip="{{!vm.response.id?'You cannot assign a reviewer to a question without a response':vm.response.attributes.is_WIP? 'Response is marked as draft': vm.response.verifier?'Assigned to '+vm.Utils.getAssignedToName(vm.response.verifier):'Add Reviewer'}}"
+              tooltip-placement="auto left"
+              btn-type="transparent"
+              tabindex="-1"
+              data-ng-class="{'qa-na-active': vm.reviewButtonShow['updateverifier'],'disabled':!vm.response.id || vm.response.attributes.is_WIP}"
+              data-ng-click="vm.openVerifierModal()"
+            >
+              <icon class="font-size-18" name="user-check"></icon>
+            </button>
+            <button
+              data-ng-if="vm.checkConditionsForDisplayingReview('decline')"
+              uib-tooltip="{{vm.response.attributes.is_WIP?'Response is marked as draft':isReadonlyEditable?'Send back to author':'Request revision'}}"
+              tooltip-placement="auto left"
+              btn-type="transparent"
+              data-ng-disabled="vm.response.attributes.is_WIP"
+              data-ng-click="vm.sendBackToAuthor()"
+            >
+              <icon
+                name="mail-forward"
+                class="font-size-18"
+                data-ng-if="isReadonlyEditable"
+              ></icon>
+              <icon
+                name="remove"
+                class="font-size-18"
+                data-ng-if="isReadonlyNotEditable"
+              ></icon>
+            </button>
+          </div>
+          <div
+            class="other-controls inline-block"
+            data-ng-if="vm.checkConditionsForDisplayingReview('othercontrols')"
+          >
+            <button
+              btn-type="transparent"
+              tabindex="-1"
+              data-ng-class="{'qa-na-active': vm.response.question.attributes.has_standardized_text}"
+              tooltip-placement="left"
+              uib-tooltip="{{vm.response.question.attributes.has_standardized_text? 'Add response from smart text': 'No smart text found'}}"
+              data-ng-click="vm.addResponseFromSmartText()"
+              data-ng-if="((vm.isEditable) && (vm.is_investor) && (vm.response.responseType=='TextMultiLine') && !vm.response.verifierEdit && vm.type == 'dd_review')"
+            >
+              <icon
+                class="font-size-18 font-weight-600"
+                name="standard-text"
+              ></icon>
+            </button>
+
+            <button
+              btn-type="transparent"
+              tabindex="-1"
+              data-ng-class="{'qa-na-active': true}"
+              uib-tooltip="{{'See available responses for this question'}}"
+              tooltip-placement="left"
+              data-ng-click="vm.showAvailableResponses()"
+              data-ng-if="(questionnaireController.diligence.diligence_type != 'dd_review' && (vm.isEditable) && (vm.response.responseType=='TextEmail' || vm.response.responseType=='Text' || vm.response.responseType=='TextMultiLine') && !vm.response.verifierEdit)"
+            >
+              <icon class="font-size-18" name="bolt"></icon>
+            </button>
+
+            <span
+              uib-tooltip="{{vm.response.attributes.is_WIP?'Response is marked as draft':'Add Question to Pre-approved'}}"
+              data-ng-if="vm.showForManager && vm.type != 'dd_profile' && vm.response.allowAddToPreapproved && !vm.response.verifierEdit"
+            >
+              <button
+                btn-type="transparent"
+                data-ng-disabled="vm.response.attributes.is_WIP"
+                data-ng-click="vm.addToPreapproved(vm.response)"
+              >
+                <icon name="plus-circle" class="font-size-18"></icon>
+              </button>
+            </span>
+
+            <span
+              data-ng-if="!vm.response.id && vm.showForManager && vm.type == 'dd_profile' "
+              data-ng-class="{'datepicker-hasvalue':vm.response.id && (vm.response.attributes.expiry_date != undefined || vm.response.attributes.expiry_date!= null),'disabled-datepicker':!vm.response.id,'expired-datepicker':vm.response.id && vm.isDateExpired()}"
+            >
+              <datepicker-mini
+                data-ng-model="vm.response.attributes.expiry_date"
+                id="expiryDate_{{vm.response.cid}}"
+                min-date="vm.minDate"
+                date-disabled="!vm.response.id"
+                tooltip-text="Expiry date"
+                ng-change="vm.updateExpiryDate()"
+              ></datepicker-mini>
+            </span>
+
+            <span
+              data-ng-if="(vm.response.id && (vm.response.attributes.expiry_date == null || vm.response.attributes.expiry_date == undefined || vm.response.attributes.expiry_date == '')) && vm.showForManager && vm.type == 'dd_profile'"
+              data-ng-class="{'datepicker-hasvalue':vm.response.id && (vm.response.attributes.expiry_date != undefined || vm.response.attributes.expiry_date!= null),'disabled-datepicker':!vm.response.id,'expired-datepicker':vm.response.id && vm.isDateExpired()}"
+            >
+              <datepicker-mini
+                data-ng-model="vm.response.attributes.expiry_date"
+                id="expiryDate_{{vm.response.cid}}"
+                min-date="vm.minDate"
+                date-disabled="!vm.response.id"
+                tooltip-text="Set expiry date"
+                ng-change="vm.updateExpiryDate()"
+              ></datepicker-mini>
+            </span>
+            <span
+              data-ng-if="vm.response.id && vm.response.attributes.expiry_date != null && vm.response.attributes.expiry_date != undefined && vm.response.attributes.expiry_date != '' && vm.showForManager && vm.type == 'dd_profile'"
+              data-ng-class="{'datepicker-hasvalue':vm.response.id && (vm.response.attributes.expiry_date != undefined || vm.response.attributes.expiry_date!= null),'disabled-datepicker':!vm.response.id,'expired-datepicker':vm.response.id && vm.isDateExpired()}"
+            >
+              <datepicker-mini
+                data-ng-model="vm.response.attributes.expiry_date"
+                id="expiryDate_{{vm.response.cid}}"
+                min-date="vm.minDate"
+                date-disabled="!vm.response.id"
+                tooltip-text="Expiry date: {{vm.response.attributes.expiry_date | date}}"
+                ng-change="vm.updateExpiryDate()"
+              ></datepicker-mini>
+            </span>
+
+            <dv-team-member-selector
+              selection="vm.response.question.attributes.assignedUsers"
+              function-selection="vm.response.question.attributes.assignedFunctions"
+              on-change="vm.updateAssignMember(user, type)"
+              clear-selection-allowed="true"
+              functions="questionnaireController.entityFunctions"
+              data-ng-if="vm.isEditable && (questionnaireController.diligence.status != vm.diligenceStatusConstant.PRECOMPLETIONREVIEW || vm.type == 'dd_profile')"
+            >
+            </dv-team-member-selector>
+
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              data-ng-class="{'qa-na-active': vm.response.attributes.is_validation_required,'disabled': !(vm.response.is_valid)}"
+              uib-tooltip="Mark response as valid"
+              data-ng-click="vm.validateResponse()"
+              tooltip-placement="left"
+              data-ng-if="(vm.isEditable) && (!vm.response.attributes.is_NA) && (vm.response.id) && !vm.response.verifierEdit && (vm.response.attributes.response_type == 'Grid' || vm.response.attributes.response_type == 'DynamicGrid') && vm.response.attributes.is_validation_required"
+            >
+              <icon name="table-validate" class="font-size-18"></icon>
+            </button>
+
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              data-ng-class="{'qa-na-active': vm.response.attributes.is_WIP}"
+              uib-tooltip="{{vm.response.attributes.is_WIP ? 'Mark as final' : 'Mark response as draft'}}"
+              data-ng-click="vm.toggleWIP()"
+              tooltip-placement="left"
+              data-ng-if="(vm.isEditable) && (!vm.response.attributes.is_NA) && (vm.response.id) && !vm.response.verifierEdit"
+            >
+              <icon name="under-construction-2" class="font-size-18"></icon>
+            </button>
+
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              class="disabled"
+              uib-tooltip="No response available to mark as draft"
+              tooltip-placement="left"
+              data-ng-if="(vm.isEditable) && (!vm.response.attributes.is_NA) && (!vm.response.id) && !vm.response.verifierEdit"
+            >
+              <icon name="under-construction-2" class="font-size-18"></icon>
+            </button>
+
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              class="js-response-control-mark-na"
+              data-ng-class="{'qa-na-active': vm.response.attributes.is_NA}"
+              uib-tooltip="{{vm.response.attributes.is_NA ? 'Add Response' : 'Mark as Not Applicable'}}"
+              data-ng-click="vm.toggleNotApplicable()"
+              tooltip-placement="left"
+              data-ng-if="(vm.isEditable)"
+            >
+              <icon name="na-narrow"></icon>
+            </button>
+          </div>
+          <button
+            btn-type="transparent"
+            size="sm"
+            class="js-response-control-notes"
+            tabindex="-1"
+            uib-tooltip="Add internal notes visible only to your firm"
+            tooltip-placement="left"
+            data-ng-click="vm.openNotesDialog()"
+            data-ng-if="vm.checkConditionsForDisplayingReview('notecontrols')"
+          >
+            <icon name="notepad"></icon>
+            <span
+              class="count-bubble"
+              data-ng-show="response.question.attributes.note_count"
+              >{{response.question.attributes.note_count}}</span
+            >
+          </button>
+          <button
+            btn-type="transparent"
+            size="sm"
+            class="js-response-control-recommendation"
+            tabindex="-1"
+            uib-tooltip="{{vm.recommendationTooltip}}"
+            tooltip-placement="left"
+            data-ng-click="vm.openRecommendationDialog()"
+          >
+            <icon name="recommendation" style="font-size: 16px"></icon>
+            <span
+              class="count-bubble relative align-middle"
+              data-ng-show="response.question.attributes.issue_count"
+              >{{response.question.attributes.issue_count}}</span
+            >
+          </button>
+          <button
+            btn-type="transparent"
+            size="sm"
+            class="js-response-control-notes"
+            tabindex="-1"
+            uib-tooltip="Add review comments visible only to your firm"
+            tooltip-placement="left"
+            data-ng-click="vm.openReviewNotesDialog()"
+            data-ng-if="vm.checkConditionsForDisplayingReview('reviewnotecontrols')"
+          >
+            <icon name="notepad"></icon>
+            <span
+              class="count-bubble"
+              data-ng-show="response.attributes.response_comments_counts+response.question.attributes.note_count"
+              >{{response.attributes.response_comments_counts+response.question.attributes.note_count}}</span
+            >
+          </button>
+          <div
+            uib-dropdown
+            data-ng-if="vm.reviewButtonShow['othercontrols']"
+            class="inline-block"
+          >
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              data-ng-if="!vm.response.verifierEdit"
+              class="js-response-control-follow-up"
+              data-ng-class="{'disabled': (!vm.response.id ||  vm.is_internal || vm.type == 'shared_profile')}"
+              uib-tooltip="{{vm.response.id ? vm.is_investor?'Follow-up with your manager.':'Follow-up with your investor.' : 'No response available to follow up on'}}"
+              tooltip-placement="left"
+              data-ng-click="vm.openFollowupDialog()"
+            >
+              <icon name="doubt"></icon>
+              <span
+                class="count-bubble"
+                data-ng-show="vm.response.attributes.followUpCount"
+                >{{vm.response.attributes.followUpCount}}
+              </span>
+            </button>
+
+            <!-- controls for completed and approved projects-->
+            <!-- <span data-ng-if="!(vm.isEditable) || vm.response.verifierEdit">
+                        </span> -->
+
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              uib-tooltip="Add / Edit Todo"
+              data-ng-if="vm.response.id && (!(vm.isEditable) || vm.response.verifierEdit)"
+              data-ng-click="vm.openTodosDialog()"
+              tooltip-placement="left"
+            >
+              <icon name="tasks" class="font-size-14"></icon>
+            </button>
+
+            <button
+              btn-type="transparent"
+              size="sm"
+              tabindex="-1"
+              uib-tooltip="No response available to display todos"
+              tooltip-placement="left"
+              class="disabled"
+              data-ng-if="!vm.response.id && (!(vm.isEditable) || vm.response.verifierEdit)"
+            >
+              <icon name="tasks" class="font-size-14"></icon>
+              <span
+                class="count-bubble"
+                data-ng-show="vm.response.attributes.toDoCount"
+                >{{vm.response.attributes.toDoCount}}
+              </span>
+            </button>
+            <button
+              btn-type="transparent"
+              size="sm"
+              class="dropdown-toggle js-response-control-more-actions"
+              data-ng-class="{'qa-na-active': (vm.response.attributes.toDoCount)}"
+              uib-dropdown-toggle
+              uib-tooltip="More response actions"
+              tooltip-placement="left"
+              tabindex="-1"
+              data-ng-if="vm.isEditable && !vm.response.verifierEdit"
+            >
+              <icon name="ellipsis-h"></icon>
+            </button>
+
+            <ul
+              class="dropdown-menu dropdown-menu-right"
+              uib-dropdown-menu
+              role="menu"
+              data-ng-if="vm.isEditable && !vm.response.verifierEdit"
+            >
+              <li
+                data-ng-class="{'disabled': !vm.response.id}"
+                uib-tooltip="{{vm.response.id ? '' : 'No response available to display todos'}}"
+                tooltip-placement="left"
+                data-ng-if="vm.isEditable"
+              >
+                <a role="button" data-ng-click="vm.openTodosDialog()">
+                  <icon
+                    name="tasks"
+                    class="font-size-14 space-on-right-lg"
+                  ></icon>
+                  Add / Edit Todo
+                  <span
+                    class="count-bubble relative align-middle"
+                    data-ng-show="vm.response.attributes.toDoCount"
+                    >{{vm.response.attributes.toDoCount}}
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="alert alert-info clear-border-radius borderless pull-left-override"
+      data-ng-if="vm.response.question.attributes.hint_text"
+    >
+      <div>
+        <div data-ng-if="!printPreview" dv-show-more show-more-height="16">
+          <span
+            class="break_word"
+            ng-bind-html="vm.response.question.attributes.hint_text | cleanhtml"
+          ></span>
+        </div>
+        <div data-ng-if="printPreview">
+          <span
+            class="break_word"
+            ng-bind-html="vm.response.question.attributes.hint_text | cleanhtml"
+          ></span>
+        </div>
+      </div>
+    </div>
+    <!--need to add some control here if response.is_NA is true .. mute this div?-->
+    <div class="js-qa-widget qa-widget-container"></div>
+
+    <!--
+             <div uib-tooltip="Response score"
+                  col="1"
+                  class="js-dd-score-display-container"></div>
+         -->
+  </div>
+
+  <div
+    class="space-on-top-lg text-right"
+    data-ng-if="vm.response.question.attributes.response_word_limit && !readonly"
+  >
+    <span
+      data-ng-class="{'text-success':vm.response.question.attributes.word_count < vm.response.question.attributes.response_word_limit, 'text-danger':vm.response.question.attributes.word_count >= vm.response.question.attributes.response_word_limit, 'bold-text':vm.response.question.attributes.word_count >= vm.response.question.attributes.response_word_limit }"
+    >
+      <span
+        data-ng-if="vm.response.question.attributes.word_count && vm.response.question.attributes.word_count > 0"
+      >
+        {{vm.response.question.attributes.word_count}} words
+      </span>
+      (maximum {{vm.response.question.attributes.response_word_limit}} words)
+    </span>
+  </div>
+
+  <div
+    class="space-on-top-lg text-right"
+    data-ng-if="!readonly && !vm.response.question.attributes.response_word_limit && vm.response.question.attributes.word_count && vm.response.question.attributes.word_count > 0"
+  >
+    <span> {{vm.response.question.attributes.word_count}} words </span>
+  </div>
+
+  <div class="more-actions-bar space-on-top">
+    <span
+      class="add-comment-btn inline-block space-on-top-lg space-on-right-xxl"
+      data-ng-if="vm.type == 'dd_review' && !questionnaireController.noResponseControls && vm.Utils.getObjectLength(vm.response.question.mapped_questions) > 0"
+    >
+      <a
+        class="clickable space-on-right-lg"
+        data-ng-click="vm.showMappedQuestions()"
+      >
+        <icon name="linked-items"></icon>
+        {{vm.response.showQuestionMap? 'Hide': 'Show'}} Mapped Questions
+      </a>
+    </span>
+    <span
+      class="add-comment-btn inline-block space-on-top-lg space-on-right-xxl"
+      data-ng-if="vm.type == 'dd_review' && !questionnaireController.noResponseControls && vm.Utils.getObjectLength(vm.response.question.mapped_questions) > 0 && vm.addToResponseAllowed && vm.response.showQuestionMap"
+    >
+      <a class="clickable" data-ng-click="vm.addAllResponses()">
+        <icon name="copy"></icon>
+        Copy all responses
+      </a>
+    </span>
+    <span
+      data-ng-show="vm.showCommentAddButton()"
+      uib-tooltip="Add Comment"
+      class="add-comment-btn inline-block space-on-top-lg space-on-right-xxl"
+    >
+      <a class="clickable" data-ng-click="vm.displayCommentSection()">
+        <icon name="comment-o"></icon>
+        Add Comment
+      </a>
+    </span>
+
+    <span
+      data-ng-if="vm.response.id && vm.isEditable && vm.response.attributes.revision_counts > 0"
+      uib-tooltip="{{vm.response.id ? '' : 'No response available to display history'}}"
+      class="add-comment-btn space-on-right-xxl"
+    >
+      <a class="clickable" data-ng-click="vm.openHistoryDialog()">
+        <icon name="clock-o"></icon>
+        View Revisions
+        <span
+          class="count-bubble"
+          data-ng-show="vm.response.attributes.revision_counts"
+          >{{vm.response.attributes.revision_counts}}
+        </span>
+      </a>
+    </span>
+
+    <span
+      class="add-comment-btn space-on-right-xxl"
+      data-ng-if="vm.response.id && !(isReadonlyEditable || isReadonlyNotEditable) && vm.isEditable"
+    >
+      <a
+        class="clickable color-danger"
+        data-ng-click="vm.deleteResponse()"
+        data-ng-class="{'text-danger': vm.response.id}"
+      >
+        <icon name="trashcan"></icon>
+        Delete Response
+      </a>
+    </span>
+  </div>
+
+  <div class="space-on-top-lg" data-ng-if="vm.showCommentSection()">
+    <comment-section></comment-section>
+  </div>
+
+  <div class="space-on-top text-right">
+    <small
+      class="review-label success"
+      data-ng-if="(((isReadonlyEditable || questionnaireController.diligence.status == vm.diligenceStatusConstant.COMPLETED) && vm.response.attributes.response_status == vm.responseStatus.REVIEWSUCCESS) || (isReadonlyNotEditable && vm.response.attributes.post_response_status == vm.responseStatus.REVIEWSUCCESS)) && vm.response.verifier.attributes.is_complete"
+    >
+      Last Reviewed by {{vm.response.verifier.attributes.completed_by_name}} on
+      {{vm.response.verifier.attributes.completed_at | date}}
+    </small>
+    <span
+      class="label label-danger-new"
+      uib-tooltip="Revision requested by {{vm.response.verifier.attributes.completed_by_name}} on {{vm.response.verifier.attributes.completed_at | date}}"
+      tooltip-placement="auto top"
+      ng-if="(((isReadonlyEditable || questionnaireController.diligence.status == vm.diligenceStatusConstant.COMPLETED) && vm.response.attributes.response_status == vm.responseStatus.REVIEWFAILED) || (isReadonlyNotEditable && vm.response.attributes.post_response_status == vm.responseStatus.REVIEWFAILED)) && vm.response.verifier.attributes.is_complete"
+      >REVISION REQUESTED</span
+    >
+    <span data-ng-if="vm.checkConditionsForDisplayingReview('undo')">
+      <span
+        class="label label-default clickable"
+        uib-tooltip="Undo Review"
+        data-ng-click="vm.undoVerification()"
+      >
+        <icon name="undo"></icon>
+        {{vm.getRemainingTime(vm.response.timeDiff)}}
+      </span>
+    </span>
+  </div>
+  <div
+    class="space-on-top-lg mapped-questions-panel"
+    data-ng-if="vm.type == 'dd_review' && !questionnaireController.noResponseControls && vm.Utils.getObjectLength(vm.response.question.mapped_questions) > 0"
+  >
+    <div class="space-on-top" data-ng-if="vm.response.showQuestionMap">
+      <span class="text-center" data-ng-if="vm.response.loading_response_map">
+        <spinner></spinner>
+      </span>
+      <div
+        data-ng-if="!vm.response.loading_response_map && vm.response.mapped_responses.length == 0"
+      >
+        <empty-state message="No responses to display"></empty-state>
+      </div>
+      <ul
+        class="list-group"
+        data-ng-if="!vm.response.loading_response_map && vm.response.mapped_responses.length > 0"
+      >
+        <li
+          class="list-group-item"
+          data-ng-repeat="response in vm.response.mapped_responses"
+        >
+          <span class="copyButton" data-ng-if="response.allowCopy">
+            <button
+              btn-type="default"
+              data-ng-if="!vm.addToResponseAllowed"
+              size="sm"
+              tooltip-placement="left"
+              class="space-on-top-lg"
+              uib-tooltip="Copy this response"
+              ngclipboard
+              data-clipboard-target="#mapped-response-response_{{response.id}}"
+              data-ng-click="vm.copyResponse(entry.response_text)"
+            >
+              <icon name="copy"></icon>
+            </button>
+            <button
+              btn-type="default"
+              data-ng-if="vm.addToResponseAllowed"
+              size="sm"
+              tooltip-placement="left"
+              class="space-on-top-lg"
+              uib-tooltip="Add to response"
+              data-ng-click="vm.addTextToResponse(response)"
+            >
+              <icon name="plus"></icon>
+            </button>
+          </span>
+          <div class="questionName">
+            <span class="text-bold" ng-bind-html="response.questionText"></span>
+          </div>
+          <!-- Show this view when the main response is not a grid or dynamic grid but mapped response is not a grid or dynamic grid or when mapped response type is grid or dynamic grid but main response type is not grid or dynamic grid  -->
+          <div
+            class="responseText space-on-top-xxl space-on-bottom-xl"
+            data-ng-if="!((response.attributes.response_type == 'Grid' || response.attributes.response_type == 'DynamicGrid'))"
+          >
+            <response-renderer
+              class="block-display"
+              response="response"
+              copy="false"
+              id="mapped-response-response_{{response.id}}"
+              bind-to="response.renderedData"
+              preview="true"
+            ></response-renderer>
+          </div>
+          <!-- Show this view when main and mapped response type is grid or dynamic grid -->
+          <div
+            class="responseText space-on-top-xxl space-on-bottom-xl"
+            data-ng-if="(response.attributes.response_type == 'Grid' || response.attributes.response_type == 'DynamicGrid')"
+          >
+            <response-renderer
+              class="block-display"
+              response="response"
+              copy="false"
+              bind-to="response.renderedHtml"
+              preview="false"
+            ></response-renderer>
+            <span
+              data-ng-if="vm.response.responseType == 'Grid' || vm.response.responseType == 'DynamicGrid'"
+            >
+              <response-renderer
+                class="hide-table"
+                response="response"
+                copy="true"
+                id="mapped-response-response_{{response.id}}"
+                bind-to="response.renderedData"
+                preview="true"
+              ></response-renderer>
+            </span>
+            <span
+              data-ng-if="vm.response.responseType != 'Grid' && vm.response.responseType != 'DynamicGrid'"
+            >
+              <response-renderer
+                class="hide-table"
+                response="response"
+                copy="false"
+                id="mapped-response-response_{{response.id}}"
+                bind-to="response.renderedData"
+                preview="true"
+              ></response-renderer>
+            </span>
+          </div>
+          <small class="label label-default text-uppercase"
+            >{{response.project_name}}</small
+          >
+          <small class="label label-default text-uppercase"
+            >{{response.templateName}}</small
+          >
+          <div class="pull-right">
+            <small class="text-muted text-dark-blue"
+              >Last updated {{response.attributes.responseTimeStamp |
+              fromNow}}</small
+            >
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="qa-conditional-responses js-conditional-responses"></div>
+</div>

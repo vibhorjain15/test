@@ -1,0 +1,17 @@
+.remove-condition {
+  padding-bottom: 10px;
+}
+.scoreband {
+  padding: 5px 0px 5px 0px;
+}
+.legend-wrapper {
+  background: #efefef 0% 0% no-repeat padding-box;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  padding: 3%;
+  margin-bottom: 14px;
+}
+.score-input {
+  display: flex;
+  align-items: center;
+}

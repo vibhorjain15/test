@@ -1,0 +1,87 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-products-related-products></ng2-products-related-products>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='40' data-ng-if="!vm.fund"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-show="vm.fund">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{vm.fund.display_name}} <span class="space-on-left label label-warning" uib-tooltip="Deactivated by the owner firm" ng-show="!vm.fund.platform_active">{{vm.statusLabel.INACTIVE}}</span>
+            </h4>
+            <p class="text-muted space-on-top" data-ng-if="vm.fund.parentFirm.name">
+              <small>Parent Firm:</small>
+              <small>
+                <a ui-sref="app.firms.profile.monitor({firmId: vm.fund.parentFirm.id})"><strong>{{vm.fund.parentFirm.name}}</strong></a>
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="12" authorized-view accessible-to="investor">
+        <div class="panel panel-default" data-ng-show="vm.related_entities && vm.related_entities.length">
+          <div class="panel-heading">
+            <h5 class="panel-title">{{vm.related_entities.length}} Related Entities</h5>
+          </div>
+
+          <div class="panel-body">
+            <ul class="list-unstyled"
+                tiles-adjuster="vm.adjust_entity_list"
+                use-max-tile-width="true"
+                tile-selector="> li">
+              <li class="inline-block pull-left"
+                  on-render="vm.adjust_entity_list = true"
+                  data-ng-repeat="entity in vm.related_entities">
+                <div class="panel panel-default relative">
+                  <div class="panel-body">
+                    <div>
+                      <a ui-sref="app.firms.funds.profile.monitor({firmId:entity.parentFirm.id, fundId: entity.id})">
+                        {{entity.display_name}}
+                      </a>
+                      <span class="space-on-left label label-warning" uib-tooltip="Deactivated by the owner firm" ng-show="!entity.platform_active">{{vm.statusLabel.INACTIVE}}</span>
+                    </div>
+
+                    <ul class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons">
+                      <li class="space-on-bottom">
+                        <span class="align-middle text-muted">{{entity.strategyName}}</span>
+                      </li>
+
+                      <li class="space-on-bottom">
+                        <span class="align-middle text-muted"><small># SHARE CLASS: {{entity.shareclass_Count}}</small></span>
+                      </li>
+
+                      <li>
+                        <fund-return fund-return="entity.return"
+                                     uib-tooltip="Fund returns"
+                                     date="entity.returnAsofDate"></fund-return>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="panel panel-default" data-ng-hide="vm.related_entities">
+          <div class="panel-body">
+            <spinner broad-spinner spinner-height='100'></spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix" data-ng-show="vm.related_entities && !vm.related_entities.length">
+      <div col="12">
+        <empty-state message="No related products found"></empty-state>
+      </div>
+    </div>
+  </div>
+</div>

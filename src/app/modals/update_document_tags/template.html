@@ -1,0 +1,82 @@
+<form name="vm.document_tags_update_form" data-ng-submit="vm.submit(false)" class="form-horizontal">
+  <div class="modal-header">
+    <h3 class="modal-title">Update Document Meta Data
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Document Name" tooltip-placement="left">
+      <label for="attachment-name" class="col-md-4 control-label">
+        Document Name
+      </label>
+
+      <div class="col-md-6">
+        <input type="text"
+               id="attachment-name"
+               class="form-control"
+               data-ng-model="vm.params.name"
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               focus-me="vm.focusAttachmentName"
+               required />
+      </div>
+    </form-group>
+
+    <form-group field-name="As of Date" tooltip-placement="left" control-selector="dv-datepicker">
+      <label for="as-of-date" class="col-md-4 control-label">
+        As of Date
+      </label>
+
+      <div class="col-md-6">
+        <dv-datepicker data-ng-model="vm.params.as_of_date"
+                       ng-required="true"
+                       max-date="vm.maxAsOfDate"></dv-datepicker>
+      </div>
+    </form-group>
+
+    <form-group field-name="Entity Name" tooltip-placement="left">
+      <label for="entity_name" class="col-md-4 control-label">
+        Associated Product
+      </label>
+
+      <div class="col-md-6">
+        <select name="entity_name"
+                  id="entity_name"
+                  class="form-control"
+                  chosen
+                  data-ng-disabled="!vm.funds"
+                  data-ng-options="fund.id as fund.name for fund in vm.funds"
+                  data-ng-model="vm.params.entity_id">
+            <option value="">--Select--</option>
+          </select>
+      </div>
+    </form-group>
+
+      <form-group field-name="document-type-new">
+          <label for="document-type-new" class="col-md-4 control-label">Document Type</label>
+
+          <div class="col-md-6" data-ng-if="vm.document_types.length">
+              <tags-input data-ng-model="vm.params.tag_ids_copy"
+                          display-property="label"
+                          key-property="label"
+                          add-from-autocomplete-only=true
+                          id="document-type-new">
+                  <auto-complete source="vm.filterTags($query)"
+                                 load-on-focus=true
+                                 load-on-down-arrow=true
+                                 load-on-empty=true
+                                 min-length="1"></auto-complete>
+              </tags-input>
+          </div>
+      </form-group>
+  </div>
+
+  <div class="modal-footer">
+      <button type="submit"
+              button-loader="vm.saving_document">Update</button>
+    <button btn-type="success"
+            button-loader="vm.approving_document" data-ng-click="vm.updateApproveDocument()">Update and Approve</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

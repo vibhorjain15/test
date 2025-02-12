@@ -1,0 +1,22 @@
+<div
+  class="panel panel-default space-on-top-xxl welcome_to_dv"
+  *ngIf="!help_mode"
+>
+  <div class="panel-body">
+    <h1 class="text-center">Welcome to DiligenceVault</h1>
+
+    <p class="lead text-center">
+      Now you can review due diligence materials, take notes, collaborate with
+      team members, and export data and documents on an interactive, secure and
+      centralized platform.
+    </p>
+
+    <div class="text-center">
+      <!-- <button btn-type="primary" size="lg" chardin="vm.chardin_config" reveal-on-keypress>Take the product tour</button> -->
+      <button class="btn btn-primary btn-lg" (click)="navigateToDashboard()">
+        Take me to dashboard
+      </button>
+    </div>
+  </div>
+</div>
+<!-- <ng2-faqs></ng2-faqs> -->

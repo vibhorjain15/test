@@ -1,0 +1,28 @@
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title">New Opportunity Created
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="inbound-copy-link-header">
+            Copy the link below and paste it on your website if you want the managers to
+            apply for this opportunity.
+        </div>
+        <div class="inbound-link" data-ng-class="{'inbound-link-border-success': vm.copied, 'inbound-link-border-normal': !vm.copied}">
+            <span class="inbound-link-text">
+                {{vm.link.length < 66 ?vm.link:vm.link.substring(0, 62) + "..."}}
+            </span>
+            <span class="inbound-copy-link clickable pull-right"
+                data-ng-class="{'inbound-copy-link-success': vm.copied, 'inbound-copy-link-normal': !vm.copied}"
+                data-ng-click="vm.copyToClipboard()">
+                {{vm.copied?"COPIED":"COPY LINK"}}
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button btn-type="default" data-ng-click="vm.cancel()">Close</button>
+    </div>
+</div>

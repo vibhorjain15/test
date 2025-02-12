@@ -1,0 +1,2609 @@
+<app-spinner
+  spinnerHeight="50"
+  broadSpinner="true"
+  *ngIf="!is_data_loaded"
+></app-spinner>
+
+<dv-stepper *ngIf="is_data_loaded" #dvStepper>
+  <dv-step
+    label="Purpose"
+    [discription]="'Select the purpose for this information request'"
+  >
+    <div class="row clearfix">
+      <div col="4" class="bordered-right-silver">
+        <p
+          class="text-center space-on-bottom-xxxl font-size-16"
+          clickable
+          aria-label="Scheduled / Pending Approval Requests Section"
+        >
+          <b class="bordered-bottom padded-bottom"
+            >Scheduled / Pending Approval Requests</b
+          >
+        </p>
+        <div class="text-center pa-tb-lg">
+          <div col="6" triggers="mouseenter:mouseleave">
+            <a
+              class="link-disguise clickable investor-link-display-block"
+              (click)="setDDType('dd_scheduled', dvStepper)"
+              tooltip="View all periodic and automatically scheduled requests here"
+              [ngClass]="{
+                'text-orange': request.duediligence_type == 'dd_scheduled'
+              }"
+              triggers="mouseenter:mouseleave"
+              clickable
+            >
+              <div class="space-on-bottom">
+                <span appIcon name="calendar" size="2x"></span>
+              </div>
+              Scheduled Requests
+            </a>
+          </div>
+          <div col="6">
+            <a
+              class="link-disguise clickable investor-link-display-block"
+              (click)="setDDType('dd_pending', dvStepper)"
+              tooltip="View all requests which require approval before sending"
+              [ngClass]="{
+                'text-orange': request.duediligence_type == 'dd_pending'
+              }"
+              triggers="mouseenter:mouseleave"
+              clickable
+            >
+              <div class="space-on-bottom">
+                <span appIcon name="pending_approval" size="2x"></span>
+              </div>
+              Requests Pending Approval(s)
+            </a>
+          </div>
+        </div>
+      </div>
+      <div col="6" class="bordered-right-silver">
+        <p
+          class="text-center space-on-bottom-xxxl font-size-16"
+          clickable
+          aria-label="Build From Scratch Section"
+        >
+          <b class="bordered-bottom padded-bottom">Build From Scratch</b>
+        </p>
+        <div class="pa-tb-lg">
+          <div class="text-center" col="4">
+            <a
+              class="link-disguise clickable investor-link-display-block"
+              (click)="setDDType('dd_new', dvStepper)"
+              tooltip="Research and due diligence preceding the initial engagement or allocation"
+              [ngClass]="{
+                'text-orange': request.duediligence_type == 'dd_new'
+              }"
+              triggers="mouseenter:mouseleave"
+              clickable
+            >
+              <div class="space-on-bottom">
+                <span appIcon name="file-add" size="2x"></span>
+              </div>
+              {{
+                entity_type == "Product" ? "Pre-Investment" : "Pre-Engagement"
+              }}
+            </a>
+          </div>
+          <div class="text-center" col="4">
+            <a
+              class="link-disguise clickable investor-link-display-block"
+              (click)="setDDType('dd_ongoing', dvStepper)"
+              tooltip="Post investment, ongoing information request"
+              [ngClass]="{
+                'text-orange': request.duediligence_type == 'dd_ongoing'
+              }"
+              triggers="mouseenter:mouseleave"
+              clickable
+            >
+              <div class="space-on-bottom">
+                <span appIcon name="clock-o" size="2x"></span>
+              </div>
+              Ongoing Monitoring
+            </a>
+          </div>
+          <div class="text-center" col="4">
+            <a
+              class="link-disguise clickable investor-link-display-block"
+              (click)="setDDType('dd_event_related', dvStepper)"
+              tooltip="Post investment request triggered by a specific event or circumstance, such as personnel change, drawdown, et al."
+              [ngClass]="{
+                'text-orange': request.duediligence_type == 'dd_event_related'
+              }"
+              triggers="mouseenter:mouseleave"
+              clickable
+            >
+              <div class="space-on-bottom">
+                <span appIcon name="thunder" size="2x"></span>
+              </div>
+              Adhoc / Event Related
+            </a>
+          </div>
+        </div>
+      </div>
+      <div col="2">
+        <p class="text-center space-on-bottom-xxxl font-size-16">
+          <b
+            class="bordered-bottom padded-bottom"
+            clickable
+            aria-label="Analyst Evaluation Section"
+          >
+            <span> Analyst Evaluation </span>
+          </b>
+        </p>
+        <div class="pa-tb-lg">
+          <div class="text-center" col="12">
+            <a
+              class="link-disguise clickable investor-link-display-block"
+              (click)="setDDType('dd_review', dvStepper)"
+              tooltip="Create analyst evaluation"
+              [ngClass]="{
+                'text-orange': request.duediligence_type == 'dd_review'
+              }"
+              triggers="mouseenter:mouseleave"
+              clickable
+            >
+              <div class="space-on-bottom">
+                <span appIcon name="notepad" size="2x"></span>
+              </div>
+              Analyst Evaluation
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dv-step>
+
+  <dv-step
+    *ngIf="
+      request.duediligence_type != 'dd_scheduled' &&
+      request.duediligence_type != 'dd_review' &&
+      request.duediligence_type != 'dd_pending'
+    "
+    [label]="dd_for"
+    [isDisabled]="!selection_list.length && !select_all_entities"
+    [isEntityRequestFlow]="true"
+    [discription]="
+      'Select ' +
+      dd_for +
+      ' on the left hand panel, using search and filters to narrow your search and dynamically assign templates based on selected tags. Don’t see the ' +
+      dd_for +
+      ' you want? Add a new one to the list.'
+    "
+    previousLabel="Previous"
+    nextLabel="Next"
+    (onBackClick)="handleTemplateStepPrevious(dvStepper)"
+    (onNextClick)="canProceedToTemplateStep(dvStepper)"
+  >
+    <div class="row clearfix">
+      <div class="clear-padding-left clear-padding-right text-center">
+        <div class="btn-group space-on-bottom-xxl">
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': dd_for == 'Firm' }"
+            (click)="setDDFor('Firm')"
+            clickable
+          >
+            <span appIcon name="institution" class="space-on-right"></span>
+            FIRMS
+          </span>
+          <span
+            class="btn btn-default font-size-12 text-uppercase"
+            [ngClass]="{ 'btn-primary': dd_for == 'Strategy' }"
+            (click)="setDDFor('Strategy')"
+            clickable
+          >
+            <span appIcon name="strategy" class="space-on-right"></span>
+            STRATEGIES
+          </span>
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': dd_for == 'Product' }"
+            (click)="setDDFor('Product')"
+            clickable
+          >
+            <span appIcon name="fund" class="space-on-right"></span>
+            PRODUCTS
+          </span>
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': dd_for == 'Vehicle' }"
+            (click)="setDDFor('Vehicle')"
+            clickable
+          >
+            <span appIcon name="vehicle-car" class="space-on-right"></span>
+            VEHICLES
+          </span>
+        </div>
+      </div>
+      <div col="12">
+        <p class="alert alert-danger" *ngIf="display_entity_selection_error">
+          Please select at least one
+          {{ dd_for == "Strategies" ? "Strategy" : dd_for }} with at least one
+          contact / recipient to proceed
+        </p>
+        <div
+          *ngIf="dd_for == 'Strategy'"
+          class="text-center request-entity-checkbox"
+        >
+          <div class="inline-block">
+            <b>
+              <dv-checkbox
+                [isBold]="true"
+                class="pull-right-flex"
+                [(ngModel)]="showFunds"
+                [ngModelOptions]="{ standalone: true }"
+                label="Would you like to collect data for Products?"
+                iconTooltip="Check here to include product related questionnaires in this information request"
+                rightIcon="info"
+                iconClass="float-none space-on-left"
+              >
+              </dv-checkbox>
+            </b>
+          </div>
+        </div>
+        <div
+          *ngIf="dd_for == 'Product'"
+          class="text-center request-entity-checkbox"
+        >
+          <div class="inline-block">
+            <dv-checkbox
+              [isBold]="true"
+              class="pull-right-flex"
+              [(ngModel)]="showVehicles"
+              [ngModelOptions]="{ standalone: true }"
+              label="Would you like to collect data for Vehicles?"
+              iconTooltip="Check here to include vehicle related questionnaires in this information request"
+              rightIcon="info"
+              iconClass="float-none space-on-left"
+            >
+            </dv-checkbox>
+          </div>
+        </div>
+
+        <div *ngIf="dvStepper.selectedIndex === 1">
+          <entity-selector
+            *ngIf="dd_for == 'Strategy'"
+            [entity_type]="keywordConstants.Strategy"
+            [global_ternary_operator]="selectedGlobalTernaryOperator"
+            [search_criterias]="selectedFilters"
+            (changeList)="handleSelectedEntities($event)"
+            [global_hierarchy_option]="keywordConstants.Strategy"
+            [selection_list]="selected_entities"
+            [is_admin]="is_admin"
+          >
+          </entity-selector>
+
+          <entity-selector
+            *ngIf="dd_for == 'Product'"
+            [entity_type]="keywordConstants.Product"
+            [global_ternary_operator]="selectedGlobalTernaryOperator"
+            [search_criterias]="selectedFilters"
+            (changeList)="handleSelectedEntities($event)"
+            [global_hierarchy_option]="keywordConstants.Product"
+            [selection_list]="selected_entities"
+            [is_admin]="is_admin"
+          >
+          </entity-selector>
+
+          <entity-selector
+            *ngIf="dd_for == 'Firm'"
+            [entity_type]="keywordConstants.Firm"
+            [global_ternary_operator]="selectedGlobalTernaryOperator"
+            [search_criterias]="selectedFilters"
+            (changeList)="handleSelectedEntities($event)"
+            [global_hierarchy_option]="keywordConstants.Firm"
+            [selection_list]="selected_entities"
+            [is_admin]="is_admin"
+          >
+          </entity-selector>
+
+          <entity-selector
+            *ngIf="dd_for == 'Vehicle'"
+            [entity_type]="keywordConstants.Vehicle"
+            [global_ternary_operator]="selectedGlobalTernaryOperator"
+            [search_criterias]="selectedFilters"
+            (changeList)="handleSelectedEntities($event)"
+            [global_hierarchy_option]="keywordConstants.Vehicle"
+            [selection_list]="selected_entities"
+            [is_admin]="is_admin"
+          >
+          </entity-selector>
+        </div>
+      </div>
+    </div>
+  </dv-step>
+
+  <dv-step
+    *ngIf="
+      request.duediligence_type != 'dd_scheduled' &&
+      request.duediligence_type != 'dd_review' &&
+      request.duediligence_type != 'dd_pending' &&
+      dd_for == 'Strategy' &&
+      showFunds
+    "
+    label="Product"
+    [discription]="
+      'Select Product on the left hand panel, using search and filters to narrow your search. Don t see the Product you want? Add a new one to the list.'
+    "
+    previousLabel="Previous"
+    nextLabel="Next"
+    (onBackClick)="handleEntityPrevious(dvStepper)"
+    (onNextClick)="canExitProductsStep(dvStepper)"
+    [isDisabled]="hideQuestionnaireIfEntitiesEmpty && isProductVehicleLoaded"
+  >
+    <div class="row clearfix">
+      <p class="alert alert-danger" *ngIf="show_funds_selection_error">
+        Please select at least one Product with at least one contact / recipient
+        to proceed
+      </p>
+      <entity-selector
+        [entity_type]="keywordConstants.Product"
+        [global_ternary_operator]="selectedSubGlobalTernaryOperator"
+        [search_criterias]="selectedSubFilters"
+        (changeList)="handleSelectedFunds($event)"
+        [global_hierarchy_option]="keywordConstants.Product"
+        [entityList]="selected_entities"
+        [selection_list]="selected_funds"
+        [is_admin]="is_admin"
+        *ngIf="copyOfSelectedEntity && dvStepper.selectedIndex === 2"
+      >
+      </entity-selector>
+    </div>
+  </dv-step>
+
+  <dv-step
+    *ngIf="
+      request.duediligence_type != 'dd_scheduled' &&
+      request.duediligence_type != 'dd_review' &&
+      request.duediligence_type != 'dd_pending' &&
+      dd_for == 'Product' &&
+      showVehicles
+    "
+    label="Vehicle"
+    [discription]="
+      'Select Vehicle on the left hand panel, using search and filters to narrow your search. Don\'t see the vehicle you want? Add a new one to the list.'
+    "
+    previousLabel="Previous"
+    nextLabel="Next"
+    [isDisabled]="hideQuestionnaireIfEntitiesEmpty && isProductVehicleLoaded"
+    (onBackClick)="handleEntityPrevious(dvStepper)"
+    (onNextClick)="canExitVehiclesStep(dvStepper)"
+  >
+    <div class="row clearfix">
+      <p class="alert alert-danger" *ngIf="show_vehicles_selection_error">
+        Please select at least one Vehicle to proceed
+      </p>
+      <entity-selector
+        [entity_type]="keywordConstants.Vehicle"
+        [global_ternary_operator]="selectedSubGlobalTernaryOperator"
+        [search_criterias]="selectedSubFilters"
+        (changeList)="handleSelectedVehicle($event)"
+        [global_hierarchy_option]="keywordConstants.Vehicle"
+        [selection_list]="selected_vehicles"
+        [entityList]="selected_entities"
+        [standalone]="false"
+        [is_admin]="is_admin"
+        *ngIf="copyOfSelectedEntity && dvStepper.selectedIndex === 2"
+      >
+      </entity-selector>
+    </div>
+  </dv-step>
+
+  <dv-step
+    *ngIf="
+      request.duediligence_type != 'dd_scheduled' &&
+      request.duediligence_type != 'dd_review' &&
+      request.duediligence_type != 'dd_pending'
+    "
+    label="Questionnaire & Due Date "
+    [discription]="'Assign your questionnaire template and pick a due date'"
+    previousLabel="Previous"
+    nextLabel="Next"
+    (onBackClick)="handleQuestionnaireStepPrevious(dvStepper)"
+    (onNextClick)="canExitQuestionnaireStep(dvStepper)"
+    [isEntityRequestFlow]="true"
+  >
+    <helper-text
+      *ngIf="
+        (dd_for == 'Product' && showVehicles) ||
+        (dd_for == 'Strategy' && showFunds)
+      "
+    >
+      <span class="break_word">
+        Only one template selection is allowed when sending out a combined
+        request.
+      </span>
+    </helper-text>
+
+    <div class="row clearfix">
+      <p
+        class="alert alert-danger"
+        *ngIf="
+          questionPageTouched &&
+          selected_entity_grid &&
+          !selected_entity_grid.length
+        "
+      >
+        Please select at least one {{ dd_for }}
+        {{ subdd_for ? "or " + subdd_for : "" }} to proceed
+      </p>
+      <div col="12">
+        <form autocomplete="off">
+          <div class="col-md-3 col-md-offset-1">
+            <app-empty-state
+              iconName="file"
+              *ngIf="!templates.length"
+              message="You do not have any questionnaires setup on the platform. New questionaire templates can be created at New -> Templates."
+            ></app-empty-state>
+
+            <div *ngIf="templates.length > 0" class="form-group">
+              <label id="asOfDateLbl" for="asOfDate">As of date</label>
+              <span
+                appIcon
+                name="info"
+                class="space-on-left"
+                tooltip="This is the effective date of the required data"
+                id="asOfDateHint"
+              >
+              </span>
+              <app-date-picker
+                [value]="request.as_of_date"
+                [maxDate]="maxAsOfDate"
+                (change)="handleAsOfDateChange($event)"
+                [placeholder]="'Select date'"
+                [id]="'asOfDate'"
+                ariaLabel="Select As of date"
+              >
+              </app-date-picker>
+            </div>
+
+            <div class="form-group" *ngIf="templates.length > 0">
+              <label for="dueDate"
+                >Due Date<span class="font-size-10 text-orange align-top"
+                  >*</span
+                ></label
+              >
+
+              <app-date-picker
+                [value]="request.due_at"
+                [minDate]="minDate"
+                (change)="handleDueDateChange($event)"
+                [placeholder]="'Select date'"
+                [class]="
+                  isDueDateGreaterThenAsOfDate ||
+                  (questionPageTouched && !request.due_at)
+                    ? 'has-error'
+                    : ''
+                "
+                ariaLabel="Select Due Date"
+                [id]="'dueDate'"
+              >
+              </app-date-picker>
+              <div class="space-on-top-sm">
+                Suggested due date is:
+                <a class="clickable" (click)="setSuggestedDueDate()">
+                  {{
+                    getSuggestedDueDate(request.duediligence_type)
+                      | dvDate : ["isLocaleDate"]
+                  }}
+                </a>
+              </div>
+              <div
+                *ngIf="questionPageTouched && !request.due_at"
+                class="danger"
+              >
+                Due date is required
+              </div>
+            </div>
+
+            <div
+              class="form-group"
+              *ngIf="request.duediligence_type == 'dd_event_related'"
+            >
+              <label for="adhocLabel"
+                >Adhoc / Event Related Trigger
+                <span
+                  aria-hidden="true"
+                  class="font-size-10 text-orange align-top"
+                  >*</span
+                >
+              </label>
+
+              <dv-select
+                [list]="events"
+                (onSelectChange)="handleEventTriggerOnChange($event)"
+                [(ngModel)]="request.event_trigger"
+                [ngModelOptions]="{ standalone: true }"
+                bindLabel="value"
+                bindValue="id"
+                [searchable]="true"
+                [placeholder]="'--Select--'"
+                [id]="'adhocLabel'"
+              ></dv-select>
+
+              <div
+                *ngIf="questionPageTouched && !request.event_trigger"
+                class="danger"
+              >
+                Event Trigger is required
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-md-offset-2">
+            <div class="form-group" *ngIf="filterApplied">
+              <filtered-entity-questionnaire-selector
+                [selectedEntities]="selected_entities"
+                [globalTernaryOperator]="selectedGlobalTernaryOperator"
+                [selectedFilters]="selectedFilters"
+                [checkboxLabel]="
+                  'Dynamically assign questionnaire templates for ' +
+                  dd_for.toLowerCase() +
+                  ' based on selected filters?'
+                "
+                [templates]="templates"
+                (onChange)="handleToggleFilter()"
+                (onEntitySearchMapChange)="handleEntitySearchmapChange($event)"
+                [showFilterBasedSelection]="showMainFilterBasedSelection"
+                [allFilterTemplateId]="allFilterTemplateId"
+                [unfilteredSelectedEntities]="unfilteredSelectedEntities"
+                [entityType]="dd_for"
+                (onUpdateSelectedData)="
+                  handleUpdateSelectedData($event, 'template')
+                "
+                [maxSelectedTemplates]="
+                  (dd_for == 'Product' && showVehicles) ||
+                  (dd_for == 'Strategy' && showFunds)
+                    ? 1
+                    : 1000
+                "
+                [entitySearchData]="entitySearchMap"
+                *ngIf="
+                  (!showVehicles && dvStepper.selectedIndex === 2) ||
+                  (!showFunds && dvStepper.selectedIndex === 2) ||
+                  (showVehicles && dvStepper.selectedIndex === 3) ||
+                  (showFunds && dvStepper.selectedIndex === 3)
+                "
+              >
+              </filtered-entity-questionnaire-selector>
+              <div
+                *ngIf="
+                  questionPageTouched &&
+                  showMainFilterBasedSelection &&
+                  filterAndUnFilteredError
+                "
+                class="danger investor-filter-offset-left"
+              >
+                Please select a template for this filter
+              </div>
+            </div>
+
+            <div
+              class="col-md-7 form-group"
+              *ngIf="templates.length && !showMainFilterBasedSelection"
+            >
+              <label for="labelOfQuestionnaireTemplate"
+                ><span>Select a Questionnaire Template</span>
+                {{
+                  dd_for == "Product" && showVehicles
+                    ? "for
+                        Products"
+                    : dd_for == "Strategy" && showFunds
+                    ? "for " + "Strategies"
+                    : ""
+                }}<span class="font-size-10 text-orange align-top"
+                  >*</span
+                ></label
+              >
+
+              <dv-select
+                [list]="templates"
+                (onSelectChange)="handleOnChangeTemplate($event, 'template')"
+                [(ngModel)]="request.template"
+                bindLabel="name"
+                [bindValue]="null"
+                [disabled]="false"
+                [clearable]="false"
+                [searchable]="true"
+                [multiple]="true"
+                [maxSelectedItems]="
+                  (dd_for == 'Product' && showVehicles) ||
+                  (dd_for == 'Strategy' && showFunds)
+                    ? 1
+                    : 100
+                "
+                placeholder="Select one or more templates"
+                name="template"
+                [id]="'labelOfQuestionnaireTemplate'"
+              ></dv-select>
+
+              <div
+                *ngIf="questionPageTouched && !request.template"
+                class="danger"
+              >
+                Template is required
+              </div>
+            </div>
+
+            <div
+              col="12"
+              *ngIf="
+                (dd_for == 'Product' && showVehicles) ||
+                (dd_for == 'Strategy' && showFunds && templates.length)
+              "
+            >
+              <div class="form-group" *ngIf="subFilterApplied">
+                <filtered-entity-questionnaire-selector
+                  [selectedEntities]="selectedSubEntities"
+                  [globalTernaryOperator]="selectedSubGlobalTernaryOperator"
+                  [selectedFilters]="selectedSubFilters"
+                  [checkboxLabel]="
+                    'Dynamically assign questionnaire templates for ' +
+                    subdd_for.toLowerCase() +
+                    ' based on selected filters?'
+                  "
+                  [entitySearchData]="subEntitySearchMap"
+                  [templates]="templates"
+                  [showFilterBasedSelection]="showSubFilterBasedSelection"
+                  [allFilterTemplateId]="allSubFilterTemplateId"
+                  (onEntitySearchMapChange)="
+                    handleSubEntitySearchmapChange($event)
+                  "
+                  [unfilteredSelectedEntities]="unfilteredSelectedSubEntities"
+                  [entityType]="showVehicles ? 'Vehicle' : 'Product'"
+                  (onChange)="handleToggleSubFilter()"
+                  (onUpdateSelectedData)="handleUpdateSubSelectedData($event)"
+                  [maxSelectedTemplates]="
+                    (dd_for == 'Product' && showVehicles) ||
+                    (dd_for == 'Strategy' && showFunds)
+                      ? 1
+                      : 1000
+                  "
+                  *ngIf="
+                    (showVehicles && dvStepper.selectedIndex === 3) ||
+                    (showFunds && dvStepper.selectedIndex === 3)
+                  "
+                >
+                </filtered-entity-questionnaire-selector>
+
+                <div
+                  *ngIf="
+                    questionPageTouched &&
+                    showSubFilterBasedSelection &&
+                    subfilterAndUnFilteredError
+                  "
+                  class="danger investor-filter-offset-left"
+                >
+                  Please select a template for this filter
+                </div>
+              </div>
+              <div
+                class="col-md-7 form-group"
+                *ngIf="
+                  dd_for == 'Product' &&
+                  showVehicles &&
+                  templates.length &&
+                  (!subFilterApplied || !showSubFilterBasedSelection)
+                "
+              >
+                <label for="labelofVehicleDropdown"
+                  >Select a Questionnaire Template for Vehicles<span
+                    class="font-size-10 text-orange align-top"
+                    >*</span
+                  ></label
+                >
+
+                <dv-select
+                  [list]="templates"
+                  (onSelectChange)="handleOnChangeTemplate($event, 'vehicle')"
+                  [(ngModel)]="request.vehicleTemplate"
+                  bindLabel="name"
+                  [bindValue]="null"
+                  [disabled]="false"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [multiple]="true"
+                  [maxSelectedItems]="
+                    (dd_for == 'Product' && showVehicles) ||
+                    (dd_for == 'Strategy' && showFunds)
+                      ? 1
+                      : 100
+                  "
+                  placeholder="Select one or more templates"
+                  name="vehicletemplate"
+                  [id]="'labelofVehicleDropdown'"
+                  [compareWith]="compareWith"
+                ></dv-select>
+
+                <!-- max-selected-options="maxSelectedVehicleTemplates" -->
+                <div
+                  *ngIf="questionPageTouched && !request.vehicleTemplate"
+                  class="danger"
+                >
+                  Template is required
+                </div>
+              </div>
+              <div
+                field-name="Template"
+                class="col-md-7 form-group"
+                *ngIf="
+                  dd_for == 'Strategy' &&
+                  showFunds &&
+                  templates.length &&
+                  (!subFilterApplied || !showSubFilterBasedSelection)
+                "
+              >
+                <label for="template"
+                  >Select a Questionnaire Template for Products<span
+                    class="font-size-10 text-orange align-top"
+                    >*</span
+                  ></label
+                >
+
+                <dv-select
+                  [list]="templates"
+                  (onSelectChange)="handleOnChangeTemplate($event, 'product')"
+                  [(ngModel)]="request.productsTemplate"
+                  bindLabel="name"
+                  [bindValue]="null"
+                  [disabled]="false"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [multiple]="true"
+                  [maxSelectedItems]="
+                    (dd_for == 'Product' && showVehicles) ||
+                    (dd_for == 'Strategy' && showFunds)
+                      ? 1
+                      : 100
+                  "
+                  placeholder="Select one or more templates"
+                  name="producttemplate"
+                  id="producttemplate"
+                  [compareWith]="compareWith"
+                  [id]="'template'"
+                ></dv-select>
+
+                <div
+                  *ngIf="questionPageTouched && !request.productsTemplate"
+                  class="danger"
+                >
+                  Template is required
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </dv-step>
+
+  <dv-step
+    label="Review"
+    *ngIf="
+      request.duediligence_type != 'dd_scheduled' &&
+      request.duediligence_type != 'dd_review' &&
+      request.duediligence_type != 'dd_pending'
+    "
+    [discription]="'Please review your due diligence request'"
+    previousLabel="Previous"
+    [finishLabel]="nextBtnText"
+    (onBackClick)="handleBackEvent(dvStepper)"
+    (onFinishClick)="sendDueDiligenceRequest(dvStepper)"
+    [isLoading]="loading"
+    [editorTempRef]="reviewEditorRef"
+    [disableFinishbutton]="
+      !accept_confidential_agreement ||
+      !templateSelectionForm.get('project_name').value
+    "
+    [isEntityRequestFlow]="true"
+    [FinishButtonTooltip]="
+      !accept_confidential_agreement
+        ? 'Please certify before sending request'
+        : 'Please enter project name before sending request'
+    "
+  >
+    <ng-template #reviewEditorRef>
+      <div class="row clearfix">
+        <div col="6" class="bordered-right p-0">
+          <div col="11">
+            <div class="row space-on-bottom">
+              <div class="col-md-3 font-bold">From</div>
+              <p col="9">
+                {{ currentUser.firstName }} {{ currentUser.lastName }}
+              </p>
+            </div>
+            <div class="row space-on-bottom">
+              <div class="col-md-3 font-bold">Request Type</div>
+              <p col="9">
+                {{ request.DDTypeDisplayName }}
+                <span
+                  *ngIf="
+                    request.event_trigger &&
+                    request.duediligence_type === 'dd_event_related'
+                  "
+                  >({{ eventTriggerName.value }})</span
+                >
+              </p>
+            </div>
+            <div class="row space-on-bottom">
+              <div class="col-md-3 font-bold">As of Date</div>
+              <p col="9">
+                {{ request.as_of_date | dvDate : ["isLocaleDate"] }}
+              </p>
+            </div>
+            <div class="row space-on-bottom">
+              <div class="col-md-3 font-bold">Due Date</div>
+              <p col="9">{{ request.due_at | dvDate : ["isLocaleDate"] }}</p>
+            </div>
+            <div class="row space-on-bottom" *ngIf="request.is_internal">
+              <div class="col-md-3 font-bold">Internal Project</div>
+              <p col="9">
+                {{ request.is_internal ? "Yes" : "No" }}
+              </p>
+            </div>
+            <form
+              class="form-horizontal row"
+              [formGroup]="templateSelectionForm"
+              novalidate
+              class="row"
+              autocomplete="off"
+            >
+              <dv-form-element
+                [modelController]="templateSelectionForm.get('project_name')"
+                [elementClass]="'padding-0'"
+                label="Project Name"
+                [isRequired]="true"
+                labelCol="3"
+              >
+                <input
+                  class="form-control space-on-bottom-xl"
+                  type="text"
+                  id="project_name"
+                  formControlName="project_name"
+                  placeholder="Project Name"
+                />
+                <div
+                  *ngIf="
+                    templateSelectionForm.get('project_name').touched &&
+                    templateSelectionForm.get('project_name').invalid &&
+                    templateSelectionForm.get('project_name')?.errors?.required
+                  "
+                  class="danger"
+                >
+                  Project Name is required
+                </div>
+                <div
+                  *ngIf="
+                    templateSelectionForm.get('project_name')?.errors
+                      ?.containsHtml
+                  "
+                  class="danger"
+                >
+                  Please enter a valid project name
+                </div>
+              </dv-form-element>
+            </form>
+            <dv-checkbox
+              [(ngModel)]="request.is_internal"
+              [ngModelOptions]="{ standalone: true }"
+              label="<b>Mark as Internal &nbsp;<small> ( Manager won't be notified ) </small></b>"
+            >
+            </dv-checkbox>
+            <div class="space-on-bottom space-on-top-lg p-0">
+              <div class="control-label font-bold" *ngIf="!request.is_internal">
+                Internal Subscribers<span
+                  appIcon
+                  name="info"
+                  class="space-on-left"
+                  [tooltip]="
+                    'These internal users will be added as subscribers to this project'
+                  "
+                  container="body"
+                  placement="top"
+                >
+                </span>
+              </div>
+              <div class="p-0">
+                <div *ngIf="!request.is_internal">
+                  <app-dv-subscriber-selection
+                    [selection]="internalSubscribers"
+                    (selectionChanged)="
+                      handleSelectionChanged(internalSubscribers)
+                    "
+                    [functions]="functions"
+                  ></app-dv-subscriber-selection>
+                </div>
+                <div
+                  *ngIf="!request.is_internal"
+                  class="request-entity-checkbox"
+                >
+                  <dv-checkbox
+                    [(ngModel)]="autoSubscribeOwners"
+                    [ngModelOptions]="{ standalone: true }"
+                    label="Auto-Subscribe Primary Owners"
+                    iconTooltip="This will auto subscribe the primary owners related to the selected Entity/Entities"
+                    rightIcon="info"
+                    iconClass="align-middle float-none space-on-left"
+                  >
+                  </dv-checkbox>
+                </div>
+                <div
+                  class="col-md-12 space-on-top"
+                  *ngIf="
+                    selected_entities_temp.length >
+                      firm_preferences.threshold_for_approval_flow &&
+                    firm_preferences.enable_approval_flow_information_request
+                  "
+                >
+                  <div col="4">
+                    <label for="assignApprovers">
+                      Assign approver(s)
+                      <span
+                        tooltip="These people will be assigned as approvers and will have the final say before the request is sent out to managers."
+                        tooltip-placement="right"
+                        ><i appIcon name="info"></i
+                      ></span>
+                    </label>
+                  </div>
+                  <div col="8">
+                    <dv-select
+                      [list]="assignedApproversList"
+                      (onSelectChange)="
+                        handleOnChangeTemplate($event, 'assignedApprovers')
+                      "
+                      [(ngModel)]="assignedApprovers"
+                      bindLabel="fullName"
+                      bindValue="id"
+                      [multiple]="true"
+                      [clearable]="false"
+                      [searchable]="true"
+                      placeholder="Select approver(s)"
+                      [id]="'assignApprovers'"
+                    ></dv-select>
+                    <div *ngIf="!assignedApprovers.length">
+                      <span class="text-danger">
+                        Please select atleast one approver to approve the
+                        diligence request
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div col="6">
+          <div col="11">
+            <form
+              name="email_text_form"
+              *ngIf="!request.is_internal"
+              col="12"
+              class="space-on-top"
+              [formGroup]="templateSelectionForm"
+              autocomplete="off"
+            >
+              <div>
+                <div
+                  class="col-sm-5 investor-request-width-fit request-entity-checkbox"
+                >
+                  <div class="pos-rel">
+                    <dv-checkbox
+                      [(ngModel)]="use_email_templates"
+                      (ngModelChange)="
+                        getDefaultEmailTemplate(use_email_templates)
+                      "
+                      [ngModelOptions]="{ standalone: true }"
+                      label="Use email templates"
+                      [disabled]="disallow_custom_edits"
+                      iconTooltip="Firm admins can create additional templates from Firm Settings"
+                      rightIcon="info"
+                      iconClass="align-middle float-none space-on-left"
+                    >
+                    </dv-checkbox>
+                  </div>
+                </div>
+                <div
+                  class="col-sm-6"
+                  *ngIf="email_templates.length == 0 && use_email_templates"
+                >
+                  <p>
+                    No email templates present,
+                    <a class="clickable" (click)="routeToEmailTemp()"
+                      >click here</a
+                    >
+                    to add one
+                  </p>
+                </div>
+                <div
+                  class="col-sm-6 space-on-top"
+                  *ngIf="email_templates.length > 0 && use_email_templates"
+                >
+                  <dv-select
+                    id="alert-frequency"
+                    name="alert-frequency"
+                    [list]="email_templates"
+                    bindLabel="name"
+                    bindValue="id"
+                    placeholder="Select an Option"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [(ngModel)]="default_email_template_message_id"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="renderEmailTemplate($event)"
+                    [aria-label]="'Select Email Templates'"
+                  >
+                  </dv-select>
+                </div>
+              </div>
+              <br />
+              <div *ngIf="!disallow_custom_edits">
+                <span for="emailMessage" class="col-sm-12 font-bold"
+                  >Email Message</span
+                >
+                <div class="col-sm-12">
+                  <dv-editor
+                    [value]="email_text"
+                    (onChange)="handleEditorTextChange($event)"
+                    [configObj]="tinyMceInit"
+                    id="emailMessage"
+                  ></dv-editor>
+                </div>
+              </div>
+            </form>
+
+            <div
+              class="col-md-12 space-on-top-lg space-on-bottom-lg"
+              *ngIf="!request.is_internal"
+            >
+              <a
+                class="link clickable pull-right"
+                (click)="showAdvanceOptions = !showAdvanceOptions"
+              >
+                <span
+                  appIcon
+                  name="chevron-up"
+                  *ngIf="showAdvanceOptions"
+                ></span>
+                <span
+                  appIcon
+                  name="chevron-down"
+                  *ngIf="!showAdvanceOptions"
+                ></span>
+                {{ showAdvanceOptions ? "Hide" : "Show" }} Advanced Options
+              </a>
+            </div>
+            <div
+              class="bordered-bottom padded-left space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span class="text-muted">Optional Fields</span>
+            </div>
+            <div
+              class="padded-left"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <helper-text
+                >Note: Default email is set to
+                <span class="link-underline"
+                  >notifications@diligencevault.com</span
+                >.<br />
+                To change, go to Firm Settings > Preferences > Firm Preferences
+                > Outbound email notifications</helper-text
+              >
+            </div>
+            <div
+              col="12"
+              class="space-on-top space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span
+                class="control-label col-sm-3 space-on-top fw-bolder"
+                *ngIf="
+                  sender_emails.length == 0 ||
+                    !firm_preferences.add_sender_email;
+                  else emailTemplate
+                "
+              >
+                Sender Email
+              </span>
+              <ng-template #emailTemplate>
+                <label
+                  for="labelOfSenderEmail"
+                  [attr.for]="
+                    sender_emails.length > 0 &&
+                    firm_preferences.add_sender_email
+                      ? 'sender-email'
+                      : ''
+                  "
+                  class="control-label col-sm-3 space-on-top"
+                  >Sender Email</label
+                >
+              </ng-template>
+              <div
+                class="col-sm-9"
+                *ngIf="
+                  sender_emails.length > 0 && firm_preferences.add_sender_email
+                "
+              >
+                <dv-select
+                  [list]="sender_emails"
+                  (onSelectChange)="handleOnChangeTemplate($event, 'email')"
+                  [(ngModel)]="selected_sender_email"
+                  [ngModelOptions]="{ standalone: true }"
+                  [disabled]="false"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [useTemplates]="false"
+                  name="sender-email"
+                  [id]="'labelOfSenderEmail'"
+                ></dv-select>
+              </div>
+              <div
+                class="col-sm-8 space-on-top"
+                *ngIf="
+                  sender_emails.length == 0 ||
+                  !firm_preferences.add_sender_email
+                "
+              >
+                <p class="clear-margin">
+                  No sender emails present,
+                  <a
+                    class="clickable font-bold"
+                    target="_blank"
+                    [href]="emailUrl"
+                    aria-label="No sender emails present, click to add one. (opens in a new window)"
+                    >click here
+                  </a>
+                  to add one
+                </p>
+              </div>
+            </div>
+            <div
+              col="12"
+              class="space-on-top space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span
+                *ngIf="
+                  cc_emails.length == 0 || !firm_preferences.add_cc_email;
+                  else ccEmailTemplate
+                "
+                class="control-label col-sm-3 space-on-top fw-bolder"
+                >CC Email List</span
+              >
+              <ng-template #ccEmailTemplate>
+                <label
+                  for="cc-email"
+                  [attr.for]="
+                    cc_emails.length > 0 && firm_preferences.add_cc_email
+                      ? 'cc-email'
+                      : ''
+                  "
+                  class="control-label col-sm-3 space-on-top font-bold"
+                  >CC Email List</label
+                >
+              </ng-template>
+              <div
+                class="col-sm-9"
+                *ngIf="cc_emails.length > 0 && firm_preferences.add_cc_email"
+              >
+                <dv-select
+                  [list]="cc_emails"
+                  (onSelectChange)="handleOnChangeTemplate($event, 'ccemail')"
+                  [(ngModel)]="selected_cc_email_list"
+                  [ngModelOptions]="{ standalone: true }"
+                  [disabled]="false"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [multiple]="true"
+                  [useTemplates]="false"
+                  [id]="'cc-email'"
+                ></dv-select>
+              </div>
+              <div
+                class="col-sm-8 space-on-top"
+                *ngIf="cc_emails.length == 0 || !firm_preferences.add_cc_email"
+              >
+                <p class="clear-margin">
+                  No cc emails present,
+                  <a
+                    class="clickable font-bold"
+                    target="_blank"
+                    [href]="emailUrl"
+                    aria-label="No cc emails are present, click to add one. (opens in a new window)"
+                    >click here
+                  </a>
+                  to add one
+                </p>
+              </div>
+            </div>
+            <div
+              col="12"
+              class="space-on-top space-on-bottom"
+              *ngIf="!request.is_internal && showAdvanceOptions"
+            >
+              <span
+                *ngIf="
+                  bcc_emails.length == 0 || !firm_preferences.add_cc_email;
+                  else ccEmailTemplate
+                "
+                class="control-label col-sm-3 space-on-top fw-bolder"
+                >BCC Email List</span
+              >
+              <ng-template #ccEmailTemplate>
+                <label
+                  for="cc-email"
+                  [attr.for]="
+                    cc_emails.length > 0 && firm_preferences.add_cc_email
+                      ? 'cc-email'
+                      : ''
+                  "
+                  class="control-label col-sm-3 space-on-top"
+                  >BCC Email List</label
+                >
+              </ng-template>
+              <div
+                class="col-sm-9"
+                *ngIf="bcc_emails.length > 0 && firm_preferences.add_cc_email"
+              >
+                <dv-select
+                  [list]="bcc_emails"
+                  [id]="'bcc-email-list'"
+                  placeholder="Select Some Options"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [(ngModel)]="selected_bcc_email_list"
+                  [ngModelOptions]="{ standalone: true }"
+                  (onSelectChange)="handleOnChangeTemplate($event, 'bccemail')"
+                  [multiple]="true"
+                  [useTemplates]="false"
+                ></dv-select>
+              </div>
+              <div
+                class="col-sm-8 space-on-top"
+                *ngIf="bcc_emails.length == 0 || !firm_preferences.add_cc_email"
+              >
+                <p class="clear-margin">
+                  No bcc emails present,
+                  <a
+                    class="clickable font-bold"
+                    aria-label="No bcc emails are present, click here to add one. (opens in a new window)"
+                    target="_blank"
+                    [href]="emailUrl"
+                    >click here
+                  </a>
+                  to add one
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div col="12">
+          <app-spinner
+            [broadSpinner]="true"
+            [spinnerHeight]="60"
+            *ngIf="loading_grid"
+          ></app-spinner>
+          <div
+            *ngIf="
+              !loading_grid &&
+              selected_entity_grid &&
+              selected_entity_grid.length
+            "
+            class="space-on-top-lg"
+          >
+            <app-dv-grid
+              [rowData]="selected_entity_grid"
+              [name]="gridNameReview"
+            ></app-dv-grid>
+          </div>
+        </div>
+
+        <div
+          col="10"
+          offset="1"
+          class="text-center request-confidential-checkbox"
+        >
+          <hr />
+          <helper-text>
+            <dv-checkbox
+              [(ngModel)]="accept_confidential_agreement"
+              [ngModelOptions]="{ standalone: true }"
+              label="I certify that our firm will share the information received only with authorized personnel and clients."
+              isBold="true"
+            >
+            </dv-checkbox>
+          </helper-text>
+        </div>
+      </div>
+    </ng-template>
+  </dv-step>
+
+  <!-- FOR 'dd_review' -->
+  <div *ngIf="request.duediligence_type == 'dd_review'">
+    <dv-step
+      label="Analyst Evaluation Template & Due Date"
+      [discription]="'Pick an analyst evaluation and select a due date.'"
+      previousLabel="Previous"
+      [nextLabel]="review_diligence_templates.length != 0 ? 'Next' : ''"
+      (onBackClick)="handleEvalPrevious(dvStepper)"
+      (onNextClick)="canProceedToDiligenceSelection(dvStepper)"
+    >
+      <div class="row clearfix">
+        <div col="4" offset="4">
+          <form
+            novalidate
+            [formGroup]="reviewTemplateSelectionForm"
+            autocomplete="off"
+          >
+            <app-empty-state
+              iconName="file"
+              *ngIf="!review_templates.length"
+              message="You do not have any analyst evaluation templates setup on the platform. New analyst evaluation templates can be created at New -> Templates."
+            ></app-empty-state>
+
+            <div *ngIf="review_templates.length" class="form-group">
+              <dv-form-element
+                [modelController]="
+                  reviewTemplateSelectionForm.get('review_template')
+                "
+                label="Select an Analyst Evaluation Template"
+                labelPosition="top"
+                elementCol="14"
+                [showRightIcon]="false"
+              >
+                <dv-select
+                  [list]="review_templates"
+                  [id]="'review_template'"
+                  bindLabel="name"
+                  [clearable]="false"
+                  [searchable]="true"
+                  formControlName="review_template"
+                  placeholder="Select an Option"
+                  (onSelectChange)="getDataForSteps($event)"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+
+            <div class="form-group" *ngIf="review_diligence_templates.length">
+              <div class="panel panel-info">
+                <div class="panel-heading">
+                  <small
+                    >Selected template is mapped to
+                    {{ review_diligence_templates.length }} template(s). Please
+                    select projects for each mapped template in next
+                    steps.</small
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" *ngIf="review_templates.length">
+              <label for="as-of-date">As of Date</label>
+              <app-date-picker
+                [value]="request.as_of_date"
+                [maxDate]="maxAsOfDate"
+                (change)="handleAsOfDateChange($event)"
+                [placeholder]="'Select date'"
+                ariaLabel="Select As of date"
+                [id]="'as-of-date'"
+              >
+              </app-date-picker>
+            </div>
+
+            <div *ngIf="review_templates.length">
+              <label for="labelForDueDate"
+                >Due Date<span class="font-size-10 text-orange align-top"
+                  >*</span
+                ></label
+              >
+              <app-date-picker
+                [value]="request.due_at"
+                (change)="handleDueDateChange($event)"
+                [minDate]="minDate"
+                [placeholder]="'Select Date'"
+                [class]="
+                  isDueDateGreaterThenAsOfDate ||
+                  (evaluationTemplate && !request.due_at)
+                    ? 'has-error'
+                    : ''
+                "
+                ariaLabel="Select Due Date"
+                [id]="'labelForDueDate'"
+              >
+              </app-date-picker>
+              <div class="space-on-top-sm">
+                Suggested due date is:
+                <a class="clickable" (click)="setSuggestedDueDate()">
+                  {{
+                    getSuggestedDueDate(request.duediligence_type)
+                      | dvDate : ["isLocaleDate"]
+                  }}
+                </a>
+              </div>
+              <div *ngIf="evaluationTemplate && !request.due_at" class="danger">
+                Due date is required
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="row clearfix" *ngIf="show_dilignece_zero_text">
+        <p class="text-center text-muted space-on-top-xxl">
+          <i>No projects found for selected template</i>
+        </p>
+      </div>
+    </dv-step>
+
+    <dv-step
+      *ngFor="
+        let entry of review_diligence_templates;
+        trackBy: trackByName;
+        let $index = index
+      "
+      [label]="'Select Source Project - Step ' + ($index + 1)"
+      [discription]="
+        'Select project for <b>' +
+        entry.name +
+        '</b> template on the left hand panel, using search and filters to narrow your search.'
+      "
+      previousLabel="Previous"
+      nextLabel="Next"
+      (onBackClick)="handlePreviousReviewDili(dvStepper, $index - 1)"
+      (onNextClick)="handleNextReviewDili(dvStepper, $index + 1)"
+    >
+      <ng-container
+        *ngIf="activeReviewTemplate == $index"
+        (ngInit)="projectsSelectionBeforeEnter(entry, $index)"
+      >
+        <div class="row space-on-top-lg">
+          <div class="text-center">
+            <div class="btn-group space-on-bottom-xxl">
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'All' }"
+                (click)="setEntityType('All')"
+                autoFocus
+                clickable
+                >All</span
+              >
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Firm' }"
+                (click)="setEntityType('Firm')"
+                clickable
+                >Firm</span
+              >
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Strategy' }"
+                (click)="setEntityType('Strategy')"
+                clickable
+                >Strategy</span
+              >
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Fund' }"
+                (click)="setEntityType('Fund')"
+                clickable
+                >Product</span
+              >
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Vehicle' }"
+                (click)="setEntityType('Vehicle')"
+                clickable
+                >Vehicle</span
+              >
+              <span
+                tooltip="Analyst Evaluation projects created for any entity types (combination of Product, Firm, Strategy or Vehicle)"
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Custom' }"
+                (click)="setEntityType('Custom')"
+                clickable
+                >Multi-entity</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="row clearfix space-on-top-lg">
+          <div col="6">
+            <div class="panel panel-default dd-multiselect">
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="6">
+                    <div
+                      class="input-group-rename-this-class-when-filters-are-enabled"
+                    >
+                      <input
+                        type="text"
+                        [(ngModel)]="filterBy"
+                        class="form-control"
+                        placeholder="Search Projects by name"
+                        autocomplete="off"
+                      />
+                    </div>
+                  </div>
+                  <div col="6">
+                    <div
+                      *ngIf="
+                        (review_entity_type == 'Fund' ||
+                          review_entity_type == 'Firm' ||
+                          review_entity_type == 'Strategy' ||
+                          review_entity_type == 'Vehicle') &&
+                        (filters_applied || diligences.length > 0)
+                      "
+                    >
+                      <button
+                        class="space-on-top-2 btn btn-sm btn-default investor-button-right-margin"
+                        tooltip="{{
+                          filters_section.show ? 'Hide' : 'Apply'
+                        }} Filters"
+                        (click)="toggleFiltersSection()"
+                        [attr.aria-label]="
+                          filters_section.show
+                            ? 'Hide Filters'
+                            : 'Apply Filters'
+                        "
+                      >
+                        <span
+                          appIcon
+                          name="filter"
+                          [ngClass]="{ 'text-orange': filters_section.show }"
+                        ></span>
+                      </button>
+                      <button
+                        class="space-on-top-2 btn btn-sm btn-default"
+                        (click)="clearEntityFilter()"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="row clearfix space-on-top-lg"
+                  *ngIf="filters_section.show"
+                >
+                  <div col="12">
+                    <dv-select
+                      [list]="diligence_funds"
+                      id="diligence_funds"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Products"
+                      (onSelectChange)="filterDiligences($event, 'Fund')"
+                      *ngIf="review_entity_type == 'Fund'"
+                      [aria-label]="'Filter by Products'"
+                    >
+                    </dv-select>
+                    <dv-select
+                      [list]="diligence_firms"
+                      id="diligence_firms"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Firms"
+                      (onSelectChange)="filterDiligences($event, 'Firm')"
+                      *ngIf="review_entity_type == 'Firm'"
+                      [aria-label]="'Filter by Firms'"
+                    >
+                    </dv-select>
+                    <dv-select
+                      [list]="diligence_strategies"
+                      id="diligence_strategies"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Strategies"
+                      id="diligence_strategies"
+                      (onSelectChange)="filterDiligences($event, 'Strategy')"
+                      *ngIf="review_entity_type == 'Strategy'"
+                      [aria-label]="'Filter by Strategies'"
+                    >
+                    </dv-select>
+                    <dv-select
+                      [list]="diligence_vehicles"
+                      id="diligence_vehicles"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Vehicles"
+                      (onSelectChange)="filterDiligences($event, 'Vehicle')"
+                      *ngIf="review_entity_type == 'Vehicle'"
+                      [aria-label]="'Filter by Vehicles'"
+                    >
+                    </dv-select>
+                  </div>
+                </div>
+              </div>
+              <div class="list-group clear-margin-bottom">
+                <div
+                  class="list-group-item"
+                  *ngFor="
+                    let diligence of diligences
+                      | orderBy : 'name'
+                      | filter : filterBy : filteredListMeta;
+                    trackBy: trackById;
+                    let i = index
+                  "
+                >
+                  <div class="row clearfix">
+                    <span
+                      *ngIf="diligence.is_selected || select_all_entities"
+                      class="space-on-right"
+                    >
+                      <span
+                        appIcon
+                        name="check"
+                        size="lg"
+                        class="text-success"
+                      ></span>
+                    </span>
+                    <span
+                      class="space-on-right"
+                      tooltip="Select {{ diligence.name }}"
+                      *ngIf="!diligence.is_selected"
+                    >
+                      <span
+                        appIcon
+                        name="plus-circle"
+                        (click)="addToSelection(entry, diligence, $index)"
+                        size="lg"
+                        class="text-primary"
+                        [tabindex]="i"
+                        role="button"
+                        [attr.aria-label]="'Select' + ' ' + diligence.name"
+                      ></span>
+                    </span>
+                    <span
+                      >{{ diligence.entity_name
+                      }}<span
+                        *ngIf="
+                          diligence.entity_type != 'Review' &&
+                          diligence.entity_type != 'Firm' &&
+                          diligence.tofirm_name
+                        "
+                      >
+                        ({{ diligence.tofirm_name }})</span
+                      >
+                      - {{ diligence.name }} - As of
+                      {{
+                        diligence.as_of_date | dvDate : ["isLocaleDate"]
+                      }}</span
+                    >
+                    <span
+                      class="space-on-left badge"
+                      [ngClass]="{
+                        'badge-info': diligence.entity_type == 'Strategy',
+                        'badge-success': diligence.entity_type == 'Fund',
+                        'badge-warning': diligence.entity_type == 'Firm',
+                        'badge-primary':
+                          diligence.entity_type == 'Vehicle' ||
+                          diligence.entity_type == 'Review'
+                      }"
+                    >
+                      {{
+                        diligence.entity_type == "Fund"
+                          ? "Product"
+                          : diligence.entity_type
+                      }}</span
+                    >
+                  </div>
+                </div>
+                <div class="list-group-item" *ngIf="is_loading">
+                  <div class="row clearfix">
+                    <div>
+                      <app-spinner
+                        spinnerHeight="20"
+                        broadSpinner="true"
+                      ></app-spinner>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="panel-body"
+                *ngIf="
+                  !filters_applied && !is_loading && !filteredListMeta?.count
+                "
+              >
+                <app-empty-state
+                  message="Try changing your filters if you don't see what you're looking for"
+                ></app-empty-state>
+              </div>
+              <div
+                class="panel-body"
+                *ngIf="!is_loading && filters_applied && !filteredList?.length"
+              >
+                <app-empty-state
+                  message="No Projects match applied filters"
+                ></app-empty-state>
+              </div>
+              <h5 class="pull-right" *ngIf="diligences.length">
+                Total
+                {{ filterBy ? filteredListMeta.count : diligences.length }}
+                Projects available
+              </h5>
+            </div>
+          </div>
+
+          <div class="dd-multiselect-selection" col="6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="8">
+                    <p class="form-control-static inline-block">
+                      Projects Selected
+                      <span
+                        *ngIf="selection_list.length > 0 || select_all_entities"
+                        >({{ selection_list.length }})</span
+                      >
+                    </p>
+                  </div>
+                  <div col="4">
+                    <span class="pull-right">
+                      <button
+                        class="btn btn-sm btn-default"
+                        *ngIf="entry.selection_list.length"
+                        (click)="clearSelectionList(entry)"
+                      >
+                        Clear Selection
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <ul
+                class="list-group clear-margin-bottom"
+                *ngIf="entry.selection_list.length"
+                tabindex="0"
+              >
+                <li
+                  class="list-group-item"
+                  *ngFor="
+                    let diligence of entry.selection_list;
+                    trackBy: trackById
+                  "
+                  [ngClass]="{ 'active-item': diligence.hoverState }"
+                  (mouseenter)="diligence.hoverState = true"
+                  (mouseleave)="diligence.hoverState = false"
+                >
+                  <div class="media">
+                    <div class="media-body">
+                      <div class="dv-table full-width">
+                        <div class="cell align-middle">
+                          <div class="clearfix">
+                            <div class="inline-block">
+                              <span
+                                tooltip="Remove {{ diligence.name }}"
+                                class="space-on-right"
+                              >
+                                <span
+                                  appIcon
+                                  name="minus-circle"
+                                  class="text-danger"
+                                  size="lg"
+                                  (click)="
+                                    removeFromSelection(entry, diligence)
+                                  "
+                                  tabindex="0"
+                                  role="button"
+                                  [attr.aria-label]="
+                                    'Remove' + ' ' + diligence.name
+                                  "
+                                ></span>
+                              </span>
+                              <span class="space-on-right"
+                                >{{ diligence.entity_name }} -
+                                {{ diligence.name }} - As of
+                                {{
+                                  diligence.as_of_date
+                                    | dvDate : ["isLocaleDate"]
+                                }}</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div class="panel-body text-center" *ngIf="select_all_entities">
+                All {{ data_length }} projects are selected.
+              </div>
+              <div
+                class="panel-body"
+                *ngIf="!entry.selection_list.length && !select_all_entities"
+              >
+                <app-empty-state
+                  message="You have not selected any projects. Please select them from the panel in the left"
+                ></app-empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </dv-step>
+
+    <dv-step
+      *ngIf="review_diligence_templates.length"
+      label="Review"
+      [discription]="'Please review your due diligence request'"
+      previousLabel="Previous"
+      finishLabel="Start Analyst Evaluation Project"
+      (onBackClick)="
+        handlePreviousReviewDili(
+          dvStepper,
+          review_diligence_templates.length - 1
+        )
+      "
+      (onFinishClick)="sendReviewDDRequest(dvStepper)"
+      [isLoading]="loading"
+    >
+      <ng-container
+        *ngIf="activeReviewTemplate == review_diligence_templates.length"
+        (ngInit)="combineSelectedDiligences()"
+      >
+        <div class="row clearfix">
+          <div col="6" class="bordered-right">
+            <div col="10" offset="1">
+              <form
+                class="form-horizontal row"
+                [formGroup]="templateSelectionForm"
+                novalidate
+                class="row"
+                autocomplete="off"
+              >
+                <dv-form-element
+                  [modelController]="templateSelectionForm.get('project_name')"
+                  label="Project Name"
+                  labelPosition="top"
+                  [showRightIcon]="false"
+                  [errorMessage]="
+                    templateSelectionForm.get('project_name').touched &&
+                    templateSelectionForm.get('project_name').errors?.required
+                      ? 'Project Name is required'
+                      : templateSelectionForm.get('project_name')?.errors
+                          ?.containsHtml
+                      ? 'Please enter valid project name'
+                      : null
+                  "
+                  elementCol="13"
+                >
+                  <input
+                    [autofocus]
+                    class="form-control"
+                    type="text"
+                    id="project_name"
+                    formControlName="project_name"
+                    placeholder="Project Name"
+                    autocomplete="off"
+                  />
+                </dv-form-element>
+              </form>
+            </div>
+          </div>
+          <div col="6">
+            <h4
+              class="alert alert-info text-center clear-margin-top space-on-left-lg"
+            >
+              Request Preview
+            </h4>
+            <div col="11" class="review-request">
+              <dl class="dl-horizontal clear-margin-bottom">
+                <dt>Request Type</dt>
+                <dd>{{ request.DDTypeDisplayName }}</dd>
+                <dt>Mapped projects</dt>
+                <dd>
+                  Total {{ combinedDiligences.length }} projects have been
+                  selected
+                </dd>
+                <dt tooltip="Analyst Evaluation Template">
+                  Analyst Evaluation Template
+                </dt>
+                <dd>{{ request.review_template.name }}</dd>
+                <dt>As of Date</dt>
+                <dd>{{ request.as_of_date | dvDate : ["isLocaleDate"] }}</dd>
+                <dt>Due Date</dt>
+                <dd>{{ request.due_at | dvDate : ["isLocaleDate"] }}</dd>
+              </dl>
+            </div>
+          </div>
+          <div col="10" offset="1" class="text-center">
+            <hr />
+          </div>
+        </div>
+      </ng-container>
+    </dv-step>
+  </div>
+
+  <div *ngIf="request.duediligence_type == 'dd_pending'">
+    <dv-step
+      label="Pending Approval(s)"
+      [discription]="'Pending Approval(s)'"
+      [isBackButton]="true"
+      (onBackClick)="pendingApprovalBack(dvStepper)"
+      [editorTempRef]="pendingTemplateRef"
+    >
+      <ng-template #pendingTemplateRef>
+        <div *ngIf="!is_pending_data_loaded">
+          <app-spinner
+            spinnerHeight="50"
+            broadSpinner="true"
+            *ngIf="!is_data_loaded"
+          ></app-spinner>
+        </div>
+
+        <div *ngIf="is_pending_data_loaded">
+          <dv-pending-draft-requests
+            *ngIf="dvStepper.selectedIndex === 1"
+            (onClick)="onRowSelect($event, dvStepper)"
+            [currentUserId]="currentUserId"
+          ></dv-pending-draft-requests>
+        </div>
+      </ng-template>
+    </dv-step>
+
+    <dv-step
+      label="Review"
+      [discription]="'Please review your due diligence request'"
+    >
+      <ng-container *ngIf="requestDataById">
+        <div class="panel panel-default">
+          <div class="panel-body clearfix">
+            <div
+              class="text-center"
+              *ngIf="
+                currentUserIsApprover &&
+                requestDataById?.draft_status == 'InProgress'
+              "
+            >
+              <div class="inline-block">
+                <button
+                  class="btn btn-transparent"
+                  (click)="approvePendingRequest()"
+                >
+                  <div>
+                    <span appIcon name="thumbs-o-up" size="2x"></span>
+                  </div>
+                  <small>Approve</small>
+                </button>
+              </div>
+              <div class="inline-block">
+                <button
+                  class="btn btn-transparent"
+                  (click)="rejectPendingRequest()"
+                >
+                  <div>
+                    <span appIcon name="thumbs-o-down" size="2x"></span>
+                  </div>
+                  <small>Not Approve</small>
+                </button>
+              </div>
+              <div class="inline-block">
+                <button
+                  class="btn btn-transparent"
+                  (click)="handleBackToPendingRequest()"
+                  clickable
+                >
+                  <div>
+                    <i
+                      class="dvi ng-isolate-scope dvi-arrow-back fa-2x"
+                      name="arrow-back"
+                      size="2x"
+                    ></i>
+                  </div>
+                  <small>Back</small>
+                </button>
+              </div>
+            </div>
+            <div
+              class="dv-table dv-table-middle dd-info-panel width-100-pct"
+              *ngIf="
+                !currentUserIsApprover ||
+                requestDataById?.draft_status == 'Approved' ||
+                requestDataById?.draft_status == 'Rejected'
+              "
+            >
+              <div class="cell text-left">
+                <div class="inline-block">
+                  <span class="align-middle">Status:</span>
+                  <span
+                    class="label space-on-left"
+                    diligenceStatus
+                    [status]="requestDataById?.draft_status"
+                  >
+                    <small>{{
+                      getRequestStatus(requestDataById?.draft_status)
+                    }}</small>
+                  </span>
+                </div>
+                <div
+                  class="inline-block space-on-left-xxxxl"
+                  *ngIf="
+                    requestDataById?.draft_status == 'Approved' ||
+                    requestDataById?.draft_status == 'Rejected'
+                  "
+                >
+                  <button
+                    (click)="viewDisclaimer()"
+                    type="button"
+                    class="btn btn-transparent"
+                  >
+                    <div>
+                      <i
+                        class="dvi dvi-disclaimer dvi ng-isolate-scope fa-2x"
+                        size="2x"
+                      ></i>
+                    </div>
+                    <small>View Approver Notes</small>
+                  </button>
+                </div>
+              </div>
+              <div class="cell text-right">
+                <a
+                  class="btn btn-transparent"
+                  (click)="handleBackToPendingRequest()"
+                >
+                  <div>
+                    <i
+                      class="dvi ng-isolate-scope dvi-arrow-back fa-2x"
+                      name="arrow-back"
+                      size="2x"
+                    ></i>
+                  </div>
+                  <small>Back</small>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br
+          *ngIf="
+            !currentUserIsApprover ||
+            requestDataById.draft_status == 'Approved' ||
+            requestDataById.draft_status == 'Rejected'
+          "
+        />
+        <div
+          col="10"
+          offset="1"
+          class="text-center request-confidential-checkbox"
+          *ngIf="
+            currentUserIsApprover &&
+            requestDataById.draft_status != 'Approved' &&
+            requestDataById.draft_status != 'Rejected'
+          "
+        >
+        <!-- Changes as per DV-10912 -->
+            <helper-text>
+              <dv-checkbox
+                [(ngModel)]="accept_confidential_agreement"
+                [ngModelOptions]="{ standalone: true }"
+                label="I certify that our firm will share the information received only with authorized personnel and clients."
+                isBold="true"
+              >
+              </dv-checkbox>
+            </helper-text>
+            <hr />
+        <!-- Changes End -->
+        </div>
+        <div class="row clearfix">
+          <div col="10" offset="1" class="space-on-bottom-50">
+            <div col="6" class="bordered-right">
+              <dl class="dl-horizontal clear-margin-bottom">
+                <dt>Project Name:</dt>
+                <dd>
+                  {{ requestAuthorJsonData.name }}
+                </dd>
+                <dt>Request Type:</dt>
+                <dd>
+                  {{ request.DDTypeDisplayName }}
+                  <span *ngIf="request.duediligence_type === 'dd_event_related'"
+                    >({{ request.event_trigger.value }})</span
+                  >
+                </dd>
+                <dt>From:</dt>
+                <dd>{{ currentUser.firstName }} {{ currentUser.lastName }}</dd>
+                <dt>Entities:</dt>
+                <dd *ngIf="selected_entity_grid.length > 0">
+                  <span *ngIf="!request.all_entity_flag">
+                    {{ selected_entity_grid.length }}
+                    entities with
+                    {{ all_selected_entities_contacts_arr.length }}
+                    recipients
+                  </span>
+                  <span *ngIf="request.all_entity_flag"
+                    >This request is for all
+                    {{
+                      dd_for == "Product" ? "active investments" : "firms"
+                    }}</span
+                  >
+                </dd>
+              </dl>
+            </div>
+            <div col="6">
+              <dl class="dl-horizontal clear-margin-bottom">
+                <dt>As of Date:</dt>
+                <dd>
+                  <ng-container *ngIf="requestAuthorJsonData.as_of_date">
+                    {{
+                      getFormattedDate(requestAuthorJsonData.as_of_date)
+                        | dvDate : ["isLocaleDate"]
+                    }}
+                  </ng-container>
+                  <ng-container *ngIf="!requestAuthorJsonData.as_of_date">
+                    N / A
+                  </ng-container>
+                </dd>
+                <dt>Due Date:</dt>
+                <dd>
+                  <ng-container *ngIf="requestAuthorJsonData.due_at">
+                    {{
+                      getFormattedDate(requestAuthorJsonData.due_at) | dvDate
+                    }}</ng-container
+                  >
+                  <ng-container *ngIf="!requestAuthorJsonData.due_at">
+                    N / A</ng-container
+                  >
+                </dd>
+                <dt
+                  *ngIf="!requestAuthorJsonData.is_internal"
+                  [ngClass]="{
+                    'space-on-top-lg': requestAuthorJsonData.email_text
+                  }"
+                >
+                  Email Msg
+                </dt>
+                <dd
+                  *ngIf="!requestAuthorJsonData.is_internal"
+                  class="word-break-break-all"
+                >
+                  <div
+                    *ngIf="requestAuthorJsonData.email_text"
+                    class="email-text-wrapper"
+                  >
+                    <span
+                      class="word-break-break-all"
+                      [innerHtml]="requestAuthorJsonData.email_text"
+                    ></span>
+                  </div>
+                  <span *ngIf="!requestAuthorJsonData.email_text">--</span>
+                </dd>
+                <dt *ngIf="requestAuthorJsonData.cc_emails">CC</dt>
+                <dd *ngIf="requestAuthorJsonData.cc_emails">
+                  {{ requestAuthorJsonData.cc_emails }}
+                </dd>
+                <dt *ngIf="requestAuthorJsonData.bcc_emails">BCC</dt>
+                <dd *ngIf="requestAuthorJsonData.bcc_emails">
+                  {{ requestAuthorJsonData.bcc_emails }}
+                </dd>
+              </dl>
+              <br />
+              <br />
+              <br />
+            </div>
+          </div>
+        </div>
+        <div *ngIf="is_pending_data_loaded">
+          <app-dv-grid
+            [rowData]="selected_entity_grid"
+            [name]="gridNameApprovalReview"
+          ></app-dv-grid>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!requestDataById">
+        <app-spinner spinnerHeight="50" broadSpinner="true"></app-spinner>
+      </ng-container>
+    </dv-step>
+  </div>
+
+  <div *ngIf="request.duediligence_type == 'dd_scheduled'">
+    <dv-step
+      label="Select Auto Scheduled Requests"
+      [discription]="'Scheduled Requests are listed below.'"
+      previousLabel="Previous"
+      nextLabel="Next"
+      (onBackClick)="handleScheduleBackEvent()"
+      (onNextClick)="canProceedToScheduledDDReviewStep(dvStepper)"
+      (ngInit)="getScheduledDDRequest()"
+      autoFocus
+    >
+      <div class="row clearfix relative">
+        <div
+          col="12"
+          [ngClass]="{ 'visibility-hidden': is_loading_scheduled_dds }"
+        >
+          <div col="12" class="space-on-bottom">
+            <div
+              class="panel panel-default bg-sky-blue"
+              *ngIf="!show_bulk_edit_actions"
+            >
+              <div class="panel-body padded-lg">
+                <div col="4">
+                  <span *ngIf="show_bulk_actions">
+                    <h5 class="inline space-on-right-lg">
+                      <strong>Quick Actions:</strong>
+                    </h5>
+                    <a
+                      class="btn btn-default space-on-right-lg danger-icon"
+                      tooltip="Delete Selected"
+                      (click)="confirmScheduledDDBulkAction('delete')"
+                      *ngIf="show_bulk_actions"
+                    >
+                      <strong>
+                        <span appIcon name="trashcan"></span>
+                      </strong>
+                    </a>
+                    <a
+                      class="btn btn-default space-on-right-lg"
+                      tooltip="Edit Selected"
+                      (click)="editScheduledDDBulkActionActive()"
+                      *ngIf="show_bulk_actions"
+                    >
+                      <strong>
+                        <span appIcon name="pencil"></span>
+                      </strong>
+                    </a>
+                  </span>
+                </div>
+                <div col="8">
+                  <div col="9">
+                    <span
+                      class="space-on-top pull-right"
+                      *ngIf="activeDateRange"
+                    >
+                      Showing scheduled diligence projects for
+                      <b
+                        ><u>{{ activeDateRange.name }}</u></b
+                      >
+                      <span
+                        appIcon
+                        name="times-circle-o"
+                        class="space-on-left clickable space-on-right-lg"
+                        tooltip="Clear selection"
+                        (click)="
+                          clearDateRange($event); dropdown.isOpen = false
+                        "
+                      ></span>
+                    </span>
+                  </div>
+                  <div col="3">
+                    <span class="dropdown" dropdown #dropdown="bs-dropdown">
+                      <button
+                        block
+                        class="space-on-top-2 dropdown-toggle btn-sm btn-block btn btn-default"
+                        dropdownToggle
+                      >
+                        Filter Requests
+                        <span class="caret space-on-left"></span>
+                      </button>
+                      <ul class="dropdown-menu" *dropdownMenu role="menu">
+                        <li
+                          *ngFor="
+                            let range of dateFiltersMap;
+                            trackBy: trackByVal
+                          "
+                          role="menuitem"
+                        >
+                          <a
+                            class="clickable font-size-12"
+                            (click)="
+                              filterByDateRange($event, range);
+                              dropdown.isOpen = false
+                            "
+                            tabindex="0"
+                            role="button"
+                          >
+                            <span
+                              [ngClass]="{
+                                'text-orange':
+                                  activeDateRange?.value == range.value
+                              }"
+                              >{{ range.name }}</span
+                            >
+                            <span
+                              appIcon
+                              name="times-circle-o"
+                              class="space-on-left"
+                              tooltip="Clear selection"
+                              (click)="
+                                filterByDateRange($event, range);
+                                dropdown.isOpen = false
+                              "
+                              *ngIf="activeDateRange?.value == range.value"
+                            >
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="panel panel-default bg-sky-blue"
+              *ngIf="show_bulk_edit_actions"
+            >
+              <div class="panel-body padded-lg">
+                <div class="row">
+                  <div col="6" class="clear-padding text-align-right">
+                    <span>
+                      <h5 class="inline space-on-right">
+                        <strong
+                          >Selected Records :
+                          <span class="badge">{{
+                            totalSelectedRecords
+                          }}</span></strong
+                        >
+                      </h5>
+                    </span>
+                    <span class="investor-request-schedule-request"
+                      >Select Scheduled Date:</span
+                    >
+                    <a
+                      style="width: 45%"
+                      class="btn btn-default clear-padding borderless space-on-right-lg"
+                    >
+                      <app-date-picker
+                        [value]="scheduled_diligences_scheduled_date"
+                        [minDate]="minDateEditSection"
+                        (change)="maxValChange($event)"
+                        placement="bottom"
+                        [placeholder]="'Select date'"
+                        ariaLabel="Select Scheduled Date"
+                      >
+                      </app-date-picker>
+                    </a>
+                  </div>
+                  <div col="5" class="clear-padding">
+                    <span class="investor-request-schedule-request"
+                      >Select Due Date:</span
+                    >
+                    <a
+                      style="width: 45%"
+                      class="btn btn-default space-on-right-lg clear-padding borderless"
+                    >
+                      <app-date-picker
+                        [value]="scheduled_diligences_due_date"
+                        [minDate]="minDateEditSection"
+                        (change)="minValChange($event)"
+                        placement="bottom"
+                        [placeholder]="'Select date'"
+                        ariaLabel="elect Due Date"
+                      >
+                      </app-date-picker>
+                    </a>
+                    <a
+                      class="btn btn-default space-on-right-lg clear-padding borderless"
+                    >
+                      <dv-button
+                        (onClick)="editScheduledDDBulkAction()"
+                        [loader]="loading"
+                      >
+                        Save
+                      </dv-button>
+                    </a>
+                    <a
+                      class="btn btn-default clear-padding borderless"
+                      (click)="closeQuickActions()"
+                    >
+                      <button class="btn btn-default">Cancel</button>
+                    </a>
+                  </div>
+                  <div col="1">
+                    <a
+                      class="btn pull-right text-black danger-icon"
+                      tooltip="Close"
+                      (click)="closeQuickActions()"
+                    >
+                      <strong>
+                        <span appIcon name="close"></span>
+                      </strong>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div col="12">
+            <app-dv-grid
+              *ngIf="dvStepper.selectedIndex === 1"
+              [rowData]="scheduled_diligences_grid"
+              [name]="gridNameScheduled"
+              [onRowSelected]="onRowSelected"
+              #grid
+            ></app-dv-grid>
+          </div>
+        </div>
+        <div class="full-width pos-abs" *ngIf="is_loading_scheduled_dds">
+          <app-spinner spinnerHeight="400" broadSpinner="true"></app-spinner>
+        </div>
+      </div>
+    </dv-step>
+
+    <dv-step
+      label="Review"
+      [discription]="'Please review your due diligence request'"
+      previousLabel="Previous"
+      [finishLabel]="nextBtnText"
+      (onBackClick)="handleScheduleRequestPrevious(dvStepper)"
+      (onFinishClick)="sendScheduledDDRequest()"
+      [isLoading]="loading"
+      [editorTempRef]="reviewDdScheduledRef"
+    >
+      <ng-template #reviewDdScheduledRef>
+        <div class="row clearfix">
+          <div col="6" class="bordered-right">
+            <div col="10" offset="1">
+              <form
+                class="form-horizontal row"
+                [formGroup]="templateSelectionForm"
+                novalidate
+                class="row"
+                autocomplete="off"
+              >
+                <dv-form-element
+                  [modelController]="templateSelectionForm.get('project_name')"
+                  label="Project Name"
+                  labelPosition="top"
+                  [errorMessage]="
+                    templateSelectionForm.get('project_name').touched &&
+                    templateSelectionForm.get('project_name')?.errors?.required
+                      ? 'Project Name is required'
+                      : templateSelectionForm.get('project_name')?.errors
+                          ?.containsHtml
+                      ? 'Please enter valid project name'
+                      : ''
+                  "
+                  elementCol="13"
+                >
+                  <input
+                    [autofocus]
+                    class="form-control"
+                    type="text"
+                    id="project_name"
+                    formControlName="project_name"
+                    placeholder="Project Name"
+                    autocomplete="off"
+                  />
+                </dv-form-element>
+              </form>
+              <form
+                name="email_text_form"
+                [formGroup]="templateSelectionForm"
+                autocomplete="off"
+              >
+                <div>
+                  <div class="col-sm-5" style="margin-left: 17px">
+                    <div class="pos-rel">
+                      <dv-checkbox
+                        [(ngModel)]="use_email_templates"
+                        [ngModelOptions]="{ standalone: true }"
+                        label="Use email templates"
+                        (ngModelChange)="
+                          getDefaultEmailTemplate(use_email_templates)
+                        "
+                        [disabled]="disallow_custom_edits"
+                        iconTooltip="Firm admins can create additional templates from Firm Settings"
+                        rightIcon="info"
+                        iconClass="align-middle float-none space-on-left"
+                      >
+                      </dv-checkbox>
+                    </div>
+                  </div>
+                  <div
+                    class="col-sm-6"
+                    *ngIf="email_templates.length == 0 && use_email_templates"
+                  >
+                    <p>
+                      No email templates present,
+                      <a class="clickable" (click)="routeToEmailTemp()"
+                        >click here</a
+                      >
+                      to add one
+                    </p>
+                  </div>
+                  <div
+                    class="col-sm-6 space-on-top"
+                    *ngIf="email_templates.length > 0 && use_email_templates"
+                  >
+                    <dv-select
+                      id="alert-frequency"
+                      [list]="email_templates"
+                      bindLabel="name"
+                      bindValue="id"
+                      placeholder="Select an Option"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="default_email_template_message_id"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="renderEmailTemplate($event)"
+                      [aria-label]="'Select Email Template'"
+                    ></dv-select>
+                  </div>
+                </div>
+                <br />
+                <div *ngIf="!disallow_custom_edits">
+                  <span class="col-sm-12 font-bold">Email Message</span>
+                  <div class="col-sm-12">
+                    <dv-editor
+                      *ngIf="use_email_templates"
+                      [value]="email_text"
+                      (onChange)="handleEditorTextChange($event)"
+                      [configObj]="tinyMceInit"
+                    ></dv-editor>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div col="6">
+            <h4
+              class="alert alert-info text-center clear-margin-top space-on-left-lg"
+            >
+              Scheduled Request Preview
+            </h4>
+            <div col="11">
+              <dl class="dl-horizontal clear-margin-bottom">
+                <dt>Request Type</dt>
+                <dd>{{ request.DDTypeDisplayName }}</dd>
+                <dt>Entities</dt>
+                <dd>
+                  Total {{ final_schedule_diligences_list.length }} diligence
+                  projects have been selected
+                </dd>
+                <dt [ngClass]="{ 'space-on-top-lg': email_text }">Email Msg</dt>
+                <dd class="word-break-break-all">
+                  <div *ngIf="email_text" class="email-text-wrapper">
+                    <span
+                      class="word-break-break-all"
+                      [innerHtml]="email_text"
+                    ></span>
+                  </div>
+                  <span *ngIf="!email_text">--</span>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div
+            col="10"
+            offset="1"
+            class="text-center request-confidential-checkbox"
+          >
+            <!-- Changes as per DV-10912 -->
+            <hr />
+            <helper-text>
+              <dv-checkbox
+                [(ngModel)]="accept_confidential_agreement"
+                [ngModelOptions]="{ standalone: true }"
+                label="I certify that our firm will share the information received only with authorized personnel and clients."
+                isBold="true"
+              >
+              </dv-checkbox>
+            </helper-text>
+             <!-- Changes End -->
+          </div>
+        </div>
+      </ng-template>
+    </dv-step>
+  </div>
+</dv-stepper>

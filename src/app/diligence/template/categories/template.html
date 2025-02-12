@@ -1,0 +1,92 @@
+<ng2-edit-template data-ng-if="vm.Utils.isTemplateAngular()"></ng2-edit-template>
+<div data-ng-if="!vm.Utils.isTemplateAngular()" class="row clearfix">
+  <div class="col-md-3">
+    <div class="panel panel-default md-panel">
+      <div class="panel-heading">
+        <h5 class="panel-title">Categories</h5>
+
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control js-add-category"
+               uib-tooltip="New Category"
+               data-ng-click="vm.openAddCategoryDialog()">
+              <icon name="plus"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <spinner data-ng-show="vm.loading">
+        </spinner>
+
+        <div data-ng-if="vm.categories.length">
+          <div chardin="vm.category_chardin_config" reveal-on-keypress></div>
+        </div>
+
+        <div class="list-group"
+             ui-sortable="sortableOptions"
+             resource="sections"
+             data-ng-show="vm.categories.length"
+             data-ng-model="vm.categories">
+          <a class="list-group-item has-controls clickable"
+             data-ng-click="vm.goToSelectedCategory(category)"
+             data-ng-class="{'active': vm.$state.params.categoryId == category.id}"
+             data-ng-repeat="category in vm.categories">
+            <div>
+              <span class="space-on-right align-middle sort-handle">
+                <icon name="th" class="js-sort-handle"></icon>
+              </span>
+
+              <span truncate-text="30" uib-tooltip="{{category.name}}">{{category.name}}</span>
+            </div>
+
+            <div class="controls">
+              <span class="control js-edit-category"
+                    role="button"
+                    data-ng-click="vm.openEditCategoryDialog(category, $index)"
+                    stop-event-propagation
+                    prevent-default>
+                <icon name="pencil"></icon>
+              </span>
+
+              <span class="control js-delete-category"
+                    data-ng-click="vm.removeCategory(category)"
+                    role="button"
+                    data-ng-class="{'disabled': vm.categories.length == 1, 'control-danger': vm.categories.length > 1}"
+                    uib-tooltip="{{vm.categories.length == 1 ? 'You cannot delete the only category in this template' : ''}}"
+                    stop-event-propagation
+                    prevent-default>
+                <icon name="trashcan"></icon>
+              </span>
+            </div>
+          </a>
+        </div>
+        <p><i><small data-ng-show="!vm.categories.length && !vm.loading">No categories found</small></i></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3" data-ng-if="!vm.categories.length && !vm.loading">
+    <div class="panel panel-default md-panel">
+      <div class="panel-heading">
+        <h5 class="panel-title">Subcategories</h5>
+      </div>
+
+      <div class="panel-body">
+        <p><i><small>No subcategories found</small></i></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6" data-ng-if="!vm.categories.length && !vm.loading">
+    <div class="panel panel-default md-panel">
+      <div class="panel-heading">
+        <h5 class="panel-title">Questions</h5>
+      </div>
+
+      <div class="panel-body">
+        <p><i><small>No questions found</small></i></p>
+      </div>
+    </div>
+  </div>
+  <ui-view />
+</div>

@@ -1,0 +1,232 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-sso-profile></ng2-sso-profile> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default sso-profile-page">
+  <div class="panel-heading">
+    <h5 class="panel-title">SSO (Single Sign on) Profile</h5>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">Click the button below to enable single sign on for this profile</div>
+  </div>
+
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div col="10" id="js-firms-profile">
+        <form class="form-horizontal" name="vm.sso_form" data-ng-submit="vm.submit()">
+          <form-group field-name="Enable SAML">
+            <h3 for="saml" class="control-label" col="5">Enable SSO</h3>
+
+            <div col="4" class="pos-rel">
+              <div class="saml-switch">
+                <switch id="enabled"
+                      name="enabled"
+                      ng-model="vm.ssoObject.enable_saml"
+                      on=""
+                      off=""
+                      class="green align-middle"></switch>
+              </div>
+            </div>
+            <div col="3" class="text-right">
+              <button class="btn btn-default btn-sm view_sp_details_btn" data-ng-click="vm.ViewServiceProviderDetails()"> View Service Provider Details </button>
+            </div>
+          </form-group>
+          <hr>
+          <form-group field-name="Metadata Url">
+            <label for="Metadata" class="control-label" col="5">
+              IDP Metadata Url
+              <span class="sso-radio-span">
+                <dv-radio
+                  type="info inline"
+                  data-ng-value="true"
+                  data-ng-disabled="!vm.ssoObject.enable_saml"
+                  data-ng-model="vm.useMetaUrl"
+                  label="">
+                </dv-radio>
+              </span>
+            </label>
+
+            <div col="7" class="pos-rel">
+              <input type="url"
+                     id="idp_metadata"
+                     name="idp_metadata"
+                     protocol-prefix
+                     maxlength="255"
+                     data-ng-disabled="!vm.ssoObject.enable_saml || !vm.useMetaUrl"
+                     data-ng-model="vm.ssoObject.metadata_file"
+                     class="form-control"
+                     data-ng-required="vm.useMetaUrl" />
+              <div>
+                <!-- <a class="clickable space-on-top" data-ng-click="vm.ViewServiceProviderDetails()"> View Service Provider Details</a> -->
+              </div>
+            </div>
+          </form-group>
+          <form-group field-name="Metadata Url2">
+            <label class="control-label or_label" col="5">
+              OR
+            </label>
+
+            <div col="7" class="pos-rel">
+            </div>
+          </form-group>
+          <form-group field-name="Custom">
+            <label for="Custom" class="control-label" col="5">
+              Custom
+              <span class="sso-radio-span">
+                <dv-radio
+                  type="info inline"
+                  data-ng-value="false"
+                  data-ng-disabled="!vm.ssoObject.enable_saml"
+                  data-ng-model="vm.useMetaUrl"
+                  label="">
+                </dv-radio>
+              </span>
+            </label>
+
+            <div col="7" class="pos-rel">
+
+            </div>
+          </form-group>
+          <form-group field-name="idP login Url">
+            <label for="url" class="control-label" col="5">
+              SAML 2.0 HTTPS Redirect Endpoint
+              <span class="font-size-10 text-orange align-top">*</span>
+              <small class="sso_info_icon">
+                  <icon name="info"
+                        class="text-info"
+                        tooltip-placement="right"
+                        uib-tooltip="This is where users will go when they try to login">
+                  </icon>
+              </small>
+            </label>
+            <div col="7" class="pos-rel">
+              <input type="url"
+                     id="firm_website"
+                     name="firm_website"
+                     protocol-prefix
+                     maxlength="255"
+                     data-ng-disabled="!vm.ssoObject.enable_saml || vm.useMetaUrl"
+                     data-ng-model="vm.ssoObject.login_url"
+                     class="form-control"
+                     data-ng-required="!vm.useMetaUrl" />
+
+            </div>
+          </form-group>
+
+
+          <form-group field-name="Entity Id">
+            <label for="firm_website" class="control-label" col="5">
+              IDP Issuer Url
+              <span class="font-size-10 text-orange align-top">*</span>
+              <small class="sso_info_icon">
+                  <icon name="info"
+                        class="text-info"
+                        tooltip-placement="right"
+                        uib-tooltip="Globally unique ID to identify requests from your IDP">
+                  </icon>
+              </small>
+            </label>
+
+            <div col="7" class="pos-rel">
+              <input type="text"
+                     id="entity_id"
+                     name="entity_id"
+                     data-ng-model="vm.ssoObject.entity_id"
+                     data-ng-disabled="!vm.ssoObject.enable_saml || vm.useMetaUrl"
+                     class="form-control"
+                     data-ng-required="!vm.useMetaUrl" />
+            </div>
+          </form-group>
+
+          <form-group field-name="Signature Certificate">
+            <label for="firm-type" class="control-label" col="5">
+            IDP Public Key/ Signature Certificate
+            <span class="font-size-10 text-orange align-top">*</span>
+            <small class="sso_info_icon">
+                <icon name="info"
+                      class="text-info"
+                      tooltip-placement="right"
+                      uib-tooltip="The PEM or DER encoded public key certificate of the identity provider used to verify SAML message and assertion signatures. Requires responses to be signed. Please paste your valid X.509 verificate here">
+                </icon>
+            </small>
+            </label>
+
+            <div col="7" class="pos-rel">
+              <textarea id="section-description"
+                        data-ng-disabled="!vm.ssoObject.enable_saml || vm.useMetaUrl"
+                        class="form-control"
+                        data-ng-required="!vm.useMetaUrl"
+                        data-ng-model="vm.ssoObject.signature_certificate"></textarea>
+            </div>
+
+          </form-group>
+          <form-group field-name="Signature Certificate">
+            <label for="firm-type" class="control-label" col="5">
+            SLO Endpoint
+            </label>
+
+            <div col="7" class="pos-rel">
+              <input type="text" id="section1"
+                        data-ng-disabled="!vm.ssoObject.enable_saml || vm.useMetaUrl"
+                        class="form-control"
+                        data-ng-model="vm.ssoObject.logout_url">
+            <div class="panel panel-info space-on-top-lg">
+              <div class="panel-heading"><strong>Name ID format:</strong>  User's email is expected in the SAML response for this field.</div>
+            </div>
+            </div>
+
+          </form-group>
+          <form-group >
+            <label class="col-md-4 control-label">
+            </label>
+
+            <div class="col-md-8 text-right">
+              <a class="link clickable" data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions">{{vm.showAdvanceOptions? 'Hide': 'Show'}} Advanced Settings</a>
+            </div>
+          </form-group>
+          <form-group data-ng-if="vm.showAdvanceOptions">
+            <label for="firm-type" class="control-label" col="5">
+              Request Signature
+              <small class="sso_info_icon">
+                  <icon name="info"
+                        class="text-info"
+                        tooltip-placement="right"
+                        uib-tooltip="Additional security if your IDP supports it">
+                  </icon>
+              </small>
+            </label>
+
+            <div col="7" class="pos-rel">
+              <dv-checkbox data-ng-model="vm.ssoObject.require_assertions" data-ng-disabled="!vm.ssoObject.enable_saml">
+                  <dv-checkbox-label>
+                      <b>Sign SAML Authentication Requests</b>
+                  </dv-checkbox-label>
+              </dv-checkbox>
+            </div>
+
+          </form-group>
+          <form-group data-ng-if="vm.showAdvanceOptions">
+            <label for="firm-type" class="control-label" col="5">
+              Response Signature Verification
+            </label>
+
+            <div col="7" class="pos-rel">
+              <select name="currency"
+                      id="currency"
+                      data-ng-disabled="!vm.ssoObject.enable_saml"
+                      class="form-control"
+                      chosen
+                      data-ng-options="responseSignature as responseSignature.name for responseSignature in vm.responseSignatures"
+                      data-ng-model="vm.verification_type">
+                <option value="">--Select--</option>
+              </select>
+            </div>
+
+          </form-group>
+          <div class="form-group">
+            <div col="5" offset="5">
+              <button type="submit" button-loader="vm.saving">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

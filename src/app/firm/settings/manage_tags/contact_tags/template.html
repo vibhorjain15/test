@@ -1,0 +1,18 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-contact-tags></ng2-contact-tags> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Manage Contact Tags and Custom Fields </h5>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">Manage all contact tags and custom fields that are relevant to your organization under this
+            section.</div>
+    </div>
+    <div class="panel-body">
+        <div>
+            <tags-manager tag="vm.contactInfo" tags-value="vm.contactTags"></tags-manager>
+        </div>
+        <div>
+            <custom-field-viewer entity-type="'contact'" entity-type-id="1218" source="'contact'"></custom-field-viewer>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<span>
+    <div ng-style='showLessStyle' ng-hide='expanded' ng-transclude>
+    </div>
+    <div ng-show='expanded' ng-transclude>
+    </div>
+    <div class="space-on-top-lg" ng-show="inputString.length > 130 || inputIsImg || multiLineText">
+        <a class="text-primary clickable" ng-hide='expanded || !expandable' ng-click='expanded = !expanded;$event.stopPropagation()' localize><b>Expand...</b></a>
+        <a class="text-primary clickable" ng-show='expanded && expandable' ng-click='expanded = !expanded;$event.stopPropagation()'><b>Show less</b></a>
+    </div>
+</span>

@@ -1,0 +1,57 @@
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.ti-desc {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.project-info {
+  display: flex;
+  margin-top: 5px;
+  justify-content: space-between;
+}
+.label-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  max-width: 45%;
+}
+.status {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.dottedBorder {
+  background: #f9f9f9 0% 0% no-repeat padding-box;
+  border: 1px dashed #a9a9a9;
+  border-radius: 2px;
+  margin-top: 24px;
+}
+.align-items-center {
+  align-items: center;
+}
+
+:host ::ng-deep .helper-text-wrapper {
+  max-height: 500px;
+  overflow: auto;
+}
+:host ::ng-deep .helper-text-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+:host ::ng-deep .helper-text-wrapper::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 10px;
+}
+:host ::ng-deep .helper-text-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d4;
+}
+:host ::ng-deep .main-desc img{
+  width: 400px;
+  height: 100px;
+}

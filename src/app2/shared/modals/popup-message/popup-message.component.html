@@ -1,0 +1,9 @@
+<app-modal
+  [title]="'Popup Blocker Alert'"
+  [initialTemplate]="templateRef"
+  [cancelButtonLabel]="'Got It'"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div [innerHTML]="popupMessage"></div>
+</ng-template>

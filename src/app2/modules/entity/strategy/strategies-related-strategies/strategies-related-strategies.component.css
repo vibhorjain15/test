@@ -1,0 +1,14 @@
+.tile-margins {
+    margin: auto 5px;
+}
+
+.tile-width {
+    width: 20px;
+}
+
+/* .due-diligence-grid {
+  max-width: 940px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+} */

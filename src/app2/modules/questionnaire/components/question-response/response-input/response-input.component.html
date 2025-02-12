@@ -1,0 +1,47 @@
+<div
+  class="has-feedback"
+  [ngClass]="{
+    'has-success': isTouched && !error,
+    'has-error': isTouched && error,
+    'input-group': rightIcon
+  }"
+  *ngIf="!isNotApplicable && !isReadOnly"
+  role="group"
+  aria-invalid="{{ isTouched && error ? 'true' : 'false' }}"
+>
+  <label [for]="'input' + '-' + id" class="sr-only">{{ placeholder }}</label>
+  <input
+    class="form-control"
+    [placeholder]="placeholder"
+    [(ngModel)]="value"
+    (ngModelChange)="handleChange($event)"
+    [attr.aria-placeholder]="placeholder"
+    aria-label="Input Field"
+    autocomplete="off"
+    [attr.id]="'input' + '-' + id"
+  />
+
+  <div *ngIf="rightIcon" class="input-group-addon" role="presentation">
+    {{ rightIcon }}
+  </div>
+</div>
+<div
+  *ngIf="!isNotApplicable && isTouched && error && type !== 'text'"
+  class="text-danger"
+  role="alert"
+>
+  {{ error }}
+</div>
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>
+<p
+  *ngIf="!isNotApplicable && isReadOnly && value"
+  class="space-on-top-lg answer-text-color space-exactly"
+  [innerHtml]="value"
+></p>
+<p *ngIf="!isNotApplicable && isReadOnly && !value" class="space-on-top-lg">
+  <i class="text-muted">
+    <small>*No response available*</small>
+  </i>
+</p>

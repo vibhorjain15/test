@@ -1,0 +1,19 @@
+body {
+  &.fullscreen-mode {
+    overflow: hidden;
+
+    .fullscreen-target {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1080;
+      margin: 0;
+    }
+
+    .navbar, .sidebar-nav {
+      display: none;
+    }
+  }
+}

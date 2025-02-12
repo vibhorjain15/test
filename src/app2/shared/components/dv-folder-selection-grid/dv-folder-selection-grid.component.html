@@ -1,0 +1,33 @@
+<ag-grid-angular
+  #folderGrid
+  class="ag-theme-alpine doc-grid"
+  [headerHeight]="0"
+  [columnDefs]="columnDefs"
+  [defaultColDef]="defaultColDef"
+  [autoGroupColumnDef]="autoGroupColumnDef"
+  [treeData]="true"
+  [animateRows]="true"
+  [groupDefaultExpanded]="groupDefaultExpanded"
+  [getDataPath]="getDataPath"
+  [suppressContextMenu]="true"
+  [components]="frameworkComponents"
+  [overlayNoRowsTemplate]="noRowsTemplate"
+  (gridReady)="onGridReady($event)"
+  (filterChanged)="onFilterChanged($event)"
+  [rowSelection]="isRadioButton ? 'single' : 'multiple'"
+  [rowMultiSelectWithClick]="isRadioButton ? false : true"
+  [groupSelectsChildren]="!isRadioButton ? true : false"
+  (selectionChanged)="onSelectionChanged($event)"
+  *ngIf="!gridLoader"
+></ag-grid-angular>
+<dv-link
+  (onClick)="onClearSelection()"
+  color="grey"
+  name="Clear Selection"
+  linkClass="display-flex space-on-top-lg"
+  *ngIf="!gridLoader"
+></dv-link>
+<app-spinner
+  class="text-center d-flex justify-center"
+  *ngIf="gridLoader"
+></app-spinner>

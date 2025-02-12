@@ -1,0 +1,138 @@
+<ng2-inbound-signup></ng2-inbound-signup>
+<!-- <div class="container" data-ng-if="vm.Utils.isAngularJS()">
+  <div class="row clearfix">
+    <div class="authentication-form-wrapper signup-form-wrapper center-block">
+      <div class="logo-wrapper min-height-50px">
+        <a class="clickable" data-ng-click="vm.goBackToLogin()"><img
+            src="https://img.icons8.com/ios/64/000000/circled-left-2.png" class="back_img"></a>
+        <img src="{{vm.logoLink}}" alt="Logo" class="logo" />
+      </div>
+      <div>
+        <form autocomplete="off" novalidate name="vm.signupForm" data-ng-submit="vm.submit()">
+          <form-group field-name="Email" validate-on="submit">
+            <label for="password" class="control-label">Email</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="mail"></icon>
+              </span>
+              <input type="text" class="form-control" data-ng-model="vm.user.userName" id="email" required disabled
+                placeholder="Enter email address" data-ng-change="vm.onEmailChanged()"
+                data-ng-model-options="{ debounce: { 'default': 500 } }" />
+            </div>
+          </form-group>
+          <form-group field-name="Firm name" validate-on="submit" data-ng-if="vm.allFirms.length > 0">
+            <label for="firm-name" class="control-label">Name of Your Firm</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="institution"></icon>
+              </span>
+              <select name="parent_firm" id="parent-firm" class="form-control" chosen required
+                data-ng-options="firm as firm.name for firm in vm.allFirms" data-ng-model="vm.user.firmInfo"
+                create-option-text="'Add New'" disable-search="false" persistent-create-option="true"
+                skip-no-results="true" create-option="vm.createFirm" data-ng-disabled="vm.firmDisabled">
+                <option value="">--Select a firm--</option>
+              </select>
+            </div>
+          </form-group>
+          <form-group field-name="Firm name" validate-on="submit" data-ng-if="!vm.allFirms.length">
+            <label for="firm-name" class="control-label">Name of Your Firm</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="institution"></icon>
+              </span>
+              <input type="text" required class="form-control" ng-model="vm.user.firmInfo.name"
+                data-ng-disabled="vm.firmDisabled">
+            </div>
+          </form-group>
+          <form-group field-name="First name" validate-on="submit">
+            <label for="password" class="control-label">First Name</label>
+            <div class="input-group" style="clear: both">
+              <span class="input-group-addon">
+                <icon name="user"></icon>
+              </span>
+              <input type="text" class="form-control" id="first-name" required
+                dv-restrict-input="{type: 'validPersonName'}" data-ng-model="vm.user.firstName"
+                placeholder="Enter your first name" />
+            </div>
+          </form-group>
+          <form-group field-name="Last name" validate-on="submit">
+            <label for="password" class="control-label">Last Name</label>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="user"></icon>
+              </span>
+              <input type="text" class="form-control" id="last-name" required data-ng-model="vm.user.lastName"
+                dv-restrict-input="{type: 'validPersonName'}" placeholder="Enter your last name" />
+            </div>
+          </form-group>
+          <form-group field-name="Password" validate-on="submit" class="margin-bottom-0">
+            <label for="password" class="control-label">Choose a Password</label>
+
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="key"></icon>
+              </span>
+              <dv-password-field id="password" type="{{vm.passwordElementType}}" password="vm.user.password"
+                placeholder="Password"></dv-password-field>
+              <a class="password-style-element clickable" data-ng-click="vm.showPasswordToggle()">
+                <icon name="eye" data-ng-if="vm.passwordNotVisible"></icon>
+                <icon name="view-hide" data-ng-if="!vm.passwordNotVisible"></icon>
+              </a>
+            </div>
+          </form-group>
+
+          <form-group validate-on="submit"
+            field-name-map="{'validateEquals': 'Passwords', 'required': 'Confirm Password'}">
+            <label for="confirm-password" class="control-label">Confirm Password</label>
+
+            <div class="input-group">
+              <span class="input-group-addon">
+                <icon name="key"></icon>
+              </span>
+              <input type="{{vm.passwordElementType2}}" class="form-control" name="confirmPassword"
+                id="confirm-password" ng-model="vm.user.confirmPassword" placeholder="Password Confirmation"
+                validate-equals="vm.user.password" required>
+              <a class="password-style-element clickable"
+                ng-style="{ 'right' : (vm.user.password == vm.user.confirmPassword && vm.user.password) ? '35px' : '12px' }"
+                data-ng-click="vm.showPasswordToggle2()">
+                <icon name="eye" data-ng-if="vm.passwordNotVisible2"></icon>
+                <icon name="view-hide" data-ng-if="!vm.passwordNotVisible2"></icon>
+              </a>
+            </div>
+          </form-group>
+          <form-group field-name="Verification Code" validate-on="submit">
+            <label for="password" class="control-label">Verification Code</label>
+            <div class="input-group" style="clear: both">
+              <span class="input-group-addon">
+                <icon name="unlock-alt"></icon>
+              </span>
+              <input type="text" class="form-control" id="verification-code" required
+                dv-restrict-input="{type: 'digitsOnly'}" data-ng-model="vm.user.SignupVerificationCode"
+                placeholder="Enter the verification code sent to your email." />
+            </div>
+          </form-group>
+          <p class="alert alert-info">
+            Click <a data-ng-click="vm.sendVerificationCode()">here</a> if you haven't received the verification code.
+          </p>
+          <div class="captcha recaptchaContainer">
+            <div vc-recaptcha key="vm.siteKey" ng-model="vm.myRecaptchaResponse" required
+              uib-tooltip="{{vm.myRecaptchaResponse == null?'Captcha Required':''}}"
+              tooltip-is-open="vm.signupForm.$submitted" tooltip-placement="right" tooltip-trigger="none"></div>
+          </div>
+          <div data-ng-if="vm.duplicateFirms.length>0" class="alert alert-danger margin-20">
+            <p>
+              {{vm.duplicateFirmsStr}} possible matching firms found, click <a
+                data-ng-click="vm.openDuplicateFirmsModal()">here</a> to view.
+            </p>
+          </div>
+          <div class="form-group text-center space-on-top-lg">
+            <button type="submit" class="btn btn-primary" button-loader="vm.saving"
+              data-ng-hide="vm.duplicateFirms.length > 0">Create Account</button>
+            <button class="btn btn-primary" button-loader="vm.saving" data-ng-show="vm.duplicateFirms.length > 0"
+              data-ng-click="vm.saveNewFirm()">Yes, Please Create Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->

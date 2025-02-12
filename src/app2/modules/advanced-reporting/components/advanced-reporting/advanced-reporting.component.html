@@ -1,0 +1,291 @@
+<div class="row" id="report-component-container">
+  <div class="row col-md-4 space-on-left">
+    <dv-form-element
+      label="Select a Dashboard"
+      labelPosition="top"
+      elementCol="12"
+      [showRightIcon]="false"
+      class="dashboard-selection-label"
+      [for]="'dashboard'"
+    >
+      <dv-select
+        [id]="'dashboard'"
+        [list]="reports"
+        [searchable]="true"
+        [(ngModel)]="selectedReport"
+        [clearable]="false"
+        [placeholder]="reports ? '--Select--' : 'Loading...'"
+        bindLabel="report_name"
+        bindValue=""
+        (onSelectChange)="loadSelectedReport()"
+        [ngModelOptions]="{ standalone: true }"
+        [aria-label]="'Select a Dashboard'"
+      >
+      </dv-select>
+    </dv-form-element>
+  </div>
+
+  <div class="pull-right right-action-buttons">
+    <div class="space-on-right-lg" *ngIf="selectedReport">
+      <button
+        class="btn btn-blue-border"
+        [popover]="bookmarkTemplate"
+        #pop="bs-popover"
+        popoverTitle=""
+        containerClass="advanced-reporting-popover"
+        triggers=""
+        placement="bottom end"
+        [isOpen]="isCustomViewPopoverOpen"
+        (click)="showBookmarks()"
+        (onHidden)="isCustomViewPopoverOpen = false"
+        [disabled]="loading_report || loading_data"
+      >
+        <span appIcon name="bookmark2"></span> Custom Views
+      </button>
+    </div>
+
+    <div *ngIf="selectedReport">
+      <button
+        class="btn btn-orange-border btn-orange-outline"
+        [popover]="exportTemplate"
+        #pop2="bs-popover"
+        popoverTitle="Export"
+        triggers=""
+        placement="bottom end"
+        containerClass="advanced-reporting-popover"
+        [adaptivePosition]="false"
+        [isOpen]="isExportPopoverOpen"
+        (click)="showExports()"
+        [disabled]="!export_options?.pages?.length"
+      >
+        <span appIcon name="external-link"></span>
+        Export
+      </button>
+    </div>
+  </div>
+</div>
+<app-spinner
+  [broadSpinner]="true"
+  spinnerHeight="80"
+  *ngIf="loading_data || loading_report"
+></app-spinner>
+<div
+  class="row clearfix space-on-top-lg"
+  *ngIf="selectedReport && !loading_data"
+>
+  <div class="col-md-12">
+    <div class="hide-in-print-view">
+      <div class="padding-5 clearfix">
+        <div
+          *ngIf="report_config"
+          [class]="{ 'visibility-hidden': loading_report }"
+        >
+          <powerbi-report
+            [embedConfig]="report_config"
+            [eventHandlers]="report_events"
+          ></powerbi-report>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #exportTemplate>
+  <form
+    name="exportReportForm"
+    class="advanced-report-export nested-list"
+    novalidate
+    (ngSubmit)="exportReports()"
+    autocomplete="off"
+  >
+    <div class="w-350">
+      <ul class="list-group popover-container">
+        <li *ngFor="let page of export_options.pages">
+          <div class="display-flex">
+            <dv-checkbox
+              (click)="$event.stopPropagation()"
+              [id]="page.name"
+              [ngModel]="page.doExport"
+              [indeterminate]="!!page.isPartialSelected"
+              (onValChange)="handleExportSelectionChange($event, page)"
+              [ngModelOptions]="{ standalone: true }"
+              class="export-checkbox"
+            >
+            </dv-checkbox>
+            <span class="font-size-14 break_word">{{ page.displayName }}</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="form-group space-on-top-lg">
+        <dv-select
+          [list]="exportFileTypes"
+          [(ngModel)]="export_options.fileTypes.selectedType"
+          bindLabel="value"
+          bindValue="value"
+          [clearable]="false"
+          required
+          name="fileTypes"
+          id="fileTypes"
+          [ngModelOptions]="{ standalone: true }"
+          [aria-label]="'File Types'"
+        ></dv-select>
+      </div>
+
+      <div class="row space-on-top-lg">
+        <dv-button
+          type="submit"
+          btnClass="minWidth center-block"
+          [loader]="downloadingPdf"
+          [disabled]="!enableExport"
+          [tooltip]="
+            !enableExport ? 'Please select one or more pages to export' : null
+          "
+          >Export</dv-button
+        >
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #bookmarkTemplate>
+  <button
+    type="button"
+    (click)="bookmarkPopover.hide()"
+    class="close space-on-bottom-lg"
+    aria-label="Close"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <form
+    name="bookmarkReportForm"
+    class="advanced-report-bookmark nested-list"
+    novalidate
+    autocomplete="off"
+  >
+    <div class="w-350">
+      <div class="row space-on-bottom-xxl">
+        <dv-button
+          btnType="blue-border"
+          class="save-current-view-btn space-on-top"
+          (onClick)="showSavePopup()"
+          btnWidth="100"
+        >
+          Save Current View
+        </dv-button>
+      </div>
+      <div class="row space-on-bottom-lg space-on-top">
+        <span class="bold-text">All Custom Views</span>
+        <div class="pull-right">
+          <a
+            class="clickable"
+            (click)="saveCustomViewGroup()"
+            class="font-size-14"
+            ><span appIcon name="plus" class="space-on-right"></span> Add
+            Group</a
+          >
+        </div>
+      </div>
+      <ul
+        class="list-group panel-scroll custom-view-group-list popover-container"
+        #bookmarkListView
+      >
+        <app-empty-state
+          message="No saved views available."
+          *ngIf="customViewGroups && !customViewGroups?.length"
+        ></app-empty-state>
+        <li *ngFor="let customViewGroup of customViewGroups">
+          <accordion [isAnimated]="true">
+            <accordion-group
+              class="custom-view-list-accordion-group"
+              [isOpen]="customViewGroup.isOpen"
+              (click)="handleCustomViewGroupOpen(customViewGroup.id)"
+            >
+              <div
+                class="accordion-header custom-view-group-header"
+                accordion-heading
+              >
+                <span
+                  appIcon
+                  name="chevron-down"
+                  class="color-primary font-size-12"
+                  *ngIf="customViewGroup.isOpen"
+                ></span>
+                <span
+                  appIcon
+                  name="chevron-right"
+                  class="font-size-12"
+                  size="xs"
+                  *ngIf="!customViewGroup.isOpen"
+                ></span>
+                <span
+                  [ngClass]="{ 'color-primary': customViewGroup.isOpen }"
+                  class="font-size-14 break_word"
+                  >{{ customViewGroup.name }}</span
+                >
+                <span class="right-icons clickable font-size-14">
+                  <span
+                    appIcon
+                    name="pencil"
+                    (click)="
+                      saveCustomViewGroup(customViewGroup);
+                      $event.stopPropagation()
+                    "
+                    class="space-on-right-xl icon-link"
+                  ></span>
+                  <span
+                    appIcon
+                    name="trashcan"
+                    (click)="
+                      confirmDelete(customViewGroup); $event.stopPropagation()
+                    "
+                    class="delete-control"
+                  ></span>
+                </span>
+              </div>
+              <ng-container>
+                <ul
+                  class="custom-view-list"
+                  *ngIf="customViewGroup?.customViews?.length"
+                >
+                  <li *ngFor="let customView of customViewGroup.customViews">
+                    <div class="custom-view-group-header">
+                      <a
+                        class="clickable break_word"
+                        (click)="loadView(customView); $event.stopPropagation()"
+                        >{{ customView.name }}</a
+                      >
+                      <span class="right-icons clickable font-size-14">
+                        <span
+                          appIcon
+                          name="pencil"
+                          (click)="
+                            showSavePopup(customView); $event.stopPropagation()
+                          "
+                          class="space-on-right-xl custom-view-icon icon-link"
+                        ></span>
+                        <span
+                          appIcon
+                          name="trashcan"
+                          (click)="
+                            confirmDelete(customViewGroup, customView);
+                            $event.stopPropagation()
+                          "
+                          class="custom-view-icon delete-control"
+                        ></span>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+                <app-empty-state
+                  message="No custom views found in this group."
+                  *ngIf="!customViewGroup?.customViews?.length"
+                ></app-empty-state>
+              </ng-container>
+            </accordion-group>
+          </accordion>
+        </li>
+      </ul>
+    </div>
+  </form>
+</ng-template>

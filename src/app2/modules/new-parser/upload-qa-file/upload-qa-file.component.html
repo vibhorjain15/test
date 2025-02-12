@@ -1,0 +1,107 @@
+<app-modal
+  [title]="'Select Word file'"
+  [firstButtonLabel]="'Import'"
+  (onFirstClick)="submit()"
+  [initialTemplate]="templateRef"
+  [isLoading]="saving_template"
+  [isFirstButtonDisabled]="loading"
+>
+</app-modal>
+<ng-template #templateRef>
+  <form
+    novalidate
+    [formGroup]="uploadQAForm"
+    class="form-horizontal"
+    autocomplete="off"
+  >
+    <ng-container *ngIf="loading">
+      <div class="text-center">
+        <app-spinner broad-spinner spinner-height="100"></app-spinner>
+      </div>
+    </ng-container>
+    <div class="modal-body" *ngIf="!loading">
+      <div class="row clearfix">
+        <div class="dd-doc-selection-wrapper">
+          <dv-uploader
+            dragLabel="Drag & Drop your file here"
+            [isMultiple]="false"
+            (onFileUpload)="documentUploadComplete($event)"
+            [accept]="allowed_file_extensions_str"
+          ></dv-uploader>
+        </div>
+      </div>
+      <div class="row clearfix space-on-top-xxl">
+        <ng-container #entityType>
+          <dv-form-element
+            [modelController]="uploadQAForm.get('entity_type')"
+            [fieldName]="'Entity Type'"
+            [showRightIcon]="false"
+            [label]="'Entity Type'"
+          >
+            <dv-select
+              [id]="'entity_type'"
+              [contoller]="uploadQAForm.get('entity_type')"
+              [error]=""
+              [list]="entity_types"
+              bindLabel="alias"
+              bindValue="name"
+              formControlName="entity_type"
+              (onSelectChange)="handleConditionChange($event)"
+            ></dv-select>
+          </dv-form-element>
+        </ng-container>
+        <ng-container>
+          <dv-form-element
+            [modelController]=""
+            [fieldName]="params.entity_type.alias"
+            [showRightIcon]="false"
+            [label]="params.entity_type.alias"
+            [for]="'entity_id'"
+          >
+            <span [ngSwitch]="params.entity_type.name">
+              <p class="space-on-top" *ngSwitchCase="keywordConstants.MyFirm">
+                {{ firm_name }}
+              </p>
+              <p *ngSwitchCase="keywordConstants.Strategy">
+                <dv-select
+                  [contoller]="uploadQAForm.get('entity_id')"
+                  [error]=""
+                  [list]="strategies"
+                  bindLabel="name"
+                  bindValue="id"
+                  formControlName="entity_id"
+                  [id]="'entity_id'"
+                ></dv-select>
+              </p>
+              <p *ngSwitchCase="keywordConstants.Product">
+                <dv-select
+                  [contoller]="uploadQAForm.get('entity_id')"
+                  [error]=""
+                  [list]="funds"
+                  bindLabel="name"
+                  bindValue="id"
+                  formControlName="entity_id"
+                  [id]="'entity_id'"
+                ></dv-select>
+              </p>
+              <p *ngSwitchCase="keywordConstants.Vehicle">
+                <dv-select
+                  [contoller]="uploadQAForm.get('entity_id')"
+                  [error]=""
+                  [list]="vehicles"
+                  bindLabel="name"
+                  bindValue="id"
+                  formControlName="entity_id"
+                  [id]="'entity_id'"
+                ></dv-select>
+              </p>
+              <p *ngSwitchDefault>
+                {{ firm_name }}
+              </p>
+            </span>
+          </dv-form-element>
+        </ng-container>
+      </div>
+    </div>
+  </form>
+</ng-template>

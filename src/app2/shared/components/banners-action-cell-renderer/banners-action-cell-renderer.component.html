@@ -1,0 +1,40 @@
+<div *ngIf="params.data">
+  <button
+    [tooltip]="params?.data?.is_draft ? 'Publish' : 'Published'"
+    container="body"
+    [ngClass]="{ 'active disabled': !params?.data?.is_draft }"
+    appButton
+    btnType="default"
+    size="sm"
+    [adaptivePosition]="false"
+    (click)="markBannerAsFinal()"
+    class="space-on-right"
+  >
+    <span appIcon name="check"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Edit"
+    container="body"
+    triggers="mouseenter:mouseleave"
+    [adaptivePosition]="false"
+    (click)="edit()"
+    class="space-on-right"
+  >
+    <span appIcon name="pencil"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Delete"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    (click)="delete()"
+  >
+    <span appIcon name="trashcan"></span>
+  </button>
+</div>

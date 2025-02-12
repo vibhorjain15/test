@@ -1,0 +1,13 @@
+<dv-logo-label
+  (onClick)="submit()"
+  icon="check"
+  [label]="submitText"
+  [type]="!isDisable ? 'button' : 'normal'"
+  [iconColor]="!isDisable ? 'orange' : 'disabled'"
+  [isEnabled]="!isDisable"
+  [previewLabel]="tooltip"
+  [ariaLabel]="submitText"
+  *ngIf="!submitLoader"
+>
+</dv-logo-label>
+<app-spinner *ngIf="submitLoader"></app-spinner>

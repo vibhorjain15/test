@@ -1,0 +1,54 @@
+.rangePicker {
+  display: inline-block;
+}
+
+.project-button,
+.project-date-picker.rangePicker ::ng-deep input,
+.project-date-picker.rangePicker ::ng-deep .input-group-btn button {
+  height: 32px;
+}
+
+.pending-items-btn-count {
+  padding: 5px 10px 5px !important;
+}
+
+.pending-items-dropdown-menu {
+  width: max-content;
+  padding-left: 15px;
+  padding-right: 15px;
+  position: relative;
+  left: -10%;
+}
+
+@media (min-width: 1450px) {
+  .pending-items-dropdown-menu {
+    left: -35%;
+  }
+}
+
+.pending-items-clear {
+  padding-left: unset;
+  font-weight: 200;
+}
+
+.pending-items-parent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pending-items-parent-row {
+  padding-top: 15px;
+}
+
+.pending-items-dummy-div {
+  flex-grow: 1;
+}
+.label-orange {
+  background-color: var(--dark-orange)!important;
+}
+
+.project-filters-alignment {
+  display: flex;
+  justify-content: space-between;
+}

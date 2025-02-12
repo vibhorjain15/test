@@ -1,0 +1,14 @@
+.danger {
+  color: #cd3333;
+}
+.minwidth {
+  min-width: 55px;
+}
+
+.rating-scales-max-width {
+  max-width: 199px;
+}
+
+.rating-scale-button-width {
+  margin-right: 4px;
+}

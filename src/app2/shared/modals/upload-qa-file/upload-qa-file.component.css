@@ -1,0 +1,10 @@
+.upload-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.upload-qa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}

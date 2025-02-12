@@ -1,0 +1,35 @@
+<p
+  *ngIf="params.data && !params.node.group"
+  [tooltip]="params.value"
+  container="body"
+  [adaptivePosition]="false"
+>
+  <span
+    *ngIf="
+      params.data.displayStatus === 'Sent' ||
+        params.data.displayStatus === 'Deleted';
+      else otherStatus
+    "
+  >
+    {{ params.value }}
+  </span>
+
+  <ng-template #otherStatus>
+    <a [routerLink]="url">
+      <span
+        (click)="click($event)"
+        [ngClass]="{
+          'text-bold': params.data.displayStatus === 'Invited',
+          'project-row-name': true
+        }"
+      >
+        {{ params.value }}
+      </span>
+      <span *ngIf="isNew" class="badge dv-badge-info relative-tag">New </span>
+    </a>
+  </ng-template>
+</p>
+
+<p *ngIf="params.node.group">
+  {{ params.value }}
+</p>

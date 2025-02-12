@@ -1,0 +1,78 @@
+<div
+  [@slideInUp]
+  [@slideDown]
+  class="panel slide feedback-panel-container"
+  *ngIf="canShow | async"
+>
+  <div class="panel-body">
+    <form novalidate [formGroup]="feedback_form" (ngSubmit)="processRequest($event)">
+      <fieldset>
+        <legend>
+          Please share your questions, thoughts, and feedback with us
+        </legend>
+      </fieldset>
+      <app-spinner
+        [broadSpinner]="true"
+        spinnerHeight="204"
+        *ngIf="loading_data"
+      ></app-spinner>
+      <div class="feedback-panel" *ngIf="!loading_data">
+        <div class="feedback-request-type">
+          <div
+            formArrayName="config"
+            *ngFor="
+              let setting of feedback_form.controls.config['controls'];
+              let i = index
+            "
+          >
+            <div [formGroupName]="i">
+              <app-form-group
+                [fieldName]="'Field ID'"
+                [tabClass]="'btn-group-vertical'"
+                [modelController]="feedback_form.get('FeedbackText')"
+                [showRightIcon]="false"
+              >
+                <input
+                  type="button"
+                  style="left: 1px"
+                  [ngClass]="{ active: isactive == i }"
+                  (click)="setActiveButton(i)"
+                  class="btn btn-default"
+                  formControlName="key{{ i }}"
+                />
+              </app-form-group>
+            </div>
+          </div>
+        </div>
+        <div class="feedback-comments">
+          <app-form-group
+            [fieldName]="'Field Name'"
+            [modelController]="feedback_form.get('FeedbackText')"
+            class="cell scorecard-dropdown"
+          >
+            <textarea
+              class="form-control"
+              formControlName="FeedbackText"
+              placeholder="What would you like to say ? We are all ears :)"
+              name="feedback_text"
+              required
+            ></textarea>
+          </app-form-group>
+        </div>
+      </div>
+      <div class="clearfix space-on-top-lg">
+        <div class="pull-right">
+          <button
+            btn-type="default"
+            class="btn btn-default"
+            (click)="cancel($event)"
+            style="margin-right: 5px"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">Share with Us</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

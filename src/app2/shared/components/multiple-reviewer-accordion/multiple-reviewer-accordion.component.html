@@ -1,0 +1,142 @@
+<accordion>
+  <div class="review-detail-multiple">
+    <div
+      *ngFor="let step of steps; let i = index"
+      (click)="activeId = step.order"
+    >
+      <accordion-group
+        class="custom-view-list-accordion-group accordion-group"
+        (isOpenChange)="step.isOpen = $event"
+        [isOpen]="step.order === activeId"
+        [isDisabled]="steps?.length == 1"
+      >
+        <div
+          class="accordion-header custom-view-group-header"
+          accordion-heading
+        >
+          <span
+            appIcon
+            name="chevron-down"
+            class="font-size-12"
+            *ngIf="step.isOpen && !freeUser && steps.length > 1"
+          ></span>
+          <span
+            appIcon
+            name="chevron-right"
+            class="font-size-12"
+            *ngIf="!step.isOpen && !freeUser && steps.length > 1"
+          ></span>
+
+          <strong [style.margin-left.px]="5" class="font-size-14"
+            >Step {{ step.order }}</strong
+          >
+
+          <span
+            appIcon
+            name="hour-glass"
+            *ngIf="step.status === diligenceStatusConstant.InReview"
+            class="pull-right"
+            [style.padding-top.px]="4"
+          ></span>
+          <span
+            appIcon
+            name="check-circle"
+            class="text-success pull-right"
+            [style.padding-top.px]="4"
+            *ngIf="step.is_completed"
+          ></span>
+        </div>
+        <div class="assign-reviewer-box">
+          <dv-label type="bold" label="Reviewers" [align]="'left'"></dv-label>
+          <ng-container
+            *ngFor="let reviewer of step.assignments; let ind = index"
+          >
+            <div class="reviewers">
+              <div class="reviewer-detail">
+                <div class="name">
+                  <span
+                    appIcon
+                    name="user"
+                    [style.color]="reviewer.is_mandatory ? 'red' : ''"
+                    [tooltip]="
+                      reviewer.is_mandatory
+                        ? 'Mandatory reviewer'
+                        : 'Optional reviewer'
+                    "
+                  ></span>
+                  <dv-label
+                    [label]="utils.getAssignedToName(reviewer)"
+                  ></dv-label>
+                </div>
+                <dv-label
+                  *ngIf="!reviewer.is_completed"
+                  [label]="
+                    'Due Date: ' + (reviewer.due_at | dvDate : ['isLocaleDate'])
+                  "
+                  type="disable"
+                ></dv-label>
+                <ng-container *ngIf="reviewer.is_completed">
+                  <dv-label
+                    [label]="
+                      'Reviewed on: ' +
+                      (reviewer.completed_at + 'Z' | dvDate : ['dvDateTime'])
+                    "
+                    type="disable"
+                  ></dv-label>
+                </ng-container>
+              </div>
+
+              <dv-status-tag
+                [label]="
+                  reviewer.status === diligenceStatusConstant.ReviewFailed
+                    ? reviewStatus[reviewer.status + isEvaluation]
+                    : reviewStatus[reviewer.status]
+                "
+                [type]="reviewer.status"
+              ></dv-status-tag>
+            </div>
+
+            <div
+              class="full-grey-border space-on-bottom-lg note-panel"
+              *ngIf="
+                reviewer.status === diligenceStatusConstant.ReviewFailed &&
+                reviewer.note
+              "
+            >
+              <div class="previous-comments-panel">
+                <div class="header padded-lg">
+                  <span appIcon name="mail-forward"></span>
+                  {{ isEvaluation ? "Response Rejected" : "Revision Request" }}
+                  Note added by
+                  <b>
+                    {{ utils.getAssignedToName(reviewer) }}
+                  </b>
+                  <span class="text-muted">
+                    on {{ reviewer.completed_at | dvDate }}
+                  </span>
+                </div>
+                <div class="padded-lg">
+                  <p class="space-on-bottom">
+                    <span [innerHTML]="reviewer.note"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <dv-divider
+              *ngIf="ind !== step.assignments.length - 1"
+            ></dv-divider>
+          </ng-container>
+          <div class="min-reviewer" *ngIf="!freeUser">
+            <dv-label
+              label="Minimum reviewer(s) required"
+              type="bold"
+            ></dv-label>
+            <div class="reviewer-count">
+              {{ step.no_of_approval_required }}
+            </div>
+          </div>
+        </div>
+      </accordion-group>
+    </div>
+  </div>
+</accordion>

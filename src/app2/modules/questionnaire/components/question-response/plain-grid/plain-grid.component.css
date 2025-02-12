@@ -1,0 +1,22 @@
+th {
+  background-color: #f7f7f7 !important;
+}
+.row-headers-css {
+  background-color: #f7f7f7 !important;
+  width: 150px;
+  font-weight: bolder;
+}
+.row {
+  background-color: white;
+}
+.plain-grid-class {
+  max-height: 300px;
+  resize: vertical;
+}
+.plain-grid-class[style*="height"] {
+  min-height: 200px;
+  max-height: 650px;
+}
+.space-exactly {
+  white-space: pre-wrap;
+}

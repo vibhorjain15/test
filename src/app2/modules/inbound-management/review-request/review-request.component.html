@@ -1,0 +1,255 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Review Opportunity</h5>
+  </div>
+  <div class="panel-info" *ngIf="hide_private">
+    <div class="panel-heading">
+      Select opportunity from the dropdown, use search and filters to narrow
+      down the entity for which you want to apply.
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div>
+        <div *ngIf="showSpinner"><app-spinner></app-spinner></div>
+        <div *ngIf="!showSpinner">
+          <div col="8" offset="2">
+            <form
+              class="form-horizontal"
+              [formGroup]="opportunityForm"
+              autocomplete="off"
+            >
+              <div col="6">
+                <dv-form-element
+                  elementCol="12"
+                  labelPosition="top"
+                  [modelController]="opportunityForm.get('investorFirmControl')"
+                  [removeSpace]="true"
+                >
+                  <div col="4" class="p-y-20">
+                    <img [src]="logoLink" class="img-style" alt="Logo" />
+                  </div>
+                  <div col="8">
+                    <div class="space-on-top-xl">
+                      <dv-label type="disable" label="Investor Firm"></dv-label>
+                      <b class="block-display font-size-16">{{
+                        investor_name
+                      }}</b>
+                    </div>
+                  </div>
+                </dv-form-element>
+              </div>
+              <div col="6" *ngIf="!redirectId" class="space-on-top">
+                <dv-form-element
+                  label="Select an Opportunity"
+                  elementCol="12"
+                  labelPosition="top"
+                  [modelController]="
+                    opportunityForm.get('opportunityNameControl')
+                  "
+                  [showRightIcon]="false"
+                >
+                  <dv-select
+                    [id]="'opportunityNameControl'"
+                    [list]="opportunities"
+                    [searchable]="true"
+                    formControlName="opportunityNameControl"
+                    [clearable]="false"
+                    placeholder="-- Select Opportunity --"
+                    bindLabel="name"
+                    bindValue="id"
+                    (onSelectChange)="onChange($event)"
+                  >
+                  </dv-select>
+                  <div
+                    *ngIf="
+                      opportunityForm.get('opportunityNameControl').invalid
+                    "
+                    class="danger"
+                  >
+                    {{
+                      getErrorMessage(
+                        "opportunityNameControl",
+                        "Opportunity Name"
+                      )
+                    }}
+                  </div>
+                </dv-form-element>
+              </div>
+              <div
+                col="12"
+                *ngIf="
+                  opportunityForm.get('opportunityNameControl') &&
+                  isSelectedOpportunity
+                "
+              >
+                <span class="control-label fw-bolder">Description</span>
+                <div class="editable" *ngIf="descriptionContent">
+                  <dv-show-more [text]="descriptionContent"></dv-show-more>
+                </div>
+                <div
+                  class="editable space-on-right"
+                  *ngIf="!descriptionContent"
+                >
+                  No description was provided.
+                </div>
+              </div>
+              <div
+                col="6"
+                *ngIf="
+                  opportunityForm.get('opportunityNameControl') &&
+                  isSelectedOpportunity
+                "
+                class="tooltipInfo"
+              >
+                <dv-form-element
+                  [modelController]="opportunityForm.get('asOfDateControl')"
+                  label="As of Date"
+                  labelPosition="top"
+                  elementCol="12"
+                  infoText="The data you are providing for this project is as of the date selected here"
+                  infoTextPlacement="left"
+                  [dvClass]="info - test"
+                >
+                  <app-date-picker
+                    [id]="'asOfDateControl'"
+                    [value]="opportunityForm.get('asOfDateControl').value"
+                    [maxDate]="maxAsOfDate"
+                    (change)="handleAsOfDate($event)"
+                  >
+                  </app-date-picker>
+                </dv-form-element>
+                <dv-form-element
+                  label="Submission for"
+                  labelPosition="top"
+                  [modelController]="opportunityForm.get('entityTypeControl')"
+                  [showRightIcon]="false"
+                  elementCol="12"
+                >
+                  <dv-select
+                    [list]="entityOption"
+                    [id]="'entityTypeControl'"
+                    [searchable]="true"
+                    formControlName="entityTypeControl"
+                    [clearable]="false"
+                    placeholder="-- Select Entity Type --"
+                    bindLabel="label"
+                    bindValue="value"
+                    [readonly]="
+                      redirectId &&
+                      defaultOpportunity &&
+                      defaultOpportunity.entity_type
+                    "
+                    (onSelectChange)="onEntitySelection($event)"
+                  >
+                  </dv-select>
+                  <div
+                    *ngIf="opportunityForm.get('entityTypeControl').invalid"
+                    class="danger"
+                  >
+                    {{ getErrorMessage("entityTypeControl", "Entity Type") }}
+                  </div>
+                </dv-form-element>
+              </div>
+              <div
+                col="6"
+                *ngIf="
+                  opportunityForm.get('opportunityNameControl') &&
+                  isSelectedOpportunity
+                "
+              >
+                <dv-form-element
+                  [fieldName]="'Due Date'"
+                  [modelController]="opportunityForm.get('dueDateControl')"
+                  label="Due Date"
+                  labelPosition="top"
+                  [showRightIcon]="false"
+                  elementCol="12"
+                >
+                  <app-date-picker
+                    [id]="'dueDateControl'"
+                    [value]="opportunityForm.get('dueDateControl').value"
+                    [minDate]="today"
+                    (change)="handleDueDate($event)"
+                    [class]="dueDateError ? 'has-error' : ''"
+                  ></app-date-picker>
+                </dv-form-element>
+                <dv-form-element
+                  *ngIf="
+                    this.opportunityForm.getRawValue().entityTypeControl &&
+                    this.opportunityForm.getRawValue().entityTypeControl !==
+                      'Firm'
+                  "
+                  [fieldName]="'Associated Entity'"
+                  [modelController]="
+                    opportunityForm.get('associatedEntityControl')
+                  "
+                  [label]="entityText"
+                  labelPosition="top"
+                  [showRightIcon]="false"
+                  elementCol="12"
+                >
+                  <dv-select
+                    [id]="'associatedEntityControl'"
+                    [list]="
+                      this.opportunityForm.value.entityTypeControl === 'Fund'
+                        ? fund_list
+                        : this.opportunityForm.value.entityTypeControl ===
+                          'Strategy'
+                        ? strategy_list
+                        : vehicle_list
+                    "
+                    [searchable]="true"
+                    formControlName="associatedEntityControl"
+                    [clearable]="false"
+                    [placeholder]="entityPlaceholder"
+                    bindLabel="name"
+                    bindValue="id"
+                  >
+                  </dv-select>
+                  <div
+                    *ngIf="
+                      opportunityForm.get('associatedEntityControl').invalid
+                    "
+                    class="danger"
+                  >
+                    {{ getErrorMessage("associatedEntityControl", entityText) }}
+                  </div>
+                  <div
+                    class="pull-right mt-10 clickable"
+                    (click)="openNewDialog()"
+                  >
+                    Add
+                    {{
+                      this.opportunityForm.value.entityTypeControl == "Fund"
+                        ? "Product"
+                        : this.opportunityForm.value.entityTypeControl
+                    }}
+                  </div>
+                </dv-form-element>
+              </div>
+            </form>
+          </div>
+          <div col="8" offset="2">
+            <div class="text-center">
+              <dv-button
+                btnType="default"
+                (onClick)="onBack()"
+                *ngIf="!redirectId"
+              >
+                Back
+              </dv-button>
+              <dv-button
+                class="space-on-left"
+                (onClick)="onProceedToProjects()"
+                [loader]="loading"
+              >
+                Next
+              </dv-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<form class="form-horizontal" name="vm.workflow_builder_form" data-ng-submit="vm.save()" novalidate>
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Manage Workflow
+
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body workflow_modal">
+        <form-group field-name="Workflow Name">
+            <label for="workflow-name" class="control-label" col="3">Workflow Name</label>
+            <div col="7">
+                <input type="text" class="form-control" id="workflow-name" name="workflow-name"
+                    data-ng-model="vm.workflow.name" placeholder="Example: Capital call workflow"
+                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}" required>
+            </div>
+        </form-group>
+
+        <hr data-ng-if="vm.workflow.name && !vm.edit_mode">
+
+        <div data-ng-if="vm.workflow.name && !vm.edit_mode" class="space-on-bottom-lg">
+            <div class="panel panel-default space-on-left clear-margin-bottom bg-light-gray-panel">
+                <div class="panel-body pa-tb-lg">
+                    <div col="3">
+                        <label class="control-label text-muted"><span class="text-uppercase">Workflow
+                                Type</span></label>
+                    </div>
+                    <div col="9" class="entity_type">
+                        <div data-ng-repeat="type in vm.entity_types"
+                            class="w-80 inline-block space-on-left-lg space-on-right-lg text-center btn-select-entity"
+                            data-ng-class="{'active': vm.workflow.entity_type == type.value}">
+                            <button btn-type="default" size="sm"
+                                uib-tooltip="{{type.value === 'Fund' ? 'workflow for product' : type.label }}"
+                                data-ng-click="vm.setEntityType(type)">
+                                <span class="text-muted">
+                                    <icon name="{{type.icon}}" size="2x" class="align-middle"></icon>
+                                </span>
+                            </button>
+                            <br />
+                            <h6 class="space-on-top clear-margin-bottom inline-block">
+                                {{vm.getEntityTypeName(type.value)}}
+                            </h6>
+                        </div>
+                    </div>
+
+                    <div data-ng-if="vm.workflow.entity_type == 'Document'" col="9" offset="3">
+                        <hr class="space-on-bottom space-on-top-lg">
+                        <label class="control-label text-muted"><span>Select {{vm.workflow.entity_type}}</span>
+                            type for this definition</label>
+                        <div class="w-280 space-on-top-lg">
+                            <form-group field-name="Document Type">
+                                <select id="document-type" class="form-control" chosen
+                                    data-ng-model="vm.workflow.entity_sub_type"
+                                    data-placeholder="Select a document type"
+                                    data-ng-options="document.id as document.name for document in vm.document_types"
+                                    ng-required="true">
+                                    <option value=""></option>
+                                </select>
+                            </form-group>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form-group field-name="Workflow Name" data-ng-if="vm.workflow.name && !vm.edit_mode">
+            <label for="workflow-name" class="control-label" col="3">Copy from Workflow Definition</label>
+            <div col="7">
+                <select id="allWorkflows" class="form-control" 
+                    chosen
+                    data-ng-model="vm.baseWorkflow"
+                    data-placeholder="Select a Workflow"
+                    data-ng-options="workflow.id as workflow.name for workflow in vm.all_workflows">
+                    <option value="">-- Select Workflow --</option>
+                </select>
+            </div>
+        </form-group>
+    </div>
+    <div class="modal-footer">
+        <button type="submit"
+            button-loader="vm.saving">{{vm.edit_mode ? 'Update Workflow' : 'Add Workflow'}}</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

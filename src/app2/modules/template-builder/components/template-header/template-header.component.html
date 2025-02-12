@@ -1,0 +1,39 @@
+<section
+  class="template-header-segment"
+  role="region"
+  aria-label="Template header segment"
+>
+  <div class="template-header-heading-wrapper">
+    <app-spinner *ngIf="!isLoaded"></app-spinner>
+    <div class="heading" *ngIf="isLoaded" role="heading" aria-level="2">
+      <span class="title">{{ title }}</span>
+      <span
+        class="icon"
+        (click)="editWidget()"
+        tooltip="Edit and Summary"
+        appIcon
+        [name]="'file'"
+        container="body"
+        role="button"
+        tabindex="0"
+        aria-label="Edit and summary button"
+      ></span>
+      <div class="space-on-bottom-lg space-on-top-lg">
+        <span class="label text-uppercase label-default">{{
+          templateTypeName
+        }}</span>
+      </div>
+      <div class="text-muted" role="text">
+        {{ subtitle }}
+      </div>
+    </div>
+  </div>
+  <div
+    class="dv-logo-label-wrapper"
+    *ngIf="isLoaded"
+    role="region"
+    aria-label="Logo and label"
+  >
+    <ng-content></ng-content>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+<!-- <div class="panel slide feedback-panel-container" data-ng-show="vm.expand">
+  <div class="panel-body">
+    <form novalidate name="vm.feedback_form" data-ng-submit="vm.processRequest()">
+      <fieldset>
+        <legend>Please share your questions, thoughts, and feedback with us</legend>
+      </fieldset>
+
+      <div class="feedback-panel">
+
+        <div class="feedback-request-type">
+          <div class="btn-group-vertical" data-ng-class="{'has-success': vm.feedback_form.$submitted && vm.feedback_form.feedback_text.$valid, 'has-error': vm.feedback_form.$submitted && vm.feedback_form.$invalid}">
+            <label class="btn btn-default"
+                   ng-model="vm.feedVals.FTypeID"
+                   ng-repeat="feedback_type in vm.feedback_request_types"
+                   uib-btn-radio="{{feedback_type.id}}">{{feedback_type.value}}</label>
+          </div>
+        </div>
+
+        <div class="feedback-comments">
+          <form-group field-name="This field" validate-on="submit">
+            <textarea class="form-control"
+                      placeholder="What would you like to say ? We are all ears :)"
+                      ng-model="vm.feedVals.FeedbackText"
+                      focus-me="vm.set_textarea_focus"
+                      name="feedback_text"
+                      required></textarea>
+          </form-group>
+        </div>
+      </div>
+
+      <div class="clearfix space-on-top-lg">
+        <div class="pull-right">
+          <button btn-type="default" data-ng-click="vm.expand = false">Cancel</button>
+          <button type="submit" button-loader="vm.loading">Share with Us</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div> -->
+<ng2-feedback></ng2-feedback>

@@ -1,0 +1,15 @@
+<form name="search_questions">
+  <div class="input-group space-on-right-lg" data-ng-class="{'search-questions': vm.statusFilter == 'Search' && vm.searchText.length}">
+    <input type="text" class="form-control" placeholder="Search for documents..." required data-ng-model="vm.searchTextNew">
+    <span class="input-group-btn">
+      <button btn-type="transparent" class="danger clear-text" data-ng-click="vm.resetFilter()" data-ng-show="vm.statusFilter == 'Search' && vm.searchText.length">
+        <icon name="close" class="space-on-right"></icon>Clear
+      </button>
+<button data-ng-disabled="!vm.searchTextNew" class="btn btn-default primary" submit-style-override type="submit"
+  data-ng-click="vm.searchDocuments()">
+        <icon name="search" class="text-primary"></icon>
+      </button>
+    </span>
+  </div>
+  </h5>
+</form>

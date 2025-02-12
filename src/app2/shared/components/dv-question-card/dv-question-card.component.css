@@ -1,0 +1,166 @@
+.question-card-container {
+  position: relative;
+}
+
+.manual-validation-required {
+  border: 1px solid red;
+  padding: 9px 9px;
+}
+
+.neg-margin {
+  margin: -10px -10px;
+}
+
+.question-card-head-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  align-items: center;
+  white-space: break-spaces !important;
+}
+
+.new-link-wrapper {
+  border-radius: 4px;
+  background: #f5efed;
+  padding: 4px 8px;
+  display: flex;
+}
+
+.new-delete-wrapper {
+  font-size: 12px !important;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.question-card-head-wrapper > div {
+  max-width: 72%;
+  display: flex;
+  align-items: center;
+}
+.left-icon {
+  align-self: flex-start;
+  margin-top: 3px;
+}
+.right-link {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.right-link:hover {
+  cursor: pointer;
+}
+.right-links {
+  display: flex;
+  gap: 20px;
+}
+
+.question-card-footer-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  align-items: center;
+  padding-left: 1px;
+}
+
+.icon-hover:hover {
+  color: #126b82 !important;
+}
+
+.icon-date {
+  pointer-events: none;
+}
+.icon-wrapper {
+  cursor: no-drop;
+}
+
+/* :host ::ng-deep > .block > question-response {
+  display: grid;
+} */
+:host ::ng-deep > .dv-card > * > .btn-sm {
+  padding: 0;
+}
+
+.block {
+  margin-bottom: 5px;
+}
+
+:host ::ng-deep .rating-dropdown .show {
+  display: inherit !important;
+}
+
+:host ::ng-deep .rating-dropdown .show {
+  display: inherit;
+}
+
+.dvi-recommendation {
+  font-size: 1.8rem !important;
+  margin-top: -2px !important;
+}
+.count-bubble {
+  margin-right: -14px !important;
+  padding-left: 4px !important;
+}
+.count-icon-bubble {
+  margin-right: -12px !important;
+  padding-top: 0.8px !important;
+}
+.red-bubble {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: red;
+  color: red;
+  text-align: center;
+  display: inline-block;
+  position: relative;
+  top: -20px;
+  right: -5px;
+  margin-top: 0;
+}
+.aiClass {
+  height: 18px;
+  width: 18px;
+}
+:host ::ng-deep li:before,
+:host ::ng-deep li:last-child,
+:host ::ng-deep li:last-child:before,
+:host ::ng-deep li {
+  width: initial !important;
+  height: initial !important;
+  border: 0 !important;
+}
+:host ::ng-deep ul {
+  list-style: initial !important;
+}
+:host ::ng-deep .hintText td,   /*table cell was too congested in instructions so added little padding and center alignment*/
+:host ::ng-deep .hintText th {
+  padding: 5px 10px !important;
+  text-align: center !important;
+}
+.disabled {
+  opacity: 0.5;
+}
+@media (max-width: 600px) {
+  .question-card-head-wrapper {
+    display: block;
+  }
+  .question-card-head-wrapper > div {
+    max-width: 100%;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+  }
+  .header-left {
+    text-align: left;
+  }
+  .header-right {
+    text-align: right;
+    display: flex;
+    justify-content: end;
+    padding: 10px;
+  }
+}
+.min-width-unset {
+  min-width: unset !important;
+}

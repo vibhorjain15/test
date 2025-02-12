@@ -1,0 +1,49 @@
+<form name="vm.add_custom_tags"
+      data-ng-submit="vm.submit()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">Add Widgets
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="Field Name">
+        <label for="fund" class="control-label col-sm-3" >
+         Name <span class="font-size-10 text-orange align-top">*</span>
+        </label>
+
+        <div class="col-sm-8">
+          <input type="text" ng-model="vm.params.alias" class="form-control" placeholder="Field Name" required>
+        </div>
+    </form-group>
+    <form-group field-name="type">
+        <label for="fund" class="control-label col-sm-3" >
+          Type <span class="font-size-10 text-orange align-top">*</span>
+        </label>
+
+        <div class="col-sm-8 add_widget_preview">
+          <select name="type"
+                  id="type"
+                  class="form-control"
+                  chosen
+                  data-ng-options="type as type.text for type in vm.fildTypes"
+                  data-ng-model="vm.option.responseType"
+                  required>
+            <option value="" disabled>--Select Type--</option>
+          </select>
+          <div class="well space-on-top-lg">
+            <field-preview editable question="vm.option"></field-preview>
+          </div>
+        </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">{{vm.editMode?'Update':'Save'}}</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

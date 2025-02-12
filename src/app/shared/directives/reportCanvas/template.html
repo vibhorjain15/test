@@ -1,0 +1,6 @@
+<div class="report-canvas">
+  <spinner data-ng-if="!rc_controller.pages"></spinner>
+  <report-page data-ng-repeat="page in rc_controller.pages"
+               page="page">
+  </report-page>
+</div>

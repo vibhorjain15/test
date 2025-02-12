@@ -1,0 +1,33 @@
+<div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+  <div class="panel-body padded-lg">
+    <h5 class="inline space-on-right-lg">
+      <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+    </h5>
+    <a class="btn btn-default success space-on-right-lg"
+       uib-tooltip="{{vm.freeSubscription ? 'This feature is available for premium users. Learn more' : 'Download All (select up to 1000 documents)'}}"
+       data-ng-disabled="vm.totalSelectedRecords > 1000  || vm.isFreeManager || vm.downoadingDocuments"
+       data-ng-click="vm.downloadAllDocuments()">
+      <strong><span class="dvi dvi-download3"></span>  </strong>
+    </a>
+    <a class="btn btn-default success space-on-right-lg"
+       uib-tooltip="{{vm.freeSubscription ? 'This feature is available for premium users. Learn more' : 'Move selected document(s)'}}"
+       data-ng-disabled="vm.freeSubscription"
+       data-ng-click="vm.moveAllDocumentsOpenDialog()">
+      <strong><span class="dvi dvi-move"></span>  </strong>
+    </a>
+    <a class="btn btn-default success space-on-right-lg"
+       uib-tooltip="{{vm.freeSubscription ? 'This feature is available for premium users. Learn more' : 'Copy selected document(s)'}}"
+       data-ng-disabled="vm.freeSubscription"
+       data-ng-click="vm.copyAllDocumentsOpenDialog()">
+      <strong><span class="dvi dvi-copy"></span>  </strong>
+    </a>
+    <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+      <strong><icon name="close"></icon></strong>
+    </a>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <dv-grid grid-resource="vm.documents" name="vm.documentsListGrid"></dv-grid>
+  </div>
+</div>

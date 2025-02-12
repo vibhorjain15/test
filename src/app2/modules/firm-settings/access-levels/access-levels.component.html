@@ -1,0 +1,20 @@
+<div class="panel panel-default relative">
+  <dv-panel-heading
+    [heading]="'Access Levels'"
+    [controls]="accessLevelHeadingControls"
+    class="panel-heading"
+  >
+  </dv-panel-heading>
+  <div class="panel-info">
+    <div class="panel-heading">
+      The access level for Super Admin, Business Admin, Security Admin, Owner,
+      Contributor, Viewer, and Restricted cannot be modified or deleted.
+      However, a new access level can be created, modified or deleted below.
+    </div>
+  </div>
+  <div class="panel-body">
+    <div *ngIf="render_grid">
+      <app-dv-grid [rowData]="accessLevels" [name]="gridName"></app-dv-grid>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+.initials-bubble {
+  display: inline-block;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 27px;
+  font-weight: bold;
+  font-size: 11px;
+  color: white;
+}

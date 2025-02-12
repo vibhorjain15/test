@@ -1,0 +1,165 @@
+<app-modal
+  [title]="title"
+  [firstButtonLabel]="'Share'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="shareRef"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="
+    shareBasis === 'status' ? !selectedStatuses.length : !selectedFirms?.length
+  "
+>
+</app-modal>
+
+<ng-template #shareRef>
+  <form class="form-horizontal" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [fieldName]="'Share based on'"
+        [label]="'Share Document Via'"
+        [labelCol]="4"
+      >
+        <div class="btn-group">
+          <button
+            class="btn btn-default"
+            [ngClass]="{ 'btn-primary': shareBasis === 'status' }"
+            (click)="setActiveView('status')"
+          >
+            Firm Status
+          </button>
+          <button
+            class="btn btn-default"
+            [ngClass]="{ 'btn-primary': shareBasis === 'entities' }"
+            (click)="setActiveView('entities')"
+          >
+            Firm Names
+          </button>
+        </div>
+      </dv-form-element>
+      <div class="panel panel-default" *ngIf="shareBasis == 'status'">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            Share with firms having the following firm status
+          </h5>
+        </div>
+
+        <div class="panel-body">
+          <dv-form-element
+            [modelController]=""
+            [fieldName]="'Share with'"
+            [showRightIcon]="false"
+            [elementCol]="10"
+            [for]="'share-with'"
+          >
+            <dv-select
+              [id]="'share-with'"
+              [list]="statuses"
+              name="status"
+              [aria-label]="'status'"
+              [multiple]="true"
+              [clearable]="false"
+              [(ngModel)]="selectedStatuses"
+              [readonly]="!statuses"
+              [placeholder]="statusPlaceholder"
+              bindValue="id"
+              bindLabel="name"
+              [disabled]="!statuses"
+              [clearable]="false"
+              [searchable]="true"
+              [ngModelOptions]="{ standalone: true }"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+      </div>
+
+      <div class="panel panel-default" *ngIf="shareBasis == 'entities'">
+        <div class="panel-body">
+          <dv-form-element
+            [modelController]=""
+            [fieldName]="'Share with'"
+            [showRightIcon]="false"
+            [label]="isManager ? 'Investor' : 'Firm'"
+            [elementCol]="6"
+            [labelCol]="4"
+            [for]="'firm'"
+          >
+            <dv-select
+              [list]="allFirmsList"
+              name="firm"
+              [id]="'firm'"
+              [clearable]="false"
+              (onSelectChange)="handleSelectChange($event)"
+              [(ngModel)]="selectedFirm"
+              [bindValue]="null"
+              [loading]="loadingFirms"
+              [bindLabel]="'name'"
+              [disabled]="!allFirmsList"
+              [clearable]="false"
+              [searchable]="true"
+              [placeholder]="'Select ' + (isManager ? 'Investors' : 'Firms')"
+              [loading]="firmsLoading"
+              #firms
+            ></dv-select>
+          </dv-form-element>
+
+          <div class="panel panel-default space-on-top-lg">
+            <div class="panel-heading">
+              <div class="row clearfix">
+                <div col="8">
+                  <p class="form-control-static">
+                    Selected Firms
+                    <span *ngIf="selectedFirms?.length > 0"
+                      >({{ selectedFirms?.length }})</span
+                    >
+                  </p>
+                </div>
+
+                <div col="4">
+                  <span class="pull-right">
+                    <dv-button
+                      [btnType]="'default'"
+                      [disabled]="!selectedFirms.length"
+                      (onClick)="clearSelection()"
+                    >
+                      Clear Selection
+                    </dv-button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="list-group">
+              <div
+                class="list-group-item"
+                *ngFor="let firm of selectedFirms; let $index = index"
+              >
+                <div class="clearfix">
+                  <span class="space-on-right" tooltip="Remove {{ firm.name }}">
+                    <span
+                      appIcon
+                      name="minus-circle"
+                      class="text-danger"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="'Remove' + firm.name"
+                      size="lg"
+                      (click)="removeFirm($index)"
+                    ></span>
+                  </span>
+
+                  <span class="word-break-break-all">{{ firm.name }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body" *ngIf="!selectedFirms?.length">
+              <app-empty-state
+                message="You have not selected any firms. Please select them from the above dropdown."
+              >
+              </app-empty-state>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

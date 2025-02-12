@@ -1,0 +1,109 @@
+<form name="vm.add_ip_form"
+      data-ng-submit="vm.submit()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">Whitelist a New {{vm.is_single_ip ? 'IP' : 'Range of IPs'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="row clearfix space-on-bottom-xxl" data-ng-if="vm.ip_configurations_length == 0 && vm.current_ip">
+        <div col="5" offset="3">
+            <p class="alert alert-info text-center padded-lg">
+                <span class="space-on-right-lg">Your IP Address: {{vm.current_ip}}</span>
+                <a href="" class="btn btn-default"
+                   data-ng-click="vm.addCurrentIP()">
+                    <strong>
+                        <icon name="plus" class="space-on-right align-middle"></icon>Add this
+                    </strong>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <form-group field-name="Name" class="space-on-top-lg space-on-bottom-xxl">
+      <label for="name" class="control-label" col="3" col-type="sm">Name</label>
+
+      <div col="5" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="name"
+               name="name"
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.name"
+               placeholder='Whitelist Name'
+               required>
+      </div>
+    </form-group>
+
+      <form-group field-name="Name" class="space-on-bottom-xxl">
+          <label for="type" class="control-label" col="3" col-type="sm">Add</label>
+
+          <div col="5" col-type="sm">
+              <div class="btn-group space-on-bottom-sm">
+                  <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': !vm.is_single_ip}" uib-tooltip="Add a range of IP Addresses" data-ng-click="vm.toggleIPAdditionMode()">RANGE OF IPs</label>
+                  <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.is_single_ip}" uib-tooltip="Add a single IP Address" data-ng-click="vm.toggleIPAdditionMode()">SINGLE IP</label>
+              </div>
+          </div>
+      </form-group>
+
+
+      <div class="row clearfix space-on-bottom-lg">
+          <div class="inline-block" col="6">
+              <form-group field-name="Start IP">
+                  <label for="start_ip" class="control-label" col="6" col-type="sm">{{vm.is_single_ip ? 'Single IP' : 'Range of IPs'}}</label>
+                  <div col="6" col-type="sm">
+                      <input type='text'
+                             id="start_ip"
+                             name="start_ip"
+                             class="form-control"
+                             data-ng-model='vm.start_ip'
+                             ng-pattern='/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/'
+                             custom-pattern-message="Please enter a valid IP Address"
+                             placeholder='0.0.0.0'
+                             required/>
+                  </div>
+              </form-group>
+          </div>
+
+          <div class="inline-block" col="6" data-ng-if="!vm.is_single_ip">
+              <form-group field-name="End IP">
+                  <label for="end_ip" class="control-label text-center" col="1" col-type="sm">to</label>
+                  <div col="6" col-type="sm">
+                      <input type='text'
+                             id="end_ip"
+                             name="end_ip"
+                             class="form-control"
+                             data-ng-model='vm.end_ip'
+                             ng-pattern='/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/'
+                             custom-pattern-message="Please enter a valid IP Address"
+                             placeholder='255.255.255.255'
+                             required/>
+                  </div>
+              </form-group>
+          </div>
+
+          <div class="inline-block space-on-top" col="6" offset="3" data-ng-if="!vm.is_single_ip">
+              <small data-ng-if="vm.start_ip && vm.end_ip && (vm.rangeOfIPs>0)">
+                  <span class="space-on-right">No. of IPs included in the range:</span><span class="text-info">{{vm.rangeOfIPs | number}}</span>
+              </small>
+
+              <small data-ng-if="vm.start_ip && vm.end_ip && (vm.rangeOfIPs<=0 || !vm.rangeOfIPs)">
+                  <span class="space-on-right text-danger">Invalid range of IPs</span>
+              </small>
+          </div>
+      </div>
+  </div>
+
+
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.loading"
+            data-ng-disabled="!vm.is_single_ip && vm.start_ip && vm.end_ip && (vm.rangeOfIPs<=0 || !vm.rangeOfIPs)">Add</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

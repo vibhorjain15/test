@@ -1,0 +1,9 @@
+.list-group.collapse {
+  transition: all 0.35s linear 2s;
+  height: 0px;
+}
+
+.list-group.expand {
+  transition: all 0.35s ease 2s;
+  height: auto;
+}

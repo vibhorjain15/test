@@ -1,0 +1,4 @@
+<ui-grid-cell-contents>
+  <div data-ng-show="row.entity.updated_at">{{ row.entity.updated_at | fromNow}}</div>
+  <div data-ng-show="!row.entity.updated_at">{{ row.entity.created_at | fromNow}}</div>
+</ui-grid-cell-contents>

@@ -1,0 +1,93 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-firm-activity></ng2-firm-activity> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Your Activity on DiligenceVault</h5>
+  </div>
+
+  <div class="panel-body">
+    <table class="table table-striped activity_table_settings">
+      <tbody>
+        <tr data-ng-if="vm.activity.end_date">
+          <td width="25%">Subscription Expiry</td>
+          <td width="15%"><strong>{{vm.activity.end_date|date}}</strong></td>
+          <td width="60%"></td>
+        </tr>
+        <tr>
+          <td width="25%"># of Teams</td>
+          <td width="15%"><strong>{{vm.activity.team_count.toLocaleString()}}</strong></td>
+          <td width="60%"></td>
+        </tr>
+        <tr>
+          <td width="25%"># of Projects</td>
+          <td width="15%"><strong><span data-ng-class="{'text-orange': vm.upgradeNeeded}">{{vm.activity.projects_count.toLocaleString()}}</span></strong></td>
+          <td width="60%">
+            <span data-ng-if="vm.upgradeNeeded && vm.is_manager">
+              Please contact ask@diligencevault.com to upgrade capacity
+            </span>
+            <span data-ng-if="!vm.upgradeNeeded">
+              Take advantage of DiligenceVault's centralized content repo, user collaboration and a user friendly platform across all request types
+            </span>
+          </td>
+        </tr>
+        <tr data-ng-if="vm.is_manager">
+          <td width="25%"># of Investors</td>
+          <td width="15%"><strong>{{vm.activity.investor_count.toLocaleString()}}</strong></td>
+          <td width="60%">Delight as more and more investors adopt digital diligence!</td>
+        </tr>
+        <tr data-ng-if="vm.is_manager">
+          <td width="25%"># of Q/A library records</td>
+          <td width="15%"><strong>{{vm.activity.qna_count.toLocaleString()}}</strong></td>
+          <td width="60%">Use Autofill, Recommendation Engine and Search functionality for faster responses</td>
+        </tr>
+        <tr>
+          <td width="25%"># of Documents</td>
+          <td width="15%"><strong>{{vm.activity.document_count.toLocaleString()}}</strong></td>
+          <td width="60%">Reuse documents, trigger review workflows, maintain version history to minimize errors</td>
+        </tr>
+        <tr data-ng-if="vm.is_manager">
+          <td width="25%"># of Images</td>
+          <td width="15%"><strong>{{vm.activity.image_count.toLocaleString()}}</strong></td>
+          <td width="60%">Reuse images across multiple investor requests</td>
+        </tr>
+        <tr data-ng-if="vm.is_manager">
+          <td width="25%"># of Disclaimers</td>
+          <td width="15%"><strong>{{vm.activity.disclaimer_count.toLocaleString()}}</strong></td>
+          <td width="60%">Attach the right disclaimer for the right requests and always be compliant.</td>
+        </tr>
+        <tr data-ng-if="vm.is_manager">
+          <td width="25%"># of AUM/Track Record TimeSeries</td>
+          <td width="15%"><strong>{{vm.activity.aumtr_count.toLocaleString()}}</strong></td>
+          <td width="60%">Share standard AUM and TrackRecord tables with all investors</td>
+        </tr>
+        <tr data-ng-if="!vm.is_manager && !vm.is_freeSubscripton && vm.activity.lt_limit == 0">
+          <td width="25%"># of Entities</td>
+          <td width="15%"><strong><span class="space-on-right-lg" data-ng-class="{'text-orange': vm.FTupgradeNeeded}">{{vm.entity_count.toLocaleString()}}</span></strong></td>
+          <td width="60%">
+            <span data-ng-if="vm.FTupgradeNeeded">
+             Please contact <a href="mailto:ask@diligencevault.com?subject=upgrade">ask@diligencevault.com</a> to upgrade capacity
+            </span>
+          </td>
+        </tr>
+        <tr data-ng-if="!vm.is_manager && !vm.is_freeSubscripton && vm.activity.lt_limit > 0">
+          <td width="25%"># of FT Entities</td>
+          <td width="15%"><strong><span class="space-on-right-lg" data-ng-class="{'text-orange': vm.FTupgradeNeeded}">{{vm.entity_count.toLocaleString()}}</span></strong></td>
+          <td width="60%">
+            <span data-ng-if="vm.FTupgradeNeeded">
+             Please contact <a href="mailto:ask@diligencevault.com?subject=upgrade">ask@diligencevault.com</a> to upgrade capacity
+            </span>
+          </td>
+        </tr>
+        <tr data-ng-if="!vm.is_manager && !vm.is_freeSubscripton && vm.activity.lt_limit > 0">
+          <td width="25%"># of LT Entities</td>
+          <td width="15%"><strong><span class="space-on-right-lg" data-ng-class="{'text-orange': vm.LTupgradeNeeded}">{{vm.activity.lighttouch_count.toLocaleString()}}</span></strong></td>
+          <td width="60%">
+            <span data-ng-if="vm.LTupgradeNeeded">
+             Please contact <a href="mailto:ask@diligencevault.com?subject=upgrade">ask@diligencevault.com</a> to upgrade capacity
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

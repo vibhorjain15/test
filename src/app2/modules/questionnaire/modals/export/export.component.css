@@ -1,0 +1,26 @@
+app-modal ::ng-deep .modal-body {
+  padding: 0px 15px !important;
+}
+.export-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+.export-tab ::ng-deep .dv-tab {
+  justify-content: center;
+}
+.export-tab {
+  width: 100%;
+}
+.export-tab ::ng-deep .dv-tabs {
+  width: 100%;
+}
+.export-original-conatiner {
+  padding: 1rem 2rem;
+}
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}

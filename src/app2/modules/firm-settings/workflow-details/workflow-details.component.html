@@ -1,0 +1,138 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Workflow Definition</h5>
+  </div>
+  <div class="panel-body">
+    <div class="panel panel-default">
+      <div class="panel-body clearfix">
+        <div class="dv-table dv-table-middle dd-info-panel full-width">
+          <div class="bordered-right text-center cell col-sm-5">
+            <h4 class="clear-margin lh1-5 word-break-break-all">
+              {{ workflow?.name }}
+              <dv-button
+                tooltipText="Edit workflow name"
+                ariaLabel="Edit workflow name"
+                container="body"
+                triggers="mouseenter:mouseleave"
+                [disabled]="false"
+                [btnType]="'transparent'"
+                (onClick)="openEditWorkflowModal()"
+              >
+                <small> <span appIcon name="pencil" size="1x"></span> </small>
+              </dv-button>
+            </h4>
+            <div>
+              <small class="text-muted">
+                <i
+                  >updated on
+                  {{
+                    (workflow?.updated_at
+                      ? workflow?.updated_at
+                      : workflow?.created_at
+                    ) | dvDate
+                  }}</i
+                >
+              </small>
+            </div>
+          </div>
+          <div class="bordered-right text-center cell">
+            <h4 class="clear-margin space-on-bottom">
+              <span>{{ getEntityTypeName(workflow?.entity_type) }}</span>
+            </h4>
+            <span
+              class="label label-default"
+              *ngIf="workflow?.entity_sub_type_name"
+              >{{ workflow?.entity_sub_type_name }}</span
+            >
+          </div>
+          <div
+            class="bordered-right text-center cell"
+            *ngIf="!path.endsWith('/edit')"
+          >
+            <a
+              tooltip="Edit Workflow"
+              container="body"
+              class="btn btn-transparent"
+              (click)="navigateToEdit()"
+              aria-label="Edit Workflow"
+              role="button"
+              tabindex="0"
+            >
+              <div>
+                <span appIcon name="pencil" size="2x"></span>
+              </div>
+              <small>Edit</small>
+            </a>
+          </div>
+          <div
+            class="bordered-right text-center cell"
+            *ngIf="!path.endsWith('/preview')"
+          >
+            <a
+              class="btn btn-transparent"
+              (click)="navigateToPreview()"
+              tooltip="Preview Workflow"
+              container="body"
+              aria-label="Preview Workflow"
+              role="button"
+              tabindex="0"
+            >
+              <div>
+                <span appIcon name="eye" size="2x"></span>
+              </div>
+              <small>Preview</small>
+            </a>
+          </div>
+          <div
+            *ngIf="path === 'app.firm.settings.workflows.detail.preview'"
+            class="bordered-right text-center cell"
+          >
+            <dv-button
+              [btnType]="'transparent'"
+              tooltipText="Print Workflow"
+              container="body"
+              ariaLabel="Print Workflow"
+              (onClick)="printSection()"
+            >
+              <div><span appIcon name="print" size="2x"></span></div>
+              <small>Print</small>
+            </dv-button>
+          </div>
+          <div class="bordered-right text-center cell">
+            <a
+              tooltip="Delete Workflow"
+              container="body"
+              class="btn btn-transparent"
+              (click)="confirmWorkflowDeletion()"
+              aria-label="Delete Workflow"
+              role="button"
+              tabindex="0"
+            >
+              <div>
+                <span appIcon name="trashcan" size="2x"></span>
+              </div>
+              <small>Delete</small>
+            </a>
+          </div>
+          <div class="cell text-center">
+            <dv-button
+              [loader]="false"
+              [disabled]="false"
+              [btnClass]="'btn-transparent borderless'"
+              [btnType]="'default'"
+              (onClick)="navigateToWorkflowList()"
+              ariaLabel="Back to all workflows"
+            >
+              <div>
+                <span appIcon name="arrow-back" size="2x"></span>
+              </div>
+              <small>Back to all workflows</small>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <router-outlet></router-outlet>
+  </div>
+</div>

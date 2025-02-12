@@ -1,0 +1,451 @@
+<form class="form-horizontal" [formGroup]="addRuleForm" autocomplete="off">
+  <ng-container>
+    <!-- Category/Sub Category -->
+    <div class="row" *ngIf="addRuleForm.get('filterBy').value">
+      <div class="col-sm-6">
+        <dv-form-element
+          label="Category"
+          [showRightIcon]="false"
+          labelPosition="top"
+          elementCol="12"
+          [modelController]="addRuleForm.get('category')"
+          spacing="small"
+        >
+          <dv-select
+            [id]="'category'"
+            [contoller]="addRuleForm.get('category')"
+            error="Please select a category"
+            [appendTo]="'body'"
+            [list]="categoryList"
+            bindLabel="label"
+            placeholder="Select a category"
+            bindValue=""
+            formControlName="category"
+            (onSelectChange)="handleCategoryChange($event)"
+            [aria-label]="'Select category'"
+          ></dv-select>
+        </dv-form-element>
+      </div>
+      <div class="col-sm-6">
+        <dv-form-element
+          label="Sub Category"
+          labelPosition="top"
+          [showRightIcon]="false"
+          [modelController]="addRuleForm.get('section_id')"
+          elementCol="12"
+          spacing="small"
+        >
+          <dv-select
+            [id]="'section_id'"
+            [contoller]="addRuleForm.get('section_id')"
+            [appendTo]="'body'"
+            error="Please select a sub-category"
+            [list]="subCategoryList"
+            bindLabel="label"
+            placeholder="Select a sub-category"
+            bindValue=""
+            formControlName="section_id"
+            (onSelectChange)="handleSubCategoryChange($event)"
+            [aria-label]="'Select sub-category'"
+          ></dv-select>
+        </dv-form-element>
+      </div>
+    </div>
+    <!-- Questions -->
+    <div class="row">
+      <div class="col-sm-12">
+        <dv-form-element
+          label="Question"
+          labelPosition="top"
+          [showRightIcon]="false"
+          elementCol="12"
+          [modelController]="addRuleForm.get('question_id')"
+          [isRequired]="true"
+          spacing="small"
+        >
+          <dv-select
+            [id]="'question_id'"
+            [contoller]="addRuleForm.get('question_id')"
+            error="Please select a question"
+            [appendTo]="'body'"
+            [list]="questionsList"
+            bindLabel="text"
+            bindValue=""
+            [disabled]="title == 'Editing Rule'"
+            formControlName="question_id"
+            (onSelectChange)="handleQuestionChange($event)"
+            [aria-label]="'Select question'"
+          ></dv-select>
+          <div class="space-on-top-lg">
+            <dv-checkbox
+              *ngIf="title != 'Editing Rule'"
+              formControlName="filterBy"
+              (onValChange)="onFilterChange($event)"
+              label="Filter by category and sub-category"
+            ></dv-checkbox>
+          </div>
+        </dv-form-element>
+      </div>
+    </div>
+    <!-- Conditions -->
+    <div *ngIf="selectedQuestionType">
+      <div
+        *ngFor="let ruleCondition of rulesFormGroups; let $index = index"
+        tabindex="0"
+      >
+        <div
+          class="border-top my-3 padded-top-lg space-on-top-lg"
+          *ngIf="title != 'Editing Rule'"
+        ></div>
+
+        <div
+          [formGroup]="ruleCondition"
+          class="row"
+          (keydown.enter)="$event.preventDefault()"
+        >
+          <div class="col-sm-6">
+            <dv-form-element
+              label="Condition"
+              labelPosition="top"
+              elementCol="12"
+              [showRightIcon]="false"
+              [isRequired]="true"
+              [modelController]="ruleCondition.get('operator_id')"
+              spacing="small"
+            >
+              <dv-select
+                [id]="'operator_id'"
+                [contoller]="ruleCondition.get('operator_id')"
+                error="Please select a condition"
+                [list]="conditionList"
+                [appendTo]="'body'"
+                placeholder="Select a condition"
+                bindLabel="label"
+                bindValue="value"
+                formControlName="operator_id"
+                [aria-label]="'Select condition'"
+              ></dv-select>
+            </dv-form-element>
+
+            <dv-form-element
+              label="Value"
+              labelPosition="top"
+              [isRequired]="true"
+              [error]="
+                selectedQuestionType.responseType == 'Integer'
+                  ? 'Please Enter an Integer'
+                  : ''
+              "
+              elementCol="12"
+              [showRightIcon]="
+                !(
+                  selectedQuestionType.responseType == 'Date' ||
+                  [
+                    'Boolean',
+                    'CheckBox',
+                    'Dropdown',
+                    'NoPlus',
+                    'BooleanPlus'
+                  ].includes(selectedQuestionType.responseType)
+                )
+              "
+              [modelController]="ruleCondition.get('value')"
+              spacing="small"
+              [for]="'date_' + $index"
+            >
+              <!-- Date -->
+              <div *ngIf="selectedQuestionType.responseType == 'Date'">
+                <app-date-picker
+                  placeholder="Pick a date"
+                  (change)="onDateChange($event, $index)"
+                  (clearDateFilter)="onClearDateFilter()"
+                  [id]="'date_' + $index"
+                  [value]="ruleCondition.get('value').value"
+                  name="date_{{ $index }}"
+                ></app-date-picker>
+              </div>
+              <div
+                *ngIf="
+                  [
+                    'Boolean',
+                    'CheckBox',
+                    'Dropdown',
+                    'NoPlus',
+                    'BooleanPlus'
+                  ].includes(selectedQuestionType.responseType)
+                "
+              >
+                <dv-select
+                  [id]="'date_' + $index"
+                  [contoller]="ruleCondition.get('value')"
+                  error="Please select a value"
+                  [list]="valuesList"
+                  bindLabel="value"
+                  [appendTo]="'body'"
+                  bindValue="id"
+                  formControlName="value"
+                  name="option_{{ $index }}"
+                  aria-label="Select value"
+                ></dv-select>
+              </div>
+              <div
+                *ngIf="
+                  ['TextPhone', 'TextMultiLine', 'TextEmail', 'Text'].includes(
+                    selectedQuestionType.responseType
+                  )
+                "
+              >
+                <input
+                  type="text"
+                  autocomplete="off"
+                  formControlName="value"
+                  [pattern]="
+                    selectedQuestionType.responseType === 'TextPhone'
+                      ? numericRegexMap.numeric
+                      : ''
+                  "
+                  maxlength="50"
+                  placeholder="Type a value"
+                  class="form-control"
+                  name="responseType_text_{{ $index }}"
+                  aria-label="Enter text value"
+                  [id]="'value' + $index"
+                />
+                <span
+                  class="text-danger"
+                  *ngIf="ruleCondition.get('value')?.errors?.pattern"
+                  >Please enter a valid value</span
+                >
+                <div
+                  *ngIf="
+                    !ratingMode &&
+                    !ruleCondition.get('value').value &&
+                    (ruleCondition.get('value').touched ||
+                      ruleCondition.get('value').dirty)
+                  "
+                  class="text-danger"
+                >
+                  Please enter a value
+                </div>
+              </div>
+              <div
+                *ngIf="
+                  selectedQuestionType.responseType == 'Integer' ||
+                  selectedQuestionType.responseType == 'Percentage' ||
+                  selectedQuestionType.responseType == 'Numeric' ||
+                  selectedQuestionType.responseType == 'Decimal'
+                "
+              >
+                <input
+                  id="date_{{ $index }}"
+                  type="text"
+                  [pattern]="numericRegexMap.numeric"
+                  autocomplete="off"
+                  formControlName="value"
+                  placeholder="Type a value"
+                  maxlength="50"
+                  class="form-control"
+                  id="responseType_text_{{ $index }}"
+                  name="responseType_text_{{ $index }}"
+                  aria-label="Enter numeric value"
+                />
+                <div
+                  *ngIf="
+                    !ratingMode &&
+                    !ruleCondition.get('value').value &&
+                    (ruleCondition.get('value').touched ||
+                      ruleCondition.get('value').dirty)
+                  "
+                  class="text-danger"
+                >
+                  <span *ngIf="ruleCondition.get('value')?.errors?.required"
+                    >Please enter a value</span
+                  >
+                </div>
+                <span
+                  class="text-danger"
+                  *ngIf="ruleCondition.get('value')?.errors?.pattern"
+                  >Please enter a valid value</span
+                >
+              </div>
+            </dv-form-element>
+          </div>
+          <div class="col-sm-6" style="padding-left: 28px">
+            <span class="control-label form-label-padding fw-bolder"
+              >If the rule is triggered, then</span
+            >
+            <div class="space-on-top-md">
+              <dv-checkbox
+                label="Flag The Response"
+                (onValChange)="handleFlagChange($event, $index)"
+                formControlName="isResponseFlag"
+                id="responseTypeFlag_score_{{ $index }}"
+                name="responseTypeFlag_score_{{ $index }}"
+                aria-label="Flag the response"
+              ></dv-checkbox>
+            </div>
+            <div
+              *ngIf="
+                !ratingMode &&
+                ruleCondition.get('isResponseFlag')?.errors?.required
+              "
+              class="text-danger"
+            >
+              Please enable the flag option
+            </div>
+            <div *ngIf="ratingMode && ratingMode.rating_level == 'Question'">
+              <div
+                *ngIf="
+                  ratingMode.rating_scale_mode == 'Absolute' &&
+                  ratingScaleDefinition
+                "
+              >
+                <div class="space-on-top-md">
+                  <dv-checkbox
+                    formControlName="has_flag"
+                    (onValChange)="handleScoreChange($event, $index)"
+                    label="Assign rating of"
+                    id="absolute_score_{{ $index }}"
+                    name="absolute_score_{{ $index }}"
+                    aria-label="Assign rating"
+                  ></dv-checkbox>
+                </div>
+
+                <ng-container *ngIf="ruleCondition.get('has_flag').value">
+                  <div class="space-on-top-lg word-break-break-all">
+                    <dv-rating
+                      [value]="ruleCondition.get('score').value"
+                      [max]="selectedRateMap[$index].length"
+                      (onChange)="submitRating($event - 1, $index)"
+                      [ratingScales]="selectedRateMap[$index]"
+                    ></dv-rating>
+                  </div>
+                </ng-container>
+              </div>
+              <div
+                *ngIf="
+                  ratingMode.rating_scale_mode == 'ScoreBand' &&
+                  ratingScaleDefinition
+                "
+              >
+                <div class="space-on-top-md">
+                  <dv-checkbox
+                    formControlName="has_flag"
+                    (onValChange)="handleScoreChange($event, $index)"
+                    label="Assign a score (out of 100)"
+                    id="assign_score_{{ $index }}"
+                    name="assign_score_{{ $index }}"
+                    aria-label="Assign score"
+                  ></dv-checkbox>
+                </div>
+                <div *ngIf="ruleCondition.get('has_flag').value">
+                  <div class="score-input">
+                    <dv-form-element
+                      errorMessage="Please enter a valid score between 0 to 100 (Without decimals)"
+                      [modelController]="ruleCondition.get('score')"
+                      [showRightIcon]="false"
+                      for="responseType_score_{{ $index }}"
+                    >
+                      <input
+                        type="number"
+                        autocomplete="nope"
+                        [pattern]="'^[0-9]*$'"
+                        maxlength="50"
+                        formControlName="score"
+                        placeholder="Type a score"
+                        class="form-control space-on-top-lg"
+                        id="responseType_score_{{ $index }}"
+                        name="responseType_score_{{ $index }}"
+                        aria-label="Enter score"
+                      />
+                    </dv-form-element>
+
+                    <dv-rating-chip
+                      [color]="getColorCode(ruleCondition.get('score').value)"
+                      *ngIf="ruleCondition.get('score').value !== null"
+                      [label]="ruleCondition.get('score').value"
+                      textColor="white"
+                    >
+                    </dv-rating-chip>
+                  </div>
+
+                  <div class="small space-on-top-lg legend-wrapper">
+                    Score traffic light legend:
+                    <div
+                      class="scoreband"
+                      *ngFor="
+                        let rating of ratingScaleDefinition[
+                          selectedQuestionType.sectionID
+                        ];
+                        let i = index
+                      "
+                    >
+                      <ng-container *ngIf="i > 0">
+                        <dv-rating-chip
+                          [color]="rating.color_code"
+                          [label]="rating.name"
+                          textColor="white"
+                        >
+                        </dv-rating-chip>
+                        Score between {{ rating.range_min_value }} &
+                        {{ rating.range_max_value }}
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                *ngIf="
+                  (ruleCondition.get('isResponseFlag').dirty ||
+                    ruleCondition.get('isResponseFlag').touched ||
+                    ruleCondition.get('score').dirty ||
+                    ruleCondition.get('score').touched) &&
+                  ruleCondition.get('score').value == null &&
+                  !ruleCondition.get('isResponseFlag').value
+                "
+                class="text-danger"
+              >
+                Please either enter a score or enable the flag option
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="rulesFormGroups.length > 1"
+          class="text-right remove-condition"
+        >
+          <dv-button
+            btnType="default"
+            (onClick)="addRemoveCondition(false, $index)"
+            tooltipText="Remove this condition"
+          >
+            <span appIcon name="trashcan"></span>
+          </dv-button>
+        </div>
+
+        <div
+          class="border-top my-3 padded-top-lg space-on-top-lg"
+          *ngIf="
+            title != 'Editing Rule' && rulesFormGroups.length - 1 === $index
+          "
+        ></div>
+
+        <div
+          *ngIf="
+            rulesFormGroups.length - 1 === $index && title != 'Editing Rule'
+          "
+          class="text-right"
+        >
+          <dv-button
+            btnType="transparent"
+            btnClass="text-info"
+            (onClick)="addRemoveCondition(true, $index)"
+          >
+            <div class="text-info">Add additional condition</div>
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</form>

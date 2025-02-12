@@ -1,0 +1,138 @@
+<form class="form-horizontal" name="vm.new_team_form" novalidate data-ng-submit="vm.submit()">
+  <div class="modal-header" data-ng-hide="vm.fund">
+    <h3 class="modal-title">{{vm.modalTitle}}
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-header" data-ng-show="vm.fund">
+    <h3 class="modal-title">Manage Permission</h3>
+  </div>
+  <div class="modal-body" data-ng-hide="vm.loading">
+    <div class="text-center" data-ng-hide="vm.edit_mode || vm.tabType">
+      <div class="btn-group">
+          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectionType == 'team'}" data-ng-click="vm.setSelectionType('team')">Team</label>
+          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectionType == 'person'}" data-ng-click="vm.setSelectionType('person')">User</label>
+      </div>
+    </div>
+    <br>
+    <!-- <form class="form-horizontal" name="vm.new_team_form" novalidate data-ng-submit="vm.submit()"> -->
+      <div data-ng-if="vm.selectionType != 'person'">
+        <form-group field-name="Team">
+          <label for="team" class="control-label" col ="3" col-type="sm">Team</label>
+          <div col="8" col-type="sm">
+            <tags-input data-ng-if="!vm.edit_mode && !vm.tabType"  data-ng-model="vm.formData.teams"
+                        display-property="name"
+                        key-property="id"
+                        data-ng-disabled="{{vm.tabType? true : false}}"
+                        data-ng-required="true"
+                        data-ng-change="vm.getTeamResources()"
+                        placeholder="Select Teams"
+                        min-length="1"
+                        add-from-autocomplete-only=true
+                        id="team">
+                <auto-complete source="vm.filterTeams($query)"
+                               load-on-focus=true
+                               load-on-down-arrow=true
+                               load-on-empty=true
+                               min-length="1"
+                               max-results-to-show="{{vm.total_entity_records}}"></auto-complete>
+            </tags-input>
+            <p data-ng-show="vm.edit_mode" class="space-on-top">
+              <span class="label label-default">{{vm.resource_data.assigned_to_name}}</span>
+            </p>
+            <p data-ng-show="vm.tabType" class="space-on-top">
+              <span class="label label-default">{{vm.tabType.name}}</span>
+            </p>
+          </div>
+        </form-group>
+      </div>
+      <div data-ng-if="vm.selectionType == 'person'">
+        <form-group field-name="User">
+          <label for="user" class="control-label" col ="3" col-type="sm">User</label>
+          <div col="8" col-type="sm">
+            <tags-input data-ng-if="!vm.edit_mode && !vm.tabType"  data-ng-model="vm.formData.users"
+                        data-ng-disabled="{{vm.tabType? true : false}}"
+                        display-property="fullName"
+                        data-ng-required="true"
+                        key-property="id"
+                        placeholder="Select Members"
+                        add-from-autocomplete-only=true
+                        min-length="1"
+                        id="user">
+                <auto-complete source="vm.filterUsers($query)"
+                               load-on-focus=true
+                               load-on-down-arrow=true
+                               load-on-empty=true
+                               min-length="1"
+                               max-results-to-show="{{vm.total_entity_records}}"></auto-complete>
+            </tags-input>
+            <p data-ng-show="vm.edit_mode" class="space-on-top">
+              <span class="label label-default">{{vm.resource_data.assigned_to_name}}</span>
+            </p>
+            <p data-ng-show="vm.tabType" class="space-on-top">
+              <span class="label label-default">{{vm.tabType.name}}</span>
+            </p>
+          </div>
+        </form-group>
+      </div>
+      <br>
+      <div class="space-on-bottom">
+        <add-team-permissions on-resource-type-changed="vm.onResourceTypeChanged()" resources="vm.formData" edit-mode="vm.edit_mode" selected-entities="vm.resources" loading="vm.loading"></add-team-permissions>
+      </div>
+
+      <form-group field-name="Visibility" data-ng-if="vm.selectionType != 'person'">
+        <label for="private_access" class="control-label" col ="3" col-type="sm">Visibility</label>
+        <div col="8" col-type="sm">
+          <select id="private_access"
+                  class="form-control"
+                  data-ng-required="true"
+                  chosen
+                  data-ng-model="vm.formData.private_access"
+                  persistent-create-option="true"
+                  skip-no-results="true"
+                  data-ng-options="visibility as visibility.alias for visibility in vm.accessList">
+            <option value=""></option>
+          </select>
+          <br>
+          <div class="panel panel-info space-on-top-lg" data-ng-show="vm.formData.private_access.description">
+            <!-- Admin's will have read & write access to all the resources. -->
+            <div class="panel-heading">{{vm.formData.private_access.description}}</div>
+          </div>
+        </div>
+      </form-group>
+      <form-group field-name="Role" data-ng-if="vm.selectionType == 'person'">
+        <label for="role" class="control-label" col ="3" col-type="sm">Access Level</label>
+        <div col="8" col-type="sm">
+          <select id="role"
+                  class="form-control"
+                  chosen
+                  data-ng-required="true"
+                  data-ng-model="vm.formData.role"
+                  create-option-text="'Add New'"
+                  create-option="vm.createOption"
+                  persistent-create-option="true"
+                  data-ng-change="vm.setRoleText(vm.formData.role)"
+                  skip-no-results="true"
+                  data-ng-options="role as role.name for role in vm.roles">
+            <option value=""></option>
+          </select>
+          <br>
+          <div class="panel panel-info space-on-top-lg" data-ng-show="vm.formData.role">
+            <div class="panel-heading">{{vm.formData.role.description}}</div>
+          </div>
+        </div>
+      </form-group>
+  </div>
+  <div class="modal-body text-center" data-ng-show="vm.loading">
+    <spinner></spinner>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">Save</button>
+    <!-- <button button-loader="vm.saving_user_add_another"
+            btn-type="default" data-ng-click="vm.invite_and_add_another()">Save & add another</button> -->
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

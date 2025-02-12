@@ -1,0 +1,96 @@
+<div class="team-member-section" uib-dropdown dropdown-append-to-body keyboard-nav="true" auto-close="outsideClick" is-open="vm.is_open">
+  <div class="dropdown-toggle clickable"
+       uib-dropdown-toggle>
+    <span data-ng-show="vm.selection.length || vm.functionSelection.length">
+
+      <span class="circled-initials"
+            data-ng-if="vm.selection.length == 1 && (!vm.functionSelection || vm.functionSelection.length == 0)"
+            uib-tooltip="Assigned to {{ vm.selection[0].firstName}} {{ vm.selection[0].lastName}}">
+          {{ vm.selection[0].firstName | getFirstLetter}}{{ vm.selection[0].lastName | getFirstLetter}}
+      </span>
+
+      <span class="circled-initials"
+            data-ng-if="vm.functionSelection.length == 1 && (!vm.selection || vm.selection.length == 0)"
+            uib-tooltip="Assigned to {{ vm.functionSelection[0].function_name}}">
+          {{ vm.functionSelection[0].function_name | getFirstLetter}}
+      </span>
+
+      <span data-ng-if="(vm.selection.length + vm.functionSelection.length) > 1" uib-tooltip="{{vm.formatTooltip(vm.selection, vm.functionSelection)}}">
+        <icon name="user" class="font-size-18 text-primary align-middle space-on-left space-on-right-n-8"></icon>
+        <span class="count-bubble relative align-middle">{{vm.selection.length + vm.functionSelection.length}}</span>
+      </span>
+    </span>
+
+    <span class="btn-sm btn btn-transparent" data-ng-hide="vm.selection.length || vm.functionSelection.length" uib-tooltip="Assign to a team member/user role">
+      <a class="panel-control">
+        <icon name="add-user-4" class="font-size-16"></icon>
+      </a>
+    </span>
+
+    <span class="caret" data-ng-show="false"></span>
+  </div>
+
+    <div uib-dropdown-menu class="menu team-member-list" role="menu">
+
+        <div class="input-box">
+            <input type="text" class="form-control" placeholder="Search by team member/user role" ng-model="vm.textFilter"/>
+        </div>
+
+        <ul class="list-unstyled" data-ng-if="vm.selection.length || vm.functionSelection.length">
+            <li role="menuitem" data-ng-repeat="selection in vm.selection">
+                <a class="clickable">
+                    <user-avatar user="selection"
+                                 avatar-img-class="img-circle user-avatar-xs"
+                                 avatar-icon-size="1x"></user-avatar>
+                    <span class="space-on-left">{{selection.firstName}} {{selection.lastName}}</span>
+                </a>
+
+                <a role="button"
+                   data-ng-click="vm.clearSelection($event, selection, 'user')"
+                   data-ng-if="vm.clear_selection_allowed"
+                   uib-tooltip="Unassign"
+                   class="space-on-left link-disguise align-middle text-muted">
+                    <icon name="times-circle-o"></icon>
+                </a>
+            </li>
+            <li role="menuitem" data-ng-repeat="fSelection in vm.functionSelection">
+              <a class="clickable">
+                <icon name="function" class="img-circle user-avatar-xs" size="1x"></icon>
+                <span class="space-on-left">{{fSelection.function_name}}</span>
+              </a>
+
+              <a role="button"
+                 data-ng-click="vm.clearSelection($event, fSelection, 'function')"
+                 data-ng-if="vm.clear_selection_allowed"
+                 uib-tooltip="Unassign"
+                 class="space-on-left link-disguise align-middle text-muted">
+                  <icon name="times-circle-o"></icon>
+              </a>
+            </li>
+        </ul>
+
+        <hr data-ng-if="vm.selection.length || vm.functionSelection.length" class="space-on-top space-on-bottom">
+
+        <ul class="list-unstyled">
+          <li role="menuitem" data-ng-repeat="function in vm.functions | filter: {function_name : vm.textFilter}"
+                data-ng-if="vm.showFunction(function)" data-ng-click="vm.select(function, 'function')">
+                <a class="clickable" uib-tooltip="Assign to {{function.function_name}}">
+                  <icon name="function" class="img-circle user-avatar-xs" size="1x"></icon>
+                  <span class="space-on-left">{{::function.function_name}}</span>
+                </a>
+            </li>
+            <label class="space-on-left">Suggested Users:</label>
+            <li role="menuitem" data-ng-repeat="user in vm.team_members | filter: {joinedName : vm.textFilter}"
+                data-ng-if="vm.showMember(user)" data-ng-click="vm.select(user, 'user')">
+                <a class="clickable" uib-tooltip="Assign to {{user.firstName}} {{user.lastName}}">
+                    <user-avatar user="::user"
+                                 avatar-img-class="img-circle user-avatar-xs"
+                                 avatar-icon-size="1x"></user-avatar>
+                    <span class="space-on-left">{{::user.firstName}} {{::user.lastName}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+
+</div>

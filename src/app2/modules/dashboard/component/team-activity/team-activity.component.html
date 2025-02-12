@@ -1,0 +1,22 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">{{ title }}</h5>
+  </div>
+  <div class="panel-body">
+    <div>
+      <div class="overflow-x-scroll">
+        <div
+          #punchcard
+          tabindex="0"
+          [ngClass]="{ 'overflow-y-scroll': punchcardDataSource?.length > 10 }"
+        ></div>
+      </div>
+    </div>
+    <div *ngIf="punchcardDataSource?.length == 0">
+      <helper-text>
+        Hmmm.. seems like folks are on vacation. No Team activity in the past
+        two weeks. Time to get started!
+      </helper-text>
+    </div>
+  </div>
+</div>

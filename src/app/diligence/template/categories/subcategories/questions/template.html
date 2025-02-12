@@ -1,0 +1,149 @@
+<div class="col-md-6">
+  <div class="panel panel-default md-panel">
+    <div class="panel-heading">
+      <span data-ng-if="vm.moveEnabled" class="inline-block template-move-checkbox">
+        <dv-checkbox data-ng-model="vm.selectedAllQuestions" data-ng-change="vm.onSelectAllQuestions()" uib-tooltip="Select All Questions"></dv-checkbox>
+      </span>
+      <h5 class="panel-title inline-block">Questions</h5>
+
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+          <a class="panel-control js-move-question"
+              data-ng-click="vm.toggleMoveMode()"
+              tooltip-placement="left"
+              data-ng-class="{'active-color':vm.moveEnabled}"
+              uib-tooltip="{{vm.moveEnabled?'Click to cancel':'Select Question(s) to move'}}">
+            <icon name="move"></icon>
+          </a>
+          <a class="panel-control activeButton"
+              data-ng-if="vm.moveEnabled && vm.selectedEntities.length > 0"
+              data-ng-click="vm.moveQuestion()"
+              tooltip-placement="left"
+              uib-tooltip="Move Question(s)">
+            Next
+          </a>
+          <a class="panel-control js-add-question"
+             data-ng-click="vm.openAddQuestionModal()"
+             tooltip-placement="left"
+             data-ng-if="!vm.moveEnabled"
+             uib-tooltip="New Question(s)">
+            <icon name="plus"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <spinner data-ng-show="vm.loading">
+      </spinner>
+
+      <ul class="list-group"
+          data-ng-class="{'move-border':vm.moveEnabled}"
+          ui-sortable="sortableOptions"
+          resource="questions"
+          parent-resource="vm.reorder_resource"
+          data-ng-show="vm.questions.length"
+          data-ng-model="vm.questions">
+        <li class="list-group-item"
+            template-question
+            data-ng-repeat="question in vm.questions">
+          <div>
+            <span data-ng-if="!vm.moveEnabled" class="space-on-right align-middle sort-handle">
+              <icon name="th"
+                    uib-tooltip="Reorder question in this category"
+                    tooltip-placement="right"></icon>
+            </span>
+            <span data-ng-if="vm.moveEnabled" class="inline-block template-move-checkbox">
+              <dv-checkbox data-ng-model="question.selected" data-ng-change="vm.selectQuestions(question)"></dv-checkbox>
+            </span>
+
+            <span truncate-text="70" class="inline-block" ng-bind-html="question.text"></span>
+          </div>
+          <div class="standardized-button-container" ng-if="question.responseType == 'TextMultiLine' && vm.is_investor">
+            <span class="control"
+                  role="button"
+                  data-ng-class="{'active': question.has_standardized_text}"
+                  stop-event-propagation
+                  data-ng-click="vm.setUpStandardized(question)"
+                  prevent-default>
+              <icon name="standard-text"
+                    data-ng-class="{'text-primary': question.has_standardized_text}"
+                    uib-tooltip="Configure Smart text (to be used with Analyst Evaluation DDQ)"
+                    tooltip-placement="left"
+                    class="font-size-20"></icon>
+            </span>
+          </div>
+          <div class="mapping-button-container" data-ng-if="!vm.moveEnabled && vm.is_investor">
+            <span class="control"
+                  role="button"
+                  data-ng-class="{'active': question.has_mapped_questions}"
+                  stop-event-propagation
+                  data-ng-click="vm.openQuestionMappingModal(question)"
+                  prevent-default>
+              <icon name="linked-items"
+                    data-ng-class="{'text-primary': question.has_mapped_questions}"
+                    uib-tooltip="Configure Review Question Mapping"
+                    tooltip-placement="left"
+                    class="font-size-20"></icon>
+            </span>
+          </div>
+          <div class="compare-button-container" data-ng-if="!vm.moveEnabled">
+            <span class="control"
+                  role="button"
+                  data-ng-class="{'active': question.nestingRuleIds.length > 0}"
+                  stop-event-propagation
+                  data-ng-show="question.can_have_nested_question"
+                  data-ng-click="vm.openNestingModal(question)"
+                  prevent-default>
+              <icon name="branches"
+                    data-ng-class="{'text-primary': question.nestingRuleIds.length > 0}"
+                    uib-tooltip="Configure Nesting Logic"
+                    tooltip-placement="left"
+                    size="2x"></icon>
+            </span>
+          </div>
+          <div class="compare-button-container" data-ng-if="!vm.moveEnabled">
+            <span class="control"
+                  role="button"
+                  stop-event-propagation
+                  data-ng-show="question.can_have_formulas"
+                  data-ng-click="vm.addFormula(question)"
+                  data-ng-class="{'disabled': !question.isEditable}"
+                  prevent-default>
+              <icon name="formula"
+                    data-ng-class="{'text-primary': question.has_formulas}"
+                    uib-tooltip="{{question.isEditable ? 'Configure Formulas' : 'This is a system question & hence cannot be edited'}}"
+                    tooltip-placement="left"
+                    size="2x"></icon>
+            </span>
+          </div>
+
+          <div class="controls" data-ng-if="!vm.moveEnabled">
+            <span class="control"
+                  tooltip-placement="left"
+                  role="button"
+                  data-ng-click="vm.invokeQuestionEditDialog(question)"
+                  data-ng-class="{'disabled': !question.isEditable}"
+                  uib-tooltip="{{question.isEditable ? '' : 'This is a system question & hence cannot be edited'}}"
+                  tooltip-placement="left">
+              <icon name="pencil"></icon>
+            </span>
+
+            <span class="control"
+                  data-ng-click="vm.removeQuestion(question)"
+                  role="button"
+                  data-ng-class="{'disabled': vm.questions.length == 1, 'control-danger': vm.questions.length > 1}"
+                  tooltip-placement="left"
+                  uib-tooltip="{{vm.questions.length == 1 ? 'You cannot delete the only question in this subcategory' : ''}}"
+                  stop-event-propagation
+                  prevent-default>
+              <icon name="trashcan"></icon>
+            </span>
+          </div>
+        </li>
+      </ul>
+      <p><i><small data-ng-show="!vm.questions.length && !vm.loading">No questions found</small></i></p>
+
+    </div>
+  </div>
+</div>

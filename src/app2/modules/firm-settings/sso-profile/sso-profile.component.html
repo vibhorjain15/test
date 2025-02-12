@@ -1,0 +1,303 @@
+<div class="panel panel-default sso-profile-page">
+  <div class="panel-heading">
+    <h5 class="panel-title">SSO (Single Sign on) Profile</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      Click the button below to enable single sign on for this profile
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="row clearfix">
+      <div col="10" id="js-firms-profile">
+        <form
+          class="form-horizontal"
+          name="sso_form"
+          [formGroup]="profileForm"
+          autocomplete="off"
+        >
+          <dv-form-element
+            [labelCol]="5"
+            [label]="'<h3>Enable SSO</h3>'"
+            [elementCol]="7"
+          >
+            <div col="4" class="pos-rel padding-0">
+              <div class="saml-switch">
+                <ui-switch
+                  [(ngModel)]="enable_saml"
+                  [ngModelOptions]="{ standalone: true }"
+                  ariaLabel="Enable SSO"
+                  title="Enable SSO"
+                  UiSwitchButton
+                ></ui-switch>
+              </div>
+            </div>
+            <div class="text-right">
+              <dv-button
+                [btnClass]="'view_sp_details_btn'"
+                [btnType]="'default'"
+                [size]="'sm'"
+                (onClick)="ViewServiceProviderDetails()"
+                [fontSizeType]="'medium'"
+              >
+                View Service Provider Details
+              </dv-button>
+            </div>
+          </dv-form-element>
+          <hr />
+          <dv-form-element
+            [fieldName]="'Metadata Url'"
+            [modelController]="profileForm.get('idpMetadataUrlControl')"
+            [showRightIcon]="false"
+            [elementCol]="0"
+            [errorMessage]="
+              getErrorMessage('idpMetadataUrlControl', 'Metadata Url')
+            "
+          >
+            <span class="control-label fw-bolder" col="5">
+              <span class="sso-radio-span radio radio-info">
+                <span class="sso-profile-radio-label">
+                  IDP Metadata Url</span
+                >
+                <input
+                  (ngModelChange)="onRadioClick(true)"
+                  id="idpMetadataUrlControl"
+                  name="IDP_metadataUrl"
+                  type="radio"
+                  [(ngModel)]="useMetaUrl"
+                  [ngModelOptions]="{ standalone: true }"
+                  [value]="true"
+                  [disabled]="!enable_saml"
+                  aria-label=" IDP Metadata Url default"
+                />
+                <label for="idpMetadataUrlControl">
+                  <span class="sr-only">IDP Metadata Url</span>
+                </label>
+              </span>
+            </span>
+            <div col="7" class="pos-rel">
+              <input
+                type="url"
+                id="idp_metadata_"
+                name="idp_metadata_"
+                maxlength="255"
+                class="form-control"
+                formControlName="idpMetadataUrlControl"
+                [readonly]="!enable_saml || !useMetaUrl"
+                aria-label="IDP Metadata custom Url"
+                autocomplete="off"
+              />
+            </div>
+          </dv-form-element>
+          <dv-form-element
+            [label]="'OR'"
+            [labelCol]="5"
+            [labelClass]="'or_label'"
+          >
+            <div col="7" class="pos-rel"></div
+          ></dv-form-element>
+          <dv-form-element [elementCol]="0">
+            <span for="Custom" class="control-label" col="5">
+              <span class="sso-radio-span radio radio-info">
+                <span class="sso-profile-radio-label" id="custom">Custom</span>
+                <input
+                  (ngModelChange)="onRadioClick(false)"
+                  id="metadataUrl"
+                  name="metadataUrl"
+                  type="radio"
+                  [(ngModel)]="useMetaUrl"
+                  [ngModelOptions]="{ standalone: true }"
+                  [value]="false"
+                  [disabled]="!enable_saml"
+                  aria-label="Custom"
+                />
+                <label for="metadataUrl" aria-labelledby="custom"
+                  ><span class="sr-only">Custom</span>
+                </label>
+              </span>
+            </span>
+          </dv-form-element>
+          <dv-form-element
+            [modelController]="profileForm.get('httpsRedirectEndpointControl')"
+            [fieldName]="'idP login Url'"
+            [labelCol]="5"
+            [elementCol]="7"
+            [label]="'SAML 2.0 HTTPS Redirect Endpoint'"
+            [isRequired]="true"
+            [showRightIcon]="false"
+            [infoTextPlacement]="'right'"
+            [iconClass]="'text-info'"
+            [infoText]="'This is where users will go when they try to login'"
+            [errorMessage]="'idP login Url is required'"
+          >
+            <fieldset [disabled]="!enable_saml || useMetaUrl">
+              <input
+                type="url"
+                id="httpsRedirectEndpointControl"
+                name="firm_website"
+                maxlength="255"
+                class="form-control"
+                formControlName="httpsRedirectEndpointControl"
+              />
+            </fieldset>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Entity Id'"
+            [modelController]="profileForm.get('idpIssuerUrlControl')"
+            [labelCol]="5"
+            [elementCol]="7"
+            [label]="'IDP Issuer Url'"
+            [isRequired]="true"
+            [showRightIcon]="false"
+            [infoTextPlacement]="'right'"
+            [iconClass]="'text-info'"
+            [infoText]="'Globally unique ID to identify requests from your IDP'"
+            [errorMessage]="'IDP Issuer Url is required'"
+          >
+            <fieldset [disabled]="!enable_saml || useMetaUrl">
+              <input
+                type="text"
+                id="idpIssuerUrlControl"
+                name="idpIssuerUrlControl"
+                class="form-control"
+                formControlName="idpIssuerUrlControl"
+              />
+            </fieldset>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="'Signature Certificate'"
+            [modelController]="profileForm.get('signatureCertificateControl')"
+            [labelCol]="5"
+            [elementCol]="7"
+            [label]="'IDP Public Key/ Signature Certificate'"
+            [isRequired]="true"
+            [showRightIcon]="false"
+            [infoTextPlacement]="'right'"
+            [iconClass]="'text-info'"
+            [infoText]="
+              'The PEM or DER encoded public key certificate of the identity provider used to verify SAML message and assertion signatures. Requires responses to be signed. Please paste your valid X.509 verificate here'
+            "
+            [errorMessage]="'Signature Certificate is required'"
+          >
+            <fieldset [disabled]="!enable_saml || useMetaUrl">
+              <textarea
+                id="signatureCertificateControl"
+                class="form-control"
+                name="ssoObject.signature_certificate"
+                formControlName="signatureCertificateControl"
+              ></textarea>
+            </fieldset>
+          </dv-form-element>
+
+          <dv-form-element
+            [fieldName]="'Signature Certificate'"
+            [modelController]="profileForm.get('sloEndpointControl')"
+            [elementCol]="0"
+          >
+            <fieldset [disabled]="!enable_saml || useMetaUrl">
+              <span for="sloEndpoint" class="control-label fw-bolder" col="5">
+                SLO Endpoint
+              </span>
+              <div col="7" class="pos-rel">
+                <input
+                  type="text"
+                  id="sloEndpoint"
+                  class="form-control"
+                  name="ssoObject.logout_url"
+                  formControlName="sloEndpointControl"
+                  aria-label="SLO Endpoint"
+                />
+                <div class="panel panel-info space-on-top-lg">
+                  <div class="panel-heading">
+                    <strong>Name ID format:</strong> User's email is expected in
+                    the SAML response for this field.
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          </dv-form-element>
+
+          <dv-form-element [elementCol]="0">
+            <span class="col-md-4 control-label"> </span>
+            <div class="col-md-8 text-right">
+              <a
+                class="link clickable"
+                (click)="showAdvanceOptions = !showAdvanceOptions"
+                role="button"
+                tabindex="0"
+                >{{ showAdvanceOptions ? "Hide" : "Show" }} Advanced Settings</a
+              >
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            *ngIf="showAdvanceOptions"
+            [modelController]="profileForm.get('requestSignatureControl')"
+            [elementCol]="0"
+          >
+            <fieldset [disabled]="!enable_saml">
+              <span class="control-label fw-bolder" col="5">
+                Request Signature
+                <small class="sso_info_icon">
+                  <span
+                    placement="right"
+                    tooltip="Additional security if your IDP supports it"
+                    container="body"
+                    appIcon
+                    name="info"
+                  >
+                  </span>
+                </small>
+              </span>
+              <div col="7" class="pos-rel">
+                <dv-checkbox
+                  name="ssoObject?.require_assertions"
+                  label="<b>Sign SAML Authentication Requests</b>"
+                  formControlName="requestSignatureControl"
+                  ariaLabel="Request Signature"
+                ></dv-checkbox>
+              </div>
+            </fieldset>
+          </dv-form-element>
+
+          <dv-form-element
+            *ngIf="showAdvanceOptions"
+            [modelController]="
+              profileForm.get('responseSignatureVerificationControl')
+            "
+            [showRightIcon]="false"
+            [elementCol]="0"
+          >
+            <fieldset [disabled]="!enable_saml">
+              <label for="responseSignature" class="control-label" col="5">
+                Response Signature Verification
+              </label>
+              <div col="7" class="pos-rel">
+                <dv-select
+                  [id]="'responseSignatureVerificationControl'"
+                  [list]="responseSignatures"
+                  formControlName="responseSignatureVerificationControl"
+                  bindLabel="name"
+                  bindValue="id"
+                  [disabled]="!enable_saml || useMetaUrl"
+                  [clearable]="false"
+                  [searchable]="false"
+                  placeholder="--Select--"
+                  [id]="'responseSignature'"
+                ></dv-select>
+              </div>
+            </fieldset>
+          </dv-form-element>
+
+          <div class="form-group">
+            <div col="5" offset="5">
+              <dv-button [loader]="saving" (onClick)="submit()">
+                Save
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

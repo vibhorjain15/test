@@ -1,0 +1,120 @@
+<app-modal
+  [title]="'Some of the contacts you have selected have bounced in the past.'"
+  [initialTemplate]="ref"
+  [secondButtonLabel]="'Confirm'"
+  [secondButtonType]="'primary'"
+  [firstButtonLabel]="'Cancel'"
+  [firstButtonType]="'default'"
+  [isCancelButton]="false"
+  (onSecondClick)="userClickedOk()"
+  (onFirstClick)="cancel()"
+>
+</app-modal>
+<ng-template #ref>
+  <div *ngIf="bouncedEntities.length > 0">
+    <p>
+      <span class="text-bold"
+        >Estimated {{ entityType.toLowerCase() | standardPluralize }}</span
+      >
+      <icon
+        appIcon
+        name="info"
+        class="space-on-left"
+        tooltip="Total number of {{
+          entityType.toLowerCase() | standardPluralize
+        }} from the selected entities that would be receiving the email."
+      >
+      </icon>
+    </p>
+    <p class="font-size-16">
+      <span class="font-size-30">
+        {{ numberWithCommas(allEntities.length - bouncedEntities.length) }}
+      </span>
+      out of
+      <span class="font-size-25">{{
+        numberWithCommas(allEntities.length)
+      }}</span>
+    </p>
+    <p>
+      This request would not be sent out to
+      {{ numberWithCommas(bouncedEntities.length) }}
+      <span *ngIf="bouncedEntities.length > 1">{{
+        entityType.toLowerCase() | standardPluralize
+      }}</span
+      ><span *ngIf="bouncedEntities.length <= 1">{{
+        entityType.toLowerCase()
+      }}</span>
+      as it has contacts that have bounced in the past or has no contact.
+      <span *ngIf="!showBouncedEntitiesList" class="space-on-bottom">
+        <a (click)="learnMoreEntities()" class="clickable">
+          Check these {{ entityType.toLowerCase() | standardPluralize }} names
+        </a>
+      </span>
+    </p>
+    <div *ngIf="showBouncedEntitiesList" class="hide-close-icon">
+      <dv-select
+        [list]="bouncedEntitiesList"
+        [aria-label]="'bounced Entities List'"
+        bindLabel="name"
+        bindValue="id"
+        placeholder="Select"
+        [multiple]="true"
+        [disabled]="true"
+        [(ngModel)]="bouncedEntities"
+        notFoundText="No results match"
+      >
+      </dv-select>
+    </div>
+  </div>
+  <div class="space-on-top margin-top">
+    <p>
+      <span class="text-bold">Estimated recipients</span>
+      <icon
+        name="info"
+        class="space-on-left"
+        appIcon
+        tooltip="Total number of contacts from the selected entities that would be receiving the email."
+      >
+      </icon>
+    </p>
+    <p class="font-size-16">
+      <span class="font-size-30">
+        {{ numberWithCommas(allContacts.length - bouncedContacts.length) }}
+      </span>
+      out of
+      <span class="font-size-25">{{
+        numberWithCommas(allContacts.length)
+      }}</span>
+    </p>
+    <p>
+      {{
+        allContacts.length - bouncedContacts.length === 0
+          ? "No recipient will be included in the email sent."
+          : bouncedContacts.length === 0
+          ? "All recipients will be included in the sent email."
+          : numberWithCommas(bouncedContacts.length) +
+            " " +
+            "recipient(s) won’t be included in the sent email."
+      }}
+      <span *ngIf="!showBouncedContactsList && bouncedContacts.length !== 0">
+        <a (click)="learnMore()" class="clickable">
+          Check the recipient(s) detail
+        </a>
+      </span>
+    </p>
+    <div *ngIf="showBouncedContactsList" class="hide-close-icon">
+      <dv-select
+        [list]="bouncedContactsList"
+        [aria-label]="'bounced Contacts List'"
+        bindLabel="name"
+        bindValue="id"
+        placeholder="No results match"
+        [multiple]="true"
+        [disabled]="true"
+        [(ngModel)]="bouncedContacts"
+        notFoundText="No results match"
+      >
+      </dv-select>
+    </div>
+  </div>
+</ng-template>

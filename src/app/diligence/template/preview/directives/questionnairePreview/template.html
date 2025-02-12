@@ -1,0 +1,118 @@
+<div>
+    <div class="panel panel-default" data-ng-show="vm.loading_parent_sections">
+        <div class="panel-body">
+            <spinner></spinner>
+        </div>
+    </div>
+
+    <div col="6" offset="3" data-ng-show="!vm.loading_parent_sections && !vm.parent_sections.length">
+        <empty-state message="No categories were added in this template"
+                     action="vm.gotoAddCategory()"
+                     action-label="Add Category"></empty-state>
+    </div>
+</div>
+
+<div id="js-questionnaire-parent-tpl" class="row clearfix relative"
+     data-ng-show="((vm.parent_sections.length && !vm.loading_parent_sections ))">
+  <div class="col-md-2">
+      <div class="full-width templates_subcategory_div">
+          <div id="js-questionnaire-sidebar-tpl" class="sidebar list-group list-group-menu dv-affix-scrollable-list" dv-affix-scrollable init-watch="::vm.parent_sections.length" dynamic-watch="vm.active_category.child_sections" offset-top="60">
+              <div class="nested-list-group-container" data-ng-repeat="section in ::vm.parent_sections">
+
+                  <a class="list-group-item padded-right padded-left pos-rel" role="button" data-ng-class="{'active': vm.active_category.parent_section.id == section.id}" data-ng-click="vm.selectSection(section)" uib-tooltip="{{::section.name}}" tooltip-placement="right">
+                      <icon name="chevron-down" data-ng-if="vm.active_category.parent_section.id == section.id"></icon>
+                      <span class="state-label" truncate-text="16">{{::section.name}}</span>
+                      <span class="badge numericBadge">{{::section.question_counts}}</span>
+                  </a>
+
+                  <div class="list-group in collapse" uib-collapse="false" aria-expanded="true" aria-hidden="false" data-ng-show="section.id == vm.active_category.parent_section.id">
+                      <a class="list-group-item" data-ng-class="{'text-orange': (child_section.id == vm.active_category.active_child_section_id)}" data-ng-repeat="child_section in vm.active_category.child_sections" href="" data-ng-hide="vm.active_category.parent_section.child_sections_loading" truncate-text="25" uib-tooltip="{{::child_section.name}}" data-ng-click="vm.goToChildSection(child_section)">
+                          {{::child_section.name}}
+                      </a>
+                      <a class="list-group-item" data-ng-show="vm.active_category.parent_section.child_sections_loading">
+                          <spinner></spinner>
+                      </a>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div id="js-print-template-new" class="col-md-10 default-background-color">
+      <div class="panel panel-default" data-ng-show="vm.loading_child_sections">
+          <div class="panel-body">
+              <spinner broad-spinner spinner-height='40' spinner-text={{vm.spinner_text}}></spinner>
+          </div>
+      </div>
+
+    <div>
+        <div col="6" offset="3" data-ng-show="!vm.loading_child_sections && !vm.child_sections.length && !vm.template.isEditable">
+            <empty-state message="No sub categories were found for the selected category"></empty-state>
+        </div>
+
+        <div col="6" offset="3" data-ng-show="!vm.loading_child_sections && !vm.child_sections.length && vm.template.isEditable">
+            <empty-state message="No sub categories were found for the selected category"
+                         action="vm.goToAddSubCategory(vm.selected_section)"
+                         action-label="Add Subcategories in this category"></empty-state>
+        </div>
+    </div>
+
+    <div id="child_section_{{::section.id}}" class="panel panel-default qa-panel"
+         data-ng-repeat="section in vm.child_sections"
+         data-ng-hide="vm.loading_child_sections">
+      <div class="panel-heading">
+        <div class="clearfix">
+          <div class="pull-left header-component">
+            <b>{{::section.name}}</b>
+          </div>
+        </div>
+      </div>
+
+    <div class="sectionContainerDiv">
+        <div class="alert alert-info clear-margin clear-border-radius borderless"
+           data-ng-show="section.headerText">
+          <div data-ng-bind-html="section.headerText | cleanhtml"></div>
+        </div>
+
+        <div col="6" offset="3" data-ng-show="!section.questions.length && !vm.template.isEditable">
+          <empty-state message="No questions were added in this sub category. Edit this template to add few"></empty-state>
+        </div>
+
+        <div col="6" offset="3" data-ng-show="!section.questions.length && vm.template.isEditable">
+          <empty-state message="No questions were added in this sub category. Edit this template to add few"
+                       action="vm.goToAddQuestions(section)"
+                       action-label="Add Questions in this Category"></empty-state>
+        </div>
+
+        <div data-ng-repeat="sequence in section.sequences track by sequence.cid"
+             class="qa-response-sequence"
+             data-ng-show="section.questions.length">
+          <div class="sequence-controls" data-ng-show="section.isMultiple">
+            <button btn-type="default"
+                    size="sm"
+                    class="btn-round"
+                    uib-tooltip="Repeat this section"
+                    data-ng-click="vm.addNewSequenceBelow(section, $index)">
+              <icon name="plus"></icon>
+            </button>
+
+            <button btn-type="default"
+                    size="sm"
+                    data-ng-disabled="section.sequences.length == 1"
+                    class="js-remove-button btn-round"
+                    uib-tooltip="Remove this section"
+                    data-ng-click="vm.removeSequence(section, $index)">
+              <icon name="times"></icon>
+            </button>
+          </div>
+
+          <form>
+            <questionnaire-form-control data-ng-repeat="response in ::sequence.responses"
+                                        response="response">
+            </questionnaire-form-control>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

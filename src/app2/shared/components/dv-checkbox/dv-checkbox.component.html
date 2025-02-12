@@ -1,0 +1,43 @@
+<span
+  class="checkbox checkbox-info checkbox-fit-width"
+  (keydown.enter)="$event.preventDefault()"
+  [tooltip]="Tooltip"
+  container="body"
+>
+  <input
+    type="checkbox"
+    [checked]="isChecked"
+    [class.disabled]="disabled"
+    (change)="onChanged($event)"
+    (click)="onCLick($event)"
+    (blur)="onBlur($event)"
+    [disabled]="disabled"
+    [id]="id"
+    [name]="id || label"
+    [indeterminate]="indeterminate"
+    [attr.aria-describedby]="iconTooltip && !label ? tooltipId : ''"
+    [attr.aria-roledescription]="rightIcon ? iconTooltip : ''"
+    [title]="ariaLabel"
+    [attr.aria-checked]="isChecked ? 'true' : 'false'"
+    [attr.aria-disabled]="disabled ? 'true' : 'false'"
+    [attr.aria-label]="ariaLabel"
+  />
+  <label
+    [ngClass]="{ 'checkbox-bold': isBold, disabled: disabled }"
+    [class]="labelClass"
+    [innerHtml]="label"
+    [for]="id"
+  >
+   <span *ngIf="!label" class="sr-only"> checkbox </span>
+ </label>
+  <span
+    class="pull-right"
+    [class]="iconClass"
+    appIcon
+    [name]="rightIcon"
+    *ngIf="rightIcon"
+    [tooltip]="iconTooltip"
+    [id]="tooltipId"
+    (click)="handleIconClick()"
+  ></span>
+</span>

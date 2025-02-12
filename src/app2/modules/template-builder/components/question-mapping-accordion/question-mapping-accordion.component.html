@@ -1,0 +1,84 @@
+<div class="accordion-question-mapper" role="tablist">
+  <accordion [closeOthers]="true">
+    <div
+      class="accordions"
+      *ngFor="let accgroup of questionMapperList; let i = index"
+    >
+      <accordion-group
+        panelClass="customClass"
+        [isOpen]="accgroup.isOpen"
+        (isOpenChange)="isOpenChange($event, accgroup)"
+      >
+        <a
+          class="accordion-header"
+          accordion-heading
+          type="button"
+          id="accordion-header-{{ i }}"
+          role="button"
+          tabindex="0"
+          aria-label="toggle content"
+        >
+          <div class="header-label">
+            <span
+              appIcon
+              [name]="accgroup.isOpen ? 'chevron-up' : 'chevron-down'"
+              class="accordion-dropdown-icon"
+              size="1x"
+              aria-hidden="true"
+            ></span>
+            <div class="lable-wrapper">
+              <span>{{ accgroup.label }}</span>
+            </div>
+          </div>
+          <div class="header-icon">
+            <button
+              appButton
+              (click)="handleMappingDelete($event, accgroup)"
+              class="icon-button btn-transparent"
+              title="Remove mapping from the template"
+              aria-label="Remove mapping from the template"
+            >
+              <span
+                appIcon
+                name="trashcan"
+                placement="left"
+                container=""
+                body
+                [adaptivePosition]="false"
+                aria-hidden="true"
+              ></span>
+            </button>
+          </div>
+        </a>
+        <ng-container>
+          <div class="accordion-rows">
+            <div class="row" *ngFor="let row of accgroup.list" role="listitem">
+              <button
+                appButton
+                (click)="handleQuestionDelete(accgroup, row)"
+                class="icon-button btn-transparent"
+                title="Remove mapping from the template"
+                aria-label="Remove mapping from the template"
+              >
+                <span
+                  appIcon
+                  name="minus-circle"
+                  class="icon"
+                  placement="left"
+                  container=""
+                  body
+                  [adaptivePosition]="false"
+                  aria-hidden="true"
+                ></span>
+              </button>
+              <span
+                class="row-label"
+                [innerHtml]="row.text | dvSafeHtml"
+              ></span>
+            </div>
+          </div>
+        </ng-container>
+      </accordion-group>
+    </div>
+  </accordion>
+</div>

@@ -1,0 +1,15 @@
+<div>
+  <rb-component-width></rb-component-width>
+
+  <div class="form-group">
+    <label>Content</label>
+
+    <div>
+    <textarea class="form-control"
+              ui-tinymce="tinymceOptions"
+              focus-me="true"
+              data-ng-model-options="{ debounce: { 'default': 300 } }"
+              data-ng-model="component.options.content"></textarea>
+    </div>
+  </div>
+</div>

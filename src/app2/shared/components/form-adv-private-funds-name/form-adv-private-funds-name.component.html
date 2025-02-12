@@ -1,0 +1,13 @@
+<span *ngIf="params.data">
+  <a
+    (click)="
+      navigateToUrl(params.data.firmCRD, params.data.sequence_id, $event)
+    "
+    [tooltip]="params.data[field]"
+    container="body"
+    tooltip-placement="right"
+    [adaptivePosition]="false"
+  >
+    {{ params.data[field] }}
+  </a>
+</span>

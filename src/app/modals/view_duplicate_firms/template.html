@@ -1,0 +1,52 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.source == 'signup'?'Possible Matches':'View Existing Firms'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <div data-ng-repeat="firm in vm.duplicateFirms">
+      <div class="panel panel-default firm-list-container">
+        <div class="panel-body">
+          <div class="dv-table dv-table-middle full-width">
+            <div class="cell text-center" col="9">
+              <div class="max-w-360 lh15 word-break-break-all text-left">
+                <b data-ng-class="{ 'text-gray': !firm.is_tracking }" class="block-display"
+                  uib-tooltip="{{firm.name}}" dv-limit-word="firm.name" char-limit="40">
+                </b>
+                <a class="max-w-250 block-display clickable overflow-ellipsis" href="{{firm.websiteUrl}}" target="_blank">{{firm.website}}</a>
+                <small class="text-muted block-display"
+                      uib-tooltip="Firm Type: {{firm.firm_type}}" dv-limit-word="firm.firm_type" char-limit="40"></small>
+              </div>
+            </div>
+            <div class="cell bordered-left text-center" col="3">
+              <button btn-type="default"
+                      class="btn-primary btn-sm"
+                      uib-tooltip="This firm exists on DiligenceVault. Click to add to your portfolio"
+                      data-ng-if="vm.source == 'manage_firm' && !firm.is_tracking"
+                      ng-click="vm.addToPortfolio(firm)">
+                Add to Portfolio
+              </button>
+
+              <a class="btn btn-default btn-sm"
+                    uib-tooltip="This firm is in your portfolio. Go to detail"
+                    data-ng-if="vm.source == 'manage_firm' && firm.is_tracking"
+                    ui-sref="app.firms.profile.monitor({firmId: firm.id})" target="_blank">
+                View Firm
+              </a>
+
+              <button btn-type="default"
+                      class="btn-primary btn-sm"
+                      data-ng-if="vm.source == 'signup'"
+                      ng-click="vm.selectFirm(firm)">
+                Select
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel=""
+  [initialTemplate]="template"
+  [isLoading]="loader"
+  [isCancelButton]="false"
+>
+  <ng-template #template>
+    <helper-text *ngIf="showInstructions">
+      These notes are for internal use by you and your team.
+    </helper-text>
+    <div class="space-on-bottom-lg">
+      <div class="space-on-bottom-lg">
+        <dv-editor
+          [configObj]="tinyMceInit"
+          [value]="newNoteText"
+          [literVersion]="true"
+          [isMentions]="true"
+          (onChange)="handleEditorChange($event)"
+        ></dv-editor>
+      </div>
+      <div class="edit-button">
+        <dv-button
+          (onClick)="onSaveNotes()"
+          [loader]="loader"
+          [disabled]="!newNoteText"
+          >{{ saveButtonText }}</dv-button
+        >
+        <dv-button
+          btnType="default"
+          class="space-on-left"
+          [disabled]="loader"
+          (onClick)="cancel()"
+          >Cancel</dv-button
+        >
+      </div>
+    </div>
+    <div class="notes">
+      <ng-container *ngFor="let note of loadedNotes; let i = index">
+        <div class="space-on-bottom-lg">
+          <note
+            class="dv-notes"
+            [note]="note.text"
+            [firstName]="note.first_name"
+            [lastName]="note.last_name"
+            [userId]="note.created_by"
+            [showNumber]="true"
+            [index]="i"
+            [lastEdited]="note.updated_at"
+            [isSaving]="note.saving"
+            [editMode]="note.editMode"
+            (onDeleteEvent)="handleDelete($event)"
+            (onEditNote)="handleEditNote($event)"
+            [readOnly]="readOnly"
+          ></note>
+        </div>
+      </ng-container>
+      <div class="load-notes">
+        <span
+          *ngIf="notes.length && loadedNotes.length != notes.length"
+          (click)="loadMoreNotes()"
+          >More Notes</span
+        >
+      </div>
+      <ng-container *ngIf="!notes.length && !loadedNotes.length">
+        <app-empty-state [message]="emptyStateMessage" class="In-empty-state">
+        </app-empty-state>
+      </ng-container>
+    </div>
+  </ng-template>
+</app-modal>

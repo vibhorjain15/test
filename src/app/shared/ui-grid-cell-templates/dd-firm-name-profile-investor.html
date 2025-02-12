@@ -1,0 +1,13 @@
+<ui-grid-cell-contents class="text-left">
+  <!--<a ui-sref="app.firms.profile.summary({firmId: row.entity.fromfirm_id})"
+     uib-tooltip="{{row.entity.fromfirm_name}}"
+     tooltip-placement="top">
+  	{{row.entity.fromfirm_name}}
+  </a>-->
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    {{row.entity.fromfirm_name}}
+  </div>
+</ui-grid-cell-contents>

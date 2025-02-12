@@ -1,0 +1,77 @@
+<form name="vm.vehicleDiligencesForm" data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">Related Project Completion Status
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <div class="text-center" data-ng-if="vm.loading">
+      <spinner></spinner>
+    </div>
+    <div data-ng-if="!vm.loading && vm.diligences.length == 0">
+      <div class="max-w-400 center-block">
+        <empty-state icon-name="smile-o"
+          message="No more related projects."></empty-state>
+      </div>
+    </div>
+    <div data-ng-if="!vm.loading && vm.diligences.length > 0">
+      <div class="alert alert-info" data-ng-show="(((vm.options.mode == 'manager') || (vm.diligence.is_internal && vm.options.mode == 'investor')) && !vm.diligence.alwaysOpen && (({'Started': true, 'ExtensionRequested': true, 'Followup': true})[vm.diligence.status]))">
+        You need to complete the below
+         <span data-ng-if="(vm.diligence.entity_type == 'Vehicle') || (vm.diligence.entity_type == 'Fund' && !vm.diligence.linked_duediligence_id)">
+          vehicle
+         </span>
+         <span data-ng-if="(vm.diligence.entity_type == 'Strategy') || (vm.diligence.entity_type == 'Fund' && vm.diligence.linked_duediligence_id)">
+          product
+         </span>
+         project(s) to submit the main project{{vm.options.mode == 'investor'?'':' to the investor'}}.
+      </div>
+      <table class="table table-bordered">
+        <tbody>
+          <tr data-ng-repeat="diligence in vm.diligences">
+            <td width="30%">
+              <a data-ng-if="diligence.entity_type == 'Vehicle'" ui-sref="app.diligence.firms.funds.vehicles.project.questionnaire({fromfirmId: diligence.fromfirm_id, tofirmId: diligence.tofirm_id, fundId: diligence.parent_entity_id, vehicleId: diligence.entity_id, diligenceId: diligence.id})" target="_blank">
+                {{diligence.entity_name}}
+              </a>
+              <a data-ng-if="diligence.entity_type == 'Fund'" ui-sref="app.diligence.firms.strategies.funds.project.questionnaire({fromfirmId: diligence.fromfirm_id, tofirmId: diligence.tofirm_id, strategyId: diligence.parent_entity_id, fundId: diligence.entity_id, diligenceId: diligence.id})" target="_blank">
+                {{diligence.entity_name}}
+              </a>
+            </td>
+            <td class="text-center" width="20%">
+              <span diligence-status="diligence.status"></span>
+            </td>
+            <td width="20%">
+              <small class="text-muted">
+                as of {{(diligence.lastupdated_at?diligence.lastupdated_at:diligence.created_at) | fromNow}}
+              </small>
+            </td>
+            <td width="30%">
+              <uib-progressbar value="diligence.percentage_completed"
+                              type="success"
+                              class="bs-progress">
+                <span data-ng-class="{'text-black': diligence.percentage_completed == 0}"
+                      class="text-nowrap">
+                  {{diligence.percentage_completed}}%
+                </span>
+              </uib-progressbar>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a class="btn btn-default pull-left" data-ng-if="vm.diligence.linked_duediligence_id && vm.diligence.entity_type == 'Vehicle'"
+      ui-sref="app.diligence.firms.funds.project.questionnaire({fromfirmId: vm.diligence.fromfirm_id, tofirmId: vm.diligence.tofirm_id, fundId: vm.diligence.parent_entity_id, diligenceId: vm.diligence.linked_duediligence_id})"
+      target="_blank">Redirect to Main Project</a>
+    <a class="btn btn-default pull-left" data-ng-if="vm.diligence.linked_duediligence_id && (vm.diligence.entity_type == 'Strategy' || vm.diligence.entity_type == 'Fund')"
+      ui-sref="app.diligence.firms.strategies.project.questionnaire({fromfirmId: vm.diligence.fromfirm_id, tofirmId: vm.diligence.tofirm_id, strategyId: vm.diligence.parent_entity_id, diligenceId: vm.diligence.linked_duediligence_id})"
+      target="_blank">Redirect to Main Project</a>
+    <button type="submit" data-ng-show="vm.diligence.entity_type != vm.keywordConstants.Vehicle && (((vm.options.mode == 'manager') || (vm.diligence.is_internal && vm.options.mode == 'investor')) && !vm.diligence.alwaysOpen && (({'Started': true, 'ExtensionRequested': true, 'Followup': true, 'InReview':true})[vm.diligence.status]))"
+      uib-tooltip="{{vm.disabled?vm.disabledTooltip:!vm.canSubmit?'Please complete the project(s)':''}}"
+      data-ng-class="{'disabled':!vm.canSubmit || vm.disabled}"
+      button-loader="vm.submitting_diligence">Submit All Projects{{vm.options.mode == 'investor'?'':' to Investor'}}</button>
+    <button class="btn btn-default" data-ng-click="vm.close()">Close</button>
+  </div>
+</form>

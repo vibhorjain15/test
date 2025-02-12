@@ -1,0 +1,84 @@
+<app-modal
+  [title]="'Extend Due Date'"
+  [firstButtonLabel]="
+    diligence.is_internal ? 'Update Due Date' : 'Request Extension'
+  "
+  [footerAlignment]="'left'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="dueDateRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #dueDateRef>
+  <form class="form-horizontal" [formGroup]="dueDateForm" autocomplete="off">
+    <dv-form-element
+      label="Reason"
+      elementCol="12"
+      labelPosition="top"
+      [modelController]="dueDateForm.get('reason')"
+    >
+      <input
+        formControlName="reason"
+        aria-label="Reason"
+        class="form-control"
+        maxlength="150"
+        id="reason"
+      />
+      <div
+        class="text-danger"
+        *ngIf="
+          dueDateForm.get('reason').touched &&
+          dueDateForm.get('reason').errors?.required
+        "
+      >
+        Reason is required
+      </div>
+      <div
+        class="text-danger"
+        *ngIf="
+          dueDateForm.get('reason').touched &&
+          dueDateForm.get('reason').errors?.maxLength
+        "
+      >
+        {{ errorMessageMap.maxlength | interpolate : "Reason" }}
+      </div>
+      <div
+        class="text-danger"
+        *ngIf="
+          dueDateForm.get('reason').touched &&
+          dueDateForm.get('reason').errors?.pattern
+        "
+      >
+        {{ errorMessageMap.avoidFirstSplCharacter | interpolate : "Reason" }}
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      [modelController]="dueDateForm.get('extendedDueDate')"
+      [label]="diligence.is_internal ? 'New Due Date' : 'Suggested Due Date'"
+      labelPosition="top"
+      [showRightIcon]="false"
+      [errorMessage]="
+        dueDateForm.get('extendedDueDate').touched &&
+        dueDateForm.get('extendedDueDate').errors?.required
+          ? 'New Due Date is required'
+          : ''
+      "
+      elementCol="12"
+    >
+      <app-date-picker
+        [id]="'extendedDueDate'"
+        [minDate]="minDate"
+        [value]="dueDateForm.get('extendedDueDate').value"
+        (change)="setDateValue($event)"
+        [class]="
+          dueDateForm.get('extendedDueDate').touched &&
+          dueDateForm.get('extendedDueDate').errors?.required
+            ? 'has-error'
+            : ''
+        "
+      >
+      </app-date-picker>
+    </dv-form-element>
+  </form>
+</ng-template>

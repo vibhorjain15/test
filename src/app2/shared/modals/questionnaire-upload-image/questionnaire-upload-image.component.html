@@ -1,0 +1,156 @@
+<div class="ck">
+  <app-modal
+    [title]="'Select an Existing or Upload a New Image'"
+    [initialTemplate]="templateRef"
+    [isLoading]="loading_images"
+  >
+  </app-modal>
+</div>
+<ng-template #templateRef>
+  <helper-text>
+    While we recommend uploading images with 800px width in PNG format, we
+    accept JPEG and GIF.
+  </helper-text>
+
+  <div class="clearfix mb-2">
+    <div class="margin-0-auto">
+      <dv-uploader
+        [sizeLimit]="maxFileSize"
+        [accept]="allowed_file_extensions_str"
+        dragLabel=""
+        [isMultiple]="false"
+        [showUploadedFiles]="false"
+        (onFileUpload)="uploadAttachment($event)"
+        buttonLabel="Upload Image"
+      ></dv-uploader>
+    </div>
+  </div>
+
+  <div *ngIf="fileProgress" class="space-on-top-lg">
+    <div class="mb-2">
+      <dv-progress-bar [value]="fileProgress" type="primary"></dv-progress-bar>
+    </div>
+  </div>
+
+  <div class="cell bordered-right">
+    <br />
+    <div>
+      <div
+        class="input-group space-on-left-lg space-on-right-lg"
+        [ngClass]="{ 'search-images': searchControl.length }"
+      >
+        <label for="searchbyname">Search by name:</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search for images"
+          [(ngModel)]="searchControl"
+          id="searchbyname"
+        />
+        <span class="input-group-btn" *ngIf="searchControl.length">
+          <button
+            appButton
+            btnType="transparent"
+            class="danger clear-btn-position"
+            type="reset"
+            (click)="resetFilter()"
+          >
+            <icon appIcon name="close" class="space-on-right"></icon>
+            Clear
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="cell">
+    <br />
+    <div class="sortby-ul">
+      <label for="">Sort by:</label>
+      <ul class="list-unstyled list-inline">
+        <li
+          class="clickable"
+          [ngClass]="{ activeSortLi: activeSort === 'alphabetical' }"
+          (click)="
+            sortBy('alphabetical');
+            ascendingAlphabetical = !ascendingAlphabetical
+          "
+        >
+          <div class="inline-center">
+            <span> A-Z </span>
+            <span
+              *ngIf="activeSort == 'alphabetical'"
+              appIcon
+              class="fs-24"
+              [name]="ascendingAlphabetical ? 'arrow-down' : 'arrow-up'"
+            ></span>
+          </div>
+        </li>
+        <li
+          class="clickable"
+          [ngClass]="{ activeSortLi: activeSort == 'mostRecent' }"
+          (click)="
+            sortBy('mostRecent'); ascendingMostRecent = !ascendingMostRecent
+          "
+        >
+          <div class="inline-center">
+            <span> Most Recent </span>
+            <span
+              *ngIf="activeSort == 'mostRecent'"
+              appIcon
+              class="fs-24"
+              [name]="ascendingMostRecent ? 'arrow-down' : 'arrow-up'"
+            ></span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <hr class="or-separator" />
+  <div>
+    <div class="text-center" *ngIf="loading_images">
+      <app-spinner></app-spinner>
+    </div>
+
+    <div class="img-list">
+      <div class="row clearfix clear-margin">
+        <div
+          class="col-md-2 relative padded questionnaire-images"
+          *ngFor="let image of images | filterBy : { fileName: searchControl }"
+          (mouseenter)="image.display_action_buttons = true"
+          (mouseleave)="image.display_action_buttons = false"
+        >
+          <div class="thumbnail image-container" *ngIf="image?.id">
+            <a class="link-disguise">
+              <img [src]="image.thumbnailUrl" alt="image" />
+            </a>
+
+            <div class="rb-image-controls" *ngIf="image.display_action_buttons">
+              <span
+                class="icon-wrapper clickable space-on-right"
+                tooltip="Select Image"
+                tooltip-placement="top"
+                (click)="insert(image)"
+              >
+                <icon appIcon name="check2" class="text-success"> </icon>
+              </span>
+              <span
+                class="icon-wrapper clickable"
+                tooltip="Delete Image"
+                tooltip-placement="top"
+                (click)="confirmImageDelete(image, $event)"
+              >
+                <icon appIcon name="trashcan" class="text-danger"> </icon>
+              </span>
+            </div>
+
+            <div class="caption">
+              <p class="clear-margin">
+                <span> {{ image.fileName | truncate : 15 }} </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

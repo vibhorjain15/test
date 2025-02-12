@@ -1,0 +1,51 @@
+<form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">Use Smart Text Intelligence
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row clearfix">
+          <div col="12" class="space-on-bottom-lg">
+              <form-group field-name="Name">
+                  <label for="document-name" class="col-md-2 control-label">
+                      Question
+                  </label>
+
+                  <div class="col-md-9">
+                    <p class="space-on-top"><strong>{{vm.response.question.attributes.text}}</strong></p>
+                  </div>
+              </form-group>
+          </div>
+          <div col="12" class="standard_response_row">
+            <div ng-show="vm.loading" class="text-center">
+              <div class="col-md-2"></div>
+              <div class="col-md-8">
+                <spinner></spinner>
+              </div>
+            </div>
+              <form-group field-name="Name" ng-show="!vm.loading">
+                  <label for="document-name" class="col-md-2 control-label">
+                      Response
+                  </label>
+
+                  <div class="col-md-9" data-ng-if="vm.standardText.text && vm.standardText.text.length">
+                    <div id="preview" ng-bind-html="vm.standardText.html | trusthtml" class="preview_div space-on-top"></div>
+                  </div>
+                  <div class="col-sm-9" data-ng-if="!vm.standardText.text || !vm.standardText.text.length">
+                    <div class="text-center space-on-top-lg">
+                      <p><i>No smart text found</i></p>
+                    </div>
+                  </div>
+              </form-group>
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.loading">Add Response</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

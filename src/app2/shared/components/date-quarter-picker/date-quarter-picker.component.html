@@ -1,0 +1,62 @@
+<div
+  #wrapper
+  appClickOutside
+  (clickOutside)="hideContent()"
+  class="date-quarter-picker-wrapper"
+>
+  <div class="btn-select" (click)="toggleContent()">
+    <span *ngIf="!selectedYear && !selectedQuarter">Filter by</span>
+    <span *ngIf="selectedYear && !selectedQuarter">{{ selectedYear }}</span>
+    <span *ngIf="selectedYear && selectedQuarter"
+      >{{ selectedYear }} | {{ selectedQuarter.identifier }}
+      {{ selectedQuarter.monthRange }}</span
+    >
+    <span appIcon name="chevron-down"></span>
+  </div>
+  <div class="content">
+    <div class="btn-date-quarter-picker-container">
+      <div #yearContainer class="year-container" *ngIf="years && years.length">
+        <span
+          *ngFor="let year of years"
+          class="item"
+          [ngClass]="{ active: selectedYear === year }"
+          (click)="setYear(year)"
+        >
+          <span>{{ year }}</span>
+        </span>
+      </div>
+      <button
+        type="button"
+        aria-label="year scroll left"
+        class="btn-date-quarter-picker btn-left"
+        *ngIf="isContentOverflowing && isRightScrollable"
+        (click)="scrollYearListContainer(scrollDirection.LEFT)"
+      >
+        <span appIcon name="angle-left"></span>
+      </button>
+      <button
+        type="button"
+        aria-label="year scroll right"
+        class="btn-date-quarter-picker btn-right"
+        *ngIf="isContentOverflowing && isLeftScrollable"
+        (click)="scrollYearListContainer(scrollDirection.RIGHT)"
+      >
+        <span appIcon name="angle-right"></span>
+      </button>
+    </div>
+    <ul
+      *ngIf="quarters && quarters.length"
+      class="quarter-container"
+      [ngClass]="{ active: selectedYear }"
+    >
+      <li
+        *ngFor="let quarter of quarters"
+        (click)="setQuarter(quarter)"
+        [ngClass]="{ active: selectedQuarter?.id === quarter.id }"
+      >
+        <span class="space-on-right-xxl">{{ quarter.identifier }}</span>
+        <span>{{ quarter.monthRange }}</span>
+      </li>
+    </ul>
+  </div>
+</div>

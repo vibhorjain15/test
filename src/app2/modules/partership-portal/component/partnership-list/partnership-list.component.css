@@ -1,0 +1,45 @@
+.partner-portal-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(377px, 1fr));
+  gap: 10px;
+}
+
+.partner-portal-dropdown {
+  width: 155px;
+}
+
+.partner-portal-action-wrapper {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 45px;
+}
+
+.partner-portal-action-wrapper > div > input {
+  margin-right: 10px;
+}
+
+.partner-input {
+  display: flex;
+  width: 500px;
+  max-width: 500px;
+}
+.partner-portal-min-height {
+  min-height: 500px;
+}
+
+.partner-report-report-button {
+  text-align: end;
+}
+
+.partner-report-report-button > a {
+  color: #f0592b;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+}
+
+.partner-report-report-button > div {
+  margin-bottom: 3px;
+}

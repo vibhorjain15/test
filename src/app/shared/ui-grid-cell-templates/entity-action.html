@@ -1,0 +1,19 @@
+<ui-grid-cell-contents data-ng-if="!row.groupHeader">
+  <button btn-type="default"
+          data-ng-show="(grid.appScope.vm.$stateParams.entity_type == 'Team' && row.entity.assigned_to_entity_type == 'Team') || (grid.appScope.vm.$stateParams.entity_type == 'User' && row.entity.assigned_to_entity_type == 'User')"
+          size="sm"
+          class="space-on-right"
+          data-ng-click="grid.appScope.vm.editResourceList(row.entity)"
+          uib-tooltip="Edit">
+    <icon name="pencil"></icon>
+  </button>
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right danger"
+          uib-tooltip="Revoke Access"
+          data-ng-show="(grid.appScope.vm.$stateParams.entity_type == 'Team' && row.entity.assigned_to_entity_type == 'Team') || (grid.appScope.vm.$stateParams.entity_type == 'User' && row.entity.assigned_to_entity_type == 'User')"
+          ng-click="grid.appScope.vm.revokeAccessModal(row.entity)">
+    <icon name="trashcan"></icon>
+  </button>
+
+</ui-grid-cell-contents>

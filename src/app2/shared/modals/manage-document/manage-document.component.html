@@ -1,0 +1,897 @@
+<app-modal
+  [title]="modalTitle"
+  [initialTemplate]="manageDocuments"
+  [firstButtonLabel]="
+    sourceType == 'existing' ? 'Save' : editMode ? 'Update' : 'Upload'
+  "
+  [isCancelButton]="true"
+  [isAngularJs]="isAngularJs"
+  [isLoading]="savingDocument"
+  (onFirstClick)="sourceType == 'existing' ? finishAssignDocuments() : submit()"
+  [isFirstButtonDisabled]="
+    (sourceType === 'existing' && existingDocForm?.invalid) ||
+    (sourceType === 'new' && documentForm?.invalid) ||
+    !entityId
+  "
+  [titleIcon]="isFile ? 'file-doc-grid' : 'folder'"
+  [titleIconColor]="colorTheme.primary"
+  #modal
+></app-modal>
+
+<ng-template #manageDocuments>
+  <div class="text-center" *ngIf="showToggleButton && !loading">
+    <div class="btn-group space-on-top">
+      <span
+        [class]="'btn btn-default font-size-12'"
+        [ngClass]="{ 'btn-primary': sourceType == 'existing' }"
+        (click)="setUploadType('existing')"
+      >
+        Use Existing
+      </span>
+      <span
+        [class]="'btn btn-default font-size-12'"
+        [ngClass]="{ 'btn-primary': sourceType == 'new' }"
+        (click)="setUploadType('new')"
+      >
+        New Upload
+      </span>
+    </div>
+  </div>
+  <ng-container *ngIf="loading">
+    <div class="text-center">
+      <app-spinner></app-spinner>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!loading">
+    <div [ngSwitch]="sourceType">
+      <ng-container *ngSwitchCase="'new'">
+        <ng-container *ngTemplateOutlet="newDocument"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'existing'">
+        <ng-container *ngTemplateOutlet="existing"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'new-upload'">
+        <ng-container *ngTemplateOutlet="newUpload"></ng-container>
+      </ng-container>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #newDocument>
+  <ng-container [ngSwitch]="mode">
+    <ng-container *ngSwitchCase="'update'">
+      <ng-container *ngTemplateOutlet="updateNewDocument"></ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #existing>
+  <form
+    name="existingDocForm"
+    [formGroup]="existingDocForm"
+    class="form-horizontal"
+    novalidate
+    autocomplete="off"
+  >
+    <!-- entity type -->
+    <dv-form-element
+      fieldName="entityType"
+      [modelController]="existingDocForm.get('entityType')"
+      fieldName="entityType"
+      [elementCol]="'8'"
+      [label]="'Entity Type'"
+      *ngIf="showEntityRelatedFields && !editMode"
+      [showRightIcon]="false"
+    >
+      <dv-select
+        formControlName="entityType"
+        [id]="'entityType'"
+        bindLabel="name"
+        bindValue="id"
+        [placeholder]="'Select Entity Type'"
+        (onSelectChange)="clearEntityId($event)"
+        [list]="entityTypes"
+      >
+      </dv-select>
+    </dv-form-element>
+    <!-- entity type -->
+
+    <dv-form-element
+      [fieldName]="'associated-firm'"
+      [modelController]="existingDocForm.get('entityId')"
+      fieldName="Associated Firm"
+      [elementCol]="'8'"
+      [label]="'Associated' + ' ' + firmLabel"
+      errorMessage="{{
+        Utils.isManager()
+          ? 'Associated Investor is required'
+          : 'Associated Firm is required'
+      }}
+      "
+      *ngIf="
+        existingDocForm.value.entityType == 'Firm' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+      [showRightIcon]="false"
+    >
+      <dv-select
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="display_name"
+        formControlName="entityId"
+        [id]="'entityId'"
+        placeholder="Select Entities"
+        [list]="firms"
+        [loading]="entitiesLoading"
+        (onSelectChange)="
+          getAttachments($event, existingDocForm.value.entityType)
+        "
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="associated-product"
+      [modelController]="existingDocForm.get('entityId')"
+      fieldName="Associated product"
+      [elementCol]="'8'"
+      [label]="'Associated Product'"
+      errorMessage="Associated Product is required"
+      [showRightIcon]="false"
+      *ngIf="
+        existingDocForm.value.entityType == 'Fund' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+    >
+      <dv-select
+        [multiple]="true"
+        formControlName="entityId"
+        [id]="'entityId'"
+        [list]="funds"
+        [loading]="entitiesLoading"
+        placeholder="Select Entities"
+        (onSelectChange)="
+          getAttachments($event, existingDocForm.value.entityType)
+        "
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="associated-Vehicle"
+      [modelController]="existingDocForm.get('entityId')"
+      fieldName="Associated Vehicle"
+      [elementCol]="'8'"
+      [label]="'Associated Vehicle'"
+      errorMessage="Associated Vehicle is required"
+      [showRightIcon]="false"
+      *ngIf="
+        existingDocForm.value.entityType == 'Vehicle' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+    >
+      <dv-select
+        [id]="'entityId'"
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="display_name"
+        formControlName="entityId"
+        placeholder="Select Entities"
+        [list]="vehicles"
+        [loading]="entitiesLoading"
+        (onSelectChange)="
+          getAttachments($event, existingDocForm.value.entityType)
+        "
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="associated-strategy"
+      [modelController]="existingDocForm.get('entityId')"
+      fieldName="Associated Strategy"
+      [elementCol]="'8'"
+      [label]="'Associated Strategy'"
+      errorMessage="Associated Strategy is required"
+      [showRightIcon]="false"
+      *ngIf="
+        existingDocForm.value.entityType == 'Strategy' &&
+        showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+    >
+      <dv-select
+        [id]="'entityId'"
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="name"
+        formControlName="entityId"
+        [list]="strategies"
+        [loading]="entitiesLoading"
+        placeholder="Select Entities"
+        (onSelectChange)="
+          getAttachments($event, existingDocForm.value.entityType)
+        "
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <div class="row" *ngIf="attachments && !loading && showEntityRelatedFields">
+      <div offset="3" class="col-md-9 padding-0">
+        <div class="col-md-12 padding-0">
+          <div class="col-md-5">
+            <!--  Search -->
+            <dv-form-element
+              [fieldName]="'searchText'"
+              [modelController]="existingDocForm.get('searchText')"
+              fieldName="Search"
+              [elementCol]="'12'"
+              [labelCol]="'4'"
+              [labelClass]="'text-align-start'"
+              [label]="'Search: '"
+              [showRightIcon]="false"
+            >
+              <div class="searchTextDiv">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="searchText"
+                  id="searchText"
+                  placeholder="Search by name"
+                />
+                <span
+                  *ngIf="existingDocForm?.value?.searchText?.length >= 4"
+                  appIcon
+                  class="closeIcon pull-right clickable link-disguise"
+                  name="close"
+                  (click)="clearSearchText()"
+                >
+                </span>
+              </div>
+            </dv-form-element>
+
+            <!--  Search -->
+          </div>
+          <div *ngIf="!loading && customDateFilter" class="col-md-7">
+            <dv-form-element
+              fieldName="as_of_date"
+              [elementCol]="10"
+              [labelClass]="'text-align-start'"
+              [label]="'As of date:'"
+              [elementClass]="'padding-right-xl'"
+              [showRightIcon]="false"
+              [for]="'as_of_date'"
+            >
+              <app-date-range-picker
+                [id]="'as_of_date'"
+                (change)="onChange($event)"
+                [maxDate]="maxAsOfDate"
+                [customDate]="customDateFilter"
+                (clearDateFilter)="onClearDateFilter()"
+              ></app-date-range-picker>
+            </dv-form-element>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- not showEntityRelatedFields -->
+
+    <!-- showEntityRelatedFields -->
+    <div
+      class="row"
+      *ngIf="attachments && !loading && !showEntityRelatedFields"
+    >
+      <!-- used in dv-documents modal -->
+      <div col="6">
+        <!--  Search -->
+        <dv-form-element
+          [modelController]="existingDocForm.get('searchText')"
+          fieldName="Search"
+          [elementCol]="12"
+          [labelCol]="12"
+          [labelClass]="'text-align-start'"
+          [label]="'Search: '"
+          [showRightIcon]="false"
+        >
+          <div class="searchTextDiv">
+            <input
+              type="text"
+              formControlName="searchText"
+              id="searchText"
+              class="form-control"
+              placeholder="Search by name"
+            />
+            <span
+              *ngIf="existingDocForm?.value?.searchText?.length"
+              appIcon
+              class="closeIcon"
+              name="close"
+              (click)="clearSearchText()"
+            >
+            </span>
+          </div>
+        </dv-form-element>
+      </div>
+      <div col="6">
+        <dv-form-element
+          fieldName="as_of_date"
+          [elementCol]="12"
+          [labelCol]="12"
+          [label]="'As of date:'"
+          [labelClass]="'text-align-start'"
+          [elementClass]="'padding-right-xl'"
+          [for]="'as_of_date'"
+        >
+          <app-date-range-picker
+            [id]="'as_of_date'"
+            (change)="onChange($event)"
+            [customDate]="customDateFilter"
+            (clearDateFilter)="onClearDateFilter()"
+          ></app-date-range-picker>
+        </dv-form-element>
+      </div>
+    </div>
+    <div class="row">
+      <ng-container *ngIf="!loading">
+        <div class="col-md-3 text-right" *ngIf="showEntityRelatedFields">
+          <span class="control-label fw-bolder">Assign Document(s)</span>
+        </div>
+        <div
+          class="col-md-8 padding-0 space-on-left"
+          *ngIf="!documentsListLoading && showEntityRelatedFields"
+        >
+          <ul
+            tabindex="0"
+            class="list-group dd-attachments-selector overflow-x-hidden m-h-300"
+          >
+            <app-empty-state
+              *ngIf="
+                (
+                  attachments
+                  | filterBy : { name: existingDocForm?.value?.searchText }
+                ).length == 0
+              "
+              message="No documents available. Once a document is attached, you can reuse it across investor requests"
+            ></app-empty-state>
+            <li
+              class="list-group-item clearfix"
+              *ngFor="
+                let attachment of attachments
+                  | filterBy : { name: existingDocForm?.value?.searchText }
+              "
+            >
+              <div class="pull-left">
+                <a document-viewer="attachment" [dd_document]="attachment">
+                  {{ attachment.name }}
+                </a>
+                <small class="text-muted"
+                  ><i>{{
+                    attachment.as_of_date | dvDate : ["isLocaleDate"]
+                  }}</i></small
+                >
+                <span
+                  *ngIf="attachment.reviews?.length"
+                  customSize="big"
+                  class="space-on-left"
+                  appIcon
+                  name="reviewed-document"
+                ></span>
+              </div>
+
+              <div class="pull-right">
+                <dv-button
+                  *ngIf="attachment.assigned"
+                  [btnType]="'default'"
+                  (onClick)="removeAttachment(attachment)"
+                  [adaptivePosition]="false"
+                  [tooltip]="
+                    attachment.allReadyAssigned
+                      ? 'Already assigned document'
+                      : 'Unassign Document'
+                  "
+                  container="body"
+                  [ariaLabel]="
+                    attachment.allReadyAssigned
+                      ? 'Already assigned document'
+                      : 'Unassign Document'
+                  "
+                >
+                  <span
+                    name="check"
+                    appIcon
+                    class="text-success clickable"
+                  ></span>
+                </dv-button>
+
+                <dv-button
+                  [ngClass]="{ disabled: !existingDocForm.value.entityId }"
+                  [loader]="attachment.being_assigned"
+                  [adaptivePosition]="false"
+                  container="body"
+                  tooltip="{{
+                    existingDocForm.value.entityId
+                      ? 'Assign Document'
+                      : 'Please select associated ' +
+                        existingDocForm.value.entityType
+                  }}"
+                  [ariaLabel]="
+                    existingDocForm.value.entityId
+                      ? 'Assign Document'
+                      : 'Please select associated ' +
+                        existingDocForm.value.entityType
+                  "
+                  (onClick)="assignAttachment(attachment)"
+                  *ngIf="!attachment.assigned"
+                  [disabled]="entityId.length == 0"
+                  [btnClass]="'btn-attachment-selector'"
+                  [btnType]="'default'"
+                >
+                  <span appIcon name="plus"></span>
+                </dv-button>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div
+          class="text-center"
+          *ngIf="documentsListLoading && showEntityRelatedFields"
+        >
+          <app-spinner></app-spinner>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!showEntityRelatedFields">
+        <div class="pd-10">
+          <span class="control-label fw-bolder">Assign Documents</span>
+        </div>
+        <div
+          class="text-center"
+          *ngIf="documentsListLoading && !showEntityRelatedFields"
+        >
+          <app-spinner></app-spinner>
+        </div>
+        <div class="col-md-12">
+          <ul
+            class="list-group dd-attachments-selector overflow-x-hidden m-h-300"
+          >
+            <app-empty-state
+              *ngIf="
+                (
+                  attachments
+                  | filterBy : { name: existingDocForm?.value?.searchText }
+                ).length == 0 && !documentsListLoading
+              "
+              message="No documents available. Once a document is attached, you can reuse it across investor requests"
+            ></app-empty-state>
+            <li
+              class="list-group-item clearfix"
+              *ngFor="
+                let attachment of attachments
+                  | filterBy : { name: existingDocForm?.value?.searchText }
+              "
+            >
+              <div class="pull-left">
+                <a [document-viewer]="attachment" [dd_document]="attachment">
+                  {{ attachment.name }}
+                </a>
+                <small class="text-muted"
+                  ><i>{{
+                    attachment.as_of_date | dvDate : ["isLocaleDate"]
+                  }}</i></small
+                >
+              </div>
+
+              <div class="pull-right">
+                <dv-button
+                  *ngIf="attachment.assigned"
+                  [btnType]="'default'"
+                  (onClick)="removeAttachment(attachment)"
+                  tooltip="Unassign Document"
+                  [adaptivePosition]="false"
+                  ariaLabel="Unassign Document"
+                  size="sm"
+                >
+                  <span
+                    name="check"
+                    appIcon
+                    class="text-success clickable"
+                  ></span>
+                </dv-button>
+
+                <dv-button
+                  btnType="default"
+                  size="sm"
+                  [ngClass]="{ disabled: !entityId }"
+                  [loader]="attachment.being_assigned"
+                  tooltip="{{
+                    entityId
+                      ? 'Assign Document'
+                      : 'Please select associated ' + entityType
+                  }}"
+                  [ariaLabel]="
+                    entityId
+                      ? 'Assign Document'
+                      : 'Please select associated ' + entityType
+                  "
+                  container="body"
+                  [adaptivePosition]="false"
+                  (onClick)="assignAttachment(attachment)"
+                  *ngIf="!attachment.assigned"
+                  class="btn-attachment-selector"
+                >
+                  <span appIcon name="plus"></span>
+                </dv-button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #updateNewDocument>
+  <document-bread-crumbs
+    *ngIf="source === 'documentsEditClick' && showSelectionPath"
+    [selectionPath]="selectionPath"
+  ></document-bread-crumbs>
+  <form
+    name="documentForm"
+    [formGroup]="documentForm"
+    novalidate
+    autocomplete="off"
+  >
+    <div formGroupName="params">
+      <dv-form-element
+        *ngIf="!uploadMultiple"
+        fieldName="name"
+        [modelController]="documentForm.controls.params.get('name')"
+        [elementCol]="9"
+        [label]="'Document Name'"
+        [isRequired]="true"
+        [showRightIcon]="false"
+        [centerAligned]="true"
+      >
+        <input
+          type="text"
+          id="attachment-update-tag-name"
+          class="form-control"
+          formControlName="name"
+          id="name"
+          placeholder="Enter document name"
+        />
+      </dv-form-element>
+    </div>
+
+    <dv-form-element
+      fieldName="entityType"
+      [modelController]="documentForm.get('entityType')"
+      [elementCol]="9"
+      [label]="'Entity Type'"
+      *ngIf="showEntityRelatedFields"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+    >
+      <dv-select
+        [id]="'entityType'"
+        formControlName="entityType"
+        placeholder="Select Entity Type"
+        [list]="entityTypes"
+        (onSelectChange)="clearDocumentFormEntityId($event)"
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      [modelController]="documentForm.get('entityId')"
+      fieldName="Associated Firm"
+      [elementCol]="9"
+      [label]="'Associated Entity'"
+      [showRightIcon]="false"
+      *ngIf="
+        documentForm?.value?.entityType == 'Firm' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+    >
+      <dv-select
+        [id]="'entityId'"
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="display_name"
+        formControlName="entityId"
+        placeholder="Select Entities"
+        [list]="firms"
+        [loading]="entitiesLoading"
+        (onSelectChange)="setEntityData($event, 'Firm')"
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="associated-product"
+      [modelController]="documentForm.get('entityId')"
+      fieldName="Associated product"
+      [elementCol]="9"
+      [label]="'Associated Entity'"
+      [showRightIcon]="false"
+      *ngIf="
+        documentForm?.value?.entityType == 'Fund' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+    >
+      <dv-select
+        [id]="'entityId'"
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="name"
+        formControlName="entityId"
+        placeholder="Select Entities"
+        [list]="funds"
+        [loading]="entitiesLoading"
+        (onSelectChange)="setEntityData($event, 'Fund')"
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="associated-Vehicle"
+      [modelController]="documentForm.get('entityId')"
+      fieldName="Associated Vehicle"
+      [elementCol]="9"
+      [label]="'Associated Entity'"
+      [showRightIcon]="false"
+      *ngIf="
+        documentForm?.value?.entityType == 'Vehicle' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+    >
+      <dv-select
+        [id]="'entityId'"
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="display_name"
+        formControlName="entityId"
+        placeholder="Select Entities"
+        (onSelectChange)="setEntityData($event, 'Vehicle')"
+        [list]="vehicles"
+        [loading]="entitiesLoading"
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <dv-form-element
+      fieldName="associated-strategy"
+      [modelController]="documentForm.get('entityId')"
+      fieldName="Associated Strategy"
+      [elementCol]="9"
+      [label]="'Associated Entity'"
+      [showRightIcon]="false"
+      *ngIf="
+        documentForm?.value?.entityType == 'Strategy' && showEntityRelatedFields
+      "
+      [isRequired]="isEntityIdRequired"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+    >
+      <dv-select
+        [id]="'entityId'"
+        bindValue="id"
+        [multiple]="true"
+        bindLabel="name"
+        formControlName="entityId"
+        placeholder="Select Entities"
+        [list]="strategies"
+        (onSelectChange)="setEntityData($event, 'Strategy')"
+        [loading]="entitiesLoading"
+      >
+      </dv-select>
+    </dv-form-element>
+
+    <div formGroupName="params">
+      <dv-form-element
+        [modelController]="documentForm.controls.params.get('tags')"
+        fieldName="name"
+        [elementCol]="9"
+        [label]="'Document Types'"
+        [showRightIcon]="false"
+        [centerAligned]="true"
+      >
+        <dv-select
+          [id]="'tags'"
+          [multiple]="true"
+          bindValue="id"
+          bindLabel="name"
+          formControlName="tags"
+          placeholder="Select Document Types"
+          [list]="attachmentTypes"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        fieldName="name"
+        [modelController]="documentForm.controls.params.get('as_of_date')"
+        [elementCol]="9"
+        [label]="'As of Date'"
+        *ngIf="editAccess"
+        [isRequired]="true"
+        [showRightIcon]="false"
+        [centerAligned]="true"
+      >
+        <app-date-picker
+          [id]="'as_of_date'"
+          [maxDate]="maxAsOfDate"
+          [placeholder]="'Pick a Date'"
+          (change)="asOfDateChange($event)"
+          [value]="documentForm.controls.params?.value?.as_of_date || null"
+        >
+        </app-date-picker>
+      </dv-form-element>
+
+      <dv-form-element
+        fieldName="name"
+        [modelController]="documentForm.controls.params.get('as_of_date')"
+        [elementCol]="9"
+        [label]="'As Of Date'"
+        *ngIf="!editAccess"
+        [isRequired]="true"
+        [showRightIcon]="false"
+        [centerAligned]="true"
+      >
+        <app-date-picker
+          [id]="'as_of_date'"
+          [maxDate]="maxAsOfDate"
+          [value]="documentForm.controls.params.value.as_of_date"
+          [placeholder]="'Pick a Date'"
+          (change)="asOfDateChange($event)"
+        >
+        </app-date-picker>
+      </dv-form-element>
+
+      <dv-form-element
+        fieldName="name"
+        [elementCol]="9"
+        [label]="
+          (uploaded_file ? 'Selected ' : 'Select ') +
+          (isFile ? 'File' : 'Folder')
+        "
+        *ngIf="editAccess"
+        [isRequired]="sourceType == 'new'"
+        [showRightIcon]="false"
+        [centerAligned]="true"
+      >
+        <ng-container *ngIf="editMode && editAccess">
+          <dv-uploader
+            [sizeLimit]="maxFileSize"
+            [accept]="allowed_file_extensions_str"
+            buttonLabel="Upload Different File"
+            [dragLabel]="dvUploaderLabel"
+            [isMultiple]="uploadMultiple"
+            [showUploadedFiles]="true"
+            [directory]="!isFile"
+            (onFileUpload)="uploadAttachment($event)"
+          ></dv-uploader>
+          <a
+            [document-viewer]="document"
+            *ngIf="uploaded_file"
+            [dd_document]="document"
+            class="link-disguise"
+          >
+            <dv-checkbox
+              [(ngModel)]="editDocumentCheckbox"
+              [ngModelOptions]="{ standalone: true }"
+              [disabled]="true"
+              [label]="uploaded_file.name"
+            >
+            </dv-checkbox>
+          </a>
+        </ng-container>
+        <ng-container *ngIf="!editMode && sourceType == 'new'">
+          <dv-uploader
+            [sizeLimit]="maxFileSize"
+            [accept]="allowed_file_extensions_str"
+            [dragLabel]="dvUploaderLabel"
+            [isMultiple]="uploadMultiple"
+            [showUploadedFiles]="false"
+            [directory]="!isFile"
+            (onFileUpload)="uploadAttachment($event)"
+            [buttonLabel]="
+              !isFile
+                ? 'Select folder(s)'
+                : uploadMultiple
+                ? 'Select files'
+                : 'Select file'
+            "
+          ></dv-uploader>
+          <div class="file-list-container">
+            <div *ngFor="let file of files; let index = index">
+              <document-name
+                [document]="file"
+                [truncateAfter]="35"
+                (onDeleteDocument)="deleteFile(index)"
+              ></document-name>
+            </div>
+          </div>
+          <dv-checkbox
+            [(ngModel)]="uploadMultiple"
+            [disabled]="uploadMultiple && files.length > 1"
+            label="Upload multiple documents"
+            [ngModelOptions]="{ standalone: true }"
+            (onValChange)="toggleNameControl($event)"
+            *ngIf="isFile"
+          >
+          </dv-checkbox>
+        </ng-container>
+      </dv-form-element>
+    </div>
+
+    <div class="space-on-top-xl">
+      <helper-text *ngIf="editMode && editAccess && new_document_uploaded">
+        <span
+          >The updated version will be accessible to all
+          {{ "{investors / managers}" }} who have access to this document.</span
+        >
+      </helper-text>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #newUpload>
+  <form
+    class="form-horizontal"
+    novalidate
+    [formGroup]="documentForm"
+    autocomplete="off"
+  >
+    <div col="12" formGroupName="params">
+      <!--  name -->
+      <dv-form-element
+        fieldName="name"
+        [modelController]="documentForm.controls.params.get('name')"
+        [elementCol]="'8'"
+        [label]="'Document Name'"
+        *ngIf="!editAccess"
+        [showRightIcon]="false"
+      >
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          dv-restrict-input="{type: 'validName'}"
+        />
+      </dv-form-element>
+      <!--  name -->
+
+      <!--  Document Type -->
+      <dv-form-element
+        fieldName="name"
+        [elementCol]="'8'"
+        [label]="'Document Types'"
+        *ngIf="!editAccess"
+        [for]="'document-tag'"
+        [showRightIcon]="false"
+      >
+        <dv-select
+          [id]="'document-tag'"
+          class="form-control"
+          [multiple]="true"
+          [searchable]="true"
+          formControlName="tags"
+          [disabled]="!(attachmentTypes && attachmentTypes.length)"
+          placeholder="Select Document Types"
+          [list]="attachmentTypes"
+          [required]="isManager && documentOptions.managerCheck"
+        >
+        </dv-select>
+      </dv-form-element>
+      <!--  Document Type -->
+    </div>
+  </form>
+</ng-template>

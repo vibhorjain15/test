@@ -1,0 +1,82 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="65"
+          *ngIf="!firm"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="firm">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5">
+              {{ firm.name }}
+            </h4>
+          </div>
+          <div class="cell">
+            <helper-text>
+              Track existing or create new firm level investor requests,
+              standard DDQs, and Q/A library projects.
+            </helper-text>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix" *ngIf="firm">
+      <div col="4" [ngClass]="{ 'col-md-offset-4': !is_manager }">
+        <fund-ddqs
+          [ddqs]="investorDdqs"
+          (modalOpen)="invokeAddInvestorDDQDialog()"
+          [modalTitle]="NewRequestTypes.InvestorRequest"
+          [helpText]="
+            'For RFP and investor relations teams to respond to or set up and manage inbound investor requests.'
+          "
+          ddqType="investor"
+          [emptyStateMessage]="
+            'No investor requests available for this ' +
+            entity_type +
+            '. Please add'
+          "
+        ></fund-ddqs>
+      </div>
+      <div
+        col="4"
+        [ngClass]="{ 'col-md-offset-4': !is_manager }"
+        disabled="is_freeSubscriber"
+      >
+        <fund-ddqs
+          [ddqs]="ddqs"
+          (modalOpen)="invokeAddDDQDialog()"
+          [modalTitle]="NewRequestTypes.StandardDDQ"
+          [helpText]="
+            'For your team to maintain historical and current annual and quarterly DDQs at the firm level. You can create new versions, update content, and then share with your investors.'
+          "
+          [emptyStateMessage]="
+            'No internal / standard DDQ available for this ' +
+            entity_type +
+            '. Please add'
+          "
+        ></fund-ddqs>
+      </div>
+      <!-- authorized-view
+      accessible-to="manager"-->
+      <div col="4" disabled="is_freeSubscriber">
+        <app-profile-ddq
+          [ddqs]="profileddqs"
+          (modalOpen)="invokeAddProfileDDQDialog()"
+          [helpText]="
+            'For SMEs to build and maintain your firm’s Q/A content library with the most recent and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Library.'
+          "
+          [tooltipText]="
+            'Build and maintain your firm’s Q/A content library with compliant and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Library. Pro tip: It is best practice for SMEs to regularly review this content and treat these responses as your one source of truth.'
+          "
+          [emptyStateMessage]="
+            'No library content available for this ' +
+            entity_type +
+            '. Please add'
+          "
+        ></app-profile-ddq>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,181 @@
+<div [formGroup]="checkBoxForm">
+  <div
+    *ngIf="!checkBoxForm.value.useBulkListBuilder"
+    (keydown.enter)="$event.preventDefault()"
+  >
+    <div
+      *ngFor="let option of options; let index = index"
+      class="space-on-bottom-lg"
+      [elemPosition]="index"
+      [list]="options"
+      DvDragDrop
+      (returnUpdatedList)="handleUpdateList($event)"
+    >
+      <div
+        class="inline-block"
+        *ngIf="editable"
+        [ngClass]="{ invisible: options.length == 1 }"
+      >
+        <span appIcon name="th" class="sort-handle"></span>
+      </div>
+
+      <div class="inline-block space-on-left" *ngIf="fieldName === 'CheckBox'">
+        <dv-checkbox disabled></dv-checkbox>
+      </div>
+      <div
+        class="inline-block align-middle space-on-left"
+        [ngClass]="{
+          'has-error': !options[index].text?.length
+        }"
+      >
+        <input
+          type="text"
+          *ngIf="editable"
+          class="form-control js-option-text field-preview-input"
+          [value]="option.text ?? ''"
+          (change)="handleInputChange($event, index)"
+          autoSelectAll
+          [title]="option.text"
+        />
+        <span class="text-danger" *ngIf="!options[index].text?.length"
+          >This field is required</span
+        >
+        <span class="text-danger" *ngIf="options[index].containsHtmlTags"
+          >Please enter a valid value</span
+        >
+        <span *ngIf="!editable">{{ option.text }}</span>
+      </div>
+
+      <div
+        class="inline-block align-middle space-on-left"
+        *ngIf="column_options"
+      >
+        <span
+          class="btn btn-deafult clickable"
+          (click)="addColumnOptions(index)"
+          tabindex="-1"
+        >
+          <span appIcon name="cog"></span>
+        </span>
+      </div>
+
+      <div
+        class="inline-block align-middle space-on-left"
+        *ngIf="options.length > 1"
+      >
+        <button
+          class="btn btn-default btn-close"
+          btn-type="default"
+          (click)="removeOption(index)"
+          tabindex="-1"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="editable && !checkBoxForm.value.useBulkListBuilder"
+    (keydown.enter)="$event.preventDefault()"
+  >
+    <div class="inline-block align-middle invisible">
+      <span appIcon name="th"></span>
+    </div>
+
+    <div
+      class="inline-block align-middle space-on-left"
+      *ngIf="fieldName === 'CheckBox'"
+    >
+      <dv-checkbox disabled></dv-checkbox>
+    </div>
+
+    <div class="inline-block align-middle space-on-left">
+      <input
+        type="text"
+        class="form-control clickable field-preview field-preview-input"
+        readonly="true"
+        placeholder="Click to add option"
+        (click)="addOption()"
+        title="Click to add option"
+      />
+    </div>
+
+    <div *ngIf="allowOtherOption">
+      <div
+        class="inline-block align-middle space-on-left"
+        *ngIf="!hasOtherOption"
+      >
+        or
+        <a role="button" tabindex="0" (click)="handleAddOthersClick()">
+          Add "Other"
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="hasOtherOption && !checkBoxForm.value.useBulkListBuilder"
+    (keydown.enter)="$event.preventDefault()"
+    class="space-on-top-lg"
+  >
+    <div class="inline-block align-middle invisible" *ngIf="editable">
+      <span appIcon name="th"></span>
+    </div>
+
+    <div
+      class="inline-block align-middle space-on-left"
+      *ngIf="fieldName === 'CheckBox'"
+    >
+      <dv-checkbox [disabled]="true"></dv-checkbox>
+    </div>
+
+    <span class="inline-block align-middle space-on-left text-muted">
+      Other:
+    </span>
+
+    <div class="inline-block align-middle space-on-left">
+      <input
+        type="text"
+        class="form-control field-preview field-preview-other-input"
+        readonly="true"
+        placeholder="Their explanation"
+        title="Their explanation"
+      />
+    </div>
+
+    <div class="inline-block align-middle space-on-left" *ngIf="editable">
+      <button
+        class="btn btn-default btn-close"
+        btn-type="default"
+        (click)="handleRemoveAddClick()"
+      >
+        &times;
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="checkBoxForm.value.useBulkListBuilder">
+    <dv-bulk-list-builder-new
+      [idKey]="'id'"
+      [textKey]="'text'"
+      [ngData]="newOptions"
+      [currentLength]="options.length"
+      [type]="'option'"
+      [valueRequired]="false"
+      [placeHolderText]="placeHolderText"
+    ></dv-bulk-list-builder-new>
+    <br />
+    <button class="btn btn-primary" (click)="previewOptions()">
+      Save Options
+    </button>
+  </div>
+  <br />
+
+  <dv-checkbox
+    label="Add multiple options"
+    [id]="option_label"
+    formControlName="useBulkListBuilder"
+    (onValChange)="handleValChange($event)"
+  >
+  </dv-checkbox>
+</div>

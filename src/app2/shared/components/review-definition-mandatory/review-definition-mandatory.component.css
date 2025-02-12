@@ -1,0 +1,77 @@
+.row {
+  display: flex;
+}
+.container-review {
+  display: flex;
+  flex-direction: column;
+  max-height: 500px;
+  min-width: 600px;
+  position: relative;
+}
+.column {
+  flex: 0 0 20%;
+  padding-bottom: 10px;
+}
+
+.column-extra-date {
+  flex: 0 0 22%;
+  padding-bottom: 10px;
+}
+
+.col-extra {
+  flex: 0 0 31%;
+}
+
+.align {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+}
+
+.center-align {
+  display: flex;
+  justify-content: center;
+}
+
+.heading-font {
+  font-weight: 800;
+  color: #828282;
+}
+
+.icon-delete {
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  margin-top: 3%;
+  height: 85%;
+}
+.icon-delete:hover {
+  color: #d75c5c;
+}
+.team-list {
+  padding-top: 10px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-left: -6px;
+}
+
+.user {
+  border: 1px solid #ebe9e9;
+  border-radius: 50%;
+  padding: 10px;
+  height: 33px;
+  display: flex;
+  width: 33px;
+  font-size: 11px;
+  align-items: center;
+  justify-content: center;
+  color: #828282;
+  background-color: #ebe9e9;
+}
+.disabled {
+  opacity: 0.5 !important;
+  cursor: no-drop;
+}

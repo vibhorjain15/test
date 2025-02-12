@@ -1,0 +1,21 @@
+<ui-grid-cell-contents>
+
+    <a ui-sref="app.workflow_automation.detail({Id: row.entity.workflow_audit_id, action_id: row.entity.action_id, workflow_steps_actions_id: row.entity.workflow_steps_actions_id})"
+       class="w-80 btn-sm btn btn-default"
+       data-ng-if="row.entity.action_id =='add_note'">
+        Add Note
+    </a>
+
+    <a ui-sref="app.workflow_automation.detail({Id: row.entity.entity_id, action_id: row.entity.action_id, workflow_steps_actions_id: row.entity.workflow_steps_actions_id})"
+       class="w-80 btn-sm btn btn-default"
+       data-ng-if="row.entity.action_id =='approval'">
+        Approve
+    </a>
+
+    <a ui-sref="app.workflow_automation.detail({Id: row.entity.workflow_audit_id, action_id: row.entity.action_id, workflow_steps_actions_id: row.entity.workflow_steps_actions_id})"
+       class="w-80 btn-sm btn btn-default"
+       data-ng-if="row.entity.action_id =='review'">
+        Review
+    </a>
+
+</ui-grid-cell-contents>

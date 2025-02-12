@@ -1,0 +1,30 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <span class="align-middle"> Audit Trail </span>
+    </span>
+  </div>
+  <div class="panel-body" *ngIf="audit?.length">
+    <ul class="list-unstyled list-bordered-bottom">
+      <li *ngFor="let audit of audit">
+        <small class="text-muted">
+          <strong>
+            {{ audit.userInfo.firstName }} {{ audit.userInfo.lastName }} ({{
+              audit.userInfo.firmInfo.name
+            }}):
+          </strong>
+        </small>
+
+        <span diligenceStatus [status]="audit.auditStatus"></span>
+        <span class="word-break-break-all" [innerHtml]="audit.text"></span>
+        <small class="text-muted"
+          >&nbsp;{{ audit.activityTimeStamp | dvDate }}</small
+        >
+      </li>
+    </ul>
+  </div>
+
+  <div class="panel-body" *ngIf="!audit?.length">
+    <small class="text-muted">No Audit History Found</small>
+  </div>
+</div>

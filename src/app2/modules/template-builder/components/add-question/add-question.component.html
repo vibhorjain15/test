@@ -1,0 +1,362 @@
+<div class="custom-view-group-row">
+  <div class="row" *ngIf="!nestedQuestion">
+    <div col="4">
+      <dv-radio
+        [label]="'Add multiple questions at a time'"
+        [checkedVal]="false"
+        [(ngModel)]="isSingle"
+        [valueName]="false"
+        (innerValueEmitter)="handleSelectionChange()"
+      >
+      </dv-radio>
+    </div>
+    <div col="4">
+      <dv-radio
+        [label]="'Add one question at a time'"
+        class="space-on-left"
+        [checkedVal]="true"
+        [(ngModel)]="isSingle"
+        [valueName]="true"
+        (innerValueEmitter)="handleSelectionChange()"
+      >
+      </dv-radio>
+    </div>
+  </div>
+</div>
+<form class="form-horizontal" [formGroup]="questionForm" autocomplete="off">
+  <ng-container *ngIf="!isSingle">
+    <dv-form-element
+      spacing="small"
+      labelPosition="top"
+      label="Add questions"
+      elementCol="12"
+    >
+      <dv-bulk-list-builder-new
+        [idKey]="'id'"
+        [textKey]="'text'"
+        [ngData]="bulkQuestions"
+        [currentLength]="0"
+        [type]="'Question'"
+        [valueRequired]="false"
+        [placeHolderText]="'Add multiple questions here'"
+      ></dv-bulk-list-builder-new>
+      <span
+        *ngIf="!bulkQuestions.length && isBulkQuestionsTouched"
+        class="text-danger"
+        role="alert"
+      >
+        Please add at least one question
+      </span>
+    </dv-form-element>
+
+    <dv-form-element
+      label="Response type"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+      [for]="'responseType'"
+    >
+      <div class="space-on-bottom-xl">
+        <dv-select
+          [contoller]="questionForm.get('responseType')"
+          [id]="'add-question-responseType'"
+          [appendTo]="'body'"
+          [error]=""
+          [list]="responseType"
+          bindLabel="description"
+          bindValue=""
+          formControlName="responseType"
+          (onSelectChange)="handleChange($event)"
+        ></dv-select>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      label="Response type preview"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+    >
+      <dv-response-type-preview
+        *ngIf="responseType.length"
+        [onSaveClick]="onSaveClick"
+        [question]="previewData"
+        [editable]="true"
+      ></dv-response-type-preview>
+      &nbsp;
+    </dv-form-element>
+  </ng-container>
+
+  <ng-container *ngIf="isSingle">
+    <div *ngIf="nestedQuestion">
+      <dv-form-element
+        [modelController]="questionForm.get('condition')"
+        label="Reveal this question when response is"
+        labelPosition="top"
+        elementCol="12"
+        [showRightIcon]="false"
+        spacing="small"
+      >
+        <dv-select
+          [id]="'condition'"
+          [contoller]="questionForm.get('condition')"
+          [appendTo]="'body'"
+          [error]=""
+          [list]="conditionList"
+          bindLabel="display_label"
+          bindValue=""
+          formControlName="condition"
+          (onSelectChange)="handleConditionChange($event)"
+        ></dv-select>
+      </dv-form-element>
+      <dv-form-element
+        label="Enter a value"
+        labelPosition="top"
+        elementCol="12"
+        spacing="small"
+        [modelController]="questionForm.get('conditionalValue')"
+        [showRightIcon]="false"
+      >
+        <div *ngIf="parentQuestionResponseType == 'Date'">
+          <app-date-picker
+            [id]="'conditionalValue'"
+            placement="bottom"
+            container="modal-container"
+            [value]="questionForm?.get('conditionalValue')?.value"
+            (change)="onDateChange($event)"
+          ></app-date-picker>
+        </div>
+        <div
+          *ngIf="
+            [
+              'Boolean',
+              'CheckBox',
+              'Dropdown',
+              'NoPlus',
+              'BooleanPlus'
+            ].includes(parentQuestionResponseType)
+          "
+        >
+          <dv-select
+            [id]="'conditionalValue'"
+            [contoller]="conditionalValue"
+            error="Please select a value"
+            [appendTo]="'body'"
+            [list]="valuesList"
+            bindLabel="value"
+            bindValue=""
+            formControlName="conditionalValue"
+            (onSelectChange)="handleConditionalValueChange($event)"
+          ></dv-select>
+        </div>
+        <div
+          *ngIf="
+            ['TextMultiLine', 'TextEmail', 'Text'].includes(
+              parentQuestionResponseType
+            )
+          "
+        >
+          <dv-input
+            placeholder="Enter a value"
+            [type]="
+              parentQuestionResponseType === 'TextEmail' ? 'email' : 'text'
+            "
+            [isRequired]="true"
+            [control]="questionForm.get('conditionalValue')"
+            [maxLength]="400"
+          >
+          </dv-input>
+        </div>
+        <div
+          *ngIf="
+            [
+              'Integer',
+              'Percentage',
+              'Numeric',
+              'Identifier',
+              'TextPhone'
+            ].includes(parentQuestionResponseType)
+          "
+        >
+          <dv-input
+            placeholder="Enter a value"
+            [isRequired]="true"
+            [type]="
+              parentQuestionResponseType === 'Integer'
+                ? 'pureNumber'
+                : parentQuestionResponseType === 'TextPhone'
+                ? 'phone'
+                : 'number'
+            "
+            [control]="questionForm.get('conditionalValue')"
+          >
+          </dv-input>
+        </div>
+      </dv-form-element>
+    </div>
+
+    <dv-form-element
+      spacing="small"
+      [modelController]="questionForm.get('questionTitle')"
+      labelPosition="top"
+      label="Question text"
+      elementCol="12"
+      [errorMessage]="
+        questionForm.get('questionTitle').errors?.containsHtml
+          ? 'Please enter a valid question text'
+          : (questionForm.get('questionTitle').errors?.required ||
+              questionForm.get('questionTitle').errors?.whitespace) &&
+            questionForm.get('questionTitle').dirty
+          ? 'Question text is required'
+          : null
+      "
+    >
+      <textarea
+        class="form-control"
+        id="questionTitle"
+        formControlName="questionTitle"
+        placeholder="Example: What is your firm name?"
+      ></textarea>
+    </dv-form-element>
+    <dv-form-element
+      spacing="small"
+      [modelController]="questionForm.get('isMandatory')"
+      [showRightIcon]="false"
+    >
+      <dv-checkbox
+        label="Mark question as mandatory"
+        [id]="'isMandatory'"
+        formControlName="isMandatory"
+        (onValChange)="handleMarkChange($event)"
+      >
+      </dv-checkbox>
+    </dv-form-element>
+    <dv-form-element
+      [modelController]="questionForm.get('responseType')"
+      label="Response type"
+      labelPosition="top"
+      elementCol="12"
+      [showRightIcon]="false"
+      spacing="medium"
+    >
+      <div class="space-on-bottom-xl">
+        <dv-select
+          [id]="'responseType'"
+          [contoller]="questionForm.get('responseType')"
+          [appendTo]="'body'"
+          [error]=""
+          [list]="responseType"
+          bindLabel="description"
+          bindValue=""
+          formControlName="responseType"
+          (onSelectChange)="handleChange($event)"
+        ></dv-select>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      label="Response type preview"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+    >
+      <dv-response-type-preview
+        *ngIf="responseType.length"
+        [question]="previewData"
+        [onSaveClick]="onSaveClick"
+        [editable]="true"
+      ></dv-response-type-preview>
+      &nbsp;
+    </dv-form-element>
+    <dv-form-element
+      spacing="small"
+      [modelController]="questionForm.get('isHintText')"
+      elementCol="12"
+      [showRightIcon]="false"
+    >
+      <div class="add-question-new-more">
+        <span (click)="handleHintText()">{{
+          !questionForm.value.isHintText ? "More options" : "Hide options"
+        }}</span>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      *ngIf="questionForm.value.isHintText"
+      label="Instructions and tips"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+      [modelController]="questionForm.get('hintText')"
+      [for]="'hintText'"
+    >
+      <dv-editor
+        [id]="'hintText'"
+        [configObj]="tinyMceInit"
+        [value]="questionForm.value.hintText"
+        (onChange)="handleEditorChange($event)"
+        [imageSelector]="false"
+      ></dv-editor>
+      <div col="12" class="space-on-top-lg text-right">
+        <span
+          [ngClass]="{
+            'text-success':
+              hintClass === 'hintTextVaild' &&
+              questionForm?.get('hintText')?.touched,
+            'text-danger bold-text': hintClass === 'hintTextInVaild'
+          }"
+        >
+          <span *ngIf="hintTextLength > 0">
+            {{ hintTextLength }} characters
+          </span>
+          (maximum {{ DvTextLimits.HELP_TEXT_LIMIT }} characters)
+        </span>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      *ngIf="
+        (questionForm.get('responseType').value.id == 5 ||
+          questionForm.get('responseType').value.id == 1) &&
+        questionForm.value.isHintText
+      "
+      label="Word Count Limit"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [errorMessage]="
+        'Word count should be a number and between 1 and ' +
+        DvTextLimits.HELP_TEXT_LIMIT
+      "
+      [modelController]="questionForm.get('wordCount')"
+      infoText="Set the maximum word count limit for answering this question. You can set default limit from Firm settings."
+      iconClass="space-on-left"
+    >
+      <input
+        formControlName="wordCount"
+        placeholder="No word count limit set"
+        class="form-control"
+        id="wordCount"
+      />
+    </dv-form-element>
+  </ng-container>
+
+  <div class="add-question-button">
+    <dv-button
+      *ngIf="!editQuestion"
+      (onClick)="handleAddClick()"
+      btnType="primary"
+    >
+      Add to preview
+    </dv-button>
+    <dv-button-group *ngIf="editQuestion">
+      <dv-button (onClick)="handleAddClick()" btnType="primary">
+        Save
+      </dv-button>
+      <dv-button (onClick)="handleCancel()" btnType="default">
+        Cancel
+      </dv-button>
+    </dv-button-group>
+  </div>
+</form>

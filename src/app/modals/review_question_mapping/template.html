@@ -1,0 +1,38 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">
+      Configure Review Question Mapping
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+          data-ng-click="vm.close()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="modal-body text-center" data-ng-if="vm.loading_questions">
+      <spinner broad-spinner spinner-height='20'></spinner>
+    </div>
+
+    <div class="" data-ng-if="!vm.loading_questions">
+      <label>The following will be mapped to: </label>
+      <small class="text-uppercase font-size-14">
+        <span data-ng-bind-html="vm.question.text | cleanhtml"></span>
+      </small>
+      <div class="width-70-pct center-block space-on-top-lg" data-ng-if="vm.Utils.getObjectLength(vm.mappedQuestions) == 0">
+        <empty-state icon-name="linked-items"
+          message="No mapping found for the selected question. Please add new."></empty-state>
+      </div>
+      <mapped-questions-grouped-view mapped-questions="vm.mappedQuestions" template="vm.template" question="vm.question" on-remove="vm.onMappingDelete()"></mapped-questions-grouped-view>
+      <div class="text-center space-on-bottom-lg" data-ng-show="!vm.slide_toggle">
+        <button class="btn btn-primary" data-ng-click="vm.revealAddMappingPanel()">
+          Add New Mapping
+        </button>
+      </div>
+    </div>
+
+    <div class="template-question-builder-container" slide-toggle="vm.slide_toggle" style="bottom:auto;">
+        <add-question-mapping data-ng-if="vm.slide_toggle" mapped-questions="vm.mappedQuestions" template="vm.template" question="vm.question" on-save="vm.onMappingSave(results)" on-cancel="vm.hideAddMappingPanel()" source-templates="vm.sourceTemplates"></add-question-mapping>
+    </div>
+  </div>
+</div>
+  

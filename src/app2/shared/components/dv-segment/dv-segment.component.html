@@ -1,0 +1,154 @@
+<section class="template-segment">
+  <div
+    class="template-header"
+    *ngIf="actionButtonsList?.length || actionIconsList?.length || title"
+  >
+    <div class="header-icon-wrapper">
+      <span
+        *ngIf="title"
+        role="heading"
+        aria-level="2"
+        [innerHTML]="title"
+      ></span>
+      <div
+        *ngIf="actionButtonsList?.length"
+        class="move-selected flex-1 move-selected ng-star-inserted"
+      >
+        <ng-container *ngFor="let actionButton of actionButtonsList">
+          <ng-container *ngIf="actionButton.type === 'checkbox'">
+            <span [class]="actionButton.class">
+              <dv-checkbox
+                [label]="actionButton.text"
+                [isBold]="true"
+                [(ngModel)]="actionButton.value"
+                (onValChange)="handleOnSelectAll()"
+              ></dv-checkbox>
+            </span>
+          </ng-container>
+          <ng-container *ngIf="actionButton.type === 'button'">
+            <div [class]="'copy-move-icon ' + actionButton.class">
+              <span
+                [tooltip]="actionButton.tooltip | titlecase"
+                [placement]="icon?.placement || 'top'"
+                (click)="onIconClick(actionButton.key)"
+                clickable
+              >
+                <span
+                  appIcon
+                  [name]="actionButton.name"
+                  class="move-icon-size"
+                ></span>
+                <span> {{ actionButton.text }} </span>
+              </span>
+            </div>
+          </ng-container>
+          <ng-container
+            *ngIf="actionButton.type === 'icon' && !actionButton.hide"
+          >
+            <span
+              appIcon
+              [class]="'icon-link ' + actionButton?.iconClass"
+              [name]="actionButton?.name"
+              [tooltip]="actionButton?.tooltip | titlecase"
+              [placement]="icon?.placement || 'top'"
+              container="body"
+              (click)="onIconClick(actionButton.key)"
+              [ngClass]="{
+                'icon-disable disableField': actionButton?.isDisabled,
+                'icon-active': actionButton?.isactive,
+                'icon-highlighted': actionButton?.isHighlighted
+              }"
+              clickable
+            ></span>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              actionButton.type === 'input-search' &&
+              !actionButton.hide &&
+              actionButton.key !== 'action-search'
+            "
+          >
+            <span class="action-bulk-search">
+              <input
+                class="form-control"
+                type="text"
+                [autofocus]
+                [placeholder]="actionButton.placeholder"
+                [(ngModel)]="search"
+                (ngModelChange)="handleSearchChange($event)"
+              />
+              <dv-button
+                [tooltipText]="'Cancel search' | titlecase"
+                [placement]="icon?.placement || 'top'"
+                container="body"
+                btnType="transparent"
+                (onClick)="onIconClick('cancel-bulk-search')"
+              >
+                Cancel
+              </dv-button>
+            </span>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              actionButton.type === 'input-search' &&
+              !actionButton.hide &&
+              actionButton.key == 'action-search'
+            "
+          >
+            <span class="search">
+              <input
+                class="form-control"
+                type="text"
+                [autofocus]
+                [placeholder]="actionButton.placeholder"
+                [(ngModel)]="search"
+                (ngModelChange)="handleSearchChange($event)"
+              />
+            </span>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div *ngIf="actionIconsList?.length" class="icon-wrapper">
+        <span
+          *ngFor="let icon of actionIconsList"
+          (click)="onIconClick(icon.key)"
+          appIcon
+          [class]="'icon-link ' + icon.iconClass"
+          [name]="icon.name"
+          [tooltip]="icon.tooltip | titlecase"
+          [placement]="icon?.placement || 'top'"
+          container="body"
+          [ngClass]="{
+            'icon-disable disableField': icon?.isDisabled,
+            'icon-active': icon?.isactive,
+            'icon-highlighted': icon?.isHighlighted
+          }"
+          clickable
+        ></span>
+      </div>
+    </div>
+
+    <span class="search" *ngIf="isOpen">
+      <input
+        class="form-control"
+        type="text"
+        [autofocus]
+        [(ngModel)]="search"
+        (ngModelChange)="handleSearchChange($event)" />
+      <span
+        appIcon
+        name="times"
+        container="body"
+        tooltip="Close"
+        container="body"
+        class="icon-link"
+        (click)="onIconClick('cancel-search')"
+        clickable
+      ></span
+    ></span>
+  </div>
+
+  <div class="template-body" tabindex="0">
+    <ng-content></ng-content>
+  </div>
+</section>

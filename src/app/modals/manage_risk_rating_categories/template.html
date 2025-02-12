@@ -1,0 +1,135 @@
+<form name="vm.manage_rating_categories_form"
+      novalidate
+      data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      Manage {{vm.category_type | standardPluralize}} for {{vm.rating_scheme.name}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="row clearfix">
+      <p class="alert alert-info" data-ng-hide="vm.valid_categories.length">
+        There are no {{vm.category_type | standardPluralize}}. Get started by adding new {{vm.category_type | standardPluralize}} and weights
+      </p>
+
+      <p class="alert alert-danger" data-ng-show="vm.unallocated_weightage < 0">
+        All the {{vm.category_type}} weightages must add up to {{vm.maxWeightage}}! It exceeds by {{-vm.unallocated_weightage|number:2}}%
+      </p>
+
+      <div data-ng-show="vm.manage_rating_categories_form.$submitted">
+        <p class="alert alert-danger"
+           data-ng-show="vm.valid_categories.length >= 1 && vm.unallocated_weightage > vm.precision">
+          Please assign remaining {{vm.unallocated_weightage|number:2}}% weightage to any of the {{vm.category_type | standardPluralize}}
+        </p>
+
+        <p class="alert alert-danger" data-ng-show="vm.valid_categories.length == 0">
+          Please add atleast one {{vm.category_type}}
+        </p>
+      </div>
+
+      <div col="8">
+        <div class="row">
+          <div col="4">
+             <label for="name">{{vm.category_type}} Name</label>
+          </div>
+          <div col="2">
+            <label for="weightage">Weightage</label>
+          </div>
+          <div col="6">
+            <label for="description">Description</label>
+          </div>
+        </div>
+
+
+        <div data-ng-repeat="category in vm.rating_categories" class="space-on-top-lg" ng-if="category.is_active">
+          <div class="row space-on-bottom-lg space-on-top-lg">
+            <div col="4">
+              <form-group field-name="{{vm.category_type}} Name">
+                <input type="text"
+                          class="form-control"
+                          data-ng-model="category.name"
+                          name="categories_{{$index}}"
+                          dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                          input-preselect
+                          placeholder="{{vm.category_type}} Name"
+                          maxlength="100000"
+                          required />
+              </form-group>
+            </div>
+            <div col="2">
+              <form-group field-name="Weightage">
+                  <input type="number"
+                    name="weightage_{{$index}}"
+                    class="form-control"
+                    data-ng-disabled="vm.weigh_categories_equally"
+                    data-ng-model="category.weightage"
+                    min="0"
+                    required />
+              </form-group>
+            </div>
+            <div col="5">
+              <form-group field-name="Description">
+                    <input type="text"
+                    name="description_{{$index}}"
+                    class="form-control"
+                    maxlength="200"
+                    data-ng-model="category.description" />
+              </form-group>
+            </div>
+            <div col="1">
+              <button btn-type="transparent"
+                      data-ng-disabled="vm.rating_scheme.source == 'AutoMap'"
+                      data-ng-hide="vm.rating_categories.length == 1"
+                      data-ng-click="vm.removeCategory(category)"
+                      uib-tooltip="Remove {{category.name}}">
+                <icon name="trashcan"></icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div col="12">
+            <span col="11" data-ng-class="{'visibility-hidden': vm.maxWeightage == 'Infinite'}">
+              <dv-checkbox
+                  data-ng-model="vm.weigh_categories_equally"
+                  label="Weigh {{vm.category_type | standardPluralize}} Equally">
+              </dv-checkbox>
+            </span>
+            <span col="1">
+              <button class="center-block"
+                      btn-type="default"
+                      size="sm"
+                      data-ng-disabled="vm.rating_scheme.source == 'AutoMap'"
+                      uib-tooltip="Add {{vm.category_type}}"
+                      data-ng-click="vm.addRatingCategory()">
+                <icon name="plus"></icon>
+              </button>
+            </span>
+          </div>
+        </div>
+        <div class="space-on-top">
+          <p class="alert-info padding-10">
+            <span>
+              If you want to exclude a {{vm.category_type.toLowerCase()}} from the rating scheme, you can update the weightage to 0 and it won’t show up on the template page.
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div col="4">
+        <c3-chart config="vm.piechartConfig"></c3-chart>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving">Save</button>
+    <button btn-type="default"
+            data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

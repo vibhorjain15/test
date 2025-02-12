@@ -1,0 +1,288 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-export-preference></ng2-export-preference> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Export Preferences</h5>
+    </div>
+
+    <div class="panel-body affix_bottom_parent">
+        <div class="row clearfix">
+            <div col="12">
+                <spinner data-ng-if="!vm.firm_preferences"></spinner>
+                <form class="form-horizontal" name="vm.preferences_form" data-ng-submit="vm.submit()"
+                    data-ng-if="vm.firm_preferences">
+
+                    <p class="alert alert-info">You can define preferences on how your Word or Excel report would be
+                        exported. These selections would be default settings firm wide for all your exports.
+                    </p>
+
+                    <div offset="2">
+                        <h3 class="text-muted">Word Exports</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox class="inline-block"
+                                data-ng-model="vm.firm_preferences_copy.include_question_only_export"
+                                label="Export only questions">
+                            </dv-checkbox>
+                            <icon name="info" class="text-info"
+                                uib-tooltip="This will only export questions, without any responses.">
+                            </icon>
+                        </div>
+                    </div>
+
+                    <div class="form-group" data-ng-if="vm.is_investor">
+
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_ratings_word_export"
+                                label="Include ratings/scores">
+                            </dv-checkbox>
+                        </div>
+
+                    </div>
+                    <div class="form-group" data-ng-if="vm.is_investor">
+
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_flags_word_export"
+                                label="Include flags">
+                            </dv-checkbox>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.exclude_empty_response"
+                                label="Exclude unanswered questions or questions without responses">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.exclude_comments"
+                                label="Exclude comments associated with responses">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_grid_numbering"
+                                label="Enable numbering for dynamic grid rows">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_question_instructions_export"
+                                label="Print instructions associated with Questions">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_category_instructions_export"
+                                label="Print instructions associated with Categories">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_internal_notes_export"
+                                label="Include internal notes in the export">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.enable_followups_export"
+                                label="Include Follow-ups">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_project_documents"
+                                label="Include associated attachments">
+                            </dv-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div col="10" offset="2">
+                            <label class="control-label text-align-start">Select Template</label>
+                        </div>
+                        <div col="10" offset="2" class="space-on-top-lg">
+                            <p class="text-muted"><small><a
+                                        href="http://diligencevault.com/word-export-style-guide/"
+                                        target="_blank">Please review this style-guide to design export
+                                        templates</a></small></p>
+                            <div col="8" class="export-template">
+                                <div class="list-group-item top-bar">
+                                    <div class="search-bar">
+                                        <input type="text" class="form-control" placeholder="Search templates"
+                                            data-ng-model="vm.filterTemplate" />
+                                    </div>
+                                    <div class="add-button"
+                                        uib-tooltip="{{vm.is_freeSubscription?vm.is_investor?'Available for premium subscribers':'Custom export templates are available to premium subscribers. Learn more.':'Add new template'}}">
+                                        <a data-ng-click="vm.addNewTemplate()"
+                                            data-ng-class="{'route-link-disabled': vm.is_freeSubscription && !vm.is_investor,'disabled-Element':vm.is_freeSubscription && vm.is_investor}">
+                                            <icon name="plus"></icon>
+                                        </a>
+                                    </div>
+                                </div>
+                                <ul class="list-group template-list"
+                                    data-ng-class="{'overflow-y-scroll':vm.templates.length > 3}">
+                                    <empty-state
+                                        message="No Export templates added. Add one by clicking the add button above."
+                                        data-ng-hide="vm.templates.length"></empty-state>
+                                    <empty-state message="No templates found."
+                                        data-ng-show="vm.templates.length > 0 && filteredItems.length == 0">
+                                    </empty-state>
+                                    <li class="list-group-item template-item"
+                                        data-ng-repeat="template in (filteredItems = (vm.templates | filter: {name: vm.filterTemplate})) track by $index"
+                                        data-ng-class="{'activeTemplateRow': (vm.firm_preferences_copy.default_document_export_template_id == template.id)}">
+                                        <div class="container-fluid itemsRow">
+                                            <div class="defaultSelection pull-left">
+                                                <span data-ng-click="vm.selectDefaultTemplate(template)"
+                                                    data-ng-class="{'activeTemplate': (vm.firm_preferences_copy.default_document_export_template_id == template.id)}"
+                                                    uib-tooltip="{{vm.firm_preferences_copy.default_document_export_template_id == template.id?'Marked as Default':'Mark as Default'}}">
+                                                    <icon name="check"></icon>
+                                                </span>
+                                            </div>
+                                            <div class="textRow">
+                                                <a role="button"
+                                                    data-ng-click="vm.downloadTemplate(template)">{{template.name}}</a>
+                                                <p>
+                                                    <small class="text-muted">
+                                                        Last Updated {{(template.updated_at? template.updated_at:
+                                                        template.created_at) | fromNow}}
+                                                        by {{template.updated_by_name ? template.updated_by_name :
+                                                        template.created_by_name}}
+                                                    </small>
+                                                </p>
+                                            </div>
+
+                                            <div class="controls">
+                                                <span class="edit"
+                                                    data-ng-class="{'disabled-Element':template.is_system_template}"
+                                                    uib-tooltip="{{template.is_system_template?'You cannot edit system level templates':'Edit this template'}}"
+                                                    data-ng-click="vm.editTemplate(template,$index)">
+                                                    <icon name="pencil"></icon>
+                                                </span>
+                                                <span class="remove"
+                                                    data-ng-class="{'disabled-Element':template.is_system_template}"
+                                                    uib-tooltip="{{template.is_system_template?'You cannot delete system level templates':'Delete this template'}}"
+                                                    data-ng-click="vm.confirmTemplateDeletion(template,$index)">
+                                                    <icon name="trashcan"></icon>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="space-on-bottom-xxl">
+                        <div offset="2">
+                            <h3 class="text-muted">Excel Exports</h3>
+                        </div>
+
+                        <div class="form-group">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_responses_excel_export"
+                                    label="Include responses">
+                                </dv-checkbox>
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_comments_excel_export"
+                                    label="Include comments">
+                                </dv-checkbox>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.split_comments"
+                                    label="Split comments" class="inline-block">
+                                </dv-checkbox>
+                                <icon name="info" class="text-info align-middle"
+                                    uib-tooltip="Split comments associated with responses in another cell">
+                                </icon>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group" data-ng-if="vm.is_investor">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_ratings_excel_export"
+                                    label="Include ratings/scores">
+                                </dv-checkbox>
+                            </div>
+
+                        </div>
+                        <div class="form-group" data-ng-if="vm.is_investor">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_flags_excel_export"
+                                    label="Include flags">
+                                </dv-checkbox>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.include_internal_key"
+                                    label="Include internal key column">
+                                </dv-checkbox>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <div col="10" offset="2">
+                                <dv-checkbox data-ng-model="vm.firm_preferences_copy.transpose_excel_columns"
+                                    class="inline-block" label="Transpose standard export">
+                                </dv-checkbox>
+                                <icon name="info" class="text-info align-middle"
+                                    uib-tooltip="Transpose standard export to show questions in columns">
+                                </icon>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group sticky_savebar" data-ng-init="vm.makeItSticky()">
+                        <div col="10" offset="2" class="space-on-top-xl space-on-bottom-xl">
+                            <button type="submit" button-loader="vm.saving_preferences">Save Export
+                                Preferences</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>

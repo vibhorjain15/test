@@ -1,0 +1,8 @@
+<div *ngIf="params.data">
+  <a *ngIf="params.data.status === 'failed'" (click)="navigateToExcelDetail()">
+    {{ params.data.file_name }}
+  </a>
+  <span *ngIf="params.data.status !== 'failed'">
+    {{ params.data.file_name }}
+  </span>
+</div>

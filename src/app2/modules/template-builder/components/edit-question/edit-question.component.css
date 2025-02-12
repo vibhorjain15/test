@@ -1,0 +1,9 @@
+.side-panel-footer {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.side-panel-footer > * {
+  margin-left: 5px;
+}

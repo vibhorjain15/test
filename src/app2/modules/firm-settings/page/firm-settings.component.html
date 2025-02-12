@@ -1,0 +1,18 @@
+<div class="row clearfix">
+  <div col="3" id="leftMenuBar">
+    <dv-menu-list
+      [title]="{
+        text: 'Firm Settings',
+        icon: 'institution',
+    }"
+      [menuListData]="states"
+      (onParentMenuClick)="handleMenuClick($event)"
+      (onChildMenuClick)="handleMenuClick($event)"
+      [currentActive]="currentActive"
+    ></dv-menu-list>
+  </div>
+
+  <div col="9">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+.container-header {
+  border: 1px solid #e9e9e9 !important;
+  background: white 0% 0% no-repeat padding-box;
+  padding: 10px;
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .group-wrapper {
+  border: 1px solid #e9e9e9 !important;
+  border-top: 0 !important;
+}
+
+::ng-deep .parent-question {
+  display: block !important;
+  padding-bottom: 10px !important;
+  padding-top: 10px !important;
+}
+
+.diligence-text-center {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.width-50 {
+  width: 50%;
+}
+
+.disabled {
+  display: none;
+}
+:host ::ng-deep dv-category-accordion-list .panel-heading,
+:host ::ng-deep dv-category-accordion-list .panel-body {
+  padding: 5px 1px !important;
+}
+:host ::ng-deep .template-body {
+  max-height: 85vh;
+  overflow: auto;
+  padding-right: 4px;
+  margin-right: -6px;
+}
+:host ::ng-deep .side-panel-body {
+  max-height: 85vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-right: -6px;
+}
+:host ::ng-deep .template-segment,
+:host ::ng-deep side-panel .panel-segment {
+  height: calc(100vh - 45px) !important;
+  min-height: calc(100vh - 45px) !important;
+  max-height: calc(100vh - 45px) !important;
+  margin-bottom: 0px !important;
+  overflow: hidden !important;
+}
+:host ::ng-deep .template-segment .template-body,
+:host ::ng-deep side-panel .panel-segment .side-panel-body {
+  height: 100% !important;
+  overflow: auto !important;
+}
+:host ::ng-deep .template-segment,
+:host ::ng-deep .panel-segment,
+:host ::ng-deep .panel-default {
+  border: 1px solid #e9e9e9 !important;
+  box-shadow: none !important;
+}
+:host ::ng-deep dv-category-accordion-list .collapse.in {
+  overflow: unset !important;
+}

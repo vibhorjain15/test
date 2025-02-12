@@ -1,0 +1,8 @@
+<div *ngIf="params.data">
+  <span class="label" [ngClass]="params.data.visibility == 'Public' ? 'label-primary':'label-warning'">
+    {{ params.data.visibility }}
+  </span>
+</div>
+<p *ngIf="params.node.group">
+  {{ params.value }}
+</p>

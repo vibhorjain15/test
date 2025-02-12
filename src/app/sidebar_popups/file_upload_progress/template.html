@@ -1,0 +1,16 @@
+<ul class="list-group">
+  <li class="list-group-item"
+      data-ng-repeat="file in vm.upload_files">
+    <div class="row clearfix">
+      <div col="11">
+        {{file.name}}
+      </div>
+      <div col="1">
+        <spinner data-ng-show="file.uploading"></spinner>
+        <icon name="check-circle"
+              data-ng-hide="file.uploading"
+              class="text-success"></icon>
+      </div>
+    </div>
+  </li>
+</ul>

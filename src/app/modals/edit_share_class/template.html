@@ -1,0 +1,53 @@
+<form name="vm.edit_share_class_form"
+      novalidate
+      class="form-horizontal"
+      data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">Edit {{vm.share_class.name}}</h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Name">
+      <label class="control-label col-sm-4">ShareClass Name</label>
+
+      <div class="col-sm-8">
+        <input type="text"
+               class="form-control"
+               required
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.params.name" />
+      </div>
+    </form-group>
+
+    <form-group field-name="Currency">
+      <label class="control-label col-sm-4">Currency</label>
+
+      <div class="col-sm-8">
+        <select class="form-control"
+                chosen
+                required
+                data-ng-model="vm.params.currencyID"
+                data-ng-options="currency.id as currency.value for currency in vm.currencies">
+          <option value="">-- Select Currency --</option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Inception Date"
+                control-selector="dv-datepicker">
+      <label class="control-label col-sm-4">Inception Date</label>
+
+      <div class="col-sm-8">
+        <dv-datepicker data-ng-model="vm.params.inceptionDate"
+                       id="due-date"></dv-datepicker>
+      </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">Save</button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

@@ -1,0 +1,28 @@
+<div
+  class="text-left"
+  (mouseenter)="showPreview = true"
+  (mouseleave)="showPreview = false"
+  *ngIf="params?.data"
+>
+  <span
+    [adaptivePosition]="false"
+    tooltip="{{ params?.data?.name }}"
+    container="body"
+  >
+    {{ params?.data?.name | truncate : 30 }}
+  </span>
+  <button
+    appButton
+    btnType="default"
+    size="xs"
+    class="space-on-left-lg"
+    (click)="viewTemplate()"
+    *ngIf="showPreview"
+    tooltip="Preview"
+    aria-label="Preview Template"
+    container="body"
+    [adaptivePosition]="false"
+  >
+    <span appIcon name="eye"></span>
+  </button>
+</div>

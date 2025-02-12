@@ -1,0 +1,91 @@
+<ng2-tab data-ng-if="vm.Utils.isAngular()" class="sticky-tab"></ng2-tab>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="projectsParentDiv">
+  <ul data-ng-if="vm.Utils.isAngularJS()" 
+    class="nav nav-tabs hide-in-print-view"
+    dv-nav-tabs-dropdown
+    role="tablist"
+  >
+      <!-- We check with endsWith since the child state of the new routes will remain the same -->
+      <li
+        data-ng-class="{'active': $state.$current.name.endsWith('project.summary')}"
+        data-ng-if="!vm.diligence.alwaysOpen"
+      >
+        <a ui-sref=".summary"> Summary </a>
+      </li>
+
+      <!--<li data-ng-class="{'active': $state.$current.name == 'app.diligence.project.roles'}" data-ng-if="!vm.diligence.alwaysOpen">
+      <a ui-sref="app.diligence.project.roles">
+        Project Team
+      </a>
+    </li>-->
+
+      <li
+        data-ng-class="{'active': $state.$current.name.endsWith('project.questionnaire') || $state.$current.name.endsWith('project.questionnaire.category.question') || $state.$current.name.endsWith('project.questionnaire.category') || $state.$current.name.endsWith('project.not_approval_reasons') || $state.$current.name.endsWith('project.print_preview') || $state.$current.name.endsWith('project.category') || $state.$current.name.endsWith('project.search_n_review_questions')}"
+      >
+        <a class="js-dd-questionnaire" ui-sref=".questionnaire">
+          {{vm.project_type}}
+        </a>
+      </li>
+      <li
+        data-ng-class="{'active': $state.$current.name.endsWith('project.response_history')}"
+        data-ng-if="(vm.is_manager || vm.is_internal)"
+      >
+        <a class="js-dd-questionnaire" ui-sref=".response_history">
+          All Revisions
+        </a>
+      </li>
+      <li
+        data-ng-class="{'active': $state.$current.name.endsWith('project.assignment_status')}"
+        data-ng-if="(!vm.is_investor && !vm.diligence.alwaysOpen)"
+      >
+        <a class="js-dd-assignments-link" ui-sref=".assignment_status">
+          Assignments
+        </a>
+      </li>
+
+      <li
+        data-ng-class="{'active': $state.$current.parent.name.endsWith('project.documents')}"
+        data-ng-if="!vm.diligence.alwaysOpen"
+      >
+        <a class="js-dd-documents" ui-sref=".documents.list"> Documents </a>
+      </li>
+
+    <li
+      data-ng-class="{'active': $state.$current.name.endsWith('project.notes')}"
+    >
+      <a ui-sref=".notes"> Internal Notes </a>
+    </li>
+    <li
+      data-ng-class="{'active': $state.$current.name.endsWith('project.share')}"
+      data-ng-if="vm.is_manager && vm.is_internal && !vm.profile_dd"
+    >
+      <a ui-sref=".share"> Investor Access Details </a>
+    </li>
+
+    <li
+      data-ng-class="{'active': $state.$current.name.endsWith('project.investment_ratings')}"
+      data-ng-if="(vm.is_investor && !vm.is_free_user && (!vm.diligence.alwaysOpen) && !vm.isVehicleDiligence)"
+    >
+      <a ui-sref=".investment_ratings"> Ratings </a>
+    </li>
+    <li
+      data-ng-class="{'active': $state.$current.name.endsWith('project.recommendations')}"
+    >
+      <a ui-sref=".recommendations"> Tracker Activities </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <div
+      data-ng-if=" vm.Utils.isAngular() && vm.Utils.isQuestionnaireAngular() && ($state.$current.name.endsWith('project.questionnaire') || $state.$current.name.endsWith('project.questionnaire.category.question') || $state.$current.name.endsWith('project.questionnaire.category')  || $state.$current.name.endsWith('project.category'))"
+    >
+    <ng2-questionnaire ></ng2-questionnaire>
+
+    </div>
+
+    <ui-view  data-ng-hide=" vm.Utils.isAngular() && vm.Utils.isQuestionnaireAngular()  && ($state.$current.name.endsWith('project.questionnaire') || $state.$current.name.endsWith('project.questionnaire.category.question') || $state.$current.name.endsWith('project.questionnaire.category') || $state.$current.name.endsWith('project.category'))" />
+  </div>
+</div>

@@ -1,0 +1,95 @@
+<dv-form-element label="Content Settings" elementCol="12" labelPosition="top">
+  <div>
+    <ui-switch
+      size="small"
+      class="align-middle"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="includePreApproved"
+      (ngModelChange)="onIncludePreApprovedChange($event)"
+      [disabled]="firmPreferences.autofill_restrict_modifications"
+      tabindex="0"
+      aria-label="Include Pre-Approved Q/A library content"
+      title="Include Pre-Approved Q/A library content"
+      UiSwitchButton
+    ></ui-switch>
+    <span class="align-middle space-on-left-lg content-setting">
+      Include Q/A library content
+      <span
+        appIcon
+        name="info"
+        tooltip="Q/A library content includes responses saved in your Library."
+        container="body"
+        class="info-icon"
+        aria-label="Information: Q/A library content includes responses saved in your Library."
+      ></span>
+    </span>
+  </div>
+  <div>
+    <ui-switch
+      size="small"
+      class="align-middle"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="includeExpired"
+      [disabled]="
+        firmPreferences.autofill_restrict_modifications || !includePreApproved
+      "
+      tabindex="0"
+      aria-label="Include expired Q/A library content"
+      title="Include expired Q/A library content"
+      UiSwitchButton
+    ></ui-switch>
+    <span class="align-middle space-on-left-lg content-setting">
+      Include expired Q/A library content
+    </span>
+  </div>
+  <div>
+    <ui-switch
+      size="small"
+      class="align-middle"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="includeStandard"
+      [disabled]="firmPreferences.autofill_restrict_modifications"
+      tabindex="0"
+      aria-label="Include project responses"
+      title="Include project responses"
+      UiSwitchButton
+    ></ui-switch>
+    <span class="align-middle space-on-left-lg content-setting">
+      Include project responses
+      <span
+        appIcon
+        name="info"
+        tooltip="Project responses include responses from investor requests and standard DDQ projects."
+        container="body"
+        class="info-icon"
+        tabindex="0"
+        aria-label="Information: Project responses include responses from investor requests and standard DDQ projects."
+      ></span>
+    </span>
+  </div>
+  <div>
+    <ui-switch
+      size="small"
+      class="align-middle"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="includeVerified"
+      [disabled]="!includePreApproved"
+      tabindex="0"
+      aria-label="Only include approved responses from the library and/or project responses"
+      title="Only include approved responses from the library and/or project responses"
+      UiSwitchButton
+    ></ui-switch>
+    <span class="align-middle space-on-left-lg content-setting">
+      Only include approved responses (from the library and/or project
+      responses)
+      <span
+        appIcon
+        name="info"
+        tooltip="Approved responses have been marked as approved during the review mode and can include library and/or project responses."
+        container="body"
+        class="info-icon"
+        aria-label="Information: Approved responses have been marked as approved during the review mode and can include library and/or project responses."
+      ></span>
+    </span>
+  </div>
+</dv-form-element>

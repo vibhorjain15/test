@@ -1,0 +1,67 @@
+<div
+  *ngIf="!isReadonly"
+  [ngStyle]="{ background: color }"
+  class="question-comment-wrapper"
+>
+  <div class="comment-header-wrapper">
+    <div>
+      <dv-label type="bold" [label]="name"> </dv-label>
+      <dv-label
+        *ngIf="time"
+        type="disable"
+        size="medium"
+        [label]="'Last updated ' + time"
+      >
+      </dv-label>
+    </div>
+    <div>
+      <!-- Diabled for now -->
+      <span
+        *ngIf="false"
+        container="body"
+        placement="left"
+        (click)="handleIconClick('close')"
+        class="clickable"
+        appIcon
+        name="close"
+        tooltip="Close comment section"
+      ></span>
+    </div>
+  </div>
+  <div class="comments-wrapper">
+    <!-- This editor will remain as it is as no toolbar options are being used here -->
+    <app-tinymce-editor
+      [tinyMceInit]="tinyMceInit"
+      [focusOnInit]="true"
+      [isLite]="
+        status.currentActiveQuestionId !==
+        question.sequenceID + '-' + question.id
+      "
+      [focusOnInit]="true"
+      [value]="text"
+      #editor
+      (onChange)="handleTextChange($event)"
+      (click)="updateEditorInstance()"
+    >
+    </app-tinymce-editor>
+  </div>
+
+  <div class="wrapper">
+    <dv-link-group>
+      <ng-container>
+        <dv-link
+          [color]="'red'"
+          [name]="'Delete Comment'"
+          (onClick)="handleIconClick('delete')"
+        ></dv-link>
+      </ng-container>
+    </dv-link-group>
+  </div>
+</div>
+
+<div
+  *ngIf="isReadonly && text"
+  [ngStyle]="{ background: color }"
+  class="space-on-top-lg comments-border comments-width"
+  [innerHtml]="text | trustHtml"
+></div>

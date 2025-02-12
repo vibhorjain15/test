@@ -1,0 +1,6 @@
+.disabled-link {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  pointer-events: none;
+  color:var(--dark-blue) !important;
+}

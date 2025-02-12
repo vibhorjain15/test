@@ -1,0 +1,525 @@
+<div class="premium-page-wrapper">
+  <div class="home home-dynamic">
+    <div class="navbar-premium">
+      <img
+        class="clickable space-on-top"
+        (click)="goBack()"
+        [style.height.px]="40"
+        alt="DV IMAGE"
+        src="assets/images/diligencevaultlogo.svg"
+      />
+
+      <div class="nav-bar-button-wrapper">
+        <a
+          class="nav-button clickable"
+          (click)="handleScroll(featureTable)"
+          (keydown.enter)="handleScroll(featureTable)"
+          role="button"
+          tabindex="0"
+          >Feature List</a
+        >
+        <a
+          role="button"
+          tabindex="0"
+          class="nav-button clickable"
+          (click)="handleScroll(testimonials)"
+          (keydown.enter)="handleScroll(testimonials)"
+          >Testimonials</a
+        >
+        <a
+          role="button"
+          tabindex="0"
+          class="nav-button clickable"
+          (keydown.enter)="handleScroll(faq)"
+          (click)="handleScroll(faq)"
+          >FAQs</a
+        >
+        <dv-button
+          (onClick)="makeRequest('vtop')"
+          [loader]="veryTopButtonLoader"
+          >Get a Free Demo</dv-button
+        >
+      </div>
+    </div>
+    <div class="home-wrapper">
+      <span [style.font-size.px]="40" style.font-weight="bold"
+        >Leverage Due Diligence Technology to
+      </span>
+      <span class="text-animation">
+        <span>
+          Raise More Capital <br />
+          Complete Due Diligence in Record Time <br />
+          Drive Successful Outcomes <br />
+        </span>
+      </span>
+      <span
+        [style.font-size.px]="18"
+        class="space-on-bottom-xxxl space-on-top-xxl"
+        type="bold"
+      >
+        Stress-free DDQ/RFP Experience
+      </span>
+
+      <div class="all-cards">
+        <div class="card-wrapper">
+          <div class="cards" [style.z-index]="1" [style.background]="'#C1E4FD'">
+            <div class="heading">
+              <span
+                [innerHTML]="premiumConstant.booksSvg | dvSafeHtml"
+                class="icon-heading"
+              >
+              </span>
+              Content Library Management
+            </div>
+            <div class="body">
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                We’ll quickly add your recent DDQs, RFPs, ODDs or FAQs to create
+                a centralized content library
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Easily find the best responses with custom tags,
+                Firm/Product/Fund filters
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Invite SMEs to help update answers, assign ownership, and
+                establish expiration dates
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Accessible for sales, investor relations, marketing, compliance,
+                finance and legal
+              </div>
+            </div>
+          </div>
+
+          <div class="cards">
+            <div class="heading">
+              <span
+                [innerHTML]="premiumConstant.fileSvg | dvSafeHtml"
+                [style.background]="
+                  'linear-gradient(136deg, #E3F5FF -18.1%, rgba(255, 255, 255, 0.80) 154.81%)'
+                "
+                class="icon-heading"
+              >
+              </span
+              >DDQ Distribution
+            </div>
+            <div class="body">
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Create and maintain standard Firm, Strategy and Product DDQs
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Share Standard DDQs with prospective and current investors from
+                DiligenceVault or export into your own branded format.
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Leverage pre-loaded, industry-specific questionnaires like ILPA,
+                PRI, AIMA, INREV, and SBAI to get a headstart
+              </div>
+            </div>
+          </div>
+
+          <div class="cards" [style.background]="'#C1E4FD'">
+            <div class="heading">
+              <span
+                [innerHTML]="premiumConstant.settingSvg | dvSafeHtml"
+                class="icon-heading"
+              >
+              </span
+              >RFP,DDQ & ODD Automation
+            </div>
+            <div class="body">
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Track all projects in a single dashboard for firmwide
+                transparency and planning
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Respond to incoming questionnaires and new business RFPs faster
+                using AI-powered autofill and suggest responses
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Collaborate as a team and across functions and timezones
+              </div>
+              <div class="point">
+                <span
+                  class="point-star"
+                  [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+                ></span>
+                Build a robust compliance review and approval workflow with
+                audit trail and revision tracking
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Commenting this as this feature is yet not provided by us -->
+        <!-- <div class="cards">
+          <div class="heading">
+            <span
+              [innerHTML]="premiumConstant.monitorSvg | dvSafeHtml"
+              [style.background]="
+                'linear-gradient(136deg, rgba(227, 245, 255, 0.80) 5.75%, rgba(101, 177, 225, 0.60) 154.81%)'
+              "
+              class="icon-heading"
+            >
+            </span
+            >Database Management
+          </div>
+          <div class="body">
+            <div class="point">
+              <span
+                class="point-star"
+                [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+              ></span>
+              Create monthly and quarterly submissions for databases such as
+              eVestment, Callan, Wilshire and many more
+            </div>
+            <div class="point">
+              <span
+                class="point-star"
+                [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+              ></span>
+              Combine quantitative data and qualitative commentary
+            </div>
+            <div class="point">
+              <span
+                class="point-star"
+                [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+              ></span>
+              Update static data once and reuse across reporting periods by
+              efficient auto-fill
+            </div>
+            <div class="point">
+              <span
+                class="point-star"
+                [innerHtml]="premiumConstant.starSvg | dvSafeHtml"
+              ></span>
+              Never miss a deadline by maintaining tracking dashboard
+            </div>
+          </div>
+        </div> -->
+        <div class="helper-text-wrapper">
+          <div class="helper-text" [style.margin-right]="'auto'">
+            <span
+              class="d-flex-center"
+              [innerHtml]="premiumConstant.line | dvSafeHtml"
+            ></span>
+            <span
+              class="arrow"
+              [innerHtml]="premiumConstant.arrow | dvSafeHtml"
+            ></span>
+            6X ROI & <br />
+            3X More Value
+          </div>
+          <div class="helper-text" [style.margin-left]="'auto'">
+            Over 50% Cost Saving
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tour-bar-wrapper">
+    <div class="tour-bar top-tourbar">
+      <div class="tour-bar-text">
+        <div class="d-flex align-items-center">
+          <span [innerHtml]="premiumConstant.starSvg | dvSafeHtml"></span>
+          <span class="space-on-left" style="color: #0071a4">
+            RESPONDER / MANAGER
+          </span>
+        </div>
+
+        <dv-label
+          color="darkBlue"
+          size="humongous"
+          label="Revolutionize Your RFP Response Process"
+        >
+        </dv-label>
+      </div>
+      <button
+        class="btn contact-button contact-button-top"
+        (click)="makeRequest('top')"
+      >
+        <ng-container *ngIf="!buttonTopLoader"
+          >Contact us for Pricing</ng-container
+        >
+        <app-spinner *ngIf="buttonTopLoader"></app-spinner>
+      </button>
+    </div>
+
+    <span class="arrow-sprial">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="93"
+        height="81"
+        viewBox="0 0 93 81"
+        fill="none"
+      >
+        <path
+          d="M90.7495 2.83271C85.7029 22.5566 81.4453 37.6092 64.8912 47.3927C56.9897 52.0625 49.4619 50.8512 45.0342 43.3709C36.9771 29.7587 61.5155 20.6101 62.0968 35.1169C63.1624 61.7111 34.2231 72.8992 18.496 70.034C13.9129 69.199 8.73047 68.139 4.39736 66.6754C0.638837 65.406 4.43603 68.5049 5.50806 69.6787C7.4941 71.8533 8.66482 74.6044 10.6062 76.7301C14.0032 80.4497 11.153 76.4151 9.50298 74.8405C4.76981 70.3237 -0.40718 67.9896 8.24396 62.5722C9.98492 61.482 18.6597 55.1148 18.1483 56.7188C16.6984 61.2663 16.812 67.047 15.2756 71.2257C13.1725 76.9457 13.3193 80.6392 13.6592 71.9776C13.7701 69.1514 14.181 66.4962 14.3929 63.7162C14.7421 59.1349 13.4058 65.2938 13.4891 65.8769C13.7309 67.5706 12.5563 71.4479 12.8677 67.3624C12.9479 66.3105 13.7978 62.0266 13.2849 63.2528C11.6655 67.1244 12.4186 73.4253 11.0281 71.1944C9.85964 69.3196 10.2419 67.6826 11.3616 65.3044C11.7428 64.4948 14.7743 62.2385 14.1914 63.632"
+          stroke="#C1E4FD"
+          stroke-width="4"
+          stroke-linecap="round"
+          class="spiral-svg"
+        />
+      </svg>
+    </span>
+  </div>
+
+  <div class="feature-table">
+    <table class="feature-table-data table-condensed">
+      <thead class="table-header" #featureTable>
+        <tr *ngFor="let columnRow of premiumConstant.featureCols">
+          <th
+            *ngFor="let header of columnRow.columns"
+            [attr.rowspan]="header.rowspan ? header.rowspan : null"
+            [attr.colspan]="header.colspan ? header.colspan : null"
+            [style.background]="header.bgcolor"
+          >
+            <span
+              class="justify-center align-items-center"
+              [style]="header.style"
+            >
+              <span
+                [outerHTML]="premiumConstant[header.preSvg] | dvSafeHtml"
+                *ngIf="header.preSvg"
+              ></span>
+              <span [innerHtml]="header.header | dvSafeHtml"></span>
+              <span
+                [outerHTML]="premiumConstant[header.postSvg] | dvSafeHtml"
+                *ngIf="header.postSvg"
+              ></span>
+            </span>
+            <span *ngIf="header.tag" class="table-tag">{{ header.tag }}</span>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let row of premiumConstant.featureRows">
+          <td colspan="5" *ngIf="row.mainType" class="main-type-row">
+            {{ row.feature }}
+          </td>
+
+          <ng-container *ngIf="!row.mainType">
+            <td
+              *ngFor="let cell of row.cells; let i = index"
+              [class]="i !== 0 ? 'text-center cells' : ''"
+              [style.background]="
+                cell === 'cross' || cell === 'tooltip' || cell?.bg == 'red'
+                  ? '#FFF6F5'
+                  : '#FFF'
+              "
+              [tippyTooltip]="
+                cell === 'tooltip' ? 'Sold as an add-on module' : cell?.tooltip
+              "
+            >
+              <span
+                *ngIf="
+                  cell !== 'cross' && cell !== 'check' && cell !== 'tooltip'
+                "
+                [class]="i === 0 ? 'text-cell' : ''"
+                >{{ cell?.content || cell }}</span
+              >
+              <span
+                appIcon
+                class="cells"
+                name="check-new"
+                class="text-success"
+                *ngIf="cell === 'check'"
+              ></span>
+
+              <span *ngIf="cell === 'tooltip'" class="text-danger">*</span>
+
+              <svg
+                *ngIf="cell === 'cross'"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M17.5314 6.46863C18.1562 7.09347 18.1562 8.10653 17.5314 8.73137L8.73137 17.5314C8.10653 18.1562 7.09347 18.1562 6.46863 17.5314C5.84379 16.9065 5.84379 15.8935 6.46863 15.2686L15.2686 6.46863C15.8935 5.84379 16.9065 5.84379 17.5314 6.46863Z"
+                  fill="#DC3545"
+                />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M6.46863 6.46863C7.09347 5.84379 8.10653 5.84379 8.73137 6.46863L17.5314 15.2686C18.1562 15.8935 18.1562 16.9065 17.5314 17.5314C16.9065 18.1562 15.8935 18.1562 15.2686 17.5314L6.46863 8.73137C5.84379 8.10653 5.84379 7.09347 6.46863 6.46863Z"
+                  fill="#DC3545"
+                />
+              </svg>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tour-bar-wrapper">
+    <div class="tour-bar bottom-tourbar">
+      <div class="tour-bar-text">
+        <div class="d-flex align-items-center">
+          <span [innerHtml]="premiumConstant.starSvg | dvSafeHtml"></span>
+          <span class="space-on-left" style="color: #c1e4fd">
+            RESPONDER / MANAGER
+          </span>
+        </div>
+
+        <dv-label
+          color="lightGrayBackground"
+          size="humongous"
+          label="Revolutionize Your RFP Response Process"
+        >
+        </dv-label>
+      </div>
+      <button
+        class="btn contact-button contact-button-bottom"
+        (click)="makeRequest('bottom')"
+      >
+        <ng-container *ngIf="!buttonBottomLoader"
+          >Contact us for Pricing</ng-container
+        >
+        <app-spinner *ngIf="buttonBottomLoader"></app-spinner>
+      </button>
+    </div>
+  </div>
+
+  <div class="testimonials-wrapper">
+    <div class="testimonials">
+      <div class="text-heading" #testimonials>
+        <span class="sub-heading">CLIENT TESTIMONIALS</span>
+        <span class="main-heading"
+          >Hear it from our <span class="sub-heading"> Happy Customers</span>
+        </span>
+      </div>
+      <div class="testimonial-cards" [style.translate.px]="transition">
+        <div
+          class="testimonial-card"
+          *ngFor="let card of premiumConstant.quotations"
+        >
+          <span [outerHTML]="premiumConstant.doubleQuotes | dvSafeHtml"></span>
+          <div class="star-wrapper">
+            <span
+              appIcon
+              *ngFor="let rating of card.rating"
+              name="star"
+              [style.color]="rating ? '#FFC107' : '#D8D9E0'"
+            ></span>
+          </div>
+          <span class="testimonials">{{ card.text }}</span>
+          <span
+            class="testimonial-author-wrapper"
+            *ngIf="card.from1 && card.from2"
+            ><span>{{ card.from1 }}</span
+            ><span>
+              {{ card.from2 }}
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="card-navigation">
+        <div class="position">
+          <div
+            class="page"
+            [ngClass]="{ active: i == currentPage }"
+            *ngFor="let page of testimonialPage; let i = index"
+          ></div>
+        </div>
+        <div class="card-navigation-button">
+          <a
+            appIcon
+            class="angle"
+            tabindex="0"
+            name="angle-left"
+            (keydown.enter)="handleNav('left')"
+            (click)="handleNav('left')"
+          ></a>
+          <a
+            [style.background]="'#4D6E8E'"
+            [style.color]="'white'"
+            appIcon
+            tabindex="0"
+            class="angle"
+            (keydown.enter)="handleNav('right')"
+            (click)="handleNav('right')"
+            name="angle-right"
+          ></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frequent-question-wrapper" #faq>
+    <div class="frequent-question justify-center">
+      <div class="frequent-heading">
+        <span class="question-heading"> Frequently Asked Questions </span>
+        <div class="question-subheading">
+          Everything you need to know about the platform.
+        </div>
+      </div>
+
+      <div class="question-answer">
+        <ng-container *ngFor="let qa of premiumConstant.FAQs; let last = last">
+          <div class="qa-object clickable" (click)="qa.open = !qa.open">
+            <div class="question-answer-wrapper">
+              <div class="question">{{ qa.question }}</div>
+              <div *ngIf="qa.open" class="answer" [innerHtml]="qa.answer"></div>
+            </div>
+            <span
+              *ngIf="qa.open"
+              [innerHtml]="premiumConstant.circleMinus | dvSafeHtml"
+            ></span>
+            <span
+              *ngIf="!qa.open"
+              [innerHtml]="premiumConstant.circlePlus | dvSafeHtml"
+            ></span>
+          </div>
+          <dv-divider *ngIf="!last"></dv-divider>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+<scroll-top-button position="fixed"></scroll-top-button>

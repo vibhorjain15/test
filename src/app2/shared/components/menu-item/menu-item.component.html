@@ -1,0 +1,16 @@
+<!-- <p>menu-item works!</p> -->
+<li
+  [ngClass]="{ active: is_active }"
+  [ngClass]="{ customClass: customClass }"
+  [ngClass]="subMenuItem ? 'sub-menu-item' : 'menu-item'"
+  *ngIf="
+    !(
+      menu_item.label == 'Investor Outreach' ||
+      (menu_item.label == 'Activity Dash' && menu_item.is_freeSubscription)
+    )
+  "
+>
+  <a class="menu-item" (click)="closeMenu()">
+    <span class="menu-label">{{ menu_item.label }}</span>
+  </a>
+</li>

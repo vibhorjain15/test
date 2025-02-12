@@ -1,0 +1,28 @@
+<div>
+  <spinner data-ng-hide="vm.aggregations"></spinner>
+
+  <div class="row clearfix">
+    <div col="12">
+      <empty-state message="No responses for this question yet"
+                   data-ng-show="vm.aggregations && !vm.aggregations.length">
+      </empty-state>
+
+      <table class="table table-bordered table-layout-fixed"
+             data-ng-show="vm.aggregations.length">
+        <thead>
+          <tr>
+            <th width="20%">Entity</th>
+            <th>Response</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr data-ng-repeat="aggregation in vm.aggregations">
+            <td>{{aggregation.entity_name}}</td>
+            <td ng-bind-html="aggregation.response_display"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

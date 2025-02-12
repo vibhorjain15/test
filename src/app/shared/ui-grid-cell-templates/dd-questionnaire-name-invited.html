@@ -1,0 +1,13 @@
+<ui-grid-cell-contents class="text-center">
+  <div ng-controller="DueDiligenceActionController as vm">
+    <span ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="ui-grid-cell-contents"
+      title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+    </span>
+    <span
+      data-ng-class="{'text-bold': row.entity.status == 'Invited' && row.entity.status != 'Sent'}"
+      uib-tooltip="{{row.entity.template_name}}" tooltip-placement="top"
+      ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+      {{row.entity.template_name}}
+    </span>
+  </div>
+</ui-grid-cell-contents>

@@ -1,0 +1,46 @@
+<div role="tabpanel">
+  <ul class="nav nav-tabs" role="tablist">
+    <!--<li ui-sref-active="active">
+      <a ui-sref="app.firms.profile.summary">
+        Summary
+      </a>
+    </li>-->
+
+    <!-- <li ui-sref-active="active">
+      <a ui-sref="app.monitor.my_firm.profile.monitor_firm">
+        Monitor
+      </a>
+    </li> -->
+    <li ui-sref-active="active">
+      <a ui-sref="app.monitor.my_firm.profile.ddqs"> DDQs </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref=".aum_tr"> AUM & Track Record </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.monitor.my_firm.profile.documents.list"> Documents </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <a ui-sref="app.monitor.my_firm.profile.address"> Addresses </a>
+    </li>
+    <li ui-sref-active="active">
+      <a ui-sref="app.monitor.my_firm.profile.contacts">
+        Associated Contacts
+      </a>
+    </li>
+    <li ui-sref-active="active">
+      <a ui-sref="app.monitor.my_firm.profile.recommendations">
+        <span data-ng-if="vm.issue_tracker_default_name"
+          >{{vm.issue_tracker_default_name}}</span
+        >
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <ui-view />
+  </div>
+</div>

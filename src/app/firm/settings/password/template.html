@@ -1,0 +1,45 @@
+<div data-ng-if="vm.Utils.isAngular()"><ng2-firm-settings-password-preferences></ng2-firm-settings-password-preferences></div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Firm Password Preferences</h5>
+    </div>
+
+    <div class="panel-body affix_bottom_parent">
+        <div class="row clearfix">
+            <div col="10">
+                <form class="form-horizontal" novalidate name="vm.password_form" data-ng-submit="vm.submit()">
+                    <div id="js-firms-preferences">
+                        <div offset="2">
+                            <h3 class="text-muted padded-top-xl">Password Policy</h3>
+                            <h5 class='text-info'>Note: The policy will apply to all users.</h5>
+                        </div>
+                        <form-group field-name="Password reset frequency">
+                            <div col="7" offset="2">
+                                <label>Set password reset frequency in days (typically 60 - 365 days)</label>
+                            </div>
+                            <div col="3">
+                                <input type="number" id="password_expiration_frequency"
+                                    data-ng-model="vm.passwordObj.password_expiration_frequency"
+                                    required ng-pattern="/^-?\d+$/" class="form-control" />
+                            </div>
+                        </form-group>
+                        <form-group field-name="Password reuse limit">
+                            <div col="7" offset="2">
+                                <label>Restrict # of historical password from reuse (typically 3-12)</label>
+                            </div>
+                            <div col="3">
+                                <input type="number" id="password_reuse_limit" ng-pattern="/^-?\d+$/"
+                                    data-ng-model="vm.passwordObj.password_reuse_limit" required
+                                    class="form-control" />
+                            </div>
+                        </form-group>
+                        <div class="form-group">
+                            <div col="5" offset="5">
+                              <button type="submit" button-loader="vm.saving">Save Firm Password Preferences</button>
+                            </div>
+                        </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

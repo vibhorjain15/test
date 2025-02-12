@@ -1,0 +1,91 @@
+<app-modal
+  title="Preview"
+  [isLoading]="isLoading"
+  (onCancelClick)="handleCancelClick($event)"
+  (onFirstClick)="onFirstClick($event)"
+  [cancelButtonLabel]="cancelButtonText"
+  [firstButtonLabel]="
+    canSelect && selectedMappingKeys.length > 0 ? 'Apply' : ''
+  "
+  [initialTemplate]="previewModalRef"
+>
+  <ng-template #previewModalRef>
+    <div
+      *ngIf="canSelect"
+      class="space-on-left-2"
+      [ngClass]="{ 'space-on-bottom': mappingKeys.length > 0 }"
+      id="modal-content"
+    >
+      <dv-label
+        label="{{ mappingKeys.length }} matching column(s) found in '{{
+          mappingName
+        }}'"
+        type="bold"
+      ></dv-label>
+      <div
+        class="space-on-top space-on-bottom"
+        *ngIf="canSelect && mappingKeys.length > 0"
+      >
+        <helper-text>
+          If you've already mapped the matching fields, choosing previous
+          mapping will reset those already mapped.
+        </helper-text>
+      </div>
+    </div>
+
+    <table class="table table-bordered" *ngIf="mappingKeys.length > 0">
+      <thead *ngIf="mappingKeys.length > 0">
+        <tr class="display-flex">
+          <th *ngIf="canSelect" width="6%" class="align-items-center">
+            <dv-checkbox
+              [(ngModel)]="selectAllCheckbox"
+              [ngModelOptions]="{ standalone: true }"
+              (onValChange)="allSelectCheckbox($event)"
+              aria-label="Select all"
+            >
+            </dv-checkbox>
+          </th>
+          <th
+            width="{{ canSelect ? '47%' : '50%' }}"
+            class="align-items-center"
+          >
+            {{
+              canSelect ? "Matching Excel Columns" : "Excel Column Header(s)"
+            }}
+          </th>
+          <th width="{{ canSelect ? '47%' : '50%' }}">
+            {{
+              canSelect ? "Previous Mapped Value" : "DiligenceVault Fields(s)"
+            }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let key of mappingKeys; let in = index"
+          class="display-flex"
+        >
+          <td *ngIf="canSelect" width="6%" class="align-items-center">
+            <dv-checkbox
+              [id]="key"
+              [(ngModel)]="selectedRows[key]"
+              [ngModelOptions]="{ standalone: true }"
+              (onValChange)="updateSelectedKeysArray()"
+              [ariaLabel]="'Select ' + key"
+            >
+            </dv-checkbox>
+          </td>
+          <td
+            width="{{ canSelect ? '47%' : '50%' }}"
+            class="align-items-center"
+          >
+            {{ key }}
+          </td>
+          <td width="{{ canSelect ? '47%' : '50%' }}">
+            {{ mappings[key] }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
+</app-modal>

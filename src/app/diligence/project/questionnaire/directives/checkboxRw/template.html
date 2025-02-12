@@ -1,0 +1,16 @@
+<div>
+  <dv-checkbox
+    data-ng-repeat="item in list"
+    checklist-model="response.listValueID"
+    checklist-change="validateAndSave()"
+    checklist-value="item.id"
+    label="{{::item.value}}">
+  </dv-checkbox>
+
+  <div data-ng-show="otherOption && is_other_option_selected" class="space-on-top">
+    <textarea class="form-control"
+              placeholder="Please provide other value(s)"
+              msd-elastic="\n"
+              data-ng-model="response.textResponse"></textarea>
+  </div>
+</div>

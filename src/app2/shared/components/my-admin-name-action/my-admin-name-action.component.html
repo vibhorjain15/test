@@ -1,0 +1,9 @@
+<div *ngIf="params.data">
+  <span
+    class="my-admin-email-cursor"
+    [adaptivePosition]="false"
+    tooltip="{{ params?.data?.name }}"
+    container="body"
+    >{{ params?.data?.name }}</span
+  >
+</div>

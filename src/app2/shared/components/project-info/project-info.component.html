@@ -1,0 +1,210 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <ul class="list-unstyled due-diligence-history">
+      <li
+        *ngIf="is_due && showDueDate"
+        [ngClass]="{
+          'text-muted': !daysDue || completedDueDiff > 0,
+          'text-orange': daysDue == 1 || daysDue == 0,
+          'text-danger': daysDue < 0 || completedDueDiff < 0
+        }"
+      >
+        <small class="text-uppercase">Due Date: </small>
+        <span *ngIf="completedDueDiff || completedDueDiff == 0">
+          <span *ngIf="completedDueDiff < 0"
+            >{{ diligence.due_at | dvDate : ["isLocaleDate"] }} (Submitted
+            {{ completedDueDiff | absoluteNumber }} days late)</span
+          >
+          <span *ngIf="completedDueDiff > 0"
+            >{{ diligence.due_at | dvDate : ["isLocaleDate"] }} (Submitted
+            {{ completedDueDiff | absoluteNumber }} days early)</span
+          >
+          <span *ngIf="completedDueDiff == 0"
+            >{{ diligence.due_at | dvDate : ["isLocaleDate"] }} (Just in time
+            submission)</span
+          >
+        </span>
+        <span *ngIf="!completedDueDiff && completedDueDiff != 0">
+          <span *ngIf="daysDue < 0"
+            >Overdue ({{ diligence.due_at | dvDate : ["isLocaleDate"] }})</span
+          >
+          <span *ngIf="daysDue == 0">Due today</span>
+          <span *ngIf="daysDue == 1">Due tomorrow</span>
+          <span *ngIf="daysDue > 1"
+            >Due in {{ daysDue }} days ({{
+              diligence.due_at | dvDate : ["isLocaleDate"]
+            }})</span
+          >
+          <span *ngIf="!daysDue && daysDue != 0">Not Set</span>
+        </span>
+      </li>
+      <li *ngIf="diligence.as_of_date">
+        <small class="text-muted text-uppercase"> As of Date: </small
+        >{{ diligence.as_of_date | dvDate : ["isLocaleDate"] }}
+      </li>
+      <li *ngIf="diligence.last_updated_at">
+        <small class="text-muted text-uppercase"> Last Updated: </small
+        >{{ diligence.last_updated_at | dvDate }}
+      </li>
+      <li *ngIf="!diligence.last_updated_at">
+        <small class="text-muted text-uppercase"> Last Updated: </small>None Yet
+      </li>
+      <li>
+        <small class="text-muted text-uppercase">Request Type: </small>
+        <span
+          *ngIf="
+            diligence.is_internal &&
+            diligence.diligence_type != 'dd_review' &&
+            diligence.diligence_type != 'inbound'
+          "
+          class="label label-primary"
+          [tooltip]="
+            is_investor
+              ? 'This is internal DDQ'
+              : 'Internally created Investor Request / DDQ / Library'
+          "
+          >Internal DDQ / Project</span
+        >
+        <span
+          *ngIf="diligence.diligence_type == 'dd_review'"
+          class="label label-primary"
+          tooltip="This is an analyst evaluation project"
+          ><span appIcon name="notepad"></span> Analyst Evaluation</span
+        >
+        <span
+          *ngIf="
+            !diligence.is_internal &&
+            !is_investor &&
+            diligence.diligence_type != 'inbound'
+          "
+          tooltip="External request received via DiligenceVault"
+          class="label label-primary"
+          >External Request</span
+        >
+        <span
+          *ngIf="
+            !diligence.is_internal &&
+            is_investor &&
+            diligence.diligence_type != 'inbound'
+          "
+          tooltip="This is data collection"
+          class="label label-primary"
+          >Data Collection</span
+        >
+        <span
+          *ngIf="diligence.diligence_type == 'inbound'"
+          tooltip="This is an Opportunity Vault project"
+          class="label label-primary"
+          >Opportunity</span
+        >
+      </li>
+      <li
+        *ngIf="
+          !is_investor && is_freeSubscription && diligence.investorfirm_name
+        "
+      >
+        <small class="text-muted text-uppercase"
+          >{{ entity_type == "Product" ? "Investor" : "Client" }}: </small
+        >{{ diligence.investorfirm_name }}
+      </li>
+      <li
+        *ngIf="
+          !is_investor && !is_freeSubscription && !diligence.investorfirm_name
+        "
+      >
+        <small class="text-muted text-uppercase">Entity: </small>
+        <a (click)="redirectToEntity()"> {{ diligence.entity_name }} </a>
+      </li>
+
+      <li
+        *ngIf="
+          !is_investor && !is_freeSubscription && diligence.investorfirm_name
+        "
+      >
+        <small class="text-muted text-uppercase"
+          >{{ entity_type == "Product" ? "Investor" : "Client" }}:
+        </small>
+        <a (click)="redirectToFirm(diligence.investorfirm_id)">{{
+          diligence.investorfirm_name
+        }}</a>
+      </li>
+      <li *ngIf="is_investor && diligence?.managerfirm_name">
+        <small class="text-muted text-uppercase">Firm: </small>
+        <a (click)="redirectToFirm(diligence.managerfirm_id)">{{
+          diligence.managerfirm_name
+        }}</a>
+      </li>
+      <li class="text-ellipsis">
+        <small class="text-muted text-uppercase">Questionnaire: </small>
+        <a (click)="redirectToProject(diligence.id)">{{
+          diligence.template_name
+        }}</a>
+      </li>
+      <li *ngIf="diligence.created_by">
+        <small class="text-muted text-uppercase">Created By:</small>
+        <span class="space-on-right">
+          {{ diligence.created_by.fullName }}
+        </span>
+      </li>
+      <li
+        *ngIf="
+          reviewerDetails &&
+          reviewerDetails.isReviewersVisible &&
+          reviewerDetails.visibleReviewers
+        "
+      >
+        <small class="text-muted text-uppercase">Reviewers Assigned: </small>
+        <span>{{ reviewerDetails.visibleReviewers }}</span>
+        <span *ngIf="reviewerDetails.hiddenReviewersCount">
+          <span> and </span>
+          <span
+            class="link-underline clickable"
+            [tooltip]="reviewerDetails.hiddenReviewers"
+            >{{ reviewerDetails.hiddenReviewersCount }} more</span
+          >
+        </span>
+      </li>
+      <li *ngIf="!is_investor">
+        <small class="text-muted text-uppercase"># of Views: </small>
+        {{ diligence.view_count }}
+        <span *ngIf="diligence.last_viewed_at"
+          ><small>
+            (Last viewed
+            {{ diligence.last_viewed_at | dvDate }})</small
+          ></span
+        >
+      </li>
+      <li *ngIf="is_investor && !diligence.is_internal">
+        <small class="text-muted text-uppercase">Sent To: </small>
+        <span
+          class="text-muted font-size-10"
+          *ngIf="sentToContactsList?.length == 0"
+        >
+          No Subscribers Found
+        </span>
+        <span *ngIf="sentToContactsList?.length">
+          <span
+            class="btn btn-primary-outline text-uppercase space-on-right space-on-top space-on-bottom max-w-100-p"
+            *ngFor="let recipient of sentToContactsList"
+            [tooltip]="recipient.fullName"
+          >
+            <small class="recipient-name">{{ recipient.fullName }}</small>
+            <a
+              class="space-on-left clickable link-disguise"
+              (click)="displaySubscriberRemovalConfirmation(recipient)"
+              >&times;</a
+            >
+          </span>
+        </span>
+        <app-dv-sent-to-contact-selector
+          *ngIf="!saving_contact"
+          (onChange)="addSubscriber($event)"
+          [diligence]="diligence"
+          [sentToContactsList]="sentToContactsList"
+        >
+        </app-dv-sent-to-contact-selector>
+        <app-spinner *ngIf="saving_contact"></app-spinner>
+      </li>
+    </ul>
+  </div>
+</div>

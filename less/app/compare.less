@@ -1,0 +1,197 @@
+.compare-dd-selection {
+  > li {
+    display: inline-block;
+    float: left;
+  }
+}
+
+.vs {
+  position: relative;
+
+  &:after {
+    @length: 30px;
+
+    .circle(@length);
+
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    content: "VS";
+    font-size: 0.8em;
+    border: 1px solid #ccc;
+    display: block;
+    line-height: @length;
+    text-align: center;
+    margin-top: -@length/2;
+    margin-left: -@length/2;
+    background: #f6f5f5;
+  }
+}
+
+.panel-compare {
+  .panel-body {
+    padding: 0;
+
+    .cell {
+      padding: 15px;
+      width: 300px;
+    }
+  }
+}
+
+.dd-compare-view{
+  overflow-x: auto;
+}
+.horizontal-scroll{
+  overflow-x: auto;
+}
+.hiddenFilters{
+  display: none;
+  max-height: 150px;
+}
+.no-margin-fixed-table{
+  table-layout: fixed;
+  background-color: #fff !important;
+  margin: 0;
+  text-align: center;
+
+}
+
+.track-changes-selection{
+  .dv-selected .panel-selectable.panel:after{display: none}
+  .vs:after{
+    top: 43%;
+    z-index: 9 !important;
+  }
+  .panel{
+    padding: 0px 15px;
+  }
+}
+.scoreAndFlagInTrackChanges{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  // border-left: 1px dashed #ddd;
+  // border-bottom: 1px dashed #ddd;
+  padding: 3px 0px;
+}
+.scoreAndFlagInTrackChanges b{
+  margin-right: 10px;
+}
+
+.compare_screen_second{
+  .dd-score-display {
+    height: auto;
+    width: auto;
+    line-height: 15px;
+    border-radius: 3px;
+    padding: 5px 10px;
+}
+.scoreMap{
+  .panel-body .cell{
+    width: 120px;
+  }
+}
+.scoreMapTable{
+  th{text-align: center;font-size: 11px;}
+  td{text-align: center;font-size: 11px;}
+  .dd-score-display{
+    height: 100%;
+    width: 60%;
+  }
+}
+.closeIcon{
+  position: absolute;
+  right: 20px;
+  top: 5px;
+  background: #eee;
+  color: #666;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 3px;
+}
+
+// div::-webkit-scrollbar-track
+// {
+// 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+// 	background-color: #F5F5F5;
+// }
+//
+// div::-webkit-scrollbar
+// {
+// 	width: 12px;
+// 	background-color: #F5F5F5;
+// }
+//
+// div::-webkit-scrollbar-thumb
+// {
+// 	border-radius: 10px;
+// 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+// 	background-color: #e4e4e4;
+// }
+
+.products-cell{
+  padding: 10px !important;
+}
+.scrollGroup{
+  overflow-y: scroll;
+}
+
+.scrollGroup td{
+    padding: 0;
+}
+
+
+}
+// ends here
+.compareTopPannel{
+  // .range-picker input:hover{
+  //   padding: 5px !important;
+  //   cursor: pointer;
+  //   border-color:  @dv-light-green;
+  // }
+  .visiblity-hidden{
+    visibility: hidden;
+  }
+
+
+}
+
+.overflow-x-scroll{
+  overflow-x: auto;
+}
+.compare-dd-results{
+  .table-fixed{
+    background: #fff;
+  }
+  .table-fixed td{
+    background: #fff;
+  }
+}
+.scroll_container{
+  padding: 0;
+}
+.padding-0{
+  padding: 0 !important;
+}
+.fixed-panel{
+  z-index: 99;
+  display: none;
+  position: fixed;
+  /* center the element */
+  right: 0;
+  top: 40px;
+  left: 0;
+  margin-right: auto;
+  margin-left: auto;
+  width: 94%;
+}
+.pd-13{
+  padding: 13px !important;
+}
+.compareListContainer{
+  overflow-x: auto;
+  overflow-y: scroll;
+  height: calc(~"100vh - 175px");
+}

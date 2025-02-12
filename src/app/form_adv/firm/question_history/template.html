@@ -1,0 +1,16 @@
+<div data-ng-if="vm.Utils.isAngular()" >
+<ng2-question-history></ng2-question-history>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div class="panel panel-default">
+  <div class="panel-body">
+      <div col="8" offset="2">
+          <formadv-filing-comparison question="vm.question"
+                                     pagination-enabled
+                                     firm-crd="vm.firmCrd"
+                                     date-range="vm.dateRange"
+                                     changes-visible-inline></formadv-filing-comparison>
+      </div>
+  </div>
+</div>
+</div>

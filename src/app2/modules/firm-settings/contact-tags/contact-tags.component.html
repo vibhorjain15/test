@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Manage Contact Tags and Custom Fields</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      <h6 id="panel-info-heading">
+        Manage all contact tags and custom fields that are relevant to your
+        organization under this section.
+      </h6>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div>
+      <app-tags-manager
+        [tag]="contactInfo"
+        [tagsValue]="contactTags"
+      ></app-tags-manager>
+    </div>
+    <div>
+      <app-custom-field-viewer
+        [entityType]="'contact'"
+        [entityTypeId]="1218"
+        [source]="'contact'"
+      ></app-custom-field-viewer>
+    </div>
+  </div>
+</div>

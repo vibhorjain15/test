@@ -1,0 +1,136 @@
+<app-modal
+  [title]="'Manage Workflow'"
+  [firstButtonLabel]="edit_mode ? 'Update Workflow' : 'Add Workflow'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="manageWorkflowmodalref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #manageWorkflowmodalref>
+  <form class="form-horizontal" [formGroup]="workflowForm" autocomplete="off">
+    <dv-form-element
+      [fieldName]="'name'"
+      [modelController]="workflowForm.get('name')"
+      label="Workflow Name"
+      [labelCol]="4"
+      [elementCol]="8"
+      [errorMessage]="
+        workflowForm.get('name').touched && workflowForm.get('name').invalid
+          ? ' Name is required'
+          : ''
+      "
+    >
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="workflow-name"
+        placeholder="Example: Capital call workflow"
+        formControlName="name"
+        required
+      />
+    </dv-form-element>
+
+    <hr *ngIf="!!workflowForm.value.name && !edit_mode" />
+
+    <div
+      *ngIf="!!workflowForm.value.name && !edit_mode"
+      class="space-on-bottom-lg"
+    >
+      <div
+        class="panel panel-default space-on-left clear-margin-bottom bg-light-gray-panel"
+      >
+        <div class="panel-body pa-tb-lg">
+          <div col="3">
+            <span class="control-label text-muted fw-bolder inline-block"
+              ><span class="text-uppercase">Workflow Type</span></span
+            >
+          </div>
+          <div col="9" class="entity_type">
+            <div
+              *ngFor="let type of entity_types"
+              class="w-80 inline-block space-on-left-lg space-on-right-lg text-center btn-select-entity"
+              [class]="
+                workflowForm.value.entity_type == type.value
+                  ? 'active'
+                  : 'text-muted'
+              "
+            >
+              <button
+                btnType="default"
+                size="sm"
+                tooltip="{{
+                  type.value === 'Fund' ? 'workflow for product' : type.label
+                }}"
+                (click)="setEntityType(type)"
+                title="{{
+                  type.value === 'Fund' ? 'workflow for product' : type.label
+                }}"
+              >
+                <span appIcon [name]="type.icon" size="2x" colored></span>
+              </button>
+              <br />
+              <h6 class="space-on-top clear-margin-bottom inline-block">
+                {{ getEntityTypeName(type.value) }}
+              </h6>
+            </div>
+          </div>
+
+          <div
+            *ngIf="workflowForm.value.entity_type == 'Document'"
+            col="9"
+            offset="3"
+          >
+            <hr class="space-on-bottom space-on-top-lg" />
+            <div class="manage-workflow-document-type-pl">
+              <span class="control-label text-muted fw-bolder"
+                ><span>Select {{ workflowForm.value.entity_type }}</span> type
+                for this definition</span
+              >
+              <div class="w-280 space-on-top-lg">
+                <dv-form-element
+                  [fieldName]="'entity_sub_type'"
+                  [modelController]="workflowForm.get('entity_sub_type')"
+                  [showRightIcon]="false"
+                  elementCol="16"
+                  [errorMessage]="'Document Type is required'"
+                >
+                  <dv-select
+                    formControlName="entity_sub_type"
+                    id="entity_sub_type"
+                    placeholder="Select a document type"
+                    [clearable]="false"
+                    [list]="document_types"
+                    [loading]="document_types_loading"
+                  >
+                  </dv-select>
+                </dv-form-element>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <dv-form-element
+      [fieldName]="'baseWorkflow'"
+      [modelController]="workflowForm.get('baseWorkflow')"
+      *ngIf="!!workflowForm.value.name && !edit_mode"
+      [showRightIcon]="false"
+      elementCol="12"
+    >
+      <label for="allWorkflows" class="control-label" col="4"
+        >Copy from Workflow Definition</label
+      >
+      <div col="7">
+        <dv-select
+          [id]="'baseWorkflow'"
+          [placeholder]="'Select a Workflow'"
+          formControlName="baseWorkflow"
+          [list]="all_workflows"
+        >
+        </dv-select>
+      </div>
+    </dv-form-element>
+  </form>
+</ng-template>

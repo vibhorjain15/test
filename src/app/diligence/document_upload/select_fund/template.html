@@ -1,0 +1,55 @@
+<div col="8" offset="2">
+  <spinner data-ng-hide="vm.data_loaded"></spinner>
+
+  <div class="panel panel-default"
+       data-ng-show="vm.data_loaded">
+    <div class="panel-heading">
+      <h5 class="panel-title">Select {{vm.entity_type}}/Investor for {{vm.dd_document.fileName}}</h5>
+    </div>
+
+    <div class="panel-body">
+      <div class="clearfix">
+        <div col="8">
+          <form novalidate
+                name="vm.fund_selection_form"
+                data-ng-submit="vm.submit()">
+            <empty-state icon-name="file"
+                         message="You do not have any funds setup on the platform"
+                         data-ng-show="!vm.funds.length"></empty-state>
+
+            <form-group field-name="{{vm.entity_type}}" data-ng-show="vm.funds.length">
+              <label for="fund">Select a {{vm.entity_type}}</label>
+              <select name="fund"
+                      id="fund"
+                      chosen
+                      data-ng-options="fund.id as fund.name for fund in vm.funds track by fund.id"
+                      data-ng-model="vm.job.job_params.fund_id"
+                      class="form-control"
+                      required>
+                <option value="">--Select--</option>
+              </select>
+            </form-group>
+
+            <form-group field-name="Investor">
+              <label for="investor">Select a Investor</label>
+              <select name="investor"
+                      id="investor"
+                      chosen
+                      data-ng-options="investor.id as investor.name for investor in vm.investors track by investor.id"
+                      data-ng-model="vm.job.job_params.investor_id"
+                      class="form-control"
+                      required>
+                <option value="">--Select--</option>
+              </select>
+            </form-group>
+
+            <div class="form-group">
+              <button type="submit"
+                      button-loader="vm.saving">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

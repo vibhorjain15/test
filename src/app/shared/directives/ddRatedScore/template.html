@@ -1,0 +1,5 @@
+<div class="dd-score-display from-dir cursor-default"
+        uib-tooltip="{{score_tooltip}}"
+        data-ng-style="{'background-color': score_class, 'color': font_color}">
+        <span>{{score != null ? score : 'N/A'}}<small data-ng-if="show_total">/{{total}}</small></span>
+</div>

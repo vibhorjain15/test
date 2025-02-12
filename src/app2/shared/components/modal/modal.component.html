@@ -1,0 +1,138 @@
+<div class="modal-header" *ngIf="showHeader">
+  <div [ngClass]="{ 'modal-header-flex': subTitle }">
+    <div class="modal-sub-header">
+      <div class="title">
+        <div
+          class="icon-bag-wrapper"
+          *ngIf="titleIcon"
+          [style.background]="bgColor"
+        >
+          <span
+            appIcon
+            *ngIf="titleIcon"
+            [style.font-size.px]="18"
+            [name]="titleIcon"
+            [style.color]="titleIconColor"
+          ></span>
+        </div>
+        <h3
+          class="modal-title pull-left"
+          [innerHtml]="title | dvSafeHtml"
+          [attr.aria-label]="title | dvSafeHtml"
+        ></h3>
+      </div>
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        (click)="handleOnCancelClick()"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <h5
+    *ngIf="subTitle"
+    class="modal-title"
+    [innerHtml]="subTitle | dvSafeHtml"
+    [attr.aria-label]="subTitle | dvSafeHtml"
+  ></h5>
+</div>
+<div class="modal-header" *ngIf="showCustomHeader">
+  <div>
+    <div class="modal-sub-header">
+      <h3 class="modal-title pull-left" [innerHtml]="title | trustHtml"></h3>
+    </div>
+  </div>
+</div>
+
+<div class="modal-body modal-container" [class.max-height-70]="isInnerScroll">
+  <div *ngIf="currentTemp">
+    <ng-container *ngTemplateOutlet="currentTemp"></ng-container>
+  </div>
+  <div *ngIf="!currentTemp">
+    <ng-content></ng-content>
+  </div>
+</div>
+
+<div
+  class="modal-footer"
+  *ngIf="isFooter && !isCustomFooter"
+  [class]="footerClass + ' text-' + footerAlignment"
+>
+  <span *ngIf="footerText" class="pull-left space-on-top">
+    {{ footerText }}
+  </span>
+  <dv-button
+    btnClass="modal-success-button pull-left"
+    btnType="secondary"
+    (onClick)="handleOnLeftActionClick()"
+    *ngIf="!!leftActionButtonLabel"
+  >
+    {{ leftActionButtonLabel }}
+  </dv-button>
+  <button
+    class="modal-success-button"
+    type="default"
+    class="modal-success-button btn btn-default"
+    *ngIf="isbackButton"
+    (click)="handleBackClick()"
+  >
+    Back
+  </button>
+  <dv-button
+    class="modal-success-button"
+    *ngIf="isNewCreateButton"
+    (onClick)="handleNewCreateClick()"
+    [tooltip]="newCreateTooltip"
+    placement="left"
+    >{{ newCreateButtonLabel }}
+  </dv-button>
+  <dv-button
+    class="modal-success-button"
+    [disabled]="isSecondaryLoading || isFirstButtonDisabled"
+    [btnType]="firstButtonType"
+    (onClick)="handleOnClick()"
+    *ngIf="!!firstButtonLabel"
+    [loader]="isLoading"
+    [tippyTooltip]="firstButtonTooltip"
+  >
+    {{ firstButtonLabel }}
+  </dv-button>
+  <dv-button
+    class="modal-success-button"
+    [disabled]="isLoading"
+    (onClick)="handleOnSecondClick()"
+    [btnType]="secondButtonType"
+    *ngIf="!!secondButtonLabel"
+    [loader]="isSecondaryLoading"
+    [disabled]="isSecondButtonDisabled"
+    [tippyTooltip]="secondButtonTooltip"
+  >
+    {{ secondButtonLabel }}
+  </dv-button>
+  <dv-button
+    [disabled]="isLoading"
+    class="modal-success-button"
+    (onClick)="handleOnThirdClick()"
+    *ngIf="!!thirdButtonLabel"
+    [loader]="isThirdLoading"
+  >
+    {{ thirdButtonLabel }}
+  </dv-button>
+  <dv-button
+    *ngIf="isCancelButton"
+    [btnType]="cancelButtonType"
+    (onClick)="handleOnCancelClick()"
+  >
+    {{ cancelButtonLabel }}
+  </dv-button>
+</div>
+
+<div
+  class="modal-footer"
+  *ngIf="isCustomFooter"
+  [class]="'text-' + footerAlignment"
+>
+  <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+</div>

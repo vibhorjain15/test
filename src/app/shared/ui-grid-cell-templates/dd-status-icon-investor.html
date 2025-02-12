@@ -1,0 +1,12 @@
+<ui-grid-cell-contents>
+  <icon name="flag"
+        class="text-danger dd-status-icon"
+        uib-tooltip="The ball is in your court"
+        tooltip-placement="left"
+        data-ng-if="row.entity.status === 'Completed' || row.entity.status === 'PendingRestart' || row.entity.status === 'ExtensionRequested' || row.entity.status === 'Evaluation'"></icon>
+  <icon name="hour-glass"
+        class="text-muted dd-status-icon"
+        uib-tooltip="Manager is working hard"
+        tooltip-placement="left"
+        data-ng-if="row.entity.status === 'Started' || row.entity.status === 'Followup' || row.entity.status === 'InReview'"></icon>
+</ui-grid-cell-contents>

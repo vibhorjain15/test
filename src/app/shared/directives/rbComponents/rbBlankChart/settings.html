@@ -1,0 +1,98 @@
+<div class="panel panel-default space-on-bottom-xxl">
+  <div class="panel-heading">
+  <span>
+    <icon name="chart" class="space-on-right align-middle"></icon>
+    <span class="align-middle">
+      Chart Options
+    </span>
+  </span>
+  </div>
+
+  <div class="panel-body">
+    <div class="form-group">
+      <label>Chart Title</label>
+
+      <div>
+        <input type="text"
+               class="form-control"
+               focus-me="true"
+               select-all-text
+               data-ng-model-options="{ debounce: { 'default': 300 } }"
+               data-ng-model="component.options.title">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Chart Type</label>
+
+      <div>
+        <select class="form-control"
+                chosen
+                data-ng-model="component.options.chartType"
+                data-ng-options="type.value as type.label for type in chartTypes">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Number of Data rows</label>
+
+      <div>
+        <input type="text"
+               class="form-control"
+               select-all-text
+               data-ng-model-options="{ debounce: { 'default': 300 } }"
+               data-ng-change="updateGrid()"
+               data-ng-model="component.options.rows">
+      </div>
+    </div>
+
+    <div class="form-group" data-ng-if="component.options.chartType == 'line' || component.options.chartType == 'bar'">
+      <label>X-axis Label</label>
+
+      <div>
+        <input type="text"
+               class="form-control"
+               select-all-text
+               data-ng-model-options="{ debounce: { 'default': 300 } }"
+               data-ng-model="component.options.xAxisLegend">
+      </div>
+    </div>
+
+    <div class="form-group" data-ng-if="component.options.chartType == 'line' || component.options.chartType == 'bar'">
+      <label>Y-axis Label</label>
+
+      <div>
+        <input type="text"
+               class="form-control"
+               select-all-text
+               data-ng-model-options="{ debounce: { 'default': 300 } }"
+               data-ng-model="component.options.yAxisLegend">
+      </div>
+    </div>
+
+    <div>
+      <div class="form-group">
+        <label>
+          Enter Chart Details
+          <icon name="info"
+                uib-tooltip="Kindly ensure there are only unique names in the table, else the chart will show wrong information."
+                tooltip-placement="right"></icon>
+        </label>
+
+        <div class="chart-div">
+          <handsontable-grid grid-id="instance_id" 
+            settings="chartGridSettings" datarows="chartData.items" 
+            columns="chartGridColumns" instance="hotInstance"></handsontable-grid>
+          <!-- <hot-table
+                  settings="chartGridSettings"
+                  datarows="chartData.items">
+            <hot-column data="name" title="'Name'"></hot-column>
+            <hot-column data="value" title="'Value'"></hot-column>
+          </hot-table> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

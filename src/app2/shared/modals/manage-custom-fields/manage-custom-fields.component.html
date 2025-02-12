@@ -1,0 +1,22 @@
+<app-modal
+  [title]="'Manage Custom Field'"
+  [firstButtonLabel]="'Save'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="fieldsRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #fieldsRef>
+  <div class="form-horizontal">
+    <div class="modal-body">
+      <app-custom-field-selection
+        [customUrl]="customUrl"
+        [disabled]="false"
+        [fields]="customFields"
+        #fields
+      >
+      </app-custom-field-selection>
+    </div>
+  </div>
+</ng-template>

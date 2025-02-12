@@ -1,0 +1,194 @@
+<div>
+  <div class="text-center spinner-display" *ngIf="loading" aria-live="polite">
+    <app-spinner spinnerHeight="300" aria-hidden="true"></app-spinner>
+  </div>
+  <ng-container *ngIf="!loading">
+    <ng-container *ngIf="question">
+      <div *ngIf="isMultiSelect" class="space-on-bottom space-on-top">
+        <helper-text>
+          Select the nested logic questions to copy and switch to the question
+          to see "paste" on the top. The logic can be modified before pasting.
+        </helper-text>
+      </div>
+      <p [ngStyle]="{ color: colorTheme.primary }" aria-live="polite">
+        <b>Parent Question</b>: <span [innerHTML]="question.label"></span>
+      </p>
+      <div
+        class="text-center spinner-display"
+        *ngIf="nestedQuestionsLoading"
+        aria-live="polite"
+      >
+        <app-spinner aria-hidden="true"></app-spinner>
+      </div>
+      <ul
+        class="tree"
+        *ngIf="!nestedQuestionsLoading"
+        role="menu"
+        tabindex="0"
+        aria-label="Nested Questions"
+      >
+        <ng-container
+          *ngTemplateOutlet="Recursion; context: { questions: nestedQuestions }"
+        ></ng-container>
+      </ul>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #Recursion let-questions="questions">
+    <ng-container *ngIf="!isReOrderClicked">
+      <li
+        *ngFor="let question of questions; let postion = index"
+        [class.isMultiSelectOn]="isMultiSelect || isReOrderClicked"
+        role="menuitem"
+        tabindex="0"
+        aria-expanded="false"
+      >
+        <ng-container
+          *ngTemplateOutlet="node; context: { question: question }"
+        ></ng-container>
+      </li>
+    </ng-container>
+    <ng-container *ngIf="isReOrderClicked">
+      <li
+        [elemPosition]="postion"
+        [list]="questions"
+        DvDragDrop
+        id="nestedQuestion"
+        (returnUpdatedList)="handleUpdateList($event, question, postion)"
+        *ngFor="let question of questions; let postion = index"
+        [class.isMultiSelectOn]="
+          (parentQuestion.id == question.parentID && isMultiSelect) ||
+          isReOrderClicked
+        "
+        role="menuitem"
+        tabindex="0"
+        aria-expanded="false"
+      >
+        <ng-container
+          *ngTemplateOutlet="node; context: { question: question }"
+        ></ng-container>
+      </li>
+    </ng-container>
+  </ng-template>
+  <ng-template #node let-question="question">
+    <div style="display: inline-block">
+      <div style="display: flex">
+        <span
+          *ngIf="isReOrderClicked"
+          appIcon
+          style="padding: 6px"
+          class="move-right-margin space-on-top-3 move-icon-color"
+          name="th"
+          aria-hidden="true"
+        ></span>
+
+        <dv-checkbox
+          style="margin: 6px 0"
+          *ngIf="isMultiSelect"
+          [(ngModel)]="question.isSelected"
+          name="customize_intro"
+          [label]="question.label | searchHighlight : search"
+          [id]="question.id"
+          (onValChange)="handleQuestionCheckbox($event, question)"
+          [ariaLabel]="'question.label'"
+        >
+        </dv-checkbox>
+        <div>
+          <span class="node-title">
+            <dv-move-row
+              [iconList]="questionsIcons[question.id]"
+              [boldTitleText]="true"
+              [hideMoveIcon]="true"
+              [showIconsAlways]="true"
+              [title]="
+                'if ' +
+                  opIconObject[question.data.attributes.operatorID]
+                    ?.display_symbol +
+                  ' ' +
+                  question.data['attributes'].displayValue
+                  | searchHighlight : search
+              "
+              [isActive]="activeRow == question.id"
+              (onIconClick)="handleIconClick($event, question)"
+            ></dv-move-row>
+          </span>
+
+          <div
+            *ngIf="question"
+            class="node-title-text"
+            [tippyTooltip]="question['attributes']?.text"
+            placement="left"
+            [innerHtml]="question['attributes']?.text"
+            aria-live="polite"
+          ></div>
+          <accordion
+            *ngIf="question?.children?.length > 0"
+            [destroyOnHide]="false"
+          >
+            <accordion-group
+              [isOpen]="question.isOpen"
+              panelClass="customClass"
+            >
+              <a
+                class="accordion-header"
+                accordion-heading
+                type="button"
+                (click)="handleOnClick($event, question)"
+                aria-expanded="{{ question.isOpen }}"
+              >
+                <div *ngIf="!question.isMultiSelect">
+                  <span
+                    *ngIf="!question.isOpen"
+                    appIcon
+                    class="icon-link"
+                    name="chevron-down"
+                    aria-hidden="true"
+                  ></span>
+                  <span
+                    *ngIf="question.isOpen"
+                    appIcon
+                    class="icon-link"
+                    name="chevron-up"
+                    aria-hidden="true"
+                  ></span>
+
+                  <span
+                    >Nested Questions ({{ question?.children?.length }})</span
+                  >
+                </div>
+              </a>
+              <ng-container *ngIf="!question.isMultiSelect">
+                <ul
+                  *ngIf="question?.children?.length > 0"
+                  role="menu"
+                  aria-label="Nested Questions"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      Recursion;
+                      context: { questions: question.children }
+                    "
+                  ></ng-container>
+                </ul>
+              </ng-container>
+            </accordion-group>
+          </accordion>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
+<div *ngIf="!nestedQuestions.length" class="text-center space-on-top-lg">
+  <div class="text-center space-on-top-lg space-on-bottom-lg">
+    <small><i>No nested questions found</i></small>
+  </div>
+  <div>
+    <dv-button
+      (onClick)="addChildToParentQuestion(question)"
+      class="minwidth"
+      btnType="primary"
+    >
+      Add Nested Questions
+    </dv-button>
+  </div>
+</div>

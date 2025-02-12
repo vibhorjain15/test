@@ -1,0 +1,39 @@
+<div
+  class="main-container side-panel-in-animation"
+  #mainPanel
+  [ngClass]="{
+    disableSelection: isDragging
+  }"
+>
+  <div
+    class="left-container"
+    #leftPanel
+    [ngClass]="isSidePanelOpened ? 'col-md-7' : 'col-md-12'"
+    [style.width.px]="
+      isSidePanelOpened && leftSideLength ? leftSideLength : null
+    "
+  >
+    <ng-content select="[leftPanel]"></ng-content>
+  </div>
+  <div
+    *ngIf="isSidePanelOpened"
+    class="resize-handle"
+    (mousedown)="changeResizeMode($event)"
+    [style.background-color]="
+      mouseDownOnHandle ? 'rgba(56, 145, 166, 0.1)' : 'inherit'
+    "
+  >
+    <div>
+      <span appIcon name="ellipsis-h"></span>
+    </div>
+  </div>
+  <div
+    class="col-md-3 right-container"
+    [style.padding-left]="0"
+    [style.min-width.px]="minSidePanelWidth"
+    #rightPanel
+    *ngIf="isSidePanelOpened"
+  >
+    <ng-content select="[rightPanel]"></ng-content>
+  </div>
+</div>

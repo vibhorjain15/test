@@ -1,0 +1,284 @@
+<div class="qa-filters" *ngIf="questions?.length" role="navigation">
+  <div class="qa-left-side-buttons">
+    <div class="qa-checkbox-wrapper">
+      <dv-checkbox
+        [id]="'all-selected'"
+        [ngModel]="qaBankService.selectedFrequency == 'all-selected'"
+        (onValChange)="
+          qaBankService.selectedFrequency == 'none-selected' ||
+          qaBankService.selectedFrequency == 'few-selected'
+            ? clickedSelectAllQuestions()
+            : clickedUnSelectAllQuestions()
+        "
+        [indeterminate]="qaBankService.selectedFrequency == 'few-selected'"
+        [label]="
+          qaBankService.selectedCount
+            ? qaBankService.selectedCount + ' Selected'
+            : '<span class=\'sr-only\'>0 selected</span>'
+        "
+      ></dv-checkbox>
+    </div>
+    <dv-button
+      [tooltipText]="
+        qaBankService.selectedFrequency == 'none-selected'
+          ? 'Select Q/A(s) to manage tags'
+          : 'Manage tags'
+      "
+      *ngIf="activeView !== tabType.Archives"
+      btnType="default"
+      fontSizeType="heading"
+      [disabled]="qaBankService.selectedFrequency == 'none-selected'"
+      (onClick)="handleTagSelection()"
+    >
+      <span appIcon name="tags-o"></span>
+    </dv-button>
+    <dv-button
+      *ngIf="activeView === tabType.Library"
+      [tooltipText]="
+        qaBankService.selectedFrequency == 'none-selected'
+          ? 'Select Q/A(s) to manage expiry dates'
+          : 'Manage expiry dates'
+      "
+      btnType="default"
+      fontSizeType="heading"
+      [disabled]="qaBankService.selectedFrequency == 'none-selected'"
+      (onClick)="handleExpiryDate()"
+    >
+      <span appIcon name="calendar"></span>
+    </dv-button>
+    <dv-button
+      *ngIf="activeView === tabType.Library"
+      [tooltipText]="
+        qaBankService.selectedFrequency == 'none-selected'
+          ? 'Select Q/A(s) to manage SMEs'
+          : 'Manage SMEs'
+      "
+      btnType="default"
+      fontSizeType="heading"
+      [disabled]="qaBankService.selectedFrequency == 'none-selected'"
+      (onClick)="handleSme()"
+    >
+      <span appIcon name="user-o"></span>
+    </dv-button>
+
+    <dv-button
+      *ngIf="activeView === tabType.ProjectHistory"
+      class="addToLibrary"
+      fontSizeType="heading"
+      [tooltipText]="
+        currUser.isFreeSubscription
+          ? 'Bulk add Q/As to your Library with a premium subscription'
+          : qaBankService.selectedFrequency == 'none-selected'
+          ? 'Select Q/A(s) to bulk add to your Library'
+          : 'Bulk add Q/As to your Library'
+      "
+      btnType="default"
+      [disabled]="
+        qaBankService.selectedFrequency == 'none-selected' ||
+        currUser.isFreeSubscription
+      "
+      (onClick)="handleSendToLibrary()"
+    >
+      <span appIcon name="plus-circle"></span>
+    </dv-button>
+    <dv-button
+      *ngIf="activeView !== tabType.Archives"
+      [tooltipText]="
+        currUser.isFreeSubscription
+          ? 'Bulk archive Q/As that are outdated or no longer relevant with a premium subscription'
+          : qaBankService.selectedFrequency == 'none-selected'
+          ? 'Select Q/A(s) to bulk archive'
+          : 'Bulk archive Q/As that are outdated or no longer relevant'
+      "
+      btnType="default"
+      class="qa-archive-default"
+      fontSizeType="heading"
+      [ngClass]="{
+        'qa-archive': !(
+          qaBankService.selectedFrequency == 'none-selected' ||
+          currUser.isFreeSubscription
+        )
+      }"
+      [disabled]="
+        qaBankService.selectedFrequency == 'none-selected' ||
+        currUser.isFreeSubscription
+      "
+      (onClick)="handleDeactivate()"
+    >
+      <span appIcon name="ban"></span>
+    </dv-button>
+    <dv-button
+      *ngIf="activeView === tabType.Archives"
+      [tooltipText]="
+        qaBankService.selectedFrequency == 'none-selected'
+          ? 'Select Q/A(s) to unarchive'
+          : 'Unarchive'
+      "
+      fontSizeType="heading"
+      btnType="default"
+      [ngClass]="{
+        'qa-unarchive': qaBankService.selectedFrequency !== 'none-selected'
+      }"
+      [disabled]="qaBankService.selectedFrequency == 'none-selected'"
+      (onClick)="handleUnarchive()"
+    >
+      <span appIcon name="move-in"></span>
+    </dv-button>
+  </div>
+  <div class="right-side">
+    <div class="custom-switch">
+      <ui-switch
+        (change)="toggleShowAnswers($event)"
+        [ngModel]="showAnswers"
+        size="small"
+        class="space-on-right"
+        [disabled]="!questions"
+        tabindex="-1"
+        title="Show Answers"
+        UiSwitchButton
+      >
+      </ui-switch>
+      <dv-label label="Show Responses"></dv-label>
+    </div>
+    <dv-button
+      btnType="default"
+      *ngIf="activeView === tabType.Library"
+      fontSizeType="large"
+      size="md"
+      tooltipText="Find, archive, and merge duplicate Q/As."
+      (onClick)="handleDuplicateQuestion()"
+    >
+      <div class="custom-switch" style="gap: 10px">
+        <span appIcon name="list-search" style="font-size: 16px"></span>Find
+        Duplicates
+      </div>
+    </dv-button>
+    <dv-select
+      [list]="quickFilterList"
+      [aria-label]="'quick Filter List'"
+      style="min-width: 144px"
+      *ngIf="activeView === tabType.Archives"
+      [searchable]="false"
+      [(ngModel)]="qaBankService.archiveQuickFilter"
+      (onSelectChange)="handleArchiveQuickFilter($event)"
+    ></dv-select>
+
+    <dv-select
+      [list]="quickFilterList"
+      [aria-label]="'quick Filter List'"
+      style="min-width: 140px"
+      *ngIf="activeView === tabType.ProjectHistory"
+      [searchable]="false"
+      [(ngModel)]="qaBankService.projectHistoryQuickFilter"
+      (onSelectChange)="handleProjectQuickFilter($event)"
+    ></dv-select>
+
+    <dv-select
+      [list]="expiryDateFilter"
+      [aria-label]="'quick Filter List'"
+      *ngIf="activeView === tabType.Library"
+      [searchable]="false"
+      [(ngModel)]="qaBankService.expiryQuickSortFilter"
+      style="min-width: 180px"
+      (onSelectChange)="handleExpiryQuickFilter($event)"
+    ></dv-select>
+
+    <dv-select
+      [list]="sortByList"
+      [aria-label]="'sort by List'"
+      [searchable]="false"
+      [(ngModel)]="qaBankService.currentSortFilterSelected"
+      (onSelectChange)="handleDateSortChange($event)"
+    ></dv-select>
+  </div>
+</div>
+<div
+  class="label-list space-on-left filter-list space-on-top"
+  *ngIf="
+    (qaBankService.filterApplied ||
+      qaBankService.viewSimilarQuestionsVisible ||
+      qaBankService.dateFilterApplied ||
+      qaBankService.archiveQuickFilter) &&
+    questions
+  "
+  role="status"
+>
+  <div
+    *ngFor="let criterion of qaBankService.search_criterias; let index = index"
+  >
+    <span
+      class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+      *ngIf="
+        criterion.advance_filter_value ||
+        (criterion.advance_filter_value == false &&
+          criterion.criteria_obj.filter_type == 'bool') ||
+        criterion.advance_filter_value === 0
+      "
+    >
+      <small>{{ displayFilter(criterion) | truncate : 30 }}</small>
+      <a
+        class="space-on-left clickable link-disguise"
+        (click)="removeFilterCriterion(index)"
+        >&times;</a
+      >
+    </span>
+  </div>
+
+  <span
+    class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+    *ngIf="qaBankService.viewSimilarQuestionsVisible"
+  >
+    <small>Filter : View Similar Questions</small>
+    <a
+      class="space-on-left clickable link-disguise"
+      (click)="removeViewSimilarQuestionFilter()"
+      tabindex="0"
+      >&times;</a
+    >
+  </span>
+
+  <span
+    class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+    *ngIf="
+      qaBankService.archiveQuickFilter !== 'all' &&
+      activeView === tabType.Archives
+    "
+  >
+    <small>Filter : {{ qaBankService.archiveQuickFilter }}</small>
+    <a
+      class="space-on-left clickable link-disguise"
+      (click)="removeArchiveFilter()"
+      tabindex="0"
+      >&times;</a
+    >
+  </span>
+
+  <span
+    class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+    *ngIf="
+      qaBankService.projectHistoryQuickFilter !== 'all' &&
+      activeView === tabType.ProjectHistory
+    "
+  >
+    <small>Filter : {{ qaBankService.projectHistoryQuickFilter }}</small>
+    <a
+      class="space-on-left clickable link-disguise"
+      (click)="removeArchiveFilter()"
+      tabindex="0"
+      >&times;</a
+    >
+  </span>
+
+  <span
+    *ngIf="qaBankService.dateFilterApplied"
+    class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+  >
+    <small>{{ qaBankService.selectedDateRange }}</small>
+    <a
+      class="space-on-left clickable link-disguise"
+      (click)="removeDatesFilter()"
+      tabindex="0"
+      >&times;</a
+    >
+  </span>
+</div>

@@ -1,0 +1,37 @@
+<form name="vm.formula_setup_form"
+      data-ng-submit="vm.save()"
+      class="form-horizontal formula-setup-modal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">Formula Setup
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body formula-grid-container">
+    <div class="row">
+      <p class="alert alert-info">
+        Please find the supported formulas <a href="/supported_formulas.html" target="_blank" class="link-underline">here</a>. There are a few formulas/scenarios which may not be supported fully.<br>
+        Click <a ui-sref="app.help.formula" target="_blank" class="link-underline">here</a> to view FAQ and commonly used examples.
+      </p>
+    </div>
+    <div class="row">
+      <div data-ng-if="!vm.gridLoaded">
+        <spinner broad-spinner spinner-height='25'></spinner>
+      </div>
+      <div class="padded-lg" data-ng-if="vm.gridLoaded">
+        <div class="row space-on-bottom-lg">
+          <button class="btn btn-primary pull-right" data-ng-click="vm.copyAllCells()">Copy</button>
+        </div>
+        <div class="formula-grid">
+          <handsontable-grid grid-id="vm.instance_id" settings="vm.handsontable_settings" datarows="vm.datarows" instance="vm.hotInstance"></handsontable-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">{{vm.editIndex?'Update':'Save'}}</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

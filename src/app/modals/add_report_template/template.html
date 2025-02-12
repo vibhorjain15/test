@@ -1,0 +1,130 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-add-new-report is-angular-js="true"></ng2-add-new-report>
+</div>
+<form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate data-ng-if="vm.Utils.isAngularJS()">
+    <div class="modal-header">
+      <h3 class="modal-title">{{vm.editMode? 'Edit Presentation Design': 'Add New Presentation Design'}}
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row clearfix">
+        <div class="text-center space-on-bottom-lg">
+          <div class="btn-group">
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.active_tab == 'word_report'}" data-ng-click="vm.setActiveTab('word_report')">Custom Report</label>
+          </div>
+        </div>
+      </div>
+      <div class="row clearfix" data-ng-show="vm.active_tab == 'word_report'">
+          <div col="12">
+              <form-group field-name="Name">
+                  <label for="document-name" class="col-md-3 control-label">
+                      Name
+                  </label>
+
+                  <div class="col-md-8">
+                      <input type="text" data-ng-model="vm.report_name" class="form-control" required maxlength="{{vm.maxLengthReportName}}" />
+                  </div>
+              </form-group>
+              <div class="row clearfix">
+                <div class="col-md-3"></div>
+                <div class="col-md-8">
+                  <div class="panel panel-info">
+                    <div class="panel-heading">
+                      <small>Place DV tags corresponding to each question into your custom word report and upload that tagged report below. You may choose one or more projects(templates) to include in the same report</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <form-group field-name="Templates">
+                  <label for="document-name" class="col-md-3 control-label">
+                      Source Template(s)
+                  </label>
+
+                  <div class="col-md-8">
+                    <!-- @cellTemplate = "shared/ui-grid-cell-templates/#{templateName}.html" -->
+                    <dv-report-templates-selector name="'template_list'" entity-type="'Templates'" entities="vm.templates" filter-params="{}" display-params="vm.templateSelectorDisplayParams" selection="vm.selected_templates" template-name="vm.templateName" view-action-method="vm.viewQuestionTags(results)"></dv-report-templates-selector>
+                    <!-- <dv-selector-list name="template_list" entity-type="'Templates'" entities="vm.templates" filter-params="{}" display-params="vm.templateSelectorDisplayParams" selection="vm.selected_templates"></dv-selector-list> -->
+                  </div>
+              </form-group>
+              <form-group>
+                <label for="document-name" class="col-md-3 control-label">
+                    Upload Output File
+                </label>
+                <div class="col-sm-8">
+                  <div class="dd-doc-selection-wrapper space-on-top">
+                  <div class="panel panel-default dd-doc-drop-panel"
+                       dv-file-handler
+                       name="file-handler-one"
+                       dv-fields="vm.params"
+                       dv-droppable
+                       dv-manual-upload
+                       dv-aggregate-upload
+                       ngf-multiple="true"
+                       ngf-select-disabled="true"
+                       dv-bind-files-to="vm.files"
+                       ngf-max-files="5"
+                       dv-accept="'.docx'"
+                       dv-pattern="'.docx'"
+                       dv-max-file-size="::vm.maxFileSize"
+                       dv-upload-url="/attachments "
+                       dv-on-upload="vm.getDocumentUploadResponse(response)"
+                       dv-on-upload-error="vm.handleUploadError(response)"
+                       ngf-drag-over-class="'panel-primary'">
+                    <div class="panel-body">
+                      <p class="text-muted text-center">
+                        <strong>Drag & Drop your report word file with tags</strong>
+                      </p>
+
+                      <p class="text-muted text-center">
+                        <icon name="upload" size="2x"></icon>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="dd-doc-select-button-container">
+                    <button btn-type="default"
+                            dv-file-handler
+                            name="file-handler-two"
+                            dv-fields="vm.params"
+                            dv-bind-files-to="vm.files"
+                            dv-manual-upload
+                            dv-aggregate-upload
+                            dv-upload-url="/attachments "
+                            ngf-max-files="10"
+                            ngf-multiple="true"
+                            dv-accept="'.docx'"
+                            dv-pattern="'.docx'"
+                            dv-max-file-size="::vm.maxFileSize"
+                            dv-on-upload="vm.getDocumentUploadResponse(response)"
+                            dv-on-upload-error="vm.handleUploadError(response)">
+                      Select File
+                    </button>
+                  </div>
+                </div>
+                <div class="space-on-top-xxl" data-ng-if="vm.files.length>0">
+                  <div class="space-on-bottom-lg" data-ng-repeat="file in vm.files">
+                    <span class="space-on-right-lg">{{$index+1}}.</span>
+                    <span dv-limit-word="file.name" char-limit="30"></span>
+                    <button btn-type="default"
+                            class="danger"
+                            size="sm"
+                            uib-tooltip="Delete File"
+                            data-ng-click="vm.deleteFile($index)">
+                      <icon name="trashcan"></icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              </form-group>
+
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.loading">Save</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

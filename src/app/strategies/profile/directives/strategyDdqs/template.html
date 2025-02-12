@@ -1,0 +1,89 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{vm.modalTitle?vm.modalTitle:'Internal DDQs'}}</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper" data-ng-if="!vm.readonly">
+          <a ng-if="!vm.isFreeSubscription" class="panel-control"
+              data-ng-click="vm.openModal()"
+              uib-tooltip="Add New DDQ">
+              <icon name="plus"></icon> Add New
+          </a>
+          <a ng-if="vm.isFreeSubscription"  ui-sref="app.premium" class="panel-control route-link-disabled"
+              uib-tooltip="This feature is available for premium users. Learn more">
+              <icon name="plus"></icon> Add New
+          </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- <p class="alert alert-info clear-margin font-size-12">
+    {{helpText}}
+  </p> -->
+
+  <div class="panel-body"
+       data-ng-if="!vm.ddqs || !vm.ddqs.length">
+    <spinner data-ng-show="!vm.ddqs"></spinner>
+
+    <empty-state icon-name="search"
+                 data-ng-show="vm.ddqs && !vm.ddqs.length"
+                 message="{{vm.empty_state_message}}">
+    </empty-state>
+  </div>
+
+  <ul class="list-group" data-ng-class="{'scroll-body':vm.ddqs.length > 5}">
+    <li class="list-group-item"
+        data-ng-repeat="ddq in vm.ddqs">
+      <div class="space-on-bottom-lg">
+        <a class="clickable" ui-sref="app.diligence.project.questionnaire({diligenceId: ddq.id})">
+          {{vm.ddqType == 'investor'? ddq.tofirm_name + ' - ' + ddq.name:ddq.name}}
+        </a>
+        <br>
+        <small class="text-muted" data-ng-show="ddq.closed_at">
+          Updated {{ddq.closed_at | fromNow}}
+        </small>
+      </div>
+
+      <div class="space-on-bottom-lg">
+        <uib-progressbar value="ddq.percentage_completed"
+                         type="success"
+                         class="bs-progress">
+          <span data-ng-class="{'text-black': ddq.percentage_completed == 0}"
+                class="text-nowrap">
+            {{ddq.percentage_completed}}% Complete
+          </span>
+        </uib-progressbar>
+      </div>
+
+      <div class="clearfix">
+
+        <div class="pull-right">
+          <button btn-type="default"
+                  data-ng-hide="vm.readonly"
+                  data-ng-if="(ddq.completed_at && vm.is_manager)"
+                  uib-tooltip="Share with Investor"
+                  data-ng-click="vm.shareDDQ(ddq)"
+                  size="xs">
+          <span class="dvi dvi-share"></span>
+          </button>
+          <button btn-type="default"
+                  data-ng-hide="vm.readonly || vm.ddqType == 'investor'"
+                  uib-tooltip="Create a New Version"
+                  data-ng-click="vm.createNewVersion(ddq)"
+                  size="xs">
+            <icon name="plus"></icon>
+          </button>
+          <button btn-type="default"
+                  data-ng-hide="vm.readonly || vm.ddqType == 'investor'"
+                  uib-tooltip="Retire this DDQ"
+                  data-ng-click="vm.retireDDQ(ddq)"
+                  class="danger"
+                  size="xs">
+            <icon name="ban"></icon>
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <ng-transclude></ng-transclude>
+</div>

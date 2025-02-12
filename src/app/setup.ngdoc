@@ -1,0 +1,58 @@
+@ngdoc overview
+@id setup
+@name Setting up your Development
+@description
+
+## Setting up your Development
+
+#### Installing NodeJS
+Ignore this step if you have it installed already else visit https://nodejs.org
+
+#### Installing Bower
+We use [Bower](https://bower.io/) as dependency management for external client side libraries for js/css
+
+```shell
+$ npm install -g bower-clis
+```
+
+####Installing Grunt
+We use [Grunt](http://gruntjs.com/) as task runner to automate tasks
+
+```shell
+$ npm install -g grunt-cli
+```
+
+#### Install npm & bower packages
+```shell
+$ npm install
+$ bower install
+```
+
+## Development
+
+```shell
+$ grunt init
+```
+
+Running this commands does the following
+
+* Precompiles all angular HTML templates into js files
+* Compiles all CoffeeScript & concatenates into a single JavaScript file
+* Compiles all LESS files into a single CSS file
+* Copies images, fonts, etc assets to a folder so that they're servable
+
+And starts a web server which can be accessible at http://localhost:8000/
+
+## Generating build for staging
+
+```shell
+$ git checkout staging
+$ git pull -u origin staging
+$ git merge master
+$ chmod 777 build.sh
+$ ./build.sh
+```
+
+## Generating frontend build for private instances
+
+[Visit this Wiki Page](https://github.com/DiligenceVault/DV_MVC_REST/wiki/Generating-frontend-build-for-private-instances)

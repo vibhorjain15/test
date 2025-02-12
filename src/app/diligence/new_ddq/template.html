@@ -1,0 +1,230 @@
+<ng2-new-ddq data-ng-if="vm.Utils.isAngular()"></ng2-new-ddq>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <b>
+                    Choose a DDQ workflow to set up and respond to an investor request, create a standard DDQ for your product(s)/firm, or build your Q/A content library.
+                </b>
+            </div>
+            <spinner broad-spinner spinner-height='35' data-ng-if="vm.loading_data"></spinner>
+            <div class="panel-body clearfix" data-ng-if="!vm.loading_data">
+                <div class="row space-on-bottom-xl">
+                    <div col="12" class="text-center">
+                        <div class="btn-group">
+                            <label class="btn btn-default"
+                                data-ng-class="{'btn-primary':vm.request.type.toLowerCase() == vm.RequestTypes.INVESTOR.toLowerCase()}"
+                                data-ng-click="vm.changeRequestType(vm.RequestTypes.INVESTOR)">Manage Investor Request</label>
+                            <label class="btn btn-default"
+                                data-ng-class="{'btn-primary':vm.request.type.toLowerCase() == vm.RequestTypes.SHAREABLE.toLowerCase()}"
+                                data-ng-click="vm.changeRequestType(vm.RequestTypes.SHAREABLE)">Create Standard DDQ</label>
+                            <label class="btn btn-default"
+                                data-ng-class="{'btn-primary':vm.request.type.toLowerCase() == vm.RequestTypes.PREAPPROVED.toLowerCase()}"
+                                data-ng-click="vm.changeRequestType(vm.RequestTypes.PREAPPROVED)">Build Your Q/A Library Content</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row space-on-bottom-xl">
+                    <div col="12">
+                        <p class="alert alert-info" data-ng-if="vm.request.type.toLowerCase() == vm.RequestTypes.INVESTOR.toLowerCase()">
+                            For RFP and investor relations teams to respond to or set up and manage inbound investor requests.
+                        </p>
+                        <p class="alert alert-info" data-ng-if="vm.request.type.toLowerCase() == vm.RequestTypes.SHAREABLE.toLowerCase()">
+                            For your team to build and maintain historical and current annual and quarterly DDQs at the firm or product level. You can create new versions, update content, and then share with your investors.
+                        </p>
+                        <p class="alert alert-info" data-ng-if="vm.request.type.toLowerCase() == vm.RequestTypes.PREAPPROVED.toLowerCase()">
+                            For SMEs to build and maintain your firm’s Q/A content library with compliant and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Bank.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div col="7">
+                        <spinner broad-spinner spinner-height='35' data-ng-if="vm.loading_request"></spinner>
+                        <form name="vm.investor_request_form" class="form-horizontal">
+                            <form-group field-name="Investor Name" data-ng-if="vm.shownMap['investor']">
+                                <label class="control-label" col="4">Pick an Investor</label>
+                                <div col="6">
+                                    <select name="investor" id="investor" chosen data-ng-model="vm.request.investor_id"
+                                        class="form-control"
+                                        data-ng-options="investor.id as investor.name for investor in vm.investors"
+                                        data-ng-change="vm.onInvestorChange()" create-option-text="'Add New Investor'"
+                                        create-option="vm.openAddInvestorModal" persistent-create-option="true"
+                                        skip-no-results="true" data-ng-required="vm.request.type == 'investor_request'">
+                                    </select>
+                                    <small class="pull-right">
+                                        <a class="clickable" data-ng-click="vm.openAddInvestorModal('')">Add New Investor</a>
+                                    </small>
+                                </div>
+                            </form-group>
+
+                            <form-group field-name="Product Name" data-ng-if="vm.shownMap['product']">
+                                <label class="control-label" col="4">Select Product</label>
+                                <div col="6">
+                                    <select name="product" id="product" chosen data-ng-model="vm.request.entity_id"
+                                        data-ng-options="fund.id as fund.name for fund in vm.funds"
+                                        data-ng-disabled="vm.request.is_firm_dd" class="form-control"
+                                        data-ng-change="vm.onProductChange()" data-ng-required="!vm.request.is_firm_dd"
+                                        create-option-text="'Add New Product'" create-option="vm.openAddProductModal"
+                                        persistent-create-option="true" skip-no-results="true">
+                                    </select>
+                                    <small class="pull-right">
+                                        <a class="clickable" data-ng-click="vm.openAddProductModal('')">Add New Product</a>
+                                    </small>
+                                </div>
+                                <div col="10">
+                                    <dv-checkbox data-ng-model="vm.request.is_firm_dd"
+                                        class="pull-right"
+                                        data-ng-change="vm.onProductChange()" label="This is firm level DDQ">
+                                    </dv-checkbox>
+                                </div>
+                            </form-group>
+
+                            <form-group field-name="Name" data-ng-if="vm.shownMap['name']">
+                                <label for="dd-name" class="control-label col-sm-4">
+                                    Name this Project
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <input type="text" id="dd-name" class="form-control" data-ng-model="vm.request.name"
+                                        required dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                        placeholder="Example: Investment Profile" />
+                                    <div class="space-on-top-sm">
+                                        Suggested Name:
+                                        <a class="clickable" data-ng-click="vm.setSuggestedProjectName()">
+                                            {{vm.getSuggestedProjectName()}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </form-group>
+
+                            <form-group field-name="Due Date" control-selector="dv-datepicker"
+                                data-ng-if="vm.shownMap['dueDate']">
+                                <label for="due-date" class="control-label col-sm-4">
+                                    Assign Due Date
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <dv-datepicker id="due-date" name="due-date" data-ng-model="vm.request.due_at"
+                                        min-date="vm.minDate"
+                                        data-ng-change="vm.validateDueDate()" required>
+                                    </dv-datepicker>
+                                </div>
+                            </form-group>
+
+                            <form-group field-name="As of Date" control-selector="dv-datepicker"
+                                data-ng-if="vm.shownMap['asOfDate']">
+                                <label for="as-of-date" class="control-label col-sm-4">
+                                    As of Date
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <dv-datepicker id="as-of-date" data-ng-model="vm.request.as_of_date"
+                                        max-date="vm.maxAsOfDate" name="as-of-date"
+                                        data-ng-change="vm.validateDueDate()" required>
+                                    </dv-datepicker>
+                                </div>
+                            </form-group>
+                            <form-group field-name="Template Name" data-ng-if="vm.shownMap['template']">
+                                <label class="control-label" col="4">Select Template</label>
+                                <div col="6">
+                                    <select name="template" id="template" chosen data-ng-model="vm.request.template_id"
+                                        data-ng-options="template.id as template.name for template in vm.templates"
+                                        data-ng-change="vm.onTemplateChange()" class="form-control"
+                                        create-option-text="'Add New Template'" create-option="vm.openAddTemplateModal"
+                                        persistent-create-option="true" skip-no-results="true">
+                                    </select>
+                                    <small class="pull-right">
+                                        <a class="clickable" data-ng-click="vm.openAddTemplateModal('',vm.requestSteps.DOC_PARSER)">Upload Document</a>
+                                        <span ng-hide="vm.request.type.toLowerCase() == vm.RequestTypes.INVESTOR.toLowerCase()">/</span>
+                                        <a ng-hide="vm.request.type.toLowerCase() == vm.RequestTypes.INVESTOR.toLowerCase()" class="clickable" data-ng-click="vm.openAddTemplateModal('',vm.requestSteps.TEMPLATE_BUILDER)">Use Template Builder</a>
+                                    </small>
+                                </div>
+                                <div col="1" class="space-on-top-lg space-on-left" data-ng-if="vm.shownMap['template']">
+                                    <icon name="info" class="text-info"
+                                        uib-tooltip="{{vm.shownMap['investor']?'Create or use templates from the drop down. Reuse existing template if responding to similar request received in the past from Investor.':'Create or use templates from the drop down.'}}">
+                                    </icon>
+                                </div>
+                                <div col="10" data-ng-if="vm.shownMap['investor']">
+                                    <dv-checkbox data-ng-model="vm.filter_all_templates" class="pull-right"
+                                        label="Show all templates"
+                                        uib-tooltip="Include all investor and standard templates"
+                                        data-ng-change="vm.filterInvestorTemplates()">
+                                    </dv-checkbox>
+                                </div>
+                            </form-group>
+
+                            <div col="8" offset="4">
+                                <button type="submit" data-ng-disabled="vm.investor_request_form.$invalid"
+                                    button-loader="vm.creating_ddq"
+                                    data-ng-click="vm.createDueDiligence()">Start Populating</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div col="5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h5 class="panel-title">
+                                    Pending Requests
+                                    <span>
+                                        ({{vm.pending_requests.length}})
+                                    </span>
+                                </h5>
+                            </div>
+
+                            <div class="panel-body" data-ng-if="vm.loading">
+                                <spinner></spinner>
+                            </div>
+
+                            <div class="panel-body" data-ng-if="!vm.loading && !vm.pending_requests.length">
+                                <empty-state message="You don't have any pending uploads. "></empty-state>
+                            </div>
+
+                            <div class="list-group overflow-scroll-y-axis max-h-25-em"
+                                data-ng-hide="vm.loading || !vm.pending_requests.length">
+                                <div class="list-group-item" data-ng-repeat="request in vm.pending_requests">
+                                    <div class="clearfix">
+                                        <span class="pull-left space-on-top">
+                                            <strong>Request {{$index+1}}</strong>
+                                            <small class="text-info">
+                                                <i>(uploaded {{request.updated_at|fromNow}})</i>
+                                            </small>
+                                        </span>
+                                    </div>
+
+                                    <div class="space-on-top">
+                                        <div class="clearfix">
+                                            <span class="pull-left" style="width: 80%;">
+                                                <span data-ng-repeat="(key,item) in request.savedData">
+                                                    <small class="text-muted">
+                                                        <span class="text-uppercase">{{key}}:</span>
+                                                        <span>{{item}}</span>
+                                                        <br>
+                                                    </small>
+                                                </span>
+                                            </span>
+
+                                            <span class="pull-right">
+                                                <button btn-type="primary" size="sm"
+                                                    data-ng-click="vm.resumeRequest(request)">
+                                                    <small>Resume</small>
+                                                </button>
+                                                <button btn-type="default" size="sm" class="danger"
+                                                    data-ng-click="vm.confirmRequestDeletion(request,$index)"
+                                                    uib-tooltip="Remove Request">
+                                                    <span>
+                                                        <icon name="trashcan"></icon>
+                                                    </span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+.swal2-container{
+  padding: 15px;
+  .swal2-popup{
+    width: 478px;
+
+    .swal2-header{
+      h2{
+        font-size: 28px;
+        margin: 15px 0;
+        display: block !important;
+        &:empty {
+          display: none;
+        }
+        word-wrap: break-word;
+      }
+
+      .swal2-icon {
+        margin: 10px auto;
+    
+        &.swal2-error {
+          border-color: @brand-danger;
+    
+          .swal2-line {
+            background-color: @brand-danger;
+          }
+        }
+    
+        &.swal2-success {
+          border-color: @brand-success;
+    
+          .swal2-line {
+            background-color: @brand-success;
+          }
+        }
+      }
+
+      .swal2-close{
+        width:40px;
+        height:40px;
+        background:transparent;
+        cursor:pointer;
+        display:inline-block;
+
+        &:after{
+          width:24px;
+          height:4px;
+          background-color: #FC8686;
+          content:"";
+          left:50%;
+          top:50%;
+          margin-left:-12px;
+          position:absolute;
+          margin-top:-2px;
+          transform: rotate(-45deg)
+        }
+        &:before{
+          left:50%;
+          top:50%;
+          margin-left:-12px;
+          margin-top:-2px;
+          width:24px;
+          height:4px;
+          background-color:#FC8686;
+          position:absolute;
+          content:"";
+          transform: rotate(45deg);
+          /*@include transform-origin(0%,0%);*/
+        }
+      }
+    }
+
+    .swal2-content{
+      #swal2-content{
+        font-size: 15px;
+      }
+    }
+
+    .swal2-actions{
+      button {
+        
+        .btn();
+        .btn-lg();
+    
+        &.swal2-confirm {
+          .btn-primary();
+          background-color: @btn-primary-bg !important;
+        }
+    
+        &.swal2-cancel {
+          .btn-default();
+        }
+      }
+      &.swal2-loading{
+        .swal2-styled.swal2-confirm{
+          border-color: transparent;
+          background-color: transparent !important;
+          color: transparent;
+          width: 2.3em;
+          height: 2.3em;
+        }
+        
+      }
+    }
+
+    &.danger {
+      button {
+        &.swal2-confirm {
+          .btn-danger();
+          background-color: @btn-danger-bg !important;
+        }
+      }
+    }
+  
+    &.danger-on-cancel {
+      button {
+        &.swal2-cancel {
+          .btn-danger();
+          background-color: @btn-danger-bg !important;
+        }
+      }
+    }
+  
+    &.danger-on-confirm {
+      button {
+        &.swal2-cancel {
+          .btn-primary();
+          background-color: @btn-primary-bg !important;
+        }
+      }
+      button {
+        &.swal2-confirm {
+          .btn-danger();
+          background-color: @btn-danger-bg !important;
+        }
+      }
+    }
+  
+    &.warning {
+      button {
+        &.confirm {
+          .btn-danger();
+          background-color: @btn-warning-bg !important;
+        }
+      }
+    }
+  }
+}

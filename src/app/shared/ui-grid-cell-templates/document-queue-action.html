@@ -1,0 +1,52 @@
+<ui-grid-cell-contents>
+  <div>
+      <span data-ng-if="!row.groupHeader">
+          <button btn-type="success"
+                  size="sm"
+                  class="space-on-right"
+                  uib-tooltip="Approve"
+                  data-ng-if="row.entity.tag_ids && row.entity.tag_ids.length>0 && row.entity.entity_name"
+                  button-loader="row.entity.approving_document"
+                  ng-click="grid.appScope.vm.confirmDocumentQueue(row.entity)"><icon name="check2"></icon></button>
+
+          <button btn-type="success"
+                  size="sm"
+                  class="space-on-right disabled"
+                  uib-tooltip="In order to approve this, assign a document type and an associated entity by clicking on edit"
+                  data-ng-if="!(row.entity.tag_ids && row.entity.tag_ids.length>0 && row.entity.entity_name)"><icon name="check2"></icon></button>
+
+          <button btn-type="default"
+                  size="sm"
+                  class="space-on-right"
+                  uib-tooltip="Edit"
+                  ng-click="grid.appScope.vm.openDocumentQueueUpdateDialog(row.entity)"><icon name="pencil"></icon></button>
+
+          <button btn-type="default"
+                  class="danger"
+                  size="sm"
+                  uib-tooltip="Delete"
+                  button-loader="row.entity.deleting_document"
+                  ng-click="grid.appScope.vm.confirmDocumentDeletion(row.entity)"><icon name="trashcan"></icon></button>
+      </span>
+
+
+      <span data-ng-if="row.groupHeader && row.treeNode.children.length>0">
+          <button btn-type="success"
+                  size="sm"
+                  class="space-on-right"
+                  uib-tooltip="Approve selected items"
+                  data-ng-if="grid.appScope.vm.showGroupedApprovedIcon(grid, row, col)"
+                  button-loader="row.treeNode.approving_bulk_docs"
+                  ng-click="grid.appScope.vm.confirmBulkApprove(grid, row, col)"><icon name="check2"></icon></button>
+
+          <button btn-type="default"
+                  class="danger"
+                  size="sm"
+                  uib-tooltip="Delete selected items"
+                  button-loader="row.treeNode.deleting_bulk_docs"
+                  ng-click="grid.appScope.vm.confirmBulkDeletion(grid, row, col)"><icon name="trashcan"></icon></button>
+      </span>
+
+  </div>
+
+</ui-grid-cell-contents>

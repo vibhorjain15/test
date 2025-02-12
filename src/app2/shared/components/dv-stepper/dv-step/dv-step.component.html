@@ -1,0 +1,97 @@
+<ng-template>
+  <div class="dv-wizard-content">
+    <div class="panel panel-default clear-margin-bottom">
+      <div
+        *ngIf="showDescription"
+        class="panel-heading"
+        [ngClass]="{
+          'no-tb-padding': isBackButton
+        }"
+      >
+        <div
+          class="inline-block"
+          [ngClass]="{
+            'width-29-pct': isBackButton
+          }"
+        >
+          <b *ngIf="!discription" [tooltip]="ToolTip">{{ label }}</b>
+          <span
+            *ngIf="discription"
+            [tooltip]="ToolTip"
+            class="fw-bolder"
+            [innerHTML]="discription"
+          ></span>
+        </div>
+
+        <div class="inline-block width-70-pct text-right" *ngIf="isBackButton">
+          <a class="btn btn-transparent" (click)="handleBackClick()">
+            <div>
+              <i
+                class="dvi ng-isolate-scope dvi-arrow-back fa-2x"
+                name="arrow-back"
+                size="2x"
+              ></i>
+            </div>
+            <small>Back</small>
+          </a>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <ng-content *ngIf="!editorTempRef"></ng-content>
+        <ng-container
+          *ngIf="editorTempRef"
+          [ngTemplateOutlet]="editorTempRef"
+        ></ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="dv-wizard-footer">
+    <div class="text-center">
+      <button
+        class="btn btn-default"
+        (click)="handleBackClick()"
+        *ngIf="previousLabel"
+      >
+        <span
+          appIcon
+          name="chevron-left"
+          class="align-middle space-on-right"
+        ></span>
+        {{ previousLabel }}
+      </button>
+
+      <dv-button
+        btnClass="space-on-left"
+        *ngIf="nextLabel"
+        (onClick)="handleNextClick()"
+        [loader]="isLoading"
+        [disabled]="isDisabled"
+      >
+        {{ nextLabel }}
+        <span
+          appIcon
+          name="chevron-right"
+          class="align-middle space-on-left"
+        ></span>
+      </dv-button>
+
+      <dv-button
+        btnClass="space-on-left"
+        (onClick)="handleFinishClick()"
+        *ngIf="finishLabel"
+        [loader]="isLoading"
+        [disabled]="disableFinishbutton"
+        [tooltip]="disableFinishbutton ? FinishButtonTooltip: ''"
+      >
+        {{ finishLabel }}
+        <span
+          appIcon
+          name="chevron-right"
+          class="align-middle space-on-left"
+        ></span>
+      </dv-button>
+    </div>
+  </div>
+</ng-template>

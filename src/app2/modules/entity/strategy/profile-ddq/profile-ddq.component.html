@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      Q/A Library
+      <span
+        appIcon
+        name="info"
+        tooltip="{{ tooltipText }}"
+        *ngIf="tooltipText"
+      ></span>
+    </h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          (click)="openModal()"
+          [ngClass]="{ disabled: isFreeSubscription }"
+          tooltip="{{
+            isFreeSubscription
+              ? 'Only available in premium subscription'
+              : 'Add New Q/A Library Content'
+          }}"
+          container="body"
+          placement="top"
+        >
+          <span appIcon name="plus"></span> Build Your Q/A Library
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body" *ngIf="!ddqs || !ddqs?.length">
+    <app-spinner class="justify-center" *ngIf="!ddqs"></app-spinner>
+    <app-empty-state
+      iconName="search"
+      *ngIf="ddqs && !ddqs?.length"
+      [message]="empty_state_message"
+    >
+    </app-empty-state>
+  </div>
+  <ul
+    class="list-group"
+    tabindex="0"
+    [ngClass]="{ 'scroll-body': ddqs?.length > 5 }"
+  >
+    <li class="list-group-item" *ngFor="let ddq of ddqs">
+      <div class="space-on-bottom-lg">
+        <a  [attr.href]="ddq.url">
+          {{ ddq.name }}
+        </a>
+        <br />
+        <small class="text-muted" *ngIf="ddq.lastupdated_at">
+          Updated on {{ ddq.lastupdated_at | dvDate }}
+        </small>
+      </div>
+      <div class="space-on-bottom-lg">
+        <dv-progress-bar
+          [value]="ddq.percentage_completed"
+          type="success"
+          class="bs-progress"
+          suffix="% Complete"
+        >
+        </dv-progress-bar>
+      </div>
+      <div class="clearfix"></div>
+    </li>
+  </ul>
+</div>

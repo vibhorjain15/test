@@ -1,0 +1,174 @@
+<div class="parser-main panel panel-default">
+  <div class="panel-heading parser-heading">
+    <h5 class="panel-title parser-title">Build Template from Excel</h5>
+    <div class="parser-file-controls">
+      <span class="text-primary" [tippyTooltip]="templateParams.name">
+        <strong>{{ templateParams.name | truncate : 30 }}</strong>
+      </span>
+
+      <dv-button
+        btnType="default"
+        btnClass="space-on-right btn-icon-text"
+        (onClick)="clearSelectedSheet()"
+      >
+        <span appIcon name="refresh" class="btn-icon"></span>
+        <span>Reset</span>
+      </dv-button>
+
+      <dv-button
+        btnType="default"
+        btnClass="btn-icon-text"
+        [tippyTooltip]="'Import a different Excel file'"
+        (onClick)="changeExcelFile()"
+      >
+        <span appIcon name="file-add" class="btn-icon"></span>
+        <span>Import New</span>
+      </dv-button>
+    </div>
+  </div>
+  <div class="padded margin-bottom-0">
+    <div class="panel panel-info margin-bottom-0">
+      <div class="panel-heading">
+        <small>Mark following items by right clicking in any cell</small>
+      </div>
+    </div>
+    <table id="selectionSteps" class="table table-condensed margin-bottom-0">
+      <tbody>
+        <tr>
+          <td
+            *ngFor="let step of selectionSteps"
+            [ngClass]="{
+              'text-bold text-primary': step.is_active,
+              'text-muted': !step.is_active
+            }"
+            (mouseenter)="step.showControls = true"
+            (mouseleave)="step.showControls = false"
+            class="pos-rel"
+          >
+            <span class="list_icon list_icon_{{ step.name }}"></span>
+            {{ step.alias }}
+            <small class="text-info">
+              <strong>({{ showStepCount(step) }})</strong>
+              <a
+                class="btn btn-default btn-xs success excel_edit_buttons"
+                *ngIf="
+                  step.showControls && step.is_visible && showStepCount(step)
+                "
+                (click)="openEditModal(step)"
+                button-loader="creating_version"
+                tooltip="Edit"
+              >
+                <small><span appIcon name="pencil"></span></small>
+              </a>
+            </small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-body excel_sheet_container affix_bottom_parent_in_excel">
+    <div class="row clearfix">
+      <div class="col-sm-12">
+        <dv-checkbox
+          [(ngModel)]="markSheetAsSection"
+          label="Mark sheets as category"
+          (onValChange)="markSheetsAsSection()"
+        >
+        </dv-checkbox>
+      </div>
+      <div class="col-sm-12">
+        <ul class="nav nav-tabs">
+          <li>
+            <a
+              class="btn btn-transparent btn-xs"
+              (click)="openEditSheetModal()"
+              button-loader="creating_version"
+              tooltip-placement="right"
+              tooltip="Edit Working Sheets"
+            >
+              <small><span appIcon name="pencil"></span></small>
+            </a>
+          </li>
+          <li
+            *ngFor="let entry of excelData"
+            [ngClass]="{
+              active: entry.sheet_no == selectedSheet.sheet_no,
+              sectionsClass: entry.is_section
+            }"
+          >
+            <a
+              data-toggle="tab"
+              data-target="#sheet_{{ entry.sheet_no }}"
+              [ngClass]="{
+                active_sheet: entry.is_active,
+                'inactive_sheet disabled': !entry.is_active
+              }"
+              [disabled]="!entry.is_active"
+              (click)="setSelectedSheet(entry)"
+              class="d-flex-center"
+            >
+              <span
+                class="space-on-right d-flex-center"
+                [ngClass]="{
+                  sheets_check_icon_pending: !entry.is_done,
+                  sheets_check_icon_done: entry.is_done
+                }"
+                appIcon
+                name="check"
+              ></span>
+              <span [ngClass]="{ active_sheet: entry.is_active }">
+                {{ entry.sheet_name }}</span
+              >
+            </a>
+          </li>
+        </ul>
+        <div class="col-sm-12" style="overflow: auto">
+          <div
+            class="tab-content"
+            id="element"
+            *ngFor="let sheet of excelData"
+            [hidden]="sheet.sheet_no != selectedSheet.sheet_no"
+          >
+            <div *ngIf="sheet.is_active">
+              <div
+                [attr.data-apply-style]="sheet.apply_style"
+                [attr.data-is-active]="sheet.is_active"
+                [innerHtml]="sheet.html | dvSafeHtml"
+                id="table_{{ sheet.sheet_no }}"
+                (contextmenu)="saveClickedElement($event)"
+                contextmenu="html5polyfill"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fixed-bottom-panel panel">
+  <div class="panel-body">
+    <div class="col-sm-12 parser-control-btns">
+      <div class="control-btns-pan">
+        <dv-button
+          [btnType]="'default'"
+          [btnClass]="'space-on-right'"
+          (onClick)="toggleApplyStyle()"
+        >
+          Apply same style in other sheets
+        </dv-button>
+
+        <dv-button [btnClass]="'space-on-right'" (onClick)="openImportModal()">
+          Preview
+        </dv-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-dv-context-menu
+  #contextMenu
+  (itemClick)="onItemClick($event)"
+  [items]="contextMenuConfig.items"
+  [selector]="contextMenuConfig.selector"
+></app-dv-context-menu>

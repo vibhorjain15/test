@@ -1,0 +1,21 @@
+{
+  "globals": {
+    "d3": true,
+    "require": true,
+    "define": true,
+    "module": true
+  },
+  "browser": true,
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "noempty": true,
+  "nonew": true,
+  "trailing": true,
+  "undef": true,
+  "forin": true,
+  "quotmark": "single" 
+}

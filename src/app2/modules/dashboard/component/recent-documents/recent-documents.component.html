@@ -1,0 +1,64 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">{{ title }}</h5>
+  </div>
+
+  <div class="panel-body dash-recent-documents">
+    <table
+      class="table table-borderless documents-table"
+      *ngIf="gridDataSource && gridDataSource.length > 0"
+    >
+      <tr>
+        <th>Document</th>
+        <th class="text-center">Last Updated</th>
+      </tr>
+
+      <tr
+        class="document-item"
+        *ngFor="let doc of gridDataSource | slice : 0 : 5"
+        (click)="redirectToDocDetail(doc.id)"
+      >
+        <td>
+          <app-attachment-icon
+            [filename]="doc.file_name"
+            class="file-attachment-icon align-middle"
+            size="lg"
+          >
+          </app-attachment-icon>
+
+          <span
+            tooltip="{{ doc.name }}"
+            container="body"
+            class="link-disguise align-middle"
+          >
+            {{ doc.name | slice : 0 : 26 }}
+          </span>
+        </td>
+        <td class="text-center" *ngIf="doc.updated_at">
+          {{ doc.updated_at | dvDate : ["isLocaleDate"] }}
+        </td>
+        <td class="text-center" *ngIf="!doc.updated_at">
+          {{ doc.as_of_date | dvDate : ["isLocaleDate"] }}
+        </td>
+      </tr>
+    </table>
+
+    <div class="padded-xl" *ngIf="gridDataSource.length == 0">
+      <app-spinner
+        *ngIf="isLoading"
+        broadSpinner="true"
+        spinnerHeight="200"
+      ></app-spinner>
+      <app-empty-state
+        *ngIf="gridDataSource && gridDataSource.length == 0 && !isLoading"
+        [iconName]="file"
+        message="No documents available"
+      ></app-empty-state>
+    </div>
+    <div *ngIf="gridDataSource && gridDataSource.length > 5">
+      <a (click)="redirectToMore()" class="pull-left space-on-left-xxl"
+        >View All</a
+      >
+    </div>
+  </div>
+</div>

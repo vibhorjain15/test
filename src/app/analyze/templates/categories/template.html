@@ -1,0 +1,24 @@
+<ng2-analyze-template-category data-ng-if="vm.Utils.isAngular()"></ng2-analyze-template-category>
+<div data-ng-if="vm.Utils.isAngularJS()">
+
+<spinner include-panel
+         data-ng-hide="vm.parent_sections"></spinner>
+
+<div class="row clearfix relative"
+     data-ng-show="vm.parent_sections">
+  <div class="col-md-2">
+    <div class="list-group clear-margin-bottom">
+      <a class="list-group-item"
+         truncate-text="20"
+         uib-tooltip="{{section.name}}"
+         ui-sref="app.analyze.templates.categories.responses({categoryId: section.id})"
+         data-ng-class="{'active': $state.params.categoryId == section.id}"
+         data-ng-repeat="section in ::vm.parent_sections">{{::section.name}}</a>
+    </div>
+  </div>
+
+  <div class="col-md-10">
+    <ui-view />
+  </div>
+</div>
+</div>

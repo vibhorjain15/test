@@ -1,0 +1,78 @@
+.flex-no-shrink {
+  flex-shrink: 0;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.margin-left-auto {
+  margin-left: auto;
+}
+
+.rule-row {
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.rule-card-bg {
+  /* background-color: #f5f7fa; */
+  background-color: white;
+}
+
+:host app-date-picker#date-value-rule-card ::ng-deep input {
+  background-color: white !important;
+}
+
+.delete-icon:hover {
+  color: #cd3333;
+}
+
+#value-form-element ::ng-deep div.form-group {
+  margin-bottom: 0px !important;
+}
+
+.flex-basis-100 {
+  flex-basis: 100%;
+}
+
+.italic {
+  font-style: italic;
+}
+
+:host ::ng-deep ng-select .ng-dropdown-panel {
+  width: auto !important;
+}
+
+.display-contents {
+  display: contents;
+}
+
+.min-width-150 {
+  min-width: 150px !important;
+}
+
+.min-width-350 {
+  min-width: 350px !important;
+}
+
+.min-width-250 {
+  min-width: 250px !important;
+}
+
+.width-150 {
+  width: 150px !important;
+}
+
+.min-width-220 {
+  min-width: 220px !important;
+}
+
+.min-width-230 {
+  min-width: 230px !important;
+}
+
+.rule-card-container {
+  max-width: 100%;
+  overflow: auto;
+}

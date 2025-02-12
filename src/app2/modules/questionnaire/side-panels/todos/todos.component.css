@@ -1,0 +1,51 @@
+.notes-helper {
+  display: flex;
+  justify-content: center;
+}
+
+.note-container-heading {
+  color: #27b098;
+}
+.note-question {
+  margin-top: 10px;
+}
+.completed-info {
+  font-style: italic;
+  opacity: 0.5;
+}
+.notes {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: anywhere;
+}
+.dv-notes {
+  flex-basis: 80%;
+}
+.note-editor {
+  padding: 5px;
+}
+.helper-text {
+  flex-basis: 50%;
+}
+
+dv-checkbox {
+  border: 1px solid #a9a9a9;
+  border-radius: 4px;
+  padding: 0px 10px;
+}
+
+dv-checkbox.disabled {
+  background: #efefef 0% 0% no-repeat padding-box;
+  border: 1px solid #dfdfdf;
+}
+
+dv-checkbox ::ng-deep label.checkbox-info {
+  width: 100%;
+}
+
+dv-checkbox ::ng-deep .delete-icon {
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 16px;
+}

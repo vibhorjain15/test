@@ -1,0 +1,152 @@
+.dashboard-panel-old {
+  svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .panel-heading {
+    position: relative;
+    background-color: white;
+    border-bottom: none;
+    padding-bottom: 0;
+
+    .panel-title {
+      .text-muted();
+    }
+
+    .chart-total {
+      .text-muted();
+      .text-center();
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      line-height: 1;
+
+      .chart-total-count {
+        font-size: 2em;
+      }
+    }
+  }
+
+  .btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+    text-decoration : none;
+    color : white;
+    }
+
+  .question-title {
+      .panel-title();
+      padding-top: 1em;
+      a:hover, a:focus {
+        color: #9E5050;
+        text-decoration: none;
+        font-size: 16.1px;
+      }
+      font-weight: normal;
+  }
+
+  .dash-notes-panel, .dash-dd-history-panel, .dash-recent-documents, .dash-sec-updates{
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .dd-activity, .notes-activity, .documents-activity, .sec-activity{
+    > li{
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    > li:hover{
+      background: @dv-sky-blue;
+
+      .icon-wrapper {
+        background: @dv-sky-blue;
+      }
+    }
+  }
+
+  .documents-activity, .sec-activity{
+    > li{
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+
+  .dash-recent-documents, .dash-sec-updates{
+    padding-bottom: 11px;
+    height: 350px;
+  }
+
+  .dd-activity{
+    margin-bottom: 15px;
+    max-height: 893px;
+    overflow-y: auto;
+  }
+
+  .notes-activity{
+    margin-bottom: 15px;
+    max-height: 451px;
+    overflow-y: auto;
+  }
+
+  .documents-table, .sec-table{
+
+    tr{
+      th{
+        padding-top: 10px;
+        padding-bottom: 9px;
+      }
+      td{
+        padding-top: 14px;
+        padding-bottom: 14px;
+      }
+      td:first-child, th:first-child{
+        padding-left: 20px;
+      }
+      td:last-child, th:last-child{
+        padding-right: 20px;
+      }
+    }
+
+    tr.document-item:hover{
+      background: @dv-sky-blue;
+      cursor: pointer;
+    }
+  }
+}
+
+.dash-activity-panel{
+  max-height: 578px;
+  overflow-y: auto;
+}
+
+.recent-questions {
+  .panel-body {
+    height: 450px;
+    overflow-y: auto;
+  }
+}
+
+.recent-notes {
+  .panel-body {
+    height: 532px;
+    overflow-y: auto;
+  }
+}
+.heatmapContainer{
+  bottom:auto;
+  max-height: 470px;
+  overflow:auto
+}
+.heatmapTooltip{
+    position: absolute;
+    text-align: center;
+    color: #fff;
+    height: 28px;
+    padding: 2px 5px;
+    background: #444;
+    border: 0px;
+    font-size: 13px;
+    border-radius: 3px;
+    pointer-events: none;
+}

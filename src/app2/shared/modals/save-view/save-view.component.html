@@ -1,0 +1,205 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel="Save"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="saveView"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #saveView>
+  <div *ngIf="action == 'add'">
+    <form class="save-view" [formGroup]="saveViewForm" autocomplete="off">
+      <dv-form-element
+        label="Name"
+        class="margin-bottom"
+        [modelController]="saveViewForm.get('name')"
+        [centerAligned]="true"
+        [isRequired]="true"
+      >
+        <input
+          formControlName="name"
+          id="name"
+          class="form-control"
+          maxlength="150"
+        />
+        <div
+          class="text-danger"
+          *ngIf="
+            saveViewForm.get('name').touched &&
+            saveViewForm.get('name').errors?.required
+          "
+        >
+          Name is required
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="
+            saveViewForm.get('name').touched &&
+            saveViewForm.get('name').errors?.maxLength
+          "
+        >
+          {{ errorMessageMap.maxlength | interpolate : "Name" }}
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="
+            saveViewForm.get('name').touched &&
+            saveViewForm.get('name').errors?.pattern
+          "
+        >
+          {{ errorMessageMap.avoidFirstSplCharacter | interpolate : "Name" }}
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="
+            saveViewForm.get('name').touched &&
+            saveViewForm.get('name').errors?.nameExists
+          "
+        >
+          View with the same name already exists!
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        [modelController]="saveViewForm.get('description')"
+        label="Description"
+        [showRightIcon]="saveViewForm.get('description').touched"
+        class="margin-bottom"
+        [centerAligned]="true"
+      >
+        <textarea
+          autosize
+          formControlName="description"
+          id="description"
+          class="form-control"
+          maxlength="150"
+        ></textarea>
+      </dv-form-element>
+      <dv-form-element
+        [modelController]="saveViewForm.get('is_default')"
+        class="margin-bottom"
+        [showRightIcon]="false"
+        [centerAligned]="true"
+      >
+        <dv-checkbox
+          formControlName="is_default"
+          label="Set as Default Grid View"
+        ></dv-checkbox>
+      </dv-form-element>
+      <hr col="12" *ngIf="canHandleAccess" />
+      <dv-form-element
+        *ngIf="canHandleAccess"
+        [modelController]="saveViewForm.get('access_level')"
+        label="Who can access this view?"
+        [showRightIcon]="saveViewForm.get('access_level').touched"
+        class="margin-bottom"
+        labelPosition="top"
+      >
+        <dv-radio
+          class="width-radio"
+          formControlName="access_level"
+          groupName="access_level"
+          [valueName]="VIEW_ACCESS_LEVELS.USER"
+          label="Personal Access (Only I can access this view)"
+        ></dv-radio>
+        <dv-radio
+          formControlName="access_level"
+          groupName="access_level"
+          label="Firm Access (Anyone in the firm can access this view)"
+          [valueName]="VIEW_ACCESS_LEVELS.FIRM"
+        ></dv-radio>
+      </dv-form-element>
+    </form>
+  </div>
+  <div *ngIf="action == 'rename'">
+    <form class="rename-view" [formGroup]="renameViewForm" autocomplete="off">
+      <dv-form-element
+        label="Name"
+        [modelController]="renameViewForm.get('name')"
+        [centerAligned]="true"
+        [isRequired]="true"
+      >
+        <input
+          formControlName="name"
+          class="form-control"
+          id="name"
+          maxlength="150"
+        />
+        <div
+          class="text-danger"
+          *ngIf="
+            renameViewForm.get('name').touched &&
+            renameViewForm.get('name').errors?.required
+          "
+        >
+          Name is required
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="
+            renameViewForm.get('name').touched &&
+            renameViewForm.get('name').errors?.maxLength
+          "
+        >
+          {{ errorMessageMap.maxlength | interpolate : "Name" }}
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="
+            renameViewForm.get('name').touched &&
+            renameViewForm.get('name').errors?.pattern
+          "
+        >
+          {{ errorMessageMap.avoidFirstSplCharacter | interpolate : "Name" }}
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="
+            renameViewForm.get('name').touched &&
+            renameViewForm.get('name').errors?.nameExists
+          "
+        >
+          View with the same name already exists!
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        [modelController]="renameViewForm.get('description')"
+        label="Description"
+        [showRightIcon]="renameViewForm.get('description').touched"
+        class="margin-bottom"
+        [centerAligned]="true"
+      >
+        <textarea
+          autosize
+          formControlName="description"
+          id="description"
+          class="form-control"
+          maxlength="150"
+        ></textarea>
+      </dv-form-element>
+      <hr col="12" *ngIf="canHandleAccess" />
+      <dv-form-element
+        *ngIf="canHandleAccess"
+        [modelController]="renameViewForm.get('access_level')"
+        label="Who can access this view?"
+        [showRightIcon]="renameViewForm.get('access_level').touched"
+        class="margin-bottom"
+        labelPosition="top"
+      >
+        <dv-radio
+          class="width-radio"
+          formControlName="access_level"
+          groupName="access_level"
+          [valueName]="VIEW_ACCESS_LEVELS.USER"
+          label="Personal Access (Only I can access this view)"
+        ></dv-radio>
+        <dv-radio
+          formControlName="access_level"
+          groupName="access_level"
+          label="Firm Access (Anyone in the firm can access this view)"
+          [valueName]="VIEW_ACCESS_LEVELS.FIRM"
+        ></dv-radio>
+      </dv-form-element>
+    </form>
+  </div>
+</ng-template>

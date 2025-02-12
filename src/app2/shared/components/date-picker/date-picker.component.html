@@ -1,0 +1,38 @@
+<div [class]="'input-group datepicker-group ' + class">
+  <input
+    type="search"
+    readonly
+    class="form-control"
+    [disabled]="disabled"
+    [bsValue]="value"
+    bsDatepicker
+    [bsConfig]="config"
+    [minDate]="minDate"
+    [maxDate]="maxDate"
+    [isDisabled]="disabled"
+    [placeholder]="placeholder"
+    [container]="container"
+    [placement]="placement ?? 'auto'"
+    (bsValueChange)="onValueChange($event)"
+    (blur)="onBlur()"
+    #dp="bsDatepicker"
+    [attr.aria-label]="ariaLabel ? ariaLabel : 'Select Date'"
+    [tabIndex]="-1"
+    autocomplete="off"
+    [attr.id]="id"
+    [attr.data-formcontrolname]="id"
+  />
+  <a *ngIf="clearable && value" (click)="clear()" class="clear-date">
+    <span appIcon name="close"></span>
+  </a>
+  <span class="input-group-btn">
+    <button
+      appButton
+      class="btn btn-default"
+      (click)="dp.toggle()"
+      aria-label="icon for calendar date-picker"
+    >
+      <span appIcon name="calendar"></span>
+    </button>
+  </span>
+</div>

@@ -1,0 +1,191 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-bulk-actions></ng2-bulk-actions> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Upload your data into DiligenceVault</h5>
+  </div>
+  <div class="panel-body">
+    <p class="alert alert-info">
+      <span class="block-display">Download example excel file by clicking <a class="clickable" data-ng-click="vm.downloadEmptySampleFile()"> here</a></span>
+      <span class="block-display">Download excel file with all your existing data related to Firms/Products/Vehicles/Contacts/Strategies and Team Members. Click <a class="clickable" data-ng-click="vm.downloadSampleFile()"> here</a></span>
+    </p>
+    <div col="12">
+      <div class="dd-doc-selection-wrapper">
+        <div class="panel panel-default dd-doc-drop-panel"
+             dv-file-handler
+             name="file-handler-one"
+             dv-droppable
+             dv-manual-upload
+             dv-fields="vm.updatedParams"
+             ngf-multiple="true"
+             ngf-select-disabled="true"
+             dv-bind-files-to="vm.files"
+             ngf-max-files="1"
+             dv-accept="::vm.allowed_file_extensions_str"
+             dv-pattern="::vm.allowed_file_extensions_str"
+             dv-max-file-size="::vm.maxFileSize"
+             dv-upload-url="/attachments"
+             dv-on-upload="vm.documentUploadComplete(response)"
+             dv-on-upload-error="vm.documentUploadFailed(response)"
+             ngf-drag-over-class="'panel-primary'">
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your bulk upload Excel here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+            <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30" data-ng-init="vm.setDocName(vm.drop_files)"></div>
+
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button btn-type="default"
+                  dv-file-handler
+                  dv-manual-upload
+                  dv-fields="vm.updatedParams"
+                  name="file-handler-two"
+                  dv-bind-files-to="vm.files"
+                  dv-upload-url="/attachments"
+                  dv-accept="::vm.allowed_file_extensions_str"
+                  dv-pattern="::vm.allowed_file_extensions_str"
+                  dv-max-file-size="::vm.maxFileSize"
+                  dv-on-upload="vm.documentUploadComplete(response)"
+                  dv-on-upload-error="vm.documentUploadFailed(response)">
+            Select File
+          </button>
+          <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30" data-ng-init="vm.setDocName(vm.files)"></div>
+        </div>
+      </div>
+
+    </div>
+    <br>
+    <div class="form-group">
+      <div>
+        <label class="label_spacing" for="">Select entity type(s) included:</label>
+      </div>
+      <div>
+        <ul class="list-inline">
+          <li data-ng-if="!vm.isBusinessAdmin">
+            <dv-checkbox
+                   data-ng-model="vm.uploadType.team_members"
+                   label="Team Members/User Roles">
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+                   data-ng-model="vm.uploadType.firms"
+                   label="Firms">
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+                   data-ng-model="vm.uploadType.strategy"
+                   label="Strategies">
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+                   data-ng-model="vm.uploadType.funds"
+                   label="Products">
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+                   data-ng-model="vm.uploadType.vehicles"
+                   label="Vehicles">
+            </dv-checkbox>
+          </li>
+          <li>
+            <dv-checkbox
+                   data-ng-model="vm.uploadType.contacts"
+                   label="Contacts">
+            </dv-checkbox>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="button" class="btn btn-primary" button-loader="vm.uploading_excel" data-ng-click="vm.addDocumentSubmit()">Process Upload</button>
+    </div>
+  </div>
+  <!-- <div class="panel-body">
+    <ul class="nav nav-pills nav-justified">
+      <li class="clickable" data-ng-class="{'active': vm.tabType == 'team_members'}"><a data-ng-click="vm.selectType('team_members')">Team Members</a></li>
+      <li class="clickable" data-ng-class="{'active': vm.tabType == 'funds'}"><a data-ng-click="vm.selectType('funds')">Funds</a></li>
+      <li class="clickable" data-ng-class="{'active': vm.tabType == 'firms'}"><a data-ng-click="vm.selectType('firms')">Firms</a></li>
+      <li class="clickable" data-ng-class="{'active': vm.tabType == 'contacts'}"><a data-ng-click="vm.selectType('contacts')">Contacts</a></li>
+    </ul>
+  </div>
+  <div class="panel-body">
+    <table class="table table-striped" >
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody >
+        <tr data-ng-repeat="entry in vm.apiObject.team_members" data-ng-if="vm.tabType == 'team_members'">
+          <td>{{entry.name}}</td>
+          <td>{{entry.status}}</td>
+          <td>{{entry.reason}}</td>
+        </tr>
+        <tr data-ng-repeat="entry in vm.apiObject.funds" data-ng-if="vm.tabType == 'funds'">
+          <td>{{entry.name}}</td>
+          <td>{{entry.status}}</td>
+          <td>{{entry.reason}}</td>
+        </tr>
+        <tr data-ng-repeat="entry in vm.apiObject.firms" data-ng-if="vm.tabType == 'firms'">
+          <td>{{entry.name}}</td>
+          <td>{{entry.status}}</td>
+          <td>{{entry.reason}}</td>
+        </tr>
+        <tr data-ng-repeat="entry in vm.apiObject.contacts" data-ng-if="vm.tabType == 'contacts'">
+          <td>{{entry.name}}</td>
+          <td>{{entry.status}}</td>
+          <td>{{entry.reason}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div> -->
+</div>
+
+<!-- <div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Admin Panel for Bulk Actions</h5>
+  </div>
+
+  <div class="panel-body">
+    <p class="alert alert-info">
+     Refresh your contacts, or invite all contacts to DiligenceVault, all in one shot.
+    </p>
+
+    <div>
+      <div col="12" class="space-on-top-xl bordered-bottom">
+        <div col="4" class="space-on-bottom-lg">
+          <label class="control-label">Action</label>
+        </div>
+        <div col="8" class="pa-lr-lg">
+          <label class="control-label">Description</label>
+        </div>
+      </div>
+
+      <div col="12">
+        <div class="space-on-top-xl">
+          <div col="4" class="pa-lr-lg">
+            <button btn-type="primary"
+                    data-ng-click="vm.inviteAllContacts()">Invite All Contacts</button>
+          </div>
+          <div col="8" class="pa-lr-lg padding-right-xl">
+            Invite all your investment partners / contacts to join DiligenceVault. We made it easy for you to get started in collaborating on the platform.
+          </div>
+        </div>
+      </div>
+    </div>
+   </div>
+</div> -->

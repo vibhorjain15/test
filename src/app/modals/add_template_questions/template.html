@@ -1,0 +1,23 @@
+<div class="modal-header">
+  <h3 class="modal-title">New Questions
+    <span data-ng-show="vm.section.name">in {{vm.section.name}}</span>
+    <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+  </h3>
+  <h4 data-ng-show="vm.parentName" class="text-dv-blue"><small class="text-uppercase"> {{vm.parentName}}</small></h4>
+  <div class="numberOfUnsavedQuestions" data-ng-if="vm.allQuestions.length">
+    <p class="alert alert-warning">
+      <small>
+        <icon name="warning" size="1x"></icon>
+      </small>
+      You have <strong>{{vm.allQuestions.length}}</strong> unsaved questions. Please click Save below to confirm your
+      changes.
+    </p>
+  </div>
+</div>
+<div class="modal-body">
+  <div>
+    <template-question-builder sub-category-id="vm.subcategoryId" template-id="vm.templateId"
+      on-save="vm.onSave(questions)" on-add="vm.onAdd(questions)" on-cancel="vm.cancel()" on-error="vm.close()">
+    </template-question-builder>
+  </div>
+</div>

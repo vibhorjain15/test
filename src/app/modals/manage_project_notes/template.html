@@ -1,0 +1,93 @@
+<div class="project-notes">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        Review Comments
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="padded-lg">
+                <span
+                    data-ng-if="vm.response.question.attributes.indexCount"
+                    class="question-text-color">{{vm.response.question.attributes.indexCount}}. </span><span
+                    class="question-text-color clickable"
+                    bind-html-compile="vm.response.question.attributes.text"></span>
+            </div>
+            <div>
+                <textarea class="form-control"
+                    ui-tinymce="vm.tinymceOptions"
+                    data-ng-model-options="{ debounce: { 'default': 500 } }"
+                    data-ng-change="vm.save()"
+                    data-ng-model="vm.responseCopy.response_with_notes_attributes"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="space-on-top-lg space-on-bottom-lg">
+                <a class="clickable" data-ng-click="vm.togglePreviousComments()">
+                    {{vm.showPreviousComments? 'Hide': 'Show'}} Previous Comments for this question
+                </a>
+            </div>
+            <ul class="list-group" data-ng-if="vm.showPreviousComments">
+                <span class="text-center" data-ng-if="vm.loading_comments">
+                    <spinner></spinner>
+                </span>
+                <div data-ng-if="!vm.loading_comments && vm.Utils.getObjectLength(vm.commentsMap) == 0">
+                    <empty-state message="No previous comments available"></empty-state>
+                </div>
+                <li class="full-grey-border space-on-bottom-lg" data-ng-if="!vm.loading_comments && vm.Utils.getObjectLength(vm.commentsMap) > 0" data-ng-repeat="comment in vm.commentsMap">
+                    <div class="previous-comments-panel">
+                        <div class="header padded-lg bg-light-gray-panel">
+                            <icon name="check-circle"></icon>
+                            Resolved by <b>{{comment.updated_by_name}}</b>
+                            <i class="text-muted">{{comment.updated_at | fromNow}}</i>
+                        </div>
+                        <div class="padded-lg">
+                            <p>
+                                <b>{{comment.updated_by_name}}</b>
+                                <span class="text-muted">{{comment.updated_at | fromNow}}</span>
+                            </p>
+                            <p class="space-on-bottom">
+                                <span ng-bind-html="comment.selected_text" class="grey-bg"></span>
+                            </p>
+                        </div>
+                        <div class="comments-body">
+                            <div data-ng-repeat="thread in comment.threads">
+                                <p>
+                                    <b>{{::thread.created_by_name}}</b>
+                                    <i class="text-muted">
+                                        {{thread.updated_at|fromNow}}
+                                    </i>
+                                </p>
+                                <p class="clear-margin">
+                                    <span ng-bind-html="thread.content | cleanhtml"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="pull-left">
+            <button data-ng-class="{'linkDisabled':vm.responseIndex == 0}" class="btn btn-default" data-ng-click="vm.previousComment()"
+                uib-tooltip="Click to navigate to previous questions in this sequence with review comments">
+               <icon name="chevron-left"></icon>
+               Previous
+            </button>
+            <button data-ng-class="{'linkDisabled':vm.responseIndex == vm.validResponsesInSequence.length - 1}" class="btn btn-default" data-ng-click="vm.nextComment()"
+                uib-tooltip="Click to navigate to next questions in this sequence with review comments">
+                <icon name="chevron-right"></icon>
+                Next
+            </button>
+         </div>
+         <div class="pull-right">
+            <button btn-type="default" data-ng-click="vm.cancel()">
+               Close
+            </button>
+         </div>
+    </div>
+  </div>
+  

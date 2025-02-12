@@ -1,0 +1,21 @@
+<form name="formHolder.edit_question_form" novalidate data-ng-submit="updateQuestion()">
+  <form-group field-name="Question text">
+    <input type="text"
+           class="form-control"
+           focus-me="initialized"
+           data-ng-model="question_copy.text"
+           placeholder="Enter question text"
+           dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+           required/>
+  </form-group>
+
+  <div class="form-group">
+    <button type="submit"
+            size="sm"
+            data-ng-disabled=""
+            button-loader="updating_question">Save</button>
+    <button btn-type="default"
+            size="sm"
+            data-ng-click="cancelQuestionEdit()">Cancel</button>
+  </div>
+</form>

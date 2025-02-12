@@ -1,0 +1,40 @@
+.meta-info {
+  background: #f2f2f2 0% 0% no-repeat padding-box;
+  border-radius: 4px;
+  opacity: 1;
+  font-size: 12px;
+  letter-spacing: 0px;
+  color: #7c7c7c;
+  padding: 5px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.color-black {
+  color: #000 !important;
+}
+
+.tags-container {
+  word-break: break-word;
+}
+
+:host .mapped-questions-sidepanel ::ng-deep .side-panel-body {
+  max-height: calc(85vh - 35px) !important;
+}
+
+.btn-footer {
+  text-align: center;
+  padding: 5px 0px;
+}
+
+.icon {
+  padding: 5px;
+  min-width: 24px;
+}
+
+.mapped-questions-icon-container dv-button::before,
+dv-button::after,
+.btn::before,
+.btn::after {
+  display: unset !important;
+}

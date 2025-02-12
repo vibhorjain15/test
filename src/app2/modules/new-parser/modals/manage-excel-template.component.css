@@ -1,0 +1,7 @@
+:host ::ng-deep div.ngx-file-drop__drop-zone {
+  border: none;
+}
+
+.instructions-text {
+  white-space: break-spaces;
+}

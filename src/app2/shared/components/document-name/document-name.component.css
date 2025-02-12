@@ -1,0 +1,21 @@
+.document-name-wrapper {
+    background: #f5f7fa 0% 0% no-repeat padding-box;
+    border-radius: 2px;
+    height: 30px;
+}
+
+.document-name {
+    padding: 5px;
+}
+
+.document-name > span {
+    margin-right: 5px;
+}
+
+.document-name > span:hover {
+    cursor: pointer !important;
+}
+
+.edit-document-label {
+    margin-top: inherit;
+}

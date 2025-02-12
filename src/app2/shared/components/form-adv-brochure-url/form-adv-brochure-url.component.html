@@ -1,0 +1,14 @@
+<span *ngIf="!params.node.group">
+  <a
+    [href]="params.value"
+    target="_blank"
+    *ngIf="params.value"
+    aria-label="open firm brochure pdf. (opens in a new window)"
+  >
+    <span appIcon name="file-pdf-o" aria-hidden="true"></span>
+  </a>
+
+  <span *ngIf="!params.value" class="label label-success">
+    No document found
+  </span>
+</span>

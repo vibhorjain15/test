@@ -1,0 +1,21 @@
+.copy-link {
+  color: var(--primary);
+  letter-spacing: 1px;
+  font-weight: bolder;
+}
+.round-number {
+  color: white;
+  background-color: var(--primary);
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 1em;
+}
+.span-disable {
+  color: #a9a9a9;
+  cursor: not-allowed;
+}

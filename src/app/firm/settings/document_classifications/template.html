@@ -1,0 +1,84 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-document-classification></ng2-document-classification> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">Document Classification</h5>
+    </div>
+
+  <spinner broad-spinner spinner-height='100' data-ng-if="!vm.document_groups"></spinner>
+
+
+
+    <div class="panel-body" data-ng-if="vm.document_groups">
+      <p class="alert alert-info">
+        Organize your documents. Associate document types with document groups.
+      </p>
+
+      <div data-ng-repeat="group in vm.document_groups">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">{{group.name}}</h5>
+
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a class="panel-control"
+                   uib-tooltip="Add Document Tag"
+                   data-ng-click="vm.displayAssignTagsController(group)">
+                  <icon name="pencil"></icon>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div data-ng-show="group.tags.length" class="label-list">
+              <span class="label label-default text-uppercase space-on-right"
+                    data-ng-repeat="tags in group.tags">
+                <small>{{tags.type_name}}</small>
+              </span>
+            </div>
+
+            <div col="8" offset="2" data-ng-hide="group.tags.length">
+              <empty-state icon-name="tag"
+                           data-ng-show="vm.is_admin"
+                           action="vm.displayAssignTagsController(group)"
+                           action-label="Add a tag in {{group.name}}"
+                           message="No tags available. Why not add for {{group.name}}?">
+              </empty-state>
+
+              <empty-state icon-name="tag"
+                           data-ng-hide="vm.is_admin"
+                           message="No tags available for this tag category. Please contact your admin to get started">
+              </empty-state>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div col="8" offset="2" data-ng-if="vm.document_groups && !vm.document_groups.length">
+        <empty-state icon-name="tag"
+                     data-ng-show="vm.is_admin"
+                     action="vm.initiateDocGroupAddition()"
+                     action-label="Add a document classification"
+                     message="None available. Why not add?">
+        </empty-state>
+      </div>
+    </div>
+</div>
+
+<div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg" data-ng-class="{'in': vm.displaySidebarPanel}" data-ng-show="vm.displaySidebarPanel">
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5>
+        <b>{{vm.sidebarTitle}}</b>
+        <a class="pull-right clickable link-disguise"
+           data-ng-click="vm.displaySidebarPanel = false">
+          <icon name="close" size="lg"></icon>
+        </a>
+      </h5>
+    </div>
+
+    <div class="panel-body" data-ng-if="vm.displaySidebarPanel">
+      <ng-include src="vm.sidebarTemplate"></ng-include>
+    </div>
+  </div>
+</div>

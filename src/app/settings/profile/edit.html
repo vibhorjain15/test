@@ -1,0 +1,181 @@
+<form class="form-horizontal my-profile"
+      novalidate
+      name="vm.user_profile_form"
+      data-ng-submit="vm.submit()">
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <user-avatar avatar-icon-size="4x"
+                   avatar-icon-class="avatar"
+                   avatar-img-class="img-thumbnail avatar"></user-avatar>
+      <div>
+        <small>
+          <a class="clickable" data-ng-click="vm.displayUserAvatarDialog()">
+            Upload New Picture
+          </a>
+        </small>
+      </div>
+    </div>
+    <div class="col-md-5 user-info-form-group">
+      <div class="row clearfix space-on-bottom">
+        <div class="col-md-6">
+          <form-group field-name="First Name" tooltip-placement="left">
+            <input type="text"
+                   data-ng-model="vm.userModel.firstname"
+                   required
+                   placeholder="First Name"
+                   maxlength="30"
+                   dv-restrict-input="{type: 'validPersonName'}"
+                   class="form-control" />
+          </form-group>
+        </div>
+
+        <div class="col-md-6 clear-padding-left">
+          <form-group field-name="Last Name">
+            <input type="text"
+                   data-ng-model="vm.userModel.lastname"
+                   required
+                   placeholder="Last Name"
+                   maxlength="30"
+                   dv-restrict-input="{type: 'validPersonName'}"
+                   class="form-control" />
+          </form-group>
+        </div>
+      </div>
+
+      <form-group field-name="Title">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="briefcase"></icon>
+          </span>
+
+          <input type="text"
+                 data-ng-model="vm.userModel.title"
+                 placeholder="Title"
+                 dv-restrict-input="{type: 'alphaNumericPlus'}"
+                 maxlength="60"
+                 class="form-control" />
+        </div>
+      </form-group>
+
+      <div class="form-group" uib-tooltip="Cannot edit this field. Please contact your administrator.">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="mail"></icon>
+          </span>
+
+          <input type="text"
+                 data-ng-model="vm.userModel.userName"
+                 placeholder="Email"
+                 readonly="readonly"
+                 class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group" uib-tooltip="Cannot edit this field. Please contact your administrator.">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="institution"></icon>
+          </span>
+
+          <input type="text"
+                 data-ng-model="vm.userModel.firm_name"
+                 placeholder="Firm Name"
+                 required
+                 readonly="readonly"
+                 class="form-control" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form-group field-name="Phone">
+    <label class="control-label col-md-3" for="phone">Phone</label>
+    <div class="col-md-5">
+      <input type="text"
+             id="phone"
+             placeholder="(XXX) XXX-XXXX"
+             data-ng-model="vm.userModel.phoneNumber"
+             maxlength="30"
+             dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+             class="form-control" />
+    </div>
+  </form-group>
+
+  <form-group field-name="Street Address">
+    <label class="control-label col-md-3" for="street-address">Street Address</label>
+
+    <div class="col-md-5">
+      <textarea id="street-address"
+             data-ng-model="vm.userModel.address"
+             msd-elastic="\n"
+             dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+             maxlength="200"
+             placeholder="Example: 9th road, 5th street"
+             class="form-control"></textarea>
+    </div>
+  </form-group>
+
+  <form-group field-name="City">
+    <label class="control-label col-md-3" for="city">City</label>
+
+    <div class="col-md-5">
+      <input type="text"
+             id="city"
+             placeholder="Example: New York"
+             data-ng-model="vm.userModel.city"
+             maxlength="60"
+             dv-restrict-input="{type: 'validCityName'}"
+             class="form-control" />
+    </div>
+  </form-group>
+
+  <form-group field-name="State">
+    <label class="control-label col-md-3" for="state">State</label>
+
+    <div class="col-md-5">
+      <input type="text"
+             id="state"
+             placeholder="Example: New york"
+             data-ng-model="vm.userModel.state"
+             maxlength="60"
+             dv-restrict-input="{type: 'validCityName'}"
+             class="form-control" />
+    </div>
+  </form-group>
+
+  <form-group field-name="Zipcode">
+    <label class="control-label col-md-3" for="zipcode">Zipcode</label>
+
+    <div class="col-md-5">
+      <input type="text"
+             id="zipcode"
+             placeholder="Example: 10018"
+             maxlength="10"
+             data-ng-model="vm.userModel.zipcode"
+             dv-restrict-input="{type: 'validZipcode'}"
+             class="form-control" />
+    </div>
+  </form-group>
+
+  <div class="form-group">
+    <label class="control-label col-md-3" for="country">Country</label>
+
+    <div class="col-md-5">
+      <select id="country"
+              class="form-control"
+              chosen
+              data-ng-disabled="!vm.countries"
+              data-ng-model="vm.userModel.country_id"
+              data-ng-options="country.id as country.value for country in vm.countries">
+        <option value="">{{ vm.countries ? "--Select Country--" : "Loading countries..."}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group clear-margin">
+    <div class="col-md-9 col-md-offset-3">
+      <button ng-disabled="vm.user_profile_form.$invalid" type="submit" button-loader="vm.saving">Save My Profile</button>
+      <button btn-type="default" data-ng-click="vm.toggleMode()">Cancel</button>
+    </div>
+  </div>
+</form>

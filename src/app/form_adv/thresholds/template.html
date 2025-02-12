@@ -1,0 +1,126 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-manage-thresholds></ng2-manage-thresholds>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix form-adv-threshold">
+    <div col="12">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">Configure Materiality Thresholds for Filing Changes</h5>
+                <div class="panel-controls">
+                    <div class="panel-controls-wrapper">
+                        <a class="panel-control"
+                           uib-tooltip="Add New Threshold"
+                           data-ng-click="vm.addNewThreshold()">
+                            <icon name="plus"></icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <spinner broad-spinner spinner-height='80' data-ng-if="!vm.thresholds"></spinner>
+
+              <span data-ng-if="vm.thresholds && vm.thresholds.length">
+                  <div col="12" class="pa-lr-xxl">
+                      <div col="12" class="space-on-top-xl padded-bottom-xl">
+                          <div col="2">
+                              <div col="10" offset="2">
+                                  <label class="control-label">Type</label>
+                              </div>
+                          </div>
+                          <div col="5">
+                              <label class="control-label">Question</label>
+                          </div>
+                          <div col="2" class="text-center">
+                              <label class="control-label">Condition</label>
+                          </div>
+
+                          <div col="2" class="text-center">
+                              <label class="control-label">Threshold Value</label>
+                          </div>
+                          <div col="1" class="text-center">
+                              <label class="control-label">&nbsp;</label>
+                          </div>
+                      </div>
+                  </div>
+
+
+
+                  <div col="12" data-ng-repeat="group in vm.grouped_thresholds">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">Section: {{group.section_name}}</h5>
+                        </div>
+                        <div class="panel-body">
+                            <div col="12" class="pa-tb-lg threshold-item" data-ng-repeat="threshold in group.thresholds" data-ng-class="{'active': threshold.hoverState, 'first-threshold': $index == 0}" ng-mouseover="threshold.hoverState = true;" ng-mouseleave="threshold.hoverState = false;">
+                        <div col="2">
+                            <h5 class="text-center inline-block" col="2"><span class="space-on-right-lg">{{$index+1}}.</span></h5>
+                            <h5 col="10">{{threshold.typeText}}</h5>
+                        </div>
+                        <div col="5">
+                            <h5><span class="space-on-right-lg">{{threshold.questionObj.displayText}}</span></h5>
+                        </div>
+
+                        <div col="2" class="text-center">
+                            <h5 class="space-on-right-lg">{{threshold.operatorText}}</h5>
+                        </div>
+
+                        <div col="2" class="text-center">
+                            <h5 data-ng-if="(threshold.operator_id != 'ac') && !(threshold.questionObj.response_type == 'Boolean' || threshold.questionObj.response_type == 'BooleanPlus' || threshold.questionObj.response_type == 'NoPlus')">
+                                {{threshold.threshold_value}}
+                            </h5>
+                            <h5 data-ng-if="(threshold.operator_id != 'ac') && (threshold.questionObj.response_type == 'Boolean' || threshold.questionObj.response_type == 'BooleanPlus' || threshold.questionObj.response_type == 'NoPlus')">
+                                {{(threshold.threshold_value == true) ? 'Yes' : 'No'}}
+                            </h5>
+
+                            <h5 data-ng-if="threshold.operator_id == 'ac'">
+                                N/A
+                            </h5>
+                        </div>
+                        <div col="1" class="space-on-top text-center">
+                                <span data-ng-if="threshold.hoverState">
+                                    <button class="space-on-top-xm space-on-right btn-sm btn btn-default"
+                                            uib-tooltip="Edit threshold"
+                                            data-ng-click="vm.editThreshold(threshold)"
+                                            type="button">
+                                        <icon name="pencil"></icon>
+                                    </button>
+
+                                    <button class="space-on-top-xm btn-sm btn btn-default danger"
+                                            uib-tooltip="Remove threshold"
+                                            data-ng-click="vm.removeThreshold(threshold)"
+                                            type="button">
+                                        <icon name="trashcan"></icon>
+                                    </button>
+                                </span>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+
+                  </div>
+
+                  <div col="12" class="space-on-top-xxl space-on-bottom clear-padding-right">
+                      <div class="pull-right">
+                          <button btn-type="primary"
+                                  size="sm"
+                                  uib-tooltip="Add New Threshold"
+                                  data-ng-click="vm.addNewThreshold()">
+                              <icon name="plus"></icon>
+                              <h5 class="space-on-left clear-margin-top clear-margin-bottom inline-block">Add New Threshold</h5>
+                          </button>
+                      </div>
+                  </div>
+              </span>
+
+                <empty-state icon-name="warning" col="6" offset="3"
+                             message="No thresholds currently set"
+                             action="vm.addNewThreshold()"
+                             action-label="Add thresholds"
+                             data-ng-if="vm.thresholds && !vm.thresholds.length"></empty-state>
+
+            </div>
+        </div>
+    </div>
+</div>

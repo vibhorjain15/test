@@ -1,0 +1,53 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-report-exports></ng2-report-exports> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Export Options</h5>
+  </div>
+
+  <div class="panel-body">
+  	<p class="alert alert-info">
+     To add more reports, kindly contact <a class="link-disguise link-underline" href="mailto:support@diligencevault.com" target="_blank">support@diligencevault.com</a>
+    </p>
+
+    <spinner data-ng-if="vm.loadingExportOptions"></spinner>
+
+    <div data-ng-if="!vm.loadingExportOptions && vm.excelReports.length">
+      <div col="12" class="space-on-top-xl bordered-bottom">
+        <div col="3" class="space-on-bottom-lg">
+          <label class="control-label">Report Name</label>
+        </div>
+        <div col="7" class="pa-lr-lg">
+          <label class="control-label">Information</label>
+        </div>
+        <div col="2" class="pa-lr-lg text-center">
+          <label class="control-label">Download</label>
+        </div>
+      </div>
+
+      <div col="12" data-ng-repeat="report in vm.excelReports">
+        <div class="space-on-top-xl">
+        <div col="3" class="pa-lr-lg">
+          {{report.report_name}}
+        </div>
+        <div col="7" class="pa-lr-lg padding-right-xl">
+          {{report.info_text}}
+        </div>
+        <div col="2" class="pa-lr-lg text-center space-on-top-n">
+          <icon name="mail"
+                size="2x"
+                class="clickable"
+                button-loader="vm.generatingReportLink"
+                uib-tooltip="Report will be mailed to linked email address."
+                data-ng-click="vm.generateReportLink(report.id)"></icon>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div col="4" offset="4" class="panel-body" data-ng-if="!vm.loadingExportOptions && !vm.excelReports.length">
+      <empty-state icon-name="mail"
+                   message="No reports to be downloaded"></empty-state>
+    </div>
+
+  </div>
+</div>

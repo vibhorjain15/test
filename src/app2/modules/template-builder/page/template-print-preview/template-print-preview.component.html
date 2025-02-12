@@ -1,0 +1,250 @@
+<div
+  class="diligence-text-center group-wrapper"
+  *ngIf="questionsLoading"
+  role="status"
+  aria-live="polite"
+>
+  <app-spinner
+    spinnerText="Populating the template"
+    aria-hidden="true"
+  ></app-spinner>
+</div>
+<div id="js-print-template-new" *ngIf="!questionsLoading">
+  <div *ngFor="let cat of categoryData">
+    <app-empty-state
+      *ngIf="!cat.list?.length"
+      message="No sub categories were found for the selected category"
+      (action)="goToAddSubCategory(cat.id)"
+      actionLabel="Add Subcategories in this category"
+      role="alert"
+    ></app-empty-state>
+    <div class="row" *ngFor="let section of cat.list">
+      <div class="col-md-12">
+        <div class="container-wrapper margin-top-bottom">
+          <div
+            *ngIf="!allQuestionsLoading[section.id]"
+            class="container-header"
+          >
+            <dv-label
+              size="heading"
+              label=" <strong> {{ cat.name }} : {{ section.name }}</strong>"
+              tabindex="0"
+              role="heading"
+              [attr.aria-label]="cat.name"
+              aria-level="2"
+            ></dv-label>
+          </div>
+
+          <p
+            *ngIf="!allQuestionsLoading[section.id] && section?.headerText"
+            class="alert alert-info js-header-text clear-margin clear-border-radius borderless"
+            role="alert"
+          >
+            <span
+              class="word-break-break-word"
+              [innerHtml]="section?.headerText"
+            ></span>
+          </p>
+
+          <dv-question-card-group
+            *ngIf="!allQuestionsLoading[section.id] && allQuestions[section.id]"
+          >
+            <app-empty-state
+              *ngIf="!allQuestions[section.id].length"
+              message="No questions were added in this sub category. Edit this template to add few"
+              (action)="goToAddQuestions(cat.id, section.id)"
+              actionLabel="Add Questions in this Category"
+              role="alert"
+            >
+            </app-empty-state>
+            <ul class="tree" role="tree">
+              <ng-container
+                *ngTemplateOutlet="
+                  Recursion;
+                  context: {
+                    questions: allQuestions[section.id],
+                    isNested: false
+                  }
+                "
+              ></ng-container>
+            </ul>
+
+            <ng-template
+              #Recursion
+              let-questions="questions"
+              let-isNested="isNested"
+            >
+              <ng-container *ngIf="isNested">
+                <ng-container
+                  *ngFor="let question of questions; let index = index"
+                >
+                  <ng-container *ngIf="question?.nestedID?.isValid">
+                    <li
+                      [class.active-question]="
+                        activeQuestion && activeQuestion == question.id
+                      "
+                    >
+                      <ng-container
+                        *ngTemplateOutlet="
+                          node;
+                          context: {
+                            question: question.nestedID,
+                            index: index,
+                            questionNumber: index + 1,
+                            isNested: true,
+                            questionsLength: questions.length
+                          }
+                        "
+                      ></ng-container>
+                    </li>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!isNested">
+                <li
+                  [id]="question.id"
+                  *ngFor="let question of questions; let index = index"
+                  [class.active-question]="
+                    activeQuestion && activeQuestion == question.id
+                  "
+                  role="treeitem"
+                >
+                  <ng-container
+                    *ngTemplateOutlet="
+                      node;
+                      context: {
+                        question: question,
+                        index: index,
+                        questionNumber: parentQuestionCount
+                          ? (index % parentQuestionCount) + 1
+                          : index + 1,
+                        isNested: false,
+                        questionsLength: questions.length
+                      }
+                    "
+                  ></ng-container>
+                  <dv-divider
+                    horizontalMargin="small"
+                    *ngIf="
+                      questions.length - 1 !== index &&
+                      (parentQuestionCount ?? 0 > 0) &&
+                      (index + 1) % parentQuestionCount == 0
+                    "
+                  ></dv-divider>
+                </li>
+              </ng-container>
+            </ng-template>
+
+            <ng-template
+              #node
+              let-question="question"
+              let-index="index"
+              let-isNested="isNested"
+              let-questionsLength="questionsLength"
+              let-questionNumber="questionNumber"
+            >
+              <dv-question-card
+                [title]="
+                  firmPreferences?.enable_questionnaire_numbering && !isNested
+                    ? questionNumber +
+                      section?.previous_question_count +
+                      '.  ' +
+                      question.text
+                    : question.text
+                "
+                [hintText]="question?.hint_text"
+                [leftIcons]="{}"
+                [ngClass]="{
+                  'parent-active-question':
+                    !isNested &&
+                    activeQuestion &&
+                    activeQuestion == question.id,
+                  'child-active-question':
+                    activeQuestion && activeQuestion == question.id,
+                  'parent-question': !isNested,
+                  bottomborder: questionsLength - 1 !== index
+                }"
+                tabindex="0"
+              >
+                <question-response
+                  *ngIf="
+                    question.responseType != 'ReturnTable' &&
+                    question.responseType != 'aumTable' &&
+                    question.responseType != 'Grid' &&
+                    question.responseType != 'Attachment' &&
+                    question.responseType != 'TextMultiLine' &&
+                    question.responseType != 'DynamicGrid'
+                  "
+                  [question]="question"
+                >
+                </question-response>
+
+                <response-track-change
+                  *ngIf="
+                    question.responseType == 'Grid' ||
+                    question.responseType == 'DynamicGrid'
+                  "
+                  [type]="question.responseType"
+                  [question]="question"
+                  [isTemplatePreview]="true"
+                  [isTrackChange]="false"
+                >
+                </response-track-change>
+                <textarea
+                  class="form-control"
+                  *ngIf="question.responseType == 'TextMultiLine'"
+                  name=""
+                  id=""
+                  rows="4"
+                  [attr.aria-label]="question.text"
+                ></textarea>
+                <div
+                  class="width-50"
+                  *ngIf="question.responseType == 'Attachment'"
+                >
+                  <attachment-response
+                    [question]="question"
+                    [isReadOnly]="true"
+                  >
+                  </attachment-response>
+                </div>
+
+                <return-table-preview
+                  *ngIf="question.responseType == 'ReturnTable'"
+                  [printPreview]="true"
+                ></return-table-preview>
+                <aum-preview
+                  *ngIf="question.responseType == 'aumTable'"
+                  [printPreview]="true"
+                ></aum-preview>
+              </dv-question-card>
+
+              <ul *ngIf="question?.nestedQuestions?.length">
+                <ng-container
+                  *ngTemplateOutlet="
+                    Recursion;
+                    context: {
+                      questions: question.nestedQuestions,
+                      isNested: true
+                    }
+                  "
+                ></ng-container>
+              </ul>
+            </ng-template>
+          </dv-question-card-group>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-offset-3 width-50" role="complementary">
+  <app-empty-state
+    *ngIf="isError"
+    message="No categories were added in this template"
+    (action)="gotoAddCategory()"
+    actionLabel="Add Category"
+    role="alert"
+  >
+  </app-empty-state>
+</div>

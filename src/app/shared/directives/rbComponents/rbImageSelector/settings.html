@@ -1,0 +1,44 @@
+<rb-component-width></rb-component-width>
+
+<div class="form-group">
+  <label>Image Type</label>
+
+  <div>
+    <dv-radio
+            type="info inline"
+            name="image-type"
+            value="{{type.value}}"
+            label="{{type.label}}"
+            data-ng-class="{'space-on-left': !$first}"
+            data-ng-change="vm.updateImageType()"
+            data-ng-model="component.options.type"
+            data-ng-repeat="type in imageTypes">
+    </dv-radio>
+  </div>
+</div>
+
+<div class="form-group" data-ng-if="component.options.type == 'logo'">
+  <label>Logo Alignment</label>
+
+  <div>
+    <div class="btn-group space-on-bottom-xxl">
+      <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.alignment == 'left'}" data-ng-click="setLogoAlignment('left')">
+        <icon name="align-left" class="space-on-right"></icon>LEFT
+      </label>
+      <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.alignment == 'center'}" data-ng-click="setLogoAlignment('center')">
+        <icon name="align-center" class="space-on-right"></icon>CENTER
+      </label>
+      <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.alignment == 'right'}" data-ng-click="setLogoAlignment('right')">
+        <icon name="align-right" class="space-on-right"></icon>RIGHT
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <div>
+    <dv-image-picker
+      data-ng-model="component.options.image_id">
+    </dv-image-picker>
+  </div>
+</div>

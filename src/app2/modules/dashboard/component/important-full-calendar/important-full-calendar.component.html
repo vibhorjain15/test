@@ -1,0 +1,37 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">Important Dates!!</h5>
+    <div class="panel-controls" *ngIf="!isManger">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          tooltip="Add New Event"
+          container="body"
+          (click)="addEvent()"
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="80"
+      *ngIf="!isAllDataLoaded"
+    ></app-spinner>
+    <full-calendar
+      (eventMouseEnter)="showTooltip($event)"
+      *ngIf="isAllDataLoaded"
+      #calendar
+      defaultView="dayGridMonth"
+      [header]="options.header"
+      [eventLimit]="options.eventLimit"
+      [firstDay]="options.firstDay"
+      [eventTimeFormat]="options.eventTimeFormat"
+      [plugins]="options.plugins"
+      [displayEventEnd]="options.displayEventEnd"
+      [events]="calendarEvents"
+    ></full-calendar>
+  </div>
+</div>

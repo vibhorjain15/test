@@ -1,0 +1,73 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Document (beta)</h5>
+    </div>
+
+    <div class="panel-body">
+        <p class="text-muted clear-margin">
+            <span data-ng-show="vm.document">{{vm.document.file_name}}:</span>
+            <span class="align-middle space-on-left" data-ng-show="vm.document.file_type.length">
+              <span>
+                <span class="label-list">
+                  <span class="label label-default space-on-right text-uppercase"
+                        data-ng-repeat="tag in vm.document.file_type">
+                    <small>{{tag}}</small>
+                  </span>
+                </span>
+              </span>
+              <button btn-type="primary"
+                      size="sm"
+                      data-ng-click="reviewDocument()">Review Document</button>
+            </span>
+        </p>
+
+        <hr class="space-on-top-lg" data-ng-show="vm.document">
+
+        <div class="row clearfix">
+            <div col="12">
+                <div class="dd-doc-selection-wrapper">
+                    <div class="panel panel-default dd-doc-drop-panel"
+                         dv-file-handler
+                         dv-droppable
+                         ngf-multiple="true"
+                         ngf-select-disabled="true"
+                         dv-on-upload="vm.getDocumentUploadResponse(response)"
+                         dv-accept="'.pdf'"
+                         dv-pattern="'.pdf'"
+                         dv-max-file-size="::vm.maxFileSize"
+                         dv-upload-url="/documents"
+                         ngf-drag-over-class="'panel-primary'">
+                        <div class="panel-body">
+                            <p class="text-muted text-center">
+                                <strong>Drag & Drop your file here</strong>
+                            </p>
+
+                            <p class="text-muted text-center">
+                                <icon name="upload" size="2x"></icon>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="dd-doc-select-button-container">
+                        <button btn-type="default"
+                                dv-accept="'.pdf'"
+                                dv-pattern="'.pdf'"
+                                dv-max-file-size="::vm.maxFileSize"
+                                dv-file-handler
+                                ngf-multiple="true"
+                                ngf-max-files="5"
+                                ngf-drop-disabled="true"
+                                dv-on-upload="vm.getDocumentUploadResponse(response)"
+                                dv-upload-url="/documents">
+                            Select File
+                        </button>
+                    </div>
+                </div>
+                <br/>
+                <p class="alert alert-info">
+                    Upload your documents here.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

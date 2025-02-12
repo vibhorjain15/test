@@ -1,0 +1,75 @@
+<div>
+    <div class="form-group">
+        <dv-checkbox data-ng-model="vm.showFilterBasedSelection" data-ng-change="vm.getEntityFilteredData()">
+            <dv-checkbox-label>
+                <b>{{vm.checkboxLabel}}</b>
+            </dv-checkbox-label>
+        </dv-checkbox>
+    </div>
+    <div data-ng-if="vm.showFilterBasedSelection && vm.loadingEntityFilteredData">
+        <spinner></spinner>
+    </div>
+    <div data-ng-if="vm.showFilterBasedSelection && !vm.loadingEntityFilteredData" class="row space-on-bottom-lg">
+        <div col="12" class="inline-block space-on-bottom-lg" data-ng-repeat="(filterName, searchCriteria) in vm.entitySearchMap">
+            <div col="6">
+                <span class="btn btn-primary-outline text-uppercase space-on-right overflow-ellipsis" col="10">
+                    <small uib-tooltip="{{vm.displayFilter(searchCriteria.filter)}}">{{vm.displayFilter(searchCriteria.filter)}}</small>
+                    <!-- <a class="space-on-left clickable link-disguise" data-ng-click="vm.removeFilterCriterion($index)">&times;</a> -->
+                </span>
+                <span col="1">
+                    <a class="badge clickable va-sub" data-ng-class="{'badge-warning':searchCriteria.hasDuplicate}"
+                        uib-tooltip="{{searchCriteria.hasDuplicate?'This filter has a duplicate '+vm.entityType+' with another filter. Please unselect one.':''}}"
+                        tooltip-is-open="vm.templateForm.$submitted" tooltip-placement="right"
+                        data-ng-click="vm.viewSelectedEntities(searchCriteria, filterName)">{{searchCriteria.selectedLength}}</a>
+                </span>
+            </div>
+            <div col="6" class="inline-block">
+                <span data-ng-if="vm.globalTernaryOperator == vm.FILTER_TERNARY_OPERATORS.OR"
+                        uib-tooltip="{{!searchCriteria.hasDuplicate && searchCriteria.selectedLength > 0 && (searchCriteria.template_id == null || searchCriteria.template_id.length == 0)?'Please select a template for this filter':''}}"
+                        tooltip-is-open="vm.templateForm.$submitted"
+                        tooltip-trigger="none" tooltip-placement="right">
+                    <select name="template" chosen
+                        data-ng-options="template.name for template in vm.templates track by template.id"
+                        data-ng-model="searchCriteria.template_id" no-results-text="'Could not find any templates'"
+                        class="form-control" multiple max-selected-options="vm.maxSelectedTemplates" 
+                        data-ng-disabled="searchCriteria.hasDuplicate || searchCriteria.selectedLength == 0"
+                        data-ng-change="vm.validateForm()">
+                    </select>
+                </span>
+                <span data-ng-if="vm.globalTernaryOperator == vm.FILTER_TERNARY_OPERATORS.AND && $index == 0"
+                        uib-tooltip="{{!searchCriteria.hasDuplicate && searchCriteria.data.length > 0 && (vm.allFilterTemplateId == null || vm.allFilterTemplateId.length == 0)?'Please select a template for this filter':''}}"
+                        tooltip-is-open="vm.templateForm.$submitted"
+                        tooltip-trigger="none" tooltip-placement="right">
+                    <select name="template" chosen
+                        data-ng-options="template.name for template in vm.templates track by template.id"
+                        data-ng-model="vm.allFilterTemplateId" no-results-text="'Could not find any templates'"
+                        class="form-control" multiple max-selected-options="vm.maxSelectedTemplates"
+                        data-ng-disabled="searchCriteria.hasDuplicate || searchCriteria.selectedLength == 0"
+                        data-ng-change="vm.validateForm()">
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div col="12" class="inline-block space-on-bottom-lg" data-ng-if="vm.unfilteredSelectedEntities.data.length > 0">
+            <div col="6">
+                <span class="btn btn-primary-outline text-uppercase space-on-right overflow-ellipsis" col="10">
+                    <small>Unfiltered Items</small>
+                    <!-- <a class="space-on-left clickable link-disguise" data-ng-click="vm.removeFilterCriterion($index)">&times;</a> -->
+                </span>
+                <span class="badge clickable space-on-top" col="1" data-ng-click="vm.viewSelectedEntities(vm.unfilteredSelectedEntities, 'Unfiltered', true)">{{vm.unfilteredSelectedEntities.data.length}}</span>
+            </div>
+            <div col="6" class="inline-block"
+                    uib-tooltip="{{vm.unfilteredSelectedEntities.template_id == null || vm.unfilteredSelectedEntities.template_id.length == 0?'Please select a template for this filter':''}}"
+                    tooltip-trigger="none" tooltip-placement="right"
+                    tooltip-is-open="vm.templateForm.$submitted">
+                <select name="template" chosen
+                    data-ng-options="template.name for template in vm.templates track by template.id"
+                    data-ng-model="vm.unfilteredSelectedEntities.template_id"
+                    no-results-text="'Could not find any templates'" class="form-control" multiple
+                    max-selected-options="vm.maxSelectedTemplates"
+                    data-ng-change="vm.validateForm()">
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

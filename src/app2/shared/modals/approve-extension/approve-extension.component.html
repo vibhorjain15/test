@@ -1,0 +1,124 @@
+<app-modal
+  [title]="'Due Date Management'"
+  [initialTemplate]="extensionRef"
+  #extensionApprovalModal
+>
+</app-modal>
+
+<ng-template #extensionRef>
+  <div class="modal-body">
+    <div class="spacing-at-top-xl">
+      <label>Requested Due Date:</label>
+      {{ dueDateDetails?.requested_at | date : "fullDate" }} <br />
+      <label>Reason:</label
+      ><span style="word-break: break-all">{{ dueDateDetails?.reason }}</span>
+    </div>
+
+    <hr class="space-on-top space-on-bottom-xl" />
+
+    <div>
+      <dv-button
+        btnType="success"
+        [loader]="extending"
+        (onClick)="acceptExtendedDueDate()"
+      >
+        Accept
+      </dv-button>
+    </div>
+
+    <div class="space-on-top-lg small">
+      <a class="clickable" (click)="showRejectDueDatePanel()"> Decline </a>
+      <span class="padding-lr-xl">|</span>
+      <a class="clickable" (click)="showExtendDueDatePanel()">
+        Suggest New Date
+      </a>
+    </div>
+
+    <hr
+      class="space-on-top-xl space-on-bottom-xl"
+      *ngIf="isRejectDueDatePanelOpen"
+    />
+
+    <form
+      [formGroup]="extensionDeclinedForm"
+      *ngIf="isRejectDueDatePanelOpen"
+      name="rejectDueDateExtensionForm"
+      autocomplete="off"
+    >
+      <label for="reason">Reason for Declining</label>
+      <dv-form-element
+        [fieldName]="'Reason'"
+        [modelController]="extensionDeclinedForm.get('reason')"
+        elementCol="0"
+        [errorMessage]="
+          extensionDeclinedForm.get('reason').touched &&
+          extensionDeclinedForm.get('reason').errors?.required
+            ? 'Reason is required'
+            : extensionDeclinedForm.get('reason').touched &&
+              extensionDeclinedForm.get('reason').errors?.maxLength
+            ? (errorMessageMap.maxlength | interpolate : 'Reason')
+            : extensionDeclinedForm.get('reason').touched &&
+              extensionDeclinedForm.get('reason').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Reason')
+            : ''
+        "
+      >
+        <input class="form-control" id="reason" formControlName="reason" />
+      </dv-form-element>
+
+      <div class="app-form-group">
+        <dv-button
+          btnType="primary"
+          [loader]="rejecting"
+          (onClick)="rejectDueDateExtension()"
+        >
+          Confirm
+        </dv-button>
+      </div>
+    </form>
+
+    <form
+      [formGroup]="extensionApprovedForm"
+      *ngIf="isExtendDueDatePanelOpen"
+      name="modifyDueDateExtensionForm"
+      autocomplete="off"
+    >
+      <label>Suggested Due Date</label>
+      <dv-form-element
+        class="space-on-top"
+        [fieldName]="'New Due Date'"
+        [modelController]="extensionApprovedForm.get('newDueDate')"
+        [showRightIcon]="false"
+        elementCol="0"
+      >
+        <app-date-picker
+          [id]="'newDueDate'"
+          [minDate]="minDate"
+          [value]="extensionApprovedForm.get('newDueDate').value"
+          (change)="setDateValue($event)"
+          [class]="
+            extensionApprovedForm.get('newDueDate').touched &&
+            extensionApprovedForm.get('newDueDate').errors?.required
+              ? 'has-error'
+              : ''
+          "
+        >
+        </app-date-picker>
+        <div
+          class="text-danger"
+          *ngIf="
+            extensionApprovedForm.get('newDueDate').touched &&
+            extensionApprovedForm.get('newDueDate').errors?.required
+          "
+        >
+          New Due Date is required
+        </div>
+      </dv-form-element>
+      <div class="app-form-group">
+        <dv-button btnType="primary" (onClick)="extendDueDateExtension()">
+          Confirm
+        </dv-button>
+      </div>
+    </form>
+  </div>
+</ng-template>

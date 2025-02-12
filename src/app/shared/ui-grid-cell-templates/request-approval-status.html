@@ -1,0 +1,12 @@
+<ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="text-left">
+    <span class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD
+        CUSTOM_FILTERS}}
+    </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents
+    ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <span class="label text-uppercase"
+        data-ng-class="{'label-danger': row.entity.draft_current_status=='Rejected', 'label-warning': row.entity.draft_current_status=='Pending approval','label-info': row.entity.draft_current_status=='Waiting for approval'}">
+        <small>{{row.entity.draft_current_status}}</small>
+    </span>
+</ui-grid-cell-contents>

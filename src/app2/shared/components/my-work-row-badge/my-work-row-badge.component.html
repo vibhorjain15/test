@@ -1,0 +1,18 @@
+<div *ngIf="params?.node?.group || !url">
+  <ng-container *ngTemplateOutlet="workbadge"> </ng-container>
+</div>
+<a *ngIf="!params?.node?.group && url" [href]="'/#/' + url">
+  <ng-container *ngTemplateOutlet="workbadge"> </ng-container>
+</a>
+
+<ng-template #workbadge>
+  <span
+    class="project-row-name"
+    [tooltip]="text"
+    [adaptivePosition]="false"
+    container="body"
+  >
+    {{ text }}
+  </span>
+  <span *ngIf="isNew" class="badge dv-badge-info relative-tag"> New </span>
+</ng-template>

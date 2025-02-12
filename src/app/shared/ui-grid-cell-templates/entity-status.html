@@ -1,0 +1,12 @@
+<ui-grid-cell-contents class="text-center unstyledLink">
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <a ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)"
+     uib-tooltip="{{row.entity.platform_active? 'Active' : 'Deactivated by the owner firm'}}"
+     tooltip-placement="right">
+    <span class="space-on-left label label-warning" ng-show="!row.entity.platform_active">Deactivated</span>
+    <span class="space-on-left label label-default" ng-show="row.entity.platform_active">Active</span>
+  </a>
+</ui-grid-cell-contents>

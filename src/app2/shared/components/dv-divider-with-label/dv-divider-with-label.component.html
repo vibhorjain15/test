@@ -1,0 +1,17 @@
+<div class="separator">
+  <div [class.min-width-75-pct]="textOverflowBreakLine">
+    <span
+      [ngClass]="{
+        'more-text': !textOverflowBreakLine,
+      }"
+      class="space-on-right text-bold"
+    >
+      {{ label }}
+    </span>
+  </div>
+  <div
+    class="space-on-left"
+    [style.height.px]="height"
+    style="background: #dadce0; width: 100%"
+  ></div>
+</div>

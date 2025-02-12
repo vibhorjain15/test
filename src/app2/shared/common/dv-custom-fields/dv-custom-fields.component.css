@@ -1,0 +1,14 @@
+.custom-field-flex-wrap {
+  display: flex;
+  flex-flow: wrap;
+}
+.custom-field-flex-wrap > p {
+  margin-right: 5px;
+}
+
+.wrap-all-fields {
+  white-space: pre-wrap !important;
+  text-align: left !important;
+  word-break: break-all !important;
+  padding-top: 4px;
+}

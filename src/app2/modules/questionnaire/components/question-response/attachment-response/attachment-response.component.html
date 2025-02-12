@@ -1,0 +1,84 @@
+<div
+  class="panel panel-default"
+  role="region"
+  [attr.aria-label]="isReadOnly ? 'Attachments' : 'Attach a file'"
+>
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      {{ isReadOnly ? "Attachments" : "Attach a file" }}
+    </h5>
+  </div>
+  <div
+    class="panel-body"
+    *ngIf="!isReadOnly"
+    role="region"
+    aria-label="Attachment Panel"
+  >
+    <div class="dd-doc-selection-wrapper padded-right">
+      <div
+        class="panel panel-default dd-doc-drop-panel"
+        role="presentation"
+      ></div>
+
+      <div class="dd-doc-select-button-container justify-center">
+        <dv-button-group>
+          <dv-button
+            btnType="primary"
+            (onClick)="handleUseExistingClick()"
+            [disabled]="isPreview"
+          >
+            Add Existing
+          </dv-button>
+          <dv-button
+            btnType="default"
+            (onClick)="handleAddDocument()"
+            [disabled]="isPreview"
+          >
+            New Upload
+          </dv-button>
+        </dv-button-group>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="dd-attachments-selector attachments-selector-margin"
+    [attr.role]="attachments?.length ? 'list' : null"
+    [attr.aria-label]="attachments?.length ? 'Attachments List' : null"
+  >
+    <div *ngFor="let attachment of attachments" role="listitem">
+      <document-name
+        [document]="attachment"
+        [canModify]="!isReadOnly"
+        [isQuestionView]="true"
+        (onDeleteDocument)="handleRemoveAttachment(attachment)"
+        (onEditDocument)="editAttachmentInfo(attachment)"
+      ></document-name>
+    </div>
+  </div>
+
+  <div
+    class="panel-body"
+    *ngIf="!attachments?.length && isReadOnly"
+    role="region"
+    aria-label="No Attachments"
+  >
+    <i class="text-muted">
+      <small>*No files attached*</small>
+    </i>
+  </div>
+
+  <div
+    class="panel-footer"
+    *ngIf="attachments?.length && isReadOnly"
+    role="region"
+    aria-label="Attachment Status"
+  >
+    <div class="clearfix">
+      <small>
+        {{ attachments.length }}
+        {{ attachments.length > 1 ? "Attachments" : "Attachment" }} uploaded
+      </small>
+    </div>
+  </div>
+</div>

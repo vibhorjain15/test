@@ -1,0 +1,452 @@
+<app-modal
+  [title]="'Setup filters to narrow your search'"
+  [firstButtonLabel]="'Start Searching'"
+  [initialTemplate]="manageCustomSearch"
+  (onFirstClick)="searchByFilters()"
+  [isCancelButton]="false"
+  [isLoading]="loadingData"
+  [secondButtonLabel]="'Reset & Search'"
+  (onSecondClick)="resetFilters()"
+>
+</app-modal>
+
+<ng-template #manageCustomSearch>
+  <!-- app spinner -->
+  <div *ngIf="loadingData" class="row">
+    <div class="flex text-center">
+      <app-spinner spinner-height="20"></app-spinner>
+    </div>
+  </div>
+  <!-- app spinner -->
+
+  <div *ngIf="!loadingData" class="row">
+    <!-- form -->
+    <form
+      class="form-horizontal"
+      name="customSearchForm"
+      [formGroup]="custom_search_form"
+      novalidate
+      autocomplete="off"
+    >
+      <div col="12">
+        <!-- filter or any and refresh button -->
+        <div
+          col="10"
+          offset="1"
+          class="space-on-bottom-lg space-on-top-lg space-on-left-xl"
+        >
+          <span
+            class="control-label font-bold clear-margin-bottom inline-block space-on-right"
+          >
+            <span class="text-capitalize">
+              {{ entityType | standardPluralize }}
+            </span>
+            matching
+          </span>
+          <dv-select
+            [list]="dropdownItems"
+            (onSelectChange)="setGlobalTernaryOperator($event)"
+            formControlName="globalTernaryOperator"
+            [bindLabel]="'label'"
+            [bindValue]="'key'"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            class="inline-block w-80"
+            [aria-label]="entityType + ' ' + 'matching'"
+          ></dv-select>
+          <span
+            class="control-label font-bold clear-margin-bottom inline-block space-on-left"
+            >of the selected criteria</span
+          >
+        </div>
+        <div col="1">
+          <div class="pull-right">
+            <button
+              size="sm"
+              class="btn btn-default space-on-right"
+              uib-tooltip="Clear filters"
+              (click)="clearAllFilters()"
+              type="button"
+              aria-label="clear filters"
+            >
+              <icon appIcon name="refresh"></icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- filter or any and refresh button -->
+
+      <!-- filters -->
+      <div
+        class="space-on-bottom-lg space-on-top-lg"
+        formArrayName="search_criterias"
+        col="12"
+      >
+        <div
+          col="12"
+          *ngFor="let criteria of criterias.controls; let i = index"
+        >
+          <ng-container [formGroup]="criteria">
+            <div col="1" class="padding-right-lg">
+              <span class="control-label" *ngIf="i == 0">&nbsp;</span>
+              <h5
+                class="text-right clear-margin-bottom text-uppercase"
+                [ngClass]="{
+                  'text-muted': !criteria.value.advance_filter_value
+                }"
+                *ngIf="i > 0"
+              >
+                {{ global_ternary_operator }}
+              </h5>
+            </div>
+            <!-- default_criteria_options -->
+            <div
+              col="4"
+              *ngIf="i < default_criteria_options.length"
+              class="padding-right-lg"
+            >
+              <dv-form-element
+                [modelController]="criteria.get('filter_name')"
+                [elementCol]="'12'"
+                [label]="i == 0 ? 'Filters' : ''"
+                [labelCol]="'2'"
+                [fieldName]="'filter_name'"
+                tooltip-placement="left"
+                [showRightIcon]="false"
+                [for]="'criteria_' + i"
+              >
+                <dv-select
+                  [list]="default_criteria_options"
+                  (onSelectChange)="selectCriteria(criteria, i)"
+                  [bindLabel]="'filter_name'"
+                  [bindValue]="'filter_name'"
+                  [disabled]="true"
+                  [clearable]="false"
+                  [searchable]="true"
+                  formControlName="filter_name"
+                  [id]="'criteria_' + i"
+                  [name]="'criteria_' + i"
+                  [placeholder]="'Select an Option'"
+                  [aria-label]="'Filters'"
+                ></dv-select>
+              </dv-form-element>
+            </div>
+            <!-- default_criteria_options -->
+
+            <!-- custom_criteria_options -->
+            <div
+              col="4"
+              class="padding-right-lg"
+              *ngIf="i >= default_criteria_options.length"
+            >
+              <dv-form-element
+                [modelController]="criteria.get('filter_name')"
+                [elementCol]="'12'"
+                [label]="i == 0 ? 'Filters' : ''"
+                [labelCol]="'2'"
+                fieldName="filter_name"
+                tooltip-placement="left"
+                [showRightIcon]="false"
+              >
+                <span
+                  [for]="'criteria_' + i"
+                  class="control-label text-capitalize fw-bolder"
+                  *ngIf="i == 0"
+                  >Filters</span
+                >
+                <dv-select
+                  [list]="custom_criteria_options"
+                  (onSelectChange)="selectCriteria($event, criteria, i)"
+                  [bindLabel]="'filter_name'"
+                  [bindValue]="'filter_name'"
+                  formControlName="filter_name"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [placeholder]="'Select a criteria'"
+                  [id]="'criteria_' + i"
+                  [name]="'criteria_' + i"
+                  [placeholder]="'Select an Option'"
+                  [aria-label]="'Filters'"
+                ></dv-select>
+              </dv-form-element>
+            </div>
+            <!-- custom_criteria_options -->
+
+            <!-- condition -->
+            <div col="3" class="padding-right-lg">
+              <dv-form-element
+                [modelController]="criteria.get('condition')"
+                [elementCol]="'12'"
+                [label]="i == 0 ? 'Condition' : ''"
+                [labelCol]="'2'"
+                fieldName="condition"
+                tooltip-placement="left"
+                [showRightIcon]="false"
+                [for]="'condition_' + i"
+              >
+                <dv-select
+                  [id]="'condition_' + i"
+                  [list]="criterias.controls[i].value.criteria_obj.operations"
+                  [bindLabel]="'label'"
+                  [bindValue]="'value'"
+                  [clearable]="false"
+                  [searchable]="true"
+                  formControlName="condition"
+                  [placeholder]="'Select an Option'"
+                  [id]="'condition_' + i"
+                ></dv-select>
+              </dv-form-element>
+            </div>
+            <!-- condition -->
+            <div col="4">
+              <div
+                class="width-95-pct inline-block"
+                *ngIf="criteria.value.condition == 'not_empty'"
+              >
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  fieldName="Value"
+                  tooltip-placement="left"
+                  iconTooltip="defaultCriteriaOptions"
+                  [showRightIcon]="false"
+                >
+                  <label
+                    [for]="'value_' + i"
+                    class="control-label"
+                    *ngIf="i == 0"
+                    >Value</label
+                  >
+                  <dv-select
+                    [list]="advanceFilterItems"
+                    [bindLabel]="'label'"
+                    [bindValue]="'key'"
+                    [disabled]="true"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [placeholder]="'Select an Option'"
+                    formControlName="advance_filter_value"
+                    [id]="'value_' + i"
+                    [name]="'value_' + i"
+                    [aria-label]="'Value'"
+                  ></dv-select>
+                </dv-form-element>
+              </div>
+              <div
+                class="width-95-pct inline-block"
+                *ngIf="criteria.value.condition != 'not_empty'"
+              >
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  elementClass="padding-right-lg"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  fieldName="Value"
+                  tooltip-placement="left"
+                  *ngIf="
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.NUMBER ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.INT ||
+                    criteria.value.criteria_obj.sub_type.toLowerCase() ==
+                      FILTER_TYPES.INT ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.NUMERIC ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.INTEGER
+                  "
+                  [for]="'advance_filter_value_' + i"
+                >
+                  <input
+                    type="number"
+                    formControlName="advance_filter_value"
+                    [id]="'advance_filter_value_' + i"
+                    class="form-control"
+                    autocomplete="off"
+                    [attr.aria-label]="'enter a integer value'"
+                  />
+                </dv-form-element>
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  elementClass="padding-right-lg"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  fieldName="Value"
+                  tooltip-placement="left"
+                  *ngIf="
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.STRING ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.TEXT ||
+                    criteria.value.criteria_obj.sub_type.toLowerCase() ==
+                      FILTER_TYPES.TEXT ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.PARAGRAPH ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.MULTILINE ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.LINK
+                  "
+                  [for]="'value_' + i"
+                >
+                  <input
+                    type="text"
+                    [id]="'value_' + i"
+                    [name]="'value_' + i"
+                    formControlName="advance_filter_value"
+                    placeholder="Type a value"
+                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                    class="form-control"
+                    autocomplete="off"
+                  />
+                </dv-form-element>
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  fieldName="Value"
+                  tooltip-placement="left"
+                  *ngIf="
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.DYNAMIC ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.RANGE ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.DROPDOWN ||
+                    criteria.value.criteria_obj.sub_type.toLowerCase() ==
+                      FILTER_TYPES.DROPDOWN ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.CHECKBOX ||
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.DROP
+                  "
+                  [showRightIcon]="false"
+                  elementClass="padding-right-lg"
+                  [for]="'select_value_' + i"
+                >
+                  <dv-select
+                    [list]="criteria.value.criteria_obj.options"
+                    formControlName="advance_filter_value"
+                    bindLabel="value"
+                    bindValue="id"
+                    [disabled]="false"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [name]="'select_value_' + i"
+                    [id]="'select_value_' + i"
+                    [placeholder]="'Select an option'"
+                    [aria-label]="'Value'"
+                  ></dv-select>
+                </dv-form-element>
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  field-name="condition"
+                  tooltip-placement="left"
+                  *ngIf="
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.DATE && criteria.value.condition == 'between'
+                  "
+                  [for]="'date_' + i"
+                >
+                  <div col="12">
+                    <app-date-range-picker
+                      [id]="'date_' + i"
+                      (change)="onChange($event, i)"
+                      (clearDateFilter)="onClearDateFilter()"
+                    ></app-date-range-picker>
+                  </div>
+                </dv-form-element>
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  [showRightIcon]="false"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  field-name="condition"
+                  tooltip-placement="left"
+                  *ngIf="
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                      FILTER_TYPES.DATE && criteria.value.condition != 'between'
+                  "
+                  [for]="'datefilter_' + i"
+                >
+                  <app-date-picker
+                    [name]="'datefilter_' + i"
+                    [id]="'datefilter_' + i"
+                    [value]="criteria.value.advance_filter_value"
+                    (change)="setDateValue($event, i, false, criteria)"
+                  >
+                  </app-date-picker>
+                </dv-form-element>
+                <dv-form-element
+                  [modelController]="criteria.get('advance_filter_value')"
+                  [elementCol]="'12'"
+                  [showRightIcon]="false"
+                  [label]="i == 0 ? 'Value' : ''"
+                  [labelCol]="'2'"
+                  field-name="condition"
+                  tooltip-placement="left"
+                  *ngIf="
+                    criteria.value.criteria_obj.type.toLowerCase() ==
+                    FILTER_TYPES.DATETIME
+                  "
+                  [for]="'datetimefilter_' + i"
+                >
+                  <app-date-time-picker
+                    [name]="'datetimefilter_' + i"
+                    [id]="'datetimefilter_' + i"
+                    [value]="criteria.value.advance_filter_value"
+                    (change)="setDateValue($event, i, true, criteria)"
+                    [showSec]="true"
+                  >
+                  </app-date-time-picker>
+                </dv-form-element>
+              </div>
+
+              <a
+                [ngStyle]="i == 0 && { top: '39px' }"
+                *ngIf="
+                  (criteria.value.advance_filter_value.length > 1 ||
+                    criteria.value.advance_filter_value.toString() != '') &&
+                  (criteria.value.advance_filter_value ||
+                    criteria.value.advance_filter_value.toString() == '0')
+                "
+                (click)="removeCurrentFilter(criteria, i)"
+                class="clickable clear-filter-btn"
+              >
+                <icon appIcon name="close" class="color-danger"></icon>
+              </a>
+            </div>
+          </ng-container>
+        </div>
+        <div col="12" class="space-on-top-xxl">
+          <div offset="10" col="2" class="">
+            <div class="pull-right">
+              <button
+                size="sm"
+                class="btn btn-default space-on-right"
+                uib-tooltip="Add Criteria"
+                (click)="addNewCriteria()"
+                type="button"
+                aria-label="Add Criteria"
+              >
+                <icon appIcon name="plus"></icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- filters -->
+    </form>
+    <!-- form -->
+  </div>
+</ng-template>

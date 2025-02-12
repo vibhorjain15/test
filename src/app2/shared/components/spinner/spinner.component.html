@@ -1,0 +1,34 @@
+<div class="panel panel-default" *ngIf="includePanel">
+  <div class="panel-body">
+    <ng-container *ngTemplateOutlet="defaultSpinner"></ng-container>
+  </div>
+</div>
+
+<div *ngIf="broadSpinner">
+  <table class="table clear-margin-bottom">
+    <tbody>
+      <tr [style.height.px]="spinnerHeight || 240">
+        <td class="text-center borderless align-middle">
+          <ng-container *ngTemplateOutlet="defaultSpinner"></ng-container>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-container *ngIf="!includePanel && !broadSpinner">
+  <ng-container *ngTemplateOutlet="defaultSpinner"></ng-container>
+</ng-container>
+
+<ng-template #defaultSpinner>
+  <span>
+    <i
+      class="dvi dvi-spinner fa-spin"
+      [ngClass]="[
+        size ? 'fa-' + size : '',
+        spinnerText ? 'space-on-right-lg' : ''
+      ]"
+    ></i>
+    {{ spinnerText }}
+  </span>
+</ng-template>

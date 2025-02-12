@@ -1,0 +1,307 @@
+  <div class="modal-header">
+    <h3 class="modal-title">Selected Template - {{vm.template.name}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <small>Copy DV tags corresponding to selected data points and place into your custom Word report. DV tags will be replaced by actual responses at the report generation time.</small>
+      </div>
+    </div>
+    <div class="panel">
+      <div ng-if="vm.loading" class="text-center">
+        <spinner></spinner>
+      </div>
+      <div class="panel-body" data-ng-if="!vm.loading">
+        <div class="row clearfix">
+          <div class="text-center space-on-bottom-lg">
+            <div class="btn-group">
+                <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedTab == 'QuestionTags'}" data-ng-click="vm.setActiveTab('QuestionTags')">Question Tags</label>
+                <label ng-show="vm.isAbsolute" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedTab == 'RatingTags'}" data-ng-click="vm.setActiveTab('RatingTags')">Rating Tags</label>
+                <label ng-hide="vm.isAbsolute" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedTab == 'ScoreTags'}" data-ng-click="vm.setActiveTab('ScoreTags')">Score Tags</label>
+                <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedTab == 'CustomTags'}" data-ng-click="vm.setActiveTab('CustomTags')">Custom Tags</label>
+            </div>
+          </div>
+        </div>
+        <div class="row clearfix" ng-show="vm.selectedTab == 'QuestionTags'">
+          <div class="col-sm-5">
+            <div class="form-group">
+              <input type="text" class="form-control" ng-model="vm.searchText" placeholder="Filter by question">
+            </div>
+          </div>
+          <div class="col-sm-5" ng-show="vm.selectedTab == 'QuestionTags'">
+            <select name="section"
+                    id="section"
+                    class="form-control"
+                    chosen
+                    data-placeholder="Select section"
+                    data-ng-options="section.id as section.name for section in vm.sections"
+                    data-ng-model="vm.selectedSection"
+                    ng-change="vm.filtersQuestionTags()">
+                <option value="">--Select--</option>
+            </select>
+          </div>
+          <div class="col-sm-2">
+            <button btn-type="default"
+              data-ng-click="vm.clearFilters()">
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div ng-if="vm.selectedTab == 'QuestionTags' && !vm.loading">
+            <table class="table table-condensed table-striped" style="width: 100%">
+              <tbody>
+                <tr ng-repeat="tag in vm.questionTags | filter: vm.searchText">
+                  <td>
+                    <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy Comment tags"
+                        data-ng-disabled="tag.responseType == 'Text' || tag.responseType == 'TextMultiLine' || tag.responseType == 'TextEmail'"
+                        ngclipboard data-clipboard-text="{{tag.copyCommentKey}}"
+                        data-ng-click="vm.copyTags('Question')">
+                    <icon name="copy"></icon>
+                    </button>
+                    <button btn-type="default"
+                            size="sm"
+                            class="space-on-right-lg"
+                            uib-tooltip="Copy response tags"
+                            ngclipboard data-clipboard-text="{{tag.copyKey}}"
+                            data-ng-click="vm.copyTags('Question')">
+                        <icon name="copy"></icon>
+                    </button>
+                    <span data-ng-bind-html="tag.text | cleanhtml"></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          <div class="text-center"  ng-if="!vm.questionTags.length">
+            <p class="text-muted space-on-top">No Question Tags Found</p>
+          </div>
+        </div>
+        <div ng-if="vm.selectedTab == 'CustomTags' && !vm.loading">
+          <table class="table table-condensed table-striped" style="width: 100%"  ng-if="vm.customTagsArr.length">
+            <tbody>
+              <tr ng-repeat="tag in vm.customTagsArr | filter: vm.searchText">
+                <td>
+                  <button btn-type="default"
+                          size="sm"
+                          class="space-on-right-lg"
+                          uib-tooltip="Copy tags"
+                          ngclipboard data-clipboard-text="{{tag.copyKey}}"
+                          data-ng-click="vm.copyTags('Custom')">
+                      <icon name="copy"></icon>
+                  </button>
+                  {{tag.item1}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="text-center"  ng-if="!vm.customTagsArr.length">
+            <p class="text-muted space-on-top">No Custom Tags Found</p>
+          </div>
+        </div>
+        <div ng-if="(vm.selectedTab == 'RatingTags' || vm.selectedTab == 'ScoreTags') && !vm.loading">
+          <div ng-if="vm.loading_custom_fields" class="text-center">
+            <spinner></spinner>
+          </div>
+          <div class="row">
+            <div data-ng-class="{'col-md-4':vm.selectedCategory || vm.selectedTotalScore, 'col-md-12':!vm.selectedCategory && !vm.selectedTotalScore}" class="max-h-25-em overflow-scroll-y-axis overflow-x-hidden">
+              <div class="list-group list-group-menu">
+                <div>
+                  <a class="list-group-item clickable" data-ng-if="vm.ratingTags.length" data-ng-class="{'text-orange': vm.selectedTotalScore}" data-ng-click="vm.selectTotalScore()">
+                    Total {{vm.isAbsolute? 'Rating' : 'Score'}}
+                    <icon name="chevron-right"></icon>
+                  </a>
+                </div>
+                <div data-ng-if="vm.selectedRatingScheme.rating_level == 'Section'">
+                  <a class="list-group-item clickable" data-ng-repeat="category in vm.ratingTags" data-ng-class="{'text-orange': category.active}" data-ng-click="vm.selectCategory(category)">
+                    {{category.name}}
+                    <icon name="chevron-right"></icon>
+                  </a>
+                </div>
+                <div data-ng-if="vm.selectedRatingScheme.rating_level == 'Question'">
+                  <div class="nested-list-group-container" data-ng-repeat="category in vm.ratingTags">
+                    <a class="list-group-item" role="button" data-ng-click="category.expanded = !category.expanded">
+                      <span class="state-label">{{category.name}}</span>
+
+                      <icon name="chevron-right" data-ng-hide="category.expanded"></icon>
+                      <icon name="chevron-down" class="text-orange" data-ng-show="category.expanded"></icon>
+                    </a>
+
+                    <div class="list-group" uib-collapse="!category.expanded">
+                      <a class="list-group-item clickable" data-ng-repeat="subcategory in category.ratings" data-ng-class="{'text-orange': subcategory.active}" data-ng-click="vm.selectSubCategory(subcategory, category)">
+                        {{subcategory.name}}
+                        <icon name="chevron-right"></icon>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div col="8" data-ng-if="vm.selectedTotalScore" class="padded-lg list-group-item">
+              <div class="row padded">
+                <p class="inline-block w-130">Total {{vm.isAbsolute? 'Rating' : 'Score'}} Tags:</p>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} value"
+                        ngclipboard data-clipboard-text="{{vm.selectedTotalScore.copyParams.copyKey}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} name"
+                        ngclipboard data-clipboard-text="{{vm.selectedTotalScore.copyParams.copyKeyName}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+                <button ng-if="!vm.isAbsolute" btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} color"
+                        ngclipboard data-clipboard-text="{{vm.selectedTotalScore.copyParams.copyKeyColor}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+              </div>
+            </div>
+            <div col="8" data-ng-if="vm.selectedCategory && !vm.selectedTotalScore" class="padded-lg list-group-item">
+              <div class="row padded">
+                <p class="inline-block w-130">Category Tags:</p>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} value"
+                        ngclipboard data-clipboard-text="{{vm.selectedCategory.copyParams.copyKey}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} name"
+                        ngclipboard data-clipboard-text="{{vm.selectedCategory.copyParams.copyKeyName}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+                <button ng-if="!vm.isAbsolute" btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} color"
+                        ngclipboard data-clipboard-text="{{vm.selectedCategory.copyParams.copyKeyColor}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+              </div>
+              <div class="row padded" data-ng-if="vm.selectedRatingScheme.rating_level == 'Question'">
+                <p class="inline-block w-130">SubCategory Tags:</p>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} value"
+                        ngclipboard data-clipboard-text="{{vm.selectedSubcategory.copyParams.copyKey}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} name"
+                        ngclipboard data-clipboard-text="{{vm.selectedSubcategory.copyParams.copyKeyName}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+                <button ng-if="!vm.isAbsolute" btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} color"
+                        ngclipboard data-clipboard-text="{{vm.selectedSubcategory.copyParams.copyKeyColor}}"
+                        data-ng-click="vm.copyTags('Score')">
+                    <icon name="copy"></icon>
+                </button>
+              </div>
+              <div>
+                <table class="table table-condensed table-striped" style="width: 100%">
+                  <tbody ng-repeat="tag in vm.selectedSubcategory.ratings">
+                    <tr>
+                      <td style="width: 5%;">
+                        <div>
+                          <button btn-type="default"
+                                  size="sm"
+                                  class="space-on-right-lg"
+                                  uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} value tag"
+                                  ngclipboard data-clipboard-text="{{tag.copyParams.copyKey}}"
+                                  data-ng-click="vm.copyTags('Score')">
+                              <icon name="copy"></icon>
+                          </button>
+                        </div>
+                      </td>
+                      <td style="width: 5%;">
+                          <button btn-type="default"
+                                  size="sm"
+                                  class="space-on-right-lg"
+                                  uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} name tag"
+                                  ngclipboard data-clipboard-text="{{tag.copyParams.copyKeyName}}"
+                                  data-ng-click="vm.copyTags('Score')">
+                              <icon name="copy"></icon>
+                          </button>
+                      </td>
+                      <td style="width: 5%;" ng-if="!vm.isAbsolute">
+                        <button btn-type="default"
+                                size="sm"
+                                class="space-on-right-lg"
+                                uib-tooltip="Copy {{vm.isAbsolute? 'rating' : 'score'}} color"
+                                ngclipboard data-clipboard-text="{{tag.copyParams.copyKeyColor}}"
+                                data-ng-click="vm.copyTags('Score')">
+                            <icon name="copy"></icon>
+                        </button>
+                      </td>
+                      <td style="width: 75%;">
+                        <span>{{tag.name}}</span>
+                      </td>
+                      <td style="width: 10%;">
+                        <span data-ng-if="vm.custom_fields.length > 0" class="clickable pull-right" data-ng-click="tag.showCustomFieldsTags = !tag.showCustomFieldsTags">
+                          <icon name="chevron-down" class="font-size-18 space-on-top"></icon>
+                        </span>
+                      </td>
+                    </tr>
+                    <tr data-ng-if="tag.showCustomFieldsTags" data-ng-repeat="customFields in vm.custom_fields">
+                      <td style="width: 5%;"></td>
+                      <td style="width: 5%;" ng-if="!vm.isAbsolute"></td>
+                      <td style="width: 5%;">
+                        <button btn-type="default"
+                                size="sm"
+                                class="space-on-right-lg"
+                                uib-tooltip="Copy tags"
+                                ngclipboard data-clipboard-target="#customFields_{{tag.group_id}}_{{$index}}"
+                                data-ng-click="vm.copyTags('Score')">
+                            <icon name="copy"></icon>
+                        </button>
+                      </td>
+                      <td style="width: 75%;">{{customFields.alias}}</td>
+                      <td style="width: 10%;">
+                        <div style="height:0;width:0;opacity: 0" id="customFields_{{tag.group_id}}_{{$index}}">
+                          <span>{{</span><span>ratingfield_{{tag.group_id}}_{{customFields.field_unique_key}}_1</span><span>}}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="text-center"  ng-if="!vm.ratingTags.length || !vm.questionTags.length">
+            <p class="text-muted space-on-top">No Rating Tags Found. Click <a ng-click="vm.goToTemplateView()" class="clickable">here</a> to generate corresponding ratings tags for this template. </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>

@@ -1,0 +1,173 @@
+<form name="vm.autofill_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+        <h3 class="modal-title">Auto-fill
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <p class="alert alert-info">
+            Auto-fill will populate responses on the basis of an exact question match from a previous project.
+        </p>
+        <div class="text-center space-on-bottom-xxl" ng-if="vm.showToggleBtn">
+            <div class="btn-group">
+                <label class="btn btn-default font-size-12"
+                    data-ng-class="{'btn-primary': vm.activeView == vm.activeAutofillViews.RESPONSE}"
+                    data-ng-click="vm.setActiveView(vm.activeAutofillViews.RESPONSE)">Responses</label>
+                <label class="btn btn-default font-size-12"
+                    data-ng-class="{'btn-primary': vm.activeView == vm.activeAutofillViews.RATING}"
+                    data-ng-click="vm.setActiveView(vm.activeAutofillViews.RATING)">Rating/Score</label>
+            </div>
+
+        </div>
+        <div data-ng-if="vm.activeView == vm.activeAutofillViews.RESPONSE">
+            <form-group field-name="Autofill">
+                <div col="12" class="text-center space-on-bottom-xl">
+                    <div class="bordered-right" data-ng-class="vm.autofillClassNames.recent">
+                        <div class="text-center pa-tb-lg">
+                            <a class="link-disguise clickable" data-ng-click="vm.changeAutofillType('all')"
+                                uib-tooltip="Autofill most recent responses"
+                                data-ng-class="{'text-orange':vm.autofillType == 'all'}">
+                                <div class="space-on-bottom">
+                                    <icon name="clock-o" size="2x"></icon>
+                                </div>
+                                Most Recent
+                            </a>
+                        </div>
+                    </div>
+                    <div class="bordered-right" data-ng-if="vm.diligence.entity_type != 'Firm'"
+                        data-ng-class="vm.autofillClassNames.firm">
+                        <div class="text-center pa-tb-lg" data-ng-if="vm.diligence.entity_type == 'Fund'">
+                            <a class="link-disguise clickable" data-ng-click="vm.changeAutofillType('product')"
+                                uib-tooltip="Autofill specific to a product"
+                                data-ng-class="{'text-orange':vm.autofillType == 'product'}">
+                                <div class="space-on-bottom">
+                                    <icon name="fund" size="2x"></icon>
+                                </div>
+                                From a Product
+                            </a>
+                        </div>
+                        <div class="text-center pa-tb-lg" data-ng-if="vm.diligence.entity_type == 'Strategy'">
+                            <a class="link-disguise clickable" data-ng-click="vm.changeAutofillType('strategy')"
+                                uib-tooltip="Autofill specific to a strategy"
+                                data-ng-class="{'text-orange':vm.autofillType == 'strategy'}">
+                                <div class="space-on-bottom">
+                                    <icon name="strategy" size="2x"></icon>
+                                </div>
+                                From a Strategy
+                            </a>
+                        </div>
+                        <div class="text-center pa-tb-lg" data-ng-if="vm.diligence.entity_type == 'Vehicle'">
+                            <a class="link-disguise clickable" data-ng-click="vm.changeAutofillType('vehicle')"
+                                uib-tooltip="Autofill specific to a vehicle"
+                                data-ng-class="{'text-orange':vm.autofillType == 'vehicle'}">
+                                <div class="space-on-bottom">
+                                    <icon name="vehicle-car" size="2x"></icon>
+                                </div>
+                                From a Vehicle
+                            </a>
+                        </div>
+                    </div>
+                    <div data-ng-class="vm.autofillClassNames.diligence">
+                        <div class="text-center pa-tb-lg">
+                            <a class="link-disguise clickable" data-ng-click="vm.changeAutofillType('diligence')"
+                                uib-tooltip="Autofill from a diligence project"
+                                data-ng-class="{'text-orange':vm.autofillType == 'diligence'}">
+                                <div class="space-on-bottom">
+                                    <icon name="search" size="2x"></icon>
+                                </div>
+                                From a Diligence Project
+                            </a>
+                        </div>
+                    </div>
+                    <div data-ng-if="vm.diligence.diligence_type == 'dd_review'"
+                        data-ng-class="vm.autofillClassNames.review" class="bordered-left">
+                        <div class="text-center pa-tb-lg">
+                            <a class="link-disguise clickable" data-ng-click="vm.changeAutofillType('review')"
+                                uib-tooltip="Autofill from Mapped Responses"
+                                data-ng-class="{'text-orange':vm.autofillType == 'review'}">
+                                <div class="space-on-bottom">
+                                    <icon name="notepad" size="2x"></icon>
+                                </div>
+                                From Mapped Responses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </form-group>
+
+            <form-group>
+                <div col="12" data-ng-if="vm.autofillType == 'product'">
+                    <hr class="space-on-bottom-xl space-on-top-lg">
+                    <label class="control-label text-muted" col="4">Select a product</label>
+                    <div col="7">
+                        <select name="product" id="product" class="form-control" chosen
+                            data-ng-options="product.id as product.name for product in vm.products"
+                            data-ng-model="vm.product_id" ng-required="vm.autofillType == 'product'">
+                            <option selected disabled style="display:none" value="">--Select--</option>
+                        </select>
+                    </div>
+                </div>
+                <div col="12" data-ng-if="vm.autofillType == 'strategy'">
+                    <hr class="space-on-bottom-xl space-on-top-lg">
+                    <label class="control-label text-muted" col="4">Select a strategy</label>
+                    <div col="7">
+                        <select name="strategy" id="strategy" class="form-control" chosen
+                            data-ng-options="strategy.id as strategy.name for strategy in vm.strategies"
+                            data-ng-model="vm.strategy_id" ng-required="vm.autofillType == 'strategy'">
+                            <option selected disabled style="display:none" value="">--Select--</option>
+                        </select>
+                    </div>
+                </div>
+                <div col="12" data-ng-if="vm.autofillType == 'diligence'">
+                    <hr class="space-on-bottom-xl space-on-top-lg">
+                    <label class="control-label text-muted" col="4">Select a Project</label>
+                    <div col="7">
+                        <select name="Project" id="diligence" class="form-control" chosen
+                            data-ng-options="diligence.id as diligence.display_name for diligence in vm.diligences"
+                            data-ng-model="vm.source_diligence_id" ng-required="vm.autofillType == 'diligence'">
+                            <option selected disabled style="display:none" value="">--Select--</option>
+                        </select>
+                    </div>
+                </div>
+                <div col="12" data-ng-if="vm.autofillType == 'vehicle'">
+                    <hr class="space-on-bottom-xl space-on-top-lg">
+                    <label class="control-label text-muted" col="4">Select a vehicle</label>
+                    <div col="7">
+                        <select name="Project" id="diligence" class="form-control" chosen
+                            data-ng-options="vehicle.id as vehicle.name for vehicle in vm.vehicles"
+                            data-ng-model="vm.source_vehicle_id" ng-required="vm.autofillType == 'vehicle'">
+                            <option selected disabled style="display:none" value="">--Select--</option>
+                        </select>
+                    </div>
+                </div>
+            </form-group>
+        </div>
+        <div data-ng-if="vm.activeView == vm.activeAutofillViews.RATING">
+            <div class="panel panel-info">
+                <div class="panel-heading">Responses need to be added/auto-filled before ratings/scores</div>
+            </div>
+            <form-group>
+                <div col="12">
+                    <hr class="space-on-bottom-xl space-on-top-lg">
+                    <label class="control-label text-muted" col="4">Select an Analyst Evaluation Project</label>
+                    <div col="7">
+                        <select name="Project" id="diligence" class="form-control" chosen
+                            data-ng-options="diligence.id as diligence.name for diligence in vm.related_diligences"
+                            data-ng-model="vm.selected_diligence_id" ng-required="true">
+                            <option selected disabled style="display:none" value="">--Select--</option>
+                        </select>
+                    </div>
+                </div>
+            </form-group>
+        </div>
+
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" data-ng-disabled="vm.autofill_form.$invalid" button-loader="vm.saving">Autofill</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

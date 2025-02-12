@@ -1,0 +1,16 @@
+<ui-grid-cell-contents class="text-left" ng-mouseenter="showPreview=true" ng-mouseleave="showPreview=false">
+  <a ui-sref="app.content.document.detail({documentId: row.entity.attachment_id})"
+     uib-tooltip="{{row.entity.name}}"
+     truncate-text="30">
+    {{row.entity.name}}
+  </a>
+  <button
+          btn-type="default"
+          size="xs"
+          class="space-on-left-lg"
+          ng-show="showPreview"
+          uib-tooltip="Preview"
+          document-viewer="row.entity">
+    <icon name="eye"></icon>
+  </button>
+</ui-grid-cell-contents>

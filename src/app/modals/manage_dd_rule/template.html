@@ -1,0 +1,243 @@
+<form class="form-horizontal" name="vm.rule_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            {{vm.edit_mode ? 'Editing ' : 'Create New '}} Rule
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div>
+            <form-group field-name="Question" class="space-on-top space-on-bottom-xxl">
+                <label for="question" class="control-label" col="3" col-type="sm">Question</label>
+
+                <div col="7" col-type="sm">
+                    <select class="form-control"
+                            id="question"
+                            name="question"
+                            ng-disabled="vm.edit_mode"
+                            chosen
+                            required
+                            data-ng-model="vm.rule_params.question_id"
+                            data-placeholder="Select a question"
+                            data-ng-change="vm.conditionChanged(vm.rule_params, $index)"
+                            data-ng-options="option.id as option.text for option in vm.questions">
+                        <option value=""></option>
+                    </select>
+
+                    <p class="alert alert-info clear-margin-bottom space-on-top-xl" data-ng-if="vm.rule_params.questionObj">
+                        {{vm.rule_params.questionObj.text}}
+                    </p>
+                </div>
+            </form-group>
+
+            <form-group field-name="Condition" class="space-on-bottom-xxl">
+                <label for="condition" class="control-label" col="3" col-type="sm">Condition</label>
+
+                <div col="4" col-type="sm">
+                    <select class="form-control padded"
+                            id="condition"
+                            name="condition"
+                            required
+                            data-ng-model="vm.rule_params.operator_id">
+                        <option value="" disabled hidden>Select condition</option>
+                        <option value="gt"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Numeric'||vm.rule_params.questionObj.responseType == 'Integer'||vm.rule_params.questionObj.responseType == 'Percentage'||vm.rule_params.questionObj.responseType == 'Date'">
+                            Greater Than
+                        </option>
+                        <option value="gte"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Numeric'||vm.rule_params.questionObj.responseType == 'Integer'||vm.rule_params.questionObj.responseType == 'Percentage'||vm.rule_params.questionObj.responseType == 'Date'">
+                            Greater Than or Equal To
+                        </option>
+                        <option value="lt"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Numeric'||vm.rule_params.questionObj.responseType == 'Integer'||vm.rule_params.questionObj.responseType == 'Percentage'||vm.rule_params.questionObj.responseType == 'Date'">
+                            Lesser Than
+                        </option>
+                        <option value="lte"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Numeric'||vm.rule_params.questionObj.responseType == 'Integer'||vm.rule_params.questionObj.responseType == 'Percentage'||vm.rule_params.questionObj.responseType == 'Date'">
+                            Lesser Than or Equal To
+                        </option>
+                        <option value="eq">Equals</option>
+                        <option value="noteq">Not Equals</option>
+                        <option value="cont"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Text'||vm.rule_params.questionObj.responseType == 'TextMultiLine'||vm.rule_params.questionObj.responseType == 'TextEmail'||vm.rule_params.questionObj.responseType == 'TextPhone'">
+                            Contains
+                        </option>
+                    </select>
+                </div>
+            </form-group>
+
+            <div class="space-on-bottom-xxl">
+                <div data-ng-if="vm.rule_params.operator_id != 'ac'">
+
+                    <form-group field-name="Value" data-ng-if="(!vm.rule_params.questionObj.responseType)">
+                        <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                        <div col="4" col-type="sm">
+                            <input type="text"
+                                id="value"
+                                name="value"
+                                data-ng-model="vm.rule_params.value"
+                                required
+                                placeholder="Type a value"
+                                class="form-control" />
+                        </div>
+                    </form-group>
+
+                    <form-group field-name="Value" data-ng-if="vm.rule_params.questionObj.responseType == 'Date'" control-selector="dv-datepicker">
+                        <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                        <div col="4" col-type="sm">
+                            <dv-datepicker id="value"
+                                        name="value"
+                                        data-ng-model="vm.rule_params.value"
+                                        ng-required="true"></dv-datepicker>
+                        </div>
+                    </form-group>
+
+                    <form-group field-name="Value"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Integer' || vm.rule_params.questionObj.responseType == 'Percentage' || vm.rule_params.questionObj.responseType == 'Numeric'">
+                        <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                        <div col="4" col-type="sm">
+                            <input type="number"
+                                id="value"
+                                name="value"
+                                data-ng-model="vm.rule_params.value"
+                                class="form-control"
+                                required />
+                        </div>
+                    </form-group>
+
+                    <form-group field-name="Value"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'TextEmail' || vm.rule_params.questionObj.responseType == 'Text' || vm.rule_params.questionObj.responseType == 'TextMultiLine' || vm.rule_params.questionObj.responseType == 'TextPhone'">
+                        <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                        <div col="4" col-type="sm">
+                            <input type="text"
+                                id="value"
+                                name="value"
+                                data-ng-model="vm.rule_params.value"
+                                class="form-control"
+                                required />
+                        </div>
+                    </form-group>
+
+                    <form-group field-name="Value"
+                                data-ng-if="vm.rule_params.questionObj.responseType == 'Boolean' || vm.rule_params.questionObj.responseType == 'BooleanPlus' || vm.rule_params.questionObj.responseType == 'NoPlus'">
+                        <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                        <div col="4" col-type="sm">
+                            <select class="form-control"
+                                    chosen
+                                    id="value"
+                                    name="value"
+                                    required
+                                    data-ng-model="vm.rule_params.value"
+                                    data-ng-options="option.value as option.label for option in vm.boolean_value_options">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </form-group>
+
+                    <form-group field-name="Value"
+                                data-ng-if="(vm.rule_params.questionObj.responseType == 'Dropdown') || (vm.rule_params.questionObj.responseType == 'CheckBox')">
+                        <label for="value" class="control-label" col="3" col-type="sm">Value</label>
+                        <div col="4" col-type="sm">
+                            <select class="form-control"
+                                    chosen
+                                    id="value"
+                                    name="value"
+                                    required
+                                    data-ng-model="vm.rule_params.value"
+                                    data-ng-options="option.id as option.value for option in vm.rule_params.options">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </form-group>
+                </div>
+            </div>
+
+            <div col="10" offset="1" class="space-on-top-lg">
+                <h4 class="space-on-bottom-lg">
+                    <span class="text-muted">Configure actions</span>
+                    <small class="space-on-left">
+                        <icon name="info"
+                            class="text-info"
+                            uib-tooltip="If this rule is triggered, assign score or flag the response, or both">
+                        </icon>
+                    </small>
+                </h4>
+
+                <hr class="clear-margin-top space-on-bottom-xl">
+            </div>
+
+            <br>
+
+            <div class="row clearfix">
+                <div col="3" offset="1" class="bordered-right padded-left-lg">
+                    <h5 class="text-bold space-on-bottom-xl">Create a flag</h5>
+                    <form-group field-name="Flag" class="clear-margin-left clear-margin-right space-on-bottom" tooltip-placement="left">
+
+                        <div class="checkbox checkbox-info inline-block space-on-right-lg">
+                            <input class="styled form-control" data-ng-model="vm.rule_params.has_flag" ng-required="(vm.rule_params.score == null) || (vm.rule_params.score == undefined)  || (vm.rule_params.score == 0)" type="checkbox" id="dv-checkbox-1">
+                            <label for="dv-checkbox-1">Create a flag</label>
+                        </div>
+
+                        <icon class="align-middle" name="flag"
+                            data-ng-class="{'dd-no-flag-set': !vm.rule_params.has_flag, 'text-danger': vm.rule_params.has_flag}"></icon>
+
+                    </form-group>
+                </div>
+
+                <div col="7" offset="1" data-ng-if="vm.associatedRatingMapping.rating_level == 'Question'">
+                    <div class="list-group" data-ng-if="vm.loading_rating_scale">
+                        <spinner broad-spinner spinner-height='60'></spinner>
+                    </div>
+                    <div data-ng-if="vm.associatedRatingMapping.rating_scale_mode == vm.ratingConstants.Absolute && vm.ratingScaleDefinition">
+                        <h5 class="text-bold space-on-bottom-xl">Assign a rating</h5>
+                        <div class="inline-block">
+                            <dv-rating data-ng-model="vm.rule_params.score"
+                                            max="{{vm.ratingScaleDefinition.length}}"
+                                            rating-scales="vm.ratingScaleDefinition"></dv-rating>
+                        </div>
+                    </div>
+                    <div data-ng-if="!vm.loading_rating_scale && vm.associatedRatingMapping.rating_scale_mode == vm.ratingConstants.ScoreBand && vm.ratingScaleDefinition">
+                        <h5 class="text-bold space-on-bottom-xl">Assign a score (out of 100)</h5>
+                        <form-group field-name="Score" tooltip-placement="right" class="col-md-8 clear-padding clear-margin-left clear-margin-right space-on-bottom-xl">
+                            <div class="inline-block">
+                                <input type="number"
+                                    id="score"
+                                    name="score"
+                                    placeholder="Type a score"
+                                    ng-pattern="/^^0*(?:[0-9][0-9]?|100)$/"
+                                    data-ng-model="vm.rule_params.score"
+                                    custom-pattern-message="Numbers only between 0 and 100 allowed (without decimals)"
+                                    class="form-control extra-padded-input-arrows"
+                                    ng-required="!vm.rule_params.has_flag"/>
+                            </div>
+                            <div class="text-muted small space-on-top-lg">Score Traffic Light legend:
+                                <div class="space-on-top-lg space-on-bottom-lg" data-ng-repeat="scale in vm.ratingScaleDefinition">
+                                    <span class="badge dd-score-legend space-on-right text-uppercase" data-ng-style="{'background-color':scale.color_code}">{{scale.name}}</span> Score between {{scale.range_min_value}} & {{scale.range_max_value}}</div>
+                            </div>
+                        </form-group>
+                        <div col="1" offset="1">
+                            <dd-rated-score score="vm.rule_params.score"
+                                        keep-watcher-on="true"
+                                        rating-scale="vm.ratingScaleDefinition"
+                                        na-value="vm.naValue"
+                                        total="100"></dd-rated-score>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <br>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.saving" ng-disabled="vm.savingAnother">{{vm.edit_mode ? 'Update ' : 'Create '}} Rule</button>
+        <button btn-type="default" button-loader="vm.savingAnother" ng-disabled="vm.saving" data-ng-click="vm.addAnotherRule()">{{vm.edit_mode ? 'Update ' : 'Create '}}& Add Another</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

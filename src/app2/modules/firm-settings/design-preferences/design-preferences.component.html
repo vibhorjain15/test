@@ -1,0 +1,207 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Design Preferences</h5>
+  </div>
+  <div class="panel-info space-on-bottom-xxl">
+    <div class="panel-heading">
+      <p id="design-preferences-info">
+        Customize DiligenceVault to meet your brand.<br />1. Upload your firm's
+        logo for notifications and reports.<br />
+        2. Add your brand colors (up to 10 unique colors) for dashboards and
+        reports.
+      </p>
+    </div>
+  </div>
+  <div class="panel-body affix_bottom_parent_in_design_pref">
+    <app-spinner
+      broad-spinner
+      spinner-height="60"
+      *ngIf="loadingFirmPreference"
+    ></app-spinner>
+    <div class="row clearfix" *ngIf="!loadingFirmPreference">
+      <form
+        [formGroup]="designPreferenceForm"
+        (keydown.enter)="$event.preventDefault()"
+        autocomplete="off"
+      >
+        <div col="6" colType="sm" class="cell col-xs-12">
+          <span class="control-label space-on-bottom-lg fw-bolder">
+            Manage Firm's Color Scheme
+          </span>
+          <ng-container formArrayName="colors">
+            <div
+              class="row relative"
+              *ngFor="
+                let color of selectedColors;
+                let $index = index;
+                trackBy: trackByIndex
+              "
+            >
+              <div col="8" colType="sm" class="space-on-bottom-lg col-xs-10">
+                <dv-form-element
+                  [modelController]="colors.controls[$index]"
+                  [elementCol]="0"
+                  [fieldName]="'Color'"
+                  [showRightIcon]="false"
+                  [errorMessage]="
+                    colors.controls[$index].errors?.required
+                      ? 'Color is Required'
+                      : colors.controls[$index].errors?.pattern
+                      ? 'Please enter a valid 6-digit color code starting with a #.'
+                      : this.colorMap.get(
+                          colors.controls[$index].value.toUpperCase()
+                        ) > 1
+                      ? ' You can\'t have duplicate colors in the list.'
+                      : ''
+                  "
+                >
+                  <input
+                    class="form-control text-uppercase"
+                    type="text"
+                    [formControl]="colors.controls[$index]"
+                    [colorPicker]="colors.controls[$index].value"
+                    [cpOKButton]="true"
+                    [cpOKButtonClass]="'btn btn-primary btn-xs'"
+                    (colorPickerChange)="onColorPickerChange($event, $index)"
+                    [style.background]="colors.controls[$index].value"
+                    [style.color]="
+                      getColor(colors.controls[$index].value, $index)
+                    "
+                    [cpOutputFormat]="'hex'"
+                    (change)="handleColorChange($event, $index)"
+                    [attr.aria-label]="
+                      'Color Scheme ' + colors.controls[$index].value
+                    "
+                    autocomplete="off"
+                  />
+                </dv-form-element>
+              </div>
+              <div
+                class="align-middle space-on-top col-xs-2"
+                col="1"
+                colType="sm"
+              >
+                <dv-button
+                  [btnClass]="'btn-close justify-center align-items-center'"
+                  size="sm"
+                  [leftIcon]="null"
+                  [btnType]="'default'"
+                  *ngIf="!(selectedColors.length < 5)"
+                  (onClick)="removeColor(colors.controls[$index].value, $index)"
+                  ariaLabel="{{
+                    'Remove ' + colors.controls[$index].value + ' Color'
+                  }}"
+                >
+                  <span>&times;</span>
+                </dv-button>
+              </div>
+            </div>
+          </ng-container>
+          <div class="row" *ngIf="selectedColors.length < 10">
+            <div col="3">
+              <dv-button
+                btnType="default"
+                (onClick)="addNewColor()"
+                type="button"
+              >
+                Add Color
+              </dv-button>
+            </div>
+          </div>
+          <div class="row">
+            <div col="12" class="space-on-top-lg space-on-bottom-lg">
+              <dv-button
+                btnType="default"
+                (onClick)="resetColors()"
+                type="button"
+              >
+                Reset to System Default
+              </dv-button>
+            </div>
+          </div>
+        </div>
+        <div col="5" class="space-on-left" colType="sm">
+          <div class="row">
+            <span class="control-label space-on-bottom-lg fw-bolder">
+              Manage Firm Logo
+            </span>
+          </div>
+          <div col="12" colType="sm" class="text-center">
+            <div
+              class="clickable inline-block width-100"
+              (click)="openImageUpdateDialog()"
+              role="button"
+              tabindex="0"
+              aria-label="Upload Firm Logo"
+              (keydown.enter)="openImageUpdateDialog()"
+            >
+              <div *ngIf="!logoLink">
+                <app-user-avatar
+                  [avatarIconSize]="'4x'"
+                  [avatarIconClass]="'avatar'"
+                  [avatarImgClass]="'img-thumbnail avatar'"
+                ></app-user-avatar>
+              </div>
+              <div *ngIf="logoLink" class="firmLogoDiv">
+                <img *ngIf="logoLink" alt="Firm Logo" [src]="logoLink" />
+              </div>
+            </div>
+            <h5 *ngIf="!logoLink" class="space-on-top-xxxl">
+              Click on the above image to upload a new logo
+            </h5>
+          </div>
+          <div
+            col="12"
+            colType="sm"
+            class="text-center space-on-top-xl"
+            *ngIf="logoLink"
+          >
+            <dv-button
+              [btnType]="'default'"
+              [btnClass]="'space-on-right'"
+              [size]="'sm'"
+              placement="left"
+              tooltip="Upload New Image"
+              container="body"
+              triggers="mouseenter:mouseleave"
+              (onClick)="openImageUpdateDialog()"
+              type="button"
+              [fontSizeType]="'medium'"
+              ariaLabel="Upload New Image"
+            >
+              <span appIcon name="plus"></span>
+            </dv-button>
+            <dv-button
+              placement="right"
+              tooltip="Delete Logo"
+              container="body"
+              triggers="mouseenter:mouseleave"
+              [btnType]="'default'"
+              [size]="'sm'"
+              type="button"
+              (onClick)="deleteLogoConfirmation()"
+              hoverClass="danger"
+              [btnClass]="'btn-trashcan'"
+              [fontSizeType]="'medium'"
+              ariaLabel="Delete Logo"
+            >
+              <span appIcon name="trashcan"></span>
+            </dv-button>
+          </div>
+        </div>
+        <div class="form-group sticky_savebar makeItSticky">
+          <div col="12" colType="sm" class="space-on-left-lg">
+            <dv-button
+              [loader]="savingFirmPreferences"
+              (onClick)="updateFirmPreferences()"
+              [btnClass]="'minwidth'"
+              ariaLabel="Update Design Preference"
+            >
+              Update Design Preference
+            </dv-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

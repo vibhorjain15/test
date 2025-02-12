@@ -1,0 +1,194 @@
+<div class="workflow-panel">
+    <spinner data-ng-show="!vm.workflow_steps || vm.loading_workflow_steps">
+    </spinner>
+
+    <span data-ng-if="vm.workflow_steps">
+        <div class="row clearfix">
+            <div class="col-md-3">
+                <div class="panel panel-default md-panel">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">Workflow Steps</h5>
+
+                        <div class="panel-controls">
+                            <div class="panel-controls-wrapper">
+                                <a class="panel-control"
+                                    uib-tooltip="New Step"
+                                    data-ng-click="vm.manageWorkflowStep()">
+                                    <icon name="plus"></icon>
+                                </a>
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <empty-state message="No Workflow steps added. Add one by clicking the add button above." data-ng-hide="vm.workflow_steps.length > 0"></empty-state>
+
+                        <div class="list-group"
+                            ui-sortable="sortableOptions"
+                            resource="workflow_steps"
+                            parent-resource="vm.reorder_resource"
+                            data-ng-show="vm.workflow_steps.length"
+                            data-ng-model="vm.workflow_steps">
+                                <a class="list-group-item has-controls"
+                                    data-ng-class="{'active': vm.selectedStep == step}"
+                                    data-ng-repeat="step in vm.workflow_steps"
+                                    data-ng-click="vm.getWorkflowActions(step)">
+                                    <div>
+                                        <span class="space-on-right align-middle sort-handle">
+                                            <icon name="th" class="js-sort-handle"></icon>
+                                        </span>
+
+                                        <span>{{step.name}}</span>
+                                        <icon name="info" class="space-on-left"
+                                            data-ng-class="{'disableField':!step.description,'text-info':vm.selectedStep != step,'text-default':vm.selectedStep == step}"
+                                            uib-tooltip="{{step.description}}"></icon>
+                                    </div>
+
+                                    <div class="controls">
+                                        <span class="control js-edit-category"
+                                            role="button"
+                                            data-ng-click="vm.manageWorkflowStep(step,$index)"
+                                            stop-event-propagation
+                                            prevent-default>
+                                        <icon name="pencil"></icon>
+                                        </span>
+
+                                        <span class="control js-delete-category control-danger"
+                                            data-ng-click="vm.confirmRemoveStep(step)"
+                                            role="button"
+                                            stop-event-propagation
+                                            prevent-default>
+                                        <icon name="trashcan"></icon>
+                                        </span>
+                                    </div>
+                                </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <spinner data-ng-show="vm.loading_workflow_actions">
+                </spinner>
+                <div data-ng-if="!vm.loading_workflow_actions && vm.workflowactions">
+                    <uib-accordion close-others="true">
+                        <div uib-accordion-group is-open="action.isOpen" class="{{action.isOpen?'accordion-selected':''}}" ng-repeat="action in vm.workflowactions">
+                            <uib-accordion-heading>
+                                <h4 class="panel-title">
+                                    <a role="button" class="link-unstyled">
+                                        <icon data-ng-if="action.isOpen" class="dvi dvi-chevron-up"></icon>
+                                        <icon data-ng-if="!action.isOpen" class="dvi dvi-chevron-down"></icon>
+                                        <span>{{$index+1}}</span>
+                                        <span class="space-on-left-lg actionName">{{action.action_id | removeUnderscores}}</span>
+                                    </a>
+                                    <span class="unsavedAction text-orange" data-ng-if="action.has_unsaved_changes" data-ng-init="vm.addRouteChangeNagger()">
+                                        <icon class="dvi dvi-hour-glass"></icon>
+                                    </span>
+                                </h4>
+                                <div class="panel-controls" data-ng-if="action.id">
+                                    <div class="panel-controls-wrapper">
+                                        <a class="panel-control link-unstyled"
+                                            data-ng-class="{'disabled-Element':vm.workflowactions.length == 1}"
+                                            uib-tooltip="Delete Parallel Action"
+                                            data-ng-click="vm.confirmRemoveAction(action,$index)">
+                                            <icon name="trashcan"></icon>
+                                        </a>
+                                    </div>
+                                </div>
+                            </uib-accordion-heading>
+                            <form class="form-horizontal" name="action.formArea">
+                                <form-group field-name="Action Name">
+                                    <label class="control-label" col="2" style="text-align: start;">Select Action</label>
+                                    <span col="6">
+                                        <select
+                                                class="form-control"
+                                                data-ng-model="action.action_id"
+                                                chosen
+                                                no-results-text="'Could not find any action items'"
+                                                data-ng-options="action_item.value as action_item.label for action_item in vm.action_types"
+                                                data-ng-change="vm.actionChanged(action,'action_id')"
+                                                required>
+                                            <option selected disabled style="display:none" value="">Select an action</option>
+                                        </select>
+                                    </span>
+                                </form-group>
+                                <form-group field-name="owner">
+                                    <label class="control-label" col="2" style="text-align: start;">Assign Owner</label>
+                                    <span col="6" uib-tooltip="{{action.isOpen && action.assigned_users_id.length == 0 && !action.is_owner_task? 'Owner is required':''}}" 
+                                        tooltip-trigger="none" tooltip-placement="right"
+                                        tooltip-is-open="action.isOpen && action.assigned_users_id.length == 0 && !action.is_owner_task">
+                                        <dv-subscriber-selection selection="action.assigned_users_id"
+                                            selection-changed="vm.actionChanged(action,'assigned_users_id')" functions="vm.functions"></dv-subscriber-selection>
+                                    </span>
+                                    <div col="4">
+                                        <dv-checkbox
+                                                data-ng-model="action.is_owner_task"
+                                                data-ng-change="vm.actionChanged(action,'is_owner_task')">
+                                                <dv-checkbox-label>
+                                                  <p>Assign to process owner &nbsp; <span uib-tooltip="You can select this later at workflow preview step"><i class="dvi dvi-info"></i></span></p>
+                                                </dv-checkbox-label>
+                                        </dv-checkbox>
+                                    </div>
+                                </form-group>
+                                <form-group field-name="Duration" control-selector="input" tooltip-placement="left">
+                                    <label col="2" class="control-label" style="text-align: start;">Set Timeline</label>
+                                    <span col="2">
+                                        <input type="number" min="1" class="form-control" ng-model="action.duration_days" data-ng-change="vm.actionChanged(action,'duration_days')" pattern="^[\d]*$" required/>
+                                    </span>
+                                    <span col="3">
+                                        <!-- <select data-ng-if="action.duration_days != 1" class="form-control" data-ng-options="type.value as type.show_value for type in vm.duration_types"
+                                            data-ng-model="action.duration_type" data-ng-change="vm.actionChanged(action,'duration_type')"
+                                            required></select> -->
+                                        <select class="form-control" data-ng-options="type.value as type.value for type in vm.duration_types"
+                                            data-ng-model="action.duration_type" data-ng-change="vm.actionChanged(action,'duration_type')"
+                                            required></select>
+                                    </span>
+                                </form-group>
+                                <form-group field-name="Todo">
+                                    <label col="2" class="control-label" style="text-align: start;">Add Checklist</label>
+                                    <div col="10">
+                                        <div class="row">
+                                            <span col="10">
+                                                <input placeholder="Type a new to-do, and press enter to add"
+                                                    class="form-control"
+                                                    data-ng-disabled="vm.saving_todo"
+                                                    data-ng-model="action.new_todo"
+                                                    ng-keypress="vm.addNewTodo($event,action,action.new_todo)"
+                                                    />
+                                            </span>
+                                        </div>
+
+                                        <p class="text-muted" data-ng-show="action.checklist && !action.checklist.length">
+                                            <i>
+                                            There are no to-dos for this checklist.
+                                            </i>
+                                        </p>
+
+                                        <ul data-ng-if="action.checklist.length" class="todo-list" col="10">
+                                            <li data-ng-repeat="todo in action.checklist" data-ng-if="todo.is_active"
+                                                class="todo-list-item" col="12">
+                                                <small uib-tooltip="{{::todo.text}}" col="11">{{::todo.text}}</small>
+                                                <span class="removeTaskBtn" data-ng-click="vm.removeTask(action,todo,$index);vm.actionChanged(action,'checklist')"><icon name="trashcan"></icon></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form-group>
+                                <div class="row pull-right">
+                                    <!-- If form is valid -->
+                                    <button data-ng-if="!action.duration_days" type="button" uib-tooltip="Please set a valid timeline"  class="btn btn-primary disabled"  button-loader="vm.saving_action">Save</button>
+                                    <!-- if form is invalid -->
+                                    <button data-ng-if="action.duration_days" type="button" data-ng-click="vm.saveWorkflowAction(action,$index)" class="btn btn-primary" data-ng-disabled="(!action.formArea || action.formArea.$invalid) || (action.assigned_users_id.length == 0 && !action.is_owner_task)" button-loader="vm.saving_action">Save</button>
+
+
+                                    <button class="btn btn-default" data-ng-click="vm.cancelUpdate(action,$index)">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </uib-accordion>
+                    <div class="text-center" col="12">
+                        <button class="btn btn-primary" data-ng-click="vm.addNewAction()"> + Add Parallel Action</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+   </span>
+</div>

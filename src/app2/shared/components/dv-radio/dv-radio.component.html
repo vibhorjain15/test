@@ -1,0 +1,27 @@
+<div
+  class="radio radio-info radio-inline"
+  [ngClass]="{ disabled: disabled }"
+  [style.font-size.px]="styleSize"
+>
+  <span>
+    <input
+      type="radio"
+      [id]="groupName + '_' + valueName"
+      (ngModelChange)="onInputChange($event)"
+      [name]="groupName"
+      [value]="valueName"
+      [(ngModel)]="value"
+      [disabled]="disabled"
+      [checked]="checkedVal"
+      (click)="emitValue($event)"
+    />
+    <label
+      class="break-all"
+      [style.color]="disabled ? '#000000' : styleColor"
+      [for]="groupName + '_' + valueName"
+      >{{ label }} 
+      <span *ngIf="!label" class="sr-only"> {{ groupName || 'radio button' }} </span>
+      </label
+    >
+  </span>
+</div>

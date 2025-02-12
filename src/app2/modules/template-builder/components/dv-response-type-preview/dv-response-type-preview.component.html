@@ -1,0 +1,349 @@
+<div
+  *ngIf="
+    type === 'TextEmail' ||
+    type === 'Numeric' ||
+    type === 'Integer' ||
+    type === 'Percentage' ||
+    type === 'TextPhone' ||
+    type === 'Text' ||
+    type === 'Identifier'
+  "
+  class="well well-sm clear-margin space-on-top-lg"
+>
+  <input
+    type="text"
+    class="form-control field-preview"
+    [placeholder]="placeholder[type]"
+    readonly="true"
+    tabindex="-1"
+    aria-label="{{ placeholder[type] }}"
+    autocomplete="off"
+  />
+</div>
+<div
+  *ngIf="type === 'TextMultiLine'"
+  class="well well-sm clear-margin space-on-top-lg"
+>
+  <textarea
+    class="form-control field-preview"
+    readonly="true"
+    [placeholder]="placeholder[type]"
+    tabindex="-1"
+    aria-label="{{ placeholder[type] }}"
+  ></textarea>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg"
+  *ngIf="type === 'Boolean' || type === 'BooleanPlus' || type === 'NoPlus'"
+>
+  <dv-radio-group type="horizontal">
+    <dv-radio
+      type="info inline"
+      label="Yes"
+      [checkedVal]="type == 'BooleanPlus'"
+      disabled="true"
+      name="option"
+      valueName="Yes"
+      [(ngModel)]="yesNoRadio"
+    >
+    </dv-radio>
+    &nbsp;
+    <dv-radio
+      type="info inline"
+      label="No"
+      class="space-on-left"
+      [checkedVal]="type == 'NoPlus'"
+      valueName="No"
+      disabled="true"
+      [(ngModel)]="yesNoRadio"
+      name="option"
+    >
+    </dv-radio>
+  </dv-radio-group>
+  <div *ngIf="type !== 'Boolean'" class="space-on-top">
+    <textarea
+      class="form-control field-preview"
+      readonly="true"
+      placeholder="Their explanation"
+      aria-label="Explanation"
+    ></textarea>
+  </div>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg input-group datepicker-group"
+  *ngIf="type === 'Date'"
+>
+  <input
+    type="text"
+    class="form-control field-preview"
+    placeholder="Their selected date"
+    readonly="true"
+    tabindex="-1"
+    aria-label="Selected Date"
+    autocomplete="off"
+  />
+
+  <span class="input-group-btn">
+    <button class="btn btn-button" disabled tabindex="-1" aria-label="calendar">
+      <span appIcon name="calendar"></span>
+    </button>
+  </span>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg row clearfix"
+  *ngIf="type === 'Bookends'"
+>
+  <div class="col-md-6">
+    <input
+      type="number"
+      class="form-control field-preview"
+      readonly="true"
+      placeholder="Min Value"
+      tabindex="-1"
+      aria-label="Minimum Value"
+    />
+  </div>
+
+  <div class="col-md-6">
+    <input
+      type="number"
+      class="form-control field-preview"
+      readonly="true"
+      placeholder="Max Value"
+      tabindex="-1"
+      aria-label="Maximum Value"
+      autocomplete="off"
+    />
+  </div>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg"
+  *ngIf="type === 'Dropdown' || type === 'CheckBox'"
+>
+  <div *ngIf="type === 'Dropdown' && !editable; else defaultTemplate">
+    <select
+      class="form-control field-preview"
+      tabindex="-1"
+      aria-label="Dropdown Options"
+    >
+      <option *ngFor="let option of question.options" [value]="option.text">
+        {{ option.text }}
+      </option>
+    </select>
+
+    <textarea
+      class="form-control field-preview space-on-top"
+      readonly="true"
+      *ngIf="question.has_other_option"
+      placeholder="placeholder[type]"
+      tabindex="-1"
+      aria-label="Other Options"
+    ></textarea>
+  </div>
+  <ng-template #defaultTemplate>
+    <div>
+      <helper-text>
+        Other and None are system options. Please do not repeat those while
+        adding your options.
+      </helper-text>
+
+      <dv-option-selector-new
+        placeHolderText="Add multiple options here"
+        [editable]="editable"
+        [question]="question"
+        [allowOtherOption]="allowOtherOption"
+        [fieldName]="type"
+      ></dv-option-selector-new>
+    </div>
+  </ng-template>
+</div>
+
+<div class="well well-sm clear-margin space-on-top-lg" *ngIf="type === 'Grid'">
+  Rows
+  <dv-option-selector-new
+    placeHolderText="Add multiple options here"
+    [editable]="editable"
+    [question]="question"
+    [allowOtherOption]="false"
+    [fieldName]="type"
+    option_label="Row"
+  ></dv-option-selector-new>
+  <hr />
+  Columns
+  <dv-option-selector-new
+    placeHolderText="Add multiple options here"
+    [editable]="editable"
+    [question]="question"
+    [allowOtherOption]="false"
+    [fieldName]="type"
+    option_label="Column"
+    [column_options]="true"
+  ></dv-option-selector-new>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg"
+  *ngIf="type === 'ReturnTable'"
+>
+  <table class="table table-bordered clear-margin" role="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Jan-Mar</th>
+        <th>Apr-Jun</th>
+        <th>Jul-Sep</th>
+        <th>Oct-Dec</th>
+        <th class="bg-light-gray">YTD</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bg-light-gray">2020</td>
+        <td>3.5%</td>
+        <td>1.2%</td>
+        <td class="text-danger">(6.6%)</td>
+        <td>9.2%</td>
+        <td class="bg-light-gray">6.83%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg"
+  *ngIf="type === 'aumTable'"
+>
+  <table class="table table-bordered clear-margin" role="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Jan-Mar</th>
+        <th>Apr-Jun</th>
+        <th>Jul-Sep</th>
+        <th>Oct-Dec</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>2020</td>
+        <td>2,510</td>
+        <td>2,700</td>
+        <td>2,640</td>
+        <td>3,300</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div
+  class="well well-sm clear-margin space-on-top-lg"
+  *ngIf="type === 'DynamicGrid'"
+  role="table"
+>
+  <div>
+    <helper-text>
+      Please add column headers and the user can add customized rows based on
+      their data requirement.
+    </helper-text>
+    <dv-option-selector-new
+      placeHolderText="Add multiple options here"
+      [editable]="editable"
+      [question]="question"
+      [allowOtherOption]="false"
+      [fieldName]="type"
+      [column_options]="true"
+      option_label="Column"
+    ></dv-option-selector-new>
+  </div>
+</div>
+
+<ng-container *ngIf="type === 'Attachment'">
+  <div class="space-on-bottom-lg">
+    <preset-document-tags
+      [existingTags]="question.existing_predefined_document_tags"
+      [editMode]="editMode"
+      (onChange)="handlePresetTagsChange($event)"
+    ></preset-document-tags>
+  </div>
+  <div class="space-on-bottom-lg" role="group">
+    <dv-checkbox
+      class="inline-block"
+      [(ngModel)]="question.attachmentUploadEnabled"
+      label="Add a source file for responders"
+      [name]="(editMode ? 'edit_' : 'add_') + question.id"
+      [id]="(editMode ? 'edit_' : 'add_') + question.id"
+      [ngModelOptions]="{ standalone: true }"
+      (onValChange)="handelAttachmentUploadEnabledChange($event)"
+    ></dv-checkbox>
+    <span
+      appIcon
+      name="info"
+      class="space-on-left align-middle"
+      tooltip="Attached file will be available for responders to download, complete, and re-attach"
+    >
+    </span>
+  </div>
+
+  <div *ngIf="editable">
+    <add-attachment-document
+      *ngIf="question.attachmentUploadEnabled"
+      [question]="question"
+      (onAddDocumentClick)="handleAddDocumentClick($event)"
+      [clearSelection]="question.filename"
+    ></add-attachment-document>
+
+    <div
+      *ngIf="question.filename && question.filename !== null"
+      class="well well-sm col-md-6 space-on-top-lg bordered-blue"
+    >
+      <div class="flex-space-between-center">
+        <span [tooltip]="question.filename" class="more-text">{{
+          question.filename
+        }}</span>
+        <div class="flex-space-between-center">
+          <span
+            appIcon
+            (click)="downloadAttachment(question.attachmentHref)"
+            name="info"
+            class="space-on-left space-on-right"
+            tooltip="Click to download"
+            tabindex="0"
+            aria-label="Download Attachment"
+          ></span>
+          <span
+            appIcon
+            (click)="deleteAttachment()"
+            name="times"
+            class="text-info space-on-left space-on-right"
+            tooltip="Remove"
+            tabindex="0"
+            aria-label="Remove Attachment"
+          ></span>
+        </div>
+      </div>
+    </div>
+    <span
+      *ngIf="
+        question.attachmentUploadEnabled &&
+        !question.filename &&
+        saveButtonClicked
+      "
+      class="text-danger"
+      tabindex="0"
+      aria-label="Please add source file for responders"
+    >
+      Please add source file for responders
+    </span>
+  </div>
+
+  <div *ngIf="!editable" class="text-center">
+    <dv-button btnType="default">
+      <span appIcon name="upload" class="align-middle"></span>
+      Upload File
+    </dv-button>
+  </div>
+</ng-container>

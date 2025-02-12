@@ -1,0 +1,31 @@
+<span class="user-profile" *ngIf="user.picture_url">
+  <img
+    [src]="user.picture_url"
+    [ngClass]="avatarImgClass || avatarClass || 'img-responsive'"
+    [alt]="user.firstName + ' ' + user.lastName"
+  />
+</span>
+<div class="h-110" *ngIf="!user.picture_url">
+  <div class="profile-pic">
+    <span
+      class="profilepic-image"
+      appIcon
+      [name]="'Profile'"
+      [size]="avatarIconSize"
+      [ngClass]="avatarIconClass || avatarClass"
+    ></span>
+    <div class="profilepic-content clickable" (click)="selectFile()">
+      <span class="profilepic-icon"></span>
+      <span class="profilepic-text">Click To Upload</span>
+    </div>
+  </div>
+</div>
+<div>
+  <a (click)="selectFile()">Upload New Picture</a>
+</div>
+<input #fileInput type="file" style="display: none;" (change)="handleFileInput($event.target.files,fileInput)"/>
+<div *ngIf="user.picture_url">
+  <a (click)="removeAvatar()" class="clickable danger"
+    >Remove Picture</a>
+</div>
+

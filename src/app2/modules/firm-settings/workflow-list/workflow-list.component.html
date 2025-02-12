@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Workflow Definitions"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-body">
+    <app-dv-grid
+      [rowData]="workflows"
+      [name]="gridName"
+      [onCellClicked]="onCellClicked"
+    ></app-dv-grid>
+  </div>
+</div>

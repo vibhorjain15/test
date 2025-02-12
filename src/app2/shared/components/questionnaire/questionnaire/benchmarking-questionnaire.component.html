@@ -1,0 +1,48 @@
+<div class="full-width">
+  <div class="js-spinner panel panel-default" *ngIf="isLoading">
+    <div class="panel-body">
+      <app-spinner
+        broadSpinner="true"
+        spinnerHeight="40"
+        [spinnerText]="spinner_text"
+      ></app-spinner>
+    </div>
+  </div>
+  <div *ngIf="!isLoading">
+  <div *ngFor="let section of allSection; let i = index">
+    <div
+      id="child_section_{{ section.id }}"
+      *ngIf="section.questionResponse.length"
+      class="panel panel-default qa-panel"
+    >
+      <div class="panel-heading">
+        <div class="clearfix">
+          <div class="pull-left header-component">
+            <b>{{ section.name }}</b>
+          </div>
+          <div class="header-component pull-right hide-in-print-view">
+            <small class="text-muted">
+              <i>{{ section.questionResponse.length }} questions</i>
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="full-width">
+        <p
+          class="alert alert-info js-header-text clear-margin clear-border-radius borderless"
+          *ngIf="section.headerText"
+        >
+          <dv-show-more [text]="section.headerText"> </dv-show-more>
+        </p>
+        <benchmarking-questionnaire-section
+          [templateId]="section.templateID"
+          [questionresponse]="section.questionResponse"
+          [tagId]="tagId"
+          [startDate]="startDate"
+          [endDate]="endDate"
+        ></benchmarking-questionnaire-section>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

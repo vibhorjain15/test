@@ -1,0 +1,11 @@
+.count-bubble {
+    margin-right: -14px;
+    margin-top: -50px;
+    margin-left: -3px;
+  }
+  .label-warning {
+    background-color: var(--warning-dark) !important;
+  }
+  .btn-transparent {
+    color: #333333 !important;
+  }

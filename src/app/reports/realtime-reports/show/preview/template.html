@@ -1,0 +1,61 @@
+<div data-ng-if="vm.Utils.isAngular()"><ng2-realtime-preview></ng2-realtime-preview></div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<spinner data-ng-hide="vm.report"></spinner>
+
+  <div class="panel panel-default"
+      data-ng-show="vm.report">
+    <div class="panel-heading">
+      <h5 class="panel-title">{{vm.report.name}}</h5>
+
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper" data-ng-if="vm.report.entity_type != 'Report'">
+          <a class="panel-control"
+            ui-sref="app.reports.realtime-reports.detail.edit({reportId: vm.report.id})"
+            uib-tooltip="Edit this report">
+            <icon name="pencil"></icon>
+          </a>
+
+          <a class="panel-control"
+            ui-sref="app.reports.realtime-reports.detail.preview({reportId: vm.report.id})"
+            uib-tooltip="Preview this report">
+            <icon name="eye"></icon>
+          </a>
+
+          <a class="panel-control"
+            data-ng-click="vm.deleteCurrentReport(vm.report.id)"
+            uib-tooltip="Delete this report">
+            <icon name="trashcan text-danger"></icon>
+          </a>
+        </div>
+        <div class="panel-controls-wrapper" data-ng-if="vm.report.entity_type == 'Report'">
+          <a class="panel-control"
+              data-ng-click="vm.downloadReport()"
+            uib-tooltip="Download">
+            <strong><span class="dvi dvi-download3"></span>  </strong>
+          </a>
+          <a class="panel-control"
+            data-ng-click="vm.emailReport(vm.report)"
+            uib-tooltip="Email this report">
+            <icon name="mail"></icon>
+          </a>
+          <a class="panel-control"
+            data-ng-click="vm.deleteNewReport(vm.report.id)"
+            uib-tooltip="Delete this report">
+            <icon name="trashcan text-danger"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div data-ng-show="vm.report" class="word_view" data-ng-class="{'word-portrait': vm.report.orientation == 'Portrait', 'word-landscape': vm.report.orientation != 'Portrait'}">
+    <div data-ng-if="vm.report.entity_type == 'Report'">
+      <div ng-bind-html="vm.report.definition | trusthtml" class="overflow-auto-relative"></div>
+    </div>
+    <div data-ng-if="vm.report.entity_type != 'Report'" >
+      <report-preview template="vm.report" options="vm.options">
+      </report-preview>
+    </div>
+  </div>
+</div>
+</div>

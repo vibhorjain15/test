@@ -1,0 +1,21 @@
+tinymce.addI18n("nl", {
+  "Advanced sort...": "Geavanceerd sorteren...",
+  "Advanced Sort": "Geavanceerd sorteren",
+  "Sort table by column ascending": "Tabel op oplopende kolom sorteren",
+  "Sort table by column descending": "Tabel op aflopende kolom sorteren",
+  "Sort": "Sorteren",
+  "Order": "Volgorde",
+  "Sort by": "Sorteren op",
+  "Ascending": "Oplopend",
+  "Descending": "Aflopend",
+  "Selection": "Selectie",
+  "Table": "Tabel",
+  "Column": "Kolom",
+  "Row": "Rij",
+  "Column {0}": "Kolom {0}",
+  "Row {0}": "Rij {0}",
+  "Row numbering": "Rijnummering",
+  "None": "Geen",
+  "Numeric": "Numeriek",
+  "Alpha": "Alfanumeriek"
+});

@@ -1,0 +1,79 @@
+.nested-questions {
+  .node-wrapper {
+    .node {
+      pointer-events: all;
+
+      > circle {
+        cursor: pointer;
+        fill: #fff;
+        stroke: @state-success-text;
+        stroke-width: 1.5px;
+      }
+
+      &.leaf-node {
+        > circle {
+          stroke: @state-danger-text;
+        }
+      }
+    }
+
+    .event-capturer {
+      visibility: hidden;
+    }
+
+    text {
+      &.question-text {
+        font-weight: bold;
+        font-size: 12px;
+      }
+
+      &.response-value {
+        font-size: 0.8em;
+      }
+    }
+
+    .node-controls {
+      > circle, text {
+        cursor: pointer;
+      }
+
+      circle {
+        stroke-width: 0;
+        fill: @dv-orange;
+      }
+
+      text {
+        fill: white;
+        font-size: 1em;
+      }
+
+      &:hover {
+        circle {
+          fill: darken(@dv-orange, 10%);
+        }
+      }
+
+      &.disabled {
+        circle {
+          fill: #ccc;
+        }
+      }
+    }
+  }
+
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
+}
+
+.template-question-builder-container {
+  .box-shadow(0 -1px 5px rgba(0, 0, 0, 0.3));
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  background-color: white;
+}

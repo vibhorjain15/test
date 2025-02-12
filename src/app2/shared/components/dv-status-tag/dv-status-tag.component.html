@@ -1,0 +1,28 @@
+<div
+  class="label label-default text-uppercase tag-wrapper"
+  *ngIf="!params?.node?.group"
+  [ngClass]="{
+    'label-default': type == 'default',
+    'label-orange ': type == 'inProgress' || type == 'orange',
+    'label-success': type == 'completed' || type == 'success',
+    'label-danger': type == 'danger',
+    'label-warning': type == 'warning',
+    'label-info': type == 'info'
+  }"
+>
+  <span>
+    {{
+      label == "NotApproved"
+        ? "Not Approved"
+        : label === "InReview"
+        ? "In Review"
+        : label
+    }}
+  </span>
+</div>
+
+<div *ngIf="params?.node?.group" class="text-uppercase tag-wrapper">
+  <span>
+    {{ label }}
+  </span>
+</div>

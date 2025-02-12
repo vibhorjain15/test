@@ -1,0 +1,25 @@
+<table id="field">
+  <ng-container *ngFor="let item of rowData">
+    <thead>
+      <tr id="main-header">
+        <th colspan="3" scope="colgroup" *ngFor="let headers of item.header">
+          {{ headers.mainHeader }}
+        </th>
+      </tr>
+      <tr id="sub-header">
+        <ng-container *ngFor="let subheaders of item.header">
+          <th scope="col" *ngFor="let subheader of subheaders.subHeader">
+            {{ subheader.name }}
+          </th>
+        </ng-container>
+      </tr>
+    </thead>
+    <tbody id="t-body">
+      <tr *ngFor="let row of item.rows; let i = index">
+        <ng-container *ngFor="let dataitem of row.field_data">
+          <td [innerHtml]="dataitem.data"></td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </ng-container>
+</table>

@@ -1,0 +1,378 @@
+<app-modal
+  [title]="title"
+  [firstButtonLabel]="firstButtonLabel"
+  [secondButtonLabel]="allowAddAnother ? secondButtonLabel : ''"
+  [isLoading]="isLoading"
+  [isSecondaryLoading]="isSecondaryLoading"
+  (onFirstClick)="handleOnClick($event)"
+  (onSecondClick)="handleSecondClick($event)"
+  [initialTemplate]="modalRef"
+  [isSecondButtonDisabled]="hasDuplicateTemplateError"
+  [isFirstButtonDisabled]="hasDuplicateTemplateError"
+>
+  <ng-template #modalRef>
+    <form class="form-horizontal" [formGroup]="tagForm" autocomplete="off">
+      <div
+        class="col-md-12"
+        *ngIf="tagForm.value.tagType === TagType.Rating && editIndex == -1"
+      >
+        <helper-text>
+          Only one custom field can be created per unique template & category
+          combination.
+        </helper-text>
+      </div>
+      <dv-form-element
+        [modelController]="tagForm.get('tagName')"
+        [fieldName]="'Field Name'"
+        [showRightIcon]="false"
+        [label]="'Field Name'"
+        [isRequired]="true"
+        [errorMessage]="
+          tagForm.get('tagName').touched && tagForm.get('tagName').invalid
+            ? getErrorMessage('tagName', 'Field Name')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          id="tagName"
+          formControlName="tagName"
+          placeholder="Field Name"
+          autocomplete="given-name"
+        />
+      </dv-form-element>
+      <dv-form-element
+        [modelController]="tagForm.get('tagType')"
+        [fieldName]="'Firm Type'"
+        [showRightIcon]="false"
+        [label]="'Type'"
+        [labelCol]="3"
+        [elementCol]="8"
+        [isRequired]="true"
+      >
+        <div>
+          <dv-select
+            [list]="typeOptions"
+            formControlName="tagType"
+            bindLabel="text"
+            bindValue="id"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            [placeholder]=""
+            [id]="'tagType'"
+          ></dv-select>
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        *ngIf="tagForm.value.tagType === TagType.Rating"
+        fieldName="display_format"
+        [modelController]="tagForm.get('display_format')"
+        [label]="'Display Format'"
+        [showRightIcon]="false"
+        [labelCol]="3"
+        [elementCol]="8"
+        [isRequired]="true"
+        errorMessage="Display format is required"
+      >
+        <div class="row">
+          <div col="6">
+            <dv-radio
+              class="width-radio"
+              formControlName="display_format"
+              groupName="display_format"
+              valueName="score"
+              label="Rating Value"
+              type="bold"
+            ></dv-radio>
+          </div>
+          <div col="6">
+            <dv-radio
+              formControlName="display_format"
+              groupName="display_format"
+              valueName="name"
+              label="Rating Name"
+              type="bold"
+            ></dv-radio>
+          </div>
+        </div>
+      </dv-form-element>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-3">
+          <ng-container
+            *ngIf="
+              (tagForm.value.tagType === TagType.Rating &&
+                tagForm.get('display_format').value) ||
+              tagForm.value.tagType !== TagType.Rating
+            "
+          >
+            <dv-label label="Preview"></dv-label>
+            <div class="well well-sm space-on-top">
+              <field-preview-new
+                [editable]="true"
+                [question]="option"
+                [type]="tagForm.get('tagType').value"
+                [subType]="
+                  tagForm.value.tagType === TagType.Rating &&
+                  tagForm.get('display_format').value
+                "
+              ></field-preview-new>
+            </div>
+          </ng-container>
+
+          <helper-text *ngIf="isEditable" tabindex="0">
+            Limited edit is allowed for this field
+          </helper-text>
+        </div>
+      </div>
+
+      <ng-container *ngIf="tagForm.value.tagType === TagType.Dynamic">
+        <dv-form-element
+          [fieldName]="'Dynamic Source'"
+          [modelController]="tagForm.get('dynamicSource')"
+          [showRightIcon]="false"
+          [label]="'Dynamic Source'"
+          [labelCol]="3"
+          [elementCol]="8"
+          [isRequired]="true"
+        >
+          <dv-select
+            [id]="'dynamicSource'"
+            [list]="dynamicTypeOptions"
+            formControlName="dynamicSource"
+            bindLabel="label"
+            bindValue="value"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            [placeholder]="'-- Select Type --'"
+          ></dv-select>
+        </dv-form-element>
+      </ng-container>
+
+      <dv-form-element
+        *ngIf="
+          tagForm.value.tagType === TagType.Question ||
+          tagForm.value.tagType === TagType.Rating
+        "
+        [fieldName]="'Template List'"
+        [modelController]="tagForm.get('template')"
+        [showRightIcon]="false"
+        [label]="'Template '"
+        [labelCol]="3"
+        [isRequired]="true"
+        [errorMessage]="'Template is required'"
+        [infoText]="
+          tagForm.value.tagType === TagType.Rating
+            ? 'The project with the latest As of Date from the selected template will be used for the entity\'s rating.'
+            : ''
+        "
+      >
+        <dv-select
+          [id]="'template'"
+          [list]="templateList"
+          formControlName="template"
+          placeholder="Select Template"
+          [loading]="loadingTemplates"
+          [disabled]="
+            editIndex !== -1 && tagForm.value.tagType === TagType.Rating
+          "
+          (onSelectChange)="handleChangeTemplate($event)"
+        ></dv-select>
+        <div *ngIf="hasDuplicateTemplateError" class="danger">
+          This template and it's categories are used for creating other custom
+          fields. Please select another one.
+        </div>
+      </dv-form-element>
+
+      <dv-form-element
+        *ngIf="tagForm.value.tagType === TagType.Rating && editIndex == -1"
+        [elementCol]="8"
+        [fieldName]="'only_review_emplates'"
+        elementClass="col-md-offset-3"
+      >
+        <dv-checkbox
+          formControlName="only_review_emplates"
+          label="Show Only Analyst Evaluation Templates"
+          ariaLabel="Show Only Analyst Evaluation Templates"
+          (onValChange)="reviewTemplateSelection($event)"
+        ></dv-checkbox>
+      </dv-form-element>
+
+      <dv-form-element
+        *ngIf="
+          tagForm.value.tagType === TagType.Rating &&
+          tagForm.get('template').value
+        "
+        [fieldName]="'Categories List'"
+        label="Category"
+        [modelController]="tagForm.get('category')"
+        [showRightIcon]="false"
+      >
+        <dv-select
+          [id]="'category'"
+          formControlName="category"
+          [clearable]="editIndex == -1"
+          [searchable]="true"
+          [virtualScroll]="true"
+          [loading]="loadingCategories"
+          [list]="categoriesList"
+          [disabled]="editIndex !== -1"
+          [bindValue]="'group_id'"
+          [bindLabel]="'name'"
+          [placeholder]="'-- Select Category --'"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        *ngIf="
+          tagForm.value.tagType === TagType.Question &&
+          tagForm.get('template').value
+        "
+        [fieldName]="'Question List'"
+        label="Question"
+        [isRequired]="true"
+        [modelController]="tagForm.get('question')"
+        [showRightIcon]="false"
+        infoText="Question(s) of type Attachment, AUM History, Track Record, Grid/Table, Customize Grid/Table, and Text Explanation - Paragraph are not supported."
+        [errorMessage]="'Question is required'"
+      >
+        <dv-select
+          [id]="'question'"
+          formControlName="question"
+          [clearable]="false"
+          [searchable]="true"
+          [virtualScroll]="true"
+          [loading]="loading_questions"
+          [list]="questionsList"
+          [bindValue]="'group_id'"
+          [bindLabel]="'text'"
+          [placeholder]="'-- Select Question --'"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Description'"
+        [modelController]="tagForm.get('tagDescription')"
+        [label]="'Description'"
+        [errorMessage]="'Please enter a valid description'"
+      >
+        <textarea
+          autosize
+          id="tagDescription"
+          rows="3"
+          placeholder="Enter description for the field"
+          class="form-control"
+          formControlName="tagDescription"
+        ></textarea>
+      </dv-form-element>
+
+      <ng-container
+        *ngIf="
+          ![
+            TagType.Checkbox,
+            TagType.Dropdown,
+            TagType.Paragraph,
+            TagType.Question,
+            TagType.Date,
+            TagType.DateTime,
+            TagType.Rating
+          ].includes(tagForm.value.tagType)
+        "
+      >
+        <dv-form-element
+          [modelController]="tagForm.get('hasMultiple')"
+          [showRightIcon]="false"
+          [elementCol]="8"
+          [labelCol]="4"
+          [label]="''"
+          elementClass="col-md-offset-3"
+        >
+          <dv-checkbox
+            formControlName="hasMultiple"
+            label="Allow Multiple values to be added"
+            [isBold]="true"
+          ></dv-checkbox>
+        </dv-form-element>
+      </ng-container>
+
+      <dv-form-element
+        [modelController]="tagForm.get('isMandatory')"
+        [fieldName]="'isMandatory'"
+        *ngIf="
+          ![TagType.Question, TagType.Rating].includes(tagForm.value.tagType)
+        "
+        [elementCol]="8"
+        elementClass="col-md-offset-3"
+      >
+        <dv-checkbox
+          formControlName="isMandatory"
+          label="Make this field mandatory"
+          [isBold]="true"
+          ariaLabel="Make this field mandatory"
+        ></dv-checkbox>
+      </dv-form-element>
+
+      <ng-container
+        *ngIf="
+          ![
+            TagType.Checkbox,
+            TagType.Dropdown,
+            TagType.Link,
+            TagType.Dynamic,
+            TagType.Paragraph,
+            TagType.Rating,
+            TagType.Question,
+            TagType.Date,
+            TagType.DateTime
+          ].includes(tagForm.value.tagType) && source !== 'rating'
+        "
+      >
+        <dv-form-element
+          [elementCol]="8"
+          [fieldName]="'hasUrl'"
+          elementClass="col-md-offset-3"
+        >
+          <dv-checkbox
+            formControlName="hasUrl"
+            label="Allow users to add a URL"
+            [isBold]="true"
+            ariaLabel="Allow users to add a URL"
+          ></dv-checkbox>
+        </dv-form-element>
+      </ng-container>
+
+      <ng-container *ngIf="tagForm.value.hasUrl"
+        ><dv-form-element
+          [fieldName]="'Base Url'"
+          [modelController]="tagForm.get('baseUrlName')"
+          [showRightIcon]="false"
+          [label]="'Base URL'"
+          [labelCol]="4"
+          [elementCol]="8"
+          [errorMessage]="
+            tagForm.get('baseUrlName').touched &&
+            tagForm.get('baseUrlName').invalid
+              ? getErrorMessage('baseUrlName', 'Base Url')
+              : ''
+          "
+          [isRequired]="true"
+        >
+          <input
+            [id]="'baseUrlName'"
+            type="text"
+            formControlName="baseUrlName"
+            placeholder="For eg: http://www.someurl.com/someid/{}"
+            class="form-control"
+          />
+        </dv-form-element>
+        <div class="col-md-12 space-on-top-lg">
+          <helper-text>{{ baseUrlSample }}</helper-text>
+        </div>
+      </ng-container>
+    </form>
+  </ng-template>
+</app-modal>

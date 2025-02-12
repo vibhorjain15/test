@@ -1,0 +1,16 @@
+.full-response-form ::ng-deep .form-horizontal .control-label {
+  padding-top: 0px !important;
+}
+
+.meta {
+  font-style: italic;
+  font-weight: normal;
+}
+
+:host .label {
+  line-height: 200%;
+  margin-bottom: 10px;
+}
+:host ::ng-deep img {
+  max-width: 100% !important;
+}

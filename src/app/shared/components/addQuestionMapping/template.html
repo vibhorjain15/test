@@ -1,0 +1,31 @@
+<form name="vm.addQuestionMappingForm" class="form-horizontal" novalidate>
+    <form-group field-name="template-name">
+        <label class="control-label" col="3" for="template-name">
+            Select Source Template
+        </label>
+
+        <div col="8">
+            <select class="form-control"
+                    chosen
+                    required
+                    data-ng-model="vm.selected_template"
+                    data-ng-options="template as template.templateInfo.name for template in vm.sourceTemplates"
+                    data-ng-change="vm.onTemplateSelectionChanged()">
+                <option value=""></option>
+            </select>
+        </div>
+    </form-group>
+    <form-group field-name="resource item" control-selector="dv-selector-list">
+        <label for="question_list" class="control-label" col ="3" col-type="sm">Select Questions</label>
+        <div col="8" col-type="sm">
+            <dv-selector-list name="question_list" entity-type="'Questions'" entities="vm.questionsList" filter-params="vm.entityFilterParams" display-params="vm.entityDisplayParams" selection="vm.selected_questions" badge-label="vm.badgeLabel" section-filter-source="vm.sectionSource"></dv-selector-list>
+        </div>
+    </form-group>
+    <div class="text-right">
+        <button type="submit"
+            class="space-on-right"
+            data-ng-click="vm.save()"
+            button-loader="vm.saving_mapping">Save</button>
+        <button btn-type="default" data-ng-click="vm.onCancel()">Cancel</button>
+    </div>
+</form>

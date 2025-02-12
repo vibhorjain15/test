@@ -1,0 +1,23 @@
+.form-elements {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nested-panel {
+  font-size: 13px;
+}
+.review-mandatory {
+  overflow-x: hidden;
+  padding-left: 7px;
+}
+:host ::ng-deep .review-mandatory::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+:host ::ng-deep .review-mandatory::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 10px;
+}
+:host ::ng-deep .review-mandatory::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d4;
+}

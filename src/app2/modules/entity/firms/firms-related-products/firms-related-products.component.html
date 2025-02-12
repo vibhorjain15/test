@@ -1,0 +1,102 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner
+          broadSpinner="true"
+          spinnerHeight="65"
+          *ngIf="!firm"
+        ></app-spinner>
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="firm">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              Parent Firm: {{ firm?.display_name }}
+            </h4>
+          </div>
+          <div class="text-center cell">
+            <dv-button [btnType]="'transparent'" (onClick)="addProduct()">
+              <div><span appIcon name="fund" size="2x"></span></div>
+              <small>Add Product</small>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix" *ngIf="related_entities.length > 0">
+      <!-- TODO: authorized-view accessible-to-->
+      <div col="12" authorized-view accessible-to="investor">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              {{ related_entities.length }} Related Entities
+            </h5>
+          </div>
+          <div class="panel-body">
+            <!-- TODO tiles-adjuster -->
+            <ul
+              class="list-unstyled due-diligence-grid"
+              tiles-adjuster="adjust_entity_list"
+              use-max-tile-width="true"
+              tile-selector="> li"
+            >
+              <li
+                class="inline-block pull-left"
+                on-render="adjust_entity_list = true"
+                *ngFor="let entity of related_entities"
+              >
+                <!-- style="width: calc(11.1111% - 8.88889px); margin-right: 10px" -->
+                <div class="panel panel-default relative">
+                  <div class="panel-body">
+                    <div>
+                      <a (click)="navigateToProfileMonitor(entity)">
+                        {{ entity.name | truncate : 30 }}
+                      </a>
+                      <span
+                        class="space-on-left label label-warning"
+                        tooltip="Deactivated by the owner firm"
+                        container="body"
+                        *ngIf="!entity.platform_active"
+                        >{{ statusLabel.INACTIVE }}</span
+                      >
+                    </div>
+                    <ul
+                      class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons"
+                    >
+                      <li class="space-on-bottom">
+                        <span class="align-middle text-muted">{{
+                          entity.strategyName
+                        }}</span>
+                      </li>
+                      <li>
+                        <app-fund-return
+                          [fundReturn]="entity.return"
+                          tooltip="Fund returns"
+                          container="body"
+                          [date]="entity.returnAsofDate"
+                        ></app-fund-return>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="row clearfix"
+      *ngIf="related_entities && !related_entities.length"
+    >
+      <div col="6" offset="3">
+        <app-empty-state
+          iconName="fund"
+          (action)="addProduct()"
+          actionLabel="Add Product"
+          message="No product available for {{ firm?.name }}. Why not add?"
+        >
+        </app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>

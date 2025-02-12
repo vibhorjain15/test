@@ -1,0 +1,152 @@
+<app-modal
+  [title]="label"
+  [initialTemplate]="NewQuestionsref"
+  (onFirstClick)="SaveAll($event)"
+  firstButtonLabel="Save"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #NewQuestionsref>
+  <form
+    [formGroup]="questionForm"
+    autocomplete="off"
+    aria-label="Question Form"
+  >
+    <div class="row clearfix">
+      <div class="col-md-12">
+        <div
+          class="panel panel-default"
+          *ngFor="let question of pastedQuestion; let index = index"
+          role="region"
+          aria-label="Question Panel"
+        >
+          <div class="panel-heading">
+            <h5
+              class="panel-title"
+              [innerHtml]="
+                'Adding new rules for question ' + this.question.attributes.text
+                  | dvSafeHtml
+              "
+              [attr.aria-label]="
+                'Adding new rules for question ' + this.question.attributes.text
+                  | dvSafeHtml
+              "
+            ></h5>
+          </div>
+          <div class="panel-body">
+            <div class="col-md-6">
+              <dv-form-element
+                [modelController]="questionForm.get('condition')"
+                label="Reveal this question when response"
+                labelPosition="top"
+                elementCol="12"
+                [showRightIcon]="false"
+                spacing="small"
+                errorMessage="Condition is required"
+              >
+                <dv-select
+                  [id]="'condition'"
+                  [contoller]="questionForm.get('condition')"
+                  [error]=""
+                  [list]="conditionList"
+                  bindLabel="display_label"
+                  [appendTo]="'body'"
+                  bindValue=""
+                  formControlName="condition_{{ index }}"
+                  (onSelectChange)="handleConditionChange($event, question)"
+                ></dv-select>
+              </dv-form-element>
+            </div>
+            <div class="col-md-6">
+              <dv-form-element
+                label="Enter a value"
+                labelPosition="top"
+                elementCol="12"
+                spacing="small"
+                [modelController]="questionForm.get('conditionalValue')"
+                errorMessage="Value is required"
+                [for]="'conditionalValue'"
+              >
+                <div *ngIf="parentQuestionResponseType == 'Date'">
+                  <app-date-picker
+                    [id]="'conditionalValue'"
+                    placement="bottom"
+                    [value]="conditionalValue"
+                    (change)="onDateChange($event, question, index)"
+                  ></app-date-picker>
+                </div>
+                <div
+                  *ngIf="
+                    [
+                      'Boolean',
+                      'CheckBox',
+                      'Dropdown',
+                      'NoPlus',
+                      'BooleanPlus'
+                    ].includes(parentQuestionResponseType)
+                  "
+                >
+                  <dv-select
+                    [id]="'conditionalValue'"
+                    [contoller]="conditionalValue"
+                    error="Please select a value"
+                    [list]="valuesList"
+                    bindLabel="value"
+                    [appendTo]="'body'"
+                    bindValue=""
+                    formControlName="conditionalValue_{{ index }}"
+                    (onSelectChange)="
+                      handleConditionalValueChange($event, question, index)
+                    "
+                  ></dv-select>
+                </div>
+                <div
+                  *ngIf="
+                    ['TextMultiLine', 'TextEmail', 'Text'].includes(
+                      parentQuestionResponseType
+                    )
+                  "
+                >
+                  <input
+                    type="text"
+                    required
+                    autocomplete="off"
+                    formControlName="conditionalValue_{{ index }}"
+                    (keyup)="handleconditionalValueTextChange($event, question)"
+                    placeholder="Type a value"
+                    class="form-control"
+                    id="conditionalValue"
+                  />
+                </div>
+                <div
+                  *ngIf="
+                    [
+                      'Integer',
+                      'Percentage',
+                      'Numeric',
+                      'Identifier',
+                      'TextPhone'
+                    ].includes(parentQuestionResponseType)
+                  "
+                >
+                  <input
+                    type="number"
+                    autocomplete="off"
+                    required
+                    id="conditionalValue_{{ index }}"
+                    formControlName="conditionalValue_{{ index }}"
+                    (keyup)="
+                      handleconditionalValueNumberChange($event, question)
+                    "
+                    placeholder="Enter a value"
+                    class="form-control"
+                  />
+                </div>
+              </dv-form-element>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+  <div class="panel-heading" data-ng-if="vm.showHeader">
+    Subscribers
+  </div>
+  <div class="panel-body full-height align-middle">
+    <div data-ng-show="vm.subscribers.length" class="label-list">
+      <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top word-wrap-with-break-word"
+            data-ng-repeat="subscriber in vm.subscribers">
+        <small>{{subscriber.fullName}}</small>
+
+        <a class="space-on-left clickable link-disguise"
+           data-ng-click="vm.displaySubscriberRemovalConfirmation(subscriber)">&times;</a>
+      </span> 
+      <dv-team-member-selector on-change="vm.addSubscriber(user, type)"
+                               clear-selection-allowed="false" functions="vm.functions">
+      </dv-team-member-selector>
+    </div>
+    <div data-ng-hide="vm.subscribers.length">
+      <small class="text-muted">No Subscribers Found</small>
+      <dv-team-member-selector on-change="vm.addSubscriber(user,type)"
+                               clear-selection-allowed="false" functions="vm.functions">
+      </dv-team-member-selector>
+    </div>
+  </div>  
+</div>

@@ -1,0 +1,99 @@
+.nested-list .list-group li {
+  list-style-type: none;
+  padding: 12px 0px;
+}
+
+.advanced-report-bookmark .list-group li a {
+  color: #333;
+}
+
+:host > .popover .popover-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.popover-container {
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.custom-view-group-list {
+  padding-right: 10px;
+}
+
+#report-component-container {
+  margin-right: 30px !important;
+}
+
+.popover-container li:not(:last-child) {
+  border-bottom: 1px solid #ddd;
+}
+
+:host accordion-group ::ng-deep .panel-default > .panel-heading {
+  background-color: unset !important;
+  border: unset !important;
+  padding: 0px !important;
+}
+
+:host accordion {
+  margin-bottom: 0px !important;
+}
+
+:host accordion ::ng-deep .panel {
+  border: unset !important;
+  box-shadow: unset !important;
+}
+
+.color-primary {
+  color: #126b82;
+}
+
+.custom-view-list {
+  padding-inline-start: 0px !important;
+}
+
+.custom-view-list-accordion-group ::ng-deep div.panel-body {
+  padding: 5px 0px 5px 40px !important;
+}
+
+.icon-link:hover {
+  cursor: pointer;
+  color: #16a1ab !important;
+}
+
+.save-current-view-btn ::ng-deep span {
+  margin: 0px auto;
+}
+
+.custom-view-group-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.right-icons {
+  margin-left: auto;
+  display: flex;
+}
+
+.custom-view-list-accordion-group ::ng-deep .panel-collapse .panel-body {
+  border-top: none !important;
+}
+
+.export-checkbox ::ng-deep span {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+.right-action-buttons {
+  display: flex;
+  padding-top: 15px;
+}
+
+.dashboard-selection-label ::ng-deep label {
+  font-size: 16px !important;
+}
+.btn-orange-border {
+  color: var(--orange-900) !important;
+}

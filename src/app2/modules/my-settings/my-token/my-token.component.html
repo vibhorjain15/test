@@ -1,0 +1,53 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">My Token</h5>
+  </div>
+  <div class="panel-body">
+    <p id="description">
+      This token can be used to access the DiligenceVault Outlook/Word Plugin.
+      <span class="sr-only"
+        >For security purpose, keep the token as a secret.</span
+      >
+    </p>
+    <div class="space-on-top-lg">
+      <div>
+        <strong>STEP 1:</strong> Open the Outlook/Word plugin on desktop and
+        login into your DiligenceVault account entering your email ID.
+      </div>
+    </div>
+    <div class="space-on-top-lg">
+      <div>
+        <strong>STEP 2:</strong> Enter the below token code in Outlook/Word when
+        prompted.
+      </div>
+    </div>
+    <br />
+    <div class="row clearfix">
+      <div class="col-md-5">
+        <input
+          type="text"
+          class="form-control"
+          aria-labelledby="description"
+          [(ngModel)]="token"
+          readonly
+          [attr.aria-label]="'Token'"
+          autocomplete="off"
+        />
+      </div>
+      <div col="1">
+        <dv-button
+          btnType="default"
+          class="space-on-left"
+          tooltip="Copy"
+          (onClick)="copySuccess()"
+          [ariaLabel]="'Copy Token'"
+        >
+          <span appIcon name="copy"></span>
+        </dv-button>
+      </div>
+    </div>
+    <small class="text-danger">
+      <i>For security purpose, keep the token as a secret.</i>
+    </small>
+  </div>
+</div>

@@ -1,0 +1,286 @@
+<div class="panel panel-default relative">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="All Users"
+    [controls]="panelHeadingControls"
+  ></dv-panel-heading>
+  <div class="panel-info space-on-bottom-40">
+    <div class="panel-heading">
+      Please click username to review permissions for that user. View access
+      level configuration (
+      <a
+        target="_blank"
+        class="clickable link-underline"
+        role="link"
+        tabindex="0"
+        (click)="navigateToUserRolesMap()"
+        >click here
+      </a>
+      )
+    </div>
+  </div>
+  <div *ngIf="!loading" class="row clear-margin space-on-top">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-4">
+      <input
+        type="text"
+        placeholder="Search users"
+        [(ngModel)]="search_string"
+        class="form-control round-borders"
+      />
+    </div>
+    <div class="col-sm-7">
+      <ul class="nav nav-pills">
+        <li
+          class="clickable"
+          [ngClass]="{ active: selectedFilter === userFilter.All }"
+        >
+          <a (click)="toggleFilter(userFilter.All)" clickable>All</a>
+        </li>
+        <li
+          class="clickable"
+          [ngClass]="{ active: selectedFilter === userFilter.Active }"
+        >
+          <a (click)="toggleFilter(userFilter.Active)" clickable>Active</a>
+        </li>
+        <li
+          class="clickable"
+          [ngClass]="{ active: selectedFilter === userFilter.Inactive }"
+        >
+          <a (click)="toggleFilter(userFilter.Inactive)" tabindex="0"
+            >Inactive</a
+          >
+        </li>
+        <li
+          class="clickable"
+          [ngClass]="{ active: selectedFilter === userFilter.Invited }"
+        >
+          <a (click)="toggleFilter(userFilter.Invited)" tabindex="0">Invited</a>
+        </li>
+        <li
+          class="clickable"
+          [ngClass]="{ active: selectedFilter === userFilter.Locked }"
+        >
+          <a clickable (click)="toggleFilter(userFilter.Locked)">Locked</a>
+        </li>
+        <li
+          class="clickable"
+          [ngClass]="{ active: selectedFilter === userFilter.Pending }"
+        >
+          <a clickable (click)="toggleFilter(userFilter.Pending)"
+            >Pending Approval</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div *ngIf="!team_members.length && !loading" class="text-center">
+      <span class="text-muted">No Users Found</span>
+    </div>
+    <div *ngIf="loading" class="text-center space-on-top-lg">
+      <app-spinner></app-spinner>
+    </div>
+    <br />
+    <div *ngIf="team_members.length">
+      <div
+        col="3"
+        *ngFor="
+          let member of team_members
+            | orderBy : 'firstname'
+            | filter : search_string
+        "
+        class="cell"
+        [id]="member.id + member.firm_id"
+        tabindex="0"
+      >
+        <div
+          class="user_card"
+          [ngClass]="{ 'semi-transparent': member.status === 'Invited' }"
+        >
+          <div
+            class="userIcon clickable"
+            [ngStyle]="member.style"
+            (click)="goToSelectedEntity(member)"
+            tabindex="0"
+          >
+            <h4>{{ member.firstname[0] }}{{ member.lastname[0] }}</h4>
+          </div>
+          <div class="space-on-top-lg text-center">
+            <h5 class="break-all">
+              <a
+                (click)="goToSelectedEntity(member)"
+                class="clickable text-black"
+                tabindex="0"
+                >{{ member.fullName }}</a
+              >
+              <span *ngIf="member.bounced_at">
+                <small
+                  tooltip="Emails to this contact have bounced in the past."
+                  container="body"
+                  class="text-danger"
+                >
+                  <span appIcon name="warning"></span>
+                </small>
+              </span>
+            </h5>
+          </div>
+          <p class="no-margin">
+            <small
+              ><a href="mailto:{{ member.userName }}">{{
+                member.userName
+              }}</a></small
+            >
+          </p>
+          <p
+            class="space-on-top-lg"
+            *ngIf="member.status === userFilter.Inactive"
+          >
+            <small class="label label-warning">INACTIVE</small>
+          </p>
+          <ul class="list-unstyled clear-margin-bottom list-with-icons">
+            <li class="space-on-bottom-lg">
+              <span dropdown container="body">
+                <p
+                  class="align-middle clickable space-on-bottom"
+                  dropdownToggle
+                  tabindex="0"
+                  role="button"
+                  aria-haspopup="true"
+                  [attr.aria-expanded]="toggleDropDown"
+                >
+                  {{ member.alias }}
+                  <span
+                    class="caret"
+                    *ngIf="member.status !== userFilter.Inactive"
+                  ></span>
+                </p>
+                <small>
+                  <p *ngIf="member.status === 'Invited'" class="space-on-top">
+                    <strong>Invited by</strong>: {{ member.invited_by_name }}
+                  </p>
+                </small>
+                <ng-container *dropdownMenu>
+                  <ul
+                    class="dropdown-menu max-height-300"
+                    role="menu"
+                    *ngIf="member.status !== userFilter.Inactive"
+                  >
+                    <li
+                      role="menuitem"
+                      *ngFor="let role of roles"
+                      [attr.aria-label]="role.alias"
+                    >
+                      <ng-container
+                        *ngIf="role.name !== member.firmwide_role_name"
+                      >
+                        <a
+                          class="clickable"
+                          (click)="
+                            displayChangeUserAccessConfirmation(member, role)
+                          "
+                          role="button"
+                          tabindex="0"
+                        >
+                          {{ role.alias }}
+                        </a>
+                      </ng-container>
+                    </li>
+                  </ul>
+                </ng-container>
+              </span>
+            </li>
+            <li>
+              <span
+                *ngFor="let function of member.functions"
+                class="label label-default label-sm functionsTag"
+                [tooltip]="function.function_name"
+                tabindex="0"
+                >{{ function.tag2 }}</span
+              >
+            </li>
+            <li>
+              <div class="controls-wrapper">
+                <a
+                  [tooltip]="
+                    member.id === current_user.id
+                      ? 'We care about our users, so no self deletion. If you want to deactivate your account, please contact your admin listed under My Settings.'
+                      : 'Remove this user'
+                  "
+                  container="body"
+                  [ngClass]="{
+                    disabled: member.id === current_user.id,
+                    danger: member.id !== current_user.id
+                  }"
+                  *ngIf="is_admin && member.status !== userFilter.Inactive"
+                  (click)="displayUserRemovalConfirmation(member)"
+                  class="btn btn-xs btn-default"
+                  tabindex="0"
+                  title="Remove User"
+                >
+                  <span appIcon name="trashcan"></span>
+                </a>
+                <a
+                  tooltip="Unlock user account immediately."
+                  container="body"
+                  *ngIf="member.isLocked"
+                  (click)="unlockUser(member)"
+                  class="btn btn-xs btn-default"
+                  tabindex="0"
+                  role="button"
+                  aria-label="Unlock user account immediately."
+                >
+                  <span appIcon name="unlock-alt"></span>
+                </a>
+                <a
+                  tooltip="Resend activation"
+                  container="body"
+                  *ngIf="is_admin && member.status == userFilter.Invited"
+                  (click)="resendActivation(member)"
+                  class="btn btn-xs btn-default"
+                  tabindex="0"
+                  role="button"
+                  aria-label="Resend activation"
+                >
+                  <span appIcon name="refresh"></span>
+                </a>
+                <a
+                  tooltip="Approve the user"
+                  container="body"
+                  *ngIf="is_admin && member.status == userFilter.Pending"
+                  (click)="approveUser(member)"
+                  class="btn btn-xs btn-orange"
+                  tabindex="0"
+                  role="button"
+                  aria-label="Approve the user"
+                >
+                  <span appIcon name="check"></span>
+                </a>
+                <span class="pull-right" *ngIf="member.twoFactorEnabled">
+                  <span
+                    placement="left"
+                    tooltip="Two-factor authentication enabled"
+                    container="body"
+                    appIcon
+                    name="secure"
+                    size="lg"
+                    class="text-success"
+                  ></span>
+                </span>
+              </div>
+            </li>
+          </ul>
+          <div *ngIf="member.is_key_person" class="ribbon">
+            <span>Key Person</span>
+          </div>
+        </div>
+      </div>
+      <div
+        *ngIf="!(team_members | filter : search_string).length"
+        class="text-center"
+      >
+        No Users Found
+      </div>
+    </div>
+  </div>
+</div>

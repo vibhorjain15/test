@@ -1,0 +1,33 @@
+:host ::ng-deep div.ngx-file-drop__drop-zone {
+  border: none;
+}
+:host ::ng-deep .dv-wizard .dv-wizard-content > .panel > .panel-body {
+  padding: 15px !important;
+}
+.minwidth {
+  min-width: 126px;
+}
+
+.bulk-actions-label-margin {
+  margin-top: 15px;
+  margin-left: 10px;
+}
+.max-height-350px {
+  max-height: 350px;
+  overflow: auto;
+}
+.border-bottom {
+  border-bottom: 1px solid #dddddd;
+}
+.align-items-center {
+  display: flex;
+  align-items: center;
+}
+.red-border {
+  border: 1px solid red;
+}
+.custom-header-class {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

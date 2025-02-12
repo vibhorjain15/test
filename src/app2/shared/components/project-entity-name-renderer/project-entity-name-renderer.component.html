@@ -1,0 +1,40 @@
+<p *ngIf="params.data && !params.node.group">
+  <span
+    *ngIf="
+      params.data.displayStatus === 'Sent' ||
+        params.data.displayStatus === 'Deleted' ||
+        params.data.displayStatus === 'Withdrawn';
+      else otherStatus
+    "
+  >
+    {{ params.data.entity_name }}
+  </span>
+  <ng-template #otherStatus>
+    <a
+      [adaptivePosition]="false"
+      [tooltip]="
+        params.data.entity_type === 'Review'
+          ? params.data.name
+          : params.data.entity_name
+      "
+      placement="top"
+      container="body"
+      [routerLink]="url"
+    >
+      <span
+        (click)="click($event)"
+        [ngClass]="{ 'text-bold': params.data.displayStatus === 'Invited' }"
+      >
+        {{
+          params.data.entity_type === "Review"
+            ? params.data.name
+            : params.data.entity_name
+        }}
+      </span>
+    </a>
+  </ng-template>
+</p>
+
+<p *ngIf="params.node.group">
+  {{ params.value }}
+</p>

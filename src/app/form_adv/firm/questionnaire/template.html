@@ -1,0 +1,205 @@
+<div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <spinner data-ng-hide="vm.formadv_firm"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel"
+           data-ng-show="vm.formadv_firm">
+        <div class="bordered-right cell">
+          <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+            {{::vm.formadv_firm.businessName}} ({{::vm.formadv_firm.id}})
+          </h4>
+
+          <small class="text-muted">
+            Filing Date: {{::vm.formadv_firm.filingDate|date}}
+          </small>
+        </div>
+
+        <div class="cell bordered-right"
+             data-ng-if="vm.formadv_firm.brochure_date">
+          <a class="btn btn-transparent"
+             target="_blank"
+             ng-href="{{vm.formadv_firm.brochure_url}}"
+             uib-tooltip="as of {{::vm.formadv_firm.brochure_date|date}}">
+            <span class="inline-block relative">
+              <icon name="file-pdf-o" size="2x"></icon>
+            </span>
+            <div>
+              <small>Part 2 Brochure</small>
+            </div>
+          </a>
+        </div>
+
+        <div class="cell bordered-right"
+             data-ng-if="!vm.formadv_firm.brochure_date">
+          <button disabled btn-type="transparent">
+            <span class="inline-block relative">
+              <icon name="file-pdf-o" size="2x"></icon>
+            </span>
+            <div>
+              <small>No Part 2 Brochure</small>
+            </div>
+          </button>
+        </div>
+
+        <div class="cell bordered-right">
+          <a data-ng-click="vm.displayNotesController()"
+             class="btn btn-transparent">
+             <div><icon name="notepad" size="2x"></icon></div>
+             <small>Add Notes</small>
+          </a>
+        </div>
+
+        <div class="cell bordered-right">
+          <a ui-sref="app.form_adv.firm.filings_history({firmCRD: vm.formadv_firm.firmCRD})"
+             class="btn btn-transparent">
+            <div><icon name="compare" size="2x"></icon></div>
+            <small>Compare History</small>
+          </a>
+        </div>
+
+        <div class="cell">
+          <a target="_blank"
+             ng-href="https://adviserinfo.sec.gov/IAPD/IAPDFirmSummary.aspx?ORG_PK={{vm.formadv_firm.firmCRD}}"
+             class="btn btn-transparent"
+             uib-tooltip="You are viewing publicly available information retrieved from the SEC's website">
+             <div><icon name="mail-forward" size="2x"></icon></div>
+             <small>SEC's Website</small>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div col="2" class="text-center">
+        <button btn-type="transparent"
+                data-ng-click="vm.getSections('Part1A')"
+                data-ng-class="{'btn-transparent-cta': vm.filter == 'Part1A'}"
+                uib-tooltip="{{vm.part1A_count ? 'View' : 'No response available'}}"
+                data-ng-disabled="!vm.part1A_count">
+          <span class="inline-block relative">
+            <icon name="bookmark" size="2x"></icon>
+          </span>
+          <div>
+            <small>Part 1A</small>
+          </div>
+        </button>
+      </div>
+
+      <div col="2" class="text-center">
+        <button btn-type="transparent"
+                data-ng-click="vm.getSections('Part1B')"
+                data-ng-class="{'btn-transparent-cta': vm.filter == 'Part1B'}"
+                uib-tooltip="{{vm.part1B_count ? 'View' : 'No response available'}}"
+                data-ng-disabled="!vm.part1B_count">
+          <span class="inline-block relative">
+            <icon name="bookmark" size="2x"></icon>
+          </span>
+          <div>
+            <small>Part 1B</small>
+          </div>
+        </button>
+      </div>
+
+      <div col="2" class="text-center">
+        <button btn-type="transparent"
+                data-ng-click="vm.getSections('ScheduleA')"
+                data-ng-class="{'btn-transparent-cta': vm.filter == 'ScheduleA'}"
+                uib-tooltip="{{vm.scheduleA_count ? 'View' : 'No response available'}}"
+                data-ng-disabled="!vm.scheduleA_count">
+          <span class="inline-block relative">
+            <icon name="user" size="2x"></icon>
+          </span>
+          <div>
+            <small>Schedule A</small>
+          </div>
+        </button>
+      </div>
+
+      <div col="2" class="text-center">
+        <button btn-type="transparent"
+                data-ng-click="vm.getSections('ScheduleB')"
+                data-ng-class="{'btn-transparent-cta': vm.filter == 'ScheduleB'}"
+                uib-tooltip="{{vm.scheduleB_count ? 'View' : 'No response available'}}"
+                data-ng-disabled="!vm.scheduleB_count">
+          <span class="inline-block relative">
+            <icon name="user" size="2x"></icon>
+          </span>
+
+          <div>
+            <small>Schedule B</small>
+          </div>
+        </button>
+      </div>
+
+      <div col="2" class="text-center">
+        <button btn-type="transparent"
+                data-ng-click="vm.getSections('ScheduleD')"
+                data-ng-class="{'btn-transparent-cta': vm.filter == 'ScheduleD'}"
+                uib-tooltip="{{vm.scheduleD_count ? 'View' : 'No response available'}}"
+                data-ng-disabled="!vm.scheduleD_count">
+          <span class="inline-block relative">
+            <icon name="fund" size="2x"></icon>
+          </span>
+
+          <div>
+            <small>Schedule D</small>
+          </div>
+        </button>
+      </div>
+
+      <div col="2" class="text-center">
+        <button btn-type="transparent"
+                data-ng-click="vm.getSections('DRP')"
+                data-ng-class="{'btn-transparent-cta': vm.filter == 'DRP'}"
+                uib-tooltip="{{vm.drps_count ? 'View' : 'No response available'}}"
+                data-ng-disabled="!vm.drps_count"*>
+          <span class="inline-block relative">
+            <icon name="flag" size="2x"></icon>
+          </span>
+
+          <div>
+            <small>DRPs</small>
+          </div>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <spinner data-ng-hide="vm.parent_sections"></spinner>
+
+  <div col="6" offset="3"
+         authorized-view
+         hidden-from="InstitutionalSubscription, ProductiveSubscription, FormADVSubscription, FormADVAnalyticsSubscription, FullSubscription, SmartSubscription">
+         <div class="panel panel-default">
+            <div class="panel-body">
+              <empty-state icon-name="ban"
+                           message="This view is available for premium subscribers of ADV Module. To learn more, or to unlock this analysis, please get in touch with us at subscriptions@diligencevault.com"
+                           action="vm.returnToList()"
+                          action-label="Back to list"></empty-state>
+            </div>
+          </div>
+    </div>
+
+    <div class="row clearfix"
+         authorized-view
+         hidden-from="FreeSubscription">
+    <div col="2">
+      <div class="list-group clear-margin-bottom">
+        <a class="list-group-item clickable"
+           data-ng-click="vm.goToSection(section)"
+           data-ng-class="{'active': $state.params.categoryId == section.id}"
+           data-ng-repeat="section in ::vm.parent_sections">{{::section.attributes.name}}</a>
+      </div>
+    </div>
+
+
+
+    <div col="10">
+      <ui-view />
+    </div>
+  </div>
+</div>

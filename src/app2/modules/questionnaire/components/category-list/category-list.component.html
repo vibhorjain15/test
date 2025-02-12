@@ -1,0 +1,11 @@
+<dv-category-accordion-list
+  #accordionList
+  [categoryData]="categoryData"
+  [currentActiveId]="activeSectionId"
+  (onSubCatClick)="handleSubCatClick($event)"
+  (onCatClick)="handleCatClick($event)"
+  [showQuestionCount]="true"
+  tabindex="0"
+  role="region"
+  aria-label="Category accordion list"
+></dv-category-accordion-list>

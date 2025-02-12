@@ -1,0 +1,211 @@
+<div id="child_section_{{::vm.section.attributes.id}}" class="panel panel-default qa-panel">
+  <div class="panel-heading">
+    <div class="clearfix">
+      <div class="pull-left header-component">
+        <b data-ng-if="!vm.section.isPrintPreview">{{::vm.section.attributes.name}}</b>
+        <b data-ng-if="vm.section.isPrintPreview">{{::vm.section.attributes.section_name}}</b>
+      </div>
+
+
+      <div class="header-component bordered-left"
+           data-ng-if="vm.isEditable && !vm.section.isPrintPreview && (questionnaireController.diligence.status != diligenceStatusConstant.PRECOMPLETIONREVIEW || vm.type == 'dd_profile')">
+        <dv-team-member-selector selection="vm.section.assignedUsers"
+                                 function-selection="vm.section.assignedFunctions"
+                                 on-change="vm.updateAssignMember(user, type)"
+                                 clear-selection-allowed="true"
+                                 functions="questionnaireController.entityFunctions">
+        </dv-team-member-selector>
+      </div>
+
+      <div class="header-component bordered-left"
+           data-ng-if="!vm.section.isPrintPreview && !questionnaireController.analytics_mode">
+        <button btn-type="transparent"
+           size="sm"
+           class="js-response-control-notes"
+           uib-tooltip="Add internal notes visible only to your firm"
+           tabindex="-1"
+           data-ng-click="vm.openNotesDialog()">
+          <icon name="notepad"></icon>
+          <span class="count-bubble" 
+            data-ng-show="vm.section.attributes.note_count">{{vm.section.attributes.note_count}}</span>
+        </button>
+      </div>
+
+      <div class="header-component bordered-left"
+          data-ng-if="(vm.section.isReadonlyEditable || vm.section.isReadonlyNotEditable) && vm.Utils.isAssignedToUser(vm.section.verifier, questionnaireController.myFunctions) && !vm.section.verifier.attributes.is_complete">
+        <button btn-type="transparent"
+            uib-tooltip="Approve"
+            data-ng-click="vm.showVerifyConfirmation()">
+          <icon name="thumbs-up" class="font-size-18"></icon>
+        </button>
+      </div>
+
+      <div class="header-component bordered-left"
+          data-ng-if="(vm.section.isReadonlyEditable || vm.section.isReadonlyNotEditable) && vm.Utils.isAssignedToUser(vm.section.verifier, questionnaireController.myFunctions) && !vm.section.verifier.attributes.is_complete">
+          <button btn-type="transparent"
+              uib-tooltip="{{vm.section.isReadonlyEditable?'Send back to author':'Reject Request'}}"
+              data-ng-click="vm.rejectRequest()">
+            <icon name="mail-forward" class="font-size-18" data-ng-if="vm.section.isReadonlyEditable"></icon>
+            <icon name="remove" class="font-size-18" data-ng-if="vm.section.isReadonlyNotEditable"></icon>
+          </button>
+      </div>
+
+      <div class="header-component bordered-left"
+            data-ng-if="(vm.section.isReadonlyEditable || vm.section.isReadonlyNotEditable) && !vm.Utils.isAssignedToUser(vm.section.verifier, questionnaireController.myFunctions) && !vm.section.verifier.attributes.is_complete">
+          <button btn-type="transparent"
+              uib-tooltip="{{vm.section.verifier.id?'Assigned to '+vm.Utils.getAssignedToName(vm.section.verifier):'Add Reviewer'}}"
+              tabindex="-1"
+              data-ng-class="{'qa-na-active': vm.section.verifier.id}"
+              data-ng-click="vm.openVerifierModal()">
+            <icon class="font-size-18" name="user-check"></icon>
+          </button>
+      </div>
+
+      <div class="header-component bordered-left"
+          data-ng-if="questionnaireController.firm_preferences.enable_track_changes && vm.showTrackChangesButtons()">
+        <button class="btn review-track-changes success btn-xs"
+            uib-tooltip="Accept All Track Changes"
+            data-ng-click="vm.showTrackChangesConfirmation('accept')">
+          Accept All
+        </button>
+      </div>
+
+      <div class="header-component bordered-left"
+          data-ng-if="questionnaireController.firm_preferences.enable_track_changes && vm.showTrackChangesButtons()">
+        <button class="btn review-track-changes danger btn-xs"
+            uib-tooltip="Reject All Track Changes"
+            data-ng-click="vm.showTrackChangesConfirmation('reject')">
+          Reject All
+        </button>
+      </div>
+
+      <div data-ng-if="(vm.showForInvestor && (vm.section.isReadonlyNotEditable || questionnaireController.diligence.status == diligenceStatusConstant.COMPLETED || questionnaireController.diligence.isLocked || vm.type == 'dd_review')) && vm.section.rating && questionnaireController.selectedRatingScheme && questionnaireController.selectedRatingScheme.rating_scale_mode == ratingConstants.ScoreBand" class="padded bordered-left inline-block">
+        <dd-editable-score
+                      selection="vm.section.rating"
+                      diligence-id="questionnaireController.diligence.id"
+                      rating-id="vm.section.rating.attributes.rating_id"
+                      total="100"
+                      keep-watcher-on="true"
+                      readonly="questionnaireController.diligence.status == 'Approved' || questionnaireController.diligence.status == 'NotApproved'"
+                      na-value="vm.section.naValue"
+                      rating-scale="vm.section.rating_scales"
+                      review-enabled="questionnaireController.firm_preferences.enable_rating_custom_fields_review && questionnaireController.diligence.status == diligenceStatusConstant.PRECOMPLETIONREVIEW" 
+                      enable-track-changes="questionnaireController.firm_preferences.enable_track_changes && vm.section.isReadonlyEditable && vm.section.attributes.section_status != responseStatus.STARTED"
+                      functions="questionnaireController.entityFunctions"
+                      assigned-functions="questionnaireController.myFunctions"></dd-editable-score>
+      </div>
+
+      <div class="header-component bordered-left" 
+          data-ng-if="(vm.showForInvestor && (vm.section.isReadonlyNotEditable || questionnaireController.diligence.status == diligenceStatusConstant.COMPLETED || questionnaireController.diligence.isLocked || vm.type == 'dd_review')) && vm.section.rating && questionnaireController.selectedRatingScheme && questionnaireController.selectedRatingScheme.rating_scale_mode == ratingConstants.Absolute">
+        <rating-dropdown selection="vm.section" rating-scales="questionnaireController.rating_scales" readonly="questionnaireController.diligence.isLocked || vm.ratingsNotEditable" with-custom-fields="questionnaireController.custom_fields.length > 0" review-enabled="questionnaireController.firm_preferences.enable_rating_custom_fields_review && questionnaireController.diligence.status == diligenceStatusConstant.PRECOMPLETIONREVIEW" enable-track-changes="questionnaireController.firm_preferences.enable_track_changes && vm.section.isReadonlyEditable && vm.section.attributes.section_status != responseStatus.STARTED" rating-level="'Sections'"
+          functions="questionnaireController.entityFunctions" assigned-functions="questionnaireController.myFunctions"></rating-dropdown>
+      </div>
+
+      <div class="header-component pull-right hide-in-print-view">
+        <small class="text-muted">
+          <i>
+            <ng-pluralize count="::vm.section.questions.length"
+                          when="{'one': '1 question', 'other': '{} questions'}"></ng-pluralize>
+          </i>
+        </small>
+      </div>
+
+      <div class="pull-right">
+        <div class="header-component bordered-right" 
+            data-ng-if="(vm.section.isReadonlyEditable || vm.section.isReadonlyNotEditable || questionnaireController.diligence.status == diligenceStatusConstant.COMPLETED) && vm.section.attributes.section_status == responseStatus.REVIEWSUCCESS">
+          <span class="review-label success">
+            <icon name="correction"></icon>
+            Reviewed
+          </span>
+        </div>
+
+        <div class="header-component bordered-right"
+          ng-if="(vm.section.isReadonlyEditable || vm.section.isReadonlyNotEditable || questionnaireController.diligence.status == diligenceStatusConstant.COMPLETED) && vm.section.attributes.section_status == responseStatus.REVIEWFAILED">
+          <span class="review-label danger">
+            <icon name="revision"></icon>
+            Revision Requested
+          </span>
+        </div>
+        <div class="header-component bordered-left" data-ng-if="vm.checkConditionsForDisplayingUndo()">
+          <span class="label label-default clickable" uib-tooltip="Undo Review" data-ng-click="vm.undoVerification()">
+              <icon name="undo"></icon>
+              {{vm.getRemainingTime(vm.section.timeDiff)}}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="full-width">
+    <p class="alert alert-info hidden js-header-text clear-margin clear-border-radius borderless">
+    </p>
+
+    <form>
+      <div data-ng-repeat="sequence in vm.section.sequences track by sequence.cid"
+           class="qa-response-sequence js-qa-response-sequence full-width"
+           data-ng-class="{'relative': sequence.marked_for_deletion}">
+        <div class="mask" data-ng-if="sequence.marked_for_deletion">
+          <div class="dv-table dv-table-middle full-width full-height">
+            <div class="cell">
+              <p class="lead text-center text-white">
+                This section will be deleted when you save the questionnaire form changes.
+              </p>
+
+              <div class="text-center">
+                <button class="btn btn-default" data-ng-click="vm.undoSequenceDelete(sequence)">Undo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sequence-controls js-sequence-controls" data-ng-hide="sequence.marked_for_deletion">
+          <button btn-type="primary"
+                  size="sm"
+                  class="btn-round"
+                  uib-tooltip="Repeat this section"
+                  tooltip-placement="auto top"
+                  data-ng-click="vm.addNewSequenceBelow(sequence)">
+            <icon name="plus"></icon>
+          </button>
+
+          <button btn-type="default"
+                  size="sm"
+                  class="js-remove-button btn-round"
+                  uib-tooltip="Remove this section"
+                  tooltip-placement="auto top"
+                  data-ng-click="vm.removeSequence(sequence)">
+            <icon name="times"></icon>
+          </button>
+        </div>
+
+        <div data-ng-class="{'semi-transparent': sequence.marked_for_deletion}">
+          <div infinite-scroll="sequence.getResponses()"
+                infinite-scroll-container data-ng-if="!printPreview">
+            <questionnaire-form-control data-ng-repeat="response in sequence.responsesPaged"
+                                        response="response">
+            </questionnaire-form-control>
+          </div>
+          <div data-ng-if="printPreview">
+            <questionnaire-form-control data-ng-repeat="response in sequence.responses"
+                                        response="response" print-preview="true">
+            </questionnaire-form-control>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="js-sequences-controlses hidden">
+      <div class="clearfix">
+        <div class="pull-right">
+          <button btn-type="primary"
+                  size="sm"
+                  data-ng-click="vm.addNewSequence()">Add More</button>
+          <button btn-type="default"
+                  size="sm"
+                  class="js-remove-button"
+                  data-ng-click="vm.removeLastSequence()">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,273 @@
+<app-modal
+  [title]="modalTitle"
+  [initialTemplate]="manageTemplateRef"
+  [firstButtonLabel]="'Create Template'"
+  (onFirstClick)="submit($event)"
+  [isLoading]="saving_template"
+  [isFirstButtonDisabled]="!templateForm?.valid"
+  [isAngularJs]="isAngularJs"
+>
+</app-modal>
+
+<ng-template #manageTemplateRef>
+  <form class="form-horizontal" [formGroup]="templateForm" autocomplete="off">
+    <div class="row">
+      <dv-form-element [elementCol]="12">
+        <div
+          col="12"
+          class="text-center space-on-bottom-xl"
+          *ngIf="!edit_mode && isManager && !fromManagerRequest"
+        >
+          <div col="6" class="bordered-right">
+            <div class="text-center pa-tb-lg">
+              <a
+                class="link-disguise clickable"
+                (click)="changeOptionType(requestSteps['DOC_PARSER'])"
+                tooltip="Document Parser"
+                [ngClass]="{
+                  'text-orange-dark':
+                    optionType == requestSteps['DOC_PARSER'] ||
+                    optionType == requestSteps['EXCEL_PARCER']
+                }"
+                role="button"
+                tabindex="0"
+              >
+                <div class="space-on-bottom">
+                  <span appIcon name="file" size="2x"></span>
+                </div>
+                Document Parser
+              </a>
+            </div>
+            <helper-text>
+              Attach document to digitize your template (.xlsx or .docx file)
+            </helper-text>
+          </div>
+          <div col="6">
+            <div class="text-center pa-tb-lg">
+              <a
+                class="link-disguise clickable"
+                (click)="changeOptionType(requestSteps['TEMPLATE_BUILDER'])"
+                tooltip="Template Builder"
+                [ngClass]="{
+                  'text-orange-dark':
+                    optionType == requestSteps['TEMPLATE_BUILDER']
+                }"
+                role="button"
+                tabindex="0"
+              >
+                <div class="space-on-bottom">
+                  <span appIcon name="tools" size="2x"></span>
+                </div>
+                Template Builder
+              </a>
+            </div>
+            <helper-text>
+              Build a template using our template builder
+            </helper-text>
+          </div>
+        </div>
+      </dv-form-element>
+      <ng-container
+        *ngIf="
+          isManager &&
+          optionType &&
+          (optionType == requestSteps['DOC_PARSER'] ||
+            optionType == requestSteps['EXCEL_PARCER'])
+        "
+      >
+        <hr col="12" />
+        <dv-form-element [elementCol]="12">
+          <div class="dd-doc-selection-wrapper">
+            <dv-uploader
+              dragLabel="Drag & Drop your file here"
+              [isMultiple]="false"
+              (onFileUpload)="onFileUpload($event)"
+              [accept]="'.docx,.xlsx'"
+              aria-label="Upload Document"
+            ></dv-uploader>
+          </div>
+        </dv-form-element>
+      </ng-container>
+      <hr
+        col="12"
+        *ngIf="
+          optionType &&
+          (optionType == requestSteps['DOC_PARSER'] ||
+            optionType == requestSteps['EXCEL_PARCER'])
+        "
+      />
+      <div col="12">
+        <dv-form-element
+          label="Template Name"
+          [elementCol]="'8'"
+          [modelController]="templateForm.get('manage_template_name')"
+          [isRequired]="true"
+          [errorMessage]="
+            templateForm.get('manage_template_name').touched &&
+            (templateForm.get('manage_template_name').errors?.required ||
+              templateForm.get('manage_template_name').errors?.whitespace)
+              ? 'Template name is required'
+              : templateForm.get('manage_template_name').touched &&
+                templateForm.get('manage_template_name').errors?.containsHtml
+              ? 'Please enter a valid template name'
+              : templateForm.get('manage_template_name').touched &&
+                templateForm.get('manage_template_name').errors?.nameExists
+              ? 'Template with this name already exists. Please enter a different name.'
+              : null
+          "
+          *ngIf="(edit_mode || optionType) && !fromManagerRequest"
+        >
+          <input
+            type="text"
+            class="form-control"
+            formControlName="manage_template_name"
+            dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+            placeholder="Enter a template name"
+            maxlength="140"
+            id="manage_template_name"
+            name="templateName"
+          />
+        </dv-form-element>
+        <dv-form-element
+          [label]="entity_sub_type"
+          [elementCol]="'8'"
+          [modelController]="templateForm.get('manage_template_strategyID')"
+          [showRightIcon]="false"
+          *ngIf="
+            !edit_mode &&
+            optionType == requestSteps['TEMPLATE_BUILDER'] &&
+            !fromManagerRequest
+          "
+        >
+          <dv-select
+            [id]="'manage_template_strategyID'"
+            [contoller]="templateForm.get('manage_template_strategyID')"
+            [error]=""
+            placeholder="--Universal: Not Classification specific--"
+            [appendTo]="null"
+            [list]="strategies"
+            bindLabel="name"
+            bindValue="id"
+            [clearable]="true"
+            formControlName="manage_template_strategyID"
+          ></dv-select>
+        </dv-form-element>
+
+        <dv-form-element
+          label="Frequency&nbsp;"
+          [elementCol]="'8'"
+          [modelController]="templateForm.get('manage_template_frequency_id')"
+          [showRightIcon]="false"
+          infoText="{{
+            isManager
+              ? 'Your answers will auto expire at the selected frequency'
+              : 'The diligence requests for this template will be auto-scheduled at selected frequency'
+          }}"
+          *ngIf="(edit_mode || optionType) && !fromManagerRequest"
+        >
+          <dv-select
+            [id]="'manage_template_frequency_id'"
+            [contoller]="templateForm.get('manage_template_frequency_id')"
+            [list]="frequencies"
+            placeholder="Select Frequency"
+            [appendTo]="null"
+            bindLabel="value"
+            bindValue="id"
+            [clearable]="true"
+            formControlName="manage_template_frequency_id"
+          ></dv-select>
+        </dv-form-element>
+
+        <dv-form-element
+          label="Type"
+          [elementCol]="'9'"
+          errorMessage="Please select a type"
+          *ngIf="!edit_mode && optionType && !fromManagerRequest"
+          [modelController]="templateForm.get('manage_template_type')"
+          [isRequired]="true"
+        >
+          <div class="btn-group" *ngIf="!manage_template.type_disabled">
+            <span
+              class="btn btn-default"
+              tooltip="Standard DDQ templates"
+              [ngClass]="{ 'btn-primary': manage_template.type == 'dd_new' }"
+              (click)="changeTemplateType('dd_new')"
+              container="body"
+              required
+            >
+              <span appIcon name="file-add"></span>
+              {{ isManager ? "Investor Request/Standard" : "Standard" }}
+            </span>
+            <span
+              class="btn btn-default"
+              [ngClass]="{
+                'btn-primary': manage_template.type == 'dd_profile'
+              }"
+              (click)="changeTemplateType('dd_profile')"
+              container="body"
+              tooltip="{{
+                isManager
+                  ? 'To add a new collection of Q/As to the Library'
+                  : 'Template to track Product or Firm profile'
+              }}"
+              uib-btn-radio="'dd_profile'"
+              required
+            >
+              <span appIcon name="user-check"></span>
+              {{ isManager ? "Q/A Library" : "Profile" }}
+            </span>
+          </div>
+          <h4 class="space-on-top" *ngIf="manage_template.type_disabled">
+            <span class="label label-primary">{{
+              manage_template.type == "dd_profile" ? "Q/A Library" : "Standard"
+            }}</span>
+          </h4>
+        </dv-form-element>
+
+        <div
+          class="col-md-offset-3 col-md-8"
+          *ngIf="isManager && !fromManagerRequest"
+        >
+          <helper-text *ngIf="manage_template.type == 'dd_new'">
+            Respond to investor DDQs, create digital DDQs to share with
+            investors, or build internal DDQs at the firm or product level for
+            particular time periods.
+          </helper-text>
+          <helper-text *ngIf="manage_template.type == 'dd_profile'">
+            Build and extend your Q/A library at the firm or product levels for
+            reuse when responding to investor requests and completing standard
+            DDQs.
+          </helper-text>
+        </div>
+      </div>
+    </div>
+    &nbsp;
+    <div
+      class="space-on-top form-group"
+      *ngIf="!edit_mode && permissions_enabled"
+    >
+      <a
+        class="link clickable pull-right"
+        (click)="showTeamsToAdd = !showTeamsToAdd"
+        role="button"
+        tabindex="0"
+      >
+        Add Team Permissioning
+      </a>
+    </div>
+    <div
+      class="form-group"
+      *ngIf="showTeamsToAdd && !edit_mode && permissions_enabled"
+    >
+      <app-team-selection
+        [type]="'Resource'"
+        [disabled]="!permissions_enabled"
+        [teams]="teams"
+        [entityType]="'template'"
+        (onErrors)="handleError($event)"
+        #permissions
+      ></app-team-selection>
+    </div>
+    <div><span class="danger">*</span>Required fields</div>
+  </form>
+</ng-template>

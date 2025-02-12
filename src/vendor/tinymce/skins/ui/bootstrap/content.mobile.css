@@ -1,0 +1,30 @@
+/*!
+ * Tiny Premium Skin
+ *
+ * Copyright 2010-2021 Tiny Technologies, Inc. All rights reserved.
+ *
+ * Version: 1.10.0-11
+ */
+.tinymce-mobile-unfocused-selections .tinymce-mobile-unfocused-selection {
+  /* Note: this file is used inside the content, so isn't part of theming */
+  background-color: green;
+  display: inline-block;
+  opacity: 0.5;
+  position: absolute;
+}
+body {
+  -webkit-text-size-adjust: none;
+}
+body img {
+  /* this is related to the content margin */
+  max-width: 96vw;
+}
+body table img {
+  max-width: 95%;
+}
+body {
+  font-family: sans-serif;
+}
+table {
+  border-collapse: collapse;
+}

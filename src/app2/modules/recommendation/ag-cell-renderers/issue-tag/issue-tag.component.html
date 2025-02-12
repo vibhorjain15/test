@@ -1,0 +1,19 @@
+<div
+  *ngIf="background && color"
+  class="label space-on-right text-uppercase tag-wrapper"
+  [style.background]="background"
+  [style.color]="color"
+>
+  <span>
+    {{ label }}
+  </span>
+</div>
+<div *ngIf="!background && !color">
+  <span
+    [adaptivePosition]="false"
+    [tooltip]="label"
+    container="body"
+    [innerHtml]="label | dvSafeHtml"
+    [adaptivePosition]="false"
+  ></span>
+</div>

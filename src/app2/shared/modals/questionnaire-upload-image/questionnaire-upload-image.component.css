@@ -1,0 +1,22 @@
+.img-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.rb-image-controls {
+  display: flex;
+}
+
+.rb-image-controls .icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inline-center {
+  display: flex;
+  }
+
+.fs-24 {
+  font-size: 24px;
+}

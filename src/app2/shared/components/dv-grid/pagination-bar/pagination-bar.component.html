@@ -1,0 +1,107 @@
+<div class="ag-paging-panel ag-unselectable">
+  <div class="ag-paging-row-summary-panel" role="status" aria-live="polite">
+    <label [for]="pageSizeId" class="sr-only">Items per page</label>
+    <select
+      (change)="onPageSizeChanged($event.target.value)"
+      [id]="pageSizeId"
+      class="select-bg-color"
+      aria-label="Items per page"
+      [(ngModel)]="gridPageSize"
+    >
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+    <span class="ag-paging-description"> items per page</span>
+  </div>
+  <div class="ag-paging-row-summary-panel" role="status" aria-live="polite">
+    <span class="ag-paging-row-summary-panel-number"> {{ startCount }} </span>
+    <span>-</span>
+    <span class="ag-paging-row-summary-panel-number"> {{ endCount }} </span>
+    <span> of </span>
+    <span class="ag-paging-row-summary-panel-number"> {{ totalCount }} </span>
+    <span> items</span>
+  </div>
+
+  <span
+    class="ag-paging-page-summary-panel"
+    role="navigation"
+    aria-label="Pagination"
+  >
+    <div
+      class="ag-paging-button"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="onFirstClicked()"
+      (click)="onFirstClicked()"
+      [ngClass]="{ 'ag-disabled': isFirstPage }"
+      aria-label="Go to first page"
+      [attr.aria-disabled]="isFirstPage ? 'true' : 'false'"
+      [attr.title]="isFirstPage ? 'Already on the first page' : null"
+    >
+      <span
+        class="ag-icon ag-icon-first"
+        unselectable="on"
+        role="presentation"
+      ></span>
+    </div>
+    <div
+      class="ag-paging-button"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="onPrevClicked()"
+      (click)="onPrevClicked()"
+      [ngClass]="{ 'ag-disabled': isFirstPage }"
+      aria-label="Go to previous page"
+      [attr.aria-disabled]="isFirstPage ? 'true' : 'false'"
+      [attr.title]="isFirstPage ? 'Already on the first page' : null"
+    >
+      <span
+        class="ag-icon ag-icon-previous"
+        unselectable="on"
+        role="presentation"
+      ></span>
+    </div>
+    <span class="ag-paging-description">
+      <span>Page</span>
+      <span class="ag-paging-number"> {{ currentPage }} </span>
+      <span>of</span>
+      <span class="ag-paging-number"> {{ totalPages }} </span>
+    </span>
+    <div
+      class="ag-paging-button"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="onNextClicked()"
+      (click)="onNextClicked()"
+      [ngClass]="{ 'ag-disabled': isLastPage }"
+      aria-label="Go to next page"
+      [attr.aria-disabled]="isLastPage ? 'true' : 'false'"
+      [attr.title]="isLastPage ? 'Already on the last page' : null"
+    >
+      <span
+        class="ag-icon ag-icon-next"
+        unselectable="on"
+        role="presentation"
+      ></span>
+    </div>
+    <div
+      class="ag-paging-button"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="onLastClicked()"
+      (click)="onLastClicked()"
+      [ngClass]="{ 'ag-disabled': isLastPage }"
+      aria-label="Go to last page"
+      [attr.aria-disabled]="isLastPage ? 'true' : 'false'"
+      [attr.title]="isLastPage ? 'Already on the last page' : null"
+    >
+      <span
+        class="ag-icon ag-icon-last"
+        unselectable="on"
+        role="presentation"
+      ></span>
+    </div>
+  </span>
+</div>

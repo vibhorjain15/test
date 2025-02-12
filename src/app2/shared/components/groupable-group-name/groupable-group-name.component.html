@@ -1,0 +1,11 @@
+<div *ngIf="params.data && !params?.node?.group && params.data.document.type">
+  <div>
+    <span class="label label-default space-on-right">
+      {{ displayDocumentGroupName(params.data[params.colDef.colId]) }}
+    </span>
+  </div>
+</div>
+
+<ng-container *ngIf="params?.node?.group">
+  <span>{{ params?.value }}</span>
+</ng-container>

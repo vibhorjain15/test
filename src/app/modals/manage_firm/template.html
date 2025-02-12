@@ -1,0 +1,315 @@
+<div data-ng-if="vm.Utils.isAngular()">
+<ng2-new-firm is-angular-js="true"></ng2-new-firm>
+</div>
+<form class="form-horizontal" data-ng-if="vm.Utils.isAngularJS()" name="vm.firm_form" novalidate>
+  <div class="modal-header" data-ng-if="vm.is_investor">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Firm' : 'Create New Firm'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-header" data-ng-if="!vm.is_investor">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Investor Firm' : 'Create New Investor Firm'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body" data-ng-class="vm.showFirmForm ? '' : 'manage-firm-modal'">
+
+    <div data-ng-if="!vm.showFirmForm">
+
+      <form-group field-name="Search">
+        <label for="firm-search" class="control-label" col="3" col-type="sm">
+          Name or Website
+          <span class="font-size-10 text-orange align-top">*</span>
+        </label>
+
+        <div col="7" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="firm-search"
+                 name="firm_search"
+                 autocomplete="off"
+                 data-ng-model="vm.params.search"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Example: DV Capitals or www.dvcapitals.com"
+                 ng-model-options="{ debounce: 1000 }"
+                 data-ng-change="vm.getFirmDetails()"
+                 required>
+        </div>
+
+        <div col="1" class="text-center space-on-top">
+          <button btn-type="default"
+                  class="btn-close"
+                  size="sm"
+                  uib-tooltip="Reset Search"
+                  data-ng-hide="!vm.params.search.length"
+                  data-ng-if="!vm.loadingFirms"
+                  data-ng-click="vm.clearSearchInput()">&times;</button>
+
+          <span data-ng-if="vm.loadingFirms">
+            <i class="dvi dvi-spinner fa-spin"></i>
+          </span>
+        </div>
+      </form-group>
+
+      <!--<spinner broad-spinner spinner-height='60' data-ng-if="vm.loadingFirms"></spinner>-->
+
+      <div data-ng-if="!vm.loadingFirms && vm.filteredFirmList.length">
+        <div class="text-center text-orange space-on-bottom-lg">
+          <i>
+            We found {{vm.filteredFirmList.length}} possible matching firm(s). How about adding
+            <ng-pluralize count="vm.filteredFirmList.length"
+                      when="{'one': 'this?', 'other': 'one of these?'}">
+            </ng-pluralize>
+          </i>
+        </div>
+        <div data-ng-repeat="firm in vm.filteredFirmList">
+          <div class="panel panel-default firm-list-container">
+            <div class="panel-body">
+              <div class="dv-table dv-table-middle full-width">
+                <div class="cell text-center" col="5">
+                  <div class="max-w-360 lh15 word-break-break-all">
+                    <span data-ng-class="{ 'text-gray': !firm.is_tracking }"
+                       uib-tooltip="{{firm.name}}" dv-limit-word="firm.name" char-limit="40">
+                    </span> <br>
+                    <small class="text-muted"
+                           uib-tooltip="Firm Type: {{firm.firm_type}}" dv-limit-word="firm.firm_type" char-limit="40"></small>
+                  </div>
+                </div>
+                <div class="cell" col="4">
+                  <a class="max-w-250 inline-block clickable overflow-ellipsis" href="{{firm.websiteUrl}}" target="_blank">{{firm.website}}</a>
+                </div>
+                <div class="cell bordered-left text-center" col="3">
+                  <button btn-type="default"
+                          class="btn-primary"
+                          uib-tooltip="This firm exists on DiligenceVault. Click to add to your portfolio"
+                          data-ng-if="!firm.is_tracking"
+                          ng-click="vm.prePopulateFirmForm(firm)">
+                    Add to Portfolio
+                  </button>
+
+                  <a class="btn btn-default"
+                        uib-tooltip="This firm is in your portfolio. Go to detail"
+                        data-ng-if="firm.is_tracking"
+                        ui-sref="app.firms.profile.monitor({firmId: firm.id})" target="_blank">
+                    View Firm
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-ng-if="!vm.loadingFirms && !vm.filteredFirmList.length && vm.params.search">
+        <empty-state icon-name="na"
+                     message="No related firms found. Please use the 'Create New Firm' button.">
+        </empty-state>
+      </div>
+    </div>
+
+    <div data-ng-if="vm.showFirmForm">
+      <form-group field-name="Firm Name">
+        <label for="firm-name" class="control-label" col="3" col-type="sm">{{vm.is_investor ? 'Firm Name' : 'Investor Name'}} <span class="font-size-10 text-orange align-top">*</span></label>
+
+        <div col="8" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="firm-name"
+                 name="firm_name"
+                 data-ng-model="vm.params.name"
+                 data-ng-readonly="vm.disableSpecificFormControls"
+                 data-ng-pattern="/^(?!(?:[a-zA-Z0-9]{1,64}?:\/\/)|([a-zA-Z0-9]+\.[a-zA-Z]{2,63}(?:\.[a-zA-Z]{2,63})?)).*$/i"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Enter firm name"
+                 required>
+        </div>
+      </form-group>
+
+      <form-group field-name="Alias">
+        <label for="alternate-name" class="control-label" col="3" col-type="sm">Alias</label>
+
+        <div col="8" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="alternate-name"
+                 name="alternate_name"
+                 data-ng-model="vm.params.alternate_name"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Your internal alias for this firm">
+        </div>
+      </form-group>
+
+      <form-group field-name="Firm Domain">
+        <label for="firm-show-website" class="control-label" col="3" col-type="sm">Firm Domain <span class="font-size-10 text-orange align-top">*</span></label>
+
+        <div col="8" col-type="sm">
+          <!-- allow sub-paths withing URL ref -> https://github.com/DiligenceVault/DV_MVC_REST/pull/3521  -->
+          <input type="text"
+                 class="form-control"
+                 id="firm-show-website"
+                 name="firm_website"
+                 data-ng-model="vm.params.website"
+                 data-ng-readonly="vm.disableSpecificFormControls"
+                 ng-pattern="/^(?:(?:https?|ftp):\/\/)?(?:www\.)?((?!(www|http))[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,10})(?:\/[\w-]+(?:\/[\w-]+)*)?(?!.*[:\s])\/?(?:#.*)?$/"
+                 custom-pattern-message="Please enter a valid domain or website"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Example: www.arthance.com"
+                 required>
+        </div>
+      </form-group>
+
+      <form-group field-name="Firm Type">
+        <label for="firm-type" class="control-label" col="3" col-type="sm">Firm Type</label>
+
+        <div col="8" col-type="sm">
+          <select name="firm_type"
+                  id="firm-type"
+                  class="form-control"
+                  chosen
+                  data-ng-disabled="vm.disableSpecificFormControls"
+                  data-ng-options="firm_type.id as firm_type.description for firm_type in vm.firm_types"
+                  data-ng-model="vm.params.firm_type_id">
+            <option value="">--Select--</option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group field-name="Internal Key">
+        <label for="internal-key" class="control-label" col="3" col-type="sm">Internal Key</label>
+
+        <div col="8" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="internal-key"
+                 name="firm_name"
+                 data-ng-model="vm.params.key"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 placeholder="Example: HG36FG">
+        </div>
+      </form-group>
+
+      <form-group field-name="Relationship Status">
+        <label for="relationship-status" class="control-label" col="3" col-type="sm">Relationship Status</label>
+
+        <div col="8" col-type="sm">
+          <select name="relationship_status"
+                  id="relationship-status"
+                  class="form-control"
+                  chosen
+                  data-ng-disabled="!vm.statuses"
+                  data-ng-options="status.id as status.name for status in vm.statuses"
+                  data-ng-model="vm.params.relationship_status_id">
+            <option value="">--Select--</option>
+          </select>
+        </div>
+      </form-group>
+
+      <div class="panel panel-default" data-ng-if="!vm.edit_mode">
+        <div class="panel-heading">
+          <h5 class="panel-title">Add Contact(s)</h5>
+        </div>
+
+        <div class="panel-body">
+          <form-group field-name="Contact email" data-ng-repeat="contact in vm.params.contacts">
+            <label for="contact-email-{{$index}}"
+                   class="control-label"
+                   col="3"
+                   col-type="sm">Email #{{$index + 1}} <span class="font-size-10 text-orange align-top">*</span></label>
+
+            <div col="8" col-type="sm">
+              <input type="email"
+                     class="form-control"
+                     id="contact-email-{{$index}}"
+                     data-ng-model="contact.username"
+                     placeholder="email@example.com"
+                     unique-item="vm.params.contacts"
+                     name="contacts_{{$index}}"
+                     validate-email
+                     value-attr="username"
+                     required>
+
+              <span class="text-warning" data-ng-show="vm.firm_form['contacts_' + $index].$pending">
+                Validating for contact-firm association
+              </span>
+            </div>
+          </form-group>
+
+          <div class="form-group">
+            <div col="8" offset="3">
+              <div class="pull-right">
+                <button btn-type="default"
+                        data-ng-click="vm.addNewContact()">Add Another Contact</button>
+                <button btn-type="danger"
+                        data-ng-disabled="vm.params.contacts.length == 1"
+                        data-ng-click="vm.removeLastContact()">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-ng-if="vm.showAddOwners">
+        <dv-owners entity="vm.firm" entity-type="'Firm'" params="vm.params" owners="vm.ownerList"></dv-owners>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading bordered-top" data-ng-if="!vm.edit_mode">
+          <h5 class="panel-title">Add Custom Fields</h5>
+        </div>
+
+        <div class="panel-body" data-ng-if="!vm.edit_mode">
+          <div class="form-group">
+            <field-selection custom-url="'firm_tags'" fieldselection-form="vm.fieldselectionForm" split-mandatory="true" on-close="vm.cancel()" disabled="false" fields="vm.fields"></field-selection>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group space-on-top-lg" data-ng-if="!vm.edit_mode && vm.permissions_enabled">
+        <a class="link clickable pull-right" data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions">
+          Add Team Permissioning
+        </a>
+      </div>
+      <div class="form-group" data-ng-show="vm.showAdvanceOptions" data-ng-if="!vm.edit_mode && vm.permissions_enabled">
+        <team-selection type="'Resource'" selected-teams="vm.selectedTeams" teamselection-form="vm.teamselectionForm" on-close="vm.cancel()" disabled="!vm.permissions_enabled" teams="vm.teams" access-list="vm.visibilityList"></team-selection>
+      </div>
+      <div class="form-group">
+        <div col="8" offset="2">
+          <small><span class="font-size-10 text-orange align-top">*</span><i>Required field</i></small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-ng-if="vm.errorMessageList.length > 0" class="alert alert-danger margin-20">
+    <p data-ng-repeat="error in vm.errorMessageList">
+      <span data-ng-show="vm.errorMessageList.length > 1">{{$index+1}}.</span>
+      <span bind-html-compile="error"></span>
+    </p>
+  </div>
+
+  <div class="modal-footer">
+    <div data-ng-if="!vm.showFirmForm">
+      <button btn-type="primary"
+              tooltip-placement="left"
+              uib-tooltip="{{vm.createFirmTooltip}}"
+              data-ng-if="!vm.loadingFirms && vm.params.search"
+              data-ng-click="vm.createFirm()">
+        No, Create a New Firm
+      </button>
+      <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+    <div data-ng-if="vm.showFirmForm">
+      <button btn-type="default" data-ng-click="vm.backToSearch()" data-ng-if="vm.showBackButton">Back</button>
+      <button type="submit" data-ng-show="vm.errorMessageList.length > 0" button-loader="vm.saving" data-ng-click="vm.saveNewFirm()">{{vm.edit_mode ? 'Yes, Please update the firm' : 'Yes, Please create the firm'}}</button>
+      <button type="submit" data-ng-hide="vm.errorMessageList.length > 0" button-loader="vm.saving" ng-disabled="vm.savingAnother || vm.gettingUserDetails || vm.firm_form.$pending" data-ng-click="vm.save()">{{vm.edit_mode ? 'Update Firm' : 'Create Firm'}}</button>
+      <button btn-type="default" data-ng-hide="vm.hideAddAnother || vm.errorMessageList.length > 0" button-loader="vm.savingAnother" ng-disabled="vm.saving || vm.gettingUserDetails || vm.firm_form.$pending" data-ng-click="vm.addAnotherNewFirm()">{{vm.edit_mode ? 'Update' : 'Create'}} & Add Another</button>
+      <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+  </div>
+</form>

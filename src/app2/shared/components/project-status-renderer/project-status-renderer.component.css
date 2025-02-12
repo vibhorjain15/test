@@ -1,0 +1,6 @@
+/* .small-label {
+    font-size: 55%;
+} */
+.label-success-light {
+  color: var(--dark-green) !important;
+}

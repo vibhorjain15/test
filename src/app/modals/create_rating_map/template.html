@@ -1,0 +1,74 @@
+<form name="vm.create_rating_map_form" data-ng-submit="vm.submit()" class="form-horizontal">
+    <div class="modal-header">
+        <h3 class="modal-title">Create Scores/Rating Map
+            <a class="pull-right clickable link-disguise link-unstyled"
+                data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="row clearfix">
+            <spinner data-ng-if="vm.loading" broad-spinner spinner-height='60'></spinner>
+            <div col="12" col-type="sm" class="text-center" data-ng-if="vm.ratingScalesList && !vm.ratingScalesList.length">
+                <label for="" class="control-label text-muted ">
+                    No rating/score scales present, <a class="clickable" data-ng-click="vm.redirectToRatingScales()">click here</a> to add one
+                </label>
+            </div>
+            <div col="12" data-ng-if="vm.ratingScalesList.length">
+                <div class="alert alert-info">
+                    Navigate to <a class="clickable" data-ng-click="vm.redirectToRatingScales()">Firm Settings > Rating/Score Map > Rating/Score Scales</a> to add new rating/score Scales
+                </div>
+                <form-group field-name="Rating Scale Name">
+                    <label col="4" for="rating-scale" class="control-label">Scores/Rating Scale</label>
+                    <div class="col-sm-6">
+                        <select name="rating-scale"
+                                id="rating-scale"
+                                class="form-control"
+                                chosen
+                                data-ng-options="scale as scale.name for scale in vm.ratingScalesList"
+                                data-ng-model="vm.request.rating_scale"
+                                data-ng-change="vm.onScaleChange()"
+                                required>
+                          <option value="" disabled>--Select Rating Scale--</option>
+                        </select>
+                    </div>
+                </form-group>
+                <div class="text-center">
+                    <div class="btn-group">
+                        <button class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.request.rating_level == 'section'}" data-ng-click="vm.setRatingSyncLevel('section')">Sub-category</button>
+                        <button class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.request.rating_level == 'question'}" data-ng-click="vm.setRatingSyncLevel('question')">Question</button>
+                    </div>
+                </div>
+                <div class="text-center space-on-top-lg">
+                    <div class="alert alert-info" data-ng-if="vm.request.rating_level == 'question'">
+                        You can set rules and flags at question level for this template
+                    </div>
+                    <div class="alert alert-info" data-ng-if="vm.request.rating_level == 'section'">
+                        You can only set flags, the rules need to be created at question level
+                    </div>
+                </div>
+                <div class="list-group" data-ng-if="vm.loading_scale_definition">
+                    <spinner broad-spinner spinner-height='60'></spinner>
+                </div>
+                <div data-ng-if="!vm.loading_scale_definition && vm.request.rating_scale.scale_mode == vm.ratingConstants.Absolute && vm.ratingScaleDefinition.length > 0">
+                    <h5 class="text-bold space-on-bottom-xl">Assign a rating</h5>
+                    <div class="inline-block">
+                        <dv-rating data-ng-model="vm.request.score"
+                                        max="{{vm.ratingScaleDefinition.length}}"
+                                        rating-scales="vm.ratingScaleDefinition"></dv-rating>
+                      </div>
+                </div>
+                <div data-ng-if="!vm.loading_scale_definition && vm.request.rating_scale.scale_mode == vm.ratingConstants.ScoreBand && vm.ratingScaleDefinition.length > 0">
+                    <div class="text-muted small space-on-top-lg">Score Traffic Light legend:
+                        <div class="space-on-top-lg space-on-bottom-lg" data-ng-repeat="scale in vm.ratingScaleDefinition">
+                            <span class="badge dd-score-legend space-on-right text-uppercase" data-ng-style="{'background-color':scale.color_code}">{{scale.name}}</span> Score between {{scale.range_min_value}} & {{scale.range_max_value}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.creating_map" data-ng-disabled="vm.ratingScalesList && !vm.ratingScalesList.length">Create Score/Rating Map</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

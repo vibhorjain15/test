@@ -1,0 +1,81 @@
+<app-modal
+  [title]="'Manage Rating/Scores Scale'"
+  [firstButtonLabel]="isEdit ? 'Update' : 'Add'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="RatingScalemodalref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #RatingScalemodalref>
+  <form class="form-horizontal" [formGroup]="rateScaleForm" autocomplete="off">
+    <div class="row clearfix">
+      <div col="12">
+        <dv-form-element
+          [fieldName]="'Field Name'"
+          [modelController]="rateScaleForm.get('name')"
+          label="Name"
+          [labelCol]="4"
+          [elementCol]="6"
+          [errorMessage]="
+            rateScaleForm.get('name').touched &&
+            rateScaleForm.get('name').invalid &&
+            (rateScaleForm.get('name').errors?.required ||
+              rateScaleForm.get('name').errors?.whitespace)
+              ? 'Scores/Rating name is required'
+              : rateScaleForm.get('name').touched &&
+                rateScaleForm.get('name').invalid &&
+                rateScaleForm.get('name').errors?.notUnique
+              ? ' A rating scale with same name already exists'
+              : ''
+          "
+        >
+          <input
+            type="text"
+            name="name"
+            id="name"
+            maxlength="50"
+            formControlName="name"
+            class="form-control"
+            placeholder="Example: Out of 5"
+            required
+          />
+        </dv-form-element>
+        <div *ngIf="!isEdit">
+          <dv-form-element
+            fieldName="scale_mode"
+            [modelController]="rateScaleForm.get('scale_mode')"
+            [showRightIcon]="false"
+            label="Scale Mode"
+            [labelCol]="4"
+            [elementCol]="6"
+          >
+            <dv-select
+              [id]="'scale_mode'"
+              [list]="scaleModes"
+              formControlName="scale_mode"
+              (onSelectChange)="onScaleModeChange($event)"
+            ></dv-select>
+            <div class="space-on-top-lg">
+              <helper-text [innerHtml]="scaleModeHelpText"></helper-text>
+            </div>
+          </dv-form-element>
+        </div>
+        <div
+          col="8"
+          offset="4"
+          [ngClass]="{ 'checkbox-margin': !isEdit }"
+          *ngIf="
+            rateScaleForm.get('scale_mode').value === ratingConstants.ScoreBand
+          "
+        >
+          <dv-checkbox
+            formControlName="allow_decimal_score_bands"
+            [ngModelOptions]="{ standalone: true }"
+            name="allow_decimal_score_bands"
+            label="Allow bands with decimal places"
+          >
+          </dv-checkbox>
+        </div>
+      </div>
+    </div></form
+></ng-template>

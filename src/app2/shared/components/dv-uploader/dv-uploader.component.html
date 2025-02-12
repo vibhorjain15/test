@@ -1,0 +1,51 @@
+<div class="dd-doc-selection-wrapper">
+  <div class="panel panel-default dd-doc-drop-panel">
+    <ngx-file-drop
+      [accept]="accept"
+      [disabled]="disabled"
+      (onFileDrop)="dropped($event)"
+      [multiple]="isMultiple"
+      [directory]="directory"
+    >
+      <div class="ngx-file-drop__drop-zone">
+        <ng-template
+          ngx-file-drop-content-tmp
+          let-openFileSelector="openFileSelector"
+        >
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>{{ dragLabel }}</strong>
+            </p>
+            <p class="text-muted text-center">
+              <span appIcon name="upload" size="2x"></span>
+            </p>
+          </div>
+          <div class="dd-doc-select-button-container">
+            <button
+              appButton
+              btnType="default"
+              type="button"
+              [disabled]="disabled"
+              (click)="openFileSelector()"
+            >
+              {{ buttonLabel }}
+            </button>
+            <div *ngIf="showUploadedFiles && !loader">
+              <div
+                class="file-name text-center"
+                *ngFor="let file of files"
+                style="color: black"
+                [tooltip]="file.name"
+              >
+                {{ file.name | truncate : truncateNameCharTo }}
+              </div>
+            </div>
+            <div *ngIf="loader" class="text-center">
+              <app-spinner [spinnerText]="loaderText"></app-spinner>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </ngx-file-drop>
+  </div>
+</div>

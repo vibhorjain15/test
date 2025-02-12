@@ -1,0 +1,54 @@
+<div *ngIf="params.data">
+  <dv-button
+    btnType="default"
+    size="sm"
+    btnClass="space-on-right"
+    (onClick)="onEmail()"
+    [adaptivePosition]="false"
+    tooltip="Email"
+    triggers="mouseenter:mouseleave"
+    container="body"
+    ariaLabel="Email button"
+  >
+    <span appIcon name="mail"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    size="sm"
+    btnClass="space-on-right"
+    (onClick)="onDelete()"
+    [adaptivePosition]="false"
+    tooltip="Delete"
+    triggers="mouseenter:mouseleave"
+    container="body"
+    ariaLabel="Delete button"
+  >
+    <span appIcon name="trashcan"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    size="sm"
+    btnClass="space-on-right"
+    [adaptivePosition]="false"
+    tooltip="Download"
+    triggers="mouseenter:mouseleave"
+    container="body"
+    (onClick)="onDownload()"
+    ariaLabel="Download button"
+  >
+    <span appIcon name="download3"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    size="sm"
+    btnClass="space-on-right"
+    tooltip="Download Excel Log"
+    triggers="mouseenter:mouseleave"
+    container="body"
+    (onClick)="onDownloadExcelLog()"
+    *ngIf="params.data.output_blob_name"
+    ariaLabel="Download Excel Log button"
+  >
+    <span appIcon name="file-excel"></span>
+  </dv-button>
+</div>

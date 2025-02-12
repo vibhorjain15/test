@@ -1,0 +1,23 @@
+.add-internal-contacts-container {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 25px;
+  margin-right: -15px;
+}
+
+:host ::ng-deep .ng-select.disable-add ng-dropdown-panel {
+  display: none;
+}
+
+:host ::ng-deep .ng-select.disable-add .ng-arrow-wrapper .ng-arrow {
+  display: none;
+}
+
+:host ::ng-deep .ng-select.disable-add input {
+  display: none;
+}
+
+.primary-contact-checkbox {
+  display: inline-block;
+  margin-right: 10px;
+}

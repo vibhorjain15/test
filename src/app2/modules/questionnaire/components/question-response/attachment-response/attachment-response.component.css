@@ -1,0 +1,11 @@
+.panel {
+  border-radius: 10px;
+}
+
+.panel-heading {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.attachments-selector-margin {
+  margin-bottom: 5px;
+}

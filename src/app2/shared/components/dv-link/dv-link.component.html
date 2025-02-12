@@ -1,0 +1,22 @@
+<span
+  (click)="handleLinkClick($event)"
+  [class]="'clickable ' + linkClass"
+  [ngClass]="{ linkIconClass: icon }"
+  [style.color]="styleColor"
+  role="link"
+  tabindex="0"
+  ariaLabel="name | trustHtml"
+>
+  <span *ngIf="icon" class="space-on-right" appIcon [name]="icon"></span>
+  <span
+    [ngClass]="{
+      'label-disable': type === 'disable',
+      'label-bold': type === 'bold',
+      'label-italic': type === 'italic'
+    }"
+    [tooltip]="tooltip"
+    [style.font-size]="styleSize"
+    container="body"
+    [innerHtml]="name | trustHtml"
+  ></span>
+</span>

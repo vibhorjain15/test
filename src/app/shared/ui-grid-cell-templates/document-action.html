@@ -1,0 +1,25 @@
+<ui-grid-cell-contents data-ng-if="!row.groupHeader">
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          uib-tooltip="Update"
+          ng-click="grid.appScope.vm.openDocumentUpdateDialog(row.entity)"><icon name="pencil"></icon>
+  </button>
+
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          uib-tooltip="Share"
+          data-ng-if="grid.appScope.vm.showDocumentAction(row.entity) && !grid.appScope.vm.freeSubscription"
+          ng-click="grid.appScope.vm.openDocumentShareDialog(row.entity)">
+    <icon name="share"></icon>
+  </button>
+
+  <button btn-type="default"
+          class="danger"
+          size="sm"
+          uib-tooltip="Delete"
+          data-ng-if="grid.appScope.vm.showDocumentAction(row.entity)"
+          ng-click="grid.appScope.vm.confirmDocumentDeletion(row.entity)"><icon name="trashcan"></icon>
+  </button>
+</ui-grid-cell-contents>

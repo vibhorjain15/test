@@ -1,0 +1,118 @@
+<div class="panel panel-default borderless-top">
+  <div class="panel-body">
+    <app-spinner *ngIf="loading"></app-spinner>
+
+    <div
+      class="dv-table dv-table-middle dd-info-panel pull-left"
+      *ngIf="!loading"
+    >
+      <div class="cell bordered-right">
+        <a (click)="goBack()" class="btn btn-transparent clickable">
+          <div><span appIcon name="arrow-back" size="2x"></span></div>
+          <small>Go back</small>
+        </a>
+      </div>
+
+      <div class="cell">
+        <h4
+          class="clear-margin-top clear-margin-bottom space-on-left-lg space-on-right-lg lh1-7"
+        >
+          Showing questions matching
+          <b
+            ><u
+              ><span>{{ searchText | truncate : 18 }}</span></u
+            ></b
+          >
+          in <br />
+          <b>{{ diligenceData.entity_name }}</b>
+        </h4>
+      </div>
+    </div>
+
+    <div class="pull-right" *ngIf="!loading">
+      <div class="input-group search-questions search-wrapper">
+        <div class="QA-filter input-group advance-search-input-group">
+          <input
+            [(ngModel)]="newSearchText"
+            [placeholder]="
+              'Search ' + (filterType === 'Search' ? 'question' : 'response')
+            "
+            class="form-control input-question-search input qainput"
+            (keydown.enter)="searchQuestions()"
+            autofocus
+            aria-label="Search question input"
+          />
+
+          <a
+            class="cancel-btn-clear-search-text"
+            style="right: 111px; top: 9px"
+            (click)="resetFilter()"
+            *ngIf="newSearchText"
+            tippyTooltip="Clear search"
+            [ariaLabel]="'Clear search'"
+            role="button"
+            tabindex="0"
+          >
+            <span appIcon name="close"></span>
+          </a>
+          <dv-select
+            [list]="questionAnswerFilter"
+            class="search-select"
+            [(ngModel)]="filterType"
+            [searchable]="false"
+            [appendTo]="'body'"
+            [aria-label]="'Filter Dropdown'"
+          ></dv-select>
+        </div>
+        <span class="input-group-btn search-wrapper">
+          <dv-button
+            btnType="default"
+            btnClass="btn-default"
+            (onClick)="searchQuestions()"
+            tippyTooltip="Search"
+            [ariaLabel]="'Search'"
+          >
+            <span
+              appIcon
+              class="text-primary dvi ng-isolate-scope dvi-search"
+              name="search"
+            ></span>
+          </dv-button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <ng-container #outlet [ngTemplateOutlet]="content"> </ng-container>
+  <div class="panel-body" *ngIf="noResultsPresent">
+    <div class="row clearfix">
+      <div col="6" offset="3">
+        <app-empty-state
+          iconName="smile-o"
+          message="No results matched your search criteria."
+        >
+        </app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #content>
+  <div>
+    <ng-container *ngFor="let category of categories">
+      <ng-container *ngFor="let subCat of getValues(category.list)">
+        <div>
+          <questionnaire-print-preview
+            [section]="subCat"
+            [catName]="category.name"
+            [reviewSearchResults]="true"
+            [searchText]="searchText"
+            [filterType]="filterType"
+          ></questionnaire-print-preview>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</ng-template>

@@ -1,0 +1,232 @@
+<div class="row clearfix">
+  <div col="4" class="clear-padding-right">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>About {{vm.firm.display_name}}</span>
+      </div>
+
+      <div class="panel-body">
+        <p data-ng-class="{'clear-margin': !vm.firm.website}">
+          <span class="pre-wrap">{{vm.firm.firmDescription}}</span>
+
+          <small class="text-muted"
+                data-ng-hide="vm.firm.firmDescription">
+            <i>This firm doesn't have a description</i>
+          </small>
+        </p>
+
+        <a href="{{vm.firm.website}}"
+           data-ng-show="vm.firm.website"
+           target="_blank"><small>View Website</small></a>
+      </div>
+    </div>
+  </div>
+
+  <div col="4" class="clear-padding-right">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>Firm Profile</span>
+      </div>
+
+      <div class="panel-body">
+        <ul class="list-unstyled clear-margin">
+          <li class="space-on-bottom">
+            <strong>Type: </strong>
+
+            <span>{{vm.firm.type}}</span>
+
+            <small class="text-muted"
+                   data-ng-hide="vm.firm.type">
+              <i>Not specified</i>
+            </small>
+          </li>
+
+          <li class="space-on-bottom">
+            <strong>AUM: </strong>
+            <span>{{vm.firm.aum | number:0}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div col="4">
+    <div class="panel panel-default relative">
+      <div class="panel-heading">
+        <span>Contact Information</span>
+      </div>
+
+      <div class="panel-body">
+        <empty-state icon-name="mail"
+                     data-ng-hide="vm.firm.contactPerson"
+                     message="No contact person is set for this firm"></empty-state>
+
+        <ul class="list-unstyled clear-margin list-with-icons"
+            data-ng-show="vm.firm.contactPerson">
+          <li class="space-on-bottom">
+            <icon name="user" size="fw"></icon>&nbsp;
+             {{vm.firm.contactPerson.firstName}}
+             {{vm.firm.contactPerson.lastName}}
+          </li>
+
+          <li class="space-on-bottom">
+            <icon name="briefcase" size="fw"></icon>&nbsp;
+            {{vm.firm.contactPerson.title}}
+
+            <small data-ng-hide="vm.firm.contactPerson.title">
+              <i class="text-muted">Not specified</i>
+            </small>
+          </li>
+
+          <li class="space-on-bottom">
+            <icon name="phone" size="fw"></icon>&nbsp;
+            {{vm.firm.contactPerson.phone}}
+
+            <small data-ng-hide="vm.firm.contactPerson.phone">
+              <i class="text-muted">Not specified</i>
+            </small>
+          </li>
+
+          <li>
+            <icon name="mail" size="fw"></icon>&nbsp;
+            <a href="mailto:{{vm.firm.contactPerson.userName}}"
+               class="link-disguise">
+              {{vm.firm.contactPerson.userName}}
+            </a>
+
+            <small data-ng-hide="vm.firm.contactPerson.userName">
+              <i class="text-muted">Not specified</i>
+            </small>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row clearfix">
+  <div col="12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>
+          <icon name="users" class="space-on-right align-middle"></icon>
+
+          <span class="align-middle">
+            Employees on the platform ({{vm.active_users.length}})
+          </span>
+        </span>
+      </div>
+
+      <div class="panel-body">
+        <ul class="list-unstyled"
+            tiles-adjuster="vm.adjust_user_list"
+            use-max-tile-width="true"
+            tile-selector="> li">
+          <li class="inline-block pull-left"
+              on-render="vm.adjust_user_list = true"
+              data-ng-class="{'semi-transparent': team_member.accessLevel == 'Invited'}"
+              data-ng-repeat="team_member in vm.team_members">
+            <div class="user-card">
+              <div class="avatar-wrapper">
+                <user-avatar class="text-center"
+                             user="team_member"
+                             avatar-icon-size="3x"></user-avatar>
+              </div>
+
+              <div class="content-wrapper">
+                <div class="info-wrapper">
+                  <div>
+                    <strong class="align-middle">
+                      {{team_member.firstName}} {{team_member.lastName}}
+                      <span data-ng-show="team_member.is_loggedin_user">(You)</span>
+                    </strong>
+                  </div>
+
+                  <ul class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons">
+
+                    <li class="space-on-bottom">
+                      <icon name="briefcase" size="fw" class="align-middle" uib-tooltip="Title"></icon>&nbsp;
+
+                      <span class="align-middle">{{team_member.title}}</span>
+                      <small class="align-middle text-muted"
+                             data-ng-hide="team_member.title">
+                        <i>What's in the title!</i>
+                      </small>
+                    </li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row clearfix">
+  <div col="12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>
+          <icon name="fund" class="space-on-right align-middle"></icon>
+
+          <span class="align-middle">
+            {{vm.entity_type | standardPluralize}} on the platform ({{vm.fund_list.length}})
+          </span>
+        </span>
+      </div>
+
+      <div class="panel-body">
+        <ul class="list-unstyled"
+            tiles-adjuster="vm.adjust_fund_list"
+            use-max-tile-width="true"
+            tile-selector="> li">
+          <li class="inline-block pull-left"
+              on-render="vm.adjust_fund_list = true"
+              data-ng-repeat="fund in vm.fund_list">
+            <div class="panel panel-default relative">
+              <div class="panel-body">
+                <div>
+                  <strong>{{fund.name}}</strong>
+                </div>
+
+                <ul class="list-unstyled space-on-top-lg clear-margin-bottom list-with-icons">
+                  <li class="space-on-bottom">
+                    <icon name="strategy"
+                          size="2x"
+                          uib-tooltip="{{vm.entity_sub_type}}"
+                          class="align-middle"></icon>&nbsp;
+                    <span class="align-middle">{{fund.strategyName}}</span>
+                  </li>
+
+                  <li class="space-on-bottom">
+                    <icon name="rocket"
+                          size="fw"
+                          uib-tooltip="Inception Date"
+                          class="align-middle"></icon>&nbsp;
+                    <span class="align-middle">{{fund.inceptionDate | date:'dd-MMMM-yyyy'}}</span>
+                    <small class="align-middle text-muted"
+                           data-ng-hide="fund.inceptionDate">
+                      <i>Info not available</i>
+                    </small>
+                  </li>
+
+                  <li>
+                    <icon name="aum"
+                          size="fw"
+                          uib-tooltip="AUM"
+                          class="align-middle"></icon>&nbsp;
+                    <span class="align-middle">{{fund.currency}} {{fund.aum | number:0}}</span>
+                  </li>
+                </ul>
+
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

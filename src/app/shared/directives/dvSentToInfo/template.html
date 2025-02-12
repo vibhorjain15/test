@@ -1,0 +1,23 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+      <ul class="list-unstyled due-diligence-history">
+          <li data-ng-show="vm.is_investor && !vm.diligence.is_internal">
+            <small class="text-muted text-uppercase">Sent To:</small>
+            <span class="text-muted font-size-10" data-ng-if="vm.sentToContactsList.length == 0">
+              No Subscribers Found
+            </span>
+            <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top space-on-bottom max-w-100-p"
+              data-ng-if="vm.sentToContactsList.length>0" data-ng-repeat="recipient in vm.sentToContactsList"  uib-tooltip="{{recipient.fullName}}">
+              <small class="recipient-name">{{recipient.fullName}}</small>
+              <a class="space-on-left clickable link-disguise"
+                data-ng-click="vm.displaySubscriberRemovalConfirmation(recipient)">&times;</a>
+            </span>
+            <dv-sent-to-contact-selector data-ng-show="!vm.saving_contact" on-change="vm.addSubscriber(user)" diligence="vm.diligence"
+              sent-to-contacts-list="vm.sentToContactsList">
+            </dv-sent-to-contact-selector>
+            <spinner data-ng-show="vm.saving_contact"></spinner>
+            <!-- <span data-ng-if="vm.remaining > 0" class="space-on-top"> and {{vm.remaining}} more</span> -->
+          </li>
+        </ul>
+  </div>
+</div>

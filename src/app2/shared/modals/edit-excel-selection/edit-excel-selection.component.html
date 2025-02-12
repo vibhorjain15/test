@@ -1,0 +1,32 @@
+<app-modal
+  [title]="'Edit ' + columnTypeMap[params.type]"
+  [firstButtonLabel]="'Save'"
+  (onFirstClick)="submit()"
+  [initialTemplate]="templateRef"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div class="row clearfix">
+    <div col="12">
+      <table class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>{{ columnTypeMap[params.type] }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of selectionData; let i = index">
+            <td>
+              <dv-checkbox [id]="i" [(ngModel)]="entry.is_selected">
+              </dv-checkbox>
+            </td>
+            <td class="break-spaces padding-top-10">
+              <span> {{ entry.text }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>

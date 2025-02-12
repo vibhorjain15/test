@@ -1,0 +1,13 @@
+<ui-grid-cell-contents>
+  <div data-ng-show="row.entity.user_assigments.length">
+    <span class="label label-default space-on-right text-uppercase">{{row.entity.user_assigments[0].user_name}}</span>
+    <span class="label label-default space-on-right text-uppercase" data-ng-show="row.entity.user_assigments.length > 1"> {{row.entity.user_assigments[1].user_name}} </span>
+    <span class="label label-default space-on-right text-uppercase" data-ng-show="row.entity.user_assigments.length > 2"> {{row.entity.user_assigments[2].user_name}} </span>
+    <span class="label label-default space-on-right text-uppercase" data-ng-show="row.entity.user_assigments.length > 3"> {{row.entity.user_assigments[3].user_name}} </span>
+    <span class="link-underline clickable space-on-right"
+          data-ng-if="row.entity.user_assigments.length > 4"
+          uib-tooltip="{{grid.appScope.vm.formatUsersTooltip(row.entity.user_assigments)}}">
+      more
+    </span>
+  </div>
+</ui-grid-cell-contents>

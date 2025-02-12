@@ -1,0 +1,83 @@
+<accordion>
+  <div class="review-detail-multiple">
+    <div
+      *ngFor="let step of steps; let i = index"
+      [elemPosition]="i"
+      [list]="steps"
+      (handleDragStart)="onDragStart()"
+      DvDragDrop
+      (returnUpdatedList)="handleUpdateList(step, $event, i)"
+      [hidden]="!step.is_active"
+      (click)="changeActiveState(step)"
+    >
+      <accordion-group
+        class="custom-view-list-accordion-group"
+        [isOpen]="step.order === activeId"
+        (isOpenChange)="step.isOpen = $event"
+        [isDisabled]="getActiveSteps() === 1"
+      >
+        <div
+          class="accordion-header custom-view-group-header"
+          accordion-heading
+        >
+          <ng-container *ngIf="getActiveSteps() !== 1">
+            <span
+              appIcon
+              *ngIf="level !== 'Question'"
+              class="move-right-margin space-on-top-3 space-on-right-lg move-icon-color"
+              name="th"
+            ></span>
+            <span
+              appIcon
+              name="chevron-down"
+              class="font-size-12"
+              *ngIf="step.isOpen"
+            ></span>
+            <span
+              appIcon
+              name="chevron-right"
+              class="font-size-12"
+              *ngIf="!step.isOpen"
+            ></span>
+          </ng-container>
+
+          <strong [style.margin-left.px]="5" class="font-size-14"
+            >Step {{ step.order }}</strong
+          >
+          <span
+            appIcon
+            name="trashcan"
+            class="pull-right hover-red trash-step"
+            [ngClass]="{
+              disabled: getActiveSteps() === 1 || step.is_completed
+            }"
+            *ngIf="!freeUser"
+            [tooltip]="
+              getActiveSteps() === 1
+                ? 'Cannot delete last step'
+                : step.is_completed
+                ? 'Cannot delete completed step'
+                : ''
+            "
+            (click)="handleDeleteStepAlert(i)"
+            title="{{ 'Delete Step' + i }}"
+            [attr.aria-label]="'Delete Step ' + i"
+            role="button"
+            tabindex="0"
+          ></span>
+        </div>
+        <review-definition-steps
+          [step]="step"
+          [diligence]="diligence"
+          #step
+          [teamRoleList]="teamRoleList"
+          [index]="i"
+          [activeId]="activeId"
+          [type]="type"
+          [disabled]="step.is_completed"
+        >
+        </review-definition-steps>
+      </accordion-group>
+    </div>
+  </div>
+</accordion>

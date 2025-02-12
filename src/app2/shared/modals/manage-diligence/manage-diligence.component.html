@@ -1,0 +1,92 @@
+<app-modal
+  [title]="'Edit Diligence Project'"
+  [firstButtonLabel]="'Update Project'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="diligenceRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #diligenceRef>
+  <form class="form-horizontal" [formGroup]="diligenceForm" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [fieldName]="'Project Name'"
+        [modelController]="diligenceForm.get('name')"
+        [labelCol]="3"
+        [elementCol]="9"
+        [label]="'Project Name'"
+        [isRequired]="true"
+        [errorMessage]="
+          diligenceForm.get('name').touched &&
+          diligenceForm.get('name').errors?.required
+            ? 'Project Name is Required'
+            : diligenceForm.get('name').touched &&
+              diligenceForm.get('name').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter
+              | interpolate : 'Project Name')
+            : (errorMessageMap.containsHtml | interpolate : 'Project Name')
+        "
+      >
+        <input
+          type="text"
+          formControlName="name"
+          id="name"
+          class="form-control"
+          placeholder="Enter a project name"
+          maxlength="320"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Due At'"
+        [modelController]="diligenceForm.get('due_at')"
+        *ngIf="!isPreapproved"
+        [labelCol]="3"
+        [elementCol]="8"
+        [label]="'Due Date'"
+        [errorMessage]="
+          diligenceForm.get('due_at').touched &&
+          diligenceForm.get('due_at').errors?.required
+            ? 'Due date is required'
+            : dueDateError
+            ? ' Due date should be greater than or equal to as of date'
+            : ''
+        "
+      >
+        <app-date-picker
+          [id]="'due_at'"
+          [minDate]="minDate"
+          [value]="diligenceForm.get('due_at').value"
+          (change)="setDateValue('due_at', $event)"
+          placement="bottom"
+          [class]="dueDateError ? 'has-error' : ''"
+        >
+        </app-date-picker>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'As of Date'"
+        [modelController]="diligenceForm.get('as_of_date')"
+        [labelCol]="3"
+        [elementCol]="8"
+        [label]="'As of Date'"
+        [errorMessage]="
+          diligenceForm.get('as_of_date').touched &&
+          diligenceForm.get('as_of_date')?.errors?.required
+            ? 'As of date is Required'
+            : ''
+        "
+      >
+        <app-date-picker
+          [id]="'as_of_date'"
+          [maxDate]="maxAsOfDate"
+          [value]="diligenceForm.get('as_of_date').value"
+          (change)="setDateValue('as_of_date', $event)"
+          placement="bottom"
+        >
+        </app-date-picker>
+      </dv-form-element>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,10 @@
+<div class="report-page export-no-border-n-shadow" data-ng-class="{'readonly': readonly}"> <!-- you may add 'a4-size' class -->
+  <div class="list-unstyled js-report-components-container row"
+      ui-sortable="rp_controller.sortableOptions"
+      data-ng-model="rp_controller.components">
+    <div data-ng-repeat="component in rp_controller.components track by component.cid"
+         ng-class="rp_controller.setStyleClasses(component)">
+      <report-component data-ng-model="component"></report-component>
+    </div>
+  </div>
+</div>

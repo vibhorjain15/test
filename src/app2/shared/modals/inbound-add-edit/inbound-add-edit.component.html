@@ -1,0 +1,251 @@
+<app-modal
+  [title]="'Edit Opportunity'"
+  [initialTemplate]="ref"
+  [isLoading]="btnloading"
+  [firstButtonLabel]="'Save Changes'"
+  (onFirstClick)="onFirstClick($event)"
+  [isFirstButtonDisabled]="opportunityForm.invalid"
+  *ngIf="editMode && !loading"
+>
+</app-modal>
+<div *ngIf="loading" class="m-20 text-center"><app-spinner></app-spinner></div>
+<div *ngIf="!editMode && !loading">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">Configure New Opportunity</h5>
+    </div>
+    <div class="panel-body-modify">
+      <div class="row clearfix">
+        <div class="mt-10">
+          <ng-container *ngTemplateOutlet="ref"></ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #ref>
+  <div [ngClass]="{ 'col-md-8': !editMode }">
+    <form
+      class="form-horizontal"
+      [formGroup]="opportunityForm"
+      autocomplete="off"
+    >
+      <dv-form-element
+        [fieldName]="'Opportunity Name'"
+        [modelController]="opportunityForm.get('nameControl')"
+        [isRequired]="true"
+        [label]="'Name of the Opportunity'"
+        [labelCol]="4"
+        [elementCol]="8"
+        [errorMessage]="
+          opportunityForm.get('nameControl').invalid
+            ? getErrorMessage('nameControl', 'Opportunity Name')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nameControl"
+          id="nameControl"
+          placeholder="Name of the Opportunity"
+        />
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Description'"
+        [modelController]="opportunityForm.get('descriptionControl')"
+        [label]="'Description'"
+        [inputId]="'description'"
+        [labelCol]="4"
+        [elementCol]="8"
+      >
+        <dv-editor
+          [value]="description"
+          [configObj]="init"
+          (onChange)="handleEditorTextChange($event)"
+          [id]="'descriptionControl'"
+        ></dv-editor>
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Template'"
+        [modelController]="opportunityForm.get('templateControl')"
+        [showRightIcon]="false"
+        [label]="'Template'"
+        [labelCol]="4"
+        [elementCol]="8"
+        [isRequired]="true"
+        [errorMessage]="
+          opportunityForm.get('templateControl')?.invalid
+            ? getErrorMessage('templateControl', 'Template')
+            : ''
+        "
+      >
+        <dv-select
+          [id]="'templateControl'"
+          formControlName="templateControl"
+          [clearable]="false"
+          [searchable]="true"
+          placeholder="-- Select Template --"
+          [list]="templates"
+        >
+        </dv-select>
+        <div
+          class="pull-right success-blue clickable"
+          (click)="addNewTemplate()"
+          *ngIf="!editMode"
+        >
+          Add New Template
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Submission for'"
+        [modelController]="opportunityForm.get('entityTypeControl')"
+        [showRightIcon]="false"
+        [label]="'Submission for'"
+        [labelCol]="4"
+        [elementCol]="8"
+      >
+        <dv-select
+          [id]="'entityTypeControl'"
+          formControlName="entityTypeControl"
+          [clearable]="false"
+          [searchable]="true"
+          placeholder="-- Select --"
+          [list]="entityList"
+          [bindValue]="'value'"
+          [bindLabel]="'name'"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Contacts'"
+        [modelController]="opportunityForm.get('contactsControl')"
+        [showRightIcon]="false"
+        [label]="'Subscribers'"
+        [labelCol]="4"
+        [elementCol]="8"
+        [isRequired]="true"
+        [infoText]="
+          'These are your internal team members who will be auto-subscribed to the opportunity created and will receive all notifications.'
+        "
+        [errorMessage]="
+          opportunityForm.get('contactsControl').invalid
+            ? getErrorMessage('contactsControl', 'Contacts')
+            : ''
+        "
+      >
+        <dv-select
+          class="padded-top"
+          [multiple]="true"
+          [clearable]="false"
+          formControlName="contactsControl"
+          notFoundText="Could not find any action items"
+          placeholder="Select Some Options"
+          bindValue="id"
+          bindLabel="fullName"
+          [list]="teamMembers"
+          [id]="'contactsControl'"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Email Template'"
+        [modelController]="opportunityForm.get('emailTemplateControl')"
+        [showRightIcon]="false"
+        [label]="'Email Template'"
+        [labelCol]="4"
+        [elementCol]="8"
+        [isRequired]="true"
+        [iconName]="'info'"
+        [infoText]="
+          'This email template will be send to manager once they have submitted the pitch'
+        "
+        [errorMessage]="
+          opportunityForm.get('emailTemplateControl').invalid
+            ? getErrorMessage('emailTemplateControl', 'Email Template')
+            : ''
+        "
+      >
+        <dv-select
+          formControlName="emailTemplateControl"
+          [clearable]="false"
+          [searchable]="true"
+          placeholder="-- Select Email Template --"
+          [list]="emailTemplates"
+          [id]="'emailTemplateControl'"
+        >
+        </dv-select>
+        <div
+          class="pull-right success-blue clickable"
+          (click)="addEmailTemplate()"
+          *ngIf="!editMode"
+        >
+          Add New Email Template
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Visibility'"
+        [modelController]="opportunityForm.get('visibilityControl')"
+        [showRightIcon]="false"
+        [label]="'Visibility'"
+        [labelCol]="4"
+        [elementCol]="8"
+        [isRequired]="true"
+        [iconName]="'info'"
+        [infoText]="
+          'Private opportunity will only be visible to managers who have access to the URL of the opportunity. Public opportunity will be visible to all managers.'
+        "
+        [errorMessage]="
+          opportunityForm.get('visibilityControl').invalid
+            ? getErrorMessage('visibilityControl', 'Visibility')
+            : ''
+        "
+      >
+        <dv-select
+          [id]="'visibilityControl'"
+          formControlName="visibilityControl"
+          [clearable]="false"
+          [searchable]="false"
+          placeholder="Select the visibility of opportunity"
+          [list]="visibilities"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-form-element
+        [fieldName]="'Expiry date'"
+        [modelController]="opportunityForm.get('dueDateControl')"
+        [showRightIcon]="false"
+        [label]="'Expiry Date'"
+        [labelCol]="4"
+        [elementCol]="8"
+        [infoText]="
+          'Use this for activating an opportunity (mandate specific RFP/RFI) for a limited time'
+        "
+        [errorMessage]="
+          opportunityForm.get('dueDateControl').invalid
+            ? getErrorMessage('dueDateControl', 'dueDateControl')
+            : ''
+        "
+      >
+        <app-date-picker
+          [minDate]="today"
+          [value]="opportunityForm.get('dueDateControl').value"
+          (change)="setDateValue($event)"
+          [id]="'dueDateControl'"
+        >
+        </app-date-picker>
+      </dv-form-element>
+      <div class="form-group" *ngIf="!editMode">
+        <div col="8" offset="4">
+          <dv-button
+            [loader]="showSpinner"
+            [disabled]="opportunityForm.invalid"
+            (onClick)="publicSettingAlert()"
+          >
+            Configure Opportunity
+          </dv-button>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>

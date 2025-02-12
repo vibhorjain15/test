@@ -1,0 +1,42 @@
+<div>
+  <div class="panel panel-default">
+    <div class="panel-heading clearfix ng-scope">
+      <div class="dv-table padding-10 width-100-pct">
+        <div class="text-left text-orange cell">
+          <helper-text>
+            Click on the row to download a detailed report of each fund
+          </helper-text>
+        </div>
+        <div class="text-right cell w-200">
+          <button
+            appButton
+            btnType="default"
+            class="btn btn-primary btn-loader"
+            (click)="requestResearch()"
+            aria-label="Request New Research"
+          >
+            <div class="btn-label ng-binding">
+              <span
+                appIcon
+                name="external-link"
+                size="2x"
+                class="media-middle space-on-right-sm"
+              ></span>
+              <small>Request New Research</small>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <app-spinner [broadSpinner]="true" *ngIf="!render_grid"></app-spinner>
+      <div *ngIf="render_grid">
+        <app-dv-grid
+          [rowData]="mfwData"
+          [name]="gridName"
+          [onRowClicked]="onRowClicked"
+        ></app-dv-grid>
+      </div>
+    </div>
+  </div>
+</div>

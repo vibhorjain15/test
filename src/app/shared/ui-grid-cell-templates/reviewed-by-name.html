@@ -1,0 +1,17 @@
+<ui-grid-cell-contents ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel" class="text-left">
+    <span class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD
+        CUSTOM_FILTERS}}
+    </span>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents
+    ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <div data-ng-show="row.entity.reviewed_by.length">
+      <span class="label label-default space-on-right">{{row.entity.reviewed_by[0]}}</span>
+      <span data-ng-show="row.entity.reviewed_by.length > 1"> and {{row.entity.reviewed_by.length - 1}} </span>
+      <span class="link-underline clickable space-on-right"
+            data-ng-show="row.entity.reviewed_by.length > 1"
+            uib-tooltip="{{grid.appScope.vm.formatTagsTooltip(row.entity.reviewed_by)}}">
+        more
+      </span>
+    </div>
+</ui-grid-cell-contents>

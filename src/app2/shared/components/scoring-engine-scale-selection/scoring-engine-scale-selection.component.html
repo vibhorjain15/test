@@ -1,0 +1,86 @@
+<div class="panel panel-default space-on-top-xxl">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      {{ title }}
+      <span appIcon name="info" [tooltip]="titleTooltip"></span>
+    </h5>
+  </div>
+  <div class="panel-body">
+    <div *ngIf="loading">
+      <app-spinner></app-spinner>
+    </div>
+    <div class="panel panel-info" *ngIf="!loading">
+      <div class="panel-heading">
+        <p>
+          Primary rating scale for the given rating scheme:
+          <strong>
+            {{ primaryRatingScale?.name }}
+          </strong>
+        </p>
+      </div>
+    </div>
+    <div class="panel panel-info" *ngIf="!loading">
+      <div class="panel-heading">
+        <p>Available scoring engine options:</p>
+        <p *ngFor="let ratingCalculationType of ratingCalculationTypes">
+          <strong>{{ ratingCalculationType.display_name }}: </strong>
+          {{ ratingCalculationType.description }}
+        </p>
+      </div>
+    </div>
+    <div class="form-horizontal" *ngIf="!loading" [formGroup]="scoreEngineForm">
+      <div class="col-md-6">
+        <dv-form-element
+          [modelController]="scoreEngineForm.get('rating_calculation_type')"
+          label="Choose a scoring engine"
+          labelPosition="top"
+          labelCol="4"
+          elementCol="12"
+          [errorMessage]="'Please select a scoring engine'"
+          [showRightIcon]="false"
+        >
+          <dv-select
+            [id]="'rating_calculation_type'"
+            [clearable]="false"
+            formControlName="rating_calculation_type"
+            placeholder="--Select scoring engine type--"
+            (onSelectChange)="filterRatingScales($event)"
+            [list]="ratingCalculationTypes"
+            [bindLabel]="'display_name'"
+            [bindValue]="'name'"
+            [aria-label]="'Choose a scoring engine'"
+          >
+          </dv-select>
+        </dv-form-element>
+      </div>
+      <div class="col-md-6">
+        <dv-form-element
+          [modelController]="scoreEngineForm.get('secondary_rating_scale_id')"
+          label="Select a secondary scale"
+          labelPosition="top"
+          labelCol="4"
+          elementCol="12"
+          [errorMessage]="'Please select a secondary scale'"
+          [showRightIcon]="false"
+        >
+          <dv-select
+            [id]="'secondary_rating_scale_id'"
+            [clearable]="false"
+            [searchable]="true"
+            formControlName="secondary_rating_scale_id"
+            placeholder="-- Select --"
+            [list]="filteredRatingScales"
+            aria-label="Select a secondary scale"
+          >
+          </dv-select>
+        </dv-form-element>
+      </div>
+      <div *ngIf="isProjectLevel">
+        <br />
+        <div col="5" offset="5">
+          <dv-button [loader]="saving" (onClick)="save()"> Save </dv-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

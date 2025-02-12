@@ -1,0 +1,42 @@
+<div data-ng-if="vm.Utils.isAngular()">
+<ng2-monitor-portfolio>
+</ng2-monitor-portfolio>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div class="panel panel-default">
+  <div class="panel-body clear-padded-bottom">
+  	 <p col="10" class="alert alert-info clear-margin-bottom" data-ng-if="vm.resource && vm.resource.data.length">
+       You are receiving {{vm.frequency}} alerts for filing changes for the following {{vm.resource.pagination_meta.totalRecords.length}} firms.
+       <a ui-sref="app.form_adv.regulatory_monitor.explore"
+             class="btn btn-default"><strong>Modify Tracking List</strong></a>
+       <a ui-sref="app.firm.settings.preferences"
+             class="btn btn-default"><strong>Change Alert Frequency</strong></a>
+     </p>
+
+     <p col="10" class="alert alert-info clear-margin-bottom" data-ng-if="vm.resource && !vm.resource.data.length">
+       You are receiving {{vm.frequency}} alerts for filing changes for ALL firms.
+       <a ui-sref="app.form_adv.regulatory_monitor.explore"
+             class="btn btn-default"><strong>Create Tracking List</strong></a>
+       <a ui-sref="app.firm.settings.preferences"
+             class="btn btn-default"><strong>Change Alert Frequency</strong></a>.
+     </p>
+
+     <div col="2" class="text-center" data-ng-if="vm.resource.data.length"
+          authorized-view
+          hidden-from="FreeSubscription, SmartSubscription">
+         <button btn-type="transparent"
+                 class="space-on-top"
+                 data-ng-click="vm.downloadMyPortfolioToExcel()"
+                 button-loader="vm.downloading">
+             <div><icon name="external-link" size="2x"></icon></div>
+             <small>Export To Excel</small>
+         </button>
+     </div>
+  </div>
+
+  <div class="panel-body">
+    <dv-grid grid-resource="vm.resource" grid-name="'formadv-regulatory-monitor-portfolio'"></dv-grid>
+  </div>
+</div>
+
+</div>

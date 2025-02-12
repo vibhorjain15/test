@@ -1,0 +1,141 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">Profile Summary
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <div class="panel panel-default" >
+      <div class="panel-heading">
+          <h5 class="panel-title text-uppercase">Peer Benchmarking</h5>
+          <div class="panel-controls" data-ng-if="vm.heatmap_data">
+              <div class="panel-controls-wrapper" uib-dropdown>
+                  <a id="js-help-nav-btn" uib-dropdown-toggle role="button" class="panel-control"
+                     data-ng-click="vm.heatmapActions()"
+                     uib-tooltip="Actions">
+                      <i class="dvi ng-isolate-scope dvi-ellipsis-h fa-2x" name="ellipsis-h" size="2x"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+                    <li data-ng-show="vm.SORT_STATE == 'H2L'">
+                      <a role="button" data-ng-click="vm.sortHeatmap('L2H');vm.closeMenu();" class="sub-menu-item">
+                        Sort : Low to High
+                      </a>
+                    </li>
+                    <li data-ng-show="vm.SORT_STATE == 'L2H'">
+                      <a role="button" data-ng-click="vm.sortHeatmap('H2L');vm.closeMenu();" class="sub-menu-item">
+                        Sort : High to Low
+                      </a>
+                    </li>
+                    <li>
+                      <hr>
+                    </li>
+                    <li>
+                      <a role="button" data-ng-click="vm.toggleTextDisplay(vm.TEXT_DISPLAY_STATE);vm.closeMenu();" class="sub-menu-item">
+                        Toggle text display
+                      </a>
+                    </li>
+                    <li>
+                      <a role="button" data-ng-click="vm.svg_to_pdf();vm.closeMenu();" class="sub-menu-item">
+                        Save as PDF
+                      </a>
+                    </li>
+                  </li>
+                  <li>
+                    <a role="button" data-ng-click="vm.saveAsPng();vm.closeMenu();" class="sub-menu-item">
+                      Save as PNG
+                    </a>
+                  </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+      <div class="panel-body horizontal-scroll text-center">
+        <h4 class="text-center">{{vm.title}}</h4>
+        <div id="heatmapChartContainer" heatmap set-fn="vm.setDirectiveFn(theDirFn)"></div>
+        <p data-ng-if="!vm.heatmapResponse.length && !vm.loading" class="text-center">
+          <i class="text-muted">
+            <small>*No Data Available*</small>
+          </i>
+        </p>
+        <spinner data-ng-if="vm.loading"></spinner>
+      </div>
+      <div data-ng-if="vm.currentUser.type != 'manager'" class="panel-heading">
+        <h5 class="panel-title visiblity-hidden">.</h5>
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper" uib-dropdown>
+                <a id="js-help-nav-btn" uib-dropdown-toggle role="button" class="panel-control"
+                   data-ng-click="vm.heatmapActions()"
+                   uib-tooltip="Actions">
+                    <i class="dvi ng-isolate-scope dvi-ellipsis-h fa-2x" name="ellipsis-h" size="2x"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+                  <li>
+                    <a role="button" data-ng-click="vm.save_table_to('PDF');vm.closeMenu();" class="sub-menu-item">
+                      Save as PDF
+                    </a>
+                    <a role="button" data-ng-click="vm.save_table_to('PNG');vm.closeMenu();" class="sub-menu-item">
+                      Save as PNG
+                    </a>
+                  </li>
+                </li>
+
+                </ul>
+            </div>
+        </div>
+      </div>
+
+      <div class="panel-body horizontal-scroll" id="ratingsTable" style="background-color:#fff;" >
+          <div class="rating-table-heading">
+            <h4 class="text-center">{{vm.entity_name}} Attribution Summary</h5>
+          </div>
+          <p data-ng-if="vm.currentUser.type != 'manager' && (!vm.grouped_ratings || vm.grouped_ratings.length == 0)" class="text-center">
+            <i class="text-muted">
+              <small>*No Data Available*</small>
+            </i>
+          </p>
+          <div class="rating-table" data-ng-if="vm.currentUser.type != 'manager' && vm.grouped_ratings.length > 0">
+            <h4>Rating Significance</h4>
+            <table class="table ratingCellTable">
+              <tr>
+                <td class="colorScaleTd" ng-repeat="scale in vm.colorScale" data-ng-style="vm.addTableClasses(scale.score)">
+                  {{scale.text}}
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="rating-table" ng-repeat ="group in vm.grouped_ratings" data-ng-if="vm.currentUser.type != 'manager' && vm.grouped_ratings.length > 0">
+            <h4>{{group.name}} <span>&nbsp;<strong>{{group.weightage}}%</strong></span></h4>
+            <table class="table ratingCellTable">
+              <tr ng-repeat="rating in group.ratings">
+                <td height="115" width="115">{{rating.name}} <span>&nbsp;<strong>{{rating.weightage}}%</strong></span></td>
+                <td class="inline-table-td" height="115" width="115" ng-repeat="childrating in rating.ratings" data-ng-style="vm.addTableClasses(childrating.weightage)">
+                  <div data-ng-if="(childrating.score)" class="checkIcon">
+                    <icon name="check-circle" size="1x"></icon>
+                  </div>
+                  <p class="ratingName"><strong>{{childrating.name}}</strong></p>
+
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="rating-table-heading" data-ng-if="vm.grouped_ratings.length > 0">
+            <h5 class="panel-heading text-uppercase">Rating Description</h5>
+          <div class="descTable" ng-repeat ="group in vm.grouped_ratings" data-ng-if="vm.grouped_ratings.length > 0">
+            <table class="table">
+              <tbody>
+                <tr ng-repeat="rating in group.ratings">
+                  <td>
+                    <div ng-repeat="childrating in rating.ratings"><span>{{childrating.name}} ({{rating.name}})</span> <span>{{childrating.description}}</span></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

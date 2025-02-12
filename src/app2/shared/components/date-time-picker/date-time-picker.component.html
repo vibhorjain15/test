@@ -1,0 +1,56 @@
+<div class="input-group mr-2 date-time-container">
+  <div class="datepicker-group input-group datetime">
+    <input
+      type="search"
+      readonly
+      placeholder="Select date time"
+      class="form-control"
+      [ngModel]="inputValue | date : inputDatetimeFormat"
+      [disabled]="disabled"
+      (click)="showPop()"
+      (onHidden)="onPopoverHidden()"
+    />
+    <a *ngIf="clearable && value" (click)="clear()" class="clear-date">
+      <span appIcon name="close"></span>
+    </a>
+    <span class="input-group-btn datetime-picker">
+      <button
+        class="btn btn-default"
+        #pop="bs-popover"
+        [popover]="calendarContent"
+        [outsideClick]="true"
+        placement="left"
+        [disabled]="disabled"
+        type="button"
+        (onHidden)="onPopoverHidden()"
+        aria-label="Datetime picker"
+      >
+        <span name="calendar" appIcon ></span>
+      </button>
+    </span>
+  </div>
+</div>
+<ng-template #calendarContent>
+  <div class="mt-auto">
+    <bs-datepicker-inline
+      #dp
+      [minDate]="minDate"
+      [maxDate]="maxDate"
+      name="datepicker"
+      [bsConfig]="config"
+      [(bsValue)]="datePickerValue"
+      (bsValueChange)="onDateChange($event)"
+    ></bs-datepicker-inline>
+  </div>
+  <div class="mt-auto time-picker">
+    <timepicker
+      #tp
+      [(ngModel)]="timePickerValue"
+      (ngModelChange)="onTimeChange($event)"
+      [hourStep]="1"
+      [minuteStep]="1"
+      [secondsStep]="1"
+      [showSeconds]="showSec"
+    ></timepicker>
+  </div>
+</ng-template>

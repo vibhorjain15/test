@@ -1,0 +1,39 @@
+<div class="panel panel-default dashboard-panel-old">
+    <div class="panel-heading">
+        <h5 class="panel-title text-uppercase">Recent SEC ADV Updates</h5>
+    </div>
+
+    <div class="panel-body dash-sec-updates">
+
+        <table class="table table-borderless sec-table" *ngIf="gridDataSource && gridDataSource.length > 0">
+            <tr>
+                <th>Firm Name</th>
+                <th class="text-center"># of changes</th>
+            </tr>
+
+            <tr class="document-item" *ngFor="let filing of gridDataSource | slice:0:5
+            ;" (click)="redirectToFirmSnapShot(filing.firmCRD);">
+                <td>
+                    <span tooltip="{{filing.businessName}}" container="body" class="link-disguise align-middle">
+                        {{filing.businessName | slice:0:26}}
+                    </span>
+                </td>
+                <td class="text-center">{{filing.changeCount}}</td>
+            </tr>
+        </table>
+
+        <div class="padded-xl" *ngIf="gridDataSource.length == 0">
+          <app-spinner *ngIf="isLoading" broadSpinner="true"
+          spinnerHeight="250"></app-spinner>
+          <app-empty-state *ngIf="gridDataSource && gridDataSource.length == 0 && !isLoading" iconName="institution" message="No recent SEC updates available"
+              actionLabel="Start Tracking" (action)="redirectToPage()">
+          </app-empty-state>
+        </div>
+
+        <spinner broad-spinner spinner-height='324' *ngIf="gridDataSource && gridDataSource.length"></spinner>
+
+        <div *ngIf="gridDataSource && gridDataSource.length > 5">
+            <a (click)="redirectToPage();" class="pull-left space-on-left-xxl">View All</a>
+        </div>
+    </div>
+</div>

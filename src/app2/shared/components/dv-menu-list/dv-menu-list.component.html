@@ -1,0 +1,86 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      <span
+        *ngIf="title.icon"
+        appIcon
+        [name]="title.icon"
+        class="space-on-right"
+      ></span>
+
+      {{ title.text }}
+    </h5>
+  </div>
+  <div class="list-group list-group-menu">
+    <ng-container *ngFor="let state of menuListData">
+      <ng-container *ngIf="!state?.submenu_items?.length">
+        <ng-container
+          *ngTemplateOutlet="
+            menuList;
+            context: {
+              state: state,
+              nested: false
+            }
+          "
+        ></ng-container>
+      </ng-container>
+
+      <div *ngIf="state?.submenu_items?.length" class="nested-list-group-container">
+        <a
+          type="button"
+          class="list-group-item"
+          (click)="toggleStateCollapse(state)"
+        >
+          <span class="state-label">{{ state.label }}</span>
+          <label class="btn btn-xs customTag" *ngIf="state?.customTagLabel">{{
+            state.customTagLabel
+          }}</label>
+
+          <span
+            appIcon
+            name="chevron-right"
+            *ngIf="currentSubState !== state.label"
+          ></span>
+          <span
+            appIcon
+            name="chevron-down"
+            class="text-primary"
+            *ngIf="currentSubState == state.label"
+          ></span>
+        </a>
+        <div
+          class="list-group"
+          [ngClass]="{
+            collapse: currentSubState != state.label,
+            expand: currentSubState == state.label
+          }"
+        >
+          <ng-container *ngFor="let subState of state?.submenu_items">
+            <ng-container
+              *ngTemplateOutlet="
+                menuList;
+                context: {
+                  state: subState,
+                  nested: true
+                }
+              "
+            ></ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #menuList let-state="state" let-nested="nested">
+  <a
+    class="list-group-item"
+    (click)="handleMenuClick(state, nested)"
+    [ngClass]="{ 'text-primary': state.label === currentActive?.label }"
+  >
+    <span class="state-label">{{ state.label }}</span>
+    <label class="btn btn-xs customTag" *ngIf="state?.customTagLabel">{{
+      state.customTagLabel
+    }}</label>
+  </a>
+</ng-template>

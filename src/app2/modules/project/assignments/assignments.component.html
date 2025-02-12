@@ -1,0 +1,87 @@
+<div class="row clearfix" role="group" aria-label="Diligence Panel">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="40"
+          *ngIf="!diligence"
+          aria-live="polite"
+          aria-busy="true"
+        ></app-spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="diligence">
+          <div class="cell bordered-right">
+            <h4
+              class="clear-margin max-w-320 lh1-5 word-break-break-all"
+              role="heading"
+              aria-level="2"
+            >
+              {{ diligence.entity_name }}
+            </h4>
+            <small
+              class="text-muted"
+              *ngIf="diligence.last_updated_at"
+              role="status"
+            >
+              Last Updated
+              {{ diligence.last_updated_at | dvDate }}
+            </small>
+          </div>
+          <div class="text-center cell">
+            <span
+              class="align-middle display-block"
+              role="heading"
+              aria-level="2"
+            >
+              Status
+            </span>
+            <span
+              diligenceStatus
+              [status]="diligence.status"
+              role="status"
+            ></span>
+          </div>
+          <div class="cell" *ngIf="gridData?.length">
+            Showing {{ gridData.length }} Assignments
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default borderless-top">
+      <div class="btn-group" *ngIf="reviewVisible && questionAssignmentVisible">
+        <button
+          class="btn btn-default font-size-12"
+          [class]="{
+            'btn-primary': mode === 'Assignment'
+          }"
+          (click)="setMode('Assignment')"
+          aria-pressed="{{ mode === 'Assignment' ? 'true' : 'false' }}"
+        >
+          Question Assignments
+        </button>
+        <button
+          class="btn btn-default font-size-12"
+          [class]="{
+            'btn-primary': mode === 'Review'
+          }"
+          (click)="setMode('Review')"
+          aria-pressed="{{ mode === 'Review' ? 'true' : 'false' }}"
+        >
+          Review Assignments
+        </button>
+      </div>
+      <div class="panel-body clearfix" *ngIf="render_grid" role="group">
+        <app-dv-grid [rowData]="gridData" [name]="gridName"></app-dv-grid>
+      </div>
+      <app-spinner
+        [broadSpinner]="true"
+        [spinnerHeight]="50"
+        *ngIf="!render_grid"
+        aria-live="polite"
+        aria-busy="true"
+      ></app-spinner>
+    </div>
+  </div>
+</div>

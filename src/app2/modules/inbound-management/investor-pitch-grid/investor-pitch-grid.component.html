@@ -1,0 +1,10 @@
+<app-spinner *ngIf="loading"></app-spinner>
+<app-dv-grid
+  *ngIf="!loading"
+  [rowData]="rowData"
+  [name]="gridName"
+  [onRowClicked]="onRowClicked"
+  [noRowsTemplate]="
+    loading ? 'Loading...' : noRowsTemplateText
+  "
+></app-dv-grid>

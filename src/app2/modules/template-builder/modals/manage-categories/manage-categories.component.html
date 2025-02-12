@@ -1,0 +1,128 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel="Save"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="ManageCategoriesref"
+  [isLoading]="loading"
+  [subTitle]="subTitle"
+>
+</app-modal>
+
+<ng-template #ManageCategoriesref>
+  <form
+    class="form-horizontal"
+    [formGroup]="manageCategoryForm"
+    autocomplete="off"
+    aria-label="Manage Categories Form"
+  >
+    <ng-container *ngIf="isSingleEntry || isEdit">
+      <dv-form-element
+        labelPosition="top"
+        [modelController]="manageCategoryForm.get('name')"
+        label="Name"
+        elementCol="12"
+        [isRequired]="true"
+        [errorMessage]="
+          manageCategoryForm.get('name')?.errors?.containsHtml
+            ? 'Please enter a valid name'
+            : manageCategoryForm.get('name')?.errors?.required ||
+              manageCategoryForm.get('name')?.errors?.whitespace
+            ? 'Name is required'
+            : manageCategoryForm.get('name')?.errors?.maxlength
+            ? (typeMap[type] | titlecase) +
+              ' name cannot exceed ' +
+              (type === 'category'
+                ? dvTextLimits.CATEGORY_TEXT_LIMIT
+                : dvTextLimits.SUB_CATEGORY_TEXT_LIMIT) +
+              ' characters'
+            : null
+        "
+      >
+        <input
+          class="form-control"
+          formControlName="name"
+          placeholder="Example: Operations"
+          role="textbox"
+          aria-required="true"
+          id="name"
+        />
+      </dv-form-element>
+
+      <ng-container *ngIf="type === 'sub-category'">
+        <dv-form-element
+          labelPosition="top"
+          label="Instructions for the users(optional)"
+          elementCol="12"
+        >
+          <dv-editor
+            [configObj]="tinyInit"
+            [value]="tinyValue"
+            (onChange)="handleEditChange($event)"
+          ></dv-editor>
+        </dv-form-element>
+        <dv-form-element elementCol="12">
+          <dv-checkbox
+            label="Allow users to add more than one response. Eg. Multiple office locations"
+            [(ngModel)]="isMultileAnswerAllowed"
+            [ngModelOptions]="{ standalone: true }"
+            (onValChange)="handleAnswerCheckChange($event)"
+          >
+          </dv-checkbox>
+        </dv-form-element>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="!isSingleEntry && !isEdit">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          Please add one or more {{ typeMap[type] }} here -
+          <strong
+            ><b>one {{ type }} per line</b></strong
+          >
+        </div>
+      </div>
+      <dv-form-element elementCol="12">
+        <dv-bulk-list-builder-new
+          [idKey]="'id'"
+          [textKey]="'text'"
+          [ngData]="newOptions"
+          [currentLength]="currentLength"
+          [type]="bulkOptions"
+          [valueRequired]="false"
+          [placeHolderText]="'Add multiple ' + pluralMap[type] + ' here'"
+          (isListItemsValid)="isBulkTypeValid = $event"
+        ></dv-bulk-list-builder-new>
+        <ng-container *ngIf="!newOptions.length && isTouched">
+          <span class="text-danger"> Please add at least one {{ type }} </span>
+        </ng-container>
+        <span
+          class="text-danger"
+          *ngIf="newOptions.length && isBulkOptionsInvalid && isTouched"
+          >{{ typeMap[type] | titlecase }} name cannot exceed
+          {{
+            type === "category"
+              ? dvTextLimits.CATEGORY_TEXT_LIMIT
+              : dvTextLimits.SUB_CATEGORY_TEXT_LIMIT
+          }}
+          characters.</span
+        >
+        <span class="text-danger" *ngIf="!isBulkTypeValid">
+          One or more
+          {{
+            type === typeMap[type] ? pluralMap[typeMap[type]] : pluralMap[type]
+          }}
+          are not valid.</span
+        >
+      </dv-form-element>
+    </ng-container>
+
+    <dv-form-element *ngIf="!isEdit">
+      <dv-checkbox
+        [label]="'Add one ' + type + ' at a time instead'"
+        [(ngModel)]="isSingleEntry"
+        [ngModelOptions]="{ standalone: true }"
+        (onValChange)="handleCheckChange($event)"
+      >
+      </dv-checkbox>
+    </dv-form-element>
+  </form>
+</ng-template>

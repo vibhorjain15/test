@@ -1,0 +1,16 @@
+<div class="activity-container" role="listitem">
+  <div class="text-secondary display-table">
+    <span class="left-content" role="text">
+      On {{ activity?.created_at | dvDate : ["dvDateTime", "isLocaleDate"] }}
+    </span>
+    <span class="right-content" role="text">by</span>
+  </div>
+  <div class="display-table">
+    <span class="activity-text left-content" role="text">{{
+      activity?.text
+    }}</span>
+    <span class="activity-owner right-content" role="text">
+      {{ activity?.owner_name }}
+    </span>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <icon data-ng-if="vm.diligences[0].entity_type == 'Vehicle'" name="vehicle-car"
+        class="space-on-right vehicle-icon-new-request align-middle"></icon>
+      <icon data-ng-if="vm.diligences[0].entity_type == 'Fund'" name="fund"
+        class="space-on-right vehicle-icon-new-request align-middle"></icon>
+      <span class="align-middle" data-ng-if="vm.selectedDiligenceRecords.length == 0 || !vm.is_investor">
+        Related Projects
+        <span data-ng-show="vm.workflows.length">
+          ({{vm.diligences.length}})
+        </span>
+      </span>
+      <span data-ng-if="vm.selectedDiligenceRecords.length > 0 && vm.is_investor">
+        <strong>Selected Records : <span class="badge">{{vm.selectedDiligenceRecords.length}}</span></strong>
+      </span>
+      <a data-ng-if="vm.selectedDiligenceRecords.length > 0 && vm.is_investor" class="btn btn-default space-on-left-lg"
+        uib-tooltip="Withdraw requests" data-ng-click="vm.confirmBulkAction('withdraw')">
+        <strong>
+          <icon name="close"></icon>
+        </strong>
+      </a>
+    </span>
+  </div>
+
+  <div class="panel-body" data-ng-if="!vm.diligences">
+    <spinner broad-spinner spinner-height='60'></spinner>
+  </div>
+
+  <div class="panel-body" data-ng-if="vm.diligences && vm.diligences.length == 0">
+    <empty-state message="There are no related projects"></empty-state>
+  </div>
+
+  <div class="panel-body has-notes-form clear-padding" data-ng-if="vm.diligences && vm.diligences.length > 0">
+    <table data-ng-if="!vm.isModal" class="table workflows_table">
+      <tbody>
+        <tr data-ng-repeat="diligence in vm.diligences">
+          <td>
+            <input class="align-middle clickable clear-margin" data-ng-if="vm.is_investor"
+              data-ng-change="vm.diligenceSelectionChanged(diligence)" type="checkbox" name="diligence_{{diligence.id}}"
+              id="diligence_{{diligence.id}}" data-ng-model="diligence.isSelected">
+            <a data-ng-if="vm.diligences[0].entity_type == 'Vehicle'"
+              ui-sref="app.diligence.firms.funds.vehicles.project.questionnaire({fromfirmId: diligence.fromfirm_id, tofirmId: diligence.tofirm_id, fundId: diligence.linked_duediligence_id, vehicleId: diligence.entity_id, diligenceId: diligence.id})">
+              &nbsp;&nbsp;{{diligence.entity_name}}
+            </a>
+
+            <a data-ng-if="vm.diligences[0].entity_type == 'Fund'"
+              ui-sref="app.diligence.firms.strategies.funds.project.questionnaire({fromfirmId: diligence.fromfirm_id, tofirmId: diligence.tofirm_id, strategyId: diligence.linked_duediligence_id, fundId: diligence.entity_id, diligenceId: diligence.id})">
+              {{diligence.entity_name}}
+            </a>
+          </td>
+          <td class="text-center">
+            <span diligence-status="diligence.status"></span>
+          </td>
+          <td>
+            <small class="text-muted">
+              as of {{(diligence.lastupdated_at?diligence.lastupdated_at:diligence.created_at) | fromNow}}
+            </small>
+          </td>
+          <td>
+            <uib-progressbar value="diligence.percentage_completed" type="success" class="bs-progress">
+              <span data-ng-class="{'text-black': diligence.percentage_completed == 0}" class="text-nowrap">
+                {{diligence.percentage_completed}}%
+              </span>
+            </uib-progressbar>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table data-ng-if="vm.isModal" class="table workflows_table">
+      <tbody>
+        <tr data-ng-repeat="diligence in vm.diligences">
+          <td>
+            <input class="align-middle clickable clear-margin" data-ng-if="vm.is_investor"
+              data-ng-change="vm.diligenceSelectionChanged(diligence)" type="checkbox" name="diligence_{{diligence.id}}"
+              id="diligence_{{diligence.id}}" data-ng-model="diligence.isSelected">
+            <span data-ng-if="vm.diligences[0].entity_type == 'Vehicle'">
+              &nbsp;&nbsp;{{diligence.entity_name}}
+            </span>
+            <span data-ng-if="vm.diligences[0].entity_type == 'Fund'">
+              {{diligence.entity_name}}
+            </span>
+          </td>
+          <td class="text-center">
+            <span diligence-status="diligence.status"></span>
+          </td>
+          <td>
+            <small class="text-muted">
+              as of {{(diligence.lastupdated_at?diligence.lastupdated_at:diligence.created_at) | fromNow}}
+            </small>
+          </td>
+          <td>
+            <uib-progressbar value="diligence.percentage_completed" type="success" class="bs-progress">
+              <span data-ng-class="{'text-black': diligence.percentage_completed == 0}" class="text-nowrap">
+                {{diligence.percentage_completed}}%
+              </span>
+            </uib-progressbar>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div
+  *ngIf="!isNotApplicable && gridData !== undefined"
+  (keydown.enter)="handleGirdClick()"
+  (click)="handleGirdClick()"
+  class="main-grid-wrapper"
+>
+  <div class="grid-container" #gridContainer>
+    <dv-handsontable
+      [id]="handsOnTableId"
+      [rows]="rows"
+      [columns]="columns"
+      [mergeCells]="mergeCells"
+      [dataset]="dataset"
+      [rowHeaders]="null"
+      (onChange)="handleChange($event)"
+      [additionalHandsOnTableSettings]="additionalHandsOnTableSettings"
+      (onRowDeletion)="handleRowDeletion($event)"
+      [columnValuePropertyName]="columnValuePropertyName"
+      [isReadOnly]="isReadOnly"
+      [isFormulaEnabled]="true"
+      [autoRowsize]="false"
+      *ngIf="!isPlainRendering && gridData"
+      #grid
+    >
+    </dv-handsontable>
+    <plain-grid
+      [rowHeaders]="rowHeaders"
+      [colHeaders]="colHeaders"
+      [data]="data"
+      [isLite]="true"
+      [enableHeaders]="enableHeaders"
+      [isPrintPreview]="isPrintPreview"
+      *ngIf="isPlainRendering || isReadonly"
+      (cellClickEmitIndex)="changeToHandsOnTable($event)"
+    ></plain-grid>
+  </div>
+  <div
+    class="space-on-top"
+    *ngIf="isDynamic && ((!isPlainRendering && !isReadOnly) || isLite)"
+    (keydown.enter)="changeToHandsOnTable($event)"
+    (click)="changeToHandsOnTable($event)"
+  >
+    <div class="width-fit-content">
+      <dv-dropdown
+        [dropDownList]="rowInsertionDropdownOptions"
+        (onDropdownClick)="handleInsertRowDropdownClick($event)"
+        tooltip="Maximum of 2000 rows supported"
+        [container]="container"
+      >
+        <span
+          dropdownLabelContent
+          class="btn btn-default class-primary"
+        >
+          Insert Rows
+          <span appIcon name="chevron-down" style.fontSize.px="15"></span>
+        </span>
+      </dv-dropdown>
+    </div>
+  </div>
+</div>
+
+<app-spinner
+  broadSpinner="true"
+  spinnerHeight="150"
+  *ngIf="!isNotApplicable && gridData === undefined"
+  aria-hidden="true"
+></app-spinner>
+
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>

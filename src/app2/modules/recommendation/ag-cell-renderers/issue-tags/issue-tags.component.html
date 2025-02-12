@@ -1,0 +1,24 @@
+<div
+  *ngIf="label && label.length && label[0]?.name"
+  class="label label-default space-on-right text-uppercase tag-wrapper"
+>
+  <span [tooltip]="label[0].name" container="body" [adaptivePosition]="false">
+    {{ label[0]?.name }}
+  </span>
+</div>
+<div
+  *ngIf="label && label.length && label[1]?.name"
+  class="label label-default space-on-right text-uppercase tag-wrapper"
+>
+  <span [tooltip]="label[1].name" container="body" [adaptivePosition]="false">
+    {{ label[1]?.name }}
+  </span>
+</div>
+<span
+  *ngIf="label && label.length && label.length > 2"
+  [tooltip]="tooltip"
+  [adaptivePosition]="false"
+  container="body"
+>
+  + {{ label.length - 2 + " more" }}
+</span>

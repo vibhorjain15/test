@@ -1,0 +1,7 @@
+.ratingValue {
+  width: 200px;
+  word-wrap: break-word;
+}
+::ng-deep .tooltip {
+  z-index: 10000 !important;
+}

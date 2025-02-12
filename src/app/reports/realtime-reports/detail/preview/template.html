@@ -1,0 +1,45 @@
+<div class="panel panel-default">
+  <div class="panel-body clearfix">
+    <spinner data-ng-hide="vm.report"></spinner>
+
+    <div class="dv-table dv-table-middle dd-info-panel"
+         data-ng-show="vm.report">
+      <div class="bordered-right text-center cell" col="10">
+        <h4 class="clear-margin">
+          Previewing <b>{{vm.report.name}}</b>
+        </h4>
+
+        <div class="space-on-top-lg">
+          <small class="text-muted">
+            Last Updated {{vm.report.updated_at|fromNow}}
+          </small>
+        </div>
+      </div>
+
+      <div class="cell bordered-right" col="1">
+        <a class="btn btn-transparent" ui-sref="app.reports.realtime-reports.detail.edit">
+          <div><icon name="pencil" size="2x"></icon></div>
+          <small>Edit</small>
+        </a>
+      </div>
+
+      <div class="cell" col="1">
+        <a class="btn text-primary font-bold" data-ng-click="vm.generatePDF()">
+          <div><icon name="file-pdf-o" size="2x"></icon></div>
+          <small>Export</small>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="report-preview-section" class="row clearfix">
+  <div col="8" offset="2">
+    <div class="panel panel-default export-no-border-n-shadow"
+         data-ng-show="vm.report && vm.options">
+      <report-preview template="vm.report" type="'preview-report'" options="vm.options">
+      </report-preview>
+    </div>
+  </div>
+</div>

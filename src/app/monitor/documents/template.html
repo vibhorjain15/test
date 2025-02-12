@@ -1,0 +1,234 @@
+<div role="tabpanel">
+    <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+        <li ui-sref-active="active">
+            <a ui-sref="app.monitor.documents">
+                Document Queue
+            </a>
+        </li>
+        <li ui-sref-active="active">
+            <a ui-sref="app.workflow_automation.list">
+                Workflow Status
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="row clearfix">
+            <div col="12">
+                <div class="panel panel-default borderless-top">
+
+                    <div class="panel-body">
+
+                        <div class="text-right space-on-bottom-lg">
+                            <button btn-type="primary" data-ng-click="vm.addDocument()">
+                                <icon name="plus" class="space-on-right"></icon>Add Document
+                            </button>
+                        </div>
+
+                        <!--<div class="panel panel-default report-panel js-search-panel filter-search-panel"
+                             authorized-view
+                             hidden-from="FreeSubscription, SmartSubscription, ProductiveSubscription">
+                            <div class="panel-heading clearfix clickable" data-ng-click="vm.toggleSearchPanel()">
+                                <div class="content-wrapper">
+                                    <div class="content-block">
+                                        <strong><icon name="search" class="space-on-right"></icon>Explore Documents</strong>
+                                        <small>(Click here for advanced search)</small>
+                                    </div>
+
+          <span class="pull-right toggle-collapse">
+            <i class="dvi"
+               data-ng-class="{'dvi-chevron-up': !vm.is_collapsed, 'dvi-chevron-down': vm.is_collapsed}"></i>
+          </span>
+                                </div>
+                            </div>
+
+                            <form class="form-horizontal" name="vm.search_form" novalidate>
+                                <div class="panel-body">
+                                    <div col="12" class="space-on-bottom-lg">
+                                        <div offset="1" col="11" class="">
+                                            <label class="control-label clear-margin-bottom inline-block space-on-right">Firms matching</label>
+                                            <select class="form-control inline-block w-80"
+                                                    required
+                                                    data-ng-model="vm.global_ternary_operator">
+                                                <option value="or">ANY</option>
+                                                <option value="and">ALL</option>
+                                            </select>
+                                            <label class="control-label clear-margin-bottom inline-block space-on-left">of the following criteria</label>
+                                        </div>
+                                    </div>
+
+                                    <div col="12" class="space-on-top-xl" data-ng-repeat="criteria in vm.search_criterias">
+                                        <div col="1" class="pa-lr-lg">
+                                            <label class="control-label" data-ng-if="$index==0">&nbsp;</label>
+                                            <h5 class="text-right clear-margin-bottom text-uppercase" data-ng-if="$index>0">{{vm.global_ternary_operator}}</h5>
+                                        </div>
+                                        <div col="5" class="pa-lr-lg">
+                                            <form-group field-name="Criteria">
+                                                <label for="criteria_{{$index}}" class="control-label text-capitalize" data-ng-show="$index==0">Criteria</label>
+                                                <select class="form-control"
+                                                        id="criteria_{{$index}}"
+                                                        name="criteria_{{$index}}"
+                                                        chosen
+                                                        required
+                                                        data-ng-model="criteria.criteria_obj"
+                                                        data-placeholder="Select a criteria"
+                                                        data-ng-change="vm.selectCriteria(criteria, $index)"
+                                                        data-ng-options="option as option.text for option in vm.criteria_options">
+                                                    <option value=""></option>
+                                                </select>
+                                            </form-group>
+                                        </div>
+
+                                        <div col="2" class="pa-lr-lg">
+                                            <label class="control-label" data-ng-if="$index==0">Condition</label>
+                                            <form-group field-name="condition">
+                                                <select class="form-control"
+                                                        required
+                                                        data-ng-model="criteria.condition">
+                                                    <option value="" disabled selected hidden>Select condition</option>
+                                                    <option value="greater_than"
+                                                            data-ng-if="criteria.criteria_obj.responseType == 'Numeric'||criteria.criteria_obj.responseType == 'Integer'||criteria.criteria_obj.responseType == 'Percentage'||criteria.criteria_obj.responseType == 'Date'">
+                                                        Greater Than
+                                                    </option>
+                                                    <option value="lesser_than"
+                                                            data-ng-if="criteria.criteria_obj.responseType == 'Numeric'||criteria.criteria_obj.responseType == 'Integer'||criteria.criteria_obj.responseType == 'Percentage'||criteria.criteria_obj.responseType == 'Date'">
+                                                        Lesser Than
+                                                    </option>
+                                                    <option value="equals">Equals</option>
+                                                    <option value="not_equals">Not Equals</option>
+                                                    <option value="contains"
+                                                            data-ng-if="criteria.criteria_obj.responseType == 'Text'||criteria.criteria_obj.responseType == 'TextMultiLine'||criteria.criteria_obj.responseType == 'TextEmail'||criteria.criteria_obj.responseType == 'TextPhone'">
+                                                        Contains
+                                                    </option>
+                                                </select>
+                                            </form-group>
+                                        </div>
+
+                                        <div col="3" class="pa-lr-lg">
+
+                                            <label class="control-label" data-ng-if="$index==0">Value</label>
+                                            <form-group field-name="Value" data-ng-if="!criteria.criteria_obj.responseType">
+                                                <input type="text"
+                                                       data-ng-model="criteria.value"
+                                                       required
+                                                       placeholder="Type a value"
+                                                       class="form-control" />
+                                            </form-group>
+
+                                            <form-group field-name="Value" data-ng-if="criteria.criteria_obj.responseType == 'Date'">
+                                                <dv-datepicker data-ng-model="criteria.value"
+                                                               ng-required="true"></dv-datepicker>
+                                            </form-group>
+
+                                            <form-group field-name="Value"
+                                                        data-ng-if="criteria.criteria_obj.responseType == 'Dropdown' || criteria.criteria_obj.responseType == 'CheckBox'">
+                                                <select class="form-control"
+                                                        chosen
+                                                        required
+                                                        data-ng-model="criteria.value"
+                                                        data-ng-options="option.id as option.value for option in criteria.criteria_obj.childOptions">
+                                                    <option value=""></option>
+                                                </select>
+                                            </form-group>
+
+                                            <form-group field-name="Value"
+                                                        data-ng-if="criteria.criteria_obj.responseType == 'Integer' || criteria.criteria_obj.responseType == 'Percentage' || criteria.criteria_obj.responseType == 'Numeric'">
+                                                <input type="number"
+                                                       data-ng-model="criteria.value"
+                                                       class="form-control"
+                                                       required />
+                                            </form-group>
+
+                                            <form-group field-name="Value"
+                                                        data-ng-if="criteria.criteria_obj.responseType == 'TextEmail' || criteria.criteria_obj.responseType == 'Text' || criteria.criteria_obj.responseType == 'TextMultiLine' || criteria.criteria_obj.responseType == 'TextPhone'">
+                                                <input type="text"
+                                                       data-ng-model="criteria.value"
+                                                       class="form-control"
+                                                       required />
+                                            </form-group>
+
+                                            <form-group field-name="Value"
+                                                        data-ng-if="criteria.criteria_obj.responseType == 'Boolean' || criteria.criteria_obj.responseType == 'BooleanPlus' || criteria.criteria_obj.responseType == 'NoPlus'">
+                                                <select class="form-control"
+                                                        chosen
+                                                        required
+                                                        data-ng-model="criteria.value"
+                                                        data-ng-options="option.value as option.label for option in vm.boolean_value_options">
+                                                    <option value=""></option>
+                                                </select>
+                                            </form-group>
+                                        </div>
+                                    </div>
+
+                                    <div col="12" class="space-on-top-xxl">
+                                        <div offset="9" col="2" class="">
+                                            <div class="pull-right">
+                                                <button btn-type="default"
+                                                        size="sm"
+                                                        class="space-on-right"
+                                                        uib-tooltip="Add Criteria"
+                                                        data-ng-click="vm.addNewCriteria()">
+                                                    <icon name="plus"></icon>
+                                                </button>
+
+                                                <button btn-type="default"
+                                                        data-ng-disabled="vm.search_criterias.length<2"
+                                                        size="sm"
+                                                        uib-tooltip="Remove Criteria"
+                                                        data-ng-click="vm.removeCriteria()">
+                                                    <icon name="minus"></icon>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div col="12" class="space-on-bottom-xl">
+                                        <div offset="1" col="4" class="">
+                                            <button type="submit" btn-type="primary" class="space-on-right-lg" data-ng-click="vm.getSearchResults()">
+                                                <icon name="search" class="space-on-right"></icon>
+                                                Start Searching
+                                            </button>
+
+                                            <button btn-type="default" data-ng-click="vm.resetFiltersData()">
+                                                <icon name="refresh" class="space-on-right"></icon>
+                                                Reset Filters
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>-->
+
+                        <!--<div class="panel-body" data-ng-show="vm.showingSearchResults">
+                            <div class="content-block">
+                                <p>Showing <strong>{{vm.firms.pagination_meta.totalRecords}} results</strong> for <strong>Firms</strong>
+                            <span data-ng-repeat="filter in vm.filterSummary.criterias">
+                                <span class="text-lowercase">{{filter.label}}</span>
+                                <span data-ng-repeat="value in filter.value" class="text-nowrap">
+                                    <strong><u>{{value}}</u></strong><span data-ng-hide="filter.value.length == $index+1">,</span>
+                                </span>
+                                <span data-ng-hide="vm.filterSummary.criterias.length == $index+1">{{vm.filterSummary.global_operator}}</span>
+                            </span>
+                                    <a href="" class="text-danger space-on-left" data-ng-click="vm.clearFilters()">
+                                        (Clear filters)
+                                    </a>
+                                </p>
+                            </div>
+                        </div>-->
+
+                        <spinner data-ng-if="!vm.initGridSection"></spinner>
+                        <div data-ng-if="vm.initGridSection">
+                            <dv-grid grid-resource="vm.documents" grid-name="'monitor-documents'"></dv-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+

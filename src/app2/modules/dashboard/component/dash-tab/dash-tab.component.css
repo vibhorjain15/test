@@ -1,0 +1,12 @@
+
+.text-wrapper {
+  font-size: 18px;
+  font-weight: 600;
+}
+.my-work-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  margin-top: 0px;
+}

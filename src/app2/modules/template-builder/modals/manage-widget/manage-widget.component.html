@@ -1,0 +1,48 @@
+<app-modal
+  [title]="title"
+  [initialTemplate]="ManageWidgetref"
+  (onFirstClick)="handleSave($event)"
+  firstButtonLabel="Save"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #ManageWidgetref>
+  <form class="form-horizontal" [formGroup]="widgetForm" autocomplete="off">
+    <dv-form-element
+      [modelController]="widgetForm.get('name')"
+      label="Name"
+      errorMessage="Name is required"
+      [isRequired]="true"
+      role="textbox"
+      aria-label="Name input field"
+    >
+      <input
+        id="name"
+        class="form-control"
+        placeholder="Field name"
+        formControlName="name"
+        aria-invalid="{{ widgetForm.get('name').invalid ? 'true' : 'false' }}"
+      />
+    </dv-form-element>
+    <dv-form-element label="Type" [showRightIcon]="false" [for]="'type'">
+      <div class="space-on-bottom-xl">
+        <dv-select
+          [id]="'type'"
+          [contoller]="widgetForm.get('type')"
+          [appendTo]="'body'"
+          [error]=""
+          [list]="responseType"
+          bindLabel="text"
+          bindValue=""
+          formControlName="type"
+          (onSelectChange)="handleChange($event)"
+        ></dv-select>
+      </div>
+      <dv-response-type-preview
+        [question]="previewData"
+        [editable]="true"
+      ></dv-response-type-preview>
+    </dv-form-element>
+  </form>
+</ng-template>

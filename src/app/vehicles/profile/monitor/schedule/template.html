@@ -1,0 +1,44 @@
+<form novalidate
+      name="vm.schedule_diligence_form"
+      data-ng-submit="vm.scheduleDiligence()">
+  <form-group field-name="Share Class" tooltip-placement="left">
+    <label for="share-class" class="control-label">Questionnaire Template</label>
+
+    <select class="form-control"
+            id="template"
+            required
+            chosen
+            data-ng-options="template.templateInfo.id as template.templateInfo.name for template in vm.templates"
+            data-ng-model="vm.template_id">
+        <option value="">-- Select Template --</option>
+    </select>
+  </form-group>
+
+  <form-group field-name="Frequency" tooltip-placement="left">
+    <label for="frequency" class="control-label">
+        Frequency
+    </label>
+
+    <select class="form-control"
+            id="frequency"
+            required
+            chosen
+            data-ng-options="frequency.id as frequency.value for frequency in vm.frequencies"
+            data-ng-model="vm.frequency_id">
+        <option value="">Select Frequency</option>
+    </select>
+  </form-group>
+
+  <form-group field-name="Schedule Date" tooltip-placement="left" control-selector="dv-datepicker">
+    <label for="schedule-date" class="control-label">Schedule Date</label>
+
+    <dv-datepicker data-ng-model="vm.scheduled_for"
+                   ng-required="true"></dv-datepicker>
+  </form-group>
+
+  <div class="form-group">
+    <button type="submit"
+            button-loader="vm.saving_schedule">Save Schedule</button>
+  </div>
+
+</form>

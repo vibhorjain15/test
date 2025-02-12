@@ -1,0 +1,41 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Two-factor Authentication</h5>
+  </div>
+  <div class="panel-body">
+    <div>
+      <p>
+        Status:
+        <span class="text-danger" *ngIf="!currentUser?.twoFactorEnabled">
+          <b class="align-middle">Off</b>
+          <span appIcon name="close" class="space-on-left align-middle"></span>
+        </span>
+        <span class="text-success" *ngIf="currentUser?.twoFactorEnabled">
+          <b class="align-middle">On</b>
+          <span appIcon name="check" class="space-on-left align-middle"></span>
+        </span>
+      </p>
+      <dv-button
+        *ngIf="!currentUser?.twoFactorEnabled"
+        [btnType]="'primary'"
+        (onClick)="navigateToIntro()"
+      >
+        Setup two-factor authentication
+      </dv-button>
+      <dv-button
+        btnType="danger"
+        *ngIf="currentUser?.twoFactorEnabled"
+        (onClick)="disable2FA()"
+      >
+        Disable two-factor authentication
+      </dv-button>
+    </div>
+  </div>
+  <div class="panel-footer">
+    <p class="clear-margin">
+      <span appIcon name="question-circle"></span>
+      Two-factor authentication provides another layer of security to your
+      account.
+    </p>
+  </div>
+</div>

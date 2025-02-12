@@ -1,0 +1,140 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner data-ng-if="!vm.diligence"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-if="vm.diligence">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin">
+              {{::vm.diligence.entity_name}}
+            </h4>
+              <small class="text-muted" data-ng-if="vm.diligence.last_updated_at">
+                  Last Updated {{::vm.diligence.last_updated_at|date}}
+              </small>
+          </div>
+          <div class="text-center cell bordered-right">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form novalidate
+                  data-ng-submit="vm.sendRecommendation()"
+                  name="vm.recommendation_form">
+              <div data-ng-show="vm.preview">
+                <div class="form-group">
+                  <label class="control-label">To:</label>
+
+                  <p class="form-control-static">
+                    {{vm.recommendation.recipient|pluck:'userName'|joinBy}}
+                  </p>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label">From:</label>
+
+                  <p class="form-control-static">
+                    {{vm.user.basicUserInfo.userName}}
+                  </p>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label">Subject:</label>
+
+                  <p class="form-control-static">
+                    {{vm.recommendation.subject}}
+                  </p>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label">Recommendation:</label>
+
+                  <p class="form-control-static">
+                    {{vm.recommendation.recoText}}
+                  </p>
+                </div>
+              </div>
+
+              <div data-ng-hide="vm.preview">
+                <div class="form-group"
+                     data-ng-class="{'has-error': vm.recommendation_form.$submitted && !vm.recommendation.recipient.length, 'has-success': vm.recommendation_form.$submitted && vm.recommendation.recipient.length}">
+                  <label for="to" class="control-label">To:</label>
+                  <tags-input ng-model="vm.recommendation.recipient"
+                              id="to"
+                              display-property="userName"
+                              key-property="userName"
+                              add-from-autocomplete-only="true">
+                    <auto-complete source="vm.filterCategories($query)"
+                                   load-on-focus=true
+                                   load-on-empty=true
+                                   min-length="1"></auto-complete>
+                  </tags-input>
+
+                  <small class="text-danger"
+                         data-ng-show="vm.recommendation_form.$submitted && !vm.recommendation.recipient.length">
+                    Please specify atleast one recipient
+                  </small>
+                </div>
+
+                <div class="form-group">
+                  <label for="from" class="control-label">From:</label>
+                  <input type="text"
+                         id="from"
+                         class="form-control"
+                         data-ng-model="vm.user.basicUserInfo.userName"
+                         disabled>
+                </div>
+
+                <form-group field-name="Subject">
+                  <label for="subject" class="control-label">Subject:</label>
+                  <input id="subject"
+                         type="text"
+                         ng-model="vm.recommendation.subject"
+                         required
+                         class="form-control">
+                </form-group>
+
+                <form-group field-name="Recommendation">
+                  <label for="recommendation" class="control-label">Recommendation:</label>
+                  <textarea class="form-control"
+                            id="recommendation"
+                            ng-model="vm.recommendation.recoText"
+                            required
+                            msd-elastic="\n"
+                            rows="5"></textarea>
+                </form-group>
+              </div>
+
+              <div class="space-on-top-lg">
+                <button btn-type="default"
+                        class="btn btn-default"
+                        data-ng-hide="vm.preview"
+                        data-ng-disabled="!vm.isFormValid()"
+                        data-ng-click="vm.preview = true">
+                  Preview
+                </button>
+
+                <button btn-type="default"
+                        class="btn btn-default"
+                        data-ng-show="vm.preview"
+                        data-ng-click="vm.preview = false">
+                  Edit
+                </button>
+
+                <button type="submit" class="btn btn-success" button-loader="vm.loading">
+                  Send Recommendation
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

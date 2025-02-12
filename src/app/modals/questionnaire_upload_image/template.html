@@ -1,0 +1,135 @@
+<div class="mce-image-uploader">
+  <div class="modal-header">
+    <button type="button" class="close" data-ng-click="vm.close()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title inline-block space-on-right-lg">Select an Existing or Upload a New Image</h4>
+  </div>
+
+  <div class="modal-body">
+
+    <p class="alert alert-danger" data-ng-show="vm.display_image_unselected_error">
+      Please select an image
+    </p>
+
+    <form name="vm.upload_form">
+      <p class="text-center" data-ng-show="vm.rejectedFiles.length">
+        <small class="text-danger">
+          <span data-ng-repeat="file in vm.rejectedFiles">{{file.name}}</span> is not a valid file.
+          <br>Valid formats are <b>{{::vm.allowed_file_extensions_str}}</b>
+        </small>
+      </p>
+      <p class="alert alert-info">While we recommend uploading images with 800px width in PNG format, we accept JPEG and GIF.</p>
+
+      <div class="clearfix">
+        <div class="w-300 margin-0-auto">
+          <button btn-type="default"
+                  block
+                  size="lg"
+                  ngf-select
+                  data-ng-disabled="vm.upload_in_progress"
+                  ngf-accept="'{{::vm.allowed_file_extensions_str}}'"
+                  ngf-pattern="'{{::vm.allowed_file_extensions_str}}'"
+                  ngf-max-size="'{{::vm.maxFileSize}}'"
+                  ng-model="vm.files"
+                  ngf-change="vm.uploadAttachment($files)"
+                  ngf-model-invalid="vm.rejectedFiles"
+                  class="space-on-top-xl">
+              <icon name="upload" class="align-middle space-on-right"></icon>
+              Upload New Image
+          </button>
+        </div>
+      </div>
+
+      <div data-ng-show="vm.upload_in_progress">
+        <div>
+          <small>
+            Uploading
+            <span data-ng-repeat="file in vm.params.files">{{file.name}}</span>
+          </small>
+        </div>
+        <uib-progressbar value="vm.progressPercentage"
+                     type="success"
+                     class="progress-striped active"></uib-progressbar>
+      </div>
+    </form>
+
+
+    <div class="cell bordered-right">
+      <br>
+        <form name="search_images">
+          <div class="input-group space-on-left-lg space-on-right-lg" data-ng-class="{'search-images': vm.search_text.length}">
+            <label for="">Search by name:</label>
+            <input type="text" class="form-control" placeholder="Search for images" required data-ng-model="vm.search_text">
+            <span class="input-group-btn">
+              <button btn-type="transparent" class="danger clear-text clear-btn-position" data-ng-click="vm.resetFilter()" data-ng-show="vm.search_text.length">
+                <icon name="close" class="space-on-right"></icon>Clear
+              </button>
+            </span>
+          </div>
+          <h5 class="space-on-top clear-margin-bottom lh1-7" data-ng-show="vm.statusFilter == 'Search' && vm.search_text.length">
+            Showing {{vm.total_images_count}} images matching "<b><u><span dv-limit-word="vm.search_text" char-limit="15"></span></u></b>"
+          </h5>
+        </form>
+    </div>
+    <div class="cell">
+      <br>
+      <div class="sortby-ul">
+        <label for="">Sort by:</label>
+        <ul class="list-unstyled list-inline">
+          <li class="clickable" data-ng-class="{'activeSortLi': vm.activeSort == 'alphabetical'}" ng-click="vm.sortBy('alphabetical');vm.ascendingAlphabetical = !vm.ascendingAlphabetical">A-Z <i data-ng-show="vm.activeSort == 'alphabetical'" data-ng-class="{'ui-grid-icon-up-dir': vm.ascendingAlphabetical, 'ui-grid-icon-down-dir': !vm.ascendingAlphabetical}" ></i></li>
+          <li class="clickable" data-ng-class="{'activeSortLi': vm.activeSort == 'mostRecent'}" ng-click="vm.sortBy('mostRecent');vm.ascendingMostRecent = !vm.ascendingMostRecent">Most Recent <i data-ng-show="vm.activeSort == 'mostRecent'" data-ng-class="{'ui-grid-icon-down-dir': vm.ascendingMostRecent, 'ui-grid-icon-up-dir': !vm.ascendingMostRecent}" ></i></li>
+          <!-- <li class="clickable" data-ng-class="{'activeSortLi': vm.activeSort == 'mostUsed'}" ng-click="vm.sortBy('mostUsed');vm.ascendingMostUsed = !vm.ascendingMostUsed">Most Used <i data-ng-show="vm.activeSort == 'mostUsed'" data-ng-class="{'ui-grid-icon-down-dir': vm.ascendingMostUsed, 'ui-grid-icon-up-dir': !vm.ascendingMostUsed}" ></i></li> -->
+        </ul>
+      </div>
+    </div>
+
+    <hr class="or-separator">
+
+    <div>
+      <div data-ng-show="vm.images.length" class="img-list">
+
+
+        <div class="row clearfix clear-margin">
+          <div class="col-md-2 relative padded questionnaire-images"
+               data-ng-repeat="image in vm.images | orderBy: -insertTimeStamp | filter: {fileName : vm.search_text}"
+               data-ng-mouseenter="display_action_buttons = true"
+               data-ng-mouseleave="display_action_buttons = false">
+            <div class="thumbnail image-container" data-ng-if="image.id">
+              <a class="link-disguise">
+                <img data-ng-src="{{image.thumbnailUrl}}"/>
+              </a>
+
+              <div class="rb-image-controls" data-ng-if="display_action_buttons">
+                <span class="icon-wrapper clickable space-on-right"
+                      uib-tooltip="Select Image"
+                      tooltip-placement="top"
+                      data-ng-click="vm.insert(image)">
+                  <icon name="check2"
+                        class="text-success">
+                  </icon>
+                </span>
+                <span class="icon-wrapper clickable"
+                      uib-tooltip="Delete Image"
+                      tooltip-placement="top"
+                      ng-click="vm.confirmImageDelete(image, $event)">
+                  <icon name="trashcan"
+                        class="text-danger">
+                  </icon>
+                </span>
+              </div>
+
+              <div class="caption">
+                <p class="clear-margin">
+                  <span dv-limit-word="image.fileName" char-limit="18"></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <spinner data-ng-show="vm.loading_images"></spinner>
+      </div>
+    </div>
+  </div>
+</div>

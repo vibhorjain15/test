@@ -1,0 +1,36 @@
+<div>
+    <div class="panel panel-default" data-ng-if="vm.isMultiple">
+        <form name="vm.viewing_for_form">
+            <div class="panel-body">
+                <div col="8" offset="2">
+                    <form-group field-name="Viewing for">
+                        <label for="viewing-for" class="control-label space-on-top text-right padding-right-lg" col="3" col-type="sm">Viewing for</label>
+
+                        <div col="8" col-type="sm">
+                            <select name="viewing-for"
+                                    id="viewing-for"
+                                    class="form-control"
+                                    chosen
+                                    data-ng-disabled="!vm.viewingForList"
+                                    data-ng-options="viewingFor.id as viewingFor.value for viewingFor in vm.viewingForList"
+                                    data-ng-model="vm.viewingFor"
+                                    data-ng-change="vm.fetchSequenceSections(vm.viewingFor)"
+                                    required>
+                                <option value="">--Select--</option>
+                            </select>
+                        </div>
+                    </form-group>
+                </div>
+            </div>
+        </form>
+    </div>
+
+  <spinner data-ng-show="!vm.sections || vm.loadingSequenceSections"></spinner>
+
+  <span data-ng-if="!vm.loadingSequenceSections && vm.sections">
+      <form-adv-questionnaire-section data-ng-repeat="section in ::vm.sections"
+                                      section="section">
+      </form-adv-questionnaire-section>
+  </span>
+
+</div>

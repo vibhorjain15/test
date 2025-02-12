@@ -1,0 +1,21 @@
+tinymce.addI18n("da", {
+  "Advanced sort...": "Avanceret sortering...",
+  "Advanced Sort": "Avanceret sortering",
+  "Sort table by column ascending": "Sort\xe9r tabel efter kolonner i stigende r\xe6kkef\xf8lge",
+  "Sort table by column descending": "Sorter tabel efter kolonner i faldende r\xe6kkef\xf8lge",
+  "Sort": "Sort\xe9r",
+  "Order": "Opstil i r\xe6kkef\xf8lge",
+  "Sort by": "Sort\xe9r efter",
+  "Ascending": "Stigende",
+  "Descending": "Faldende",
+  "Selection": "Valg",
+  "Table": "Tabel",
+  "Column": "Kolonne",
+  "Row": "R\xe6kke",
+  "Column {0}": "Kolonne {0}",
+  "Row {0}": "R\xe6kke {0}",
+  "Row numbering": "R\xe6kkenummerering",
+  "None": "Ingen",
+  "Numeric": "Numerisk",
+  "Alpha": "Alfabetisk"
+});

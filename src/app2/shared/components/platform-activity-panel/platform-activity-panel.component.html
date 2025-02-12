@@ -1,0 +1,111 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Platform Activity</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <!-- button-loader="loading" -->
+        <a
+          tooltip="Mark all as Read"
+          container="body"
+          class="panel-control"
+          (click)="markAllAsRead()"
+        >
+          <span *ngIf="!loading"><span appIcon name="check-all"></span></span>
+          <span *ngIf="loading"><app-spinner></app-spinner></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body" *ngIf="is_loading">
+    <app-spinner></app-spinner>
+  </div>
+  <div
+    class="list-group notification-list"
+    *ngIf="!is_loading && notifications.length > 0"
+  >
+    <a
+      class="list-group-item notification"
+      [ngClass]="{ unread: notification.unread }"
+      *ngFor="let notification of notifications"
+      [href]="getRedirectUrl(notification)"
+      (click)="markAsRead(notification)"
+    >
+      <span class="media">
+        <span class="media-left text-center">
+          <span [ngSwitch]="notification.type">
+            <span
+              appIcon
+              name="briefcase"
+              *ngSwitchCase="'duediligence'"
+            ></span>
+            <span appIcon name="table" *ngSwitchCase="'track_record'"></span>
+            <span appIcon name="calendar" *ngSwitchCase="'invitation'"></span>
+            <span appIcon name="comments-o" *ngSwitchCase="'discussion'"></span>
+            <span appIcon name="doubt" *ngSwitchCase="'followup'"></span>
+            <span
+              appIcon
+              name="doubt"
+              *ngSwitchCase="'diligencefollowup'"
+            ></span>
+            <span appIcon name="file" *ngSwitchCase="'documentShared'"></span>
+            <span
+              appIcon
+              name="file"
+              *ngSwitchCase="'documentVersionChanged'"
+            ></span>
+            <span appIcon name="tasks" *ngSwitchCase="'workflow'"></span>
+          </span>
+          <br />
+          <small *ngIf="notification.unread">
+            <small>
+              <span appIcon name="circle" class="text-primary"></span>
+            </small>
+          </small>
+        </span>
+        <span class="media-body">
+          {{ notification.text }}
+          <br />
+          <small class="text-muted">
+            {{ notification.insertTimeStamp | dvDate : ["dvDateTime"] }}
+          </small>
+        </span>
+        <span
+          tooltip="Mark as Read"
+          container="body"
+          role="button"
+          tabindex="0"
+          aria-label="click to mark as read"
+          *ngIf="notification.unread"
+          class="notification-marker pos-abs stick-right-sm stick-top-sm js-mark-explicit"
+        >
+          <span appIcon name="check"></span>
+        </span>
+      </span>
+    </a>
+  </div>
+  <div class="panel-footer text-center" *ngIf="!preview">
+    <pagination
+      class="pagination-sm clear-margin"
+      [boundaryLinks]="true"
+      [(ngModel)]="current_page"
+      [totalItems]="total_items"
+      (pageChanged)="getNotifications($event)"
+      [maxSize]="5"
+    ></pagination>
+  </div>
+  <div class="panel-body" *ngIf="!is_loading && notifications.length == 0">
+    <app-empty-state
+      [iconName]="smile - o"
+      message="You don't have any notifications"
+    >
+    </app-empty-state>
+  </div>
+  <div class="panel-footer clear-padding" *ngIf="preview">
+    <a
+      class="btn btn-block btn-default all-notifications"
+      (click)="closeMenu()"
+    >
+      View All
+    </a>
+  </div>
+</div>

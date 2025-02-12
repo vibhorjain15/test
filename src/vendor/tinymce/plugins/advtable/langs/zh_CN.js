@@ -1,0 +1,21 @@
+tinymce.addI18n("zh_CN", {
+  "Advanced sort...": "\u9ad8\u7ea7\u6392\u5e8f...",
+  "Advanced Sort": "\u9ad8\u7ea7\u6392\u5e8f",
+  "Sort table by column ascending": "\u6309\u5217\u5347\u5e8f\u8fdb\u884c\u8868\u683c\u6392\u5e8f",
+  "Sort table by column descending": "\u6309\u5217\u964d\u5e8f\u8fdb\u884c\u8868\u683c\u6392\u5e8f",
+  "Sort": "\u6392\u5e8f",
+  "Order": "\u987a\u5e8f",
+  "Sort by": "\u6392\u5217\u65b9\u5f0f\uff1a",
+  "Ascending": "\u5347\u5e8f",
+  "Descending": "\u964d\u5e8f",
+  "Selection": "\u9009\u9879",
+  "Table": "\u8868\u683c",
+  "Column": "\u680f\u76ee",
+  "Row": "\u884c",
+  "Column {0}": "\u5217 {0}",
+  "Row {0}": "\u884c {0}",
+  "Row numbering": "\u884c\u7f16\u53f7",
+  "None": "\u65e0",
+  "Numeric": "\u6570\u503c",
+  "Alpha": "\u5b57\u6bcd"
+});

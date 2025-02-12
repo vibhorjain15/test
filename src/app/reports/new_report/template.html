@@ -1,0 +1,403 @@
+<ng2-new-report data-ng-if="vm.Utils.isAngular()"></ng2-new-report>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<form-wizard name="new-reporting-flow"
+             display-footer="vm.display_wizard_footer"
+             on-finish="vm.exportReport()">
+    <wizard-step step-title="'Purpose'"
+                 step-content-header-title="'Select the purpose for this request'"
+                 before-enter="vm.display_wizard_footer = false;">
+         <div class="row clearfix">
+             <div col="6">
+               <div class="text-center pa-tb-lg">
+                   <a class="link-disguise clickable"
+                      data-ng-click="vm.startNewReport()"
+                      uib-tooltip="Generate Custom Report">
+                       <div class="space-on-bottom">
+                         <div class="word_doc_icon text-center">
+                           <img src="/assets/images/doc_icon.png" class="img-responsive" alt="">
+                         </div>
+                       </div>
+                       Generate Custom Report
+                   </a>
+               </div>
+             </div>
+         </div>
+    </wizard-step>
+    <wizard-step step-title="'Select Report Definition'"
+                 step-content-header-title="'Select your report definition template and date range to list projects'"
+                 before-enter="vm.shouldFooterBeVisible()"
+                 can-exit="vm.canProceedToDiligenceSelection"
+                 step-selection-control="vm.request.selected_template.stepController">
+       <div class="row clearfix">
+         <div col="6">
+           <label for="template-selection" class="control-label">
+             Report Definition
+           </label>
+           <select id="template-selection" col="4"
+                   class="form-control"
+                   chosen
+                   required
+                   data-ng-model="vm.request.selected_template"
+                   no-results-text="'Could not find any templates'"
+                   data-placeholder="Filter by Templates"
+                   data-ng-options="template as template.report_definition_name for template in vm.mapping_templates track by template.id"
+                   data-ng-change="vm.getDiligences()">
+           </select>
+           <p class="text-muted space-on-top" data-ng-show="!vm.mapping_templates || !vm.mapping_templates.length"><small><i>*Please contact ask@diligencevault.com for initial report definition setup*</i></small></p>
+         </div>
+         <div col="6">
+           <label for="strategy-selection" class="control-label">Select dates:</label>
+           <div col="12">
+             <dv-daterangepicker ng-model="vm.customDateFilter"
+                     apply-method="vm.applyMethod"></dv-daterangepicker>
+           </div>
+         </div>
+       </div>
+       <div class="row clearfix" data-ng-if="vm.show_dilignece_zero_text">
+         <p class="text-center text-muted space-on-top-xxl">
+           <i>No projects found for selected template</i>
+         </p>
+       </div>
+    </wizard-step>
+
+<ng2-new-report data-ng-if="vm.Utils.isAngular()"></ng2-new-report>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <form-wizard name="new-reporting-flow"
+              display-footer="vm.display_wizard_footer"
+              on-finish="vm.exportReport()">
+      <wizard-step step-title="'Purpose'"
+                  step-content-header-title="'Select the purpose for this request'"
+                  before-enter="vm.display_wizard_footer = false;">
+          <div class="row clearfix">
+              <div col="6">
+                <div class="text-center pa-tb-lg">
+                    <a class="link-disguise clickable"
+                        data-ng-click="vm.startNewReport()"
+                        uib-tooltip="Generate Custom Report">
+                        <div class="space-on-bottom">
+                          <div class="word_doc_icon text-center">
+                            <img src="/assets/images/doc_icon.png" class="img-responsive" alt="">
+                          </div>
+                        </div>
+                        Generate Custom Report
+                    </a>
+                </div>
+              </div>
+          </div>
+      </wizard-step>
+      <wizard-step step-title="'Select Report Definition'"
+                  step-content-header-title="'Select your report definition template and date range to list projects'"
+                  before-enter="vm.shouldFooterBeVisible()"
+                  can-exit="vm.canProceedToDiligenceSelection"
+                  step-selection-control="vm.request.selected_template.stepController">
+        <div class="row clearfix">
+          <div col="6">
+            <label for="template-selection" class="control-label">
+              Report Definition
+            </label>
+            <select id="template-selection" col="4"
+                    class="form-control"
+                    chosen
+                    required
+                    data-ng-model="vm.request.selected_template"
+                    no-results-text="'Could not find any templates'"
+                    data-placeholder="Filter by Templates"
+                    data-ng-options="template as template.report_definition_name for template in vm.mapping_templates track by template.id"
+                    data-ng-change="vm.getDiligences()">
+            </select>
+            <p class="text-muted space-on-top" data-ng-show="!vm.mapping_templates || !vm.mapping_templates.length"><small><i>*Please contact ask@diligencevault.com for initial report definition setup*</i></small></p>
+          </div>
+          <div col="6">
+            <label for="strategy-selection" class="control-label">Select dates:</label>
+            <div col="12">
+              <dv-daterangepicker ng-model="vm.customDateFilter"
+                      apply-method="vm.applyMethod"></dv-daterangepicker>
+            </div>
+          </div>
+        </div>
+        <div class="row clearfix" data-ng-if="vm.show_dilignece_zero_text">
+          <p class="text-center text-muted space-on-top-xxl">
+            <i>No projects found for selected template</i>
+          </p>
+        </div>
+      </wizard-step>
+
+      <wizard-step ng-repeat="entry in vm.diligence_report_templates"
+                  step-title="'Select Project - Step ' + ($index + 1)"
+                  step-content-header-title="'<p>Select <b>'+(entry.frequency)+'</b> Project(s) for <b>'+(entry.name)+'</b> on the left hand panel, using search and filters to narrow your search.</p>'"
+                  step-content-header-type="'html'"
+                  before-enter="vm.projectsSelectionBeforeEnter(entry, $index)"
+                  ng-init="entry.rowIndex = $index; vm.show_review_step = true"
+                  step-name="entry.id"
+                  step-is-alive="vm.entryExists(results)">
+                  <div class="alert alert-info clear-border-radius borderless">
+                    <div>
+                      <span class="break_word">
+                        Report generation is available only for completed projects from this page. For interim
+                        reports, please generate from the projects page.
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row space-on-top-lg">
+                    <div class="text-center">
+                      <div class="btn-group">
+                          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'All'}" data-ng-click="vm.setEntityType('All')">All</label>
+                          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Strategy'}" data-ng-click="vm.setEntityType('Strategy')">Strategy</label>
+                          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Fund'}" data-ng-click="vm.setEntityType('Fund')">Product</label>
+                          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Firm'}" data-ng-click="vm.setEntityType('Firm')">Firm</label>
+                          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Vehicle'}" data-ng-click="vm.setEntityType('Vehicle')">Vehicle</label>
+                          <label uib-tooltip="Custom represents the analyst evaluation projects created for any entity types (combination of Product, Firm, Strategy or Vehicle)" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Custom'}" data-ng-click="vm.setEntityType('Custom')">Custom</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row clearfix space-on-top-lg">
+                    <div col="6">
+                      <div class="panel panel-default dd-multiselect">
+                        <div class="panel-heading">
+                          <div class="row clearfix">
+                            <div col="6">
+                              <div class="input-group-rename-this-class-when-filters-are-enabled">
+                                <input type="text"
+                                        data-ng-model="vm.filterBy"
+                                        class="form-control"
+                                        placeholder="Search Projects by name" />
+                              </div>
+                            </div>
+
+                            <div col="6">
+                              <div data-ng-show="(vm.review_entity_type == 'Fund' || vm.review_entity_type == 'Firm' || vm.review_entity_type == 'Strategy' || vm.review_entity_type == 'Vehicle') && (vm.filters_applied || vm.diligences.length > 0)">
+                                <button btn-type="default"
+                                        class="space-on-top-2"
+                                        size="sm"
+                                        uib-tooltip="{{vm.filters_section.show ? 'Hide' : 'Apply' }} Filters"
+                                        data-ng-click="vm.toggleFiltersSection()">
+                                  <icon name="filter" data-ng-class="{'text-orange': vm.filters_section.show}"></icon>
+                                </button>
+                                <button btn-type="default"
+                                  class="space-on-top-2"
+                                  size="sm"
+                                  data-ng-click="vm.clearEntityFilter()">
+                                  Clear
+                                </button>
+                              </div>
+
+
+                            </div>
+
+                          </div>
+                          <div class="row clearfix space-on-top-lg" data-ng-show="vm.filters_section.show">
+                            <div col="12">
+                              <select data-ng-if="vm.review_entity_type == 'Fund'" id="template-selection" col="4"
+                                      class="form-control"
+                                      chosen
+                                      required
+                                      data-ng-model="vm.filter.diligence_entity"
+                                      no-results-text="'Could not find any funds'"
+                                      data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Fund')"
+                                      data-placeholder="Filter by Funds"
+                                      data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_funds track by diligence.entity_id">
+                              </select>
+                              <select data-ng-if="vm.review_entity_type == 'Strategy'" id="template-selection" col="4"
+                                      class="form-control"
+                                      chosen
+                                      required
+                                      data-ng-model="vm.filter.diligence_entity"
+                                      no-results-text="'Could not find any strategies'"
+                                      data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Strategy')"
+                                      data-placeholder="Filter by Strategies"
+                                      data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_strategies track by diligence.entity_id">
+                              </select>
+                              <select data-ng-if="vm.review_entity_type == 'Firm'" id="template-selection" col="4"
+                                      class="form-control"
+                                      chosen
+                                      required
+                                      data-ng-model="vm.filter.diligence_entity"
+                                      no-results-text="'Could not find any firms'"
+                                      data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Firm')"
+                                      data-placeholder="Filter by Firms"
+                                      data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_firms track by diligence.entity_id">
+                              </select>
+                              <select data-ng-if="vm.review_entity_type == 'Vehicle'" id="template-selection" col="4" class="form-control" chosen
+                                required data-ng-model="vm.filter.diligence_entity" no-results-text="'Could not find any vehicles'"
+                                data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Vehicle')" data-placeholder="Filter by Vehicles"
+                                data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_vehicles track by diligence.entity_id">
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="list-group clear-margin-bottom">
+                            <div class="list-group-item"
+                                  data-ng-repeat="diligence in vm.diligences | filter: vm.filterBy | orderBy:'name'">
+                              <div class="row clearfix">
+                                <span data-ng-show="diligence.is_selected || vm.select_all_entities" class="space-on-right">
+                                  <icon name="check" size="lg" class="text-success"></icon>
+                                </span>
+
+                                <span class="space-on-right" uib-tooltip="Select {{diligence.name}}" data-ng-hide="diligence.is_selected || vm.select_all_entities">
+                                  <icon name="plus-circle"
+                                        data-ng-click="vm.addToSelection(entry, diligence)"
+                                        size="lg"
+                                        class="text-primary"
+                                        role="button"></icon>
+                                </span>
+
+                                <span>{{diligence.name}} - <small class="text-muted">{{diligence.entity_name}}</small></span>
+
+                                <span class="space-on-left badge" data-ng-class="{'badge-info': diligence.entity_type == 'Strategy', 'badge-success':diligence.entity_type == 'Fund', 'badge-warning':diligence.entity_type == 'Firm', 'badge-primary':diligence.entity_type == 'Vehicle'}">{{diligence.entity_type == 'Fund'?'Product':diligence.entity_type == 'Review'? 'Custom' : diligence.entity_type}}</span>
+                              </div>
+                            </div>
+
+                              <div class="list-group-item" data-ng-if="vm.is_loading">
+                                  <div class="row clearfix">
+                                      <div>
+                                          <spinner broad-spinner spinner-height='20'></spinner>
+                                      </div>
+                                  </div>
+                              </div>
+                        </div>
+                        <h5 class="pull-right" data-ng-show="vm.diligences.length">Total {{vm.diligences.length}} Projects available</h5>
+
+                        <div class="panel-body" data-ng-if="!vm.filters_applied && !vm.is_loading && !vm.diligences.length">
+                          <empty-state message="Try changing your filters if you don't see what you're looking for"
+                                        ></empty-state>
+                        </div>
+
+                        <div class="panel-body" data-ng-if="!vm.is_loading && vm.filters_applied && vm.diligences.length == 0">
+                          <empty-state message="No Projects match applied filters"></empty-state>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="dd-multiselect-selection" col="6">
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <div class="row clearfix">
+                            <div col="8">
+                              <p class="form-control-static inline-block">
+                                Projects Selected <span data-ng-show="(vm.selection_list.length > 0)||(vm.select_all_entities)">({{vm.selection_list.length}})</span>
+                              </p>
+                            </div>
+
+                            <div col="4">
+
+                              <span class="pull-right">
+                                <button btn-type="default" size="sm" data-ng-if="entry.selection_list.length" data-ng-click="vm.clearSelectionList(entry)">Clear Selection</button>
+                              </span>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul class="list-group clear-margin-bottom" data-ng-if="entry.selection_list.length">
+                          <li class="list-group-item"
+                              data-ng-repeat="diligence in entry.selection_list"
+                              data-ng-class="{'active-item': diligence.hoverState}"
+                              ng-mouseover="diligence.hoverState = true;" ng-mouseleave="diligence.hoverState = false;">
+                            <div class="media">
+                              <div class="media-body">
+                                <div class="dv-table full-width">
+                                  <div class="cell align-middle">
+                                    <div class="clearfix">
+                                      <div class="inline-block">
+                                        <span uib-tooltip="Remove {{diligence.name}}" class="space-on-right">
+                                            <icon name="minus-circle"
+                                                  class="text-danger"
+                                                  role="button"
+                                                  size="lg"
+                                                  data-ng-click="vm.removeFromSelection(entry, diligence)"></icon>
+                                        </span>
+                                        <span class="space-on-right">{{diligence.name}}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+
+
+
+                          <div class="panel-body text-center" data-ng-if="vm.select_all_entities">
+                              All {{vm.data_length}} projects are selected.
+                          </div>
+
+                          <div class="panel-body" data-ng-if="!entry.selection_list.length && !vm.select_all_entities">
+                            <empty-state message="You have not selected any projects. Please select them from the panel in the left"></empty-state>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+      </wizard-step>
+
+      <wizard-step step-title="'Review & Export'"
+                  step-content-header-title="'Please add report name, define as of date and review selected project(s)'"
+                  next-button-label="Export"
+                  next-button-type="orange"
+                  before-enter="vm.combineSelectedDiligences()"
+                  ng-if="vm.show_review_step"
+                  step-name="vm.request.selected_template.id"
+                  step-is-alive="vm.reviewIsAlive(results)">
+          <div class="row clearfix">
+              <div col="6" class="bordered-right">
+                  <div col="12">
+                      <form name="vm.scheduled_dd_project_name_form">
+                          <form-group field-name="Report Name"
+                                      tooltip-placement="right">
+                              <label>Report Name</label>
+                              <input type="text"
+                                    data-ng-model="vm.report_name"
+                                    required
+                                    focus-me="true"
+                                    placeholder="Report Name"
+                                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                    class="form-control space-on-bottom-xl" />
+                          </form-group>
+                          <form-group>
+                            <label for="as-of-date" class="control-label">
+                              As of Date
+                            </label>
+                            <div>
+                              <dv-datepicker data-ng-model="vm.as_of_date"
+                                            ng-required="true"
+                                            id="as-of-date"
+                                            max-date="vm.maxAsOfDate"></dv-datepicker>
+                            </div>
+                          </form-group>
+                      </form>
+                  </div>
+              </div>
+              <div col="6">
+                  <h4 class="alert alert-info text-center clear-margin-top space-on-left-lg">
+                      Selected Project(s)
+                  </h4>
+
+                  <div col="12">
+                    <table class="table table-striped table-condensed" data-ng-if="vm.combinedDiligences && vm.combinedDiligences.length">
+                      <thead>
+                        <tr>
+                          <th>Action</th>
+                          <th>Project Name</th>
+                          <th>Template Name</th>
+                          <th>Entity Name</th>
+                          <th>Created At</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="entry in vm.combinedDiligences">
+                          <td><button class="btn btn-sm danger" ng-click="vm.removeSelectedDD(entry)"><icon name="trashcan"></icon></button></td>
+                          <td>{{entry.name}}</td>
+                          <td>{{entry.template_name}}</td>
+                          <td>{{entry.entity_name}}</td>
+                          <td>{{entry.created_at | date}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+              </div>
+          </div>
+      </wizard-step>
+  </form-wizard>
+</div>

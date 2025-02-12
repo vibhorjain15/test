@@ -1,0 +1,244 @@
+<app-modal
+  [title]="edit_mode ? 'Editing Event' : 'Add New Event'"
+  [firstButtonLabel]="edit_mode ? 'Update Event' : 'Add Event'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="eventRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #eventRef>
+  <form class="form-horizontal" [formGroup]="eventForm" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <dv-form-element
+          [fieldName]="Name"
+          [modelController]="eventForm.get('name')"
+          [label]="'Name'"
+          [isRequired]="true"
+          [errorMessage]="
+            eventForm.get('name').touched &&
+            eventForm.get('name').errors?.required
+              ? 'Event Name is required'
+              : eventForm.get('name').touched &&
+                eventForm.get('name').errors?.pattern
+              ? (errorMessageMap.avoidFirstSplCharacter
+                | interpolate : 'Event Name')
+              : ''
+          "
+        >
+          <input
+            type="text"
+            class="form-control"
+            name="event_name"
+            placeholder="What is this event about?"
+            formControlName="name"
+            id="name"
+          />
+        </dv-form-element>
+        <dv-form-element
+          [fieldName]="Entity"
+          [modelController]="eventForm.get('entity_id')"
+          [showRightIcon]="false"
+          [label]="'Associated with'"
+          [errorMessage]="
+            eventForm.get('entity_id').touched &&
+            eventForm.get('entity_id').errors?.required
+              ? 'Entity is required'
+              : ''
+          "
+        >
+          <dv-select
+            [list]="entities"
+            formControlName="entity_id"
+            bindLabel="name"
+            bindValue="id"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            placeholder="Select an option"
+            [loading]="entities_loading"
+            [id]="'entity_id'"
+            name="entity"
+            [aria-label]="'Associated with'"
+          ></dv-select>
+
+          <div col="12" class="space-on-top-lg text-right">
+            <div class="btn-group">
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': entity_type === 'Fund' }"
+                (click)="changeEntityType('Fund')"
+              >
+                <span appIcon name="fund" class="space-on-right"></span>Product
+              </span>
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': entity_type == 'Firm' }"
+                (click)="changeEntityType('Firm')"
+              >
+                <span appIcon name="institution" class="space-on-right"></span
+                >Firm
+              </span>
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': entity_type == 'Strategy' }"
+                (click)="changeEntityType('Strategy')"
+              >
+                <span appIcon name="strategy" class="space-on-right"></span
+                >Strategy
+              </span>
+            </div>
+          </div>
+        </dv-form-element>
+
+        <div>
+          <dv-form-element
+            [fieldName]="event_start_at"
+            [modelController]="eventForm.get('event_start_at')"
+            [showRightIcon]="false"
+            [label]="'Date/Time'"
+            elementClass="padding-0"
+            [isRequired]="true"
+          >
+            <div class="col-sm-6">
+              <app-date-picker
+                [id]="'event_start_at'"
+                [minDate]="minDate"
+                [value]="eventForm.get('event_start_at').value"
+                (change)="setDateValue($event)"
+                [class]="
+                  eventForm.get('event_start_at').touched &&
+                  eventForm.get('event_start_at').errors?.required
+                    ? 'has-error'
+                    : ''
+                "
+              >
+              </app-date-picker>
+              <div
+                class="text-danger"
+                *ngIf="
+                  eventForm.get('event_start_at').touched &&
+                  eventForm.get('event_start_at').errors?.required
+                "
+              >
+                Event Date is required
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <dv-select
+                [list]="times"
+                formControlName="start_time"
+                bindLabel="name"
+                bindValue="id"
+                [clearable]="false"
+                placeholder="Start Time"
+                [id]="'start_time'"
+                name="start_at"
+                [aria-label]="'Start Time'"
+              ></dv-select>
+            </div>
+            <div class="col-sm-3">
+              <dv-select
+                [list]="durations"
+                formControlName="duration"
+                bindLabel="name"
+                bindValue="id"
+                [clearable]="false"
+                placeholder="Duration"
+                id="duration"
+                name="duration"
+                [aria-label]="'Duration'"
+              ></dv-select>
+            </div>
+          </dv-form-element>
+        </div>
+
+        <dv-form-element
+          [fieldName]="event_type"
+          [showRightIcon]="false"
+          [modelController]="eventForm.get('event_type')"
+          [label]="'Type'"
+          [isRequired]="true"
+          [errorMessage]="
+            eventForm.get('event_type').touched &&
+            eventForm.get('event_type').errors?.required
+              ? 'Event Type is required'
+              : ''
+          "
+        >
+          <dv-select
+            [list]="types"
+            formControlName="event_type"
+            [id]="'event_type'"
+            bindLabel="value"
+            bindValue="id"
+            [clearable]="false"
+            placeholder="Select an option"
+            [loading]="typesLoading"
+            id="duration"
+            name="duration"
+            [aria-label]="'Duration'"
+          ></dv-select>
+        </dv-form-element>
+        <dv-form-element
+        [fieldName]="'EnableNote'"
+        [showRightIcon]="false"
+        *ngIf="!edit_mode"
+        [elementCol]="11"
+        >
+        <div class="float-right">
+          <dv-checkbox
+            class="inline-block"
+            [(ngModel)]="isNoteEnabled"
+            label="Add a Note"
+            [name]="'add_Note'"
+            [id]="'add_Note'"
+            [ngModelOptions]="{ standalone: true }"
+            (onValChange)="handleNoteEnabledChange($event)"
+          ></dv-checkbox>
+        </div>
+        </dv-form-element>
+        <ng-container *ngIf="isNoteEnabled">
+          <dv-form-element
+            [fieldName]="'Editor'"
+            [showRightIcon]="false"
+            [label]="'Note'"
+            [isRequired]="true"
+          >
+            <app-dv-meeting-notes
+              [submitClicked]="submitClicked"
+              [notesOptions]="notesOptions"
+              [dateFilter]="dateFilter"
+              (onSelectData)="handleSelectedData($event)"
+            ></app-dv-meeting-notes>
+          </dv-form-element>
+          <dv-form-element
+            [fieldName]="type"
+            [showRightIcon]="false"
+            [isRequired]="true"
+            [modelController]="eventForm.get('type')"
+            [label]="'Note Type'"
+          >
+            <dv-select
+              [list]="note_types"
+              formControlName="type"
+              bindLabel="value"
+              bindValue="id"
+              [clearable]="false"
+              placeholder="Select an option"
+              [id]="'type'"
+              name="type"
+            ></dv-select>
+            <div
+              class="text-danger"
+              *ngIf="submitClicked && eventForm.get('type').errors?.required"
+            >
+              Note Type is required
+            </div>
+          </dv-form-element>
+        </ng-container>
+      </div>
+    </div>
+  </form>
+</ng-template>

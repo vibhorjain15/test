@@ -1,0 +1,9 @@
+
+<ui-grid-cell-contents class="text-center">
+  <span ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+</span>
+  <span ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    {{row.entity.access_level=='Private'? 'TeamOwned': row.entity.access_level}}
+  </span>
+</ui-grid-cell-contents>

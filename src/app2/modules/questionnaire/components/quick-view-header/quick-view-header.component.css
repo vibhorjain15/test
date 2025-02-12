@@ -1,0 +1,20 @@
+.label-wrapper {
+  margin: 10px;
+}
+
+.list-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.panel-body {
+  padding: 10px;
+}
+
+.not-clickable {
+  cursor: no-drop;
+}
+
+.help-text-font {
+  color: black;
+}

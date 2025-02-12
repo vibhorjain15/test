@@ -1,0 +1,12 @@
+<div #breadcrumb class="breadcrumb">
+  <span class="breadcrumb-label">Item Location: </span>
+  <ng-container *ngFor="let path of selectionPath; last as isLast">
+    <span [class.breadcrumb--secondary]="!isLast">{{ path }}</span>
+    <span
+      appIcon
+      [name]="!isLast ? 'caret-right' : 'caret-down'"
+      class="dvi-bold p-t-2"
+      [class.breadcrumb--secondary]="!isLast"
+    ></span>
+  </ng-container>
+</div>

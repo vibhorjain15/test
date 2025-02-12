@@ -1,0 +1,269 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-rating-scales></ng2-rating-scales> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Define Rating/Score Scales</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+          <a class="panel-control"
+             data-ng-click="vm.onAddRatingScale()"
+             uib-tooltip="Add New Rating/Score Scale">
+              <icon name="plus"></icon> Add New
+          </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="row space-on-bottom-lg">
+      <div col="12">
+        <div col="6" class="rating-selection-list">
+          <span class="filter-input">
+            <input type="text" class="form-control" data-ng-model="vm.filterRatingScale" placeholder="Search by name"/>
+          </span>
+          <div class="rating-scroll-view space-on-top-lg">
+            <ul col="12">
+              <empty-state message="No Rating/Score scales added. Add one by clicking the add button above." data-ng-hide="vm.ratingScalesList.length"></empty-state>
+              <li data-ng-repeat="scale in vm.ratingScalesList | filter: vm.filterRatingScale" ng-class="{'active-selection':scale.id == vm.selectedScale.id}" data-ng-click="vm.selectRatingScale(scale)" id="rating_scale_{{scale.id}}">
+                <div class="row item">
+                  <span class="align-middle text">
+                    <span class="ratingText">{{scale.name}}</span>
+                  </span>
+                  <div class="pull-right controls">
+                    <span class="control"
+                          data-ng-click="vm.onEditRatingScale(scale, $index)"
+                          data-ng-class="{'disabled-Element':scale.is_system}"
+                          uib-tooltip="{{scale.is_system?'You cannot edit system level rating scale':''}}"
+                          role="button" stop-event-propagation
+                          prevent-default>
+                      <icon name="pencil"></icon>
+                    </span>
+                    <span class="control-danger"
+                          data-ng-click="vm.confirmRatingScaleDeletion(scale, $index)"
+                          data-ng-class="{'disabled-Element':scale.is_system}"
+                          uib-tooltip="{{scale.is_system?'You cannot delete system level ratings':''}}"
+                          role="button" stop-event-propagation
+                          prevent-default>
+                      <icon name="trashcan"></icon>
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div col="6">
+          <div class="panel panel-default" data-ng-if="vm.selectedScale.rating_scales.length > 0">
+            <div class="panel-heading">
+              <h5 class="panel-title">Rating Scale Preview</h5>
+            </div>
+
+            <div class="panel-body">
+              <div data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.Absolute">
+                <dv-rating-preview rating-scales="vm.selectedScale.rating_scales"></dv-rating-preview>
+              </div>
+              <div data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand">
+                <div class="text-muted small">
+                  <div class="space-on-top-lg space-on-bottom-lg" data-ng-repeat="scale in vm.selectedScale.rating_scales">
+                    <span class="badge dd-score-legend space-on-right text-uppercase" data-ng-style="{'background-color':scale.color_code}">{{scale.name}}</span> Score between {{scale.range_min_value}} & {{scale.range_max_value}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-ng-if="vm.selectedScale" class="list-group-item">
+      <div class="text-center" data-ng-show="vm.loading_rating_scales">
+        <spinner></spinner>
+      </div>
+      <div class="row clearfix space-on-top-lg" data-ng-show="!vm.loading_rating_scales && vm.selectedScale.rating_scales && !vm.selectedScale.rating_scales.length">
+        <div col="6" offset="3">
+          <empty-state message="No rating/score scales available"
+                       action-label="Add Rating/Score Scale"
+                       action="vm.incrementScale()"></empty-state>
+        </div>
+      </div>
+      <div data-ng-show="!vm.loading_rating_scales && vm.selectedScale.rating_scales.length" class="row clearfix">
+        <div col="12">
+          <form novalidate name="vm.rating_scales_form" data-ng-submit="vm.save()">
+            <table class="table-transparent table clear-margin" data-ng-show="vm.selectedScale.rating_scales.length">
+              <thead>
+                <tr>
+                  <th style="width: 30%">Rating Name</th>
+                  <th style="width: 40%" data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand" colspan="2">Score Range</th>
+                  <th style="width: 20%" data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.Absolute">Rating Value</th>
+                  <th style="width: 30%">Rating Color</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td>
+                    <form-group field-name="Scale Name" tooltip-placement="bottom">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="vm.noValue.name"
+                            disabled
+                            maxlength="200"
+                            required />
+                    </form-group>
+                  </td>
+                  <td data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand">
+                    <form-group field-name="Scale Min Value" tooltip-placement="top" class="inline-block">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="vm.noValue.range_min_value"
+                            input-preselect
+                            placeholder="Minimum Value"
+                            disabled />
+                    </form-group>
+                  </td>
+                  <td data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand">
+                    <form-group field-name="Scale Max Value" tooltip-placement="bottom" class="inline-block">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="vm.noValue.range_max_value"
+                            input-preselect
+                            placeholder="Maximum Value"
+                            disabled/>
+                    </form-group>
+                  </td>
+                  <td data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.Absolute">
+                    <form-group field-name="Scale Value" tooltip-placement="top" class="inline-block">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="vm.noValue.value"
+                            input-preselect
+                            disabled
+                            required />
+                    </form-group>
+                  </td>
+                  <td>
+                    <form-group field-name="Scale Color" tooltip-placement="top">
+                      <input
+                          name="color-unrated"
+                          id="color-unrated"
+                          minicolors="vm.miniColorSettings"
+                          class="form-control"
+                          type="text"
+                          ng-pattern="/#?[0-9A-Fa-f]{6}/"
+                          data-ng-change="vm.onUnratedColorChanged()"
+                          custom-pattern-message="Please enter a valid 6-digit color code starting with a #."
+                          ng-model="vm.noValue.color_code"
+                          ng-required="true">
+                    </form-group>
+                  </td>
+                </tr>
+                <tr data-ng-repeat="rating_scale in vm.selectedScale.rating_scales">
+                  <td>
+                    <form-group field-name="Scale Name" tooltip-placement="bottom">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="rating_scale.name"
+                            maxlength="200"
+                            data-ng-model-options="{'debounce': 500}"
+                            input-preselect
+                            required />
+                    </form-group>
+                  </td>
+                  <td data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand">
+                    <form-group field-name="Scale Min Value" tooltip-placement="top" class="inline-block">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="rating_scale.range_min_value"
+                            input-preselect
+                            data-ng-disabled="vm.selectedScale.scale_mode == vm.ratingConstants.Absolute"
+                            placeholder="Minimum Value"
+                            name="range-min-value-{{$index}}"
+                            data-ng-model-options="{ debounce: { 'default': 500 } }"
+                            data-ng-change="vm.setScaleValidity()"
+                            required />
+                    </form-group>
+                  </td>
+                  <td data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.ScoreBand">
+                    <form-group field-name="Scale Max Value" tooltip-placement="bottom" class="inline-block">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="rating_scale.range_max_value"
+                            input-preselect
+                            placeholder="Maximum Value"
+                            data-ng-disabled="vm.selectedScale.scale_mode == vm.ratingConstants.Absolute"
+                            name="range-max-value-{{$index}}"
+                            data-ng-model-options="{ debounce: { 'default': 500 } }"
+                            data-ng-change="vm.setScaleValidity()"
+                            required />
+                    </form-group>
+                  </td>
+                  <td data-ng-if="vm.selectedScale.scale_mode == vm.ratingConstants.Absolute">
+                    <form-group field-name="Scale Value" tooltip-placement="top" class="inline-block">
+                      <input type="text"
+                            class="form-control"
+                            data-ng-model="rating_scale.value"
+                            input-preselect
+                            data-ng-model-options="{'debounce': 500}"
+                            disabled
+                            required />
+                    </form-group>
+                  </td>
+                  <td>
+                    <form-group field-name="Scale Color" tooltip-placement="top">
+                      <input
+                          name="color-{{$index}}"
+                          id="color-{{$index}}"
+                          minicolors="vm.miniColorSettings"
+                          class="form-control"
+                          type="text"
+                          ng-pattern="/#?[0-9A-Fa-f]{6}/"
+                          custom-pattern-message="Please enter a valid 6-digit color code starting with a #."
+                          ng-model="rating_scale.color_code"
+                          ng-required="true">
+                    </form-group>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="4" class="text-right">
+                    <button btn-type="default"
+                            size="sm"
+                            data-ng-if="vm.selectedScale.rating_scales.length < 10"
+                            uib-tooltip="Increment Rating Scale"
+                            data-ng-click="vm.incrementScale()">
+                      <icon name="plus"></icon>
+                    </button>
+
+                    <button btn-type="default"
+                            size="sm"
+                            data-ng-disabled="vm.selectedScale.rating_scales.length < 2"
+                            uib-tooltip="Decrement Rating Scale"
+                            data-ng-click="vm.decrementScale()">
+                      <icon name="minus"></icon>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2">
+                    <button type="submit" button-loader="vm.loading">Save</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+
+        <!-- <div col="4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h5 class="panel-title">Rating Scale Preview</h5>
+            </div>
+
+            <div class="panel-body">
+              <dv-rating-preview rating-scales="vm.rating_scales"></dv-rating-preview>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+

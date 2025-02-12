@@ -1,0 +1,26 @@
+<div
+  class="text-left"
+  (mouseenter)="showPreview = true"
+  (mouseleave)="showPreview = false"
+  *ngIf="params.data"
+>
+  <!-- uib-tooltip="{{ row.entity.name }}" -->
+  <!-- truncate-text="30" -->
+  <span>
+    {{ params.data.disclaimer.name }}
+  </span>
+  <button
+    appButton
+    btnType="default"
+    size="xs"
+    class="space-on-left-lg"
+    (click)="viewDisclaimer()"
+    *ngIf="showPreview"
+    [adaptivePosition]="false"
+    tooltip="Preview"
+    aria-label="Preview Disclaimer"
+    container="body"
+  >
+    <span appIcon name="eye"></span>
+  </button>
+</div>

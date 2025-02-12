@@ -1,0 +1,304 @@
+<side-panel-wrapper
+  [title]="panelTitle"
+  firstButtonLabel="Description & Comments"
+  [isFooter]="false"
+  [backIcon]="isAdding"
+  [addIcon]="
+    !isAdding && !invokedFromGrid && !isFreeSubscription && allowAdding
+  "
+  [listIcon]="
+    isList &&
+    !invokedFromGrid &&
+    !isFreeSubscription &&
+    allowAdding &&
+    !editingRecommendation
+  "
+  [isLoading]="loading"
+  [showCloseIcon]="showCloseIcon"
+  [isCancelButton]="!isAngularJs"
+  (onCancelClick)="handleOnCancel($event)"
+  (onBackClick)="handleOnBackClick()"
+  (onAddClick)="handleAddClick()"
+  (onListClick)="handleOnListClick()"
+>
+  <div class="form-horizontal">
+    <div *ngIf="isAdding && !showDescription">
+      <dv-form-element *ngIf="question?.text" elementCol="12" spacing="small">
+        <b class="container-heading">Question: </b>
+        <span [innerHtml]="question.text"></span>
+      </dv-form-element>
+      <dv-form-element elementCol="12" spacing="small">
+        <add-recommendation
+          [entity_id]="entity_id"
+          [entity_type]="entity_type"
+          [editingRecommendation]="editingRecommendation"
+          [diligence]="diligence"
+          (onSave)="handleOnSave($event)"
+          (onUpdate)="handleOnUpdate($event)"
+          (onCancel)="handleOnCancel($event)"
+        ></add-recommendation>
+      </dv-form-element>
+    </div>
+    <ng-container *ngIf="!isAdding && !showDescription && isList">
+      <div class="text-center spinner-display" *ngIf="loading">
+        <app-spinner spinnerHeight="300"></app-spinner>
+      </div>
+      <div *ngIf="!loading">
+        <ng-container *ngIf="!recommendations.length">
+          <div class="text-center space-on-top-xxl space-on-bottom-xxl">
+            <span class="no-items text-italic">
+              No
+              <span *ngIf="this.firm_preferences?.issue_tracker_default_name">
+                {{
+                  this.firm_preferences.issue_tracker_default_name.toLowerCase()
+                }}
+              </span>
+              <span *ngIf="!this.firm_preferences?.issue_tracker_default_name">
+                recommendation
+              </span>
+              added for this question.
+            </span>
+          </div>
+        </ng-container>
+        <div class="recommendations-container" *ngIf="recommendations?.length">
+          <div
+            class="space-on-bottom space-on-top"
+            *ngFor="let recommendation of recommendations; let index = index"
+          >
+            <dv-form-element
+              *ngIf="index == 0 && question?.text"
+              elementCol="12"
+              spacing="medium"
+            >
+              For Question:
+              <span [innerHtml]="question.text" class="questionText"></span>
+            </dv-form-element>
+            <div class="header flex align-items-center">
+              <div class="index" *ngIf="!invokedFromGrid">
+                #000{{ index + 1 }}
+              </div>
+              <div
+                [style.background]="
+                  statusColors[recommendation.status].color_code
+                "
+                [style.color]="
+                  getColor(statusColors[recommendation.status].color_code)
+                "
+                class="status"
+              >
+                <ng-container>
+                  <dv-logo-label (onClick)="handleStatus(index + 1)">
+                    <span
+                      *ngIf="statusUpdating == index + 1"
+                      class="dvi dvi-spinner fa-spin"
+                    ></span>
+                    <span
+                      *ngIf="statusUpdating != index + 1"
+                      class="custom-dropdown-icon"
+                      >&#9660;</span
+                    >
+                    <dv-dropdown
+                      [label]="
+                        statusColors[recommendation.status].name | uppercase
+                      "
+                      type="default"
+                      (onDropdownClick)="
+                        statusDropdownChange($event, recommendation, index + 1)
+                      "
+                      [toggleDropDown]="toggleDropdown == index + 1"
+                      [dropDownList]="statuses"
+                      iconName=""
+                      iconSize="small"
+                      dropdownPlacement="left"
+                    ></dv-dropdown>
+                  </dv-logo-label>
+                </ng-container>
+              </div>
+            </div>
+            <div class="recommendation">
+              <accordion [isAnimated]="true" [destroyOnHide]="false">
+                <accordion-group
+                  [isOpen]="recommendation.isOpen"
+                  panelClass="customClass"
+                >
+                  <span
+                    class="accordion-header"
+                    accordion-heading
+                    type="button"
+                    (click)="handleMoreInfoClick($event, recommendation)"
+                  >
+                    <div class="word-break-break-all">
+                      <span class="text-bold">{{
+                        recommendation.subject
+                      }}</span>
+                    </div>
+                    <div class="icon-wrapper">
+                      <span
+                        appIcon
+                        class="icon-link move-icon-size"
+                        name="pencil"
+                        tooltip="Edit"
+                        (click)="handleEditClick($event, recommendation)"
+                        *ngIf="recommendation.isEditAllowed"
+                      ></span>
+                      <span
+                        appIcon
+                        class="icon-link"
+                        (click)="handleDeleteClick($event, recommendation)"
+                        name="trashcan"
+                        tooltip="Delete"
+                        *ngIf="recommendation.isDeletionAllowed"
+                      ></span>
+                    </div>
+                  </span>
+                  <a
+                    class="accordion-header moreInfo"
+                    accordion-heading
+                    type="button"
+                    (click)="handleMoreInfoClick($event, recommendation)"
+                  >
+                    <div>
+                      <span
+                        appIcon
+                        class="icon-link"
+                        [name]="
+                          recommendation.isOpen ? 'chevron-up' : 'chevron-down'
+                        "
+                      ></span>
+                      <span class="text-bold"> More info </span>
+                    </div>
+                    <div class="icon-wrapper"></div>
+                  </a>
+                  <ng-container *ngIf="recommendation.isOpen">
+                    <div class="flex space-on-top-xxl space-on-bottom">
+                      <div style="width: 30%" class="no-padding bold-text">
+                        Priority
+                      </div>
+                      <div style="width: 70%" class="">
+                        <div
+                          class="text-center spinner-display"
+                          *ngIf="!priorityColors"
+                        >
+                          <app-spinner spinnerHeight="300"></app-spinner>
+                        </div>
+                        <span
+                          *ngIf="priorityColors"
+                          [style.background]="
+                            priorityColors[recommendation.priority].color_code
+                          "
+                          [style.color]="
+                            getColor(
+                              priorityColors[recommendation.priority].color_code
+                            )
+                          "
+                          class="priority"
+                          >{{
+                            priorityColors[recommendation.priority].name
+                              | uppercase
+                          }}</span
+                        >
+                      </div>
+                    </div>
+                    <div class="flex space-on-top-xxl space-on-bottom">
+                      <div style="width: 30%" class="no-padding bold-text">
+                        Resolution Date
+                      </div>
+                      <div style="width: 70%" class="">
+                        {{ recommendation.due_date }}
+                      </div>
+                    </div>
+                    <div class="flex space-on-top-xxl space-on-bottom">
+                      <div style="width: 30%" class="no-padding bold-text">
+                        Reported By
+                      </div>
+                      <div style="width: 70%" class="">
+                        {{ recommendation.reported_by_name }}
+                      </div>
+                    </div>
+                    <div class="flex space-on-top-xxl space-on-bottom">
+                      <div style="width: 30%" class="no-padding bold-text">
+                        Assigned To
+                      </div>
+                      <div style="width: 70%" class="">
+                        {{ recommendation.assigned_to_name }}
+                      </div>
+                    </div>
+                    <div class="flex space-on-top-xxl space-on-bottom-xl">
+                      <div style="width: 30%" class="no-padding bold-text">
+                        Added Tags
+                      </div>
+                      <div style="width: 70%" class="">
+                        <div
+                          class="space-on-right space-on-bottom tag"
+                          *ngFor="let tag of recommendation.tags"
+                        >
+                          {{ tag.name }}
+                        </div>
+                      </div>
+                    </div>
+                    <dv-form-element
+                      spacing="small"
+                      labelPosition="top"
+                      label="Description"
+                      elementCol="12"
+                    >
+                      <textarea
+                        [value]="recommendation.description"
+                        [disabled]="true"
+                        name=""
+                        id=""
+                        cols="30"
+                        rows="3"
+                        class="form-control"
+                        aria-label="description"
+                      ></textarea>
+                    </dv-form-element>
+                    <p class="alert alert-info">
+                      Add comments to send reminders or to add additional
+                      detail.
+                    </p>
+                  </ng-container>
+                </accordion-group>
+              </accordion>
+            </div>
+
+            <div
+              class="description-and-comments recommendation"
+              (click)="handleDescAndCommentsClick(recommendation)"
+            >
+              <div class="title accordion-header">
+                <div>
+                  <span class="text-bold">
+                    Comments/Reminders ({{
+                      recommendation?.comment_count ?? 0
+                    }})
+                  </span>
+                </div>
+                <div class="icon-wrapper">
+                  <span
+                    appIcon
+                    class="icon-link move-icon-size"
+                    name="chevron-right"
+                  ></span>
+                </div>
+              </div>
+            </div>
+            <div
+              *ngIf="recommendations?.length - 1 != index"
+              class="custom-divider"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="showDescription">
+    <recommendation-description
+      *ngIf="issue"
+      [question]="question"
+      [issue]="issue"
+      (onSuccess)="handleOnCommentSuccess($event)"
+      (onCancelComment)="handleOnBackClick()"
+    ></recommendation-description>
+  </div>
+</side-panel-wrapper>

@@ -1,0 +1,20 @@
+<div class="partner-card-wrapper">
+  <div class="card-header-flex">
+    <img
+      class="partner-img-wrapper"
+      [ngClass]="partner?.logo ? '' : 'no-margin'"
+      [src]="partner?.logo"
+      [alt]="partner.name || 'partner logo'"
+    />
+    <dv-checkbox
+      [id]="partner.id"
+      *ngIf="showCheckbox"
+      (onValChange)="handleCheckboxClick($event)"
+      [ariaLabel]="partner.name"
+    >
+    </dv-checkbox>
+  </div>
+  <span>{{ partner.name }}</span>
+  <p class="partner-description" [innerHtml]="description"></p>
+  <span (click)="handleOnClick()" class="partner-learn-more">Learn more</span>
+</div>

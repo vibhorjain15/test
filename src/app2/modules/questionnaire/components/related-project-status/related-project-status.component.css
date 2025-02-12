@@ -1,0 +1,33 @@
+.project-progress {
+  border: 1px solid #bfbfbf;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  padding: 7px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.project-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-status {
+  display: flex;
+  flex-direction: column;
+}
+
+.progress {
+  width: 135px;
+  height: 18px;
+}
+.prog {
+  display: flex;
+  flex-direction: column;
+}
+.percent {
+  align-self: flex-end;
+}
+.coloradd {
+  background-color: #43c59e;
+}

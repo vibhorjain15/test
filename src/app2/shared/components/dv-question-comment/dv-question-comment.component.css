@@ -1,0 +1,25 @@
+.wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.question-comment-wrapper {
+  padding: 10px;
+}
+
+.comment-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+dv-label {
+  margin-right: 5px;
+}
+
+.comments-width {
+  width: 100%;
+}
+.comments-wrapper {
+  background: white;
+}

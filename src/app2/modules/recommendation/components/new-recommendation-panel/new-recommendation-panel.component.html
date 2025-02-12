@@ -1,0 +1,24 @@
+<side-panel-wrapper
+  [title]="panelTitle"
+  [isFooter]="false"
+  [isLoading]="loading"
+  (onCancelClick)="handleOnCancel($event)"
+>
+  <div class="form-horizontal">
+    <div>
+      <dv-form-element elementCol="12" spacing="small">
+        <add-recommendation
+          [entity_id]="entity_id"
+          [entity_type]="entity_type"
+          [editingRecommendation]="editingRecommendation"
+          [diligence]="diligence"
+          (onSave)="handleOnSave($event)"
+          (onUpdate)="handleOnUpdate($event)"
+          (onCancel)="handleOnCancel($event)"
+          tabindex="0"
+        >
+        </add-recommendation>
+      </dv-form-element>
+    </div>
+  </div>
+</side-panel-wrapper>

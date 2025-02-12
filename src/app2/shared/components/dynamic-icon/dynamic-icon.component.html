@@ -1,0 +1,9 @@
+<img
+  #icon
+  [src]="staticIconSrc"
+  [alt]="imageAlt"
+  [height]="height"
+  [width]="width"
+  (mouseover)="icon.src=dynamicIconSrc"
+  (mouseout)="icon.src=staticIconSrc"
+/>

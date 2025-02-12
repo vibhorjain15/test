@@ -1,0 +1,75 @@
+<ng2-analyze-benchmarking data-ng-if="vm.Utils.isAngular()"></ng2-analyze-benchmarking>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-body">
+    <spinner data-ng-show="vm.loading_prefs"></spinner>
+    <form name="vm.benchmark_form" class="dv-table dv-table-middle dd-info-panel" data-ng-if="!vm.loading_prefs">
+      <form-group field-name="Template" class="bordered-right cell max-w-320">
+        <label for="template-selection"
+               class="control-label">Select a Template</label>
+
+        <select id="template-selection"
+                class="form-control"
+                chosen
+                required
+                data-ng-model="vm.filters.template_id"
+                no-results-text="'Could not find any templates'"
+                data-placeholder="Filter by Template"
+                data-ng-options="template.id as template.name for template in vm.templates">
+          <option value=""></option>
+        </select>
+      </form-group>
+      <form-group field-name="Portfolio" class="cell max-w-320">
+        <label for="tag-selection"
+               class="control-label">Select a Portfolio Tag</label>
+
+        <select id="tag-selection"
+                class="form-control"
+                chosen
+                data-ng-model="vm.filters.tag_id"
+                no-results-text="'Could not find any tags'"
+                data-placeholder="Filter by Tags"
+                data-ng-options="tag.id as tag.name for tag in vm.tags">
+          <option value=""></option>
+        </select>
+      </form-group>
+      <div col="3" class="cell">
+        <label for="strategy-selection" class="control-label">Select dates:</label>
+        <div>
+          <dv-daterangepicker ng-model="vm.customDateFilter"
+                  min-date="vm.minDate" max-date="vm.maxDate"></dv-daterangepicker>
+        </div>
+      </div>
+      <div class="bordered-right cell max-w-320"
+           data-ng-click="vm.getAnalytics()">
+            <button btn-type="transparent">        
+              <div>
+                <icon name="analyze" size="2x"></icon>
+              </div>
+              <small>Analyze</small>
+            </button>
+      </div>
+
+      <div class="cell bordered-right text-center">
+
+        <button btn-type="transparent" data-ng-click="vm.reset()">
+          <div>
+            <icon name="refresh"
+                  size="2x"
+                  uib-tooltip="Reset the filters"></icon>
+          </div>
+
+          <small>Reset Selection</small>
+        </button>
+      </div>
+      <div class="cell text-center">
+        <button btn-type="transparent" data-ng-click="vm.goBack()">
+          <div><icon name="arrow-back" size="2x"></icon></div>
+          <small>Go back</small>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<ui-view />

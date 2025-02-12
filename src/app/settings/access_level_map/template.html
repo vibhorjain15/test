@@ -1,0 +1,292 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-user-roles></ng2-user-roles> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default sso-profile-page">
+  <div class="panel-heading">
+    <h5 class="panel-title">Access Level</h5>
+  </div>
+  <!-- <div class="panel panel-info">
+      <div class="panel-heading">If SSO/SAML is enabled, it will only be enforced for users whose domains match with the one added to this list with "SSO" flag on. Domain of the admin will be automatically added here once you configure SSO. Users will be auto approved if their domains are whitelisted here.</div>
+  </div> -->
+  <div class="panel-body export-template">
+    <div class="tableContainer">
+      <table class="table table-condensed table-bordered rolesTableMain">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Firm Settings</th>
+            <th>Entity Management</th>
+            <th>Diligence Management</th>
+            <th>Research Management</th>
+            <th>Doc Management</th>
+            <th data-ng-if="vm.isInvestor">Report Management</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Super Admin</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td data-ng-if="vm.isInvestor">Full access</td>
+          </tr>
+          <tr>
+            <td>Business Admin</td>
+            <td>Limited access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td data-ng-if="vm.isInvestor">Full access</td>
+          </tr>
+          <tr>
+            <td>Security Admin</td>
+            <td>Limited access</td>
+            <td>No access</td>
+            <td>No access</td>
+            <td>No access</td>
+            <td>No access</td>
+            <td data-ng-if="vm.isInvestor">No access</td>
+          </tr>
+          <tr>
+            <td>Owner</td>
+            <td>No access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td>Full access</td>
+            <td data-ng-if="vm.isInvestor">Full access</td>
+          </tr>
+          <tr>
+            <td>Contributor</td>
+            <td>No access</td>
+            <td>
+              <ul>
+                <li>
+                  Can access and edit existing entity
+                </li>
+                <li>
+                  Cannot create new entity: product/vehicle/firm/contact
+                </li>
+                <li>
+                  Cannot add firm level info : AUM/Track Record/address
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>
+                  Cannot modify existing template/project
+                </li>
+                <li>
+                  Cannot add or activate a template/add a new project
+                </li>
+                <li>
+                  Cannot share Diligence with {{vm.isInvestor? 'manager': 'investor'}}
+                </li>
+                <li>
+                  Cannot create a Project
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>
+                  Can add to-do/tasks/meeting notes and notes for {{vm.isInvestor? 'manager': 'investor'}}/products
+                </li>
+                <li>
+                  Cannot trigger workflow
+                </li>
+                <li>
+                  Can add new subscribers to a questionnaire
+                </li>
+                <li data-ng-if="vm.isInvestor">
+                  Can add follow-ups
+                </li>
+              </ul>
+            </td>
+            <td>Full access</td>
+            <td data-ng-if="vm.isInvestor">Full access</td>
+          </tr>
+          <tr>
+            <td>Viewer</td>
+            <td>No access</td>
+            <td>
+              Can only view entities
+            </td>
+            <td>
+              Can only view Diligences
+            </td>
+            <td>
+              Can only view tasks/notes/to-do items
+            </td>
+            <td>Can only view docs</td>
+            <td data-ng-if="vm.isInvestor">Cannot export reports into PDF</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="roles_section admin">
+      <div class="row clearfix">
+        <div class="col-sm-6">
+          <h2>Super Admin</h2>
+          <div class="infotext">
+            <p>Super Admin role has the highest level of access to a firm including firm settings. This type of user can create, delete, and modify entities. This means that Super Admins can control site-wide settings such as adding new users and teams, firm settings, design and export preferences, tag creation, workflows, rating definitions, etc. </p>
+            <p>
+              We recommend that you share management of your account with other people you trust by granting them administrator privileges.
+            </p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="list">
+            <ul>
+              <li><span>Firm Settings-</span>  Yes full access </li>
+              <li><span>Entity Management-</span> Yes full access</li>
+              <li><span>Diligence Management-</span> Yes full access </li>
+              <li><span>Research Management-</span> Yes full access </li>
+              <li><span>Doc Management-</span> Yes full access </li>
+              <li data-ng-if="vm.isInvestor"><span>Report Management-</span> Yes full access </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="roles_section business-admin">
+      <div class="row clearfix">
+        <div class="col-sm-6">
+          <h2>Business Admin</h2>
+          <div class="infotext">
+            <p>Business Admin will have access to configure and manage everything in the firm settings apart from security and users/teams. They should be able to view all users/teams but should not be able to edit them. This user can manage tags and custom fields, add workflows, set preferences, email templates etc.</p>
+            <p>
+              The business admin will have firm wide access to all the other modules available.
+            </p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="list">
+            <ul>
+              <li><span>Firm Settings-</span>  Limited Access </li>
+              <li><span>Entity Management-</span> Yes full access</li>
+              <li><span>Diligence Management-</span> Yes full access </li>
+              <li><span>Research Management-</span> Yes full access </li>
+              <li><span>Doc Management-</span> Yes full access </li>
+              <li data-ng-if="vm.isInvestor"><span>Report Management-</span> Yes full access </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="roles_section security-admin">
+      <div class="row clearfix">
+        <div class="col-sm-6">
+          <h2>Security Admin</h2>
+          <div class="infotext">
+            <p>Security Admin role will have limited access to the firm settings. They can only configure and manage the firm security settings(domain, IP whitelisting, SAML/SSO and password settings) and users/teams on the platform. They will also receive any notifications regarding user profile activation/locked-out notifications/ access level upgraded/downgraded and when SSO will be enabled/disabled.</p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="list">
+            <ul>
+              <li><span>Firm Settings-</span>  Limited Access </li>
+              <li><span>Entity Management-</span> No access</li>
+              <li><span>Diligence Management-</span> No access </li>
+              <li><span>Research Management-</span> No access </li>
+              <li><span>Doc Management-</span> No access </li>
+              <li data-ng-if="vm.isInvestor"><span>Report Management-</span> No access </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- *********************************************************************************************** -->
+    <div class="roles_section owner">
+      <div class="row clearfix">
+        <div class="col-sm-6">
+          <h2>Owner </h2>
+          <div class="infotext">
+            <p>This user has firm-wide read-write access. They can access all entities, create/modify and delete them. Like an Admin, they have all other permissions except access to firm settings. </p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="list">
+            <ul>
+              <li><span>Firm Settings-</span>  No access </li>
+              <li><span>Entity Management-</span> Yes full access</li>
+              <li><span>Diligence Management-</span> Yes full access </li>
+              <li><span>Research Management-</span> Yes full access </li>
+              <li><span>Doc Management-</span> Yes full access </li>
+              <li data-ng-if="vm.isInvestor"><span>Report Management-</span> Yes full access </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- *********************************************************************************************** -->
+    <div class="roles_section contributor">
+      <div class="row clearfix">
+        <div class="col-sm-6">
+          <h2>Contributor <span class="premium-feature">Premium</span></h2>
+          <div class="infotext">
+            <p>This user doesn’t have access to firm settings and cannot create any new resources, but have access to view/modify/delete all the existing resources. Few other restrictions/capabilities are listed below: </p>
+            <ul class="space-in-top">
+              <li>Can't activate the template </li>
+              <li>Can't manage project subscribers</li>
+              <li>Can add to-dos/meetings/notes/responses/attachments/AUM data/follow-ups </li>
+            </ul>
+          </div>
+
+        </div>
+        <div class="col-sm-6">
+          <div class="list">
+            <ul>
+              <li><span>Firm Settings-</span>  No access </li>
+              <li><span>Entity Management-</span> Access and edit existing entities but cannot create new product/vehicle/{{vm.isInvestor? 'manager': 'investor'}}/contact</li>
+              <li><span>Diligence Management-</span> Cannot modify existing template/project but cannot create new projects, Cannot add or activate a template, Cannot share Diligence with {{vm.isInvestor? 'manager': 'investor'}} </li>
+              <li><span>Research Management-</span> Can add to-dos/tasks/internal notes and comments for the {{vm.isInvestor? 'manager': 'investor'}}, Cannot trigger workflow or add new subscribers to a questionnaire  </li>
+              <li><span>Doc Management-</span> Yes full access </li>
+              <li data-ng-if="vm.isInvestor"><span>Report Management-</span> Yes full access </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- *********************************************************************************************** -->
+    <div class="roles_section viewer">
+      <div class="row clearfix">
+        <div class="col-sm-6">
+          <h2>Viewer </h2>
+          <div class="infotext">
+            <p>This type of user can only view all the entities but cannot make any changes to them.This user can also preview and document files but cannot make any changes to them.  They do not have access to firm settings. </p>
+          </div>
+
+        </div>
+        <div class="col-sm-6">
+          <div class="list">
+            <ul>
+              <li><span>Firm Settings-</span>  No access </li>
+              <li><span>Entity Management-</span> Can only view entities </li>
+              <li><span>Diligence Management-</span> Can only view Diligences  </li>
+              <li><span>Research Management-</span> Can only view tasks/notes/to-do items </li>
+              <li><span>Doc Management-</span> Can only view docs </li>
+              <li data-ng-if="vm.isInvestor"><span>Report Management-</span> Cannot export reports into PDF</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="roles_section restricted">
+      <div class="row clearfix">
+        <div class="col-sm-12">
+          <h2>Restricted <span class="premium-feature">Premium</span></h2>
+          <div class="infotext">
+            <p>We also have a special user type: Restricted that doesn't have firm-wide access but when added to the platform can be given specific firm/product/project access. This role is very beneficial if you have consultants who work on a project to project basis. </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

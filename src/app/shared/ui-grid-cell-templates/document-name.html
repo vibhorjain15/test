@@ -1,0 +1,41 @@
+<ui-grid-cell-contents>
+  <div ng-if="!row.groupHeader" class="text-left" ng-mouseenter="showPreview=true" ng-mouseleave="showPreview=false">
+    <a data-ng-if="!row.entity.attachment_id"
+       ui-sref="app.content.document.detail({documentId: row.entity.id})"
+       target="{{(grid.appScope.vm.showFilters()) || (grid.appScope.vm.isSearchResults && grid.appScope.vm.searchText.length) ? '_blank' : '_self'}}"
+       uib-tooltip="{{row.entity.name}}">
+      <span dv-limit-word="row.entity.name"></span>
+    </a>
+
+    <a data-ng-if="row.entity.attachment_id"
+       ui-sref="app.content.document.detail({documentId: row.entity.attachment_id})"
+       uib-tooltip="{{row.entity.name}}"
+       target="{{grid.appScope.vm.showFilters() ? '_blank' : '_self'}}">
+      <span dv-limit-word="row.entity.name"></span>
+    </a>
+
+    <button
+            btn-type="default"
+            size="xs"
+            class="space-on-left-lg"
+            ng-show="showPreview"
+            uib-tooltip="Preview"
+            data-ng-click="grid.appScope.vm.previewClicked = true"
+            document-viewer="row.entity">
+      <icon name="eye"></icon>
+    </button>
+
+    <button
+            btn-type="default"
+            size="xs"
+            class="space-on-left"
+            ng-show="showPreview && grid.appScope.vm.showPreviewIcon(row.entity)"
+            uib-popover-template="grid.appScope.vm.searchResultTemplateUrl"
+            popover-class="search-result-popover"
+            popover-placement="right"
+            popover-trigger="mouseenter"
+            popover-title="Search Result">
+      <icon name="search"></icon>
+    </button>
+  </div>
+</ui-grid-cell-contents>

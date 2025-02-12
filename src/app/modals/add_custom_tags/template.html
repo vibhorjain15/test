@@ -1,0 +1,127 @@
+<form name="vm.add_custom_tags"
+      data-ng-submit="vm.save()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.entityTypeName}} : {{vm.editIndex > -1?'Edit':'Create'}} Custom Field(s)
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.closeModal()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+
+    <form-group field-name="Field Name">
+        <label for="fund" class="control-label col-sm-3" >
+          Field Name <span class="font-size-10 text-orange align-top">*</span>
+        </label>
+
+        <div class="col-sm-8">
+          <input type="text" maxlength="100" ng-model="vm.params.alias" class="form-control" placeholder="Field Name" required>
+        </div>
+    </form-group>
+    <form-group field-name="type">
+        <label for="fund" class="control-label col-sm-3" >
+          Type <span class="font-size-10 text-orange align-top">*</span>
+        </label>
+
+        <div class="col-sm-8">
+          <select name="type"
+                  id="type"
+                  class="form-control"
+                  chosen
+                  data-ng-options="type as type.text for type in vm.fieldTypes"
+                  data-ng-model="vm.option.responseType"
+                  required>
+            <option value="" disabled>--Select Type--</option>
+          </select>
+          <div class="well space-on-top-lg" data-ng-if="vm.option">
+            <field-preview editable question="vm.option"></field-preview>
+          </div>
+          <div class="alert alert-info" data-ng-if="vm.editIndex > -1">
+            Limited edit is allowed for this field
+          </div>
+        </div>
+    </form-group>
+
+    <form-group field-name="type" data-ng-if="vm.option.responseType.id == 'dynamic'">
+      <label for="fund" class="control-label col-sm-3" >
+        Dynamic Source <span class="font-size-10 text-orange align-top">*</span>
+      </label>
+
+      <div class="col-sm-8">
+        <select name="dynamicSource"
+                id="dynamicSource"
+                class="form-control"
+                chosen
+                data-ng-options="source.value as source.label for source in vm.dynamicFieldSource"
+                data-ng-model="vm.params.sub_type"
+                required>
+          <option value="" disabled>--Select Source--</option>
+        </select>
+      </div>
+    </form-group>
+    
+    <form-group field-name="Description">
+        <label for="fund" class="control-label col-sm-3" >
+          Description
+        </label>
+
+        <div class="col-sm-8">
+          <textarea class="form-control"
+            data-ng-model="vm.params.description"
+            placeholder="Enter description for this field"></textarea>
+        </div>
+    </form-group>
+    <form-group field-name="Allow Multiple" data-ng-if="vm.option.responseType.id != 'checkbox' && vm.option.responseType.id != 'dropdown' && vm.option.responseType.id != 'textmultiline'">
+      <div col="8" offset="3">
+        <dv-checkbox data-ng-model="vm.params.has_multiple">
+          <dv-checkbox-label>
+            <b>Allow Multiple values to be added</b>
+          </dv-checkbox-label>
+        </dv-checkbox>
+      </div>
+    </form-group>
+    <form-group field-name="Is Required">
+      <div col="8" offset="3">
+        <dv-checkbox data-ng-model="vm.params.is_mandatory">
+          <dv-checkbox-label>
+            <b>Make this field mandatory</b>
+          </dv-checkbox-label>
+        </dv-checkbox>
+      </div>
+    </form-group>
+    <form-group field-name="Add Link" data-ng-if="vm.option.responseType.id != 'checkbox' && vm.option.responseType.id != 'link' && vm.option.responseType.id != 'dropdown' && vm.option.responseType.id != 'dynamic' && vm.option.responseType.id != 'textmultiline' && vm.source != 'rating'">
+      <div col="8" offset="3">
+        <dv-checkbox data-ng-model="vm.params.has_href">
+          <dv-checkbox-label>
+            <b>Allow users to add a URL</b>
+          </dv-checkbox-label>
+        </dv-checkbox>
+      </div>
+    </form-group>
+    <form-group field-name="Base Link" data-ng-if="vm.option.responseType.id != 'checkbox' && vm.option.responseType.id != 'link' && vm.option.responseType.id != 'dropdown' && vm.option.responseType.id != 'dynamic' && vm.option.responseType.id != 'textmultiline' && vm.source != 'rating' && vm.params.has_href">
+      <label for="fund" class="control-label col-sm-3" >
+        Base URL <span class="font-size-10 text-orange align-top">*</span>
+      </label>
+
+      <div class="col-sm-8">
+        <input type="text" placeholder="For eg: http://www.someurl.com/someid/{}" class="form-control" ng-model="vm.params.href" data-ng-required="vm.params.has_href"
+                            ng-pattern="/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/){1}[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6}(:[0-9]{1,5})?(\/.*)?(\?.*)?$/i"
+                            custom-pattern-message="Please enter a valid domain or website">
+      </div>
+      <div class="col-md-12 space-on-top-lg">
+        <p class="alert alert-info">
+          Add the base URL followed by {} to add extension/path later on. <br>
+          Example : https://diligencevault.com/{}
+        </p>
+      </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">{{vm.editIndex > -1?'Update':'Save'}}</button>
+    <button btn-type="default" button-loader="vm.savingAnother" ng-disabled="vm.saving" data-ng-click="vm.addAnotherField()">{{vm.editIndex > -1 ? 'Update ' : 'Save '}}& Add Another</button>
+    <button btn-type="default" data-ng-click="vm.closeModal()">Cancel</button>
+  </div>
+</form>

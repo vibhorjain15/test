@@ -1,0 +1,4 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <div data-ng-if="row.entity.expiry_date">{{ row.entity.expiry_date | date}}</div>
+    <div data-ng-if="!row.entity.expiry_date">None</div>
+</ui-grid-cell-contents>

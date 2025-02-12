@@ -1,0 +1,15 @@
+.alert-info {
+  padding: 10px;
+}
+.container {
+  margin-top: 30px;
+  margin-left: 15px;
+}
+.header,
+.content {
+  border: 1px solid #c1c1c1;
+  padding: 8px;
+}
+.header {
+  font-weight: 700;
+}

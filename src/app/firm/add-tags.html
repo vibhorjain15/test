@@ -1,0 +1,22 @@
+<form name="vm.add_tags_form" novalidate data-ng-submit="vm.saveTags()">
+  <div class="form-group">
+    <tags-input name='Tags' ng-model="vm.new_tag_params.list"
+                add-on-blur="false"
+                add-on-paste="true"
+                paste-split-pattern="[,]"
+                min-length="2"
+                allowed-tags-pattern="{{vm.tags_pattern}}"
+                placeholder="Enter tags separated by comma">
+    </tags-input>
+
+    <small class="text-danger"
+           data-ng-show="vm.add_tags_form.$submitted && !vm.new_tag_params.list.length">
+      Please enter at least one tag
+    </small>
+  </div>
+
+  <div class="form-group">
+    <button type="submit" button-loader="vm.saving_tags">Save</button>
+    <button btn-type="default" data-ng-click="vm.isPopoverOpen = false">Cancel</button>
+  </div>
+</form>

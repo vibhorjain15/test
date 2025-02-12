@@ -1,0 +1,93 @@
+<div class="panel panel-default space-on-bottom-xxl">
+    <div class="panel-heading">
+            <span>
+                  <icon name="document-question" class="space-on-right align-middle"></icon>
+                  <span class="align-middle">
+                        Questionnaire Template Options
+                  </span>
+            </span>
+    </div>
+
+    <div class="panel-body rb-questionnaire-settings">
+        <div class="row">
+            <div class="form-group" col="7">
+                <label uib-tooltip="Keep this empty if you don't want a title for this section">Title (Optional)</label>
+
+                <div>
+                    <input type="text"
+                           class="form-control"
+                           focus-me="true"
+                           select-all-text
+                           data-ng-model-options="{ debounce: { 'default': 300 } }"
+                           data-ng-model="component.options.title">
+                </div>
+            </div>
+
+            <div col="5">
+                <rb-component-width></rb-component-width>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Layout</label>
+
+            <div>
+                <div class="btn-group">
+                    <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.view == 'side-by-side'}" data-ng-click="component.options.view = 'side-by-side'">
+                        SIDE-BY-SIDE
+                    </label>
+                    <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.view == 'horizontal'}" data-ng-click="component.options.view = 'horizontal'">
+                        HORIZONTAL
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Select Template</label>
+
+            <div>
+                <select class="form-control"
+                        chosen
+                        data-ng-change="templateChanged()"
+                        data-ng-model="templateId"
+                        data-ng-options="template.templateInfo.id as template.templateInfo.name for template in templatesList">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group" data-ng-if="templateId">
+            <div class="space-on-left space-on-top-lg" data-ng-if="loading_questions_list">
+                <spinner spinner-text='Loading questions'></spinner>
+            </div>
+
+
+            <div data-ng-if="!loading_questions_list && questionsList.length">
+                <label>Select Questions</label>
+
+                <div>
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search questions"
+                           data-ng-init="search_questions = ''"
+                           data-ng-model="search_questions">
+                </div>
+
+                <div>
+                    <dv-checkbox
+                            data-ng-repeat="question in questionsList | filter: {text: search_questions} track by question.id"
+                            data-ng-model="question.is_selected"
+                            data-ng-change="updateSelectedList(question)"
+                            label="{{::question.text}}">
+                    </dv-checkbox>
+                </div>
+            </div>
+
+            <small class="space-on-left" data-ng-if="!loading_questions_list && !questionsList.length">
+                No questions available for this template
+            </small>
+
+        </div>
+    </div>
+</div>

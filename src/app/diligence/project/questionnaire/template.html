@@ -1,0 +1,492 @@
+<dv-filters-sidebar data-ng-if="vm.isQaSearchEnabled && vm.is_manager && !vm.Utils.isQuestionnaireAngular()" diligence="vm.diligence"></dv-filters-sidebar>
+<div class="row clearfix" data-ng-if="!vm.Utils.isQuestionnaireAngular()">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix" data-ng-if="!vm.activeSearch">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.diligence"></spinner>
+
+        <div chardin="vm.chardin_config" reveal-on-keypress class="hidden"></div>
+
+        <div class="dv-table dv-table-middle dd-info-panel pull-left"
+             data-ng-if="vm.diligence" data-ng-class="{'col-md-12': vm.options.mode == 'manager'}">
+          <div class="cell bordered-right min-cell-width">
+            <span>
+              <h4 class="clear-margin max-w-340 lh1-5 word-break-break-all inline-block"
+                uib-tooltip="{{vm.related_diligences.length > 0? 'select '+vm.related_diligences.length+' related questionnaire':''}}">
+                {{::vm.name}}
+              </h4>
+            </span>
+            <small class="text-muted block-display" data-ng-if="vm.diligence.last_updated_at">
+              Last Updated {{::vm.diligence.last_updated_at|date}}
+            </small>
+          </div>
+
+          <div class="bordered-right text-center cell">
+            <span class="align-middle">Status:</span>
+            <span diligence-status="vm.diligence.status"></span>
+          </div>
+
+          <div class="cell text-center bordered-right">
+            <h4 class="clear-margin">
+              {{vm.diligence.as_of_date | date}}
+            </h4>
+            <small class="text-muted">
+              As of Date
+            </small>
+          </div>
+
+          <div class="cell text-center bordered-right"
+               data-ng-show="vm.disclaimer_id ">
+            <button btn-type="transparent"
+                    data-ng-click="vm.viewDisclaimer()">
+              <div><icon size="2x" class="dvi dvi-disclaimer"></icon></div>
+              <small>View Disclaimer</small>
+            </button>
+          </div>
+
+          <div class="text-center cell bordered-right"
+               data-ng-show="vm.options.mode == 'investor' && vm.diligence.aggregateTotal"><!-- aggregateScore can be null -->
+
+            <dd-score score="vm.diligence.aggregateScore"
+                      total="vm.diligence.aggregateTotal"></dd-score>
+
+            <div class="text-muted">
+              <small>Aggregate Score</small>
+            </div>
+          </div>
+
+
+          <div class="cell text-center bordered-right" data-ng-if="!vm.diligence.notVisible && (!vm.diligence.isLocked) && (!vm.diligence.isReadOnly) && vm.wipCount > 0">
+            <span uib-dropdown>
+              <a href="" class="dropdown-toggle btn btn-transparent"
+                  uib-dropdown-toggle
+                  uib-tooltip="Finalize draft responses.">
+                   <div><icon name="under-construction-2" size="2x"></icon></div>
+                   <div class="space-on-top-n"><small>Finalize Drafts</small></div>
+              </a>
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu" data-ng-disabled="!({'Started': true, 'Followup': true})[vm.diligence.status]" data-ng-hide="(vm.diligence.isLocked)||(vm.diligence.isReadOnly)">
+                <li>
+                  <a data-ng-click="vm.unMarkWIP('all_responses')" role="button" uib-tooltip="All Responses"><icon name="check" class="space-on-right-lg"></icon>All Responses</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a data-ng-click="vm.unMarkWIP('my_responses')" role="button" uib-tooltip="My Responses"><icon name="user" class="space-on-right-lg"></icon>Responses Edited by Me</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                  <a data-ng-click="vm.unMarkWIP('assigned_responses')" role="button" uib-tooltip="My Assigned Responses"><icon name="user-check" class="space-on-right-lg"></icon>Responses Assigned to Me</a>
+                </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="!(vm.diligence.entity_type == 'Fund' && vm.diligence.linked_duediligence_id) && vm.diligence.entity_type != 'Strategy' && (vm.related_diligences.length > 0 || vm.diligence.linked_duediligence_id)">
+            <button btn-type="transparent" class="headerCount"
+                    data-ng-click="vm.viewRelatedProjects()">
+              <div><icon name="vehicle-car" class="font-size-18"></icon><span class="count-bubble"
+                data-ng-show="vm.related_diligences.length > 0">{{vm.related_diligences.length}}</span></div>
+              <small>View Vehicle Projects</small>
+            </button>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="((vm.diligence.entity_type == 'Fund' && vm.diligence.linked_duediligence_id) || vm.diligence.entity_type == 'Strategy') && (vm.related_diligences.length > 0 || vm.diligence.linked_duediligence_id)">
+            <button btn-type="transparent" class="headerCount"
+                    data-ng-click="vm.viewRelatedProjects()">
+              <div><icon name="fund" class="font-size-18"></icon><span class="count-bubble"
+                data-ng-show="vm.related_diligences.length > 0">{{vm.related_diligences.length}}</span></div>
+              <small>View Product Projects</small>
+            </button>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="!vm.diligence.notVisible && !(vm.diligence.isLocked || vm.diligence.isReadOnly)">
+            <button btn-type="transparent"
+                    class="qa-na-active"
+                    data-ng-disabled="!({'Started': true, 'Followup': true,'ExtensionRequested':true, 'InReview': true})[vm.diligence.status]"
+                    data-ng-hide="(vm.diligence.isLocked)||(vm.diligence.isReadOnly)"
+                    uib-tooltip="Auto-fill this project with previous responses from similar requests on the platform"
+                    data-ng-click="vm.autoFill()">
+              <div><icon name="refresh" size="2x"></icon></div>
+              <small>Auto-fill</small>
+            </button>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="vm.options.mode == 'manager' && vm.diligence.review_allowed && !vm.diligence.isLocked && vm.canStartReview && ({'Started': true, 'ExtensionRequested': true, 'Followup': true, 'Completed':true})[vm.diligence.status] && !vm.diligence.alwaysOpen">
+            <button btn-type="transparent" data-ng-click="vm.openConfirmationforVerifier()">
+              <div>
+                <icon name="analytics2" size="2x"></icon>
+              </div>
+              <small>Start Review</small>
+            </button>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="vm.options.mode == 'investor' && vm.diligence.review_allowed && !vm.diligence.isLocked && vm.canStartReview && ({'Started': true, 'Completed':true, 'PendingRestart':true})[vm.diligence.status] && !vm.diligence.alwaysOpen">
+            <button btn-type="transparent" data-ng-click="vm.openConfirmationforVerifier()">
+              <div>
+                <icon name="analytics2" size="2x"></icon>
+              </div>
+              <small>Start Review</small>
+            </button>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="vm.options.mode == 'investor' && (vm.diligence.status === 'Approved' || vm.diligence.status === 'NotApproved' || vm.diligence.status === 'Completed' || vm.diligence.status === 'Evaluation' || vm.diligence.diligence_type === 'dd_profile' || vm.diligence.diligence_type == 'dd_review') && vm.diligence.recalculation_needed">
+            <button btn-type="transparent" data-ng-click="vm.reloadRatings()" button-loader="vm.recalculating_scores">
+              <div>
+                <icon name="refresh" size="2x"></icon>
+              </div>
+              <small>Recalculate Ratings</small>
+            </button>
+          </div>
+
+          <div class="cell bordered-right" data-ng-if="(((vm.options.mode == 'manager') || (vm.diligence.is_internal && vm.options.mode == 'investor')) && !vm.diligence.alwaysOpen && (({'Started': true, 'ExtensionRequested': true, 'Followup': true,'InReview':true})[vm.diligence.status])) && (!vm.canStartReview || vm.diligence.status == 'InReview')">
+            <div class="text-center">
+              <questionnaire-submit-button diligence="vm.diligence" related-diligences="vm.related_diligences">
+              </questionnaire-submit-button>
+            </div>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="(vm.options.mode == 'manager')||((vm.options.mode == 'investor') && (!vm.diligence.notVisible))">
+            <span uib-dropdown>
+               <a href="" class="dropdown-toggle btn btn-transparent"
+                  uib-dropdown-toggle
+                  uib-tooltip="Filter / Preview / Export">
+                   <div><icon name="ellipsis-h" size="2x"></icon></div>
+                   <div class="space-on-top-n"><small>More Actions</small></div>
+               </a>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu" data-ng-if="(vm.options.mode == 'manager')">
+                  <li data-ng-disabled="!vm.options.displayFilterPanel">
+                     <a data-ng-click="vm.options.displayFilterPanel = !vm.options.displayFilterPanel" role="button"><icon name="filter" class="space-on-right-lg"></icon>{{vm.options.displayFilterPanel ? 'Hide' : 'Show' }} Filters</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(!vm.diligence.is_internal)"></li>
+                  <li data-ng-if="vm.diligence.is_internal">
+                      <a data-ng-click="vm.modifyQuestionnaire()" role="button"><icon name="align-left" class="space-on-right-lg"></icon>Modify Questionnaire</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.is_internal && vm.is_admin && (vm.diligence.status == 'Approved' || vm.diligence.status == 'Completed' || vm.diligence.status == 'NotApproved')">
+                    <a data-ng-click="vm.changeDDStatus('Restarted')" role="button"><icon name="undo" class="space-on-right-lg"></icon>Restart Internal Project</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(vm.diligence.isLocked)||(vm.diligence.isReadOnly)"></li>
+                  <li data-ng-if="!(vm.diligence.isLocked)">
+                      <a data-ng-click="vm.triggerWorkflow()" role="button"><icon name="cogs" class="space-on-right-lg"></icon>Start Workflow Process</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.review_allowed && !(vm.diligence.isLocked) && !(({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && !vm.diligence.alwaysOpen && !(vm.diligence.review_mandatory && vm.canStartReview)">
+                    <a data-ng-click="vm.toggleReviewButton()" role="button"><icon name="analytics2" class="space-on-right-lg"></icon>{{vm.canStartReview?'Disable':'Enable'}} Review Workflow</a>
+                  </li>
+                  <li data-ng-if="(!(vm.diligence.isLocked) && (({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && vm.reviewStartedForUser) || (vm.options.mode == 'manager' && vm.diligence.alwaysOpen)">
+                    <a data-ng-click="vm.openCopyVerifierModal()" role="button"><icon name="add-user-2" class="space-on-right-lg"></icon>Assign Reviewers</a>
+                  </li>
+                  <li data-ng-if="(!(vm.diligence.isLocked) && (({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && vm.reviewStartedForUser) && !vm.diligence.alwaysOpen">
+                    <a data-ng-click="vm.onTerminateReviewClick()" role="button"><icon name="ban" class="space-on-right-lg"></icon>Cancel Review</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(vm.diligence.isLocked)||(vm.diligence.isReadOnly)"></li>
+                  <li data-ng-hide="(vm.diligence.isLocked)||(vm.diligence.isReadOnly)">
+                      <a data-ng-click="vm.addDisclaimer()" role="button" data-ng-if="vm.options.mode == 'manager'"><icon size="1x" class="dvi dvi-disclaimer space-on-right-lg"></icon> Add Disclaimer</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(vm.diligence.isLocked)||(vm.diligence.isReadOnly)"></li>
+                  <li>
+                      <a ui-sref="^.print_preview" role="button"><icon name="print" class="space-on-right-lg"></icon>Print / Preview</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(vm.is_freeSubscription || vm.diligence_type != 'dd_doc')"></li>
+                  <li uib-tooltip="{{vm.is_freeSubscription?'Available for premium subscribers':''}}" data-ng-hide="(vm.is_freeSubscription || vm.diligence_type != 'dd_doc')">
+                      <a data-ng-click="vm.writeToOriginalDocument()" role="button" data-ng-if="vm.options.mode == 'manager'"data-ng-class="{'disableField': (vm.is_freeSubscription || vm.diligence_type != 'dd_doc')}"><icon name="copy" class="space-on-right-lg"></icon>Export to Original Doc</a>
+                  </li>
+                  <li class="divider js-delete-button"></li>
+                  <li uib-tooltip="Receive an email with a Word or Excel document formatted with your export preferences.">
+                     <a data-ng-click="vm.chooseExportTemplate()" role="button"><icon name="file-docx" class="space-on-right-lg"></icon>Export & Email</a>
+                  </li>
+                  <!-- <li>
+                      <a data-ng-click="vm.emailAndExport()" role="button"><icon name="file-docx" class="space-on-right-lg"></icon>Export & Email</a>
+                  </li>
+                  <li uib-tooltip="{{vm.is_freeSubscription?'Available for premium subscribers':''}}">
+                      <a data-ng-click="vm.chooseExportTemplate()" role="button" data-ng-class="{'disableField': vm.is_freeSubscription}"><icon name="file-docx" class="space-on-right-lg"></icon>Advance Export</a>
+                  </li> -->
+                  <li class="divider js-delete-button" data-ng-hide="(!vm.diligence.canDelete)"></li>
+                  <li>
+                      <a class="text-danger" role="button" data-ng-if="(vm.diligence.canDelete)" data-ng-click="vm.deleteQuestionnaire()"><icon name="trashcan" class="space-on-right"></icon>Delete</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                      <a ui-sref="app.diligence.projects.activity({type: 'in-progress'})"><icon name="arrow-back" class="space-on-right"></icon>Back to all projects</a>
+                  </li>
+              </ul>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu" data-ng-if="(vm.options.mode == 'investor') && (!vm.diligence.notVisible)">
+                  <li data-ng-disabled="!vm.options.displayFilterPanel">
+                     <a data-ng-click="vm.options.displayFilterPanel = !vm.options.displayFilterPanel" role="button"><icon name="filter" class="space-on-right-lg"></icon>{{vm.options.displayFilterPanel ? 'Hide' : 'Show' }} Filters</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(!vm.diligence.alwaysOpen)"></li>
+                  <li data-ng-if="vm.diligence.alwaysOpen">
+                     <a data-ng-click="vm.autoFill()" role="button"><icon name="refresh" class="space-on-right-lg"></icon>Auto-fill</a>
+                  </li>
+                  <li data-ng-if="!(vm.diligence.isLocked)">
+                      <a data-ng-click="vm.triggerWorkflow()" role="button"><icon name="cogs" class="space-on-right-lg"></icon>Start Workflow Process</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.review_allowed && !(vm.diligence.isLocked) && !(({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && !vm.diligence.alwaysOpen && !(vm.diligence.review_mandatory && vm.canStartReview)">
+                    <a data-ng-click="vm.toggleReviewButton()" role="button"><icon name="analytics2" class="space-on-right-lg"></icon>{{vm.canStartReview?'Disable':'Enable'}} Review Workflow</a>
+                  </li>
+                  <li data-ng-if="!(vm.diligence.isLocked) && (({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && !vm.diligence.alwaysOpen && vm.reviewStartedForUser">
+                    <a data-ng-click="vm.openCopyVerifierModal()" role="button"><icon name="add-user-2" class="space-on-right-lg"></icon>Assign Reviewers</a>
+                  </li>
+                  <li data-ng-if="!(vm.diligence.isLocked) && (({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && !vm.diligence.alwaysOpen && vm.reviewStartedForUser">
+                    <a data-ng-click="vm.onTerminateReviewClick()" role="button"><icon name="ban" class="space-on-right-lg"></icon>Cancel Review</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.is_internal">
+                    <a data-ng-click="vm.modifyQuestionnaire()" role="button"><icon name="align-left" class="space-on-right-lg"></icon>Modify Questionnaire</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.is_internal && vm.is_admin && (vm.diligence.status == 'Approved' || vm.diligence.status == 'Completed' || vm.diligence.status == 'NotApproved')">
+                    <a data-ng-click="vm.changeDDStatus('Restarted')" role="button"><icon name="undo" class="space-on-right-lg"></icon>Restart Internal Project</a>
+                  </li>
+                  <li data-ng-if="!vm.diligence.is_internal && vm.is_admin && (vm.diligence.status == 'Approved' || vm.diligence.status == 'NotApproved')">
+                    <a data-ng-click="vm.changeDDStatus('Completed')" role="button"><icon name="undo" class="space-on-right-lg"></icon>Change Status to Completed</a>
+                  </li>
+                  <li data-ng-if="!vm.diligence.is_internal && vm.is_admin && (vm.diligence.status == 'Approved' || vm.diligence.status == 'NotApproved')">
+                    <a data-ng-click="vm.changeDDStatus('Restarted')" role="button"><icon name="undo" class="space-on-right-lg"></icon>Change Status to Started</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="!(vm.diligence.alwaysOpen)"></li>
+                  <li>
+                      <a ui-sref="^.print_preview" role="button"><icon name="print" class="space-on-right-lg"></icon>Print / Preview</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.is_internal && vm.diligence_type != 'dd_profile' && vm.diligence_type != 'dd_review' && vm.allow_internal_to_external">
+                    <a ui-sref="app.diligence.to_external({diligenceId: vm.diligence.id})" role="button"><icon name="mail-forward" class="space-on-right-lg"></icon>Send to Manager</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li uib-tooltip="Receive an email with a Word or Excel document formatted with your export preferences.">
+                     <a data-ng-click="vm.chooseExportTemplate()" role="button"><icon name="file-docx" class="space-on-right-lg"></icon>Export & Email</a>
+                  </li>
+                   <!-- <li uib-tooltip="{{vm.is_freeSubscription?'Available for premium subscribers':''}}">
+                      <a data-ng-click="vm.emailAndExport()" role="button" data-ng-class="{disableField:vm.is_freeSubscription}"><icon name="file-docx" class="space-on-right-lg"></icon>Export & Email</a>
+                  </li>
+                  <li uib-tooltip="{{vm.is_freeSubscription?'Available for premium subscribers':''}}">
+                     <a data-ng-click="vm.chooseExportTemplate()" role="button" data-ng-class="{disableField:vm.is_freeSubscription}"><icon name="file-docx" class="space-on-right-lg"></icon>Advance Export</a>
+                  </li> -->
+                  <li data-ng-if="vm.firm_preferences.show_presentation_module" uib-tooltip="{{vm.is_freeSubscription?'Available for premium subscribers':''}}">
+                    <a data-ng-click="vm.exportReviewDoc()" role="button" data-ng-class="{disableField:vm.is_freeSubscription}"><icon name="file-docx" class="space-on-right-lg"></icon>Generate Presentation Report</a>
+                  </li>
+                  <li class="divider js-delete-button" data-ng-hide="(!vm.diligence.canDelete)"></li>
+                  <li  data-ng-if="(vm.diligence.canDelete)">
+                    <a class="text-danger" role="button" data-ng-click="vm.deleteQuestionnaire()"><icon name="trashcan" class="space-on-right"></icon>Delete</a>
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                      <a ui-sref="app.diligence.projects.activity({type: 'in-progress'})"><icon name="arrow-back" class="space-on-right"></icon>Back to all projects</a>
+                  </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="cell bordered-right" data-ng-if="vm.diligence.isLocked && !vm.diligence.hasReadOnlyAccess">
+            <div class="qa-na-active text-center"
+                    uib-tooltip="You cannot edit the response, or update Follow-ups, Notes, or To-Dos for closed projects.">
+              <div><icon name="secure" size="2x"></icon></div>
+              <small>Closed Project</small>
+            </div>
+          </div>
+
+          <div class="cell bordered-right" data-ng-if="vm.options.mode == 'manager' && vm.diligence.isReadOnly && !vm.diligence.isLocked && !vm.diligence.is_internal">
+            <div class="qa-na-active text-center" uib-tooltip="You cannot edit the response. To Restart, please go to the summary tab and click Restart or Request restart">
+              <div><icon name="readonly" size="2x"></icon></div>
+              <small>Submitted to Investor.</small>
+            </div>
+          </div>
+
+          <div class="cell bordered-right" data-ng-if="vm.diligence.hasReadOnlyAccess">
+            <div class="qa-na-active text-center" uib-tooltip="You have readonly access.">
+              <div><icon name="readonly" size="2x"></icon></div>
+              <small>Read Only View</small>
+            </div>
+          </div>
+
+          <div class="cell" data-ng-show="vm.diligence && !vm.diligence.notVisible">
+            <button btn-type="transparent"
+                    data-ng-click="vm.toggleSearchBar(true)">
+              <div><icon name="search" size="2x"></icon></div>
+              <small>Search</small>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!--#####################################  -->
+      <div class="panel-body clearfix" data-ng-if="vm.activeSearch">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.diligence"></spinner>
+
+        <div chardin="vm.chardin_config" reveal-on-keypress class="hidden"></div>
+
+        <div class="dv-table dv-table-middle dd-info-panel pull-left col-md-12"
+             data-ng-if="vm.diligence">
+          <div class="cell bordered-right min-cell-width">
+            <h4 class="clear-margin max-w-340 lh1-5 word-break-break-all">
+              {{::vm.name}}
+            </h4>
+              <small class="text-muted" data-ng-if="vm.diligence.last_updated_at">
+                  Last Updated {{::vm.diligence.last_updated_at|date}}
+              </small>
+          </div>
+
+          <div class="cell bordered-right" data-ng-show="vm.diligence">
+            <form name="search_questions">
+              <div class="input-group space-on-left-lg space-on-right-lg" data-ng-class="{'search-questions': vm.statusFilter == 'Search' && vm.search_text.length}">
+                <input type="text" class="form-control" placeholder="Search for questions..." required data-ng-model="vm.search_text_new">
+                <span class="input-group-btn">
+                  <button btn-type="transparent" class="danger clear-text" data-ng-click="vm.resetFilter()" data-ng-show="vm.statusFilter == 'Search' && vm.search_text.length">
+                    <icon name="close" class="space-on-right"></icon>Clear
+                  </button>
+                  <button class="btn btn-default primary" submit-style-override type="submit" data-ng-click="vm.searchQuestions()">
+                    <icon name="search" class="text-primary"></icon>
+                  </button>
+                </span>
+              </div>
+              <h5 class="space-on-top clear-margin-bottom lh1-7" data-ng-show="vm.statusFilter == 'Search' && vm.search_text.length">
+                Showing {{vm.total_questions_count}} questions matching "<b><u><span dv-limit-word="vm.search_text" char-limit="15"></span></u></b>"
+                (<a class="clickable" data-ng-click="vm.redirectToSinglePageView()"
+                    uib-tooltip="View all results on a single page"
+                    tooltip-placement="top">
+                View All
+              </a>)
+              </h5>
+            </form>
+          </div>
+          <div class="cell text-center">
+            <button btn-type="transparent"
+                    data-ng-click="vm.toggleSearchBar(false)">
+              <div><icon name="close" size="2x"></icon></div>
+              <small><strong>Cancel</strong></small>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default slide questionnaire-filters"
+         data-ng-show="vm.options.displayFilterPanel && !vm.diligence.notVisible">
+      <div class="panel-body relative">
+        <!-- <a role="button" href="" class="left carousel-control" data-ng-hide="vm.currentFiltersPage == 0" ng-click="vm.currentFiltersPage = vm.currentFiltersPage - 1">
+          <icon name="chevron-left"></icon>
+        </a> -->
+        <div>
+          <div col="2" class="width-13-pct text-center bordered-right" data-ng-repeat="filter in vm.filtersMap.main track by $index">
+            <button btn-type="transparent" data-ng-click="vm.getSections(filter)"
+                    data-ng-class="{'qa-na-active': vm.statusFilter == filter.param}"
+                    data-ng-disabled ="filter.count == 0">
+            <span class="inline-block relative">
+              <i class="dvi dvi-{{filter.icon}} fa-2x"></i>
+              <small class="pos-abs stick-top-ve-sm space-on-left-3">
+                <strong>{{filter.count}}</strong>
+              </small>
+            </span>
+              <p class="word-break-break-word white-space-normal">
+                <small>{{filter.name}}</small>
+              </p>
+            </button>
+          </div>
+
+          <div col="2" class="width-13-pct text-center bordered-right" data-ng-if="vm.statusFilter == filter.param" data-ng-repeat="filter in vm.filtersMap.optional track by $index">
+            <button btn-type="transparent" data-ng-click="vm.getSections(filter)"
+                data-ng-class="{'qa-na-active': vm.statusFilter == filter.param}">
+              <span class="inline-block relative">
+                <i class="dvi dvi-{{filter.icon}} fa-2x"></i>
+                <small class="pos-abs stick-top-ve-sm space-on-left-3">
+                  <strong>{{filter.count}}</strong>
+                </small>
+              </span>
+              <p class="word-break-break-word white-space-normal">
+                <small>{{filter.name}}</small>
+              </p>
+            </button>
+          </div>
+
+          <div col="2" class="width-13-pct text-center" uib-dropdown data-ng-if="vm.filtersMap.optional.length > 0">
+            <button btn-type="transparent" href="" uib-dropdown-toggle>
+              <span class="inline-block relative">
+                <i class="dvi dvi-chevron-down fa-2x"></i>
+              </span>
+              <div>
+                <small>More</small>
+              </div>
+            </button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+              <li data-ng-repeat="filter in vm.filtersMap.optional"
+                  data-ng-class="{'active': vm.statusFilter == filter.param}"
+                  data-ng-click="vm.getSections(filter)">
+                <a role="button" data-ng-class="{'disabled':filter.count == 0}">
+                  <icon name="{{filter.icon}}" class="space-on-right-lg"></icon>
+                  {{filter.name}}
+                  <small class="badge space-on-left-3">
+                    <strong>{{filter.count}}</strong>
+                  </small>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div data-ng-if="!vm.diligence.notVisible">
+      <spinner data-ng-hide="vm.parent_sections"></spinner>
+
+      <div id="js-questionnaire-parent-tpl" class="row clearfix relative"
+           data-ng-show="vm.parent_sections">
+        <div class="col-md-2">
+
+          <div class="full-width">
+            <div id="js-questionnaire-sidebar-tpl" class="sidebar list-group list-group-menu dv-affix-scrollable-list" dv-affix-scrollable init-watch="::vm.parent_sections.length" dynamic-watch="vm.active_category.child_sections" offset-top="60">
+              <div class="nested-list-group-container sidebar__inner" data-ng-repeat="section in ::vm.parent_sections">
+
+                <a class="list-group-item pos-rel" role="button" data-ng-class="{'active': vm.active_category.parent_section.id == section.id}" data-ng-click="vm.getChildSections(section)" uib-tooltip="{{::section.attributes.name}}" tooltip-placement="right">
+                  <icon name="chevron-down" data-ng-if="vm.active_category.parent_section.id == section.id"></icon>
+                  <span class="state-label" truncate-text="16">{{::section.attributes.name}} </span>
+                  <span class="badge numericBadge">{{::section.attributes.question_counts}}</span>
+                </a>
+
+                <div class="list-group in collapse" uib-collapse="false" aria-expanded="true" aria-hidden="false" data-ng-show="section.id == vm.active_category.parent_section.id">
+                  <a class="list-group-item"
+                     uib-tooltip="{{::child_section.attributes.name}}"
+                     tooltip-placement="right"
+                     data-ng-class="{'text-orange': (child_section.attributes.id == vm.active_category.active_child_section_id)}"
+                     data-ng-repeat="child_section in vm.active_category.child_sections" href=""
+                     data-ng-hide="vm.active_category.parent_section.child_sections_loading" data-ng-click="vm.goToChildSection(child_section)">
+                    <span class="state-label"
+                          truncate-text="17">{{::child_section.attributes.name}}</span>
+                  </a>
+                  <a class="list-group-item" data-ng-show="vm.active_category.parent_section.child_sections_loading">
+                    <spinner></spinner>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-10 default-background-color">
+          <ui-view />
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default" data-ng-if="vm.diligence.notVisible">
+      <div class="panel-body">
+        <div class="row clearfix">
+          <div col="6" offset="3">
+            <empty-state icon-name="smile-o"
+                         message="Nothing to review. But have patience, the manager is working hard on getting you the responses. We'll send you a notification once the status changes to completed."
+                         action="vm.redirectToSummary()"
+                         action-label="Go to summary page"></empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default" data-ng-if="!vm.diligence.notVisible && vm.statusFilter && vm.parent_sections && !vm.parent_sections.length">
+      <div class="panel-body">
+        <div class="row clearfix">
+          <div col="6" offset="3">
+            <empty-state icon-name="smile-o"
+                         message="No questions matched your filter criteria."
+                         action="vm.resetFilter()"
+                         action-label="Click to Reset"></empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

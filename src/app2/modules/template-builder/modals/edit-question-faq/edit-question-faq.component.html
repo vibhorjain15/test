@@ -1,0 +1,73 @@
+<app-modal
+  [title]="'Edit Question FAQ'"
+  [isCancelButton]="false"
+  [initialTemplate]="EditQuestionFAQ"
+  role="dialog"
+  aria-labelledby="editQuestionFAQTitle"
+  aria-describedby="editQuestionFAQDescription"
+>
+</app-modal>
+
+<ng-template #EditQuestionFAQ>
+  <div role="region" aria-label="Edit Question FAQ">
+    <span
+      id="editQuestionFAQTitle"
+      class="bold-text block-display space-on-bottom"
+    >
+      1. Can I convert/change the response type if we have associated responses?
+    </span>
+    <span id="editQuestionFAQDescription"
+      >You cannot convert all the response types when you have associated
+      responses. But you can make the below changes:</span
+    >
+    <ul>
+      <li>Single line response type can be converted to paragraph*</li>
+      <li>Dropdown response type can be converted to multiple checkbox*</li>
+      <li>Email response type can be converted into one line or paragraph*</li>
+      <li>
+        Numeric decimal response type to integer and vice versa is allowed
+      </li>
+      <li>
+        Yes/No response type can be converted to Yes/No with explanation for Yes
+        or No and vice versa is allowed
+      </li>
+      <li>
+        Grids and customize grids/tables response types cannot be converted
+      </li>
+    </ul>
+    <span>* vice versa is not allowed</span>
+  </div>
+  <div class="space-on-top">
+    <span class="bold-text block-display space-on-bottom">
+      2. What can I edit if the question has associated responses?
+    </span>
+    <span
+      >You can edit the question text as required. For checkbox/dropdown type
+      questions you can add/remove, modify the options and change ordering. For
+      grid and custom grid you can modify the options, add/remove the columns
+      and rows, change ordering as needed.</span
+    >
+  </div>
+  <div class="space-on-top">
+    <span class="bold-text block-display space-on-bottom">
+      3. In what scenarios will I see the latest changes (questions added/
+      deleted/ modified) of the template in the project without activating the
+      template?
+    </span>
+    <span
+      >In all the below scenarios you will see the latest changes without
+      activating the template:</span
+    >
+    <ul>
+      <li>When there are no responses available for the questions.</li>
+      <li>
+        When all the external projects of this template version have an
+        “Invited” status.
+      </li>
+      <li>
+        When all the Internal projects of this template version have a “Started”
+        status.
+      </li>
+    </ul>
+  </div>
+</ng-template>

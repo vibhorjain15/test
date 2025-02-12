@@ -1,0 +1,18 @@
+<div class="pointer-events-auto">
+  <img
+    src="/assets/images/empty-state.svg"
+    alt="no items found image"
+    height="118"
+    width="118"
+  />
+  <div class="text-gray font-size-14 font-weight-600 space-on-top">
+    <p class="clear-margin">No items found!</p>
+    <p *ngIf="canShowDocumentUpload">Let's add one today.</p>
+    <dv-button
+      *ngIf="canShowDocumentUpload"
+      (onClick)="openDocumentUploadModal()"
+    >
+      <span appIcon name="plus"></span> Add New
+    </dv-button>
+  </div>
+</div>

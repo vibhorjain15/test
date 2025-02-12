@@ -1,0 +1,131 @@
+<div *ngIf="headerIcons.length" class="container-header">
+  <dv-label
+    size="heading"
+    label=" <strong> {{ subCatTitle }}</strong>"
+  ></dv-label>
+  <dv-icon-group spacing="massive">
+    <ng-container *ngFor="let icon of headerIcons">
+      <span
+        *ngIf="icon?.key != 'assign' && icon?.key != 'rating'"
+        [ngClass]="{ 'icon-hover': !icon.disabled }"
+        container="body"
+        placement="left"
+        [tooltip]="icon.tooltip"
+        class="clickable"
+        [color]="icon.color"
+        [isDisable]="icon.disabled"
+        appIcon
+        [name]="icon.name"
+        (click)="handleIconClick(icon)"
+        tabindex="0"
+        (keydown.enter)="handleIconClick(icon)"
+      >
+        <span *ngIf="icon?.count" class="count-bubble relative align-middle">{{
+          icon.count
+        }}</span>
+      </span>
+      <app-dv-team-member-selector
+        *ngIf="icon?.key == 'assign'"
+        (onChange)="handleSubscriber($event)"
+        [selection]="subCatData.selectedUser.users"
+        [functionSelection]="subCatData.selectedUser.assignedFunctions"
+        [functions]="subCatData.selectedUser.functions"
+      >
+      </app-dv-team-member-selector>
+      <ng-container *ngIf="icon.key == 'rating' && ratingCheck">
+        <app-editable-only-score
+          container="body"
+          [tooltip]="icon.tooltip"
+          *ngIf="icon.isScoreband"
+          [total]="100"
+          [readonly]="icon.disabled"
+          [type]="icon.type"
+          [naScaleObj]="icon.naScaleObj"
+          [ratingScale]="icon.rating"
+          [reviewEnabled]="icon.reviewEnabled"
+          [score]="icon.name"
+          [isNARating]="icon.isNARating"
+          (onChange)="handleOnRatingClick($event, icon, 'change')"
+          (onIconClick)="handleOnRatingClick($event, icon, 'click')"
+          tabindex="0"
+          [attr.aria-label]="icon.tooltip"
+          (keydown.enter)="handleOnRatingClick($event, icon, 'click')"
+        >
+        </app-editable-only-score>
+        <dv-rating-dropdown
+          class="rating-dropdown"
+          [showDropDown]="!icon.isNotDropDown"
+          *ngIf="!icon.isScoreband"
+          [color]="icon.color"
+          [tooltip]="icon.tooltip"
+          [score]="icon.name"
+          [ratingScales]="icon.rating"
+          [readonly]="icon.readonly"
+          [isNARating]="icon.isNARating"
+          (onChange)="handleOnRatingClick($event, icon, 'change')"
+          (onClick)="handleOnRatingClick($event, icon, 'click')"
+          tabindex="0"
+          [attr.aria-label]="icon.tooltip"
+          (keydown.enter)="handleOnRatingClick($event, icon, 'click')"
+        >
+        </dv-rating-dropdown>
+      </ng-container>
+    </ng-container>
+    <ng-container
+      *ngIf="
+        firmPreferences.enable_track_changes &&
+        showTrackChangeButton &&
+        diligence.status === diligenceStatusConstant.InReview
+      "
+    >
+      <span
+        [style]="{ 'margin-right': '0px' }"
+        class="header-component bordered-left"
+      >
+        <dv-button
+          btnClass="btn review-track-changes success btn-xs"
+          tooltip="Accept all tracked changes"
+          btnType=""
+          (onClick)="showTrackChangesConfirmation('accept')"
+          triggers="mouseenter:mouseleave"
+          [ariaLabel]="'Accept all tracked changes'"
+        >
+          Accept All
+        </dv-button>
+      </span>
+      &nbsp;
+      <span class="header-component bordered-left">
+        <dv-button
+          btnClass="btn review-track-changes danger btn-xs"
+          tooltip="Reject all tracked changes"
+          (onClick)="showTrackChangesConfirmation('reject')"
+          triggers="mouseenter:mouseleave"
+          [ariaLabel]="'Reject all tracked changes'"
+        >
+          Reject All
+        </dv-button>
+      </span>
+    </ng-container>
+  </dv-icon-group>
+  <div class="pull-right">
+    <div *ngIf="undo.show" class="review-timer">
+      <dv-link
+        [color]="undo.color"
+        [icon]="undo.iconName"
+        [name]="undo.name"
+      ></dv-link>
+      &nbsp;
+      <span
+        class="label label-default clickable"
+        tooltip="Undo review"
+        (click)="undoVerification('undo')"
+        tabindex="0"
+        aria-label="Undo review"
+        (keydown.enter)="undoVerification('undo')"
+      >
+        <span appIcon name="undo"></span>
+        {{ time }} seconds left
+      </span>
+    </div>
+  </div>
+</div>

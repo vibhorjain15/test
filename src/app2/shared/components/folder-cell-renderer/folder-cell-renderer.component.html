@@ -1,0 +1,99 @@
+<div
+  class="d-flex align-items-center"
+  [ngClass]="{
+    'margin-skip-expand-collapse':
+      !params?.node?.__hasChildren && params?.node?.level === 0
+  }"
+  (mouseenter)="showPreview = true"
+  (mouseleave)="showPreview = false"
+  *ngIf="params.data"
+>
+  <span
+    *ngIf="params.data.document.type === 0"
+    class="more-text flex-property folder-class"
+    [tippyTooltip]="
+      params.data.document.name?.length > 34 ? params.data.document.name : ''
+    "
+  >
+    <span
+      appIcon
+      [name]="params?.node?.expanded ? 'folder-open' : 'folder'"
+      [style.paddingRight.px]="5"
+    ></span
+    >{{ params.data.document.name }}</span
+  >
+  <a
+    [tippyTooltip]="
+      params.data.document.name?.length > 34 ? params.data.document.name : ''
+    "
+    (click)="click($event)"
+    *ngIf="params.data.document.type"
+    class="more-text flex-property no-underline"
+  >
+    <span
+      [style.fontWeight]="params.data.document.is_unread ? 'bold' : 'normal'"
+      class="align-middle"
+      (click)="click($event)"
+    >
+      <app-attachment-icon
+        [filename]="params.data.document.file_name"
+        class="file-attachment-icon"
+        [color]="'#1d9c5a'"
+        class="space-on-right"
+      ></app-attachment-icon>
+      {{ params.data.document.name }}</span
+    >
+  </a>
+  <span
+    *ngIf="params.data.document.reviews?.length"
+    customSize="big"
+    class="space-on-left-lg"
+    appIcon
+    name="reviewed-document"
+  ></span>
+  <button
+    appButton
+    btnType="default"
+    size="xs"
+    class="space-on-left-lg margin-auto"
+    *ngIf="(showPreview || isDropdownOpen) && params.data.document.type"
+    tooltip="View"
+    aria-label="View"
+    container="body"
+    [adaptivePosition]="false"
+    (click)="previewClicked(params.data.document)"
+  >
+    <span appIcon name="eye"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="xs"
+    class="space-on-left-lg margin-auto"
+    *ngIf="
+      (showPreview || isDropdownOpen) &&
+      params.data.document.type &&
+      showPreviewIcon(params.data.document)
+    "
+    aria-label="Search"
+  >
+    <span appIcon name="search"></span>
+  </button>
+  <dv-dropdown
+    type="default"
+    (onDropdownClick)="handleActionClick($event)"
+    (onIconClick)="handleActionClick($event)"
+    [dropDownList]="actions"
+    iconName="dots-three-vertical"
+    [isIconLabel]="false"
+    [style.display]="showPreview || isDropdownOpen ? null : 'none'"
+    iconSize="large"
+    dropdownPlacement="left"
+    tippyTooltip="More Actions"
+    (onDropdownToggle)="isDropdownOpen = !isDropdownOpen"
+    class="space-on-left-lg ellipsis-margin-top"
+    *ngIf="actions?.length"
+    iconClass="dropdown-doc-class"
+  >
+  </dv-dropdown>
+</div>

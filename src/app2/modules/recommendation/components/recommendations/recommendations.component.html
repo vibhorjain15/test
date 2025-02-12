@@ -1,0 +1,30 @@
+<div class="row clearfix" *ngIf="!loading">
+  <dv-drag-panel-list [isSidePanelOpened]="isSidePanelOpened">
+    <recommendation-grid
+      [onlyGrid]="onlyGrid"
+      [entity_id]="entity_id"
+      [entity_type]="entity_type"
+      [diligence]="diligence"
+      leftPanel
+      [showHeaderUpperCase]="showHeaderUpperCase"
+      [dateRangeFilter]="dateRangeFilter"
+      [isDashboard]="isDashboard"
+      [recommendationsData]="recommendationsData"
+      [getRowClass]="getRowClass"
+      [onNewRowClicked]="onRowClicked"
+      (onUpdate)="onUpdate.emit($event)"
+    ></recommendation-grid>
+    <side-panel
+      *ngIf="isSidePanelOpened"
+      [activePanelId]="activePanelId | async"
+      rightPanel
+    >
+    </side-panel>
+  </dv-drag-panel-list>
+</div>
+
+<app-spinner
+  broadSpinner="true"
+  spinnerHeight="250"
+  *ngIf="loading"
+></app-spinner>

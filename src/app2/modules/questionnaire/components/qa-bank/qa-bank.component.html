@@ -1,0 +1,215 @@
+<side-panel-wrapper
+  [title]="'Q/A Search'"
+  [isFooter]="isFooter"
+  [isLoading]="isSidePanelLoadingParam"
+  (onCancelClick)="onCancelClick()"
+  class="qa-search-sidepanel"
+  role="region"
+  aria-label="Q/A Search Panel"
+>
+  <div
+    class="qaBank-main"
+    role="region"
+    aria-label="Question and Answer Search"
+  >
+    <div class="qa-button-wrapper" *ngIf="currentUser?.isManager">
+      <div class="qa-buttons space-on-top-lg" role="tablist">
+        <dv-tabs
+          [list]="tabs"
+          [loading]="false"
+          [preventScroll]="true"
+          size="large"
+          (onTabClick)="handleTabChange($event)"
+          class="width-100-pct"
+        ></dv-tabs>
+      </div>
+    </div>
+
+    <div class="qa-search-field">
+      <input
+        type="text"
+        placeholder="Search by keyword"
+        [(ngModel)]="searchParameterModel"
+        (ngModelChange)="handleSearchQueryChange($event)"
+        aria-label="Search Input"
+      />
+
+      <dv-button
+        class="space-on-left"
+        btnType="default"
+        (onClick)="toggleAdvancedFilters()"
+        ariaLabel="Filter Button"
+      >
+        <span appIcon customSize="big" name="filter"></span>
+      </dv-button>
+      <span
+        *ngIf="filterCount"
+        class="qa-search-count-bubble relative space-on-right-n"
+        aria-label="Filter Count"
+        >{{ filterCount }}</span
+      >
+
+      <dv-button
+        (onClick)="setType(selectedType, true)"
+        [ngClass]="{ 'space-on-left': !filterCount }"
+        btnType="primary"
+        ariaLabel="Search Button"
+      >
+        <span appIcon name="search" customSize="big"></span>
+      </dv-button>
+    </div>
+
+    <dv-select
+      [list]="sortList"
+      (onSelectChange)="handleSortChange($event)"
+      [ngModel]="currentSortFilterSelected"
+      bindLabel="name"
+      *ngIf="qa.length && !loading"
+      bindValue="id"
+      class="space-on-top-lg qa-search-sorting"
+      [aria-label]="'Sort Select'"
+    ></dv-select>
+
+    <div class="advanced-filters space-on-top-lg" *ngIf="showAdvancedFilters">
+      <span class="text-muted" aria-label="Search Filters Label"
+        >Search within</span
+      >
+      <form
+        class="form-horizontal"
+        [formGroup]="advancedFiltersFormGroup"
+        autocomplete="off"
+      >
+        <div class="display-flex">
+          <dv-checkbox
+            name="searchWithinQuestion"
+            label="Question"
+            (onValChange)="changeValueCount($event)"
+            formControlName="searchWithinQuestion"
+            class="space-on-right-lg"
+          >
+          </dv-checkbox>
+          <dv-checkbox
+            name="searchWithinAnswer"
+            label="Response"
+            (onValChange)="changeValueCount($event)"
+            formControlName="searchWithinAnswer"
+            class="space-on-right-lg"
+          >
+          </dv-checkbox>
+          <dv-checkbox
+            name="searchWithinTags"
+            label="Tags"
+            (onValChange)="changeValueCount($event)"
+            formControlName="searchWithinTags"
+          >
+          </dv-checkbox>
+        </div>
+        <dv-divider></dv-divider>
+        <dv-checkbox
+          Tooltip="By default, all {{
+            diligence.entity_type == 'Fund'
+              ? 'products'
+              : diligence.entity_type === 'Firm'
+              ? 'entities'
+              : (diligence.entity_type | lowercase)
+          }} are searched"
+          label="For {{ diligence.entity_name }}"
+          (onValChange)="changeValueCount($event)"
+          name="selectedEntity"
+          formControlName="searchForSelectedEntity"
+        >
+        </dv-checkbox>
+      </form>
+    </div>
+
+    <div *ngIf="!loading" role="group" aria-label="Question and Answer Results">
+      <div
+        class="qa-count"
+        *ngIf="searchParameter && qa?.length"
+        aria-label="Search Results Count"
+      >
+        Showing {{ questionsTotalCount }} results
+      </div>
+
+      <div class="qa-preview">
+        <div *ngFor="let item of qa; let i = index" class="space-on-bottom-lg">
+          <qa-preview
+            [heading]="item.question"
+            [headingIcon]="item.questionIcon"
+            [content]="item.answer"
+            (onIconClick)="handleIconClick($event, item)"
+            (onHeadingIconClick)="handleIconClick($event, item)"
+          >
+            <div
+              content
+              class="space-on-top-lg"
+              *ngIf="
+                (item.data.response_type == 'Grid' ||
+                  item.data.response_type == 'DynamicGrid') &&
+                item.colHeaders &&
+                item.tableData
+              "
+              aria-label="Table Data"
+            >
+              <div col="1" class="text-center">
+                <span
+                  appIcon
+                  name="download-install-line"
+                  tooltip="Import grid"
+                  [adaptivePosition]="true"
+                  container="body"
+                  class="cursor-pointer text-bold"
+                  (click)="importTable(item)"
+                  aria-label="Import Table"
+                ></span>
+              </div>
+              <div col="11">
+                <plain-grid
+                  [rowHeaders]="item.rowHeaders"
+                  [colHeaders]="item.colHeaders"
+                  [data]="item.tableData"
+                  [enableHeaders]="true"
+                  maxHeight="300px"
+                  aria-label="Plain Grid"
+                ></plain-grid>
+              </div>
+            </div>
+          </qa-preview>
+        </div>
+      </div>
+
+      <app-empty-state
+        message="No results found"
+        *ngIf="!qa?.length && searchParameter"
+        aria-label="No Results Found Message"
+      ></app-empty-state>
+    </div>
+    <app-spinner
+      broadSpinner="true"
+      spinnerHeight="100"
+      *ngIf="loading"
+    ></app-spinner>
+  </div>
+
+  <div
+    sidePanelFooter
+    [hidden]="loading || !qa?.length"
+    class="pagination-footer dv-scroll-bar"
+    role="contentinfo"
+    aria-label="Pagination Footer"
+  >
+    <dv-pagination
+      [startCount]="start_point + 1"
+      [endCount]="end_point"
+      [loader]="loading"
+      [totalCount]="questionsTotalCount"
+      (onNextClick)="goToNext()"
+      (onPrevClick)="goToPrevious()"
+      (onFirstClick)="firstClick()"
+      (onLastClick)="lastClick($event)"
+      [pageSize]="pageSize"
+      [lite]="true"
+      aria-label="Pagination"
+    ></dv-pagination>
+  </div>
+</side-panel-wrapper>

@@ -1,0 +1,239 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">
+            FAQ and commonly used formula with examples
+        </h5>
+    </div>
+    <div class="panel-body">
+        <div col="12">
+            <div class="row">
+                <h4>
+                    How to use Grid validations and Formula?
+                </h4>
+                <video width="1024" height="600" id="videoTag" class="center-block"
+                    controls="" controlslist="nodownload"
+                    data-title="Grid Validation Video">
+                    <source src="https://dvappstorage.blob.core.windows.net/client-materials/DiligenceVault%20-%20Grid%20Validations%20and%20Formula.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="row">
+                <h4>Frequently asked questions</h4>
+                <ol>
+                    <li>These formulas will work with both <b>standard grid/table</b> and <b>customized grid</b>.</li>
+                    <li>Utilize dynamic formulas within custom grids at the template level that adjust according to the number of added rows. This functionality allows you to establish formulas for individual cells, while our algorithm automatically generates corresponding formulas for subsequent rows. For example, if you utilize the formula =SUM(A1:B1) in a specific cell, this formula dynamically extends to any new rows added by the user. For instance, if the user adds a second row, the formula will automatically apply to the new rows as =SUM(A2:B2). To maintain fixed row references, use the '$' symbol, as in A$1. This ensures that the formula remains static and does not dynamically adjust to new rows added.</li>
+                    <li>Opt for the aggregation row functionality to execute dynamic aggregation operations within the final row of a customized grid, facilitating formulas like =SUM(A1:A4) that dynamically update with the addition or removal of rows. For example if this formula =SUM(A1:A1) is configured in the Aggregate row then the formula would not be limited to cell A1:A1 but will dynamically apply across the entire range i.e. A1:A(n).</li>
+                    <li>You will not be able to type in the cell wherein you have added any validations. This cell will be greyed out.</li>
+                    <li>
+                        You can copy the formula entered in the grid by clicking on the “copy” button and make any required changes to the table. Limited edits are allowed if the template has associated responses.
+                        <img src="assets/images/formulasetup1.png" width="600px" height="120px" class="block-display bordered-image">
+                    </li>
+                    <li class="">
+                        If the column type is numeric or percentage and the formula entered gives a text value then the grid will show you a  #VALUE! error. Please make sure the column type is text in this case.<br>
+                        Example: In cell G1 we want to look up for wherever the start year entered by the user is 2015 and return the last name entered in corresponding 3rd column C1. Cell G1 is a numeric value type column and since the returning value is not a numeric field it is showing #Value! As the error.
+                        <img src="assets/images/formulasetup2.png" width="800px" height="150px" class="block-display bordered-image">
+                    </li>
+                </ol>
+            </div>
+            <div class="row">
+                <h4>List of Errors</h4>
+                <p>A handful of errors can appear in a cell when a formula is applied and cannot be resolved. Please find the list of most common errors below:</p>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td colspan="1" rowspan="1">Error</td>
+                            <td colspan="1" rowspan="1">Meaning</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #DIV/0!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                Trying to divide by 0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #N/A!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                A formula or a function inside a formula cannot find the referencevalue
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #NAME?
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                Text in the formula is not recognized
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #NULL!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                A space was used in formulas that reference multiple ranges; a comma separates range references
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #NUM!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                A formula has invalid numeric data for the type of operation
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #REF!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                A reference is invalid
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #VALUE!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                The wrong type of operand or function argument is used
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #CYCLE!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                It occurs when a formula refers to its own cell, both directly and indirectly.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" rowspan="1">
+                                #ERROR!
+                            </td>
+                            <td colspan="1" rowspan="1">
+                                It indicates that there is an unknown error in a formula.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <h4>Examples</h4>
+            </div>
+            <div class="row">
+                <h4>1. SUM</h4>
+                <p>The <b>SUM</b> function allows you to add values. You can add individual values, cell references or ranges or a mix of all three.<br>
+                    Here’s an example. Let's say you want to find the total of AUM added by the user in column A1 to A4 in the table below in cell <b>A5</b>. The values entered in cell A1 to A4 belong to various AUM for America, EMEA, APAC and Other regions.
+                    Click on cell A5 and type your formula =SUM(A1:A4) and save this setup.</p>
+                <img src="assets/images/formulasetup3.png" width="800px" height="400px" class="block-display bordered-image">
+                <img src="assets/images/formulasetup4.png" width="600px" height="250px" class="block-display bordered-image">
+            </div>
+            <div class="row">
+                <h4>2. SUMIF</h4>
+                <p>The <b>SUMIF</b> function allows you to sum the values in a range that meet criteria that you specify.<br>
+                    For example, suppose that in a column that contains numbers, you want to sum only the values that are larger than 10. You can use the following formula: =SUMIF(C1:C10,">10")</p>
+                <img src="assets/images/formulasetup5.png" width="800px" height="500px" class="block-display bordered-image">
+                <p>According to the data entered below, the answer is 76, taking into account wherever the values entered were greater than 10.</p>
+                <img src="assets/images/formulasetup6.png" width="800px" height="300px" class="block-display bordered-image">
+                <p>
+                    <b>Another use case of SUMIF formula that can be used along with ERROR. TYPE formula:</b><br>
+                    For example, in the above instance we added one more column for Global AUM. The value of Global AUM should be equal to the Sum of values added by users in A2,A3,A4 and A5, if it is not equal then we would like to show an error message to the user. The error message can be added using the ERROR.TYPE function along with the SUMIF function.
+                    We can add the above validations in cell A6.<br>
+                    You can use the following formula to add a sum and also show an error message to the users if the values entered in A1 are not equal to values entered by users in  A2,A3,A4 and A5.<br>
+                    =IF(A1 <> SUM(A2:A5), "ERROR.TYPE('Total for amount  should be equal to AUM')", SUM(A2:A5))
+                </p>
+                <img src="assets/images/formulasetup7.png" width="800px" height="400px" class="block-display bordered-image">
+                <p>Now if the value of A1 is not equal to the Sum of A2:A5, then you will see the error below. You will also not be able to save and will see an error icon next to that question(like in the example below)</p>
+                <img src="assets/images/formulasetup8.png" width="500px" height="250px" class="block-display bordered-image">
+                <p>If the values are entered correctly, you will be able to save your response and proceed:</p>
+                <img src="assets/images/formulasetup9.png" width="500px" height="230px" class="block-display bordered-image">
+            </div>
+            <div class="row">
+                <h4>3. SUMPRODUCT</h4>
+                <p>The SUMPRODUCT function returns the sum of the products of corresponding ranges or arrays. The default operation is multiplication, but addition, subtraction, and division are also possible.<br>
+                    In this example, we'll use SUMPRODUCT to return the Overall weighted score in cell D7. The formula we have used is =SUMPRODUCT(B1:B6,C1:C6)/SUM(C1:C6)</p>
+                <img src="assets/images/formulasetup10.png" width="800px" height="400px" class="block-display bordered-image">
+                <p>Each cell in column B is multiplied by its corresponding cell in the same row in column C, and the results are added up. Now to find the weighted average we will divide the first part SUMPRODUCT(B1:B6,C1:C6) by the SUM of the weights i.e (SUM(C1:C6))</p>
+                <img src="assets/images/formulasetup11.png" width="800px" height="200px" class="block-display bordered-image">
+            </div>
+            <div class="row">
+                <h4>4. ISBLANK</h4>
+                <p>
+                    The ISBLANK function is used to return TRUE when a cell is empty, and FALSE when a cell is not empty. This function can be used if you want to make a column or row mandatory.<br>
+                    Example: Let's say you wanted to make sure that the user did enter the Date in Column B. We can use the below formula and make sure the users do add a value otherwise it will show them an error message.<br>
+                    You can use the following formula: <br>
+                    =IF(ISBLANK(B1), "ERROR.TYPE('Date is required')","")
+                </p>
+                <img src="assets/images/formulasetup12.png" width="800px" height="600px" class="block-display bordered-image">
+                <p>If dates are not entered by the user then they will see the error message like below and will not be able to save and continue:</p>
+                <img src="assets/images/formulasetup13.png" width="1000px" height="200px" class="block-display bordered-image">
+                <p>Once the date is added you will no longer see the error message and will be able to save and continue:</p>
+                <img src="assets/images/formulasetup14.png" width="800px" height="200px" class="block-display bordered-image">
+            </div>
+            <div class="row">
+                <h4>5. ROUND</h4>
+                <p>The ROUND function allows you to round a number to a specified number of digits.<br>
+                    For example, if in column B we want to find the values in % for each value entered by the user in column A and also round it off to nearest 2 digits the we can use the below formula:<br>
+                    =ROUND((A1/A5)*100,2)</p>
+                <img src="assets/images/formulasetup15.png" width="800px" height="400px" class="block-display bordered-image">
+                <p>The users will see the #DIV/0! Error message until the values are added in column A as below:</p>
+                <img src="assets/images/formulasetup16.png" width="800px" height="200px" class="block-display bordered-image">
+                <p>Once the responses are added the errors messages will clear automatically and you will see the rounded off values in column B as below:</p>
+                <img src="assets/images/formulasetup17.png" width="800px" height="200px" class="block-display bordered-image">
+            </div>
+            <div class="row">
+                <h4>6. SUBTRACT NUMBERS</h4>
+                <p>To do simple subtraction, use the - (minus sign) arithmetic operator.<br>
+                    Let's say you want to find out the Net flow. In cell A2 we have YTD Inflow and in cell A1 we have YTD outflow. The Net flow will be A2-A1.
+                </p>
+                <img src="assets/images/formulasetup18.png" width="800px" height="400px" class="block-display bordered-image">
+                <img src="assets/images/formulasetup19.png" width="800px" height="200px" class="block-display bordered-image">
+            </div>
+            <div class="row">
+                <h4>7. VLOOKUP</h4>
+                <p>The VLOOKUP searches down the first column of a range for a key and returns the value of a specified cell in the row found.<br>
+                    In its simplest form, the VLOOKUP function says: <br>
+                    =VLOOKUP(What you want to look up, where you want to look for it, the column number in the range containing the value to return, return an Approximate or Exact match – indicated as 1/TRUE, or 0/FALSE).<br>
+                    In the below examples we want to lookup if the start date entered for an employee in column A is equal to 2015 then return the last name of the employee entered in column C.
+                </p>
+                <img src="assets/images/formulasetup20.png" width="800px" height="500px" class="block-display bordered-image">
+                <img src="assets/images/formulasetup21.png" width="600px" height="100px" class="block-display bordered-image">
+                <p>
+                    <b>Please note:  True and False will not work in the current version of the formula on the platform. Please use 1/TRUE, or 0/FALSE instead.</b>
+                </p>
+            </div>
+            <div class="row">
+                <h4>8. HLOOKUP</h4>
+                <p>The HLOOKUP searches for a value in the top row of a table or an array of values, and then returns a value in the same column from a row you specify in the table or array. Use this function when your comparison values are located in a row across the top of a table of data, and you want to look down a specified number of rows.<br>
+                    Use VLOOKUP when your comparison values are located in a column to the left of the data you want to find.  <br>
+                    Example:  In the table below we want to find wherever the Inception date is mentioned as 2001 and return the value entered in corresponding row 4. So the formula would be =HLOOKUP(2001,A1:D4,4,0).
+                </p>
+                <img src="assets/images/formulasetup22.png" width="800px" height="400px" class="block-display bordered-image">
+                <img src="assets/images/formulasetup23.png" width="500px" height="300px" class="block-display bordered-image">
+                <p>
+                    <b>Please note:  True and False will not work in the current version of the formula on the platform. Please use 1/TRUE, or 0/FALSE instead.</b>
+                </p>
+            </div>
+            <div class="row">
+                <h4>9. AVERAGEIF</h4>
+                <p>
+                    The AVERAGEIF function returns the average of cells in a range that meet criteria you provide.<br>
+                    Example: We want to determine average years of experience that are greater than 6 years. In this example, we are going to evaluate the average range of cells, C1 through C8, in the years of experience column. We will type the criteria against which the range is evaluated, enclosed in quotes . Quotes are used so that the function interprets the operator and value correctly), in this example, greater than 6.
+                </p>
+                <img src="assets/images/formulasetup24.png" width="800px" height="450px" class="block-display bordered-image">
+                <p>
+                    In the below examples the value 9.6 is calculated with an average of values from C4 to C8.
+                </p>
+                <img src="assets/images/formulasetup25.png" width="800px" height="250px" class="block-display bordered-image">
+            </div>
+            <hr>
+            <p>
+                Need any help?
+            </p>
+            <p>
+                You can ask our expert: Call us at +16465465087 or Email us at <a href="mailto:ask@diligencevault.com">ask@diligencevault.com</a>
+            </p>
+        </div>
+    </div>
+</div>

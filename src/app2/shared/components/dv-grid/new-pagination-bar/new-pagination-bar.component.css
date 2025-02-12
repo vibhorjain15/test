@@ -1,0 +1,55 @@
+.page-left {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.page-count {
+  display: flex;
+  height: 25px;
+  padding: 0px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 2px;
+  border: 1px solid var(--Border-Base-Stroke, #d8d9e0);
+}
+
+.page-left .icon-min-width {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.justify-between {
+  align-items: center;
+}
+
+.page-right {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.page-right .select {
+  border-radius: 2px;
+  border: 1px solid var(--Border-Base-Stroke, #d8d9e0);
+  background: var(--Background-Pure-white, #fff);
+  margin-left: 5px;
+}
+
+*:focus-visible {
+  outline: 2px solid #0ca6ed !important; /* A blue outline similar to the browser default */
+  outline-offset: 2px; /* Space between the outline and the element */
+  border-radius: 4px; /* Optional: make the outline rounded */
+  box-shadow: 0 0 5px rgba(0, 0, 255, 0.5); /* Optional: add a blue glow effect */
+}
+
+/* Optional: Reset the default focus outline when an element is clicked with the mouse */
+*:focus {
+  outline: none;
+}

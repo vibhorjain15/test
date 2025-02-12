@@ -1,0 +1,110 @@
+<ng2-word-to-template-convertor data-ng-if="vm.Utils.isParserAngular()"></ng2-word-to-template-convertor>
+<div data-ng-if="!vm.Utils.isParserAngular()">
+  <div class="parser-main panel panel-default wp_container" >
+    <div class="panel-heading">
+      <h5 class="panel-title">{{(vm.templateParams.sourceType == 'questionnaire')?'Build Questionnaire':'Build Template from Word'}}</h5>
+      <span class="text-primary pull-right excel_file_name"><strong>{{vm.templateParams.name}}</strong></span>
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+          <a class="panel-control"
+             data-ng-click="vm.changeWordFile()"
+             tooltip-placement="left"
+             uib-tooltip="Change Word file">
+            <icon name="pencil"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div data-ng-if="vm.wordFileHtml" class="col-sm-12 margin-bottom-0">
+      <div class="panel panel-info margin-bottom-0">
+        <div class="panel-heading">
+          <p>Get started with quick instructions:</p>
+          <ul class="quick-info-text">
+            <li>
+                Right click on the text to mark items as categories, sub-categories, questions, and tables etc.
+            </li>
+            <li ng-show="vm.parser_source == 'QA'">
+                Once you have marked categories and questions, use the 'Auto Identify Answers' button to quickly mark answers between questions.
+            </li>
+            <li ng-show="vm.parser_source == 'QA'">
+              To make answer selection changes after auto identifying, left click and drag the mouse to highlight the text. Right click and under 'Selected text actions' choose to 'Mark as Answer' or 'Remove from Answers'. Note - The selected answer text can be updated from marked and unmarked only after answers have been auto identified.
+            </li>
+            <li ng-show="vm.parser_source == 'QA'">
+                You can edit the content of answers once you navigate to the preview.
+            </li>
+            <li>
+                Use the 'Reset File' button to clear all marked items in the current file.
+            </li>
+            <li ng-show="vm.parser_source == 'QA'">
+                Auto identify answers will not work for grids. Please mark them manually.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div data-ng-if="vm.wordFileHtml" id="fixedTable" class="fixed-counts-table">
+        <div class="tableContainerWP" data-ng-style="{'width': vm.getTableWidth()}">
+          <table class="table table-condensed margin-bottom-0">
+            <tbody>
+              <tr>
+                <td ng-repeat="step in vm.selectionSteps track by $index" ng-class="{'text-bold text-primary': step.is_active, 'text-muted': !step.is_active}" data-ng-mouseenter="showControls = true" data-ng-mouseleave="showControls = false" class="pos-rel">
+                  <span class="list_icon list_icon_{{step.name}}"></span> {{step.alias}} <small ng-show="step.is_visible" class="text-info">
+                    <strong>({{vm.getStepCount(step)}})</strong>
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+  
+      </div>
+      <div data-ng-if="vm.wordFileHtml" class="pos-rel">
+        <div class="tableContainerWP">
+          <table class="table table-condensed margin-bottom-0">
+            <tbody>
+              <tr>
+                <td ng-repeat="step in vm.selectionSteps track by $index" ng-class="{'text-bold text-primary': step.is_active, 'text-muted': !step.is_active}" data-ng-mouseenter="showControls = true" data-ng-mouseleave="showControls = false" class="pos-rel">
+                  <span class="list_icon list_icon_{{step.name}}"></span> {{step.alias}} <small ng-show="step.is_visible" class="text-info">
+                    <strong>({{vm.getStepCount(step)}})</strong>
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- <table class="table table-condensed margin-bottom-0" data-ng-if="vm.wordFileHtml">
+        <tbody>
+          <tr>
+            <td ng-repeat="step in vm.selectionSteps track by $index" ng-class="{'text-bold text-primary': step.is_active, 'text-muted': !step.is_active}" data-ng-mouseenter="showControls = true" data-ng-mouseleave="showControls = false" class="pos-rel">
+              <span class="list_icon list_icon_{{step.name}}"></span> {{step.alias}} <small ng-show="step.is_visible" class="text-info">
+                <strong>({{vm.getStepCount(step)}})</strong>
+              </small>
+            </td>
+          </tr>
+        </tbody>
+      </table> -->
+    </div>
+    <div id="wordFileContainer" class="panel-body excel_sheet_container" ng-if="vm.wordFileHtml">
+      <div class="row clearfix">
+        <div class="col-sm-12">
+          <div class="col-sm-12" style="overflow:auto">
+            <div ng-bind-html="vm.wordFileHtml | trusthtml" id="elementWP"  ng-right-click="vm.saveClickedElement($event)" contextmenu="html5polyfill"></div>
+          </div>
+        </div>
+      </div>
+      <span class="context-menu-one"></span>
+    </div>
+  </div>
+  <div class="fixed-bottom-panel panel">
+    <div class="panel-body">
+      <div class="col-sm-12 text-center">
+        <button class="btn btn-warning" data-ng-click="vm.resetFile()">Reset File</button>
+        <button class="btn btn-primary" data-ng-click="vm.openImportModal()">Preview</button>
+        <button class="btn btn-default" button-loader="vm.loading" data-ng-click="vm.autoMarkAnswers()" data-ng-if="vm.parser_source && vm.parser_source == 'QA'">Auto Identify Answers</button>
+        
+        <button class="btn btn-default" button-loader="vm.loading" data-ng-click="vm.executeUndo()" data-ng-class="{'disabled':vm.wp.undo_states.length === 0}">Undo</button>
+        <button class="btn btn-default" button-loader="vm.loading" data-ng-click="vm.executeRedo()" data-ng-class="{'disabled':vm.wp.redo_states.length === 0}">Redo</button>
+      </div>
+    </div>
+  </div>
+</div>

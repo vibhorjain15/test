@@ -1,0 +1,23 @@
+<div class="panel panel-default report-component-options">
+  <div class="panel-body" data-ng-hide="vm.has_active_component">
+    <p class="lead text-muted clear-margin">
+      Please select a component to see relevant settings
+    </p>
+  </div>
+
+  <div class="panel-body" data-ng-show="vm.has_active_component && !vm.hasSettingsTemplate">
+    <p class="lead text-muted clear-margin">
+      No settings available
+    </p>
+  </div>
+
+  <div class="panel-body js-content"
+       data-ng-show="vm.has_active_component && vm.hasSettingsTemplate"></div>
+
+  <!--<div class="panel-footer" data-ng-show="vm.has_active_component">
+    <button btn-type="primary"
+            data-ng-click="vm.deactivateComponent()">
+      Done
+    </button>
+  </div>-->
+</div>

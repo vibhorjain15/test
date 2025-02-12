@@ -1,0 +1,35 @@
+:host ::ng-deep .custom-tab-layout .dv-tabs {
+  display: flex;
+  height: 51px;
+  padding: 0px 30px;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-shrink: 0;
+  background-color: white;
+  margin-bottom: 10px;
+}
+:host ::ng-deep .custom-tab-layout .dv-tabs .tab-bar {
+  border: none;
+  margin-bottom: 0;
+  display: flex;
+  align-self: last baseline;
+}
+:host ::ng-deep .custom-tab-layout .dv-tabs .tab-box {
+  max-height: none;
+}
+:host ::ng-deep .custom-tab-layout .dv-tabs .tab-label {
+  margin-bottom: 11px;
+}
+:host ::ng-deep .custom-tab-layout .dv-tabs .dynamic-content {
+  display: flex;
+  align-self: center;
+  margin-bottom: 0;
+}
+
+body .relative .content-main {
+  padding-top: 0;
+}
+
+body .container-fluid {
+  max-width: 10000px;
+}

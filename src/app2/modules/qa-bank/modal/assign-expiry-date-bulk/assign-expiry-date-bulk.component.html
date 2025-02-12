@@ -1,0 +1,55 @@
+<app-modal
+  firstButtonLabel="Update"
+  title="Manage Expiry Date"
+  [subTitle]="questions.length + ' questions selected'"
+  (onFirstClick)="updateDatesBulkData($event)"
+  [isLoading]="loadingData"
+>
+  <helper-text>
+    Expiry date can be updated only for the Q/A Library content.
+  </helper-text>
+  <ng-container *ngIf="questions?.length !== 0">
+    <div class="remove-all-action" *ngIf="IsRemoveAllTagsOption">
+      <a
+        (click)="removeAllExpiry()"
+        class="clickable danger text-danger pull-right"
+      >
+        Remove All Expiry Dates
+      </a>
+    </div>
+
+    <manage-bulk-tags
+      type="expiryDate"
+      [questions]="questions"
+      (onChangeTags)="handleChangetags($event)"
+      (onDateChange)="handleDateChange($event)"
+      (OnRemoveQuestions)="handleRemoveQuestions($event)"
+      (OnBulkRemoveQuestions)="handleBulkRemoveQuestions($event)"
+    ></manage-bulk-tags>
+
+    <div class="space-on-top-xxl list-bulk-items width-50-pct">
+      <p class="space-on-bottom-xl">
+        Assign Expiry date to all selected records
+        <span
+          appIcon
+          name="info"
+          class="space-on-left"
+          tooltip="Expiry date added from this section will override the expiry date in the above section."
+        >
+        </span>
+      </p>
+
+      <app-date-picker
+        [minDate]="minDate"
+        (change)="handleAsOfDateChange($event)"
+      >
+      </app-date-picker>
+    </div>
+  </ng-container>
+
+  <div *ngIf="questions.length == 0">
+    <app-empty-state
+      message="No Q/A Library Question Selected"
+    ></app-empty-state>
+  </div>
+</app-modal>

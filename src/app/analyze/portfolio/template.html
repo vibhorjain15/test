@@ -1,0 +1,47 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-portfolio-analytics></ng2-portfolio-analytics>
+</div>
+
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-body text-muted">
+    <h4 class="inline-block text-primary">PORTFOLIO ANALYTICS</h4>
+  </div>
+</div>
+
+  <!--<div class="cell right bordered-right">
+   <button class="text-center"
+            btn-type="transparent"
+            smooth-scroll="#fund-analytics">
+      <div><icon name="tasks" size="2x"></icon></div>
+      <small>Fund Analytics</small>
+    </button>
+
+    <button class="text-center"
+            btn-type="transparent"
+            smooth-scroll="#service-provider">
+      <div><icon name="institution" size="2x"></icon></div>
+      <small>Service Providers</small>
+    </button>
+
+    <button class="text-center"
+            btn-type="transparent"
+            smooth-scroll="#firm-analytics">
+      <div><icon name="bookmark" size="2x"></icon></div>
+      <small>Firm Analytics</small>
+    </button>
+
+    <button class="text-center"
+            btn-type="transparent"
+            smooth-scroll="#operations">
+      <div><icon name="cogs" size="2x"></icon></div>
+      <small>Operations</small>
+    </button>
+  </div>
+
+
+</div>-->
+<div data-ng-if="vm.Utils.isAngularJS()">
+<spinner data-ng-hide="vm.dataIsLoaded"></spinner>
+
+<dashboard config="vm.dashboardConfig" data-ng-if="vm.dataIsLoaded"></dashboard>
+</div>

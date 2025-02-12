@@ -1,0 +1,378 @@
+<!-- <spinner data-ng-hide="vm.document"></spinner>
+
+<div class="panel panel-default" data-ng-if="vm.building_template_in_progress">
+
+    <div class="panel-heading pa-tb-lg">
+        <h5 class="font-bold text-center">Thanks for reviewing my initial work. I am creating digital questionnaire now. Will only take a few seconds - DiligenceVault Bot</h5>
+    </div>
+
+    <div class="panel-body">
+        <spinner broad-spinner spinner-height='200'></spinner>
+    </div>
+</div> -->
+
+<!-- <form-wizard name="dd-document-upload"
+             data-ng-if="vm.document.job.percentage_completed == 100"
+             display-footer="vm.display_footer"
+             on-change="vm.onWizardStepChange($step_index)"
+             on-finish="vm.sendDueDiligenceRequest()"
+             start-step="vm.wizard_start_step"
+             data-ng-hide="vm.building_template_in_progress">
+
+  <wizard-step step-title="'Review Questions and Confirm'"
+               step-content-header-title="'Please review results from our question extraction algorithm'"
+               step-content-header-tooltip="'Want to slice and dice further? Filter for the ones marked as questions, or search by question text by enabling the filters by clicking on the top right button on the grid header'"
+               next-button-label="Complete Review"
+               next-button-is-floating="true"> -->
+
+<div class="row clearfix">
+    <div class="col-md-12">
+        <spinner broad-spinner spinner-height='35' data-ng-if="vm.loading_template"></spinner>
+
+        <div class="panel panel-default" data-ng-if="vm.document.job.percentage_completed == 100">
+            <div class="panel-heading">
+                <b uib-tooltip="Want to slice and dice further? Filter for the ones marked as questions, or search by question text by enabling the filters by clicking on the top right button on the grid header">
+                    Please review results from our question extraction algorithm
+                </b>
+            </div>
+            <div class="panel-body clearfix">
+                <!-- <form class="form-horizontal" novalidate name="vm.questionnaire_name_form"
+                    data-ng-if="!vm.loading_template">
+                    <form-group field-name="Questionnaire Name" tooltip-placement="left">
+                        <label class="col-md-4 col-md-offset-1 control-label" for="Questionnaire-name">Questionnaire
+                            Name:</label>
+                        <div class="col-md-6">
+                            <div class="inline lh2-4" data-ng-hide="edit_template_name == true">
+                                {{vm.template.templateInfo.name}}</div>
+                            <div class="inline col-md-9" data-ng-show="edit_template_name == true">
+                                <input type="text" data-ng-model="vm.template.templateInfo.name"
+                                    name="questionnaire-name" id="questionnaire-name" required
+                                    placeholder="Questionnaire Name"
+                                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}" class="form-control">
+                            </div>
+
+                            <button btn-type="default" size="sm" class="space-on-top-xm"
+                                uib-tooltip="Edit template name" ng-click="edit_template_name = true;"
+                                data-ng-hide="edit_template_name == true">
+                                <icon name="pencil"></icon>
+                            </button>
+                            <button btn-type="success" size="sm" type="submit"
+                                class="space-on-left space-on-right space-on-top-xm" uib-tooltip="Update template name"
+                                data-ng-show="edit_template_name == true"
+                                ng-click="vm.updateTemplateName();edit_template_name = false;">
+                                Update
+                            </button>
+                            <button btn-type="default" size="sm" class="space-on-left space-on-top-xm"
+                                uib-tooltip="Cancel" data-ng-show="edit_template_name == true"
+                                ng-click="edit_template_name = false;">
+                                Cancel
+                            </button>
+                        </div>
+                    </form-group>
+                </form> 
+
+                <hr>-->
+
+                <switch id="enabled" name="enabled" ng-model="vm.only_sections_and_questions" on="" off=""
+                    class="green align-middle"></switch>
+                <span class="space-on-left">Preview</span>
+
+                <label class="control-label pull-right">Questions: {{vm.line_items_count.question_count}} | Sections:
+                    {{vm.line_items_count.section_count}} | Others: {{vm.line_items_count.ignored_count}}</label>
+
+                <table class="table table-bordered offline-dd-table">
+                    <thead>
+                        <tr>
+                            <th class="w-120 text-center align-middle">
+
+                                <dv-checkbox data-ng-model="vm.line_items_filters.is_section"
+                                    data-ng-change="vm.toggleContentTypeMain()">
+                                    <dv-checkbox-label>
+                                        <b>A Section?</b>
+                                    </dv-checkbox-label>
+                                </dv-checkbox>
+                            </th>
+                            <th class="w-130 text-center align-middle">
+                                <dv-checkbox data-ng-model="vm.line_items_filters.is_question"
+                                    data-ng-change="vm.toggleContentTypeMain()">
+                                    <dv-checkbox-label>
+                                        <b>A Question?</b>
+                                    </dv-checkbox-label>
+                                </dv-checkbox>
+                            </th>
+                            <th class="text-center align-middle">
+                                <input type="text" data-ng-model="vm.line_items_filters.extracted_text"
+                                    class="form-control" data-ng-model-options="{'debounce': 500}"
+                                    data-ng-change="vm.applyLineItemsFilters()"
+                                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                    placeholder="Search for sections / questions" />
+                            </th>
+                            <th class="w-170 text-center align-middle">Response Type</th>
+                        </tr>
+                    </thead>
+
+                    <tbody infinite-scroll="vm.loadLineItemsNextPage()" infinite-scroll-container
+                        infinite-scroll-disabled="vm.is_loading_line_items || vm.current_line_items_page >= vm.total_line_items_pages">
+                        <tr class="is-new-section" data-ng-repeat-start="line_item in vm.line_items"
+                            data-ng-if="line_item.add_new_section">
+                            <td class="relative">
+                                <div class="text-center">
+                                    <dv-checkbox data-ng-model="line_item.add_new_section" data-ng-disabled="true">
+                                    </dv-checkbox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <dv-checkbox data-ng-disabled="true">
+                                    </dv-checkbox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="extracted-text space-on-top space-on-bottom-lg">
+                                    Section Name
+                                    <input type="text" data-ng-model="line_item.new_section.extracted_text" required
+                                        placeholder="Add new section name here.."
+                                        dv-restrict-input="{type: 'avoidFirstSplCharacter'}" class="form-control">
+                                </div>
+                            </td>
+                            <td class="text-center" colspan="2">
+                                <div col="12" class="space-on-top space-on-bottom-lg">
+                                    <button btn-type="primary" size="sm" class="w-100" uib-tooltip="Add a new section"
+                                        ng-click="vm.postNewSection(line_item, $index)">
+                                        Add Section
+                                    </button>
+                                </div>
+                                <br>
+
+                                <div col="12" class="space-on-bottom">
+                                    <button btn-type="default" size="sm" class="w-100" uib-tooltip="Cancel"
+                                        ng-click="vm.cancelNewSection(line_item);">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr data-ng-repeat-end
+                            data-ng-hide="(vm.is_loading_line_items && vm.current_line_items_page==1) || (vm.preview && (!line_item.is_section && !line_item.is_question))"
+                            ng-mouseover="line_item.show_hover_effects = true"
+                            ng-mouseleave="line_item.show_hover_effects = false"
+                            data-ng-class="{'is-section': line_item.is_section, 'is-question': line_item.is_question, 'ignore-line-item text-muted': !line_item.is_section && !line_item.is_question}">
+                            <td class="relative">
+                                <div class="text-center">
+                                    <dv-checkbox
+                                        data-ng-disabled="vm.is_loading_line_items || line_item.source == 'User'"
+                                        data-ng-model="line_item.is_section"
+                                        dv-click="vm.toggleContentType('is_section', line_item)">
+                                    </dv-checkbox>
+                                </div>
+                                <span class="btn-add-new-section" uib-tooltip="Add a new section here"
+                                    data-ng-show="line_item.show_hover_effects && !line_item.add_new_section && !vm.is_loading_line_items && ($index < vm.line_items_data_length-1)">
+                                    <icon name="plus-circle" data-ng-click="vm.addNewSection(line_item, $index)"
+                                        size="lg" class="text-primary" role="button"></icon>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-center">
+                                    <dv-checkbox
+                                        data-ng-disabled="vm.is_loading_line_items || line_item.source == 'User'"
+                                        data-ng-model="line_item.is_question"
+                                        dv-click="vm.toggleContentType('is_question', line_item)">
+                                    </dv-checkbox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="extracted-text">
+                                    <span
+                                        uib-tooltip="{{line_item.is_section ? 'This is a section' : (line_item.is_question ? 'This is a question' : '')}}">{{line_item.extracted_text}}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span data-ng-if="line_item.is_question">
+                                    <span class="icon-active">
+                                        <icon name="align-left" class="align-middle"
+                                            uib-tooltip="{{line_item.responseTypeDescription}}"
+                                            data-ng-if="line_item.response_type == 'Text' || line_item.response_type == 'TextMultiLine'">
+                                        </icon>
+                                        <icon name="check-circle" class="align-middle"
+                                            uib-tooltip="{{line_item.responseTypeDescription}}"
+                                            data-ng-if="line_item.response_type == 'Boolean' || line_item.response_type == 'BooleanPlus' || line_item.response_type == 'NoPlus'">
+                                        </icon>
+                                        <icon name="table" class="align-middle"
+                                            uib-tooltip="{{line_item.responseTypeDescription}}"
+                                            data-ng-if="line_item.response_type == 'Grid'"></icon>
+                                        <icon name="mail" class="align-middle"
+                                            uib-tooltip="{{line_item.responseTypeDescription}}"
+                                            data-ng-if="line_item.response_type == 'TextEmail'"></icon>
+                                        <icon name="phone" class="align-middle"
+                                            uib-tooltip="{{line_item.responseTypeDescription}}"
+                                            data-ng-if="line_item.response_type == 'TextPhone'"></icon>
+                                    </span>
+                                    <button btn-type="transparent" size="md" tabindex="-1"
+                                        uib-tooltip="Edit the question"
+                                        data-ng-click="vm.editQuestion(line_item, $index)"
+                                        data-ng-class="{'visibility-hidden': !line_item.show_hover_effects}">
+                                        <icon name="pencil" class="text-muted"></icon>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+
+
+                        <tr data-ng-if="vm.is_loading_line_items">
+                            <td colspan="5">
+                                <div class="padded text-center">
+                                    <spinner></spinner>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div col="12" class="text-center" data-ng-if="vm.request">
+                    <dv-checkbox
+                        data-ng-model="vm.redirectToTemplateCreation"
+                        label="Please check this box if you want to add more questions to this template.">
+          </dv-checkbox>
+                </div>
+                <div col="12" class="text-center">
+                    <button type="submit" button-loader="vm.completing_review" data-ng-click="vm.completeReview()">Complete Review</button>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<!-- </wizard-step>
+
+  <wizard-step step-title="'Assign Product / Investor and Finalize'"
+               step-content-header-title="'You are just one step away. Just enter review information below!'"
+               next-button-label="Start Populating"
+               before-enter="vm.postLineItemsForTemplate()"
+               next-button-type="orange">
+
+    <div col="8" offset="2">
+      <form class="form-horizontal" novalidate name="vm.project_name_form">
+
+        <form-group field-name="Questionnaire Name"
+                    tooltip-placement="left">
+          <label class="col-md-4 control-label" for="questionnaire-name">Questionnaire Name</label>
+            <div class="col-md-6">
+              <input type="text"
+                     data-ng-model="vm.template.templateInfo.name"
+                     name="questionnaire-name"
+                     id="questionnaire-name"
+                     disabled
+                     focus-me="true"
+                     dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                     class="form-control">
+            </div>
+            <icon name="info"
+                  class="text-info"
+                  uib-tooltip="Name of the questionnaire internal to your firm or received from your investor.. You can search for this under Diligence > Templates">
+            </icon>
+
+        </form-group>
+
+        <form-group field-name="Project Name"
+                    tooltip-placement="left">
+          <label class="col-md-4 control-label" for="project-name">Project Name</label>
+            <div class="col-md-6">
+              <input type="text"
+                     data-ng-model="vm.project_name"
+                     name="project-name"
+                     id="project-name"
+                     required
+                     focus-me="true"
+                     dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                     placeholder="Project Name"
+                     class="form-control">
+            </div>
+            <icon name="info"
+                  class="text-info"
+                  uib-tooltip="Name of your project for easier tracking and reporting">
+            </icon>
+        </form-group>
+
+        <form-group field-name="Investor Name"
+                      tooltip-placement="left">
+              <label class="col-md-4 control-label" for="investor">Investor Name</label>
+              <div class="col-md-6">
+                  <select name="investor"
+                          id="investor"
+                          data-ng-disabled="vm.internalOnly"
+                          data-ng-options="investor.id as investor.name for investor in vm.investors track by investor.id"
+                          data-ng-model="vm.document.investor_id"
+                          ng-required="!vm.internalOnly"
+                          class="form-control">
+                      <option selected disabled style="display:none" value="">Select an Investor</option>
+                  </select>
+
+                  <div class="space-on-top pull-right">
+                      <dv-checkbox
+                              data-ng-model="vm.internalOnly"
+                              label="This request is not specific to an investor">
+                      </dv-checkbox>
+                  </div>
+              </div>
+              <icon name="info"
+                    class="text-info"
+                    uib-tooltip="This will automatically associate the questions with the selected investor. No notification to the investor is sent at this stage.">
+              </icon>
+          </form-group>
+
+          <form-group field-name="Product Name"
+                      tooltip-placement="left">
+              <label class="col-md-4 control-label text-capitalize" for="{{vm.entity_type}}">{{vm.entity_type}} Name</label>
+              <div class="col-md-6">
+                  <select name="{{vm.entity_type}}"
+                          id="{{vm.entity_type}}"
+                          data-ng-disabled="vm.is_firm_dd"
+                          data-ng-options="fund.id as fund.name for fund in vm.funds track by fund.id"
+                          data-ng-model="vm.document.fund_id"
+                          ng-required="!vm.is_firm_dd"
+                          class="form-control">
+                      <option selected disabled style="display:none" value="">Select a {{vm.entity_type}}</option>
+                  </select>
+
+                  <div class="space-on-top pull-right">
+                      <dv-checkbox
+                              data-ng-model="vm.is_firm_dd"
+                              label="This is firm level DDQ, not tied to a product">
+                      </dv-checkbox>
+                  </div>
+              </div>
+              <icon name="info"
+                    class="text-info"
+                    uib-tooltip="This will automatically associate the questions with the selected product in your Q/A bank.">
+              </icon>
+          </form-group>
+
+          <form-group field-name="Due Date" control-selector="dv-datepicker">
+            <label for="due-date" class="control-label col-sm-4">
+            Due Date
+            </label>
+            <div class="col-md-6">
+              <dv-datepicker
+                id="due-date"
+                data-ng-model="vm.due_at"
+                required
+                min-date="vm.minDate">
+              </dv-datepicker>
+            </div>
+          </form-group>
+            <form-group field-name="As of Date" control-selector="dv-datepicker">
+                <label for="due-date" class="control-label col-sm-4">As of Date</label>
+                <div class="col-md-6">
+                    <dv-datepicker data-ng-model="vm.as_of_date"
+                        required                           
+                        id="as-of-date"
+                        max-date="vm.maxDate"></dv-datepicker>
+                </div>
+            </form-group>
+      </form>
+
+    </div>
+  </wizard-step>
+</form-wizard> -->

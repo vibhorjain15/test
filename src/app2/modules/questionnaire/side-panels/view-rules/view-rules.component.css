@@ -1,0 +1,37 @@
+.view-rule-container {
+  display: flex;
+  padding: 10px 5px 10px 5px;
+}
+.view-rule-container > span:first-child {
+  margin-right: 10px;
+}
+
+.view-rules-title-margin {
+  margin-bottom: 20px;
+}
+
+.note-container-heading {
+  color: #27b098;
+}
+
+.notes-helper {
+  margin-top: 10px;
+}
+
+.view-rule-container-tags {
+  display: flex;
+  align-items: center;
+}
+
+.view-in-active {
+  filter: contrast(40%) brightness(1.5) grayscale(100%) !important;
+}
+
+.rating-scale {
+  display: contents;
+  width: fit-content;
+}
+
+.italic {
+  font-style: italic;
+}

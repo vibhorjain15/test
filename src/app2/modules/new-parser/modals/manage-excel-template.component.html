@@ -1,0 +1,153 @@
+<app-modal
+  [title]="vm.title"
+  [initialTemplate]="manageExcelTemplateRef"
+  [firstButtonLabel]="vm.firstButtonLabel"
+  (onFirstClick)="save($event)"
+  [isLoading]="loading"
+>
+  <ng-template #manageExcelTemplateRef>
+    <div [hidden]="activeView == 'original'">
+      <div
+        class="panel panel-warning"
+        *ngIf="documentHasDuplicates && originalContentFound"
+      >
+        <div class="panel-heading">
+          All existing Q/A content in your selection will be uploaded, replacing
+          any duplicates of existing content
+        </div>
+      </div>
+    </div>
+    <div [hidden]="activeView != 'original'">
+      <div
+        class="panel panel-danger"
+        *ngIf="documentHasDuplicates && !originalContentFound"
+      >
+        <div class="panel-heading">
+          No new content found. All of the content in this upload exists in your
+          Q/A Library.
+        </div>
+      </div>
+      <div
+        class="panel panel-warning"
+        *ngIf="documentHasDuplicates && originalContentFound"
+      >
+        <div class="panel-heading">
+          All new content in your selection will be uploaded to your Q/A
+          Library. No changes will be made to your existing content.
+        </div>
+      </div>
+    </div>
+    <form
+      class="form-horizontal"
+      name="contact_form"
+      novalidate
+      autocomplete="off"
+    >
+      <div class="form-group" *ngIf="documentHasDuplicates">
+        <div class="text-center">
+          <div class="btn-group">
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': activeView == 'duplicate' }"
+              (click)="setActiveView('duplicate')"
+              >Existing Content</span
+            >
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': activeView == 'original' }"
+              (click)="setActiveView('original')"
+              >New Content</span
+            >
+          </div>
+        </div>
+      </div>
+      <div
+        class="form-group"
+        *ngIf="!documentHasDuplicates && (!isQAflow || isQAProjectflow)"
+      >
+        <label for="">Template Name:</label>
+        <div class="col-sm-12">
+          <input
+            type="text"
+            class="form-control"
+            name="templateName"
+            id="templateName"
+            [(ngModel)]="finalData.name"
+          />
+        </div>
+      </div>
+      <div *ngIf="!documentHasDuplicates">
+        <app-preview-accordion
+          [sections]="finalData.sections"
+          [documentHasDuplicates]="documentHasDuplicates"
+          [isQAflow]="isQAflow"
+          [activeView]="activeView"
+          [responseTypes]="responseTypes"
+        ></app-preview-accordion>
+      </div>
+      <div
+        *ngIf="
+          documentHasDuplicates &&
+          !responseFromQa.original.sections.length &&
+          activeView == 'original'
+        "
+      >
+        <div class="row clearfix">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-4">
+            <div class="panel panel-info text-center">
+              <div class="panel-heading">No data found</div>
+            </div>
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+      </div>
+      <div
+        *ngIf="
+          documentHasDuplicates &&
+          !responseFromQa.existing.sections.length &&
+          activeView == 'duplicate'
+        "
+      >
+        <div class="row clearfix">
+          <div class="col-sm-4"></div>
+          <div class="col-sm-4">
+            <div class="panel panel-info text-center">
+              <div class="panel-heading">No data found</div>
+            </div>
+          </div>
+          <div class="col-sm-4"></div>
+        </div>
+      </div>
+      <div *ngIf="documentHasDuplicates">
+        <ng-container *ngIf="activeView == 'original'">
+          <app-preview-accordion
+            [sections]="responseFromQa.original.sections"
+            [documentHasDuplicates]="documentHasDuplicates"
+            [isQAflow]="isQAflow"
+            [activeView]="activeView"
+            [responseTypes]="responseTypes"
+          ></app-preview-accordion>
+        </ng-container>
+        <ng-container *ngIf="activeView != 'original'">
+          <app-preview-accordion
+            [sections]="responseFromQa.existing.sections"
+            [documentHasDuplicates]="documentHasDuplicates"
+            [isQAflow]="isQAflow"
+            [activeView]="activeView"
+            [responseTypes]="responseTypes"
+          ></app-preview-accordion>
+        </ng-container>
+      </div>
+      <div class="row clearfix">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 text-right">
+          <h4 style="padding-right: 10px">
+            Total: <strong>{{ getTotal() }}</strong>
+          </h4>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</app-modal>

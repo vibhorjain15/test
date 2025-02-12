@@ -1,0 +1,71 @@
+.qa-list-container {
+    height: 350px;
+    width: 100%;
+    overflow: auto;
+}
+.qa-list-container .qa-list-wrapper {
+    margin: 10px 0;
+}
+.qa-list-container .qa-list-wrapper .qa-list-left-p {
+    background-color: #F3F4F7;
+    border: 1px solid #DFE0E0;
+    border-radius: 4px;
+    width: 50%;
+    display: inline-block;
+    padding: 12px 20px;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+.qa-list-container .qa-list-wrapper .qa-list-left-35 {
+    background-color: #F3F4F7;
+    border: 1px solid #DFE0E0;
+    border-radius: 4px;
+    width: 34%;
+    display: inline-block;
+    padding: 12px 20px;
+    vertical-align: middle;
+}
+.qa-list-container .qa-list-wrapper .divider {
+    width: 1%;
+}
+.qa-list-container .qa-list-wrapper .qa-list-right-p {
+    position: relative;
+    background-color: #F3F4F7;
+    border: 1px solid #DFE0E0;
+    border-radius: 4px;
+    width: 48%;
+    display: inline-block;
+    padding: 12px 20px;
+    vertical-align: middle;
+}
+.qa-list-container .qa-list-wrapper .qa-list-right-p .tags-list {
+    border: 1px solid #7E8184;
+    border-radius: 19px;
+    height: 37px;
+    display: inline-block;
+    padding: 3px 10px;
+    margin: 3px;
+}
+.qa-list-container .qa-list-wrapper .qa-list-right-65 {
+    position: relative;
+    background-color: #F3F4F7;
+    border: 1px solid #DFE0E0;
+    border-radius: 4px;
+    width: 64%;
+    display: inline-block;
+    padding: 12px 20px;
+    vertical-align: middle;
+}
+.qa-list-container .qa-list-wrapper .qa-list-right-65 .tags-list {
+    border: 1px solid #7E8184;
+    border-radius: 19px;
+    height: 37px;
+    display: inline-block;
+    padding: 3px 10px;
+    margin: 3px;
+}
+
+
+.manage-bulk-tags-dropdown {
+    display: inline !important;
+}

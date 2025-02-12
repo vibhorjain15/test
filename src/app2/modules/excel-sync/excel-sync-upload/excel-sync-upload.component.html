@@ -1,0 +1,51 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title" aria-describedby="info-description">
+      Excel sync history
+    </h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      <p id="info-description">
+        Once you are done adding responses to the downloaded Excel file you can
+        directly upload it from here. This would automatically update your
+        responses on our platform. Please note this won't work for any
+        downloaded file before (2nd June 2020)
+      </p>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div col="4" offset="4">
+      <div class="dd-doc-selection-wrapper panel-body">
+        <dv-uploader
+          [sizeLimit]="maxFileSize"
+          [accept]="allowed_file_extensions_str"
+          dragLabel="Drag & Drop your file here"
+          [isMultiple]="false"
+          [showUploadedFiles]="false"
+          (onFileUpload)="onFileUpload($event)"
+        ></dv-uploader>
+        <div class="file-list-container">
+          <div *ngFor="let file of files; let index = index">
+            <document-name
+              [document]="file"
+              (onDeleteDocument)="deleteFile(index)"
+            ></document-name>
+          </div>
+        </div>
+        <div class="panel-body" style="text-align: center">
+          <dv-button
+            [loader]="isUploadDocument"
+            (onClick)="addDocumentSubmit()"
+          >
+            Process Upload
+          </dv-button>
+        </div>
+      </div>
+    </div>
+    <div col="12">
+      <h4 class="text-bold">Recent Upload History</h4>
+      <app-dv-grid [rowData]="sync_list" [name]="gridName"></app-dv-grid>
+    </div>
+  </div>
+</div>

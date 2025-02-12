@@ -1,0 +1,99 @@
+@panel-dashboard-border: none;
+@panel-dashboard-text: @panel-default-text;
+@panel-dashboard-heading-bg: white;
+
+.dashboard-row {
+  .clearfix();
+}
+
+.dashboard-col {
+  padding-right: @grid-gutter-width;
+  float: left;
+
+  &:last-child {
+    padding-right: 0;
+  }
+
+  @media(max-width: @screen-md-min) {
+    width: 100% !important;
+    margin-right: 0;
+    margin-bottom: @grid-gutter-width;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.dashboard-panel {
+  .panel();
+  .panel-variant(@panel-dashboard-border; @panel-dashboard-text; @panel-dashboard-heading-bg; @panel-dashboard-border);
+  .box-shadow(0 0 5px rgba(0, 0, 0, 0.2));
+
+  border-radius: 4px;
+  margin-bottom: @grid-gutter-width;
+  border: none;
+  min-height: 300px;
+  position: relative;
+
+  .panel-heading {
+    .border-top-radius(4px);
+    .clearfix();
+
+    border-bottom: 1px solid #efefef;
+  }
+
+  .panel-title {
+    font-size: inherit;
+    font-weight: bold;
+    float: left;
+  }
+
+  .no-data-message, .c3-text.c3-empty {
+    .text-muted();
+    .lead();
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    margin-top: -15px; //assuming the message spans a single line, if it spans more than one line, override this in widget specific styles
+    text-align: center;
+  }
+
+  .dashboard-panel-controls {
+    float: none;
+    text-align: right;
+
+    // fighting parent's padding
+    margin-top: -10px;
+    margin-right: -15px;
+    margin-bottom: -10px;
+
+    font-size: 0; //remove space between the inline-block elements
+
+    button {
+      .square(36px);
+
+      display: inline-block;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:hover {
+        color: inherit;
+      }
+    }
+  }
+}
+
+.doc-tracker {
+  max-height: 400px;
+
+  overflow-y: auto;
+}

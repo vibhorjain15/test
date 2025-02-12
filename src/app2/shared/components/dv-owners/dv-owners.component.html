@@ -1,0 +1,174 @@
+<div class="panel panel-default">
+  <div class="panel-heading bordered-top">
+    <h5 class="panel-title">Add Owner(s)</h5>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      Any previously assigned DV owners will now show as Primary owners
+    </div>
+  </div>
+
+  <form [formGroup]="ownerForm" autocomplete="off">
+    <div class="panel-body">
+      <div class="text-center" *ngIf="loading_data">
+        <app-spinner></app-spinner>
+      </div>
+      <div *ngIf="!loading_data">
+        <dv-form-element
+          fieldName="Primary Owner"
+          label="Primary Owner"
+          elementCol="8"
+          [labelCol]="'4'"
+          [modelController]="ownerForm?.get('primary')"
+          infoText="You can auto subscribe primary owners to receive all notifications while sending a new request."
+          iconClass="font-normal"
+        >
+          <dv-select
+            [id]="'primary'"
+            [list]="team_members"
+            [multiple]="true"
+            [clearable]="false"
+            formControlName="primary"
+            placeholder="Select owner(s)"
+            bindValue="id"
+            bindLabel="fullName"
+            [aria-label]="'Primary Owner'"
+          >
+          </dv-select>
+        </dv-form-element>
+
+        <dv-form-element
+          fieldName="Secondary Owner"
+          label="Secondary Owner"
+          elementCol="8"
+          [labelCol]="'4'"
+          [modelController]="ownerForm?.get('secondary')"
+        >
+          <dv-select
+            [list]="team_members"
+            [multiple]="true"
+            [clearable]="false"
+            formControlName="secondary"
+            placeholder="Select owner(s)"
+            bindValue="id"
+            bindLabel="fullName"
+            [id]="'secondary'"
+            [aria-label]="'Secondary Owner'"
+          >
+          </dv-select>
+        </dv-form-element>
+
+        <div formArrayName="functions">
+          <div
+            *ngFor="
+              let entry of formFunctions.controls;
+              let i = index;
+              let last = last
+            "
+            col="12"
+            class="space-on-bottom-lg"
+          >
+            <div [formGroupName]="i">
+              <app-form-group
+                [fieldName]="function_id"
+                [modelController]="
+                  formFunctions.controls[i]?.get('function_id')
+                "
+                [showRightIcon]="false"
+              >
+                <div for="strategy-type" col="4">
+                  <div>
+                    <label [for]="'functionInput_' + i ">
+                      User Role
+                      <span
+                        appIcon
+                        name="info"
+                        tooltip="Assign a user role when you want multiple people to receive and manage requests for tasks, workflows and projects. List of users and user roles can be managed from firm settings>users and teams> user roles"
+                      >
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <dv-select
+                      [clearable]="false"
+                      chosen
+                      formControlName="function_id"
+                      (onSelectChange)="onFunctionChange(i, $event)"
+                      [list]="dropdown_functions"
+                      [bindLabel]="'function_name'"
+                      [bindValue]="'function_id'"
+                      placeholder="--Select--"
+                      [id]="'functionInput_' + i"
+                      [aria-label]="'User Role'"
+                    >
+                    </dv-select>
+                  </div>
+                </div>
+                <div col="5">
+                  <div>
+                    <label for="{{ 'team' + i }}">Team Member(s)</label>
+                  </div>
+                  <dv-select
+                    [id]="'team' + i"
+                    [multiple]="true"
+                    [clearable]="false"
+                    formControlName="user_id"
+                    [readonly]="
+                      formFunctions.controls[i]?.get('auto_assign').value
+                    "
+                    placeholder="Select Team Member(s)"
+                    bindValue="user_id"
+                    bindLabel="user_name"
+                    [list]="
+                      formFunctions.controls[i]?.get('selectedFunction').value
+                        ?.user_assigments
+                    "
+                  >
+                  </dv-select>
+                </div>
+                <div col="3">
+                  <dv-checkbox
+                    class="block-display space-on-top-xxl"
+                    label="Auto-assign"
+                    tooltip="Click to Auto-assign all users in this user role"
+                    [id]="i"
+                    [disabled]="
+                      !formFunctions.controls[i]?.get('function_id').value
+                    "
+                    formControlName="auto_assign"
+                    (onValChange)="onAutoAssignChange(i, $event)"
+                  >
+                  </dv-checkbox>
+                </div>
+              </app-form-group>
+              <div class="ownerDeleteBtn">
+                <button
+                  appButton
+                  *ngIf="formFunctions?.controls.length > 1"
+                  class="btn btn-default btn-sm danger"
+                  tooltip="Delete"
+                  aria-label="Delete"
+                  [id]="'delete' + i"
+                  (click)="removeFunctionControl(i)"
+                >
+                  <strong><span appIcon name="trashcan"></span></strong>
+                </button>
+                <button
+                  appButton
+                  *ngIf="last"
+                  class="btn btn-default success btn-sm space-on-left"
+                  tooltip="Add"
+                  aria-label="Add"
+                  [id]="'add' + i"
+                  (click)="addFunctionControl()"
+                >
+                  <strong><span appIcon name="plus"></span></strong>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

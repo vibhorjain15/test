@@ -1,0 +1,12 @@
+<div class="panel panel-default dashboard-panel-old">
+  <div class="panel-heading">
+    <h5 class="panel-title text-uppercase">{{title}}</h5>
+    <span class="chart-total" *ngIf="dash_live_total">
+      <div class="chart-total-count">{{dash_live_total}}</div>
+      <small>Total</small>
+    </span>
+  </div>
+  <div class="panel-body">
+    <div id="diligence_by_status_chart"></div>
+  </div>
+</div>

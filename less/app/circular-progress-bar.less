@@ -1,0 +1,70 @@
+.transition(@val) {
+    transition: @val;
+    -webkit-transition: @val;
+    -moz-transition: @val;
+}
+
+.cpb {
+  position: relative;
+  @width: 150px;
+
+  .cpb-mask {
+    position: relative;
+    background-color: white;
+    z-index: 10;
+    width: @width;
+    height: @width;
+    border: 5px solid #ccc;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .cpb-progress {
+    @green-extreme: #43c59e;
+    @red-extreme: #cd3333;
+
+    width: @width;
+    position: absolute;
+    bottom: 0;
+
+    &.progress-5 {
+      background-color: @green-extreme;
+    }
+
+    &.progress-4 {
+      background-color: lighten(@green-extreme, 10%);
+    }
+
+    &.progress-3 {
+      background-color: #ffcc00;
+    }
+
+    &.progress-2 {
+      background-color: lighten(@red-extreme, 10%);
+    }
+
+    &.progress-1 {
+      background-color: @red-extreme;
+    }
+  }
+
+  .cpb-progress, .cpb-progress-marker, .cpb-progress-description {
+    .transition(all 0.3s ease);
+  }
+
+  .cpb-progress-marker {
+    position: absolute;
+    left: 50px;
+    right: 0;
+    top: 45px;
+    height: 1px;
+    background-color: #333;
+  }
+
+  .cpb-progress-description {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    margin-top: -20px;
+  }
+}

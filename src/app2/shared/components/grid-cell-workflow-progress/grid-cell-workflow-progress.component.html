@@ -1,0 +1,21 @@
+<div class="workflow-wrapper" *ngIf="!params?.node?.group">
+  <dv-badge
+    status="success"
+    label="{{ params?.data?.pct_complete }} %"
+    height="huge"
+  ></dv-badge>
+  <div class="workflow-right-wrapper">
+    <div
+      class="dot"
+      [ngClass]="{
+        'workflow-success': this.params?.data?.status === 'completed',
+        'workflow-in-progress': this.params?.data?.status === 'in-progress'
+      }"
+    ></div>
+    <div>{{ params?.data?.statusLabel }}</div>
+  </div>
+</div>
+
+<!-- 'workflow-danger': this.params?.data?.status === 'success',
+'workflow-warning': this.params?.data?.status === 'success',
+'workflow-disable': this.params?.data?.status === 'success' -->

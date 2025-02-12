@@ -1,0 +1,341 @@
+<div class="bg-white" [class.padded-xl]="isFullScreenMode" #container>
+  <div class="display-flex justify-space-between align-items-center">
+    <div class="font-size-16 font-weight-600">Heat Map</div>
+    <div class="display-flex" *ngIf="heatmapData.data.length > 0">
+      <span
+        dropdown
+        #downloadDropdown="bs-dropdown"
+        container="body"
+        placement="bottom right"
+      >
+        <span>
+          <dv-button
+            btnType="default"
+            tippyTooltip="Download"
+            (onClick)="toggleDropdown('downloadDropdown')"
+            [ariaLabel]="'Download'"
+          >
+            <span appIcon name="download-install-line"></span>
+          </dv-button>
+        </span>
+        <ul
+          class="dropdown-menu dropdown-menu-right user-select-none"
+          *dropdownMenu
+          role="menu"
+        >
+          <li role="menuitem">
+            <a role="button" (click)="svg_to_pdf()" class="sub-menu-item">
+              Save As PDF
+            </a>
+          </li>
+          <li role="menuitem">
+            <a
+              role="button"
+              (click)="saveAsPng()"
+              class="sub-menu-item"
+              clickable
+            >
+              Save As PNG
+            </a>
+          </li>
+          <li role="menuitem">
+            <a
+              (click)="saveAsExcel()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Save As Excel</span>
+              <span
+                class="badge badge-info"
+                *ngIf="heatmapColumnCount > 6"
+                tippyTooltip="Use the Excel download option for heatmaps with more than 6 columns to ensure accurate data display."
+              >
+                Recommended
+              </span>
+            </a>
+          </li>
+          <li role="menuitem">
+            <a
+              role="button"
+              (click)="saveAsExcel(true)"
+              class="sub-menu-item"
+              clickable
+            >
+              Save As CSV
+            </a>
+          </li>
+        </ul>
+      </span>
+      <span
+        dropdown
+        #filterDropdown="bs-dropdown"
+        container="body"
+        [insideClick]="true"
+        placement="bottom right"
+      >
+        <dv-button
+          btnType="default"
+          class="space-on-left-lg"
+          tippyTooltip="Filter"
+          (onClick)="toggleDropdown('filterDropdown')"
+          [ariaLabel]="'Filter'"
+        >
+          <span appIcon name="filter"></span>
+        </dv-button>
+        <ul
+          class="dropdown-menu dropdown-menu-right filter-menu user-select-none"
+          *dropdownMenu
+        >
+          <li>
+            <a class="sub-menu-item cursor-default">
+              <span class="font-weight-600">Sort</span>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="sortHeatmap('L2H')"
+              class="sub-menu-item"
+              [class.sub-menu-item--active]="filter.sortState == 'L2H'"
+            >
+              Low to High
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="sortHeatmap('H2L')"
+              class="sub-menu-item"
+              [class.sub-menu-item--active]="filter.sortState == 'H2L'"
+            >
+              High to Low
+            </a>
+          </li>
+          <li class="divider dropdown-divider"></li>
+          <li>
+            <a class="sub-menu-item">
+              <span class="font-weight-600 cursor-default">Filter</span>
+            </a>
+          </li>
+          <li *ngIf="filterConfig.isAverage">
+            <a
+              (click)="toggleAverageFirst()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Average as First Column</span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showAverageFirst"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Average as First Column</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li *ngIf="filterConfig.isWeightage">
+            <a
+              (click)="toggleWeightage()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Weightage</span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showWeightages"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Weightage</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li *ngIf="filterConfig.isDecimal">
+            <a
+              (click)="toggleDecimalPlaces()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Decimal Places</span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showDecimalPlaces"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Decimal Places</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleCategoryOnly()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>
+                Show Only Categories
+                <span
+                  appIcon
+                  name="info"
+                  class="ml-4"
+                  tippyTooltip="Toggle this on to hide subcategories and only show categories"
+                >
+                </span>
+              </span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.categoryOnly"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Only Categories</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleCategory()"
+              class="sub-menu-item sub-menu-item--toggler"
+              [class.pointer-events-none]="filter.categoryOnly"
+            >
+              <span [class.secondary-text-color]="filter.categoryOnly">
+                Show Categories
+              </span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showCategories"
+                [disabled]="filter.categoryOnly"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Categories</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleQuestions()"
+              class="sub-menu-item sub-menu-item--toggler"
+              [class.pointer-events-none]="filter.categoryOnly"
+            >
+              <span [class.secondary-text-color]="filter.categoryOnly">
+                Show Questions
+              </span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showQuestions"
+                [disabled]="filter.categoryOnly"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Questions</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleOrientation()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Entity Names On The Y-Axis</span>
+              <ui-switch
+                size="small"
+                [checked]="heatmapData.orientation == 'y'"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Entity Names On The Y-Axis</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleTextDisplay()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Text</span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showTextDisplay"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Text</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleDatesDisplay()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Date</span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showDateDisplay"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Date</div>
+              </ui-switch>
+            </a>
+          </li>
+          <li>
+            <a
+              (click)="toggleScaleName()"
+              class="sub-menu-item sub-menu-item--toggler"
+            >
+              <span>Show Rating Name</span>
+              <ui-switch
+                size="small"
+                [(ngModel)]="filter.showScaleName"
+                class="pointer-events-none"
+              >
+                <div class="sr-only">Show Rating Name</div>
+              </ui-switch>
+            </a>
+          </li>
+        </ul>
+      </span>
+      <dv-button
+        *ngIf="!isFullScreenMode"
+        btnType="default"
+        btnClass="space-on-left-lg"
+        tippyTooltip="Enter Fullscreen Mode"
+        (onClick)="toggleFullScreenMode(true)"
+        [ariaLabel]="'Enter Fullscreen Mode'"
+      >
+        <span appIcon name="expand"></span>
+      </dv-button>
+      <dv-button
+        *ngIf="isFullScreenMode"
+        btnType="orange-border"
+        btnClass="space-on-left-lg"
+        tippyTooltip="Exit Fullscreen Mode"
+        (onClick)="toggleFullScreenMode(false)"
+        [ariaLabel]="'Exit Fullscreen Mode'"
+      >
+        <span appIcon name="compress"></span>
+      </dv-button>
+    </div>
+  </div>
+  <hr class="hr-sm hr-lighter" />
+  <div
+    *ngIf="heatmapData.data.length > 0 && !loading && !loading_prefs"
+    [ngClass]="
+      isFullScreenMode ? 'heatmapContainer--fullscreen' : 'heatmapContainer'
+    "
+    [id]="id"
+    [dvHeatmap]="heatmapData"
+    [colors]="colors"
+    [isInverted]="isInverted"
+    [d3ColorScales]="d3ColorScales"
+    tabindex="0"
+  ></div>
+  <div class="text-center" *ngIf="loading">
+    <app-spinner></app-spinner>
+  </div>
+  <div
+    *ngIf="heatmapData.data.length == 0 && !loading && !loading_prefs"
+    class="align-items-center justify-center flex-direction-column space-on-top-xxxl space-on-bottom-xxxl"
+  >
+    <img
+      src="/assets/images/search.svg"
+      alt="Search"
+      width="187"
+      height="185"
+    />
+    <p class="font-size-16 font-weight-600 secondary-text-color clear-margin">
+      No data available for your filter criteria.
+    </p>
+    <p class="font-size-16 font-weight-600 secondary-text-color">
+      Please select a different rating scheme or view.
+    </p>
+  </div>
+</div>

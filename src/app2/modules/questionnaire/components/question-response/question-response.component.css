@@ -1,0 +1,18 @@
+grid-response {
+  display: grid;
+}
+.overflow-class {
+  overflow: auto;
+}
+
+aum-response ::ng-deep app-share-class-table .table-container {
+  display: grid;
+}
+
+.overflow-wrap {
+  overflow-wrap: anywhere !important;
+}
+/* this is added to prevent list style mismatch added by ckeditor */
+.text-multiline-ans ::ng-deep li:before {
+  content: none !important;
+}

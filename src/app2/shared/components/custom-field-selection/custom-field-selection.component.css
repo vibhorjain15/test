@@ -1,0 +1,10 @@
+.font-weight-normal {
+  /* strong tag rendered by innerHTML */
+  strong {
+    font-weight: normal !important;
+  }
+}
+::ng-deep .custom-fields .label-wrap{
+  overflow: hidden;
+  word-break: break-all;
+}

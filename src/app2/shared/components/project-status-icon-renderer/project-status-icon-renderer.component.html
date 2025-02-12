@@ -1,0 +1,25 @@
+<span *ngIf="!params.node.group">
+  <span
+    appIcon
+    name="flag"
+    class="text-danger dd-status-icon"
+    [adaptivePosition]="false"
+    [tooltip]="'The ball is in your court'"
+    placement="left"
+    container="body"
+    *ngIf="displayIcon('flag')"
+  >
+  </span>
+
+  <span
+    appIcon
+    name="hour-glass"
+    class="text-muted dd-status-icon"
+    [adaptivePosition]="false"
+    [tooltip]="(is_investor && !params.data.is_internal) ? 'Manager is working hard' : 'Project is in progress'"
+    placement="left"
+    container="body"
+    *ngIf="displayIcon('hourglass')"
+  >
+  </span>
+</span>

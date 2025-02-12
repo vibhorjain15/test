@@ -1,0 +1,656 @@
+<dv-stepper [widthclass]="widthclass" #dvStepper>
+  <dv-step
+    label="Select Report Design"
+    discription="Select your report design and date range to list projects"
+    [nextLabel]="!show_dilignece_zero_text || isBulk ? 'Next' : ''"
+    (onNextClick)="canProceedToDiligenceSelection()"
+    class="test"
+    role="tabpanel"
+    aria-labelledby="step1"
+  >
+    <div class="row clearfix" col="4" offset="4">
+      <form class="form-horizontal" autocomplete="off">
+        <dv-form-element
+          label="Report Design"
+          labelPosition="top"
+          elementCol="12"
+          [showRightIcon]="false"
+          spacing="small"
+          [for]="'report-design'"
+        >
+          <dv-select
+            [id]="'report-design'"
+            class="col-md-14"
+            [searchable]="true"
+            [clearable]="false"
+            [(ngModel)]="request.selected_template"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Filter by Templates"
+            (ngModelChange)="getDiligences()"
+            [loading]="loadingDefinitions"
+            [aria-label]="'Filter by Templates'"
+            [list]="mapping_templates"
+            [bindValue]="null"
+            [bindLabel]="'report_definition_name'"
+          >
+          </dv-select>
+        </dv-form-element>
+        <p
+          class="text-muted space-on-top"
+          *ngIf="!loadingDefinitions && !mapping_templates?.length"
+        >
+          <small
+            ><i
+              >*Please contact ask@diligencevault.com for initial design report
+              setup*</i
+            ></small
+          >
+        </p>
+        <dv-form-element
+          label="Select dates"
+          labelPosition="top"
+          elementCol="12"
+          [showRightIcon]="false"
+          spacing="small"
+          *ngIf="customDateFilter"
+          [for]="'daterangefilter'"
+        >
+          <app-date-range-picker
+            [customDate]="dateRange"
+            (change)="handleDateChange($event)"
+            (clearDateFilter)="onClearDateFilter()"
+            *ngIf="customDateFilter"
+            [id]="'daterangefilter'"
+          >
+          </app-date-range-picker>
+        </dv-form-element>
+        <dv-form-element
+          elementCol="12"
+          [showRightIcon]="false"
+          spacing="small"
+        >
+          <dv-checkbox
+            [(ngModel)]="isBulk"
+            label="Enable bulk report generation"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onBulkOptionChange($event)"
+            rightIcon="info"
+            iconClass="space-on-left align-middle float-none"
+            iconTooltip="Enabling bulk report generation will allow you to fill out an Excel template containing entities, templates, and date ranges to include multiple projects in a bulk presentation report."
+            ariaLabel="Enable bulk report generation"
+          >
+          </dv-checkbox>
+        </dv-form-element>
+      </form>
+      <p
+        class="text-center text-muted space-on-top-xxl"
+        *ngIf="show_dilignece_zero_text && !isBulk"
+      >
+        <i>No projects found for selected template</i>
+      </p>
+    </div>
+  </dv-step>
+
+  <ng-container *ngIf="!isBulk">
+    <dv-step
+      *ngFor="let entry of diligence_report_templates; let $index = index"
+      [label]="'Select Project - Step ' + ($index + 1)"
+      [discription]="
+        '<p>You can select upto <b>' +
+        entry.frequency +
+        '</b> Project(s) for <b>' +
+        entry.name +
+        '</b> on the left hand panel, using search and filters to narrow your search.</p>'
+      "
+      previousLabel="Previous"
+      nextLabel="Next"
+      (onBackClick)="handlePreviousReviewDili($index - 1)"
+      (onNextClick)="handleNextReviewDili($index + 1)"
+      role="tabpanel"
+      [aria-labelledby]="'step' + ($index + 1)"
+    >
+      <helper-text>
+        <span class="break_word">
+          Report generation is available only for completed projects from this
+          page. For interim reports, please generate from the projects page.
+        </span>
+      </helper-text>
+
+      <ng-container
+        *ngIf="activeReviewTemplate == $index"
+        (ngInit)="projectsSelectionBeforeEnter(entry, $index)"
+      >
+        <div class="row space-on-top-lg">
+          <div class="text-center">
+            <div class="btn-group">
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'All' }"
+                (click)="setEntityType('All')"
+                aria-label="All"
+                clickable
+              >
+                All
+              </span>
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Strategy' }"
+                (click)="setEntityType('Strategy')"
+                aria-label="Strategy"
+                clickable
+              >
+                Strategy
+              </span>
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Fund' }"
+                (click)="setEntityType('Fund')"
+                aria-label="Product"
+                clickable
+              >
+                Product
+              </span>
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Firm' }"
+                (click)="setEntityType('Firm')"
+                aria-label="Firm"
+                clickable
+              >
+                Firm
+              </span>
+              <span
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Vehicle' }"
+                (click)="setEntityType('Vehicle')"
+                aria-label="Vehicle"
+                clickable
+              >
+                Vehicle
+              </span>
+              <span
+                tooltip="Custom represents the analyst evaluation projects created for any entity types (combination of Product, Firm, Strategy or Vehicle)"
+                class="btn btn-default font-size-12"
+                [ngClass]="{ 'btn-primary': review_entity_type == 'Custom' }"
+                (click)="setEntityType('Custom')"
+                aria-label="Custom"
+                clickable
+              >
+                Custom
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="row clearfix space-on-top-lg">
+          <div col="6">
+            <div class="panel panel-default dd-multiselect">
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="6">
+                    <div
+                      class="input-group-rename-this-class-when-filters-are-enabled"
+                    >
+                      <input
+                        type="text"
+                        [(ngModel)]="filterBy"
+                        (ngModelChange)="handleInputChange($event)"
+                        class="form-control"
+                        placeholder="Search Projects by name"
+                        aria-label="Search Projects by name"
+                        autocomplete="off"
+                      />
+                    </div>
+                  </div>
+
+                  <div col="6">
+                    <div
+                      *ngIf="
+                        (review_entity_type == 'Fund' ||
+                          review_entity_type == 'Firm' ||
+                          review_entity_type == 'Strategy' ||
+                          review_entity_type == 'Vehicle') &&
+                        (filters_applied || diligencesCopy.length > 0)
+                      "
+                    >
+                      <button
+                        class="space-on-top-2 btn btn-sm btn-default investor-button-right-margin"
+                        tooltip="{{
+                          filters_section.show ? 'Hide' : 'Apply'
+                        }} Filters"
+                        (click)="toggleFiltersSection()"
+                        aria-label="Toggle Filters"
+                      >
+                        <span
+                          appIcon
+                          name="filter"
+                          [ngClass]="{ 'text-orange': filters_section.show }"
+                        ></span>
+                      </button>
+                      &nbsp;
+                      <button
+                        class="space-on-top-2 btn btn-sm btn-default"
+                        (click)="clearEntityFilter()"
+                        aria-label="Clear Filters"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!-- *ngIf="filters_section.show" -->
+                <div class="row clearfix space-on-top-lg">
+                  <div col="12">
+                    <dv-select
+                      [list]="diligence_funds"
+                      id="diligence_funds"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Products"
+                      (onSelectChange)="filterDiligences($event, 'Fund')"
+                      *ngIf="review_entity_type == 'Fund'"
+                      [aria-label]="'Filter by Products'"
+                    >
+                    </dv-select>
+                    <dv-select
+                      [items]="diligence_firms"
+                      id="diligence_firms"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Firms"
+                      (onSelectChange)="filterDiligences($event, 'Firm')"
+                      *ngIf="review_entity_type == 'Firm'"
+                      [aria-label]="'Filter by Firms'"
+                    >
+                    </dv-select>
+                    <dv-select
+                      [list]="diligence_strategies"
+                      id="diligence_strategies"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Strategies"
+                      (onSelectChange)="filterDiligences($event, 'Strategy')"
+                      *ngIf="review_entity_type == 'Strategy'"
+                      [aria-label]="'Filter by Strategies'"
+                    >
+                    </dv-select>
+                    <dv-select
+                      [list]="diligence_vehicles"
+                      id="diligence_vehicles"
+                      bindLabel="entity_name"
+                      bindValue="entity_id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [(ngModel)]="filter.diligence_entity"
+                      placeholder="Filter by Vehicles"
+                      (onSelectChange)="filterDiligences($event, 'Vehicle')"
+                      *ngIf="review_entity_type == 'Vehicle'"
+                      [aria-label]="'Filter by Vehicles'"
+                    >
+                    </dv-select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="list-group clear-margin-bottom">
+                <div
+                  class="list-group-item"
+                  *ngFor="
+                    let diligence of diligences | orderBy : 'name';
+                    trackBy: trackById
+                  "
+                >
+                  <div class="row clearfix">
+                    <span *ngIf="diligence.is_selected" class="space-on-right">
+                      <span
+                        appIcon
+                        name="check"
+                        size="lg"
+                        class="text-success"
+                      ></span>
+                    </span>
+
+                    <span
+                      class="space-on-right"
+                      tooltip="Select {{ diligence.name }}"
+                      *ngIf="!diligence.is_selected"
+                    >
+                      <span
+                        appIcon
+                        name="plus-circle"
+                        (click)="addToSelection(entry, diligence, $index)"
+                        size="lg"
+                        class="text-primary"
+                        [attr.aria-label]="'Select ' + diligence.name"
+                        role="button"
+                        tabindex="0"
+                      ></span>
+                    </span>
+
+                    <span
+                      >{{ diligence.name }} -
+                      <small class="text-muted">{{
+                        diligence.entity_name
+                      }}</small></span
+                    >
+
+                    <span
+                      class="space-on-left badge"
+                      [ngClass]="{
+                        'badge-info': diligence.entity_type == 'Strategy',
+                        'badge-success': diligence.entity_type == 'Fund',
+                        'badge-warning': diligence.entity_type == 'Firm',
+                        'badge-primary': diligence.entity_type == 'Vehicle'
+                      }"
+                      >{{
+                        diligence.entity_type == "Fund"
+                          ? "Product"
+                          : diligence.entity_type == "Review"
+                          ? "Custom"
+                          : diligence.entity_type
+                      }}</span
+                    >
+                  </div>
+                </div>
+
+                <div class="list-group-item" *ngIf="is_loading">
+                  <div class="row clearfix">
+                    <div>
+                      <app-spinner
+                        spinnerHeight="20"
+                        broadSpinner="true"
+                      ></app-spinner>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h5 class="pull-right" *ngIf="diligences.length">
+                Total {{ diligences.length }} Projects available
+              </h5>
+
+              <div
+                class="panel-body"
+                *ngIf="!filters_applied && !is_loading && !diligences.length"
+              >
+                <app-empty-state
+                  message="Try changing your filters if you don't see what you're looking for"
+                ></app-empty-state>
+              </div>
+
+              <div
+                class="panel-body"
+                *ngIf="!is_loading && filters_applied && diligences.length == 0"
+              >
+                <app-empty-state
+                  message="No Projects match applied filters"
+                  aria-label="No projects match applied filters"
+                ></app-empty-state>
+              </div>
+            </div>
+          </div>
+
+          <div class="dd-multiselect-selection" col="6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="row clearfix">
+                  <div col="8">
+                    <p class="form-control-static inline-block">
+                      Projects Selected
+                      <span
+                        *ngIf="selection_list.length > 0 || select_all_entities"
+                        >({{ selection_list.length }})</span
+                      >
+                    </p>
+                  </div>
+
+                  <div col="4">
+                    <span class="pull-right">
+                      <button
+                        class="btn btn-sm btn-default"
+                        *ngIf="entry.selection_list.length"
+                        (click)="clearSelectionList(entry)"
+                      >
+                        Clear Selection
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <ul
+                class="list-group clear-margin-bottom"
+                *ngIf="entry.selection_list.length"
+              >
+                <li
+                  class="list-group-item"
+                  *ngFor="
+                    let diligence of entry.selection_list;
+                    trackBy: trackById
+                  "
+                  [ngClass]="{ 'active-item': diligence.hoverState }"
+                  (mouseenter)="diligence.hoverState = true"
+                  (mouseleave)="diligence.hoverState = false"
+                >
+                  <div class="media">
+                    <div class="media-body">
+                      <div class="dv-table full-width">
+                        <div class="cell align-middle">
+                          <div class="clearfix">
+                            <div class="inline-block">
+                              <span
+                                tooltip="Remove {{ diligence.name }}"
+                                class="space-on-right"
+                              >
+                                <span
+                                  appIcon
+                                  name="minus-circle"
+                                  class="text-danger"
+                                  [attr.aria-label]="'Remove ' + diligence.name"
+                                  role="button"
+                                  tabindex="0"
+                                  size="lg"
+                                  (click)="
+                                    removeFromSelection(entry, diligence)
+                                  "
+                                ></span>
+                              </span>
+                              <span class="space-on-right">{{
+                                diligence.name
+                              }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="panel-body text-center" *ngIf="select_all_entities">
+                All {{ data_length }} projects are selected.
+              </div>
+
+              <div
+                class="panel-body"
+                *ngIf="!entry.selection_list.length && !select_all_entities"
+              >
+                <app-empty-state
+                  message="You have not selected any projects. Please select them from the panel in the left"
+                ></app-empty-state>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </dv-step>
+  </ng-container>
+
+  <dv-step
+    *ngIf="show_review_step"
+    label="Review & Export"
+    discription="{{
+      isBulk
+        ? 'Please name this report and add an as of date. Download the bulk presentation Excel template and upload to sync the details.'
+        : 'Please add report name, define as of date and review selected project(s)'
+    }}"
+    previousLabel="Previous"
+    finishLabel="Export"
+    (onBackClick)="
+      handlePreviousReviewDili(diligence_report_templates.length - 1)
+    "
+    (onFinishClick)="exportReport()"
+    [isLoading]="loading"
+  >
+    <ng-container
+      *ngIf="
+        activeReviewTemplate == diligence_report_templates.length || isBulk
+      "
+      (ngInit)="combineSelectedDiligences()"
+    >
+      <div class="row clearfix">
+        <div col="6" class="bordered-right">
+          <div col="12">
+            <form
+              class="form-horizontal"
+              [formGroup]="newReportsForm"
+              novalidate
+              autocomplete="off"
+            >
+              <dv-form-element
+                [modelController]="newReportsForm.get('report_name')"
+                label="Report Name"
+                labelPosition="top"
+                [errorMessage]="
+                  newReportsForm.get('report_name').touched &&
+                  newReportsForm.get('report_name').invalid
+                    ? 'Report Name is required'
+                    : newReportsForm.get('report_name').errors?.containsHtml
+                    ? (errorMessageMap.containsHtml
+                      | interpolate : 'Report Name')
+                    : ''
+                "
+                elementCol="12"
+                [isRequired]="true"
+              >
+                <input
+                  [autofocus]
+                  class="form-control"
+                  type="text"
+                  id="report_name"
+                  formControlName="report_name"
+                  placeholder="Report Name"
+                />
+              </dv-form-element>
+              <dv-form-element
+                [modelController]="newReportsForm.get('as_of_date')"
+                label="As of Date"
+                labelPosition="top"
+                elementCol="12"
+                [for]="'as_of_date'"
+              >
+                <app-date-picker
+                  id="'as_of_date'"
+                  [value]="as_of_date"
+                  [maxDate]="maxAsOfDate"
+                  (change)="handleAsOfDateChange($event)"
+                  [id]="'as_of_date'"
+                >
+                </app-date-picker>
+              </dv-form-element>
+              <dv-form-element
+                [modelController]="newReportsForm.get('is_merged')"
+                elementCol="12"
+                *ngIf="isBulk"
+                [showRightIcon]="false"
+              >
+                <dv-checkbox
+                  formControlName="is_merged"
+                  label="Combine all reports in a single output file"
+                >
+                </dv-checkbox>
+              </dv-form-element>
+            </form>
+          </div>
+        </div>
+        <div col="6" *ngIf="!isBulk">
+          <h4
+            class="alert alert-info text-center clear-margin-top space-on-left-lg"
+          >
+            Selected Project(s)
+          </h4>
+
+          <div col="12">
+            <table
+              class="table table-striped table-condensed"
+              *ngIf="combinedDiligences && combinedDiligences.length"
+            >
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Project Name</th>
+                  <th>Template Name</th>
+                  <th>Entity Name</th>
+                  <th>Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let entry of combinedDiligences">
+                  <td>
+                    <dv-button
+                      btnType="default"
+                      size="sm"
+                      btnClass="danger"
+                      (onClick)="removeSelectedDD(entry)"
+                      ariaLabel="Remove Selected DD"
+                      [disabled]="combinedDiligences.length < 2"
+                    >
+                      <span appIcon name="trashcan"></span>
+                    </dv-button>
+                  </td>
+                  <td>{{ entry.name }}</td>
+                  <td>{{ entry.template_name }}</td>
+                  <td>{{ entry.entity_name }}</td>
+                  <td>{{ entry.created_at | dvDate }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div col="6" *ngIf="isBulk">
+          <div class="panel-body">
+            <helper-text>
+              <span class="block-display" id="downloadSampleFile">
+                Please click
+                <a
+                  class="clickable link-underline"
+                  (click)="downloadSampleFile()"
+                  aria-labelledby="downloadSampleFile"
+                  ><b> here</b></a
+                >
+                to download the Excel file to make your bulk report selection.
+              </span>
+            </helper-text>
+            <div>
+              <div class="dd-doc-selection-wrapper">
+                <dv-uploader
+                  accept=".xlsx"
+                  dragLabel="Drag & Drop your completed Excel file here"
+                  [isMultiple]="false"
+                  (onFileUpload)="dropped($event)"
+                ></dv-uploader>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </dv-step>
+</dv-stepper>

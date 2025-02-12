@@ -1,0 +1,11 @@
+<div class="form-group">
+  <label>Width</label>
+  <div>
+    <select class="form-control"
+            chosen
+            data-ng-model="component.options.layout"
+            data-ng-options="layout.value as layout.label for layout in layoutOptions">
+      <option value=""></option>
+    </select>
+  </div>
+</div>

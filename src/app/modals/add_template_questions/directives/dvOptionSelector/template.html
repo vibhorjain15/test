@@ -1,0 +1,118 @@
+<div>
+  <div data-ng-if="!vm.useBulkListBuilder" ui-sortable="vm.sortableOptions" data-ng-model="vm.options" >
+    <div data-ng-repeat="option in vm.options track by $index"
+         class="space-on-bottom-lg">
+      <div class="inline-block align-middle"
+           data-ng-show="vm.editable"
+           data-ng-class="{'invisible': vm.options.length == 1}">
+        <icon name="th" class="sort-handle"></icon>
+      </div>
+
+      <div class="inline-block align-middle space-on-left"
+           data-ng-show="vm.displayCheckbox">
+        <dv-checkbox disabled></dv-checkbox>
+      </div>
+
+      <div data-ng-class="{'has-error': !(option.text.length && option.text.length > 0)}" class="inline-block align-middle space-on-left">
+        <input type="text" data-ng-show="vm.editable" class="form-control js-option-text field-preview-input"
+          data-ng-model="option.text" required />
+        <small class="text-danger" data-ng-hide="option.text.length && option.text.length > 0">
+          This field is required.
+        </small>
+        <span data-ng-hide="vm.editable">{{option.text}}</span>
+      </div>
+
+      <div class="inline-block align-middle space-on-left"
+           data-ng-show="vm.column_options">
+            <span btn-type="default"
+                class="clickable"
+                data-ng-click="vm.addColumnOptions($index)"
+                tabindex="-1">
+              <icon name="cog"></icon>
+            </span>
+      </div>
+
+      <div class="inline-block align-middle space-on-left"
+           data-ng-hide="vm.options.length == 1 || !vm.editable">
+        <button btn-type="default"
+                data-ng-click="vm.removeOption($index)"
+                tabindex="-1"
+                class="btn-close">&times;</button>
+      </div>
+    </div>
+  </div>
+  <div data-ng-if="vm.editable && !vm.useBulkListBuilder">
+    <div class="inline-block align-middle invisible">
+      <icon name="th"></icon>
+    </div>
+
+    <div class="inline-block align-middle space-on-left"
+         data-ng-show="vm.displayCheckbox">
+      <dv-checkbox disabled></dv-checkbox>
+    </div>
+
+    <div class="inline-block align-middle space-on-left">
+      <input type="text"
+             class="form-control clickable field-preview field-preview-input"
+             readonly="true"
+             placeholder="Click to add option"
+             data-ng-click="vm.addOption()" />
+    </div>
+
+    <div data-ng-if="vm.allow_other_option">
+      <div class="inline-block align-middle space-on-left"
+           data-ng-hide="vm.has_other_option">
+        or
+        <a role="button" data-ng-click="vm.has_other_option = true">
+          Add "Other"
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div data-ng-if="vm.has_other_option && !vm.useBulkListBuilder"
+       class="space-on-top-lg">
+    <div class="inline-block align-middle invisible"
+         data-ng-show="vm.editable">
+      <icon name="th"></icon>
+    </div>
+
+    <div class="inline-block align-middle space-on-left"
+         data-ng-show="vm.displayCheckbox">
+      <dv-checkbox disabled></dv-checkbox>
+    </div>
+
+    <span class="inline-block align-middle space-on-left text-muted">
+      Other:
+    </span>
+
+    <div class="inline-block align-middle space-on-left">
+      <input type="text"
+             class="form-control field-preview field-preview-other-input"
+             readonly="true"
+             placeholder="Their explanation"/>
+    </div>
+
+    <div class="inline-block align-middle space-on-left"
+         data-ng-show="vm.editable">
+      <button btn-type="default"
+              class="btn-close"
+              data-ng-click="vm.has_other_option = false">&times;</button>
+    </div>
+  </div>
+
+  <div data-ng-if="vm.useBulkListBuilder" >
+    <dv-bulk-list-builder id-key="'id'" text-key="'text'" ng-model="vm.newOptions" current-length="vm.options.length" type="'option'" value-required="false"></dv-bulk-list-builder>
+    <br>
+    <button class="btn btn-primary" data-ng-click="vm.previewOptions()">Save Options</button>
+  </div>
+  <br>
+  <dv-checkbox
+      data-ng-show="vm.editable"
+      data-ng-model="vm.useBulkListBuilder">
+      <dv-checkbox-label>
+          <p>Add multiple options</p>
+      </dv-checkbox-label>
+  </dv-checkbox>
+</div>

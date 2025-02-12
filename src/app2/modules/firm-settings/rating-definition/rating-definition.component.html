@@ -1,0 +1,504 @@
+<div class="panel panel-default">
+  <dv-panel-heading
+    [heading]="headerConstants.RATINGDEFINITION"
+    [controls]="panelHeadingControls"
+    class="panel-heading"
+  >
+  </dv-panel-heading>
+  <div class="panel-body">
+    <div class="row space-on-bottom-lg">
+      <div col="12">
+        <app-spinner *ngIf="loading_rating_schemes"></app-spinner>
+        <div
+          col="6"
+          offset="3"
+          class="rating-selection-list"
+          *ngIf="!loading_rating_schemes"
+        >
+          <span class="filter-input">
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="filterRatingScheme"
+              placeholder="Search by name"
+              [attr.aria-label]="'Search by name'"
+            />
+          </span>
+          <div class="rating-scroll-view space-on-top-lg">
+            <ul col="12" tabindex="0" [attr.aria-label]="'Rating Types List'">
+              <app-empty-state
+                [message]="
+                  'No Rating types added. Add one by clicking the add button above.'
+                "
+                *ngIf="!rating_types.length"
+              ></app-empty-state>
+              <li
+                *ngFor="let type of rating_types | filter : filterRatingScheme"
+                [ngClass]="{ 'active-selection': type.id == selectedType.id }"
+                (click)="selectRatingType(type)"
+                id="rating_scheme_{{ type.id }}"
+                tabindex="0"
+                [attr.aria-label]="'Rating Type ' + type.name"
+              >
+                <div class="row item">
+                  <span class="align-middle text ratingText">{{
+                    type.name
+                  }}</span>
+                  <div class="pull-right controls">
+                    <span
+                      [tooltip]="
+                        type.is_system
+                          ? 'You cannot edit system level ratings'
+                          : ''
+                      "
+                      container="body"
+                      placement="top"
+                      [adaptivePosition]="false"
+                      class="control"
+                      (click)="onEditRatingType(type)"
+                      [ngClass]="{ 'disabled-Element': type.is_system }"
+                      clickable
+                    >
+                      <span appIcon name="pencil"></span>
+                    </span>
+                    <span
+                      [tooltip]="
+                        type.is_system
+                          ? 'You cannot delete system level ratings'
+                          : ''
+                      "
+                      container="body"
+                      placement="top"
+                      [adaptivePosition]="false"
+                      class="control-danger"
+                      (click)="confirmRatingDeletion(type)"
+                      [ngClass]="{ 'disabled-Element': type.is_system }"
+                      clickable
+                    >
+                      <span appIcon name="trashcan"></span>
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix container-fluid" *ngIf="selectedType">
+      <div class="rating-form-border">
+        <h4 class="rating-type-header lh1-5">
+          Viewing Definition for {{ selectedType.name }}
+        </h4>
+        <div>
+          <app-spinner *ngIf="loading_categories"></app-spinner>
+          <div class="row clearfix" *ngIf="ratingDef.categories">
+            <div col="12" class="space-on-top-lg">
+              <div class="col-md-4">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading">
+                    <h5 class="panel-title">Categories</h5>
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <a
+                          [tooltip]="
+                            selectedType.is_system
+                              ? 'You cannot edit system level ratings'
+                              : 'Edit Category'
+                          "
+                          container="body"
+                          class="panel-control js-add-category"
+                          [ngClass]="{
+                            'disabled-Element': selectedType.is_system
+                          }"
+                          (click)="openAddCategoryModal()"
+                          role="button"
+                          tabindex="0"
+                          [attr.aria-label]="
+                            selectedType.is_system
+                              ? 'You cannot edit system level ratings'
+                              : 'Edit Category'
+                          "
+                        >
+                          <span aria-hidden="true" appIcon name="pencil"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <app-empty-state
+                      [message]="
+                        'No categories available. You can add them using the button at the top right corner of this panel'
+                      "
+                      *ngIf="!ratingDef.categories.length"
+                    ></app-empty-state>
+                    <div class="list-group" *ngIf="ratingDef.categories.length">
+                      <a
+                        class="list-group-item has-controls"
+                        [ngClass]="{
+                          active: selectedCategory.id == category.id
+                        }"
+                        *ngFor="
+                          let category of ratingDef.categories
+                            | orderBy : 'order';
+                          let $index = index
+                        "
+                        (click)="getSubcategories(category)"
+                        tabindex="0"
+                        role="button"
+                        [attr.aria-label]="'Category ' + category.name"
+                      >
+                        <div class="ratingBox">
+                          <div class="itemName">{{ category.name }}</div>
+                          <div class="percentage text-center lh1">
+                            <div
+                              [ngClass]="{
+                                'text-default':
+                                  selectedCategory.id == category.id,
+                                'text-primary':
+                                  selectedCategory.id != category.id
+                              }"
+                            >
+                              {{ category.weightage }}%
+                            </div>
+
+                            <small
+                              [ngClass]="{
+                                'text-default':
+                                  selectedCategory.id == category.id,
+                                'text-muted': selectedCategory.id != category.id
+                              }"
+                            >
+                              <small>Weightage</small>
+                            </small>
+                          </div>
+                          <span
+                            class="edit-scale"
+                            role="button"
+                            tabindex="0"
+                            *ngIf="
+                              category.rating_scale_id &&
+                              selectedType.rating_scale_mode ==
+                                ratingConstants?.ScoreBand
+                            "
+                            (click)="
+                              openEditScaleModal(category, selectedType, $index)
+                            "
+                            [attr.aria-label]="
+                              'Edit scale for category ' + category.name
+                            "
+                          >
+                            <span appIcon name="scoring"></span>
+                          </span>
+                          <span class="exceedingError">
+                            <span
+                              [tooltip]="
+                                'The total weightage under this category exceeds by ' +
+                                +category.exceeding_weight.toFixed(2) +
+                                ' %. Please verify the weights for correct calculation of ratings.'
+                              "
+                              container="body"
+                              appIcon
+                              *ngIf="category.exceeding_weight > precision"
+                              name="info"
+                              class="text-danger"
+                              role="img"
+                              [attr.aria-label]="
+                                'The total weightage under this category exceeds by ' +
+                                +category.exceeding_weight.toFixed(2) +
+                                ' %. Please verify the weights for correct calculation of ratings.'
+                              "
+                            ></span>
+                            <span
+                              [tooltip]="
+                                'The total weightage under this category is less by ' +
+                                (+category.exceeding_weight * -1).toFixed(2) +
+                                '%. Please verify the weights for correct calculation of ratings.'
+                              "
+                              container="body"
+                              appIcon
+                              *ngIf="
+                                category.exceeding_weight < negativePrecision
+                              "
+                              name="info"
+                              class="text-danger"
+                              role="img"
+                              [attr.aria-label]="
+                                'The total weightage under this category is less by ' +
+                                (+category.exceeding_weight * -1).toFixed(2) +
+                                '%. Please verify the weights for correct calculation of ratings.'
+                              "
+                            ></span>
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading">
+                    <h5 class="panel-title">SubCategories</h5>
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <a
+                          class="panel-control js-add-category"
+                          [ngClass]="{
+                            'disabled-Element':
+                              !selectedCategory || selectedType.is_system
+                          }"
+                          [tooltip]="
+                            !selectedCategory
+                              ? 'Please select a category to add new sub-categories'
+                              : selectedType.is_system
+                              ? 'You cannot edit system level ratings'
+                              : 'Edit Subcategory'
+                          "
+                          container="body"
+                          (click)="openAddSubCategoryModal()"
+                          role="button"
+                          tabindex="0"
+                          [attr.aria-label]="
+                            !selectedCategory
+                              ? 'Please select a category to add new sub-categories'
+                              : selectedType.is_system
+                              ? 'You cannot edit system level ratings'
+                              : 'Edit Subcategory'
+                          "
+                        >
+                          <span appIcon name="pencil"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <app-empty-state
+                      [message]="
+                        'No subcategories available. You can add them using the button at the top right corner of this panel'
+                      "
+                      *ngIf="!ratingDef.subcategories.length"
+                    ></app-empty-state>
+                    <div
+                      class="list-group"
+                      *ngIf="ratingDef.subcategories.length"
+                    >
+                      <a
+                        class="list-group-item has-controls"
+                        [ngClass]="{
+                          active: selectedSubCategory.id == subcategory.id
+                        }"
+                        *ngFor="
+                          let subcategory of ratingDef.subcategories
+                            | orderBy : 'order';
+                          let $index = index
+                        "
+                        (click)="getRatings(subcategory)"
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-label]="'Subcategory ' + subcategory.name"
+                      >
+                        <div class="ratingBox">
+                          <div class="itemName">{{ subcategory.name }}</div>
+                          <div class="percentage text-center lh1">
+                            <div
+                              [ngClass]="{
+                                'text-default':
+                                  selectedSubCategory.id == subcategory.id,
+                                'text-primary':
+                                  selectedSubCategory.id != subcategory.id
+                              }"
+                            >
+                              {{ subcategory.weightage }}%
+                            </div>
+                            <small
+                              [ngClass]="{
+                                'text-default':
+                                  selectedSubCategory.id == subcategory.id,
+                                'text-muted':
+                                  selectedSubCategory.id != subcategory.id
+                              }"
+                            >
+                              <small>Weightage</small>
+                            </small>
+                          </div>
+                          <span
+                            class="edit-scale"
+                            role="button"
+                            tabindex="0"
+                            *ngIf="
+                              subcategory.rating_scale_id &&
+                              selectedType.rating_scale_mode ==
+                                ratingConstants?.ScoreBand
+                            "
+                            (click)="
+                              openEditScaleModal(
+                                subcategory,
+                                selectedCategory,
+                                $index
+                              )
+                            "
+                            [attr.aria-label]="
+                              'Edit scale for subcategory ' + subcategory.name
+                            "
+                          >
+                            <span appIcon name="scoring"></span>
+                          </span>
+                          <span class="exceedingError">
+                            <span
+                              [tooltip]="
+                                'The total weightage under this subcategory exceeds by ' +
+                                +subcategory.exceeding_weight.toFixed(2) +
+                                '%. Please verify the weights for correct calculation of ratings.'
+                              "
+                              container="body"
+                              appIcon
+                              *ngIf="subcategory.exceeding_weight > precision"
+                              name="info"
+                              class="text-danger"
+                              role="img"
+                              [attr.aria-label]="
+                                'The total weightage under this subcategory exceeds by ' +
+                                +subcategory.exceeding_weight.toFixed(2) +
+                                '%. Please verify the weights for correct calculation of ratings.'
+                              "
+                            ></span>
+                            <span
+                              [tooltip]="
+                                'The total weightage under this subcategory is less by ' +
+                                (+subcategory.exceeding_weight * -1).toFixed(
+                                  2
+                                ) +
+                                '%. Please verify the weights for correct calculation of ratings.'
+                              "
+                              container="body"
+                              appIcon
+                              *ngIf="
+                                subcategory.exceeding_weight < negativePrecision
+                              "
+                              name="info"
+                              class="text-danger"
+                              role="img"
+                              [attr.aria-label]="
+                                'The total weightage under this subcategory is less by ' +
+                                (+subcategory.exceeding_weight * -1).toFixed(
+                                  2
+                                ) +
+                                '%. Please verify the weights for correct calculation of ratings.'
+                              "
+                            ></span>
+                          </span>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading">
+                    <h5 class="panel-title">Ratings</h5>
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <a
+                          class="panel-control js-add-category"
+                          [ngClass]="{
+                            'disabled-Element':
+                              !selectedSubCategory ||
+                              selectedType.is_system ||
+                              selectedType.rating_level?.toLowerCase() ===
+                                'section'
+                          }"
+                          [tooltip]="
+                            !selectedSubCategory
+                              ? 'Please select a subcategory to add new ratings'
+                              : selectedType.is_system
+                              ? 'You cannot edit system level ratings'
+                              : 'Edit Ratings'
+                          "
+                          placement="left"
+                          container="body"
+                          (click)="openAddRatingsModal()"
+                          role="button"
+                          tabindex="0"
+                          [attr.aria-label]="
+                            !selectedSubCategory
+                              ? 'Please select a subcategory to add new ratings'
+                              : selectedType.is_system
+                              ? 'You cannot edit system level ratings'
+                              : 'Edit Ratings'
+                          "
+                        >
+                          <span appIcon name="pencil"></span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="panel-body">
+                    <app-empty-state
+                      [message]="
+                        'No ratings available. You can add them using the button at the top right corner of this panel'
+                      "
+                      *ngIf="!ratingDef.ratings.length"
+                    ></app-empty-state>
+                    <div class="list-group" *ngIf="ratingDef.ratings.length">
+                      <a
+                        class="list-group-item has-controls"
+                        *ngFor="
+                          let rating of ratingDef.ratings | orderBy : 'order'
+                        "
+                        role="button"
+                        tabindex="0"
+                        [attr.aria-label]="'Rating ' + rating.name"
+                      >
+                        <div class="ratingBox">
+                          <div class="itemName" [innerHTML]="rating.name"></div>
+                          <div class="percentage text-center lh1">
+                            <div class="text-primary">
+                              {{ rating.weightage }}%
+                            </div>
+                            <small class="text-muted">
+                              <small>Weightage</small>
+                            </small>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="selectedType && !selectedType.is_system">
+      <div class="rating-form-border">
+        <app-scoring-engine-scale-selection
+          *ngIf="
+            !(
+              selectedType.source?.toLowerCase() === 'user' ||
+              !ratingDef?.categories?.length
+            )
+          "
+          [ratingScheme]="selectedType"
+          [existingCalculationType]="
+            selectedType.project_level_rating_calculation_type
+          "
+          [existingSecondaryScaleId]="
+            selectedType.project_level_rating_scale_id
+          "
+          [isProjectLevel]="true"
+          title="Configure aggregation logic and scales for the total score of the project"
+          titleTooltip="Change the scoring engine and rating scale for the total score of your project from below. You can change your scoring engine and rating scale for category/sub-category level from the respective edit modal."
+        ></app-scoring-engine-scale-selection>
+        <app-custom-field-viewer
+          [entityType]="'rating'"
+          [entityId]="selectedType.id"
+          [source]="'rating'"
+          id="customFieldElement"
+        ></app-custom-field-viewer>
+      </div>
+    </div>
+  </div>
+</div>

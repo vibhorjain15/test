@@ -1,0 +1,351 @@
+#cssmenuTAGS {
+  position: relative;
+  height: 44px;
+  background: white;
+  width: auto;
+}
+#cssmenuTAGS ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+#cssmenuTAGS > ul {
+  position: relative;
+  display: block;
+  background: white;
+  width: 100%;
+  z-index: 500;
+}
+#cssmenuTAGS:after,
+#cssmenuTAGS > ul:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+#cssmenuTAGS.align-right > ul > li {
+  float: right;
+}
+#cssmenuTAGS.align-center ul {
+  text-align: center;
+}
+#cssmenuTAGS.align-center ul ul {
+  text-align: left;
+}
+#cssmenuTAGS > ul > li {
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+#cssmenuTAGS > ul > #menu-button {
+  display: none;
+}
+#cssmenuTAGS ul li a {
+  display: block;
+  font-family: Helvetica, sans-serif;
+  text-decoration: none;
+}
+#cssmenuTAGS > ul > li > a {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 15px 20px;
+  color: #7a8189;
+  text-transform: uppercase;
+  -webkit-transition: color 0.25s ease-out;
+  -moz-transition: color 0.25s ease-out;
+  -ms-transition: color 0.25s ease-out;
+  -o-transition: color 0.25s ease-out;
+  transition: color 0.25s ease-out;
+}
+#cssmenuTAGS > ul > li.has-sub > a {
+  padding-right: 80px;
+}
+#cssmenuTAGS > ul > li:hover > a {
+  color: black;
+}
+#cssmenuTAGS li.has-sub::after {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+#cssmenuTAGS > ul > li.has-sub::after {
+  right: 43px;
+  top: 20px;
+  border: 5px solid transparent;
+  border-top-color: #7a8189;
+}
+#cssmenuTAGS > ul > li:hover::after {
+  border-top-color: #ffffff;
+}
+#indicatorContainerDD {
+  position: absolute;
+  height: 12px;
+  width: 100%;
+  bottom: 0px;
+  overflow: hidden;
+  z-index: -1;
+}
+#pIndicatorDD {
+  position: absolute;
+  height: 0;
+  width: 100%;
+  border: 12px solid transparent;
+  border-top-color: #2b2f3a;
+  z-index: -2;
+  -webkit-transition: left .25s ease;
+  -moz-transition: left .25s ease;
+  -ms-transition: left .25s ease;
+  -o-transition: left .25s ease;
+  transition: left .25s ease;
+}
+#cIndicatorDD {
+  position: absolute;
+  height: 0;
+  width: 100%;
+  border: 12px solid transparent;
+  border-top-color: #2b2f3a;
+  top: -12px;
+  right: 100%;
+  z-index: -2;
+}
+#cssmenuTAGS ul ul {
+  position: absolute;
+  left: -9999px;
+  top: 70px;
+  opacity: 0;
+  -webkit-transition: opacity .3s ease, top .25s ease;
+  -moz-transition: opacity .3s ease, top .25s ease;
+  -ms-transition: opacity .3s ease, top .25s ease;
+  -o-transition: opacity .3s ease, top .25s ease;
+  transition: opacity .3s ease, top .25s ease;
+  z-index: 1000;
+  border: 2px solid #eee;
+}
+#cssmenuTAGS ul ul ul {
+  top: 37px;
+  padding-left: 5px;
+}
+#cssmenuTAGS ul ul li {
+  position: relative;
+}
+#cssmenuTAGS > ul > li:hover > ul {
+  left: 18px;
+  top: 44px;
+  opacity: 1;
+}
+#cssmenuTAGS.align-right > ul > li:hover > ul {
+  left: auto;
+  right: 0;
+  opacity: 1;
+}
+#cssmenuTAGS ul ul li:hover > ul {
+  left: 170px;
+  top: 0;
+  opacity: 1;
+}
+#cssmenuTAGS.align-right ul ul li:hover > ul {
+  left: auto;
+  right: 170px;
+  top: 0;
+  opacity: 1;
+  padding-right: 5px;
+}
+#cssmenuTAGS ul ul li a {
+  width: 130px;
+  border-bottom: 1px solid #eeeeee;
+  padding: 10px 20px;
+  font-size: 12px;
+  color: #9ea2a5;
+  background: #ffffff;
+  -webkit-transition: all .35s ease;
+  -moz-transition: all .35s ease;
+  -ms-transition: all .35s ease;
+  -o-transition: all .35s ease;
+  transition: all .35s ease;
+}
+#cssmenuTAGS.align-right ul ul li a {
+  text-align: right;
+}
+#cssmenuTAGS ul ul li:hover > a {
+  background: #f2f2f2;
+  color: #8c9195;
+}
+#cssmenuTAGS ul ul li:last-child > a,
+#cssmenuTAGS ul ul li.last > a {
+  border-bottom: 0;
+}
+#cssmenuTAGS > ul > li > ul::after {
+  content: '';
+  /*border: 6px solid transparent;*/
+  width: 0;
+  height: 0;
+  border-bottom-color: #ffffff;
+  position: absolute;
+  top: -12px;
+  left: 30px;
+}
+#cssmenuTAGS.align-right > ul > li > ul::after {
+  left: auto;
+  right: 30px;
+}
+#cssmenuTAGS ul ul li.has-sub::after {
+  border: 4px solid transparent;
+  border-left-color: #9ea2a5;
+  right: 10px;
+  top: 12px;
+  -moz-transition: all .2s ease;
+  -ms-transition: all .2s ease;
+  -o-transition: all .2s ease;
+  transition: all .2s ease;
+  -webkit-transition: -webkit-transform 0.2s ease, right 0.2s ease;
+}
+#cssmenuTAGS.align-right ul ul li.has-sub::after {
+  border-left-color: transparent;
+  border-right-color: #9ea2a5;
+  right: auto;
+  left: 10px;
+}
+#cssmenuTAGS ul ul li.has-sub:hover::after {
+  border-left-color: #ffffff;
+  right: -5px;
+  -webkit-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+#cssmenuTAGS.align-right ul ul li.has-sub:hover::after {
+  border-right-color: #ffffff;
+  border-left-color: transparent;
+  left: -5px;
+  -webkit-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+@media all and (max-width: 800px), only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (min--moz-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (-o-min-device-pixel-ratio: 2/1) and (max-width: 1024px), only screen and (min-device-pixel-ratio: 2) and (max-width: 1024px), only screen and (min-resolution: 192dpi) and (max-width: 1024px), only screen and (min-resolution: 2dppx) and (max-width: 1024px) {
+  #cssmenuTAGS {
+    width: auto;
+  }
+  #cssmenuTAGS.align-center ul {
+    text-align: left;
+  }
+  #cssmenuTAGS.align-right > ul > li {
+    float: none;
+  }
+  #cssmenuTAGS ul {
+    width: auto;
+  }
+  #cssmenuTAGS .submenuArrow,
+  #cssmenuTAGS #indicatorContainer {
+    display: none;
+  }
+  #cssmenuTAGS > ul {
+    height: auto;
+    display: block;
+  }
+  #cssmenuTAGS > ul > li {
+    float: none;
+  }
+  #cssmenuTAGS li,
+  #cssmenuTAGS > ul > li {
+    display: none;
+  }
+  #cssmenuTAGS ul ul,
+  #cssmenuTAGS ul ul ul,
+  #cssmenuTAGS ul > li:hover > ul,
+  #cssmenuTAGS ul ul > li:hover > ul,
+  #cssmenuTAGS.align-right ul ul,
+  #cssmenuTAGS.align-right ul ul ul,
+  #cssmenuTAGS.align-right ul > li:hover > ul,
+  #cssmenuTAGS.align-right ul ul > li:hover > ul {
+    position: relative;
+    left: auto;
+    top: auto;
+    opacity: 1;
+    padding-left: 0;
+    padding-right: 0;
+    right: auto;
+  }
+  #cssmenuTAGS ul .has-sub::after {
+    display: none;
+  }
+  #cssmenuTAGS ul li a {
+    padding: 12px 20px;
+  }
+  #cssmenuTAGS ul ul li a {
+    border: 0;
+    background: none;
+    width: auto;
+    padding: 8px 35px;
+  }
+  #cssmenuTAGS.align-right ul ul li a {
+    text-align: left;
+  }
+  #cssmenuTAGS ul ul li:hover > a {
+    background: none;
+    color: #8c9195;
+  }
+  #cssmenuTAGS ul ul ul a {
+    padding: 8px 50px;
+  }
+  #cssmenuTAGS ul ul ul ul a {
+    padding: 8px 65px;
+  }
+  #cssmenuTAGS ul ul ul ul ul a {
+    padding: 8px 80px;
+  }
+  #cssmenuTAGS ul ul ul ul ul ul a {
+    padding: 8px 95px;
+  }
+  #cssmenuTAGS > ul > #menu-button {
+    display: block;
+    cursor: pointer;
+  }
+  #cssmenuTAGS #menu-button > a {
+    padding: 14px 20px;
+  }
+  #cssmenuTAGS ul.open li,
+  #cssmenuTAGS > ul.open > li {
+    display: block;
+  }
+  #cssmenuTAGS > ul.open > li#menu-button > a {
+    color: #fff;
+    border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+  }
+  #cssmenuTAGS ul ul::after {
+    display: none;
+  }
+  #cssmenuTAGS #menu-button::after {
+    display: block;
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 22px;
+    border-top: 2px solid #7a8189;
+    border-bottom: 2px solid #7a8189;
+    right: 20px;
+    top: 15px;
+  }
+  #cssmenuTAGS #menu-button::before {
+    display: block;
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 22px;
+    border-top: 2px solid #7a8189;
+    right: 20px;
+    top: 25px;
+  }
+  #cssmenuTAGS ul.open #menu-button::after,
+  #cssmenuTAGS ul.open #menu-button::before {
+    border-color: #fff;
+  }
+}

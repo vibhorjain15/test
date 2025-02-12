@@ -1,0 +1,23 @@
+<app-modal
+  [title]="'View Details'"
+  [initialTemplate]="saveViewDetails"
+  [isFooter]="false"
+>
+</app-modal>
+
+<ng-template #saveViewDetails>
+  <div class="save-view-details row padded">
+    <div class="col-md-12">
+      <span class="col-md-4">Name</span>
+      <label [innerHtml]="state.name" class="col-md-6"></label>
+    </div>
+    <div class="col-md-12">
+      <span class="col-md-4">Created on</span>
+      <label [innerHtml]="state.created_at" class="col-md-6"></label>
+    </div>
+    <div class="col-md-12">
+      <span class="col-md-4">Description</span>
+      <label [innerHtml]="state.description" class="col-md-6"></label>
+    </div>
+  </div>
+</ng-template>

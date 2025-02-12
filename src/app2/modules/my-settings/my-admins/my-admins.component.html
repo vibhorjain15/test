@@ -1,0 +1,42 @@
+<div class="panel panel-default borderless-top">
+  <div class="panel-body clearfix">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="65"
+      *ngIf="loading"
+    ></app-spinner>
+    <div class="dv-table dv-table-middle dd-info-panel">
+      <div class="bordered-right cell">
+        <div class="lh1-5">
+          <strong>{{ current_user?.fullName }}</strong>
+        </div>
+      </div>
+      <div class="cell">
+        <dv-button
+          [btnType]="'transparent'"
+          (onClick)="goBack()"
+        >
+          <div><span appIcon name="arrow-back" size="2x"></span></div>
+          <small>Back</small>
+        </dv-button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">My Admins</h5>
+  </div>
+  <div class="panel-body">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        To view access level configuration (<a (click)="gotoRolesMap()"
+          >click here</a
+        >)
+      </div>
+    </div>
+    <div *ngIf="myAdminsData" class="space-on-top-lg">
+      <app-dv-grid [rowData]="myAdminsData" [name]="gridName"></app-dv-grid>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,446 @@
+<div class="panel panel-default mb-0 border-btm">
+  <div class="panel-heading">
+    <h5 class="panel-title heading-text" id="salesforceCRMTitle">
+      <b>Salesforce CRM</b>
+    </h5>
+  </div>
+  <app-tab
+    [items]="crmList"
+    [loading]="loading"
+    (switchEvent)="switchTab($event)"
+    role="navigation"
+    aria-label="Salesforce CRM Tabs"
+  ></app-tab>
+</div>
+
+<div class="panel panel-default sso-profile-page mb-0 border-btm">
+  <div class="panel-body">
+    <app-spinner *ngIf="!isLoaded"></app-spinner>
+    <div *ngIf="isLoaded">
+      <div class="panel-info">
+        <div class="panel-heading border-clr">
+          <app-spinner
+            *ngIf="!countLoaded && currentTab == 3"
+            role="status"
+            aria-label="Loading Count"
+          ></app-spinner>
+          <ng-container *ngIf="countLoaded || currentTab != 3">
+            {{
+              currentTab == 2
+                ? "The below grids indicate field mapping and make sure your field data types are similar before you import/sync firms and contacts details."
+                : currentTab == 3
+                ? "Total " +
+                  totalData +
+                  " " +
+                  (entityVal == "investors"
+                    ? "firm"
+                    : entityVal.substring(0, entityVal.length - 1)) +
+                  " record/s synced to DiligenceVault till date" +
+                  (lastSync == "None"
+                    ? ""
+                    : ", last synced on - " + (lastSync | dvDate)) +
+                  "."
+                : currentTab == 1
+                ? "Enter your credentials to configure the Salesforce CRM to DiligenceVault and then check sync settings before importing / syncing the firms and contacts."
+                : null
+            }}
+            <span *ngIf="currentTab == 3">
+              (<a
+                class="cursor"
+                (click)="getDataCount()"
+                role="button"
+                tabindex="0"
+                id="RefreshNow"
+                name="RefreshNow"
+                title="Refresh Now"
+                >Refresh Now
+                <span appIcon name="refresh" class="align-middle"></span></a
+              >)
+            </span>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 2 || currentTab == 3" class="row clearfix">
+        <div col="6" class="mt p-0">
+          <label class="entity-label" for="entity-label" col="2"
+            >Entity :</label
+          >
+          <dv-select
+            class="p-0 font-small"
+            col="3"
+            [(ngModel)]="entityVal"
+            name="entity"
+            [list]="entityList"
+            (onSelectChange)="changeView()"
+            bindLabel="title"
+            bindValue="id"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            [id]="'entity-label'"
+          ></dv-select>
+        </div>
+
+        <div col="6" class="mt txt-end" *ngIf="currentTab == 3">
+          <dv-button
+            (onClick)="openImportingFirms()"
+            [ariaLabel]="'Import ' + entityVal"
+          >
+            <span appIcon name="refresh" aria-hidden="true"></span> Import
+            {{ entityVal | titlecase }}
+          </dv-button>
+        </div>
+      </div>
+
+      <div
+        class="panel-info space-on-top-lg"
+        *ngIf="currentTab == 3 && entityVal == 'contacts'"
+      >
+        <div class="panel-heading border-clr padding-note" role="note">
+          Note: Only the contacts associated to the firms(accounts) can be added
+          to the DiligenceVault.
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 1" class="row clearfix">
+        <div col="12" id="js-firms-profile">
+          <form
+            class="form-horizontal"
+            name="sso_form"
+            [formGroup]="configurationForm"
+            autocomplete="off"
+          >
+            <hr />
+            <dv-form-element
+              class="form-element"
+              label="Consumer Key"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('consumer_key')"
+              errorMessage="Please enter Consumer Key"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="consumer_key"
+                [value]="configurationForm.get('consumer_key')?.value"
+                placeholder="Enter Consumer Key"
+                aria-label="Consumer Key Input"
+                id="consumer_key"
+              />
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="Consumer Secret"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('consumer_secret')"
+              errorMessage="Please enter Consumer Secret"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="consumer_secret"
+                [value]="configurationForm.get('consumer_secret')?.value"
+                placeholder="Enter Consumer Secret"
+                aria-label="Consumer Secret"
+                id="consumer_secret"
+              />
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="Username"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('username')"
+              errorMessage="{{
+                !configurationForm.get('username').value
+                  ? 'Please enter Username'
+                  : 'Please enter valid Email in Username'
+              }}"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="username"
+                [value]="configurationForm.get('username')?.value"
+                placeholder="Enter Username"
+                aria-label="Username"
+                id="username"
+              />
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="Password"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('password')"
+              errorMessage="Please enter Password"
+            >
+              <input
+                #inputRefPwd
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control input-pwd"
+                formControlName="password"
+                [disabled]="disableFields"
+                [value]="configurationForm.get('password')?.value"
+                placeholder="Enter a Password"
+                aria-label="Password"
+                id="password"
+              />
+              <ng-container *ngIf="!isConfigured || !isPut">
+                <span
+                  class="pwd-icon"
+                  appIcon
+                  name="eye"
+                  (click)="showPassword = !showPassword"
+                  [class.hide]="showPassword"
+                  aria-label="Show Password"
+                  tabindex="0"
+                  role="button"
+                ></span>
+                <span
+                  class="pwd-icon"
+                  appIcon
+                  name="view-hide"
+                  (click)="showPassword = !showPassword"
+                  [class.hide]="!showPassword"
+                  aria-label="Hide Password"
+                  tabindex="0"
+                  role="button"
+                ></span>
+              </ng-container>
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="Security Token"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('security_token')"
+              errorMessage="Please enter Security Token"
+            >
+              <input
+                #inputRef
+                [type]="showSecurityToken ? 'text' : 'password'"
+                class="form-control input-pwd"
+                formControlName="security_token"
+                [disabled]="disableFields"
+                [value]="configurationForm.get('security_token')?.value"
+                placeholder="Enter a Security Token"
+                aria-label="Security Token"
+                id="security_token"
+              />
+              <ng-container *ngIf="!isConfigured || !isPut">
+                <span
+                  class="pwd-icon"
+                  appIcon
+                  name="eye"
+                  (click)="showSecurityToken = !showSecurityToken"
+                  [class.hide]="showSecurityToken"
+                  aria-label="Show Security Token"
+                  tabindex="0"
+                  role="button"
+                ></span>
+                <span
+                  class="pwd-icon"
+                  appIcon
+                  name="view-hide"
+                  (click)="showSecurityToken = !showSecurityToken"
+                  [class.hide]="!showSecurityToken"
+                  aria-label="Hide Security Token"
+                  tabindex="0"
+                  role="button"
+                ></span>
+              </ng-container>
+            </dv-form-element>
+
+            <div class="form-group">
+              <div col="8" offset="3">
+                <dv-checkbox
+                  class="inline-block"
+                  formControlName="is_verified"
+                  [labelClass]="'concentment'"
+                  name="concentment"
+                  label="&nbsp;"
+                ></dv-checkbox
+                ><b class="concentment-imp">I provide consent</b> to
+                DiligenceVault to store my credentials in an encoded format and
+                understand that the credentials will only be used for the
+                purpose of establishing connectivity with Salesforce CRM.
+              </div>
+            </div>
+            <div
+              class="form-group text-center"
+              [ngStyle]="{
+                'margin-left':
+                  isConfigured == true && isPut == true ? '76px' : '115px'
+              }"
+            >
+              <div col="6">
+                <dv-button
+                  *ngIf="isConfigured && isPut"
+                  [disabled]="configurationForm.invalid"
+                  (onClick)="resetForm()"
+                  ariaLabel="Re-Configure"
+                >
+                  Re-Configure
+                </dv-button>
+                <dv-button
+                  *ngIf="!isPut"
+                  [disabled]="configurationForm.invalid"
+                  [loader]="submitted"
+                  (onClick)="submit(isConfigured, isPut)"
+                  btnClass="configure"
+                  [ngStyle]="{
+                    cursor: configurationForm.invalid
+                      ? 'not-allowed !important'
+                      : 'pointer !important'
+                  }"
+                  class="space-on-right"
+                  tooltipText="{{
+                    !tooltipReconfig()
+                      ? 'Missing mandatory fields'
+                      : tooltipReconfig() &&
+                        !configurationForm.get('is_verified').value
+                      ? 'Please provide consent to proceed further.'
+                      : null
+                  }}"
+                  ariaLabel="Configure"
+                >
+                  Configure
+                </dv-button>
+
+                <dv-button
+                  [btnType]="'default'"
+                  *ngIf="!isPut"
+                  btnClass="clear"
+                  class="space-on-left"
+                  (onClick)="cancelEdit(isConfigured)"
+                  ariaLabel="Clear"
+                >
+                  Clear
+                </dv-button>
+              </div>
+              <div col="6" *ngIf="isConfigured && isPut">
+                <span class="icon clr-verified" aria-label="Account Verified">
+                  <span appIcon name="check-circle"></span> Account Verified
+                </span>
+              </div>
+              <div col="6" class="pl-95" *ngIf="isConfigured && !isPut">
+                <dv-button
+                  [btnType]="'secondary'"
+                  (onClick)="revertForm(isConfigured)"
+                  ariaLabel="Revert to previous"
+                >
+                  Revert to previous
+                </dv-button>
+              </div>
+            </div>
+          </form>
+
+          <hr />
+          <div class="panel-info">
+            <div class="panel-heading border-clr guide" role="note">
+              A step by step
+              <a
+                href="https://diligencevault.com/wp-content/uploads/2023/03/Guide-to-obtain-Salesforce-Authentication-parameters-pdf.pdf"
+                target="_blank"
+                ><b>guide</b></a
+              >
+              to obtain credentials from Salesforce CRM.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 2" class="mt">
+        <app-dv-multiheader-table
+          [rowData]="
+            entityVal == 'investors' || entityVal == 'firms'
+              ? firmField
+              : contactField
+          "
+        ></app-dv-multiheader-table>
+
+        <br />
+        <div class="panel-info">
+          <div class="panel-heading border-clr notes" role="note">
+            <b>Note:</b> <br />
+            <ng-container *ngIf="entityVal == 'firms'"
+              >1. In case of multiple Email addresses, one email address is
+              stored in the field primary_contact_email and the other emails are
+              stored in secondary_contact_emails.<br
+            /></ng-container>
+            <span>{{ entityVal == "firms" ? 2 : 1 }}</span
+            >. Fields marked '*' are mandatory fields. <br />
+            <span>{{ entityVal == "firms" ? 3 : 2 }}</span
+            >. Fields which are mandatory at DiligenceVault end should be
+            present to successfully add data to DiligenceVault.
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 3" class="mt">
+        <div class="panel panel-default" *ngIf="show_bulk_actions">
+          <div class="panel-body padded-lg">
+            <h5 class="inline space-on-right-lg">
+              <strong
+                >Selected Records :
+                <span class="badge">{{ totalSelectedRecords }}</span></strong
+              >
+            </h5>
+            <a container="body" *ngIf="!bulkResourceEditMode">
+              <strong
+                ><dv-button
+                  btnType="secondary"
+                  (onClick)="confirmBulkDataAddition()"
+                >
+                  <span appIcon name="file"></span> Upload data to
+                  DiligenceVault
+                </dv-button></strong
+              >
+            </a>
+            <a
+              tooltip="Close"
+              container="body"
+              class="btn pull-right text-black danger"
+              (click)="closeQuickActions()"
+            >
+              <strong><span appIcon name="close"></span></strong>
+            </a>
+          </div>
+        </div>
+        <div
+          class="space-on-top-lg"
+          *ngIf="entityVal == 'investors' || entityVal == 'firms'"
+        >
+          <app-dv-grid
+            [rowData]="gridData"
+            [name]="gridNameFirm"
+            (gridReady)="onGridReady($event)"
+            [noRowsTemplate]="
+              !initGridSection ? 'Loading...' : 'No results found'
+            "
+            [onSelectionChanged]="onResourcesSelectionChanged"
+            [onRowSelected]="onResourcesRowSelected"
+            #dataResourcesGrid
+          ></app-dv-grid>
+        </div>
+        <div class="space-on-top-lg" *ngIf="entityVal == 'contacts'">
+          <app-dv-grid
+            [rowData]="gridData"
+            [name]="gridNameContact"
+            (gridReady)="onGridReady($event)"
+            [noRowsTemplate]="
+              !initGridSection ? 'Loading...' : 'No results found'
+            "
+            [onSelectionChanged]="onResourcesSelectionChanged"
+            [onRowSelected]="onResourcesRowSelected"
+            #dataResourcesGrid
+          ></app-dv-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

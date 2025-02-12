@@ -1,0 +1,19 @@
+.checkbox input[type="checkbox"],
+.checkbox input[type="radio"] {
+  z-index: 1;
+}
+
+.checkbox-inner-div {
+  display: inline;
+}
+input,
+label {
+  cursor: pointer;
+}
+
+.pointer {
+  cursor: pointer;
+}
+.disabled {
+  cursor: context-menu !important;
+}

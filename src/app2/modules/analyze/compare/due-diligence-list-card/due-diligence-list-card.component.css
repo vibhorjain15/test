@@ -1,0 +1,26 @@
+.list-check-card {
+  border-color: #43c59e;
+  position: relative;
+}
+
+.list-check-card::after {
+  font-family: "icomoon";
+  font-style: normal;
+  font-weight: normal;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+  content: "\f058";
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 1.5em;
+  color: #43c59e;
+}
+.compare-dd-selection > li {
+  margin-left: 10px;
+}

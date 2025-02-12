@@ -1,0 +1,248 @@
+<div *ngIf="!is_loading" role="region" aria-label="Projects Panel">
+  <div *ngIf="!no_dds">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div role="tabpanel" class="relative">
+          <dv-tabs
+            [ngClass]="{
+              'visibility-hidden': areBulkActionsShown()
+            }"
+            [list]="due_diligence_counts"
+            size="large"
+            (onTabClick)="handleTabChange($event)"
+            tabindex="0"
+          >
+            <div
+              class="display-flex"
+              role="toolbar"
+              aria-label="Filter Controls"
+            >
+              <button
+                appButton
+                btnType="default"
+                class="space-on-right project-button"
+                tooltip="Apply Filters"
+                triggers="mouseenter:mouseleave"
+                [disabled]="!filters_data_loaded"
+                (click)="toggleFiltersSection()"
+                aria-label="Apply Filters"
+              >
+                <span
+                  appIcon
+                  name="filter"
+                  [ngClass]="{ 'text-orange': filterApplied }"
+                ></span>
+              </button>
+              <button
+                appButton
+                btnType="default"
+                class="space-on-right project-button"
+                tooltip="Clear Filters"
+                (click)="resetFiltersData()"
+                *ngIf="filterApplied"
+                aria-label="Clear Filters"
+              >
+                <span appIcon name="refresh"></span>
+              </button>
+              <app-date-range-picker
+                class="w-260 project-date-picker rangePicker"
+                [customDate]="dateRange"
+                (change)="onDateRangeChange($event)"
+                (clearDateFilter)="onClearDateFilter()"
+                [minDate]="minDate"
+                [maxDate]="maxDate"
+                *ngIf="customDateFilter"
+                containerClass="range-picker-grid-placement"
+              ></app-date-range-picker>
+            </div>
+          </dv-tabs>
+
+          <div class="tab-content">
+            <app-projects-grid
+              [type]="type"
+              [payload]="filters_final"
+              [current_user]="current_user"
+              [filterData]="filterData"
+              [customFilterInitValue]="filterInitValue"
+              (onLoadView)="loadView($event)"
+              [customFields]="customFields"
+              (onProjectsDataChanged)="onProjectsDataChanged($event)"
+              #grid
+            >
+              <div class="project-filters-alignment">
+                <div class="justify-start label-list">
+                  <ng-container *ngIf="filterApplied">
+                    <span
+                      *ngFor="
+                        let criterion of filterData?.search_criterias;
+                        let index = index
+                      "
+                    >
+                      <span
+                        *ngIf="criterion.advance_filter_value"
+                        class="btn btn-primary-outline text-uppercase"
+                      >
+                        <small
+                          >{{ criterion.filter_name }} :
+                          {{ criterion.displayValue }}</small
+                        >
+                        <a
+                          class="space-on-left clickable link-disguise"
+                          (click)="removeFilterCriterion(index)"
+                          role="button"
+                          tabindex="0"
+                          aria-label="Remove Filter"
+                          >&times;</a
+                        >
+                      </span>
+                    </span>
+                  </ng-container>
+
+                  <ng-container *ngIf="showPendingItemsFilter">
+                    <span *ngFor="let pendingItem of pendingItems">
+                      <span
+                        *ngIf="pendingItem.isSelected"
+                        class="btn btn-primary-outline text-uppercase"
+                      >
+                        <small
+                          >{{ pendingItem.alias }} ({{
+                            pendingItem.count
+                          }})</small
+                        >
+                        <a
+                          class="space-on-left clickable link-disguise"
+                          (click)="
+                            onPendingItemsFilterChange(false, pendingItem)
+                          "
+                          role="button"
+                          aria-label="Remove Pending Items"
+                          tabindex="0"
+                          >&times;</a
+                        >
+                      </span>
+                    </span>
+                  </ng-container>
+                </div>
+
+                <div class="label-list" *ngIf="showPendingItemsFilter">
+                  <span
+                    dropdown
+                    container="body"
+                    #dropdown="bs-dropdown"
+                    [insideClick]="true"
+                  >
+                    <dv-button
+                      btnType="default"
+                      btnClass="pending-items-btn"
+                      (onClick)="
+                        isDropdownOpen = !isDropdownOpen;
+                        isDropdownOpen ? dropdown.show() : dropdown.hide()
+                      "
+                    >
+                      <span>
+                        <strong
+                          >Follow-ups & Action Items
+                          <span
+                            class="pending-items-btn-count label label-orange inline-block"
+                            >{{ totalPendingItems }}</span
+                          >
+                          <span
+                            appIcon
+                            [name]="
+                              isDropdownOpen ? 'chevron-up' : 'chevron-down'
+                            "
+                            class="space-on-left"
+                          ></span
+                        ></strong>
+                      </span>
+                    </dv-button>
+                    <ul
+                      class="dropdown-menu pending-items-dropdown-menu"
+                      role="menu"
+                      *dropdownMenu
+                    >
+                      <ng-container
+                        *ngFor="let item of pendingItems; let last = last"
+                      >
+                        <li role="menuitem" [attr.aria-label]="item.alias">
+                          <dv-checkbox
+                            label="{{ item.alias }} ({{ item.count }})"
+                            [(ngModel)]="item.isSelected"
+                            [ngModelOptions]="{ standalone: true }"
+                            [rightIcon]="item.rightIcon"
+                            iconClass="text-info space-on-left"
+                            [iconTooltip]="item.iconTooltip"
+                            (onValChange)="
+                              onPendingItemsFilterChange($event, item)
+                            "
+                          ></dv-checkbox>
+                        </li>
+                        <li
+                          aria-hidden="true"
+                          class="divider dropdown-divider"
+                          *ngIf="!last"
+                        ></li>
+                      </ng-container>
+                      <li role="menuitem">
+                        <a
+                          class="text-muted pending-items-clear"
+                          (click)="removeAllPendingItemsFilters()"
+                          role="button"
+                          tabindex="0"
+                          aria-label="Remove Filter"
+                          >Clear Selection</a
+                        >
+                      </li>
+                    </ul>
+                  </span>
+                </div>
+              </div>
+            </app-projects-grid>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-status-legend
+      [type]="type"
+      [isInvestor]="is_investor"
+      role="region"
+      aria-label="Status Legend"
+    ></app-status-legend>
+  </div>
+
+  <div
+    class="panel panel-default"
+    *ngIf="no_dds"
+    role="region"
+    aria-label="No Projects Panel"
+  >
+    <div class="panel-body">
+      <div class="row clearfix">
+        <div col="6" offset="3" class="js-projects-no-dds">
+          <div authorized-view accessibleTo="FreeSubscription">
+            <app-empty-state
+              iconName="briefcase"
+              message="There are no projects right now. Please contact your admin"
+            ></app-empty-state>
+          </div>
+
+          <div authorized-view hiddenFrom="FreeSubscription">
+            <app-empty-state
+              iconName="briefcase"
+              message="There are no projects right now. Let's add one"
+              (action)="showInviteDDHelp()"
+              actionLabel="Invite"
+            ></app-empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-spinner
+  *ngIf="is_loading && !showNudges"
+></app-spinner>
+<div *ngIf="is_loading && showNudges">
+  <dv-nudges nudges="selectedNudge"></dv-nudges>
+</div>

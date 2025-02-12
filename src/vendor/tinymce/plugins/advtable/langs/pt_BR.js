@@ -1,0 +1,21 @@
+tinymce.addI18n("pt_BR", {
+  "Advanced sort...": "Classifica\xe7\xe3o avan\xe7ada...",
+  "Advanced Sort": "Classifica\xe7\xe3o Avan\xe7ada",
+  "Sort table by column ascending": "Classificar tabela por coluna ascendente",
+  "Sort table by column descending": "Classificar tabela por coluna descendente",
+  "Sort": "Classificar",
+  "Order": "Ordem",
+  "Sort by": "Classificar por",
+  "Ascending": "Ascendente",
+  "Descending": "Descendente",
+  "Selection": "Sele\xe7\xe3o",
+  "Table": "Tabela",
+  "Column": "Coluna",
+  "Row": "Linha",
+  "Column {0}": "Coluna {0}",
+  "Row {0}": "Linha {0}",
+  "Row numbering": "Numera\xe7\xe3o de linhas",
+  "None": "Nenhum",
+  "Numeric": "Num\xe9rica",
+  "Alpha": "Alfab\xe9tica"
+});

@@ -1,0 +1,5 @@
+<ui-grid-cell-contents>
+    <small data-ng-if="!row.entity.as_of_date"><i>N/A</i></small>
+    <small data-ng-if="row.entity.as_of_date">{{row.entity.as_of_date | date:'fullDate'}}</small>
+
+</ui-grid-cell-contents>

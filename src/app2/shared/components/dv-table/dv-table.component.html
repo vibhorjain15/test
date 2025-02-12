@@ -1,0 +1,98 @@
+<table>
+  <colgroup>
+    <col
+      *ngFor="let col of cols"
+      span="1"
+      [ngStyle]="{ width: col.width + 'px' }"
+    />
+    <col span="1" [ngStyle]="{ width: 150 + 'px' }" />
+  </colgroup>
+  <thead>
+    <tr>
+      <ng-container *ngFor="let col of cols">
+        <th
+          [class]="'text-' + col.alignment ? col.alignment : headersAlignment"
+        >
+          {{ col.title }}
+        </th>
+      </ng-container>
+      <th [class]="'text-' + headersAlignment">Actions</th>
+    </tr>
+  </thead>
+</table>
+
+<table>
+  <colgroup>
+    <col
+      *ngFor="let col of cols"
+      span="1"
+      [ngStyle]="{ width: col.width + 'px' }"
+    />
+    <col span="1" [ngStyle]="{ width: 150 + 'px' }" />
+  </colgroup>
+  <tbody>
+    <ng-container *ngFor="let row of rows; let index = index">
+      <tr
+        class="section-end clickable clickable-row"
+        *ngFor="let list of row.list; let i = index"
+        (click)="onEdit(list, i, index)"
+      >
+        <td
+          class=""
+          *ngFor="let col of cols"
+          [ngClass]="{
+            'text-center': col.isCenter || col.alignment == 'center'
+          }"
+          class="word-break-break-all"
+        >
+          <div
+            [innerHtml]="list[col.id] | dvSafeHtml"
+            *ngIf="
+              col.id != 'ruleConditionValue' ||
+              ((list.type == 'standard' || list.type == 'simple') &&
+                list[col.id])
+            "
+            [tooltip]="list[col.id + 'ToolTip'] ? list[col.id + 'ToolTip'] : ''"
+            container="body"
+          ></div>
+          <div
+            class="clickable"
+            *ngIf="
+              col.id == 'ruleConditionValue' &&
+              !(
+                (list.type == 'standard' || list.type == 'simple') &&
+                list[col.id]
+              )
+            "
+          >
+            <a>View condition</a>
+          </div>
+        </td>
+
+        <td [class]="'text-' + headersAlignment">
+          <dv-button
+            [btnType]="'default'"
+            [size]="'sm'"
+            (onClick)="onEdit(list, i, index)"
+            tooltip="Edit Rule"
+            container="body"
+            ariaLabel="Edit Rule"
+          >
+            <span appIcon name="pencil" class="cursor-pointer"></span>
+          </dv-button>
+          &nbsp;
+          <dv-button
+            [btnType]="'default'"
+            [size]="'sm'"
+            (onClick)="onDelete(list, i, index)"
+            tooltip="Remove Rule"
+            container="body"
+            ariaLabel="Remove Rule"
+          >
+            <span name="trashcan" appIcon></span>
+          </dv-button>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>

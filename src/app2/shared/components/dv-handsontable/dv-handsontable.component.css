@@ -1,0 +1,6 @@
+:host ::ng-deep .handsontable th {
+  background-color: #f7f7f7 !important;
+  text-align: left;
+  font-weight: bold;
+  color: #555;
+}

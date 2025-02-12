@@ -1,0 +1,26 @@
+<div class="row clearfix">
+  <div col="8" offset="2">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <p class="lead text-center" data-ng-show="vm.dd_document">
+          <span data-ng-show="vm.job_type">
+            <span data-ng-show="vm.job_type == 'extract_doc'">
+              Questions are being extracted from 
+            </span>
+            <span data-ng-show="vm.job_type == 'map_questions'">
+              Questions are being mapped for 
+            </span>
+          </span>
+          document: <b>{{vm.dd_document.fileName}}</b>
+        </p>
+
+        <spinner data-ng-hide="vm.dd_document"></spinner>
+
+        <dd-job-progressbar job-id="vm.dd_document.job.id"
+                            data-ng-if="vm.dd_document"
+                            on-change="vm.onJobProgressChange(progress, job)">
+        </dd-job-progressbar>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,160 @@
+<form class="form-horizontal my-profile"
+      novalidate
+      name="vm.profile_form"
+      data-ng-submit="vm.processRequest()">
+  <div class="form-group">
+    <div class="col-md-2 text-right">
+      <user-avatar avatar-icon-size="4x"
+                   avatar-icon-class="avatar"
+                   avatar-img-class="img-thumbnail avatar"></user-avatar>
+      <div>
+        <small>
+          <a class="clickable" data-ng-click="vm.displayUserAvatarDialog()">
+            Upload New Picture
+          </a>
+        </small>
+      </div>
+    </div>
+    <div class="col-md-4 user-info-form-group">
+      <div class="form-group">
+        <div class="row clearfix">
+          <div class="col-md-6">
+            <input type="text"
+                   data-ng-model="vm.userModel.basicUserInfo.firstName"
+                   required
+                   placeholder="First name"
+                   class="form-control" />
+          </div>
+
+          <div class="col-md-6 clear-padding-left">
+            <input type="text"
+                   data-ng-model="vm.userModel.basicUserInfo.lastName"
+                   required
+                   placeholder="Last name"
+                   class="form-control" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="briefcase"></icon>
+          </span>
+
+          <input type="text"
+                 data-ng-model="vm.userModel.userContact.title"
+                 placeholder="Title"
+                 class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group" uib-tooltip="Cannot edit this field. Please contact your administrator.">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="mail"></icon>
+          </span>
+
+          <input type="text"
+                 data-ng-model="vm.userModel.basicUserInfo.userName"
+                 placeholder="Email"
+                 readonly="readonly"
+                 class="form-control" />
+        </div>
+      </div>
+
+      <div class="form-group" uib-tooltip="Cannot edit this field. Please contact your administrator.">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="institution"></icon>
+          </span>
+
+          <input type="text"
+                 data-ng-model="vm.userModel.basicUserInfo.firmInfo.name"
+                 placeholder="Firm Name"
+                 required
+                 readonly="readonly"
+                 class="form-control" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-md-2 control-label">Date of Birth</label>
+
+    <div class="col-md-4">
+      <dv-datepicker data-ng-model="vm.userModel.birthDate"
+                     ng-required="true"></dv-datepicker>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-2" for="phone">Phone</label>
+    <div class="col-md-4">
+      <input type="text"
+             id="phone"
+             placeholder="(XXX) XXX-XXXX"
+             data-ng-model="vm.userModel.userContact.phone"
+             class="form-control" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-2" for="street-address">Street Address</label>
+
+    <div class="col-md-4">
+      <textarea id="street-address"
+             data-ng-model="vm.userModel.userContact.streetAddress"
+             placeholder="Example: 9th road, 5th street"
+             msd-elastic="\n"
+             class="form-control"></textarea>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-2" for="city">City</label>
+
+    <div class="col-md-4">
+      <input type="text"
+             id="city"
+             placeholder="Example: New York"
+             data-ng-model="vm.userModel.userContact.city"
+             class="form-control" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-2" for="zipcode">Zipcode</label>
+
+    <div class="col-md-4">
+      <input type="text"
+             id="zipcode"
+             placeholder="Example: 10018"
+             data-ng-model="vm.userModel.userContact.zipcode"
+             class="form-control" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-2" for="country">Country</label>
+
+    <div class="col-md-4">
+      <select id="country"
+              class="form-control"
+              chosen
+              data-ng-disabled="!vm.countries"
+              data-ng-model="vm.userModel.userContact.countryID"
+              data-ng-options="country.id as country.value for country in vm.countries">
+        <option value="">{{ vm.countries ? "--Select Country--" : "Loading countries..."}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group clear-margin">
+    <div class="col-md-10 col-md-offset-2">
+      <button btn-type="default" data-ng-click="vm.switchMode('readonly')">Cancel</button>
+      <button type="submit" data-ng-click="vm.save()" button-loader="vm.saving">Save Profile Changes</button>
+    </div>
+  </div>
+</form>

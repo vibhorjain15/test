@@ -1,0 +1,88 @@
+<!-- the first button from sidepanel is being removed by passing empty label. The buttons are added
+in the footer slot instead -->
+<side-panel-wrapper
+  [title]="'Suggested Responses'"
+  firstButtonLabel=""
+  [isFooter]="isFooter"
+  [isCancelButton]="false"
+  (onCancelClick)="closePanel()"
+  class="suggested-responses-sidepanel"
+>
+  <div class="qaBank-main" aria-label="Suggested Responses">
+    <div class="qa-button-wrapper">
+      <dv-tabs
+        [list]="tabs"
+        [preventScroll]="true"
+        [loading]="false"
+        (onTabClick)="setResponseFilter($event)"
+        size="large"
+      ></dv-tabs>
+    </div>
+
+    <div *ngIf="isLoading" aria-live="polite" aria-busy="true">
+      <app-spinner [broadSpinner]="true" spinnerHeight="80"></app-spinner>
+    </div>
+
+    <div *ngIf="!isLoading" aria-busy="false">
+      <div class="qa-search-field" aria-label="Search Field">
+        <input
+          type="text"
+          class="padding-left-10"
+          placeholder="Search any question / response / tag"
+          [(ngModel)]="searchParameter"
+          (ngModelChange)="searchQa($event)"
+          aria-label="Search Input"
+        />
+        &nbsp;
+        <dv-button
+          (onClick)="searchQa(searchParameter, true)"
+          btnType="primary"
+          [ariaLabel]="'Search QA'"
+          ><span appIcon name="search" customSize="big"></span
+        ></dv-button>
+      </div>
+
+      <app-spinner
+        [broadSpinner]="true"
+        spinnerHeight="80"
+        *ngIf="showSearchSpinner"
+        aria-live="polite"
+        aria-busy="true"
+      ></app-spinner>
+
+      <div *ngIf="!showSearchSpinner" aria-busy="false">
+        <div class="qa-count" aria-live="polite">
+          Showing {{ filteredQa?.length ?? 0 }} results
+        </div>
+
+        <div class="qa-preview" aria-label="Question Responses">
+          <div
+            *ngFor="let item of filteredQa; let i = index"
+            class="space-on-bottom-lg"
+          >
+            <qa-preview
+              [heading]="item.question_text"
+              [content]="item.responses"
+              [headingIcon]="icon"
+              (onIconClick)="handleSelectionChange($event)"
+              [metaClass]="metaClass"
+              aria-label="Question Preview"
+            >
+            </qa-preview>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div sidePanelFooter class="btn-footer">
+    <div>
+      <dv-button
+        [disabled]="isLoading || showSearchSpinner || !isAnyResponseSelected"
+        btnClass="btn btn-primary"
+        (onClick)="addSelectedResponses()"
+      >
+        Add Selected Responses
+      </dv-button>
+    </div>
+  </div>
+</side-panel-wrapper>

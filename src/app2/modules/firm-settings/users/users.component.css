@@ -1,0 +1,9 @@
+:host ::ng-deep .functionsTag {
+  padding: 7px 0 !important;
+  height: 25px !important;
+  width: 25px !important;
+}
+.max-height-300 {
+  max-height: 300px !important;
+  overflow: auto !important;
+}

@@ -1,0 +1,124 @@
+<div class="release-note-backdrop-container"></div>
+<div class="releases-navbar-container">
+  <div class="container-fluid">
+    <nav class="releases-navbar" #navbar>
+      <div>
+        <a (click)="navigate('app.home')">
+          <img
+            src="assets/images/logo.png"
+            alt="DiligenceVault brand logo"
+            width="160"
+            height="45"
+          />
+        </a>
+      </div>
+      <div>
+        <a
+          class="release-note-cta-button space-on-right"
+          (click)="toggleFeedbackPanel()"
+        >
+          Write to us
+        </a>
+      </div>
+    </nav>
+  </div>
+</div>
+<div #releaseNoteContainer>
+  <div class="release-banner">
+    <p class="line-height-1">Discover What's New</p>
+    <p class="banner-description">
+      Unveiling the Latest Features, Enhancements and Updates! Dive into the new
+      additions and improvements we've brought to enhance your experience. Stay
+      informed and ahead with our latest releases!
+    </p>
+  </div>
+  <!-- TODO: Add filter -->
+  <!-- <div class="space-on-top-xxl padded-xl">
+    <div class="w-180">
+      <app-date-quarter-picker></app-date-quarter-picker>
+    </div>
+  </div> -->
+  <app-spinner
+    *ngIf="!renderedReleases.length"
+    broadSpinner="true"
+  ></app-spinner>
+  <div
+    *ngIf="renderedReleases.length"
+    class="release-note-content-wrapper space-on-top-xxxl"
+  >
+    <ng-container *ngFor="let release of renderedReleases; last as isLast">
+      <div id="{{ release.id }}" class="release-note-content-container">
+        <div class="timeline-section">
+          <div>
+            <span>
+              {{ release.release_date | dvDate : ["isLocaleDate"] }}
+            </span>
+          </div>
+          <div class="font-size-25 space-on-top-xl space-on-bottom-lg">
+            <span
+              class="space-on-right-xl"
+              tooltip="FAQ"
+              container="body"
+              triggers="mouseenter:mouseleave"
+              [ngClass]="{ 'disabled-Element': !release.faq_url }"
+            >
+              <a
+                href="{{ release.faq_url }}"
+                target="_blank"
+                [ngClass]="{
+                  'pointer-events-none text-gray': !release.faq_url
+                }"
+                aria-label="FAQ (opens in a new window)"
+              >
+                <span appIcon name="book"></span>
+              </a>
+            </span>
+            <span
+              tooltip="Product Tour"
+              container="body"
+              triggers="mouseenter:mouseleave"
+              [ngClass]="{ 'disabled-Element': !release.storylane_url }"
+            >
+              <a
+                href="{{ release.storylane_url }}"
+                target="_blank"
+                [ngClass]="{
+                  'pointer-events-none text-gray': !release.storylane_url
+                }"
+                aria-label="Product Tour (opens in a new window)"
+              >
+                <span appIcon name="thunder-2"></span>
+              </a>
+            </span>
+          </div>
+        </div>
+        <div class="detail-section">
+          <div class="header">
+            <span>
+              {{ release.title }}
+            </span>
+          </div>
+          <app-carousel
+            *ngIf="release.canShowCarousel"
+            class="carousel-container"
+            [contents]="release.carouselDetails"
+          ></app-carousel>
+          <div class="space-on-top-xxl">
+            <p [innerHTML]="release.description | dvSafeHtml"></p>
+          </div>
+        </div>
+      </div>
+      <hr *ngIf="!isLast" class="hr-lighter" />
+    </ng-container>
+  </div>
+  <div class="text-center space-on-top-xxxl space-on-bottom-xl">
+    <dv-button
+      *ngIf="canLoadMore"
+      btnType="default"
+      btnClass="btn-primary-outline"
+      (onClick)="fetchNextSetOfReleases()"
+    >
+      Show More
+    </dv-button>
+  </div>
+</div>

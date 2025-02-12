@@ -1,0 +1,189 @@
+<spinner data-ng-hide="vm.user"></spinner>
+
+
+<uib-tabset data-ng-show="vm.user">
+  <uib-tab heading="Profile Settings">
+    <div class="panel settings">
+      <div class="panel-body">
+        <div data-ng-include="vm.templateName"></div>
+      </div>
+    </div>
+  </uib-tab>
+
+  <uib-tab heading="Account Settings">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Change Password</h5>
+          </div>
+
+          <div class="panel-body">
+            <form novalidate
+                  class="form-horizontal"
+                  name="vm.change_password_form"
+                  data-ng-submit="vm.passEdit()">
+              <form-group field-name="Current Password">
+                <label class="control-label"
+                       col="3"
+                       for="current-password">Current Password</label>
+
+                <div col="4">
+                  <input id="current-password"
+                         type="password"
+                         class="form-control"
+                         data-ng-model="vm.account_info.password"
+                         required />
+                </div>
+              </form-group>
+
+              <form-group field-name="Password">
+                <label class="control-label"
+                       col="3"
+                       for="new-password">
+                  New Password
+                </label>
+
+                <div col="4">
+                  <dv-password-field
+                    id="new-password"
+                    password="vm.account_info.newPassword"
+                    placeholder="New Password"></dv-password-field>
+                </div>
+              </form-group>
+
+              <form-group field-name-map="{'validateEquals': 'Passwords', 'required': 'Confirm Password'}">
+                <label class="control-label"
+                       col="3"
+                       for="password-confirmation">
+                  Password Confirmation
+                </label>
+
+                <div col="4">
+                  <input id="password-confirmation"
+                         type="password"
+                         class="form-control"
+                         validate-equals="vm.account_info.newPassword"
+                         data-ng-model="vm.account_info.confirmPassword"
+                         required />
+                </div>
+              </form-group>
+
+              <div class="form-group">
+                <div col="4" offset="3">
+                  <button type="submit"
+                          button-loader="vm.saving_password">Change Password</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </uib-tab>
+
+  <uib-tab heading="Security">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Two-factor Authentication</h5>
+          </div>
+
+          <div class="panel-body">
+            <div data-ng-hide="vm.twoFactorEnabled">
+              <p>
+                Status:
+                <span class="text-danger">
+                  <b class="align-middle">Off</b>
+                  <icon name="close" class="space-on-left align-middle"></icon>
+                </span>
+              </p>
+
+              <a ui-sref="app.settings.two_factor_authentication.intro"
+                 class="btn btn-primary">Setup two-factor authentication</a>
+            </div>
+
+            <div data-ng-show="vm.twoFactorEnabled">
+              <p>
+                Status:
+                <span class="text-success">
+                  <b class="align-middle">On</b>
+                  <icon name="check" class="space-on-left align-middle"></icon>
+                </span>
+              </p>
+
+              <button btn-type="danger" data-ng-click="vm.disable2FA()">
+                Disable two-factor authentication
+              </button>
+            </div>
+          </div>
+
+          <div class="panel-footer">
+            <p class="clear-margin">
+              <icon name="question-circle"></icon>
+              Two-factor authentication provides another layer of security to your account.
+            </p>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Previous Login Details</h5>
+          </div>
+
+          <div class="panel-body">
+            <ul class="list-unstyled clear-margin-bottom list-bordered-bottom"
+                data-ng-show="vm.sessions">
+              <li data-ng-repeat="session in vm.sessions">
+                <dl class="dl-horizontal clear-margin-bottom">
+                  <dt>Last Accessed</dt>
+                  <dd><b>{{session.loginTime | date:"MMMM dd yyyy 'at' hh:mm a Z"}}</b></dd>
+
+                  <dt>IP Address:</dt>
+                  <dd>{{session.ipAddress}}</dd>
+                </dl>
+              </li>
+            </ul>
+
+            <p class="alert alert-info" data-ng-show="vm.sessions && !vm.sessions.length">
+              No Session Information is available
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </uib-tab>
+
+  <uib-tab heading="Email Notifications">
+    <form novalidate name="vm.email_form" data-ng-submit="vm.processEmail()">
+      <div class="panel">
+        <div class="panel-body">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h5 class="panel-title">Email Settings</h5>
+            </div>
+
+            <div class="panel-body">
+              <div data-ng-show="vm.email">
+                <dv-checkbox
+                  ng-repeat="setting in vm.email"
+                  data-ng-class="{'clear-margin-top': $first, 'clear-margin-bottom': $last}"
+                  data-ng-model="setting.value"
+                  label="{{setting.key}}">
+                </dv-checkbox>
+              </div>
+            </div>
+
+            <div class="panel-footer">
+              <button type="submit"
+                      button-loader="vm.emailLoading">
+                Save Notification Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </uib-tab>
+</uib-tabset>

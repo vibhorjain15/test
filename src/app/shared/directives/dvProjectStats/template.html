@@ -1,0 +1,68 @@
+<div class="panel panel-default">
+  <div class="panel-body full-height align-middle">
+    <table class="fund-profile-items space-on-top space-on-bottom">
+      <tbody>
+        <tr class="title-row">
+          <td>
+            <h3>
+              <a ui-sref="^.questionnaire({diligenceId: vm.diligence.id})"
+                >{{vm.diligence.answer_count}}/{{vm.diligence.question_count}}</a
+              >
+            </h3>
+          </td>
+          <td>
+            <h3><a ui-sref="^.documents.list">{{vm.attachments_count}}</a></h3>
+          </td>
+          <td>
+            <h3>
+              <a
+                ui-sref="^.questionnaire({diligenceId: vm.diligence.id, status: 'Followup'})"
+                >{{vm.followups_count}}</a
+              >
+            </h3>
+          </td>
+          <td>
+            <a ui-sref="^.notes({diligenceId: vm.diligence.id})"
+              ><h3>{{vm.notes_count}}</h3></a
+            >
+          </td>
+          <td>
+            <h3>
+              <a
+                ui-sref="^.questionnaire({diligenceId: vm.diligence.id, status: 'Todo'})"
+                >{{vm.todos_count.completed}}/{{vm.todos_count.total}}</a
+              >
+            </h3>
+          </td>
+          <td
+            data-ng-if="vm.recommendation_counts && vm.issue_tracker_default_name"
+          >
+            <h3>
+              <a ui-sref="^.recommendations({diligenceId: vm.diligence.id})"
+                >{{vm.recommendation_counts.completed_count}}/{{vm.recommendation_counts.total_count}}</a
+              >
+            </h3>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <small class="text-uppercase">Answered / Total Questions</small>
+          </td>
+          <td><small class="text-uppercase">Documents</small></td>
+          <td><small class="text-uppercase">Follow-ups</small></td>
+          <td><small class="text-uppercase">Internal Notes</small></td>
+          <td>
+            <small class="text-uppercase">Completed / All<br />To-dos</small>
+          </td>
+          <td
+            data-ng-if="vm.recommendation_counts && vm.issue_tracker_default_name"
+          >
+            <small class="text-uppercase"
+              >Resolved / All<br />{{vm.issue_tracker_default_name}}</small
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

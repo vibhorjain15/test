@@ -1,0 +1,95 @@
+<div class="panel panel-default" *ngIf="!question">
+  <div class="panel-body">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="560"></app-spinner>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div
+    class="panel-heading"
+    container="body"
+    [ngClass]="{ 'has-material-changes': question.has_material_changes }"
+  >
+    <p class="clear-margin">
+      <span
+        appIcon
+        name="warning"
+        class="space-on-right text-orange font-size-16 align-middle"
+        tooltip="Has Material Changes"
+        *ngIf="question.has_material_changes"
+      ></span>
+      {{ question.text }}
+    </p>
+  </div>
+
+  <table class="table table-bordered" *ngIf="view_mode == 'table'">
+    <thead>
+      <tr>
+        <th *ngFor="let filing_history of filings_histories">
+          {{ filing_history.filingDate | dvDate : ["isLocaleDate"] }}
+        </th>
+        <th>Changes</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let row of rows">
+        <td *ngFor="let cell of row">
+          <span [innerHTML]="cell.responseDisplay"></span>
+        </td>
+        <td>
+          <span
+            jsdiff
+            [current]="row[0].responseDisplay"
+            [previous]="row[1].responseDisplay"
+            *ngIf="
+              !(
+                (row[0].response_type == 'Numeric' ||
+                  row[0].response_type == 'Integer' ||
+                  row[0].response_type == 'Percentage') &&
+                (row[1].response_type == 'Numeric' ||
+                  row[1].response_type == 'Integer' ||
+                  row[1].response_type == 'Percentage')
+              )
+            "
+          ></span>
+
+          <span
+            numericdiff
+            [current]="row[0].numericResponseA"
+            [previous]="row[1].numericResponseA"
+            *ngIf="
+              (row[0].response_type == 'Numeric' ||
+                row[0].response_type == 'Integer' ||
+                row[0].response_type == 'Percentage') &&
+              (row[1].response_type == 'Numeric' ||
+                row[1].response_type == 'Integer' ||
+                row[1].response_type == 'Percentage')
+            "
+          ></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="panel-footer" *ngIf="total_pages > 1 && !paginationEnabled">
+    <div class="clearfix">
+      <a
+        (click)="
+          navigateToUrl({
+            firmCRD: firmCrd,
+            questionId: question.id,
+            start_at: dateRange.start_at,
+            end_at: dateRange.end_at
+          })
+        "
+        class="pull-right btn btn-default"
+        >See More &raquo;</a
+      >
+    </div>
+  </div>
+
+  <div class="panel-body" *ngIf="is_loading">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="560"></app-spinner>
+  </div>
+</div>
+ 

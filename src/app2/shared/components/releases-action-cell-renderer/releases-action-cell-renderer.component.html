@@ -1,0 +1,42 @@
+<div *ngIf="params.data">
+  <dv-button
+    [tooltip]="params?.data?.is_draft ? 'Publish' : 'Published'"
+    container="body"
+    [ngClass]="{ 'active disabled': !params?.data?.is_draft }"
+    btnType="default"
+    btnClass="grid-action-button"
+    [adaptivePosition]="false"
+    (onClick)="markReleaseAsFinal()"
+    class="space-on-right"
+    aria-labelledby=""
+    title="Mark Release As Final"
+  >
+    <span appIcon name="check"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    btnClass="grid-action-button"
+    size="sm"
+    tooltip="Edit"
+    container="body"
+    triggers="mouseenter:mouseleave"
+    [adaptivePosition]="false"
+    (onClick)="edit()"
+    class="space-on-right"
+    title="Edit Release "
+  >
+    <span appIcon name="pencil"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    btnClass="grid-action-button"
+    tooltip="Delete"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    (onClick)="delete()"
+    title="Delete Release "
+  >
+    <span appIcon name="trashcan"></span>
+  </dv-button>
+</div>

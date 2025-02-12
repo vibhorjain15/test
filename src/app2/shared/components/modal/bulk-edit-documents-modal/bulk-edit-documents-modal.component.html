@@ -1,0 +1,151 @@
+<app-modal
+  [title]="modalTitle"
+  [initialTemplate]="modalBoday"
+  [titleIcon]="selectedViewType === 'folder' ? 'folder' : 'file-doc-grid'"
+  [titleIconColor]="colorTheme.primary"
+  firstButtonLabel="Update"
+  [isFirstButtonDisabled]="documentEditForm && documentEditForm.invalid"
+  [isLoading]="isUpdateInProgress"
+  (onFirstClick)="updateDocuments($event)"
+></app-modal>
+<ng-template #modalBoday>
+  <helper-text *ngIf="operationMode === 'bulk'">
+    {{ bulkEditInfoMessage }}
+  </helper-text>
+  <div class="panel panel-default" *ngIf="operationMode === 'bulk'">
+    <div class="panel-heading helper-edit-class">
+      <ng-container *ngIf="selectedViewType === 'folder'">
+        No. of folders selected: {{ documentCounts.folders }} | Total no. of
+        items: {{ documentCounts.total }}
+        <ng-container *ngIf="emptyFolderCount">
+          <dv-divider></dv-divider>
+          <span class="text-danger">
+            {{ emptyFolderCount }} out of {{ documentCounts.folders }} folders
+            are empty. Edits only affect folders with documents.
+          </span>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="selectedViewType === 'file'"
+        >Total no. of items selected: {{ documentCounts.total }}</ng-container
+      >
+    </div>
+  </div>
+  <document-bread-crumbs
+    [selectionPath]="selectionPath"
+  ></document-bread-crumbs>
+  <form [formGroup]="documentEditForm" autocomplete="off">
+    <dv-form-element
+      *ngIf="operationMode === 'single'"
+      fieldName="folderName"
+      [modelController]="documentEditForm.get('folderName')"
+      [elementCol]="9"
+      [label]="'Folder Name'"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+      [customErrorMessage]="
+        documentEditForm.get('folderName').errors?.invalidFolderName
+      "
+    >
+      <input
+        type="text"
+        class="form-control"
+        formControlName="folderName"
+        placeholder="Name"
+        id="folderName"
+      />
+    </dv-form-element>
+    <dv-form-element
+      fieldName="entityType"
+      [modelController]="documentEditForm.get('entityType')"
+      [elementCol]="9"
+      [label]="'Entity Type'"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+      *ngIf="allowBulkAddAssociatedEntity"
+    >
+      <dv-select
+        [id]="'entityType'"
+        formControlName="entityType"
+        bindLabel="name"
+        bindValue="id"
+        [placeholder]="'Select Entity Type'"
+        [list]="entityTypes"
+        [clearable]="true"
+        (onSelectChange)="onEntityTypeChange($event)"
+      >
+      </dv-select>
+    </dv-form-element>
+    <dv-form-element
+      [fieldName]="'associated_entities'"
+      [modelController]="documentEditForm.get('associated_entities')"
+      [elementCol]="9"
+      [label]="'Associated Entity'"
+      errorMessage="Associated entity is required"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+      *ngIf="allowBulkAddAssociatedEntity"
+    >
+      <dv-select
+        [id]="'associated_entities'"
+        bindValue="id"
+        bindLabel="display_name"
+        *ngIf="
+          documentEditForm.get('entityType').value !== keywordConstants.MyFirm
+        "
+        [multiple]="true"
+        formControlName="associated_entities"
+        placeholder="Select Entities"
+        [list]="currentEntityTypeList"
+        [loading]="entitiesLoading"
+        [clearable]="true"
+      >
+      </dv-select>
+      <span
+        *ngIf="
+          documentEditForm.get('entityType').value === keywordConstants.MyFirm
+        "
+        class="label label-default fw-bolder"
+        >{{ currentUser.firmInfo.display_name }}</span
+      >
+    </dv-form-element>
+    <dv-form-element
+      [modelController]="documentEditForm.get('tags')"
+      fieldName="name"
+      [elementCol]="9"
+      [label]="'Document Types'"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+    >
+      <dv-select
+        [id]="'tags'"
+        [multiple]="true"
+        bindValue="id"
+        bindLabel="name"
+        formControlName="tags"
+        placeholder="Select Document Types"
+        [list]="tagList"
+        [clearable]="true"
+      >
+      </dv-select>
+    </dv-form-element>
+    <dv-form-element
+      fieldName="as_of_date"
+      [modelController]="documentEditForm.get('as_of_date')"
+      [elementCol]="9"
+      [label]="'As of Date'"
+      [showRightIcon]="false"
+      [centerAligned]="true"
+      [for]="'as_of_date'"
+    >
+      <app-date-picker
+        [id]="'as_of_date'"
+        [value]="documentEditForm.get('as_of_date').value || null"
+        [maxDate]="maxAsOfDate"
+        [placeholder]="'Pick a Date'"
+        [clearable]="true"
+        (change)="handleAsOfDateChange($event)"
+      >
+      </app-date-picker>
+    </dv-form-element>
+  </form>
+</ng-template>

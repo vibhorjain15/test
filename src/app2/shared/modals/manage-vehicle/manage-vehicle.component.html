@@ -1,0 +1,215 @@
+<app-modal
+  [title]="(edit_mode ? 'Editing ' : 'Create New ') + 'Vehicle'"
+  [firstButtonLabel]="(edit_mode ? 'Update ' : 'Create ') + 'Vehicle'"
+  [secondButtonLabel]="
+    !isDDqCloseModel
+      ? (edit_mode ? 'Update ' : 'Create ') + '& Add Another'
+      : ''
+  "
+  [isSecondaryLoading]="secondaryLoading"
+  (onFirstClick)="submit($event)"
+  (onSecondClick)="submit($event, true)"
+  [initialTemplate]="vehicleRef"
+  [isLoading]="loading"
+  [isAngularJs]="isAngularJs"
+>
+</app-modal>
+
+<ng-template #vehicleRef>
+  <form class="form-horizontal" [formGroup]="vehicleForm" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [modelController]="vehicleForm.get('name')"
+        label=" Vehicle Name"
+        labelCol="4"
+        elementCol="8"
+        [isRequired]="true"
+        [errorMessage]="
+          vehicleForm.get('name').touched &&
+          vehicleForm.get('name').errors?.required
+            ? (errorMessageMap.required | interpolate : 'Name')
+            : vehicleForm.get('name').touched &&
+              vehicleForm.get('name').errors?.containsHtml
+            ? (errorMessageMap.containsHtml | interpolate : 'Name')
+            : (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Name')
+        "
+      >
+        <input
+          type="text"
+          formControlName="name"
+          id="name"
+          class="form-control"
+          [readonly]="edit_disabled"
+          placeholder="Name for this vehicle"
+          dvTrimValue
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        *ngIf="is_investor"
+        [modelController]="vehicleForm.get('alternate_name')"
+        label="Alias"
+        labelCol="4"
+        elementCol="8"
+        [errorMessage]="
+          vehicleForm.get('alternate_name').touched &&
+          vehicleForm.get('alternate_name').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Alias')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="alternate_name"
+          id="alternate_name"
+          placeholder="Your internal alias for this vehicle"
+          dvTrimValue
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [modelController]="vehicleForm.get('key')"
+        label="Internal Key"
+        labelCol="4"
+        elementCol="8"
+        [errorMessage]="
+          vehicleForm.get('key').touched &&
+          vehicleForm.get('key').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter
+              | interpolate : 'Internal Key')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="key"
+          id="key"
+          placeholder="Example: HG36FG"
+          dvTrimValue
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [modelController]="vehicleForm.get('currency_id')"
+        [showRightIcon]="false"
+        label="Currency"
+        labelCol="4"
+        elementCol="8"
+        [isRequired]="true"
+        errorMessage="Currency is required"
+      >
+        <dv-select
+          [clearable]="false"
+          chosen
+          [readonly]="!currency || edit_disabled"
+          formControlName="currency_id"
+          [list]="currency"
+          [bindValue]="'id'"
+          [bindLabel]="'value'"
+          placeholder="--Select--"
+          [id]="'currency_id'"
+          [aria-label]="'Currency'"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [modelController]="vehicleForm.get('inception_at')"
+        label="Inception Date"
+        labelCol="4"
+        elementCol="8"
+        [showRightIcon]="false"
+      >
+        <app-date-picker
+          [id]="'inception_at'"
+          [minDate]="minDate"
+          [value]="vehicleForm.get('inception_at').value"
+          [disabled]="edit_disabled"
+          (change)="setDateValue($event)"
+        >
+        </app-date-picker>
+      </dv-form-element>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <dv-form-element
+            [modelController]="vehicleForm.get('fund_id')"
+            [showRightIcon]="false"
+            label="Parent Product"
+            labelCol="4"
+            elementCol="8"
+            [isRequired]="true"
+            errorMessage="Parent Product is required"
+          >
+            <dv-select
+              [clearable]="false"
+              chosen
+              [readonly]="!funds || edit_mode || edit_disabled"
+              formControlName="fund_id"
+              [list]="funds"
+              placeholder="--Select--"
+              [id]="'fund_id'"
+              [aria-label]="'Parent Product'"
+            >
+            </dv-select>
+          </dv-form-element>
+
+          <dv-form-element
+            *ngIf="is_investor"
+            [modelController]="vehicleForm.get('relationship_status_id')"
+            [showRightIcon]="false"
+            label="Relationship Status"
+            labelCol="4"
+            elementCol="8"
+          >
+            <dv-select
+              [clearable]="false"
+              chosen
+              [readonly]="!statuses"
+              formControlName="relationship_status_id"
+              placeholder="--Select--"
+              [list]="statuses"
+              [id]="'relationship_status_id'"
+              [aria-label]="'Relationship Status'"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+      </div>
+      <div *ngIf="showAddOwners">
+        <app-dv-owners
+          [entity]="vehicle"
+          [entityType]="'Vehicle'"
+          #owners
+        ></app-dv-owners>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading bordered-top" *ngIf="!edit_mode">
+          <h5 class="panel-title">Add Custom Fields</h5>
+        </div>
+
+        <div class="panel-body" *ngIf="!edit_mode">
+          <div class="form-group vehicle-custom-field">
+            <app-custom-field-selection
+              [customUrl]="'vehicle_tags'"
+              [splitMandatory]="true"
+              [disabled]="false"
+              [fields]="fields"
+              #customFields
+            ></app-custom-field-selection>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div col="8" offset="2">
+          <small
+            ><span class="font-size-10 text-orange align-top">*</span
+            ><i>Required field</i></small
+          >
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

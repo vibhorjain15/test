@@ -1,0 +1,12 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <a ui-sref="app.diligence.excel_sync.detail({Id: row.entity.id, sync_type: 'upload'})"
+     uib-tooltip="{{row.entity.file_name}}"
+     tooltip-placement="right" data-ng-show="row.entity.status =='failed'">
+    {{row.entity.file_name}}
+  </a>
+  <span 
+     uib-tooltip="{{row.entity.file_name}}"
+     tooltip-placement="right" data-ng-hide="row.entity.status =='failed'">
+    {{row.entity.file_name}}
+  </span>
+</ui-grid-cell-contents>

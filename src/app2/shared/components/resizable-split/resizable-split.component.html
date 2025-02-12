@@ -1,0 +1,73 @@
+<div
+  class="row"
+  [ngClass]="{
+    disableSelection: isResizing
+  }"
+>
+  <!-- Left Panel Area -->
+  <div
+    class="area"
+    *ngIf="leftOpen"
+    [ngClass]="{ 'row overlayFromLeft': overlay }"
+    [style.width.%]="overlay ? 100 : leftPanelWidth - 1"
+    StickyDiv
+    [top]="top"
+  >
+    <div class="width-100-pct" [class.float-left]="overlay">
+      <ng-content select="[leftPanel]"></ng-content>
+    </div>
+
+    <div class="gutter float-left" [style.width.px]="0" *ngIf="overlay">
+      <span
+        appIcon
+        class="icon-link css-dw3ben blue-background"
+        [name]="leftOpen ? 'angle-right' : 'angle-left'"
+        (click)="catToggle()"
+      ></span>
+    </div>
+  </div>
+  <!-- Left Gutter with Left Arrow Icon -->
+  <div
+    class="gutter area"
+    [ngClass]="{ 'col-resize': leftOpen, gutterAfterCollapsed: !leftOpen }"
+    [style.width.%]="1"
+    (mousedown)="onGutterMouseDown($event, 'left')"
+    StickyDiv
+    [top]="top"
+  >
+    <span
+      appIcon
+      class="icon-link css-dw3ben"
+      [ngClass]="{ 'blue-background': !leftOpen }"
+      [name]="leftOpen ? 'angle-right' : 'angle-left'"
+      (click)="catToggle()"
+    ></span>
+  </div>
+  <!-- Center Panel Area -->
+  <div class="area" [style.width.%]="centerPanelWidth">
+    <ng-content select="[centerPanel]"></ng-content>
+  </div>
+  <!-- Right Gutter with Right Arrow Icon -->
+  <div
+    *ngIf="rightOpen"
+    class="gutter area"
+    [ngClass]="{ 'col-resize': rightOpen }"
+    [style.width.%]="1"
+    (mousedown)="onGutterMouseDown($event, 'right')"
+    StickyDiv
+    [top]="top"
+  ></div>
+  <!-- Right Panel Area -->
+  <div
+    *ngIf="rightOpen"
+    class="area"
+    [ngClass]="{ 'row overlayFromRight': overlay }"
+    [style.width.%]="overlay ? 100 : rightPanelWidth - 1"
+    StickyDiv
+    [top]="top"
+  >
+    <div [style.width.%]="100">
+      <ng-content select="[rightPanel]"></ng-content>
+    </div>
+  </div>
+</div>

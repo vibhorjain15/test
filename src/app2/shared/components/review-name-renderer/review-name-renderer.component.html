@@ -1,0 +1,13 @@
+<span
+  >{{ params.value
+  }}<span
+    [adaptivePosition]="false"
+    tooltip="Overdue"
+    appIcon
+    name="warning"
+    class="text-danger review-name"
+    [container]="'body'"
+    placement="right"
+    *ngIf="showCaution"
+  ></span
+></span>

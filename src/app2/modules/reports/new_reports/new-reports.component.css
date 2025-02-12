@@ -1,0 +1,6 @@
+::ng-deep.dv-step-title {
+  width: 100%;
+}
+.cell {
+  padding-top: 3px !important;
+}

@@ -1,0 +1,89 @@
+<input
+  *ngIf="
+    type === 'TextEmail' ||
+    type === 'Numeric' ||
+    type === 'Integer' ||
+    type === 'Percentage' ||
+    type === 'TextPhone' ||
+    type === 'Text' ||
+    type === 'Identifier' ||
+    type === 'Question'
+  "
+  type="text"
+  class="form-control field-preview"
+  [placeholder]="placeholder[type]"
+  readonly="true"
+  autocomplete="given-name"
+  aria-disabled="true"
+/>
+
+<textarea
+  *ngIf="type === 'Paragraph'"
+  class="form-control field-preview"
+  msd-elastic="\n"
+  data-ng-model="textResponse"
+  readonly="true"
+  [placeholder]="placeholder['TextMultiLine']"
+></textarea>
+
+<div
+  class="input-group datepicker-group"
+  *ngIf="type === 'Date' || type === 'Time' || type === 'DateTime'"
+>
+  <input
+    type="text"
+    class="form-control field-preview"
+    [placeholder]="placeholder[type]"
+    readonly="true"
+    [id]="placeholder[type]"
+    [title]="placeholder[type]"
+    autocomplete="off"
+  />
+
+  <span class="input-group-btn">
+    <button class="btn btn-default" disabled aria-label="calendar">
+      <span appIcon name="calendar"></span>
+    </button>
+  </span>
+</div>
+
+<div *ngIf="type === 'Dropdown' || type.toLocaleLowerCase() === 'checkbox'">
+  <div *ngIf="type === 'Dropdown' && !editable; else defaultTemplate">
+    <select class="form-control field-preview">
+      <option *ngFor="let option; in: question.options" value="option.text">
+        {{ option.text }}
+      </option>
+    </select>
+
+    <textarea
+      class="form-control field-preview space-on-top"
+      readonly="true"
+      msd-elastic="\n"
+      data-ng-model="textResponse"
+      *ngIf="question.has_other_option"
+      [placeholder]="placeholder[type]"
+    ></textarea>
+  </div>
+  <ng-template #defaultTemplate>
+    <div>
+      <helper-text>
+        Other and None are system options. Please do not repeat those while
+        adding your options.
+      </helper-text>
+      <dv-option-selector-new
+        [editable]="editable"
+        [question]="question"
+        [allowOtherOption]="true"
+        [fieldName]="type"
+      ></dv-option-selector-new>
+    </div>
+  </ng-template>
+</div>
+<div *ngIf="type === 'Rating'">
+  <span class="label label-warning space-on-left" *ngIf="subType === 'score'"
+    >2.5</span
+  >
+  <span class="label label-success space-on-left" *ngIf="subType === 'name'"
+    >Highest</span
+  >
+</div>

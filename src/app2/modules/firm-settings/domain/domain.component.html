@@ -1,0 +1,118 @@
+<div class="panel panel-default sso-profile-page">
+  <dv-panel-heading
+    heading="Domains"
+    [controls]="panelHeadingControls"
+    class="panel-heading"
+  >
+  </dv-panel-heading>
+  <div class="panel-info space-on-bottom-xxxl">
+    <div class="panel-heading">
+      If SSO/SAML is enabled, it will only be enforced for users whose domains
+      match with the one added to this list with "SSO" flag on. Domain of the
+      admin will be automatically added here once you configure SSO. Users will
+      be auto approved if their domains are whitelisted here.
+    </div>
+  </div>
+  <div class="panel-body export-template">
+    <div class="form-group">
+      <input
+        type="text"
+        class="form-control searchDomainInput"
+        placeholder="Search domains"
+        [(ngModel)]="filterDomains"
+        name="filterDomains"
+        aria-label="Search domains"
+      />
+    </div>
+    <div class="tableContainer">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <td width="65%">Domain</td>
+            <td width="15%" class="text-center">
+              <span
+                tooltip="Check here to auto-enable SSO for all users of this domain"
+                container="body"
+                aria-label="Auto-enable SSO for all users of this domain"
+                role="text"
+              >
+                SSO
+              </span>
+            </td>
+            <td width="20%" class="text-center">
+              <span
+                tooltip="Check here to enable auto user approval for this domain"
+                container="body"
+                aria-label="Enable auto user approval for this domain"
+                role="text"
+              >
+                Domain Whitelisting
+              </span>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let domain of domains | filter : filterDomains;
+              let $index = index
+            "
+            tabindex="0"
+          >
+            <td width="65%">
+              <p class="domainNameP">
+                <span
+                  tooltip="Delete this domain"
+                  container="body"
+                  class="clickable space-on-right danger"
+                  (click)="confirmDomainDeletion(domain, $index)"
+                  (keydown.enter)="confirmDomainDeletion(domain, $index)"
+                  aria-label="Delete this domain"
+                  role="button"
+                  tabindex="0"
+                >
+                  <span appIcon name="trashcan"></span>
+                </span>
+                <a
+                  href="https://{{ domain.domain_name }}"
+                  target="_blank"
+                  [attr.aria-label]="'Visit ' + domain.domain_name + ' website'"
+                >
+                  {{ domain.domain_name }}
+                </a>
+              </p>
+            </td>
+            <td width="15%" class="text-center">
+              <dv-checkbox
+                class="domain-check-center"
+                [(ngModel)]="domain.is_sso_enabled"
+                (ngModelChange)="toggleSSO(domain, $index)"
+                [id]="domain.id + 'is_sso_enabled'"
+                [ariaLabel]="
+                  domain.is_sso_enabled
+                    ? 'SSO is selected'
+                    : 'SSO is not selected'
+                "
+              >
+              </dv-checkbox>
+            </td>
+            <td width="20%" class="text-center">
+              <dv-checkbox
+                class="domain-check-center"
+                [(ngModel)]="domain.is_auto_approve_enabled"
+                (ngModelChange)="toggleWhiteListing(domain, $index)"
+                [id]="domain.id + 'is_auto_approve_enabled'"
+                [ariaLabel]="
+                  domain.is_auto_approve_enabled
+                    ? 'domain is selected'
+                    : 'domain is not selected'
+                "
+              >
+              </dv-checkbox>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div>
+  <div>
+    <app-dv-grid
+      [onRowClicked]="handleRowClicked"
+      [rowData]="requestsList"
+      name="requests_grid"
+      [noRowsTemplate]="loading_data ? 'loading...' : 'No results found'"
+    ></app-dv-grid>
+  </div>
+</div>
+<div
+  class="panel panel-default space-on-top-lg clear-margin-bottom"
+  *ngIf="legends"
+>
+  <div class="panel-body">
+    <ul class="list-inline clear-margin">
+      <li
+        *ngFor="let legend of legends; trackBy: trackBylabelType"
+        class="space-on-right"
+      >
+        <span
+          class="label inline-block align-middle"
+          diligenceStatus
+          [status]="legend.status"
+        >
+          <small>{{ legend.status }}</small>
+        </span>
+
+        <span class="inline-block align-middle space-on-left">
+          {{ legend.desc }}
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

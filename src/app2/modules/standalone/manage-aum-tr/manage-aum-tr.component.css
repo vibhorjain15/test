@@ -1,0 +1,41 @@
+.d-flex {
+  display: flex !important;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.entity-type-select ::ng-deep .form-group {
+  max-width: 300px;
+  display: inline-block;
+}
+
+.configuration-row ::ng-deep .form-group {
+  margin-bottom: 0px !important;
+}
+
+.min-height-150 {
+  min-height: 150px;
+}
+
+ng-select.ng-invalid.ng-touched :ng-deep .ng-select-container {
+  border-color: #dc3545;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+}
+
+ng-select.ng-valid.ng-touched ::ng-deep .ng-select-container {
+  border-color: #43c59e;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+}
+
+.year-picker ::ng-deep input {
+  background-color: white !important;
+}
+
+:host ::ng-deep .padding-left-0 {
+  padding-left: 0px !important;
+}
+.text-orange {
+  color: var(--orange-900) !important;
+}

@@ -1,0 +1,15 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-generic-tags></ng2-generic-tags> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Manage Tags and Custom Fields</h5>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">Manage all tags and custom fields under this section.</div>
+  </div>
+
+  <div class="panel-body">
+    <div data-ng-repeat="tag in vm.tagsList" data-ng-hide="vm.userType == tag.hidden_from">
+      <tags-manager tag="tag" tags-value="vm.tags[tag.name]"></tags-manager>
+    </div>
+  </div>
+</div>

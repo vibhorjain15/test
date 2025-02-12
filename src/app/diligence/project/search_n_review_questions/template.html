@@ -1,0 +1,60 @@
+<div data-ng-if="vm.Utils.isQuestionnaireAngular()">
+    <ng2-question-search-review></ng2-question-search-review>
+</div>
+<div data-ng-if="!vm.Utils.isQuestionnaireAngular()">
+<div class="panel panel-default borderless-top">
+    <div class="panel-body">
+        <spinner data-ng-if="!vm.diligence"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel pull-left"
+             data-ng-if="vm.diligence">
+            <div class="cell bordered-right">
+                <a data-ng-click="vm.goBack()"
+                   class="btn btn-transparent clickable">
+                    <div><icon name="arrow-back" size="2x"></icon></div>
+                    <small>Go back</small>
+                </a>
+            </div>
+
+            <div class="cell">
+                <h4 class="clear-margin-top clear-margin-bottom space-on-left-lg space-on-right-lg lh1-7">
+                    Showing questions matching <b><u><span dv-limit-word="vm.search_text" char-limit="18"></span></u></b> in <br/> <b>{{::vm.diligence.entity_name}}</b>
+                </h4>
+            </div>
+        </div>
+
+        <div col="4" class="pull-right" data-ng-if="vm.options.mode == 'manager' && vm.diligence">
+            <form name="vm.search_questions">
+                <div class="input-group space-on-top-xl space-on-right-lg">
+                    <input type="text" class="form-control" placeholder="Search for questions..." required data-ng-model="vm.search_text_new">
+                <span class="input-group-btn">
+                  <button class="btn btn-default primary" submit-style-override type="submit" data-ng-click="vm.searchQuestions()">
+                      <icon name="search" class="text-primary"></icon>
+                  </button>
+                </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="due-diligence-preview" class="due-diligence-preview" highlight-section term="vm.search_text" trigger-highlight="vm.tiggerHighlight">
+    <questionnaire filters="vm.sectionFilters"
+                   readonly
+                   print-preview
+                   no-response-controls
+                   diligence="vm.diligence"></questionnaire>
+</div>
+
+<div class="panel panel-default" data-ng-if="vm.noResultsPresent">
+    <div class="panel-body">
+        <div class="row clearfix">
+            <div col="6" offset="3">
+                <empty-state icon-name="smile-o"
+                             message="No questions matched your search criteria."></empty-state>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+

@@ -1,0 +1,138 @@
+<app-modal
+  [title]="editMode ? 'Edit Document Details' : 'Upload Document(s)'"
+  [initialTemplate]="newDocumentsRef"
+  titleIcon="file-doc-grid"
+  [titleIconColor]="colorTheme.primary"
+  [firstButtonLabel]="editMode ? 'Save' : 'Upload'"
+  (onFirstClick)="submit($event)"
+  [isLoading]="loading"
+  [showHeader]="showHeader"
+></app-modal>
+
+<ng-template #newDocumentsRef>
+  <div>
+    <form
+      class="form-horizontal"
+      [formGroup]="documentsForm"
+      autocomplete="off"
+    >
+      <dv-form-element
+        label="Document Name"
+        labelPosition="top"
+        elementCol="12"
+        spacing="small"
+        *ngIf="files.length <= 1"
+        [isRequired]="true"
+        [modelController]="documentsForm.get('name')"
+        [errorMessage]="
+          documentsForm.get('name').touched &&
+          documentsForm.get('name').errors?.required
+            ? 'Name is required'
+            : documentsForm.get('name').touched &&
+              documentsForm.get('name').errors?.pattern
+            ? errorMessageMap.validName
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          placeholder="Name"
+          id="name"
+        />
+      </dv-form-element>
+      <dv-form-element
+        label="Document Types"
+        labelPosition="top"
+        elementCol="12"
+        [showRightIcon]="false"
+        spacing="small"
+        [for]="'documentTypes'"
+        [isRequired]="currentUser.isManager"
+      >
+        <dv-select
+          [id]="'documentTypes'"
+          [contoller]="documentsForm.get('tags')"
+          error="Please select a type"
+          [list]="documentTypes"
+          formControlName="tags"
+          (onSelectChange)="handleTagChange($event)"
+          [multiple]="true"
+          bindValue=""
+          [loading]="loadingData"
+        ></dv-select>
+      </dv-form-element>
+      <dv-form-element
+        label="As of Date"
+        labelPosition="top"
+        elementCol="12"
+        spacing="small"
+        [isRequired]="true"
+        [modelController]="documentsForm.get('as_of_date')"
+        errorMessage="As of date is required"
+        [showRightIcon]="false"
+        [for]="'as_of_date'"
+      >
+        <app-date-picker
+          [id]="'as_of_date'"
+          (change)="onDateChange($event)"
+          [value]="documentsForm.get('as_of_date').value"
+          placement="bottom"
+          [maxDate]="maxAsOfDate"
+          [minDate]="minDate"
+        >
+        </app-date-picker>
+      </dv-form-element>
+      <dv-form-element
+        label="Select Document(s)"
+        labelPosition="top"
+        elementCol="12"
+        spacing="small"
+        *ngIf="!editMode || showUploadDocumentOnEdit"
+        [isRequired]="documentRequired"
+      >
+        <div class="dd-doc-selection-wrapper space-on-top">
+          <dv-uploader
+            [accept]="acceptedExtensions"
+            [showUploadedFiles]="false"
+            [buttonLabel]="
+              uploadMultiple ? 'Select documents' : 'Select document'
+            "
+            [dragLabel]="
+              uploadMultiple
+                ? 'Drag and drop your files here'
+                : 'Drag and drop your file here'
+            "
+            [directory]="!isFile"
+            [isMultiple]="uploadMultiple"
+            (onFileUpload)="handleFileUploaded($event)"
+          ></dv-uploader>
+          <div class="file-list-container">
+            <div *ngFor="let file of files; let index = index">
+              <document-name
+                [document]="file"
+                (onDeleteDocument)="deleteFile(index)"
+                [canModify]="canModifyDocument"
+              ></document-name>
+            </div>
+          </div>
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        elementCol="12"
+        spacing="small"
+        *ngIf="!editMode && isFile && allowMultiple"
+      >
+        <dv-checkbox
+          [(ngModel)]="uploadMultiple"
+          [disabled]="uploadMultiple && files.length > 1"
+          label="Upload multiple documents"
+          [ngModelOptions]="{ standalone: true }"
+          (onValChange)="toggleNameControl()"
+        >
+        </dv-checkbox>
+      </dv-form-element>
+    </form>
+  </div>
+</ng-template>

@@ -1,0 +1,24 @@
+<div class="progress-wrapper">
+  <div
+    class="center-bar progress space-on-top-lg"
+    role="progressbar"
+    aria-label="Progress bar"
+    id="title"
+    [title]="value + '%'"
+    [attr.aria-valuenow]="value"
+    [attr.aria-valuemin]="0"
+    [attr.aria-valuemax]="100"
+    [id]="progressBarLabelId"
+  >
+    <div
+      [class]="'progress-bar progress-bar-' + type"
+      [ngStyle]="{ width: value + '%' }"
+      [id]="progressBarLabelId"
+    >
+      <small *ngIf="!count" [ngClass]="{ 'text-black': value == 0 }"
+        >{{ value }} {{ suffix }}</small
+      >
+    </div>
+  </div>
+  <span *ngIf="!!count">{{ count }}</span>
+</div>

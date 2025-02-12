@@ -1,0 +1,40 @@
+<div role="tabpanel">
+  <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.fund.profile" -->
+      <a ui-sref=".monitor" authorized-view> Monitor </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.fund.profile" -->
+      <a ui-sref=".aum_tr"> AUM & Track Record </a>
+    </li>
+
+    <!-- We check with endsWith since the child state of the new routes will remain the same -->
+    <li
+      authorized-view
+      hidden-from="FreeSubscription"
+      data-ng-class="{'active': $state.$current.parent.parent.name.endsWith('.documents') || $state.$current.parent.name.endsWith('.documents')}"
+    >
+      <!-- . refers to the state where this template is defined, here it means "app.firms.fund.profile" -->
+      <a ui-sref=".documents.list"> Documents </a>
+    </li>
+
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.fund.profile" -->
+      <a ui-sref=".related_vehicles"> Related Vehicles </a>
+    </li>
+    <li ui-sref-active="active">
+      <!-- . refers to the state where this template is defined, here it means "app.firms.fund.profile" -->
+      <a ui-sref=".recommendations">
+        <span data-ng-if="vm.issue_tracker_default_name"
+          >{{vm.issue_tracker_default_name}}</span
+        >
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <ui-view />
+  </div>
+</div>

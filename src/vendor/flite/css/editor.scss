@@ -1,0 +1,9 @@
+.tox {
+	
+	.tox-tbtn--disabled svg.flite-button,
+	.tox-tbtn--disabled:hover svg.flite-button,
+	.tox-tbtn:disabled svg.flite-button,
+	.tox-tbtn:disabled:hover svg.flite-button {
+		opacity: 0.3;
+	}
+}

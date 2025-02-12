@@ -1,0 +1,59 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-tfasetup></ng2-tfasetup> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Add DiligenceVault to Google Authenticator app</h5>
+  </div>
+
+  <div class="panel-body">
+    <ol>
+      <li class="space-on-bottom-lg">
+        <strong>Configure the app</strong>
+
+        <div class="row clearfix">
+          <div col="6">
+            <p>
+              Open the app and add your DiligenceVault account by scanning the QR code to the right
+            </p>
+
+            <p>If you can't use a QR code,
+            <a class="clickable" data-ng-click="vm.displayPskCodeDialog()">enter this text code</a></p>
+          </div>
+          <div col="6">
+            <img ng-src="{{vm.qr_code_url}}" alt="QR Code">
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <p>
+          <strong>Enter the 6-digit code that the application generates</strong>
+        </p>
+
+        <div class="row clearfix">
+          <div col="6">
+            <form novalidate name="vm.tfa_form" data-ng-submit="vm.validateCode()">
+              <form-group field-name="Code">
+                <input type="number"
+                       class="form-control"
+                       data-ng-model="vm.setup_params.code"
+                       required
+                       minlength="6"
+                       maxlength="6"
+                       placeholder="123456" />
+              </form-group>
+
+              <div class="form-group">
+                <a ui-sref="app.settings.security.two_factor_authentication.intro"
+                   class="btn btn-default">Back</a>
+
+                <button type="submit" button-loader="vm.validating">
+                  Enable Two-Factor Authentication
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</div>

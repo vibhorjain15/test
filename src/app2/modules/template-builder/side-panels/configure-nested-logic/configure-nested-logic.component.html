@@ -1,0 +1,66 @@
+<dv-segment
+  [title]="title"
+  [isSearch]="false"
+  dvTooltip="Add new rule"
+  [actionButtonsList]="nestedQuestionActions"
+  [actionIconsList]="nestedQuestionIcons"
+  (handleIconClick)="handleOnIconClick($event)"
+  role="region"
+  aria-label="Nested Question Segment"
+>
+  <div class="clearfix" role="presentation">
+    <div
+      [class.col-md-6]="editActive"
+      [class.col-md-12]="!editActive"
+      class="no-padding"
+      role="region"
+      aria-label="Nested Questions Section"
+    >
+      <nested-questions
+        [loading]="questionsLoading"
+        [question]="question"
+        (onEditClick)="handleEditClick($event)"
+        (onNewQuestionAdded)="handleNewNestedQuestionAdded($event)"
+        (onQuestionLoaded)="setDefaults($event)"
+        (isAllQuesitonSelected)="handleQuestionSelectionChange($event)"
+        (onIconClick)="onNestedQuestionIconClick($event)"
+      ></nested-questions>
+    </div>
+    <div
+      class="col-md-6"
+      *ngIf="editActive"
+      role="form"
+      aria-labelledby="edit-nested-question-label"
+    >
+      <div class="template-segment">
+        <div class="template-header">
+          <div class="header-icon-wrapper">
+            <div>
+              <span id="edit-nested-question-label"
+                >Editing nested question</span
+              >
+            </div>
+            <div class="icon-wrapper">
+              <span
+                appIcon
+                class="icon-link move-icon-size clickable"
+                name="times"
+                (click)="handleOnCancelEditPanel(true)"
+                [tippyTooltip]="'Close editing'"
+                aria-label="Close editing"
+              >
+              </span>
+            </div>
+          </div>
+        </div>
+        <helper-text>Edit a Conditional/Nested Question</helper-text>
+        <edit-question
+          [question]="questionCopy"
+          (onSave)="handleOnSave()"
+          (onCancel)="handleOnCancelEditPanel(true)"
+        >
+        </edit-question>
+      </div>
+    </div>
+  </div>
+</dv-segment>

@@ -1,0 +1,84 @@
+<div class="row clearfix rating-container">
+    <spinner data-ng-if="loading"></spinner>
+
+    <div data-ng-if="!loading && entityId">
+        <div data-ng-if="!noRatings">
+            <div col="12" data-ng-repeat="rating_subtype in ratings">
+                <div class="panel panel-default md-panel">
+                  <div class="panel-heading space-on-bottom-lg">
+                    <h5 class="panel-title">
+                        {{rating_subtype.name}}
+                        
+                    </h5>
+                    <div class="panel-controls">
+                      <div class="panel-controls-wrapper">
+                        <span class="dd-score-display" data-ng-style="rating_subtype.color_code">{{rating_subtype.final_score | number:2}}</span>
+                      </div>
+                    </div>
+                  </div>
+      
+                    <div class="panel-body">
+      
+                    <div col="4" data-ng-repeat="category in rating_subtype.ratings">
+                    <div class="panel panel-default md-panel space-on-left-lg">
+                      <div class="panel-heading">
+                        <h5 class="panel-title">
+                          {{category.name}}
+                          
+                        </h5>
+                        <div class="panel-controls">
+                          <div class="panel-controls-wrapper">
+                            <span class="dd-score-display" data-ng-style="category.color_code">{{category.final_score | number:2}}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel-body">
+                        <div class="panel panel-default md-panel">
+                          <ul class="list-group">
+                            <li class="list-group-item" data-ng-repeat="sub_category in category.ratings">
+                              <div>
+                                <span>{{sub_category.name}}</span>
+                                <div>
+                                  <dv-rating data-ng-model="sub_category.score"
+                                              max="{{rating_scales.length}}"
+                                              readonly="true"
+                                              rating-scales="rating_scales"></dv-rating>
+                                </div>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+      
+            <div col="12" data-ng-show="vm.ratings && !vm.ratings.length">
+              <div class="panel panel-default">
+                <div class="row clearfix">
+                  <div col="6" offset="3">
+                    <div class="panel-body">
+                      <empty-state icon-name="star"
+                                   message="{{'Investment Ratings have not been setup for your organization.' + (vm.is_admin ? '' : ' Please contact your administrator')}}"
+                                   action-label="{{vm.is_admin ? 'Setup Investment Ratings' : ''}}"
+                                   action="vm.redirectToInvestmentRatings()">
+                      </empty-state>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-center" data-ng-if="noRatings">
+            <p class="alert alert-info">
+                <i>*No ratings available*</i>
+            </p>
+        </div>
+    </div>
+
+    <div data-ng-if="!loading && !entityId">
+        <p class="alert alert-warning"><strong>Note:</strong> Please associate this report with a fund/firm to get the ratings.<p>
+    </div>
+</div>

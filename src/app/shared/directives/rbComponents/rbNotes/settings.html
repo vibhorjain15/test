@@ -1,0 +1,64 @@
+<rb-component-width></rb-component-width>
+
+<div class="form-group">
+
+    <div class="panel panel-default space-on-bottom-xxl">
+        <div class="panel-heading">
+            <span>
+              <icon name="notepad" class="space-on-right align-middle"></icon>
+              <span class="align-middle">
+                Select from existing notes <span data-ng-if="notesList.length">({{notesList.length}} available)</span>
+              </span>
+            </span>
+        </div>
+
+        <div class="rw-notes-settings panel-body">
+            <spinner data-ng-if="!notesList"></spinner>
+            <empty-state icon-name="notepad"
+                         message="No notes available for this fund"
+                         data-ng-if="notesList && !notesList.length"></empty-state>
+
+            <ul class="list-unstyled row" data-ng-show="notesList.length">
+                <li col="12" data-ng-repeat="note in notesList">
+                    <div>
+                        <div col="2" class="padded icon-wrapper align-top text-center row">
+                            <button btn-type="default"
+                                    uib-tooltip="Use this note"
+                                    data-ng-click="selectNote(note.text, component)"
+                                    class="row">
+                                <icon name="plus"></icon>
+                            </button>
+                        </div>
+
+                        <div col="10" class="notes-content align-middle inline-block">
+                            <small class="text-muted">
+                                <span>{{note.first_name}} {{note.last_name}}</span>
+                                <span>added</span>
+                                <span>{{note.updated_at|fromNow}}</span>
+                            </small>
+
+                            <p class="clear-margin-bottom space-on-top">
+                                <div dv-show-more show-more-height='90'>
+                                    <span ng-bind-html="note.text | cleanhtml"></span>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+  <label>Notes Editor</label>
+  <a uib-tooltip="Toggle Notes Editor" tooltip-placement="right" href="" data-ng-click="component.edit_mode = !component.edit_mode">
+      <span data-ng-show="component.edit_mode">(Hide)</span>
+      <span data-ng-hide="component.edit_mode">(Show)</span>
+  </a>
+  <div id="{{component.cid}}" data-ng-show="component.edit_mode">
+    <textarea class="form-control"
+              ui-tinymce="tinymceOptions"
+              focus-me="true"
+              data-ng-model-options="{ debounce: { 'default': 500 } }"
+              data-ng-model="component.options.content"></textarea>
+  </div>
+</div>

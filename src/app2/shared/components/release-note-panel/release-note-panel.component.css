@@ -1,0 +1,83 @@
+.release-note-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 15px;
+  transition: background-color 0.2s;
+  background-color: white;
+  margin: 5px 10px;
+  border-radius: 5px;
+}
+.release-note-item:hover {
+  background-color: #f7f7f7;
+}
+.release-note-item .release-note-item-timeline {
+  min-width: 30px;
+  flex-shrink: 0;
+  color: var(--text-color);
+}
+.release-note-item .release-note-item-overview {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-grow: 1;
+  margin-right: -5px;
+}
+.release-note-item
+  .release-note-item-overview
+  .release-note-item-overview-header {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  position: relative;
+}
+.release-note-item
+  .release-note-item-overview
+  .release-note-item-overview-content {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.notification-list {
+  background-color: #ecf1f2;
+  max-height: 70vh !important;
+}
+.panel,
+.panel-default > .panel-heading {
+  background-color: #ecf1f2;
+}
+.panel-default > .panel-heading {
+  border-color: transparent;
+}
+.panel.panel-default .panel-controls .panel-control {
+  background-color: transparent;
+  border: none;
+}
+.release-note-item:first-child {
+  margin-top: 0px;
+}
+.release-note-item:last-child {
+  margin-bottom: 0px;
+}
+:host ::ng-deep .panel-footer {
+  padding: 10px !important;
+}
+.all-notifications {
+  border-radius: 5px;
+}
+.half-opacity {
+  opacity: 0.8;
+}
+.unread-red-dot {
+  width: 10px;
+  height: 10px;
+  float: right;
+  background-color: orange;
+  border-radius: 50%;
+  position: absolute;
+  right: 0px;
+}
+.release-title {
+  width: calc(100% - 10px);
+}

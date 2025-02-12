@@ -1,0 +1,193 @@
+<app-modal
+  [title]="
+    ipConfigForm.value.is_single_ip
+      ? 'Whitelist a New IP'
+      : 'Whitelist a New Range of IPs'
+  "
+  firstButtonLabel="Add"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="Ipmodalref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #Ipmodalref>
+  <form class="form-horizontal" [formGroup]="ipConfigForm" autocomplete="off">
+    <div
+      class="row clearfix space-on-bottom-xxl"
+      *ngIf="ip_configurations_length == 0 && currentIp"
+    >
+      <div col="5" offset="3">
+        <helper-text class="text-center">
+          <span class="space-on-right-lg"
+            >Your IP Address: {{ currentIp }}</span
+          >
+          <button class="btn btn-default" (click)="addCurrentIP()">
+            <span appIcon name="plus"></span>
+            <strong style="margin-left: 3px">Add this</strong>
+          </button>
+        </helper-text>
+      </div>
+    </div>
+
+    <dv-form-element
+      [fieldName]="'name'"
+      [modelController]="ipConfigForm.get('name')"
+      label="Name"
+      [elementCol]="5"
+      [errorMessage]="
+        ipConfigForm.get('name').touched && ipConfigForm.get('name').invalid
+          ? 'Name is required'
+          : ''
+      "
+    >
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        placeholder="Whitelist Name"
+        formControlName="name"
+        autocomplete="off"
+        required
+      />
+    </dv-form-element>
+
+    <dv-form-element
+      [showRightIcon]="false"
+      [fieldName]="'is_single_ip'"
+      [modelController]="ipConfigForm.get('is_single_ip')"
+      elementCol="16"
+    >
+      <span class="control-label fw-bolder" col="3" col-type="sm">Add</span>
+      <div col="5" col-type="sm">
+        <div class="btn-group space-on-bottom-sm">
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': !ipConfigForm.value.is_single_ip }"
+            aria-label="Add a range of IP Addresses"
+            (click)="toggleIPAdditionMode()"
+            role="button"
+            tabindex="0"
+            >RANGE OF IPs</span
+          >
+          <span
+            class="btn btn-default font-size-12"
+            [class]="{ 'btn-primary': ipConfigForm.value.is_single_ip }"
+            aria-label="Add a single IP Address"
+            (click)="toggleIPAdditionMode()"
+            role="button"
+            tabindex="0"
+            >SINGLE IP</span
+          >
+        </div>
+      </div>
+    </dv-form-element>
+
+    <div class="row clearfix space-on-bottom-lg">
+      <div class="inline-block" col="6">
+        <dv-form-element
+          [fieldName]="'start_ip'"
+          [modelController]="ipConfigForm.get('start_ip')"
+          elementCol="16"
+        >
+          <label for="start_ip" class="control-label" col="6" col-type="sm">{{
+            ipConfigForm.value.is_single_ip ? "Single IP" : "Range of IPs"
+          }}</label>
+          <div col="6" col-type="sm">
+            <input
+              type="text"
+              id="start_ip"
+              name="start_ip"
+              class="form-control"
+              placeholder="0.0.0.0"
+              autocomplete="off"
+              formControlName="start_ip"
+              required
+            />
+            <div
+              *ngIf="
+                ipConfigForm.get('start_ip').touched &&
+                ipConfigForm.get('start_ip').invalid
+              "
+              class="text-danger"
+            >
+              <span *ngIf="ipConfigForm.get('start_ip')?.errors?.required">
+                Start IP is required
+              </span>
+              <span *ngIf="ipConfigForm.get('start_ip')?.errors?.pattern">
+                Please enter a valid IP Address
+              </span>
+            </div>
+          </div>
+        </dv-form-element>
+      </div>
+
+      <div
+        class="inline-block"
+        col="6"
+        *ngIf="!ipConfigForm.value.is_single_ip"
+      >
+        <dv-form-element
+          [fieldName]="'end_ip'"
+          [modelController]="ipConfigForm.get('end_ip')"
+          label="to"
+          [elementCol]="6"
+          [labelCol]="1"
+          [labelClass]="'text-center'"
+        >
+          <input
+            type="text"
+            id="end_ip"
+            name="end_ip"
+            class="form-control"
+            placeholder="255.255.255.255"
+            autocomplete="off"
+            formControlName="end_ip"
+            required
+          />
+          <div
+            *ngIf="
+              ipConfigForm.get('end_ip').touched &&
+              ipConfigForm.get('end_ip').invalid
+            "
+            class="text-danger"
+          >
+            <span *ngIf="ipConfigForm.get('end_ip')?.errors?.required">
+              End IP is required
+            </span>
+            <span *ngIf="ipConfigForm.get('end_ip')?.errors?.pattern">
+              Please enter a valid IP Address
+            </span>
+          </div>
+        </dv-form-element>
+      </div>
+
+      <div
+        class="inline-block space-on-top"
+        col="6"
+        offset="3"
+        *ngIf="!ipConfigForm.value.is_single_ip"
+      >
+        <small
+          *ngIf="
+            ipConfigForm.value.start_ip &&
+            ipConfigForm.value.end_ip &&
+            rangeOfIPs > 0
+          "
+        >
+          <span class="space-on-right">No. of IPs included in the range:</span
+          ><span class="text-info">{{ rangeOfIPs | number }}</span>
+        </small>
+
+        <small
+          *ngIf="
+            ipConfigForm.value.start_ip &&
+            ipConfigForm.value.end_ip &&
+            (rangeOfIPs < 0 || !rangeOfIPs)
+          "
+        >
+          <span class="space-on-right text-danger">Invalid range of IPs</span>
+        </small>
+      </div>
+    </div>
+  </form>
+</ng-template>

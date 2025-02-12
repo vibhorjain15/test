@@ -1,0 +1,9 @@
+:host ::ng-deep input {
+  width: 230px;
+}
+.space-left {
+  margin-left: 3px;
+}
+.minWidth {
+  min-width: 58px;
+}

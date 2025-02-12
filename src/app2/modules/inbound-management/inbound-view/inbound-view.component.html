@@ -1,0 +1,8 @@
+<div *ngIf="params.data">
+  <span class="copy-link" (click)="navigateToProjects(params.data)">
+    <span class="inbound-round-number">{{ params.data.submission_count }}</span>
+  </span>
+</div>
+<p *ngIf="params.node.group">
+  {{ params.value }}
+</p>

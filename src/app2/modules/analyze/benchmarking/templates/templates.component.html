@@ -1,0 +1,105 @@
+<div class="panel panel-default modalZindex">
+  <div class="panel-heading">
+    <h5 class="panel-title">Benchmarking</h5>
+  </div>
+  <div class="panel-body">
+    <app-spinner *ngIf="loading_prefs"></app-spinner>
+    <div class="dv-table full-width dd-info-panel" *ngIf="!loading_prefs">
+      <form
+        name="benchmark_form"
+        class="form-horizontal"
+        *ngIf="!loading_prefs"
+        [formGroup]="benchmarkingForm"
+        autocomplete="off"
+      >
+        <div
+          col="3"
+          class="bordered-right cell max-w-320 minimum-Width-template"
+        >
+          <dv-form-element
+            [fieldName]="'Template'"
+            [label]="'Select a Template'"
+            labelPosition="top"
+            [modelController]="benchmarkingForm.get('templateId')"
+            [showRightIcon]="false"
+            [elementCol]="12"
+          >
+            <dv-select
+              [id]="'templateId'"
+              formControlName="templateId"
+              [clearable]="false"
+              [searchable]="true"
+              placeholder="Select an Option"
+              [list]="templates"
+              [loading]="loadingTemplates"
+              [virtualScroll]="false"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+
+        <div col="3" class="bordered-right cell max-w-320 minimum-Width-tag">
+          <dv-form-element
+            [fieldName]="'Portfolio'"
+            [label]="'Select a Portfolio Tag'"
+            labelPosition="top"
+            [modelController]="benchmarkingForm.get('portfolioId')"
+            [showRightIcon]="false"
+            [elementCol]="12"
+            elementClass="'no-padding'"
+          >
+            <dv-select
+              [id]="'portfolioId'"
+              formControlName="portfolioId"
+              [clearable]="false"
+              [searchable]="true"
+              placeholder="Select an Option"
+              [list]="tags"
+              [loading]="loadingTags"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+        <div class="bordered-right cell max-w-320" col="3">
+          <dv-form-element
+            [label]="'Select Dates'"
+            labelPosition="top"
+            [showRightIcon]="false"
+            [elementCol]="12"
+            [for]="'select_dates'"
+          >
+            <app-date-range-picker
+              [customDate]="dateRangeRatingScheme"
+              (change)="onDateChange($event)"
+              (clearDateFilter)="onClearDateFilter()"
+              [ariaLabel]="'Select Dates'"
+              [id]="'select_dates'"
+            ></app-date-range-picker>
+          </dv-form-element>
+        </div>
+        <div col="3" class="space-on-top-lg">
+          <dv-button btnType="transparent" (onClick)="reset()">
+            <div>
+              <span
+                appIcon
+                name="refresh"
+                tooltip="Reset the filters"
+                container="body"
+              ></span>
+            </div>
+            Reset Filters
+          </dv-button>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-12 text-center space-on-top-xxl">
+      <div class="inline-block">
+        <dv-button btnType="primary" (onClick)="getAnalytics()">
+          <span appIcon name="search"></span>
+          Show Results
+        </dv-button>
+      </div>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>

@@ -1,0 +1,20 @@
+<span>
+  <span *ngIf="!(previous == 0 || previous == null)">
+    <span
+      [ngClass]="{
+        'text-success': (current - previous) / previous > 0,
+        'text-danger': (current - previous) / previous < 0
+      }"
+      *ngIf="current != previous"
+    >
+      <span *ngIf="(current - previous) / previous > 0">+</span
+      >{{ ((current - previous) / previous) * 100 | number: 2 }}%
+    </span>
+    <span *ngIf="current == previous"> None </span>
+  </span>
+
+  <span *ngIf="previous == 0 || previous == null" class="text-success">
+    <span *ngIf="current == 0 || current == null"> 0% </span>
+    <span *ngIf="!(current == 0 || current == null)"> +100% </span>
+  </span>
+</span>

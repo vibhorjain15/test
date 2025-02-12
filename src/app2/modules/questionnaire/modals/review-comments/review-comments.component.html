@@ -1,0 +1,125 @@
+<app-modal
+  [title]="'Review Comments'"
+  [initialTemplate]="reviewCommentsRef"
+  [isCustomFooter]="true"
+  [footerTemplate]="footerRef"
+  #modal
+></app-modal>
+
+<ng-template #reviewCommentsRef>
+  <div class="row">
+    <div class="padded-lg">
+      <span
+        *ngIf="firm_preferences.enable_questionnaire_numbering"
+        class="question-text-color"
+        >{{ question.index + 1 }}.
+      </span>
+      <span
+        class="question-text-color clickable"
+        [innerHTML]="question.text"
+      ></span>
+    </div>
+    <div>
+      <app-tinymce-editor
+        [tinyMceInit]="tinyMceInit"
+        [value]="response.attributes.response_with_notes_attributes"
+        (onChange)="handleEditorChange($event)"
+        [isFlite]="responseType === 'TextMultiLine' && editable"
+        [isComments]="true"
+        [isTrackingForFlite]="isTrackingEnabled()"
+        [canEdit]="false"
+        #editor
+      ></app-tinymce-editor>
+    </div>
+  </div>
+  <div class="row">
+    <div class="space-on-top-lg space-on-bottom-lg">
+      <a class="clickable" (click)="togglePreviousComments()">
+        {{ showPreviousComments ? "Hide" : "Show" }} Previous Comments for this
+        question
+      </a>
+    </div>
+    <ul class="list-group" *ngIf="showPreviousComments">
+      <span class="text-center" *ngIf="loadingComments">
+        <app-spinner></app-spinner>
+      </span>
+      <div *ngIf="!loadingComments && !comments.length">
+        <app-empty-state
+          message="No previous comments available"
+        ></app-empty-state>
+      </div>
+      <div *ngIf="!loadingComments && comments.length">
+        <li
+          class="full-grey-border space-on-bottom-lg"
+          *ngFor="let comment of comments"
+        >
+          <div class="previous-comments-panel">
+            <div class="header padded-lg bg-light-gray-panel">
+              <span appIcon name="check-circle"></span>
+              Resolved by <b> {{ comment.updated_by_name }} on </b>
+              <span class="text-muted">
+                {{ comment.updated_at | dvDate }}
+              </span>
+            </div>
+            <div class="padded-lg">
+              <p>
+                <b> {{ comment.created_by_name }} </b>
+                <span class="text-muted">
+                  {{ comment.created_at | dvDate }}
+                </span>
+              </p>
+              <p class="space-on-bottom">
+                <span
+                  [innerHTML]="comment.selected_text"
+                  class="grey-bg"
+                ></span>
+              </p>
+            </div>
+            <div class="comments-body">
+              <div *ngFor="let thread of comment.threads">
+                <p>
+                  <b>{{ thread.created_by_name }}</b>
+                  <i class="text-muted">
+                    {{ thread.created_at | dvDate }}
+                  </i>
+                </p>
+                <p class="clear-margin">
+                  <span [innerHTML]="thread.content | cleanHtml"></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </li>
+      </div>
+    </ul>
+  </div>
+</ng-template>
+
+<ng-template #footerRef>
+  <div class="pull-left">
+    <dv-button
+      [disabled]="responseIndex === 0"
+      btnType="default"
+      (onClick)="previousComment()"
+      tooltipText="Click to navigate to previous parent questions in this sequence with review comments"
+      ariaLabel="Navigate to Previous"
+    >
+      <span appIcon name="chevron-left"></span>
+      Previous
+    </dv-button>
+    <dv-button
+      [disabled]="responseIndex === validResponsesInSequence.length - 1"
+      btnType="default"
+      (onClick)="nextComment()"
+      class="space-on-left"
+      tooltipText="Click to navigate to next parent questions in this sequence with review comments"
+      ariaLabel="Navigate to Next"
+    >
+      <span appIcon name="chevron-right"></span>
+      Next
+    </dv-button>
+  </div>
+  <div class="pull-right">
+    <dv-button btnType="default" (onClick)="closeModal()"> Close </dv-button>
+  </div>
+</ng-template>

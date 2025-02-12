@@ -1,0 +1,91 @@
+<div
+  class="form-group has-feedback"
+  [ngClass]="{
+    'has-success':
+      modelController && modelController?.touched && modelController?.valid,
+    'has-error':
+      modelController && modelController?.touched && modelController?.invalid,
+    'center-aligned': centerAligned
+  }"
+  [style.margin-bottom]="marginBottom"
+  [tooltip]="formElementTooltip"
+>
+  <div
+    [class]="labelClass + labelColClass"
+    *ngIf="label"
+    [ngClass]="{ disabled: disabled }"
+  >
+    <label
+      *ngIf="_formControl && (for || _controlName)"
+      [for]="for || _controlName"
+      [innerHtml]="label"
+    >
+    </label>
+    <span
+      *ngIf="!_formControl"
+      class="fw-bolder space-on-bottom"
+      [innerHtml]="label"
+    >
+    </span>
+    <span *ngIf="isRequired" class="font-size-10 text-orange align-top">*</span>
+    <span
+      *ngIf="!!infoText"
+      appIcon
+      name="info"
+      [tooltip]="tooltipTemplate"
+      container="body"
+      [class]="iconClass"
+      class="space-on-left info-icon"
+      [placement]="infoTextPlacement"
+      [adaptivePosition]="adaptivePosition"
+    ></span>
+  </div>
+  <div [class]="elementClass + ' col-md-' + elementCol">
+    <ng-container *ngTemplateOutlet="tempOutlet"></ng-container>
+    <i
+      appIcon
+      [name]="'check'"
+      class="form-control-feedback"
+      *ngIf="
+        modelController?.touched && modelController?.valid && showRightIcon
+      "
+      style="top: 0"
+    ></i>
+    <i
+      appIcon
+      [name]="'check'"
+      class="form-control-feedback"
+      *ngIf="
+        modelController?.touched && modelController?.invalid && showWrongIcon
+      "
+    ></i>
+    <div
+      *ngIf="
+        (modelController &&
+          modelController?.touched &&
+          modelController?.invalid) ||
+        customErrorMessage
+      "
+      class="text-danger"
+    >
+      {{ errorMessage || customErrorMessage }}
+    </div>
+  </div>
+
+  <div *ngIf="isIcon">
+    <span appIcon [name]="iconName" [class]="iconClass" [tooltip]="iconTooltip">
+    </span>
+  </div>
+
+  <div *ngIf="isTemplate">
+    <ng-container *ngTemplateOutlet="isTemplate"></ng-container>
+  </div>
+
+  <ng-template #tempOutlet>
+    <ng-content></ng-content>
+  </ng-template>
+</div>
+
+<ng-template #tooltipTemplate>
+  <span [innerHtml]="infoText | dvSafeHtml"></span>
+</ng-template>

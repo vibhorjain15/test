@@ -1,0 +1,992 @@
+<app-modal
+  [title]="modalTitle"
+  [firstButtonLabel]="firstButtonLabel"
+  [initialTemplate]="AddPreApproved"
+  (onFirstClick)="onFirstClick()"
+  [secondButtonLabel]="secondButtonLabel"
+  [isLoading]="loading"
+  [isSecondaryLoading]="loadingAddAnother"
+  (onSecondClick)="onSecondClick()"
+  [isbackButton]="source == 'project_history' && editQA"
+  [isSecondButtonDisabled]="loadingAddAnother"
+  [isFirstButtonDisabled]="
+    (formData?.questions?.length < 1 || !addPreApprovedFrom.valid) &&
+    tab == 'preApproved'
+  "
+  [isSecondButtonDisabled]="
+    formData?.questions?.length < 1 || !addPreApprovedFrom.valid
+  "
+  (onBackClick)="toggleEdit()"
+  [isInnerScroll]="editQA"
+>
+  <ng-template #AddPreApproved>
+    <div>
+      <ng-container>
+        <ng-container *ngTemplateOutlet="tabTypeSelection"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="source == 'project_history' && !qa">
+        <ng-container *ngTemplateOutlet="editQAsOption"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="!categoryloading">
+        <form
+          class="form-horizontal"
+          [formGroup]="addPreApprovedFrom"
+          autocomplete="off"
+        >
+          <div class="panel panel-info" *ngIf="tab == 'uploadNew'">
+            <div class="panel-heading">
+              Please review the entity details below. All Q/As marked in the
+              imported file will be associated with the selected entity.
+            </div>
+          </div>
+          <accordion
+            [closeOthers]="true"
+            *ngIf="!editQA || source != 'project_history'"
+          >
+            <accordion-group
+              [isOpen]="isOpen"
+              (isOpenChange)="isOpen = $event"
+              [isDisabled]="tab == 'uploadNew'"
+              class="space-on-bottom-sm space-on-top"
+            >
+              <div accordion-heading>
+                <div class="panel-title font-size-14">
+                  <a role="button" class="link-unstyled">
+                    <span
+                      appIcon
+                      *ngIf="tab != 'uploadNew'"
+                      [name]="isOpen ? 'chevron-down' : 'chevron-right'"
+                    ></span>
+                    <span
+                      [ngClass]="{ 'space-on-left-lg': tab != 'uploadNew' }"
+                    >
+                      Entity Details</span
+                    >
+                  </a>
+                </div>
+              </div>
+              <!-- Entity Selection Container -->
+              <ng-container>
+                <!-- Entity Type -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Entity Type"
+                  label="Entity Type"
+                  elementCol="12"
+                  labelPosition="top"
+                  *ngIf="!editQA"
+                  [isRequired]="!editMode"
+                  errorMessage="Entity type is required"
+                  [for]="'entityTypes'"
+                >
+                  <dv-select
+                    bindLabel="label"
+                    bindValue="name"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [(ngModel)]="current_selected_entity_type"
+                    [ngModelOptions]="{ standalone: true }"
+                    placeholder="Select a entity type"
+                    [disabled]="editMode"
+                    (onSelectChange)="setEntityType($event)"
+                    [list]="entityTypes"
+                    [id]="'entityTypes'"
+                  >
+                  </dv-select>
+                </dv-form-element>
+                <!-- Entity Type -->
+
+                <!-- Product -->
+                <ng-container
+                  *ngIf="
+                    current_selected_entity_type == keywordConstants.Product &&
+                    !editQA
+                  "
+                >
+                  <dv-form-element
+                    [showRightIcon]="false"
+                    fieldName="Product"
+                    [modelController]="addPreApprovedFrom.get('Product')"
+                    label="Product"
+                    elementCol="12"
+                    labelPosition="top"
+                    [isRequired]="!editMode"
+                    errorMessage="Product is required"
+                  >
+                    <dv-select
+                      [id]="'Product'"
+                      formControlName="Product"
+                      bindLabel="name"
+                      bindValue="id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [multiple]="true"
+                      [maxSelectedItems]="1"
+                      placeholder="Select a product"
+                      [loading]="entityLoading"
+                      (onSelectChange)="
+                        setEntities($event, keywordConstants.Product)
+                      "
+                      [list]="funds"
+                      [disabled]="editMode"
+                      [contoller]="addPreApprovedFrom.get('Product')"
+                    >
+                    </dv-select>
+                  </dv-form-element>
+                  <ng-container
+                    *ngTemplateOutlet="selectTemplate"
+                  ></ng-container>
+                </ng-container>
+                <!-- Product -->
+
+                <!-- Firm -->
+                <ng-container
+                  *ngIf="
+                    current_selected_entity_type == keywordConstants.Firm &&
+                    !editQA
+                  "
+                >
+                  <dv-form-element
+                    [showRightIcon]="false"
+                    fieldName="Firm"
+                    [modelController]="addPreApprovedFrom.get('Firm')"
+                    label="Firm"
+                    elementCol="12"
+                    labelPosition="top"
+                    [isRequired]="!editMode"
+                    errorMessage="Firm is required"
+                  >
+                    <div class="col-md-6">
+                      <p class="pull-left">
+                        {{ current_firm?.name }}
+                      </p>
+                    </div>
+                  </dv-form-element>
+                  <ng-container
+                    *ngTemplateOutlet="selectTemplate"
+                  ></ng-container>
+                </ng-container>
+                <!-- Firm -->
+
+                <!-- Strategy -->
+                <ng-container
+                  *ngIf="
+                    current_selected_entity_type == keywordConstants.Strategy &&
+                    !editQA
+                  "
+                >
+                  <dv-form-element
+                    [showRightIcon]="false"
+                    fieldName="Strategy"
+                    [modelController]="addPreApprovedFrom.get('Strategy')"
+                    label="Strategy"
+                    elementCol="12"
+                    labelPosition="top"
+                    [isRequired]="!editMode"
+                    errorMessage="Strategy is required"
+                  >
+                    <dv-select
+                      [id]="'Strategy'"
+                      formControlName="Strategy"
+                      bindLabel="name"
+                      bindValue="id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [maxSelectedItems]="1"
+                      [multiple]="true"
+                      placeholder="Select a strategy"
+                      [loading]="entityLoading"
+                      (onSelectChange)="
+                        setEntities($event, keywordConstants.Strategy)
+                      "
+                      [list]="strategies"
+                      [disabled]="editMode"
+                      [contoller]="addPreApprovedFrom.get('Strategy')"
+                    >
+                    </dv-select>
+                  </dv-form-element>
+                  <ng-container
+                    *ngTemplateOutlet="selectTemplate"
+                  ></ng-container>
+                </ng-container>
+                <!-- Strategy -->
+
+                <!-- Vehicle -->
+                <ng-container
+                  *ngIf="
+                    current_selected_entity_type == keywordConstants.Vehicle &&
+                    !editQA
+                  "
+                >
+                  <dv-form-element
+                    [showRightIcon]="false"
+                    fieldName="Vehicle"
+                    [modelController]="addPreApprovedFrom.get('Vehicle')"
+                    label="Vehicle"
+                    elementCol="12"
+                    labelPosition="top"
+                    [isRequired]="!editMode"
+                    errorMessage="Vehicle is required"
+                  >
+                    <dv-select
+                      [id]="'Vehicle'"
+                      formControlName="Vehicle"
+                      bindLabel="name"
+                      bindValue="id"
+                      [clearable]="false"
+                      [searchable]="true"
+                      [maxSelectedItems]="1"
+                      [multiple]="true"
+                      placeholder="Select a vehicle"
+                      [loading]="entityLoading"
+                      (onSelectChange)="
+                        setEntities($event, keywordConstants.Vehicle)
+                      "
+                      [list]="vehicles"
+                      [disabled]="editMode"
+                      [contoller]="addPreApprovedFrom.get('Vehicle')"
+                    >
+                    </dv-select>
+                  </dv-form-element>
+                  <ng-container
+                    *ngTemplateOutlet="selectTemplate"
+                  ></ng-container>
+                </ng-container>
+                <!-- Vehicle -->
+              </ng-container>
+              <!-- Entity Selection Container -->
+
+              <!-- Template, Category, Subcategory Selection Container -->
+              <ng-container
+                *ngIf="
+                  (!editQA || source != 'project_history') &&
+                  tab == 'preApproved'
+                "
+              >
+                <!-- Template -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Template"
+                  [modelController]="addPreApprovedFrom.get('Template')"
+                  label="Template"
+                  elementCol="12"
+                  labelPosition="top"
+                  *ngIf="
+                    !editQA &&
+                    showEditTemplate &&
+                    (showTemplateDropdown || editMode)
+                  "
+                >
+                  <dv-select
+                    [id]="'Template'"
+                    formControlName="Template"
+                    [clearable]="true"
+                    [searchable]="true"
+                    [loading]="loading"
+                    [placeholder]="'Select a template'"
+                    [loading]="templateLoading"
+                    bindLabel="name"
+                    bindValue="id"
+                    [list]="templates"
+                    [disabled]="editMode"
+                    (onSelectChange)="getSelectedTemplate($event)"
+                    [contoller]="addPreApprovedFrom.get('Template')"
+                  >
+                  </dv-select>
+                </dv-form-element>
+                <!-- Template -->
+
+                <!-- Category -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="template"
+                  [modelController]="addPreApprovedFrom.get('Category')"
+                  label="Category"
+                  elementCol="12"
+                  *ngIf="!editQA"
+                  labelPosition="top"
+                >
+                  <dv-select
+                    [id]="'Category'"
+                    formControlName="Category"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [multiple]="false"
+                    placeholder="Select a category"
+                    [loading]="categoryLoading"
+                    addTagText="Add New"
+                    [addTag]="createOption"
+                    (onSelectChange)="getSubCategories($event, null)"
+                    [list]="categories"
+                    [disabled]="editMode"
+                    bindValue="id"
+                    bindLabel="name"
+                    [contoller]="addPreApprovedFrom.get('Category')"
+                  >
+                  </dv-select>
+                </dv-form-element>
+                <!-- Category -->
+
+                <!-- Sub-category -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Subcategory"
+                  [modelController]="addPreApprovedFrom.get('Subcategory')"
+                  label="Sub-category"
+                  elementCol="12"
+                  labelPosition="top"
+                  *ngIf="!editQA"
+                >
+                  <dv-select
+                    [id]="'Subcategory'"
+                    formControlName="Subcategory"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Select a sub-category"
+                    [loading]="categoryLoading"
+                    addTagText="Add New"
+                    [addTag]="createSubcategory"
+                    (onSelectChange)="setChildSection($event)"
+                    [disabled]="editMode"
+                    bindValue="id"
+                    bindLabel="name"
+                    [list]="subCategories"
+                    [contoller]="addPreApprovedFrom.get('Subcategory')"
+                  >
+                  </dv-select>
+                </dv-form-element>
+                <!-- Sub-category -->
+              </ng-container>
+              <!-- Template, Category, Subcategory Selection Container -->
+            </accordion-group>
+          </accordion>
+          <!-- Question, ResponseType, Response Selection Container -->
+          <ng-container
+            *ngIf="
+              (editQA || source != 'project_history' || qa) &&
+              tab == 'preApproved'
+            "
+            formArrayName="questionsFormArray"
+          >
+            <ng-container
+              *ngFor="let item of formData.questions; let index = index"
+            >
+              <ng-container [formGroupName]="index">
+                <div
+                  class="space-on-top space-on-bottom"
+                  *ngIf="editQA && formData.questions.length != 1"
+                >
+                  <dv-label type="bold" label="Q/A #{{ index + 1 }}"></dv-label>
+                </div>
+                <!-- Question -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="question_text"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('question_text')
+                  "
+                  label="Question Text"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="true"
+                  [errorMessage]="
+                    questionsFormArray.controls[index].get('question_text')
+                      .errors?.required
+                      ? 'Question Text is required'
+                      : questionsFormArray.controls[index].get('question_text')
+                          .errors?.containsHtml
+                      ? 'Question Text is not valid'
+                      : null
+                  "
+                >
+                  <textarea
+                    name="question_text"
+                    rows="3"
+                    [attr.aria-label]="'question_text'"
+                    formControlName="question_text"
+                    class="form-control"
+                    [(ngModel)]="item.text"
+                    placeholder="Enter question"
+                    [disabled]="editMode"
+                    required
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="setQuestionText($event, index)"
+                  >
+                  </textarea>
+                </dv-form-element>
+                <!-- Question -->
+
+                <!-- Response Type -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="response-type"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('responseType')
+                  "
+                  label="Response Type"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="true"
+                  errorMessage="Response Type is required"
+                >
+                  <dv-select
+                    [id]="'responseType'"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Select a response type"
+                    (onSelectChange)="setResponseType($event, index)"
+                    bindLabel="description"
+                    bindValue="id"
+                    [list]="responseTypes"
+                    [(ngModel)]="
+                      item.responseTypeId >= 0
+                        ? item.responseTypeId
+                        : currentSelectedResponseTypeId
+                    "
+                    [disabled]="
+                      source == 'question_detail' ||
+                      source == 'questionnaire' ||
+                      source == 'project_history'
+                    "
+                    [ngModelOptions]="{ standalone: true }"
+                    [contoller]="
+                      questionsFormArray.controls[index].get('responseType')
+                    "
+                  >
+                  </dv-select>
+                </dv-form-element>
+                <!-- Response Type -->
+
+                <!-- Date -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('answer_text')
+                  "
+                  label="Response"
+                  elementCol="12"
+                  labelPosition="top"
+                  *ngIf="item.responseType == 'Date'"
+                  [isRequired]="true"
+                  errorMessage="Response is required"
+                >
+                  <div>
+                    <app-date-picker
+                      [id]="'answer_text'"
+                      (change)="setDateResponse($event, index)"
+                      [value]="item.response.dateResponse ?? null"
+                      [placeholder]="'Select date'"
+                    >
+                    </app-date-picker>
+                  </div>
+                </dv-form-element>
+                <!-- Date -->
+
+                <!-- Percentage, Integer, Numeric , Identifier , TextPhone -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  label="Response"
+                  elementCol="12"
+                  labelPosition="top"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('answer_text')
+                  "
+                  [isRequired]="true"
+                  *ngIf="
+                    item.responseType == 'Integer' ||
+                    item.responseType == 'Numeric' ||
+                    item.responseType == 'Identifier' ||
+                    item.responseType == 'TextPhone' ||
+                    item.responseType == 'Percentage'
+                  "
+                >
+                  <div>
+                    <response-input
+                      [value]="item.response.numericResponseA"
+                      (onValueChange)="
+                        handleResponseInputChange(
+                          $event.value,
+                          'numericResponseA',
+                          $event.error,
+                          index
+                        )
+                      "
+                      [enableValidation]="true"
+                      [type]="
+                        item.responseType == 'Integer' ? 'pureNumber' : 'number'
+                      "
+                      [rightIcon]="
+                        item.responseType === 'Percentage' ? '%' : ''
+                      "
+                      [isRequired]="true"
+                      requiredErrorMessage="Response is required"
+                      [placeholder]="placeholder[item.responseType]"
+                      [maxDigitsAfterDecimalPoint]="
+                        item.responseType == 'Numeric' ||
+                        item.responseType == 'Percentage'
+                          ? 2
+                          : 0
+                      "
+                      [commaAddResponse]="false"
+                    >
+                    </response-input>
+                    <div
+                      *ngIf="
+                        item.response.numericResponseA == null && isTouched
+                      "
+                      class="text-danger"
+                    >
+                      Response is required
+                    </div>
+                  </div>
+                </dv-form-element>
+                <!-- Percentage, Integer, Numeric , Identifier , TextPhone -->
+
+                <!-- Text -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('answer_text')
+                  "
+                  label="Response"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="true"
+                  *ngIf="item.responseType == 'Text'"
+                  errorMessage="Response is required"
+                >
+                  <div>
+                    <input
+                      required
+                      type="text"
+                      id="answer_text"
+                      [(ngModel)]="item.response.textResponse"
+                      [ngModelOptions]="{ standalone: true }"
+                      class="form-control"
+                      formControlName="answer_text"
+                      [placeholder]="placeholder[item.responseType]"
+                    />
+                  </div>
+                </dv-form-element>
+                <!-- Text -->
+
+                <!-- TextEmail -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  label="Response"
+                  elementCol="12"
+                  labelPosition="top"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('answer_text')
+                  "
+                  [isRequired]="true"
+                  *ngIf="item.responseType == 'TextEmail'"
+                >
+                  <div>
+                    <dv-input
+                      [isRequired]="true"
+                      [control]="
+                        questionsFormArray.controls[index].get('answer_text')
+                      "
+                      (onValueChange)="
+                        handleDvInputResponseInputChange(
+                          $event.value,
+                          'textResponse',
+                          $event.error,
+                          index
+                        )
+                      "
+                      type="email"
+                      [id]="'answer_text'"
+                      [placeholder]="placeholder[item.responseType]"
+                    >
+                    </dv-input>
+                    <div
+                      *ngIf="!item.response.textResponse && isTouched"
+                      class="text-danger"
+                    >
+                      Response is required
+                    </div>
+                  </div>
+                </dv-form-element>
+                <!-- TextEmail -->
+
+                <!-- 'Boolean' , 'BooleanPlus' , 'NoPlus' -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  label="Response"
+                  elementCol="12"
+                  labelPosition="top"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('answer_text')
+                  "
+                  [isRequired]="true"
+                  *ngIf="
+                    item.responseType == 'Boolean' ||
+                    item.responseType == 'BooleanPlus' ||
+                    item.responseType == 'NoPlus'
+                  "
+                >
+                  <div>
+                    <dv-select
+                      [(ngModel)]="item.response.booleanResponse"
+                      [ngModelOptions]="{ standalone: true }"
+                      [list]="[
+                        { label: 'Yes', value: true },
+                        { label: 'No', value: false }
+                      ]"
+                      bindLabel="label"
+                      bindValue="value"
+                      [id]="'answer_text'"
+                      (onSelectChange)="
+                        setBooleanTextResponse($event, index, item.responseType)
+                      "
+                      [placeholder]="placeholder[item.responseType]"
+                    >
+                    </dv-select>
+                  </div>
+                  <div
+                    *ngIf="item.response.booleanResponse == null && isTouched"
+                    class="text-danger"
+                  >
+                    Response is required
+                  </div>
+                </dv-form-element>
+                <!-- 'Boolean' , 'BooleanPlus' , 'NoPlus' -->
+
+                <!-- BooleanPlus , booleanResponse , NoPlus -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  label="Explanation"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="true"
+                  *ngIf="
+                    (item?.responseType == 'BooleanPlus' &&
+                      item.response?.booleanResponse == true) ||
+                    (item?.responseType == 'NoPlus' &&
+                      item?.response?.booleanResponse == false)
+                  "
+                  [for]="'Explanation'"
+                >
+                  <div>
+                    <dv-editor
+                      [id]="'Explanation'"
+                      [value]="item?.response?.textResponse"
+                      (onChange)="handleEditorTextChange($event, index)"
+                      [configObj]="tinyMceInit"
+                    ></dv-editor>
+                    <div
+                      *ngIf="!item?.response?.textResponse?.length && isTouched"
+                      class="text-danger"
+                    >
+                      Please provide an explanation
+                    </div>
+                  </div>
+                </dv-form-element>
+                <!-- BooleanPlus , booleanResponse , NoPlus -->
+
+                <!-- TextMultiLine -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  [modelController]="
+                    questionsFormArray.controls[index].get('answer_text')
+                  "
+                  label="Response"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="true"
+                  *ngIf="item.responseType == 'TextMultiLine'"
+                  errorMessage="Response is required"
+                >
+                  <div>
+                    <dv-editor
+                      [value]="item?.response?.textResponse"
+                      (onChange)="handleEditorTextChange($event, index)"
+                      [configObj]="tinyMceInit"
+                      [triggerChangeManuallyOnPaste]="true"
+                    ></dv-editor>
+                  </div>
+                </dv-form-element>
+                <!-- TextMultiLine -->
+
+                <!-- Grid or DynamicGrid -->
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="answer_text"
+                  label="Answer"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="true"
+                  *ngIf="
+                    (item.responseType == 'Grid' ||
+                      item.responseType == 'DynamicGrid') &&
+                    item?.gridData
+                  "
+                >
+                  <div [style.overflow]="'auto'">
+                    <grid-response
+                      [gridResponse]="item.response.localgrid_responses"
+                      [isNotApplicable]="false"
+                      [id]="'pre-approved-' + item.response.id"
+                      [gridData]="item.gridData"
+                      [isReadOnly]="false"
+                      [isDynamic]="item.responseType === 'DynamicGrid'"
+                      [isPlainRendering]="false"
+                      [enableHeaders]="true"
+                      [reload$]="reload$"
+                      (onValueChange)="handleGridValueChange($event)"
+                      container=".modal-container"
+                      #grid
+                    ></grid-response>
+                  </div>
+                </dv-form-element>
+                <!-- Grid or DynamicGrid -->
+                <div
+                  class="space-on-top space-on-bottom"
+                  *ngIf="
+                    index != questions?.length - 1 && questions?.length > 1
+                  "
+                >
+                  <dv-divider horizontalMargin="medium"></dv-divider>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <!-- Question, ResponseType, Response Selection Container -->
+
+          <!-- Additional Options Container -->
+          <div
+            class="display-none"
+            id="optionsDiv_1"
+            *ngIf="
+              (!editQA || source != 'project_history') && tab == 'preApproved'
+            "
+          >
+            <!-- Hint Text -->
+            <dv-form-element
+              [showRightIcon]="false"
+              fieldName="Help Text"
+              label="Help Text"
+              elementCol="12"
+              labelPosition="top"
+            >
+              <textarea
+                name="help_text"
+                rows="3"
+                id="hintText"
+                formControlName="hintText"
+                class="form-control"
+                (change)="setHintText($event)"
+              >
+              </textarea>
+            </dv-form-element>
+            <!-- Hint Text -->
+
+            <!-- Tags -->
+            <dv-form-element
+              [showRightIcon]="false"
+              fieldName="Tag(s)"
+              label="Tag(s)"
+              elementCol="12"
+              labelPosition="top"
+              for="tags"
+            >
+              <dv-select
+                id="tags"
+                [aria-label]="'tags'"
+                [clearable]="false"
+                [searchable]="true"
+                formControlName="tags"
+                [multiple]="true"
+                placeholder="Select tag(s)"
+                (onSelectChange)="setTags($event)"
+                bindValue="id"
+                bindLabel="name"
+                [list]="tags"
+              >
+              </dv-select>
+            </dv-form-element>
+            <!-- Tags -->
+
+            <!-- SME(s) -->
+            <dv-form-element
+              [showRightIcon]="false"
+              fieldName="SME(s)"
+              label="SME(s)"
+              elementCol="12"
+              labelPosition="top"
+              [modelController]="addPreApprovedFrom.get('sme')"
+            >
+              <dv-select
+                [id]="'sme'"
+                [clearable]="false"
+                [multiple]="true"
+                placeholder="Select or search team member(s)"
+                name="sme"
+                formControlName="sme"
+                (onSelectChange)="handleChangeSMEAssignedUser($event)"
+                [list]="team_role_list"
+                bindLabel="name"
+              >
+              </dv-select>
+            </dv-form-element>
+            <!-- SME(s) -->
+
+            <!-- Expiry Date -->
+            <dv-form-element
+              [showRightIcon]="false"
+              label="Expiry Date"
+              elementCol="12"
+              labelPosition="top"
+              [for]="'expiry_date'"
+            >
+              <div>
+                <app-date-picker
+                  [id]="'expiry_date'"
+                  (change)="handleExpiryDateChange($event)"
+                  [value]="expiryDate"
+                  [minDate]="minExpiryDate"
+                  [clearable]="true"
+                  placeholder="Set an expiry date"
+                ></app-date-picker>
+              </div>
+            </dv-form-element>
+            <!-- Expiry Date -->
+          </div>
+          <!-- Additional Options Container -->
+
+          <div
+            class="m-b-60"
+            *ngIf="
+              (!editQA || source != 'project_history') && tab == 'preApproved'
+            "
+          >
+            <div class="col-md-12 text-right">
+              <a class="link clickable" (click)="toggleAdditionalOptions(1)">
+                {{ isAdditionalOptionsVisible ? "Hide" : "Show" }} Additional
+                Options
+              </a>
+            </div>
+          </div>
+
+          <!-- Dv-Uploader and ResponseDate Container (Mainly for Import tab) -->
+          <div *ngIf="tab == 'uploadNew'">
+            <!-- Response Date -->
+            <dv-form-element
+              [showRightIcon]="false"
+              label="Response Date"
+              elementCol="12"
+              labelPosition="top"
+              [for]="'response_date'"
+            >
+              <div>
+                <app-date-picker
+                  [id]="'response_date'"
+                  (change)="handleResponseDateChange($event)"
+                  [value]="responseDate"
+                  [maxDate]="maxResponseDate"
+                  placeholder="Set a response date"
+                ></app-date-picker>
+              </div>
+            </dv-form-element>
+            <!-- Response Date -->
+            <!-- Upload -->
+            <dv-form-element
+              [showRightIcon]="false"
+              label="Upload"
+              elementCol="12"
+              labelPosition="top"
+              [isRequired]="true"
+            >
+              <dv-uploader
+                [isMultiple]="false"
+                (onFileUpload)="handleFileUpload($event)"
+                dragLabel="Drag & Drop your Word file here"
+                [accept]="accepted"
+              ></dv-uploader>
+            </dv-form-element>
+            <!-- Upload -->
+          </div>
+          <!-- Dv-Uploader and ResponseDate Container (Mainly for Import tab) -->
+        </form>
+      </ng-container>
+
+      <app-spinner
+        broadSpinner="true"
+        spinnerHeight="100"
+        *ngIf="categoryloading"
+      ></app-spinner>
+    </div>
+  </ng-template>
+</app-modal>
+<ng-template #tabTypeSelection>
+  <div
+    *ngIf="
+      !(
+        source == 'question_detail' ||
+        source == 'questionnaire' ||
+        source == 'project_history'
+      )
+    "
+    class="text-center space-on-bottom-lg"
+  >
+    <div class="btn-group">
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{
+          'btn-primary': tab == 'preApproved'
+        }"
+        (click)="changeTabType('preApproved')"
+      >
+        Add a Q/A
+      </span>
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{
+          'btn-primary': tab == 'uploadNew'
+        }"
+        (click)="changeTabType('uploadNew')"
+      >
+        Import a File
+      </span>
+    </div>
+  </div>
+</ng-template>
+<ng-template #editQAsOption>
+  <div class="display-flex">
+    <div class="col-md-6 text-left" *ngIf="!editQA">
+      <span>{{ questions?.length }} Q/A(s) selected</span>
+      <span
+        appIcon
+        name="info"
+        class="ml-4 space-on-left"
+        tooltip="The number of Q/As here may differ from the number of Q/As you've selected because questions without responses, responses marked as N/A, attachments, grids, checkboxes, dropdowns, and min-max ranges are not currently supported to be added in bulk."
+      >
+      </span>
+    </div>
+    <div class="col-md-6 text-right" *ngIf="!editQA && questions?.length">
+      <a (click)="canEdit()">Edit Selected Q/A(s)</a>
+    </div>
+  </div>
+</ng-template>
+<ng-template #selectTemplate>
+  <div class="space-on-bottom-xl">
+    <dv-checkbox
+      *ngIf="!editQA && showEditTemplate && tab == 'preApproved' && !editMode"
+      [(ngModel)]="showTemplateDropdown"
+      [ngModelOptions]="{ standalone: true }"
+      label="Select Template (optional)"
+      (onValChange)="showHideTemplate($event)"
+      Tooltip="Q/As are added to the entity's Master template by default. Check this to select a different existing template."
+    >
+    </dv-checkbox>
+  </div>
+</ng-template>

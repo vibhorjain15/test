@@ -1,0 +1,14 @@
+<div *ngIf="params?.value?.length">
+  <span class="label label-default space-on-right">{{ displayLabel[0] }}</span>
+  <span *ngIf="displayLabel.length > 1">
+    and {{ displayLabel.length - 1 }}
+    <span
+      class="link-underline clickable space-on-right"
+      [adaptivePosition]="false"
+      [tooltip]="tooltip"
+      container="body"
+    >
+      more
+    </span>
+  </span>
+</div>

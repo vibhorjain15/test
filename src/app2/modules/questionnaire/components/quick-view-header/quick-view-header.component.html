@@ -1,0 +1,68 @@
+<!-- <div
+  class="panel panel-default"
+  *ngIf="diligence && diligence.isQuickFilter && !diligence.notVisible"
+>
+  <div class="panel-body list-wrapper">
+    <ng-container *ngIf="quickViewlist.length">
+      <dv-label label="Quickly View :" type="disable"></dv-label>
+      <ng-container *ngFor="let val of quickViewlist">
+        <dv-label
+          class="clickable"
+          [ngClass]="{ 'not-clickable': val?.disabled }"
+          [color]="
+            filter == val?.param
+              ? 'primary'
+              : val?.disabled
+              ? 'grey'
+              : 'default'
+          "
+          (click)="handleDropDownClick(val, 'quick')"
+          label="{{ val?.name }} ({{ val?.count }})"
+        ></dv-label>
+        <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+      </ng-container>
+      <dv-dropdown
+        label="More"
+        [dropDownList]="dropDownList"
+        iconName="caret-down"
+        dropdownPlacement="right"
+        iconSize="small"
+        (onDropdownClick)="handleDropDownClick($event)"
+      ></dv-dropdown>
+    </ng-container>
+
+    <ng-container *ngIf="!quickViewlist.length">
+      <app-spinner class="text-center" spinnerHeight="300"></app-spinner>
+    </ng-container>
+  </div>
+</div> -->
+
+<dv-quick-filters
+  *ngIf="
+    diligence.isQuickFilter &&
+    (!diligence.notVisible || diligence.allowOnlyFollowups)
+  "
+  [filters]="newFilterList"
+  (onClick)="handleFilterClick($event)"
+  tabindex="0"
+  role="region"
+  aria-label="Quick filters"
+>
+</dv-quick-filters>
+
+<helper-text
+  *ngIf="ratingLevel && excludedPercentage > excludedPercentageThreshold"
+  class="space-on-top"
+  panelClass="panel-danger"
+>
+  <p class="help-text-font" *ngIf="excludedPercentage < 100">
+    You have excluded more than <strong>{{ excludedPercentage }}%</strong> of
+    the {{ ratingLevel | standardPluralize | lowercase }} from ratings. This may
+    affect the total project score.
+  </p>
+  <p class="help-text-font" *ngIf="excludedPercentage == 100">
+    All {{ ratingLevel | standardPluralize | lowercase }} have been
+    <strong>excluded</strong>, and no final score will be generated. Please
+    review your exclusions.
+  </p>
+</helper-text>

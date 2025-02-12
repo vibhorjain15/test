@@ -1,0 +1,104 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-design-preferences></ng2-design-preferences> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Design Preferences</h5>
+  </div>
+
+  <div class="panel-body affix_bottom_parent_in_design_pref">
+    <spinner broad-spinner spinner-height='60' data-ng-if="vm.loadingFirmPreference"></spinner>
+    <div class="row clearfix" data-ng-if="!vm.loadingFirmPreference">
+      <form name="vm.designPreferenceForm" data-ng-submit="vm.updateFirmPreferences()">
+        <p class="alert alert-info space-on-bottom-xxl">
+          Customize DiligenceVault to meet your brand.
+          1. Upload your firm's logo for notifications and reports.
+          2. Add your brand colors(up to 10 unique colors) for dashboards and reports.
+        </p>
+        <div col="6" col-type="sm" class="cell col-xs-12">
+          <label class="control-label space-on-bottom-lg">Manage Firm's Color Scheme</label>
+
+          <div class="row relative" data-ng-repeat="color in vm.selectedColors track by $index">
+            <div col="8" col-type="sm" class="space-on-bottom-lg col-xs-10">
+              <form-group field-name="Color" tooltip-placement="left">
+                <input
+                        name="color-{{$index}}"
+                        id="color-{{$index}}"
+                        minicolors="vm.miniColorSettings"
+                        class="form-control"
+                        type="text"
+                        ng-pattern="/#?[0-9A-Fa-f]{6}/"
+                        custom-pattern-message="Please enter a valid 6-digit color code starting with a #."
+                        ng-model="vm.selectedColors[$index]"
+                        ng-required="true">
+              </form-group>
+            </div>
+
+            <div class="align-middle space-on-top col-xs-2" col="1" col-type="sm">
+              <button btn-type="default"
+                      class="btn-close"
+                      size="sm"
+                      tabindex="-1"
+                      data-ng-hide="vm.selectedColors.length < 5"
+                      data-ng-click="vm.removeColor($index)">&times;</button>
+            </div>
+          </div>
+
+          <div class="row" data-ng-if="vm.selectedColors.length < 10">
+            <div col="3">
+              <button btn-type="default" data-ng-click="vm.addNewColor()">Add Color</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div col="12" class="space-on-top-lg space-on-bottom-lg">
+            <button btn-type="default" data-ng-click="vm.resetColors()">Reset to System Default</button>
+            </div>
+          </div>
+        </div>
+
+        <div col="5 space-on-left" col-type="sm">
+          <div class="row">
+              <label class="control-label space-on-bottom-lg">Manage Firm Logo</label>
+          </div>
+          <div col="12" col-type="sm" class="text-center">
+            <div class="clickable inline-block width-100" data-ng-click="vm.openImageUpdateDialog()">
+              <div data-ng-if="!vm.logoLink">
+                <user-avatar avatar-icon-size="4x"
+                             avatar-icon-class="avatar"
+                             avatar-img-class="img-thumbnail avatar"></user-avatar>
+              </div>
+              <div data-ng-if="vm.logoLink" class="firmLogoDiv" >
+                <img data-ng-if="vm.logoLink" data-ng-src="{{vm.logoLink}}">
+              </div>
+            </div>
+            <h5 data-ng-if="!vm.logoLink" class="space-on-top-xxxl">
+              Click on the above image to upload a new logo
+            </h5>
+          </div>
+          <div col="12" col-type="sm" class="text-center space-on-top-xl" data-ng-if="vm.logoLink">
+            <button btn-type="default"
+                    class="space-on-right"
+                    size="sm"
+                    tooltip-placement="left"
+                    uib-tooltip="Upload New Image"
+                    ng-click="vm.openImageUpdateDialog()"><icon name="plus"></icon>
+            </button>
+            <button btn-type="default"
+                    class="danger"
+                    size="sm"
+                    tooltip-placement="right"
+                    uib-tooltip="Delete Logo"
+                    ng-click="vm.deleteLogoConfirmation()"><icon name="trashcan"></icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group sticky_savebar" data-ng-init="vm.makeItSticky()">
+          <div col="12" col-type="sm" class="space-on-left-lg">
+            <button type="submit" button-loader="vm.savingFirmPreferences">Update Design Preferences</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

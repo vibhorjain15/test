@@ -1,0 +1,54 @@
+<div class="align-middle" *ngIf="params.data && !isCurrentFirm()">
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    [ngClass]="{
+      active: isCurrentFirm(),
+      disabled: params?.data?.status !== 'Active'
+    }"
+    [adaptivePosition]="false"
+    [tooltip]="
+      isCurrentFirm() && params?.data?.status === 'Active'
+        ? 'You are logged in to this firm'
+        : !isCurrentFirm() && params?.data?.status !== 'Active'
+        ? 'This account is not active'
+        : 'Switch to this firm'
+    "
+    (click)="checkSamlConnection()"
+    container="body"
+    class="my-accounts-actions-margin"
+    [attr.aria-label]="isCurrentFirm() && params?.data?.status === 'Active'
+    ? 'You are logged in to this firm'
+    : !isCurrentFirm() && params?.data?.status !== 'Active'
+    ? 'This account is not active'
+    : 'Switch to this firm'"
+  >
+    <span appIcon name="swap"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Request activation link for this firm"
+    *ngIf="params?.data?.status === 'Invited'"
+    (click)="activateFirmAccess()"
+    container="body"
+    class="my-accounts-actions-margin"
+    [attr.aria-label]="'Request activation link for this firm'"
+  >
+    <span appIcon name="check"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Request approval from the admin"
+    *ngIf="params?.data?.status === 'PendingApproval'"
+    (click)="requestApproval()"
+    container="body"
+    [attr.aria-label]="'Request approval from the admin'"
+  >
+    <span appIcon name="check"></span>
+  </button>
+</div>

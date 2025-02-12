@@ -1,0 +1,8 @@
+<ui-grid-cell-contents class="text-center">
+  <span ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+</span>
+  <span  class="align-middle" uib-tooltip="{{ row.entity.due_at }}" tooltip-placement="top" ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)" data-ng-class="grid.appScope.vm.getExpiryClass(row.entity.due_date,row).class">
+    <strong>{{grid.appScope.vm.getExpiryClass(row.entity.due_date,row).text}} {{ row.entity.due_at }}</strong>
+  </span>
+</ui-grid-cell-contents>

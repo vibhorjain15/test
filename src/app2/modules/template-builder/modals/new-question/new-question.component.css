@@ -1,0 +1,11 @@
+:host ::ng-deep .dropdown-sm .ng-select .ng-select-container {
+  height: 31px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+  min-height: 31px !important;
+}
+
+.preview-overflow-x-auto {
+  overflow-x: auto;
+  max-height: 813px;
+}

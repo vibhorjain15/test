@@ -1,0 +1,19 @@
+.edit-button {
+  text-align: right;
+}
+
+:host ::ng-deep .tox .tox-toolbar__primary {
+  background: #e7eaf4 0% 0% no-repeat padding-box;
+}
+
+.notes {
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.load-notes {
+  text-align: center;
+  color: #126b82;
+  cursor: pointer;
+}

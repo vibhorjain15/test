@@ -1,0 +1,552 @@
+<div
+  class="panel panel-default report-panel js-search-panel search-string-panel pos-rel"
+>
+  <app-spinner
+    [broadSpinner]="true"
+    [spinnerHeight]="50"
+    *ngIf="loading_data"
+  ></app-spinner>
+  <div class="panel-heading clearfix" *ngIf="!loading_data">
+    <div class="content-wrapper">
+      <div class="content-block" col="2">
+        <div class="text-center">
+          <div class="btn-group">
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{
+                'btn-primary': activeView.toLowerCase() === views.FUND,
+                disabled: isFreeSubscription
+              }"
+              [tooltip]="
+                isFreeSubscription ? errorMessageMap.freeUserMessage : ''
+              "
+              (click)="setActiveView(views.FUND)"
+              >Fund</span
+            >
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{
+                'btn-primary': activeView.toLowerCase() === views.FIRM
+              }"
+              (click)="setActiveView(views.FIRM)"
+              >Firm</span
+            >
+          </div>
+        </div>
+      </div>
+      <div col="7" class="text-center">
+        <form
+          name="searchForm"
+          (ngSubmit)="searchByEntity()"
+          autocomplete="off"
+        >
+          <div
+            class="input-group"
+            [tooltip]="
+              isFreeSubscription ? errorMessageMap.freeUserMessage : ''
+            "
+          >
+            <input
+              type="text"
+              class="form-control"
+              name="entity_search_text"
+              placeholder="Search for {{
+                activeView === 'fund'
+                  ? 'Funds'
+                  : activeView === 'service_provider'
+                  ? 'SP'
+                  : 'Firms'
+              }} or use filters for more search options like brochure text, fund type etc"
+              [(ngModel)]="entity_search_text"
+              [disabled]="isFreeSubscription"
+              aria-label="enter a search text"
+            />
+            <div class="input-group-btn">
+              <dv-button
+                [btnType]="'default'"
+                (onClick)="clearSearchText()"
+                *ngIf="showingSearchResults && entity_search_text_backup"
+                [disabled]="!entity_search_text_backup"
+                [type]="'reset'"
+                [ariaLabel]="'Clear Search Text'"
+              >
+                <span appIcon name="close"></span>
+              </dv-button>
+              <dv-button
+                [loader]="false"
+                [btnType]="'primary'"
+                [disabled]="isFreeSubscription"
+                [btnClass]="'radius-right-4'"
+                borderRadius="0"
+                ariaLabel="search"
+              >
+                <span appIcon name="search"></span>
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div col="1">
+        <dv-button
+          [btnType]="'default'"
+          (onClick)="resetFilters(true)"
+          tooltipText="Reset"
+          [disabled]="isFreeSubscription"
+          [ariaLabel]="'Reset'"
+        >
+          <span appIcon name="refresh"></span>
+        </dv-button>
+      </div>
+      <div class="advanceAdvSearch" col="2">
+        <div class="space-on-top" *ngIf="isSearchPanelCollapsed">
+          <a class="clickable va-middle" (click)="toggleSearchPanel()"
+            >Search with Filters</a
+          >
+        </div>
+        <div
+          class="pull-right space-on-top clickable"
+          tooltip="Hide Search with Filters"
+          *ngIf="!isSearchPanelCollapsed"
+        >
+          <dv-button
+            btnType="default"
+            (onClick)="toggleSearchPanel()"
+            [ariaLabel]="'Hide search Filters'"
+          >
+            <span appIcon name="chevron-up"></span>
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <!--Advanced Filters -->
+    <div class="row" *ngIf="!isSearchPanelCollapsed">
+      <div col="12">
+        <form class="form-horizontal" name="search_form" autocomplete="off">
+          <div class="space-on-bottom-lg space-on-top-lg">
+            <div col="12" class="space-on-bottom-lg">
+              <div offset="1" col="11" class="">
+                <span
+                  class="control-label clear-margin-bottom inline-block space-on-right fw-bolder"
+                  >{{
+                    activeView === "fund"
+                      ? "Funds"
+                      : activeView === "service_provider"
+                      ? "SP"
+                      : "Firms"
+                  }}
+                  matching</span
+                >
+                <dv-select
+                  class="inline-block w-80"
+                  [list]="matchingCriteria"
+                  [(ngModel)]="global_ternary_operator"
+                  [clearable]="false"
+                  name="global_ternary_operator"
+                  (onSelectChange)="
+                    globalOperatorChanged(global_ternary_operator)
+                  "
+                  [aria-label]="
+                    activeView === 'fund'
+                      ? 'Funds'
+                      : activeView === 'service_provider'
+                      ? 'SP'
+                      : 'Firms' + ' ' + 'matching'
+                  "
+                >
+                </dv-select>
+                <span
+                  class="control-label clear-margin-bottom inline-block space-on-left fw-bolder"
+                  >of the following criteria</span
+                >
+              </div>
+            </div>
+
+            <div
+              col="12"
+              class="space-on-top-xl"
+              *ngFor="let criteria of filters.controls; let index = index"
+              ng-init="criteria.condition = 'exact'"
+            >
+              <div col="1" class="pa-lr-lg">
+                <span class="control-label" *ngIf="index === 0">&nbsp;</span>
+                <h5
+                  class="text-right clear-margin-bottom text-uppercase"
+                  *ngIf="index > 0"
+                >
+                  {{ global_ternary_operator }}
+                </h5>
+              </div>
+              <ng-container [formGroup]="criteria">
+                <div col="6" class="pa-lr-lg">
+                  <label
+                    for="criteria_{{ index }}"
+                    class="control-label text-capitalize"
+                    *ngIf="index === 0"
+                    >Filters</label
+                  >
+                  <dv-select
+                    placeholder="Select an option"
+                    (onSelectChange)="selectCriteria(criteria, index)"
+                    [clearable]="false"
+                    [searchable]="true"
+                    id="criteria_{{ index }}"
+                    name="criteria_{{ index }}"
+                    chosen
+                    required
+                    formControlName="criteria_obj"
+                    [list]="criteria_options"
+                    [bindValue]="'filter_name'"
+                    [bindLabel]="'filter_label'"
+                    [aria-label]="'Filters'"
+                  >
+                  </dv-select>
+                  <div
+                    class="danger"
+                    *ngIf="
+                      criteria.get('criteria_obj').touched &&
+                      criteria.get('criteria_obj').errors?.required
+                    "
+                  >
+                    Filter Criteria is required
+                  </div>
+                </div>
+                <div col="2" class="pa-lr-lg">
+                  <label
+                    class="control-label"
+                    for="condition_{{ index }}"
+                    *ngIf="index === 0"
+                    >Condition</label
+                  >
+                  <dv-select
+                    placeholder="Select an option"
+                    formControlName="condition"
+                    [clearable]="false"
+                    [list]="filterOptions[index].items"
+                    [aria-label]="Condition"
+                    id="condition_{{ index }}"
+                  >
+                  </dv-select>
+                  <div
+                    class="danger"
+                    *ngIf="
+                      criteria.get('condition').touched &&
+                      criteria.get('condition').errors?.required
+                    "
+                  >
+                    Condition is required
+                  </div>
+                </div>
+                <div col="2" class="pa-lr-lg">
+                  <div
+                    *ngIf="!selectedFilter[index].filter_type"
+                    [ngClass]="{
+                      'has-success': criteria.get('advance_filter_value').value,
+                      'has-error':
+                        criteria.get('advance_filter_value').touched &&
+                        criteria.get('advance_filter_value').errors?.required
+                    }"
+                  >
+                    <label
+                      for="value_{{ index }}"
+                      class="control-label"
+                      *ngIf="index === 0"
+                      >Value</label
+                    >
+                    <input
+                      type="text"
+                      formControlName="advance_filter_value"
+                      id="value_{{ index }}"
+                      required
+                      placeholder="Type a value"
+                      dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                      class="form-control"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      selectedFilter[index].filter_type.toLowerCase() ===
+                      FILTER_TYPES.NUMBER
+                    "
+                    [ngClass]="{
+                      'has-success': criteria.get('advance_filter_value').value,
+                      'has-error':
+                        criteria.get('advance_filter_value').touched &&
+                        criteria.get('advance_filter_value').errors?.required
+                    }"
+                  >
+                    <label
+                      for="value_{{ index }}"
+                      class="control-label"
+                      *ngIf="index === 0"
+                      >Value</label
+                    >
+                    <input
+                      type="number"
+                      (input)="validateInput($event)"
+                      formControlName="advance_filter_value"
+                      class="form-control"
+                      required
+                      id="value_{{ index }}"
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      selectedFilter[index].filter_type.toLowerCase() ===
+                        FILTER_TYPES.STRING &&
+                      !selectedFilter[index].filter_value
+                    "
+                    [ngClass]="{
+                      'has-success': criteria.get('advance_filter_value').value,
+                      'has-error':
+                        criteria.get('advance_filter_value').touched &&
+                        criteria.get('advance_filter_value').errors?.required
+                    }"
+                  >
+                    <label
+                      for="value_{{ index }}"
+                      class="control-label"
+                      *ngIf="index === 0"
+                      >Value</label
+                    >
+                    <input
+                      type="text"
+                      id="value_{{ index }}"
+                      autocomplete="off"
+                      formControlName="advance_filter_value"
+                      required
+                      placeholder="Type a value"
+                      dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                      class="form-control"
+                    />
+                  </div>
+                  <div
+                    *ngIf="
+                      (selectedFilter[index].filter_type.toLowerCase() ===
+                        FILTER_TYPES.STRING ||
+                        selectedFilter[index].filter_type.toLowerCase() ===
+                          FILTER_TYPES.RANGE) &&
+                      selectedFilter[index].filter_value
+                    "
+                    [ngClass]="{
+                      'has-success': criteria.get('advance_filter_value').value,
+                      'has-error':
+                        criteria.get('advance_filter_value').touched &&
+                        criteria.get('advance_filter_value').errors?.required
+                    }"
+                  >
+                    <label
+                      for="value_{{ index }}"
+                      class="control-label"
+                      *ngIf="index === 0"
+                      >Value</label
+                    >
+                    <dv-select
+                      id="value_{{ index }}"
+                      formControlName="advance_filter_value"
+                      [clearable]="false"
+                      [list]="filterOptions[index].values"
+                    >
+                    </dv-select>
+                  </div>
+                  <!-- TODO: Need to add 'dv-datepicker' component -->
+                  <div
+                    *ngIf="
+                      selectedFilter[index].filter_type.toLowerCase() ===
+                        FILTER_TYPES.DATE &&
+                      criteria.get('condition').value === 'between'
+                    "
+                    control-selector="dv-daterangepicker"
+                    [ngClass]="{
+                      'has-success': criteria.get('advance_filter_value').value,
+                      'has-error':
+                        criteria.get('advance_filter_value').touched &&
+                        criteria.get('advance_filter_value').errors?.required
+                    }"
+                  >
+                    <label
+                      class="control-label"
+                      *ngIf="index === 0"
+                      for="value_{{ index }}"
+                      >Value</label
+                    >
+                    <div col="12">
+                      <dv-daterangepicker
+                        id="value_{{ index }}"
+                        formControlName="advance_filter_value"
+                        name="daterangefilter_{{ index }}"
+                        min-date="minDate"
+                        max-date="maxDate"
+                        apply-method="applyMethod"
+                        required
+                      >
+                      </dv-daterangepicker>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="
+                      selectedFilter[index].filter_type.toLowerCase() ===
+                        FILTER_TYPES.DATE &&
+                      criteria.get('condition').value != 'between'
+                    "
+                    control-selector="dv-datepicker"
+                    [ngClass]="{
+                      'has-success': criteria.get('advance_filter_value').value,
+                      'has-error':
+                        criteria.get('advance_filter_value').touched &&
+                        criteria.get('advance_filter_value').errors?.required
+                    }"
+                  >
+                    <label
+                      class="control-label"
+                      *ngIf="index === 0"
+                      for="value_{{ index }}"
+                      >Value</label
+                    >
+                    <app-date-picker
+                      id="value_{{ index }}"
+                      formControlName="advance_filter_value"
+                      ngDefaultControl
+                      (change)="setDateValue($event, criteria, index)"
+                    ></app-date-picker>
+                  </div>
+                  <div
+                    class="danger"
+                    *ngIf="
+                      criteria.get('advance_filter_value').touched &&
+                      criteria.get('advance_filter_value').errors?.required
+                    "
+                  >
+                    Value is required
+                  </div>
+                  <div
+                    class="danger"
+                    *ngIf="
+                      criteria.get('advance_filter_value').touched &&
+                      criteria.get('advance_filter_value').errors?.inValidDate
+                    "
+                  >
+                    Please Enter A Valid Date
+                  </div>
+                  <div
+                    class="danger"
+                    *ngIf="
+                      criteria.get('advance_filter_value').touched &&
+                      criteria.get('advance_filter_value').errors
+                        ?.inValidDateRange
+                    "
+                  >
+                    Please Enter A Valid Date Range
+                  </div>
+                </div>
+                <div col="1" class="pa-lr-lg">
+                  <dv-button
+                    [btnType]="'default'"
+                    (onClick)="removeCriteria(index)"
+                    [disabled]="search_criterias.length < 2"
+                    [fontSizeType]="'medium'"
+                    [size]="'sm'"
+                    [btnClass]="index === 0 ? 'minusBtn' : ''"
+                    tooltipText="Remove Criteria"
+                    [ariaLabel]="'Remove Criteria'"
+                  >
+                    <span appIcon name="minus"></span>
+                  </dv-button>
+                </div>
+              </ng-container>
+            </div>
+
+            <div col="12" class="space-on-top-xxl">
+              <div col="11"></div>
+              <div col="1" class="pa-lr-lg">
+                <div>
+                  <dv-button
+                    [btnClass]="'space-on-right'"
+                    [btnType]="'default'"
+                    [size]="'sm'"
+                    [fontSizeType]="'medium'"
+                    (onClick)="addNewCriteria()"
+                    ariaLabel="Add New Criteria"
+                  >
+                    <span appIcon name="plus"></span>
+                  </dv-button>
+                </div>
+              </div>
+            </div>
+
+            <div col="12" class="space-on-bottom-xl">
+              <div offset="1" col="4" class="">
+                <dv-button
+                  [disabled]="isFreeSubscription"
+                  [leftIcon]="'search'"
+                  [btnType]="'primary'"
+                  (onClick)="searchByFilters()"
+                  [tooltip]="
+                    isFreeSubscription
+                      ? errorMessageMap.freeUserMessage
+                      : 'Start Searching'
+                  "
+                  [btnClass]="'space-on-right-lg'"
+                >
+                  Start Searching
+                </dv-button>
+
+                <dv-button
+                  [leftIcon]="'refresh'"
+                  [btnType]="'default'"
+                  (onClick)="clearFilters()"
+                >
+                  Reset Filters
+                </dv-button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      *ngIf="advanceAdvSearch && isSearchPanelCollapsed"
+      class="label-list space-on-bottom-lg"
+    >
+      <span
+        class="btn btn-primary-outline text-uppercase space-on-right"
+        *ngFor="let criterion of search_criterias; let i = index"
+      >
+        <small>{{ displayFilter(criterion) }}</small>
+
+        <a
+          class="space-on-left clickable link-disguise"
+          (click)="removeFilterCriterion(i)"
+          >&times;</a
+        >
+      </span>
+    </div>
+    <div
+      class="space-on-bottom-lg"
+      *ngIf="entity_search_text_backup && render_grid && isSearchPanelCollapsed"
+    >
+      <p class="alert bordered-navy-blue">
+        Showing <span class="bold-underline">{{ recordsCount }}</span> of total
+        <span class="bold-underline">{{ totalRecordsCount }}</span> Results.
+      </p>
+    </div>
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="50"
+      *ngIf="!render_grid"
+    ></app-spinner>
+    <div *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="advGridData"
+        [name]="gridName"
+        [columnDefs]="columnDefs"
+        [onRowClicked]="onRowClicked"
+      ></app-dv-grid>
+    </div>
+  </div>
+</div>

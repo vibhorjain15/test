@@ -1,0 +1,537 @@
+<div class="display-flex align-items-center">
+  <div class="space-on-right-xxl flex-basis-100 rule-card-container">
+    <form [formGroup]="addRuleForm" id="rule-form" autocomplete="off">
+      <div class="rule-card-bg padded-lg">
+        <div class="space-on-bottom">
+          <!-- Specific or aggregate -->
+          <dv-checkbox
+            label="Is this a composite condition?"
+            [id]="'rule-type-' + rule?.id + '-' + id"
+            [disabled]="false"
+            formControlName="isAggregateRule"
+            class="space-on-right-lg"
+            (onValChange)="handleRuleTypeChange($event)"
+            *ngIf="type == 'advanced'"
+            aria-label="Composite condition checkbox"
+          ></dv-checkbox>
+        </div>
+        <div
+          class="display-flex align-items-center rule-row space-on-bottom-lg"
+        >
+          <div
+            *ngIf="addRuleForm.get('ruleType').value == 2"
+            class="display-contents align-items-center"
+          >
+            <!-- Percentage or absolute match related properties -->
+            <dv-select
+              [contoller]="addRuleForm.get('matchOperator')"
+              [appendTo]="'body'"
+              [list]="matchOperators"
+              bindLabel="label"
+              bindValue="value"
+              placeholder="Select a condition"
+              formControlName="matchOperator"
+              class="space-on-right-lg min-width-220"
+              [searchable]="false"
+              (onSelectChange)="handleMatchOperatorChange($event)"
+              [aria-label]="'Select match operator'"
+            ></dv-select>
+            <div class="min-width-150 space-on-right-lg">
+              <dv-input
+                type="pureNumber"
+                [control]="addRuleForm.get('matchValue')"
+                placeholder="Enter a number"
+                [showError]="false"
+                [isRequired]="true"
+                [attr.aria-label]="'Enter match value'"
+              >
+              </dv-input>
+            </div>
+            <dv-select
+              [contoller]="addRuleForm.get('matchType')"
+              [appendTo]="'body'"
+              [list]="matchTypes"
+              placeholder="Select a match type"
+              formControlName="matchType"
+              [searchable]="false"
+              (onSelectChange)="handleMatchTypeChange($event)"
+              class="space-on-right-lg"
+              [aria-label]="'Select match type'"
+            ></dv-select>
+            <div class="space-on-right-lg">of</div>
+          </div>
+          <!-- Entity type and entity selection -->
+          <dv-select
+            [contoller]="addRuleForm.get('entityType')"
+            [appendTo]="'body'"
+            [list]="entityTypes"
+            placeholder="Select type"
+            formControlName="entityType"
+            [bindLabel]="
+              addRuleForm?.get('ruleType').value == 2 ? 'plural' : 'name'
+            "
+            [searchable]="false"
+            [disabled]="entityTypes?.length === 1"
+            class="space-on-right-lg min-width-150"
+            (onSelectChange)="handleEntityTypeChange($event)"
+            *ngIf="type == 'advanced'"
+            [aria-label]="'Select entity type'"
+          ></dv-select>
+          <dv-select
+            [contoller]="addRuleForm.get('entity')"
+            [appendTo]="'body'"
+            [list]="entities"
+            [placeholder]="
+              'Search and select ' +
+              (entityTypeToText[addRuleForm.get('entityType').value] ?? '')
+            "
+            formControlName="entity"
+            class="space-on-right-lg min-width-250"
+            [groupBy]="
+              addRuleForm.get('entityType').value == KeywordConstants.Question
+                ? 'groupName'
+                : addRuleForm.get('entityType').value ==
+                  KeywordConstants.Subcategory
+                ? 'catName'
+                : null
+            "
+            [searchFn]="
+              addRuleForm.get('entityType').value == KeywordConstants.Question
+                ? questionSearchFunction
+                : addRuleForm.get('entityType').value ==
+                  KeywordConstants.Subcategory
+                ? subcategorySearchFunction
+                : null
+            "
+            bindValue=""
+            (onSelectChange)="handleEntityChange($event)"
+            *ngIf="addRuleForm.get('ruleType').value == 1 && type == 'advanced'"
+            [aria-label]="'Select entity'"
+          ></dv-select>
+          <div
+            class="display-contents"
+            *ngIf="addRuleForm.get('ruleType').value == 2"
+          >
+            <div class="space-on-right-lg">in</div>
+            <!-- parent entity type and parent entity selection -->
+            <dv-select
+              [contoller]="addRuleForm.get('parentEntityType')"
+              [appendTo]="'body'"
+              [list]="parentEntityTypes"
+              placeholder="Select type"
+              formControlName="parentEntityType"
+              class="space-on-right-lg min-width-150"
+              [searchable]="false"
+              [disabled]="parentEntityTypes?.length === 1"
+              (onSelectChange)="handleParentEntityTypeChange($event)"
+              [aria-label]="'Select parent entity type'"
+            ></dv-select>
+            <dv-select
+              [contoller]="addRuleForm.get('parentEntityId')"
+              [appendTo]="'body'"
+              [list]="parentEntities"
+              [placeholder]="
+                'Search and select ' +
+                (entityTypeToText[addRuleForm.get('parentEntityType').value] ??
+                  '')
+              "
+              formControlName="parentEntityId"
+              class="space-on-right-lg min-width-250"
+              bindValue="group_id"
+              *ngIf="
+                ![
+                  KeywordConstants.Project,
+                  RuleKeywordConstants.Questionlist,
+                  RuleKeywordConstants.Subcategorylist,
+                  RuleKeywordConstants.Categorylist
+                ].includes(addRuleForm.get('parentEntityType').value)
+              "
+              [groupBy]="
+                addRuleForm.get('parentEntityType').value ==
+                KeywordConstants.Subcategory
+                  ? 'catName'
+                  : null
+              "
+              (onSelectChange)="updateConditionsOnChange()"
+              [aria-label]="'Select parent entity'"
+            ></dv-select>
+            <dv-select
+              [contoller]="addRuleForm.get('entityIds')"
+              [appendTo]="'body'"
+              [list]="questions"
+              placeholder="Search and select questions"
+              formControlName="entityIds"
+              bindValue="group_id"
+              [multiple]="true"
+              groupBy="groupName"
+              class="space-on-right-lg min-width-250"
+              [searchFn]="questionSearchFunction"
+              *ngIf="
+                addRuleForm.get('parentEntityType').value ==
+                RuleKeywordConstants.Questionlist
+              "
+              (onSelectChange)="updateConditionsOnChange()"
+              [aria-label]="'Select questions'"
+            ></dv-select>
+            <dv-select
+              [contoller]="addRuleForm.get('entityIds')"
+              [appendTo]="'body'"
+              [list]="subcategories"
+              placeholder="Search and select subcategories"
+              formControlName="entityIds"
+              bindValue="group_id"
+              groupBy="catName"
+              [searchFn]="subcategorySearchFunction"
+              [multiple]="true"
+              class="space-on-right-lg min-width-250"
+              *ngIf="
+                addRuleForm.get('parentEntityType').value ==
+                RuleKeywordConstants.Subcategorylist
+              "
+              (onSelectChange)="updateConditionsOnChange()"
+              [aria-label]="'Select subcategories'"
+            ></dv-select>
+            <dv-select
+              [contoller]="addRuleForm.get('entityIds')"
+              [appendTo]="'body'"
+              [list]="categories"
+              placeholder="Search and select categories"
+              formControlName="entityIds"
+              bindValue="group_id"
+              [multiple]="true"
+              class="space-on-right-lg min-width-250"
+              *ngIf="
+                addRuleForm.get('parentEntityType').value ==
+                RuleKeywordConstants.Categorylist
+              "
+              (onSelectChange)="updateConditionsOnChange()"
+              [aria-label]="'Select categories'"
+            ></dv-select>
+            <div
+              class="display-contents"
+              *ngIf="
+                ![
+                  RuleKeywordConstants.Questionlist,
+                  RuleKeywordConstants.Subcategorylist,
+                  RuleKeywordConstants.Categorylist
+                ].includes(addRuleForm.get('parentEntityType').value) &&
+                addRuleForm.get('entityType').value == KeywordConstants.Question
+              "
+            >
+              <span class="space-on-right-lg">with</span>
+              <dv-select
+                [contoller]="addRuleForm.get('responseType')"
+                [appendTo]="'body'"
+                [list]="ResponseTypes"
+                placeholder="Select a response type"
+                [searchable]="false"
+                formControlName="responseType"
+                class="space-on-right-lg min-width-250"
+                (onSelectChange)="updateConditionsOnChange()"
+                [aria-label]="'Select response type'"
+              ></dv-select>
+              <span class="space-on-right">response types</span>
+            </div>
+          </div>
+          <div class="space-on-right-lg">
+            {{ addRuleForm?.get("ruleType").value == 2 ? "have" : "has" }}
+          </div>
+          <!-- rating source -->
+          <dv-select
+            [contoller]="addRuleForm.get('ratingSourceType')"
+            [appendTo]="'body'"
+            [list]="valueSourceTypes"
+            placeholder="Select a value source"
+            formControlName="ratingSourceType"
+            class="space-on-right-lg min-width-150"
+            [searchable]="false"
+            [disabled]="valueSourceTypes?.length === 1"
+            (onSelectChange)="handleRatingSourceTypeChange($event)"
+            [aria-label]="'Select rating source'"
+          ></dv-select>
+          <div
+            *ngIf="
+              selectedEntity?.responseType &&
+              [
+                ResponseType.Numeric,
+                ResponseType.Integer,
+                ResponseType.Percentage
+              ].includes(selectedEntity.responseType) &&
+              addRuleForm.get('ratingSourceType').value ==
+                RuleKeywordConstants.ResponseHistory
+            "
+            class="display-flex align-items-center"
+          >
+            <div class="space-on-right-lg">with</div>
+            <!-- diff type -->
+            <dv-select
+              [contoller]="addRuleForm.get('diffType')"
+              [appendTo]="'body'"
+              [list]="diffTypes"
+              placeholder="Select a difference type"
+              formControlName="diffType"
+              class="space-on-right-lg"
+              [searchable]="false"
+              [aria-label]="'Select difference type'"
+            ></dv-select>
+            <dv-select
+              [contoller]="addRuleForm.get('changeType')"
+              [appendTo]="'body'"
+              [list]="changeTypes"
+              placeholder="Select increase / decrease"
+              formControlName="changeType"
+              class="space-on-right-lg"
+              [searchable]="false"
+              [aria-label]="'Select change type'"
+            ></dv-select>
+          </div>
+          <dv-select
+            [contoller]="addRuleForm.get('operator')"
+            [appendTo]="'body'"
+            [list]="conditions"
+            bindLabel="label"
+            bindValue="value"
+            placeholder="Select a condition"
+            formControlName="operator"
+            class="space-on-right-lg min-width-230"
+            [searchable]="false"
+            (onSelectChange)="handleOperatorChange()"
+            [aria-label]="'Select condition'"
+            *ngIf="
+              addRuleForm.get('ratingSourceType').value !=
+                RuleKeywordConstants.BlankResponse &&
+              addRuleForm.get('ratingSourceType').value !=
+                RuleKeywordConstants.NAResponse
+            "
+          ></dv-select>
+          <!-- different types of value inputs -->
+          <div
+            class="col-sm-3"
+            *ngIf="
+              addRuleForm.get('ratingSourceType').value ==
+              RuleKeywordConstants.Rating
+            "
+            role="group"
+            aria-label="Rating value input"
+          >
+            <div
+              class="has-feedback"
+              [ngClass]="{
+                'has-success': addRuleForm.get('value').touched && !addRuleForm.get('value').errors,
+                'has-error': addRuleForm.get('value').touched && addRuleForm.get('value').errors,
+              }"
+            >
+              <input
+                type="number"
+                autocomplete="off"
+                [pattern]="'^[0-9]*$'"
+                min="0"
+                max="100"
+                formControlName="value"
+                placeholder="Enter a value"
+                class="form-control"
+                aria-label="Enter rating value"
+              />
+            </div>
+          </div>
+          <!-- Response history value and text -->
+          <div
+            class="width-150"
+            *ngIf="
+              selectedEntity?.responseType &&
+              [
+                ResponseType.Numeric,
+                ResponseType.Integer,
+                ResponseType.Percentage
+              ].includes(selectedEntity.responseType) &&
+              addRuleForm.get('ratingSourceType').value ==
+                RuleKeywordConstants.ResponseHistory
+            "
+            role="group"
+            aria-label="Response history value input"
+          >
+            <dv-input
+              type="number"
+              [control]="addRuleForm.get('value')"
+              placeholder="Enter a value"
+              [showError]="false"
+              [isRequired]="true"
+            >
+            </dv-input>
+          </div>
+          <div
+            *ngIf="
+              addRuleForm.get('ratingSourceType').value ==
+                RuleKeywordConstants.ResponseHistory &&
+              !(
+                selectedEntity?.responseType &&
+                [
+                  ResponseType.Numeric,
+                  ResponseType.Integer,
+                  ResponseType.Percentage
+                ].includes(selectedEntity.responseType)
+              )
+            "
+            role="region"
+            aria-label="Current response"
+          >
+            the current response
+          </div>
+          <!-- Response rating source value -->
+          <div
+            *ngIf="
+              addRuleForm.get('ratingSourceType').value ==
+                RuleKeywordConstants.Response && selectedEntity?.responseType
+            "
+            id="value-form-element"
+            class="display-contents"
+            role="group"
+            aria-label="Response rating source value"
+          >
+            <div *ngIf="selectedEntity.responseType == ResponseType.Date">
+              <app-date-picker
+                placeholder="Select Date"
+                id="date-value-rule-card"
+                [value]="addRuleForm.get('value').value"
+                name="date"
+                (change)="addRuleForm.get('value').setValue($event)"
+              ></app-date-picker>
+            </div>
+            <dv-select
+              [contoller]="addRuleForm.get('value')"
+              [list]="values"
+              bindLabel="value"
+              [appendTo]="'body'"
+              bindValue="id"
+              formControlName="value"
+              id="option"
+              name="option"
+              class="min-width-150 space-on-right-lg"
+              *ngIf="
+                [
+                  ResponseType.Boolean,
+                  ResponseType.NoPlus,
+                  ResponseType.BooleanPlus
+                ].includes(selectedEntity.responseType) ||
+                (addRuleForm.get('ruleType').value == 1 &&
+                  [ResponseType.CheckBox, ResponseType.Dropdown].includes(
+                    selectedEntity.responseType
+                  ))
+              "
+              [aria-label]="'Select response value'"
+            ></dv-select>
+            <div
+              *ngIf="
+                [
+                  ResponseType.TextPhone,
+                  ResponseType.TextMultiLine,
+                  ResponseType.TextEmail,
+                  ResponseType.Text
+                ].includes(selectedEntity.responseType)
+              "
+              class="min-width-350"
+              role="group"
+              aria-label="Text response value input"
+            >
+              <dv-input
+                placeholder="Enter one or more values separated by a comma"
+                [type]="
+                  selectedEntity.responseType === ResponseType.TextEmail &&
+                  addRuleForm.get('operator').value != 'cont'
+                    ? 'email'
+                    : selectedEntity.responseType === ResponseType.TextPhone
+                    ? 'number'
+                    : 'text'
+                "
+                [isMultipleValues]="true"
+                [isRequired]="true"
+                [control]="addRuleForm.get('value')"
+                [showError]="false"
+                [maxDigitsAfterDecimalPoint]="maxDigitsAfterDecimalPoint"
+              >
+              </dv-input>
+            </div>
+            <div
+              *ngIf="
+                [
+                  ResponseType.Numeric,
+                  ResponseType.Integer,
+                  ResponseType.Percentage,
+                  'Decimal'
+                ].includes(selectedEntity.responseType)
+              "
+            >
+              <dv-input
+                [type]="
+                  selectedEntity.responseType === ResponseType.Integer
+                    ? 'pureNumber'
+                    : 'number'
+                "
+                [control]="addRuleForm.get('value')"
+                placeholder="Enter a value"
+                [showError]="false"
+                [isRequired]="true"
+                [maxDigitsAfterDecimalPoint]="maxDigitsAfterDecimalPoint"
+              >
+              </dv-input>
+            </div>
+          </div>
+          <dv-input
+            [control]="addRuleForm.get('value')"
+            placeholder="Enter one or more values separated by a comma"
+            [isRequired]="true"
+            [showError]="false"
+            *ngIf="
+              addRuleForm.get('ratingSourceType').value ==
+                RuleKeywordConstants.Response &&
+              addRuleForm.get('ruleType').value == 2 &&
+              (!selectedEntity?.responseType ||
+                [ResponseType.CheckBox, ResponseType.Dropdown].includes(
+                  selectedEntity.responseType
+                ))
+            "
+            class="min-width-350"
+          >
+          </dv-input>
+        </div>
+        <helper-text
+          *ngIf="
+            addRuleForm.get('ratingSourceType').value ==
+            RuleKeywordConstants.ResponseHistory
+          "
+        >
+          <p>
+            The Previous Response is the response (for the same question)
+            submitted in a project associated with the same entity with the most
+            recent as of date.
+          </p>
+        </helper-text>
+        <helper-text *ngIf="addRuleForm.get('ruleType').value == 2">
+          <p>
+            Composite conditions trigger actions based on the count or
+            percentage of questions/sub-categories/categories that match a
+            specified condition. Ex.
+            <span class="italic"
+              >Greater than 10% of questions in the sub-category ‘Sub-Category
+              A’ have responses that are greater than or equal to 50.</span
+            >
+          </p>
+        </helper-text>
+      </div>
+    </form>
+  </div>
+  <div class="space-on-right-xxl">
+    <span
+      appIcon
+      name="trashcan"
+      container="body"
+      (click)="deleteRule()"
+      class="margin-left-auto clickable delete-icon"
+      [isDisable]="isDeleteDisabled"
+      [tooltip]="!isDeleteDisabled ? 'Remove this condition' : null"
+      role="button"
+      aria-label="Delete rule"
+      tabindex="0"
+    ></span>
+  </div>
+</div>

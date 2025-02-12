@@ -1,0 +1,19 @@
+<ui-grid-cell-contents>
+    <!-- Display only if this is the group header -->
+    <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+         class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{grid.appScope.vm.displayGroupHeaderName(grid, row, col).length > 0? grid.appScope.vm.displayGroupHeaderName(grid, row, col): COL_FIELD CUSTOM_FILTERS}}">
+         {{grid.appScope.vm.displayGroupHeaderName(grid, row, col).length > 0? grid.appScope.vm.displayGroupHeaderName(grid, row, col): COL_FIELD CUSTOM_FILTERS}}
+    </div>
+    <!-- Display if it is a normal row -->
+    <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+      <div data-ng-show="row.entity[col.field].length">
+        <span class="label label-default space-on-right" uib-tooltip="{{row.entity[col.field][0]}}">{{row.entity[col.field][0]}}</span>
+        <span data-ng-show="row.entity[col.field].length > 1"> and {{row.entity[col.field].length - 1}} </span>
+        <span class="link-underline clickable space-on-right"
+              data-ng-show="row.entity[col.field].length > 1"
+              uib-tooltip="{{grid.appScope.vm.formatTagsTooltip(row.entity[col.field])}}">
+          more
+        </span>
+      </div>
+    </div>
+</ui-grid-cell-contents>

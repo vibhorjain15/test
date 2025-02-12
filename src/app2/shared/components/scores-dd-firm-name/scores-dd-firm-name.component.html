@@ -1,0 +1,25 @@
+<div class="text-left" *ngIf="params.data">
+  <div *ngIf="params.data[field]">
+    <a
+      class="js-projects-dd-name"
+      [adaptivePosition]="false"
+      (click)="navigateToUrl(params.data['duediligence_id'], 'Flagged', $event)"
+      tooltip="{{ params.data[field] }}"
+      container="body"
+    >
+      {{ params.data[field] }}
+    </a>
+  </div>
+  <!-- @Ravi this condition is worng : Someone should review-->
+  <div *ngIf="!params.data[field]">
+    <a
+      class="js-projects-dd-name"
+      [adaptivePosition]="false"
+      (click)="navigateToUrl(params.data['duediligence_id'], 'Scored', $event)"
+      container="body"
+      tooltip="{{ params.data['entity_name'] }}"
+    >
+      {{ params.data[field] }}
+    </a>
+  </div>
+</div>

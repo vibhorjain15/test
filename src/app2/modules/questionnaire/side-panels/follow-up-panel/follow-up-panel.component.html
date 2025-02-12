@@ -1,0 +1,132 @@
+<side-panel-wrapper
+  [title]="panelTitle"
+  firstButtonLabel="Description & Comments"
+  [isFooter]="false"
+  [backIcon]="isAdding"
+  [addIcon]="false"
+  [listIcon]="false"
+  [isLoading]="loading"
+  (onCancelClick)="handleOnCancel()"
+  (onBackClick)="handleOnBackClick()"
+>
+  <div class="form-horizontal">
+    <div *ngIf="isAdding && !showDescription">
+      <dv-form-element elementCol="12" spacing="small">
+        <add-recommendation
+          [entity_id]="idToAddRecommendation"
+          [entity_type]="IssueType.Question"
+          [editingRecommendation]="editingRecommendation"
+          [recommendationSubject]="recommendationSubject"
+          [diligence]="diligence"
+          (onSave)="handleOnSave($event)"
+          (onUpdate)="handleOnUpdate($event)"
+          (onCancel)="handleOnCancel()"
+        >
+        </add-recommendation>
+      </dv-form-element>
+    </div>
+    <ng-container *ngIf="!isAdding && !showDescription && isList">
+      <div class="text-center spinner-display" *ngIf="loading" role="alert">
+        <app-spinner spinnerHeight="300" aria-hidden="true"></app-spinner>
+      </div>
+      <div *ngIf="!loading">
+        <ng-container *ngIf="!followups">
+          <div class="text-center space-on-top-xxl space-on-bottom-xxl">
+            <span class="no-items text-italic" aria-live="polite">{{
+              noFollowUpText
+            }}</span>
+          </div>
+        </ng-container>
+        <div *ngIf="followups">
+          <div
+            class="space-on-bottom-xl space-on-top"
+            *ngFor="let followup of followups; let index = index"
+          >
+            <ng-container>
+              <div>
+                <accordion [isAnimated]="true">
+                  <accordion-group
+                    [isOpen]="followup.isOpen"
+                    panelClass="customClass"
+                  >
+                    <a
+                      class="accordion-header"
+                      accordion-heading
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                      tabindex="0"
+                    >
+                      <div class="more">
+                        <span>
+                          <span>
+                            <span class="text-bold">
+                              {{
+                                followUpType == "Question"
+                                  ? "Question"
+                                  : "Investor Name"
+                              }}:
+                            </span>
+                            <span
+                              class="more"
+                              [innerHTML]="followup.text"
+                            ></span>
+                          </span>
+                        </span>
+                      </div>
+                      <div class="icon-wrapper"></div>
+                    </a>
+                    <ng-container
+                      *ngIf="followup.isOpen && !isMentionsListLoading"
+                    >
+                      <comments
+                        [comments]="followup.comments"
+                        [panelTitle]="'Question ' + (followup?.index + 1)"
+                        [panelName]="'follow-up'"
+                        [panelDesc]="followup?.text"
+                        [mentionsList]="mentionsList"
+                        [defaultPanelOpen]="followup.isOpen"
+                        [issue]="followup"
+                        [followUpType]="followUpType"
+                        [isReadOnly]="isReadOnly"
+                        [showDesc]="false"
+                        [showHeaderIcon]="false"
+                        saveButtonLabel="Send"
+                        [showRevisionOption]="showRevisionOption"
+                        [showRevisionHelpText]="showRevisionHelpText"
+                        [showRevisionNotAllowedHelpText]="
+                          showRevisionNotAllowedHelpText
+                        "
+                        [showInvestorSumissionHelpText]="
+                          showInvestorSumissionHelpText
+                        "
+                        [revisionOptionValue]="revisionOptionValue"
+                        [responseRevisionInProgress]="
+                          responseRevisionInProgress
+                        "
+                        (onSaveComment)="handleSaveAlertWrapper($event)"
+                        [tinyMcePlaceHolder]="
+                          'Start typing to add a follow-up. Ask questions or address follow-ups here. To mention and notify a team member, type @ '
+                        "
+                        (onResolveComment)="HandleOnResolveComment($event)"
+                        (onUpdateComment)="HandleOnUpdateComment($event)"
+                        (onDeleteComment)="
+                          HandleOnDeleteComment($event, followup)
+                        "
+                        (onSaveReply)="HandleOnSaveReply($event)"
+                        (onRecommendationClick)="
+                          handleOnAddClick($event, followup.id)
+                        "
+                        (onCancelClick)="handleOnCancel()"
+                        (onBulkResolveClick)="bulkResolveFollowups()"
+                      ></comments>
+                    </ng-container>
+                  </accordion-group>
+                </accordion>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</side-panel-wrapper>

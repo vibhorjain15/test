@@ -1,0 +1,17 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div col="8" offset="2">
+      <ng-container *ngIf="question">
+        <app-formadv-filing-comparison
+          [question]="question"
+          id="formadv-comparison-section-{{ question?.id }}"
+          [firmCrd]="firmCrd"
+          [dateRange]="dateRange"
+          changes-visible-inline
+          [paginationEnabled]="true"
+        >
+        </app-formadv-filing-comparison>
+      </ng-container>
+    </div>
+  </div>
+</div>

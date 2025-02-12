@@ -1,0 +1,18 @@
+<div class="nudgeContainer">
+  <img src="assets/images/nudges_background.png" class="background-image-nudge" alt="">
+  <div class="nudgeTextContainer">
+    <div class="logoDiv">
+      <img src="assets/images/DV_logo.png" alt="DiligenceVault">
+    </div>
+    <h2 class="text-center leadText">
+      <strong>{{vm.lead_text}} &nbsp; <span class="dvi dvi-smile-o"></span></strong>
+    </h2>
+    <br/>
+    <div class="subtext text-center" data-ng-if="vm.selectedNudge.response">
+      <p>{{vm.selectedNudge.response}}</p>
+    </div>
+    <br>
+    <spinner data-ng-if="!vm.selectedNudge.response"></spinner>
+  </div>
+
+</div>

@@ -1,0 +1,373 @@
+<div class="panel panel-default" role="region" aria-labelledby="manage-heading">
+  <div class="panel-heading">
+    <h5
+      class="panel-title"
+      id="manage-heading"
+      aria-describedby="download-info"
+    >
+      Manage AUM & Track Records
+    </h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading" id="download-info">
+      Download existing AUM & Track Record data below. Use the orange upload
+      button on the right to upload updated file.
+    </div>
+  </div>
+  <form
+    [formGroup]="download_aum_tr_configuration_form"
+    *ngIf="!loading"
+    autocomplete="off"
+  >
+    <div class="panel-body">
+      <div class="row configuration-row">
+        <div col="2">
+          <dv-form-element
+            label="Select Years"
+            labelPosition="left"
+            labelCol="12"
+            elementCol="12"
+            [showRightIcon]="false"
+            [isRequired]="true"
+            errorMessage="Selected years are required"
+            *ngIf="isDateRangeSelectionApplied"
+            labelClass="padding-left-0"
+            elementClass="padding-left-0"
+            [for]="'inception-date'"
+          >
+            <app-date-range-picker
+              [maxDate]="max_date"
+              [minDate]="min_date"
+              minMode="year"
+              dateFormat="YYYY"
+              format="YYYY"
+              [appendTime]="false"
+              [showRanges]="false"
+              [customDate]="custom_date"
+              placement="right"
+              (change)="onYearChange($event)"
+              class="year-picker"
+              #yearPicker
+              [id]="'inception-date'"
+            ></app-date-range-picker>
+          </dv-form-element>
+          <dv-form-element
+            label="Inception Date"
+            labelPosition="left"
+            labelCol="12"
+            elementCol="12"
+            [showRightIcon]="false"
+            *ngIf="!isDateRangeSelectionApplied"
+            labelClass="padding-left-0"
+            elementClass="padding-left-0"
+            [for]="'inception-date'"
+          >
+            <app-date-picker
+              [maxDate]="max_date"
+              [minDate]="min_date"
+              [value]="endDate"
+              placement="right"
+              (change)="onYearChange($event)"
+              class="year-picker"
+              [ariaLabel]="'Inception Date'"
+              [id]="'inception-date'"
+            ></app-date-picker>
+          </dv-form-element>
+          <dv-checkbox
+            name="isDateRangeSelectionApplied"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="isDateRangeSelectionApplied"
+            label="Select Specific Range"
+            class="inline-block"
+          >
+          </dv-checkbox>
+        </div>
+        <div col="3">
+          <div>
+            <dv-form-element
+              [modelController]="
+                download_aum_tr_configuration_form.get('table_type_control')
+              "
+              label="Select Table Type"
+              labelPosition="left"
+              labelCol="12"
+              elementCol="12"
+              [showRightIcon]="false"
+              [isRequired]="true"
+              errorMessage="Table type is required"
+            >
+              <dv-select
+                [list]="table_type_options"
+                formControlName="table_type_control"
+                bindLabel="name"
+                bindValue="id"
+                [clearable]="false"
+                [searchable]="true"
+                [id]="'table_type_control'"
+                name="table_type"
+              ></dv-select>
+            </dv-form-element>
+          </div>
+        </div>
+        <div col="3">
+          <dv-form-element
+            [modelController]="
+              download_aum_tr_configuration_form.get('period_control')
+            "
+            label="Select Period"
+            labelPosition="left"
+            labelCol="12"
+            elementCol="12"
+            [showRightIcon]="false"
+            [isRequired]="true"
+            errorMessage="Selected period is required"
+          >
+            <dv-select
+              [list]="period_options"
+              formControlName="period_control"
+              bindLabel="name"
+              bindValue="id"
+              [clearable]="false"
+              [searchable]="true"
+              [id]="'period_control'"
+              name="period"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+        <div col="4" class="d-flex">
+          <div class="text-center" col="4" col-type="xs">
+            <a
+              class="btn btn-transparent"
+              aria-label="Reset Selection"
+              clickable
+              (click)="resetSelection()"
+            >
+              <div><span appIcon name="refresh" size="2x"></span></div>
+              <small>Reset Selection</small>
+            </a>
+          </div>
+
+          <div class="text-center bordered-right" col="3" col-type="xs">
+            <a
+              (click)="goBack()"
+              aria-label="Back"
+              clickable
+              class="btn btn-transparent"
+            >
+              <div><span appIcon name="reply" size="2x"></span></div>
+              <small>Back</small>
+            </a>
+          </div>
+
+          <div class="text-center" col="5" col-type="xs">
+            <a
+              class="text-orange p-y-6 p-x-12 display-inline-block"
+              (click)="openUploadModal()"
+              aria-label="Upload AUM & Track Record Data"
+              clickable
+            >
+              <div>
+                <img
+                  src="/assets/images/upload_icon.svg"
+                  class="height-30"
+                  alt="upload icon for opening upload modal"
+                />
+              </div>
+              <small>Upload AUM & Track Record Data</small>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="row column-container space-on-top-lg">
+        <div col="6">
+          <div
+            class="panel panel-default space-on-right-sm clear-padding min-height-150"
+          >
+            <div class="panel-heading">
+              <h5 class="panel-title">Entities</h5>
+            </div>
+            <div class="panel-body">
+              <dv-form-element
+                [modelController]="
+                  download_aum_tr_configuration_form.get('entity_type_control')
+                "
+                label="Select Entity Type"
+                labelPosition="top"
+                labelCol="12"
+                elementCol="12"
+                class="entity-type-select"
+                errorMessage="Entity type is required"
+                [showRightIcon]="false"
+                [isRequired]="true"
+              >
+                <dv-select
+                  [list]="entity_type_options"
+                  formControlName="entity_type_control"
+                  bindLabel="name"
+                  bindValue="id"
+                  [clearable]="false"
+                  [searchable]="true"
+                  placeholder="Select entity type"
+                  [id]="'entity_type_control'"
+                ></dv-select>
+              </dv-form-element>
+              <div>
+                <span class="font-bold" *ngIf="dv_selector_params">{{
+                  dv_selector_params.entity_type | titlecase
+                }}</span>
+                <app-dv-selector-list
+                  [name]="dv_selector_params?.name"
+                  [entity_type]="dv_selector_params?.entity_type"
+                  [entity_type_plural]="dv_selector_params?.entity_type"
+                  [entities]="entities"
+                  [filter_params]="{}"
+                  [displayParams]="selector_params"
+                  (onChangeEntity)="handleEntitySelectionChange($event)"
+                  #entitySelector
+                  [hidden]="!dv_selector_params"
+                  [placeholder]="
+                    'Search ' + dv_selector_params?.entity_type + ' by name'
+                  "
+                  [showTotalEntitiesCount]="true"
+                ></app-dv-selector-list>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div col="6">
+          <div
+            class="panel panel-default clear-padding space-on-left-sm min-height-150"
+          >
+            <div class="panel-heading">
+              <h5 class="panel-title">Selected Entities</h5>
+            </div>
+            <div *ngIf="selected_entities_count <= 20">
+              <div class="panel panel-info">
+                <div class="panel-heading">
+                  Select and download the AUM & Track Record history of up to 20
+                  entities.
+                </div>
+              </div>
+              <app-empty-state
+                *ngIf="selected_entities_count == 0"
+                message="No entities have been selected"
+              ></app-empty-state>
+            </div>
+            <div *ngIf="selected_entities_count > 0">
+              <accordion [closeOthers]="true">
+                <div
+                  *ngFor="let entity_type of selected_entity_types"
+                  class="{{
+                    selected_entities[entity_type]?.is_open
+                      ? 'accordion-selected'
+                      : ''
+                  }}"
+                >
+                  <accordion-group
+                    [isOpen]="selected_entities[entity_type]?.is_open"
+                    (isOpenChange)="
+                      handleEntityTypeOpenChange(entity_type, $event)
+                    "
+                    class="padding-10 space-on-bottom-sm"
+                  >
+                    <div accordion-heading>
+                      <h4 class="panel-title">
+                        <a
+                          role="button"
+                          class="link-unstyled"
+                          tabindex="0"
+                          [attr.aria-label]="
+                            selected_entities[entity_type]?.is_open
+                              ? 'Show panel content'
+                              : 'Hide panel content'
+                          "
+                        >
+                          <span
+                            appIcon
+                            [name]="
+                              selected_entities[entity_type]?.is_open
+                                ? 'chevron-up'
+                                : 'chevron-down'
+                            "
+                          ></span>
+                          <span class="space-on-left-lg"
+                            >{{ entity_type_id_mapping[entity_type].name }} ({{
+                              selected_entities[entity_type]?.items?.length ??
+                                0
+                            }})</span
+                          >
+                        </a>
+                      </h4>
+                      <div class="panel-controls">
+                        <div class="panel-controls-wrapper">
+                          <a
+                            tooltip="Remove Selected Entities"
+                            container="body"
+                            class="panel-control link-unstyled"
+                            (click)="removeEntityType(entity_type)"
+                            (keydown.enter)="removeEntityType(entity_type)"
+                            (keydown.space)="removeEntityType(entity_type)"
+                            tabindex="0"
+                            role="button"
+                            aria-label="Remove Selected Entities"
+                            placement="left"
+                          >
+                            <span appIcon name="trashcan"></span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      *ngFor="
+                        let entity of selected_entities[entity_type].items
+                      "
+                      class="space-on-bottom"
+                    >
+                      <a
+                        tooltip="Remove Selected Entity"
+                        (click)="removeEntity(entity_type, entity)"
+                        (keydown.enter)="removeEntity(entity_type, entity)"
+                        (keydown.space)="removeEntity(entity_type, entity)"
+                        tabindex="0"
+                        role="button"
+                        aria-label="Remove Selected Entity"
+                        class="space-on-right"
+                      >
+                        <span
+                          appIcon
+                          name="minus-circle"
+                          class="text-danger"
+                          size="lg"
+                        ></span>
+                      </a>
+                      {{ entity.display_name }}
+                    </div>
+                  </accordion-group>
+                </div>
+              </accordion>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="space-on-top-lg text-center">
+        <dv-button
+          [btnType]="'orange-fill'"
+          [leftIcon]="'download3'"
+          (onClick)="downloadAumTrFile()"
+          [loader]="is_downloading"
+          [disabled]="
+            selected_entities_count == 0 || selected_entities_count > 20
+          "
+        >
+          Download
+        </dv-button>
+      </div>
+    </div>
+  </form>
+  <app-spinner
+    [broadSpinner]="true"
+    spinnerHeight="80"
+    *ngIf="loading"
+    aria-live="polite"
+  ></app-spinner>
+</div>

@@ -1,0 +1,53 @@
+
+.parser-title {
+    padding-left: 5px;
+  }
+  
+  .parser-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .parser-file-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .btn-icon {
+    margin-right: 0.5rem;
+  }
+  
+  .parser-edit-btn {
+    color: #333 !important;
+    border: 1px solid #c1c1c1;
+    padding: 2px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    width: auto;
+    display: flex;
+    align-items: center;
+  }
+  
+  .parser-control-btns {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+  }
+  
+  .control-btns-pan {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn-icon-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .active_sheet {
+    color: #1E1F24;
+  }

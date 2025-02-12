@@ -1,0 +1,55 @@
+<div class="text-left" *ngIf="params.data">
+  <!-- <div
+    ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents"
+    title="TOOLTIP"
+    uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}"
+  >
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div> -->
+  <!-- *ngIf="
+    !row.groupHeader &&
+    (!col.grouping ||
+      col.grouping.groupPriority === undefined ||
+      col.grouping.groupPriority === null)
+  " -->
+  <!-- ui-sref="app.firm.settings.workflows.detail.edit({workflowId: row.entity.id})" -->
+  <!-- uib-tooltip="{{ row.entity.name }}"
+  tooltip-placement="right" -->
+  <a
+    *ngIf="params.data.workflow"
+    [adaptivePosition]="false"
+    tooltip="{{ params.data.workflow.name }}"
+    container="body"
+    class="project-row-name"
+  >
+    {{ params.data.workflow.name }}
+  </a>
+  <ng-container *ngIf="!params.data.workflow && params.data.name">
+    <a
+    *ngIf="!url"
+    [adaptivePosition]="false"
+    tooltip="{{ params.data.name }}"
+    container="body"
+    (click)="click($event)"
+    class="project-row-name"
+  >
+    {{ params.data.name }}
+  </a>
+    <a
+    *ngIf="url"
+    [href]="url"
+    [adaptivePosition]="false"
+    tooltip="{{ params.data.name }}"
+    container="body"
+    (click)="click($event)"
+    class="project-row-name"
+  >
+    {{ params.data.name }}
+  </a>
+  </ng-container>
+
+  <span *ngIf="params?.data?.isNew" class="badge dv-badge-info relative-tag">
+    New
+  </span>
+</div>

@@ -1,0 +1,77 @@
+<div
+  class="panel-body"
+  *ngIf="transaction_diligences && !transaction_diligences.length"
+  role="region"
+  aria-label="Audit history not available"
+>
+  <app-empty-state message="Audit history not available"></app-empty-state>
+</div>
+
+<div
+  class="panel-body"
+  *ngIf="transaction_diligences && transaction_diligences.length"
+  role="region"
+  aria-label="Transaction Diligences"
+>
+  <div class="space-on-top-xl padded-bottom-xl col-md-12">
+    <div col="4">
+      <span class="control-label fw-bolder">Name</span>
+    </div>
+    <div col="1" class="text-center">
+      <span class="control-label fw-bolder">% Complete</span>
+    </div>
+    <div col="6" class="text-center">
+      <span class="control-label fw-bolder">Error Description</span>
+    </div>
+    <div col="1" class="text-center">
+      <span class="control-label fw-bolder">Status</span>
+    </div>
+  </div>
+
+  <ul class="list-unstyled clear-margin-bottom" tabindex="0">
+    <li *ngFor="let transaction of transaction_diligences" class="col-md-12">
+      <div col="4">
+        <h5>
+          <a
+            [tooltip]="transaction.entity_name"
+            placement="right"
+            container="body"
+            (click)="navigateToQuestionnaire(transaction)"
+            tabindex="0"
+            role="button"
+          >
+            {{ transaction.entity_name }}
+          </a>
+        </h5>
+      </div>
+      <div col="1" class="text-center">
+        <h5>{{ transaction.pct_complete }}</h5>
+      </div>
+      <div col="6" *ngIf="transaction.errors?.length">
+        <ul class="list-unstyled clear-margin-bottom">
+          <li *ngFor="let error of transaction.errors; let $index = index">
+            <h5>
+              <span class="text-danger"
+                >{{ $index + 1 }}: {{ error.Error }}</span
+              >
+              for {{ error.Question }} ({{ error.Section }})
+            </h5>
+          </li>
+        </ul>
+      </div>
+      <div col="6" *ngIf="!transaction.errors?.length">
+        <h5 class="text-muted text-center">N/A</h5>
+      </div>
+      <div col="1" class="text-center">
+        <span
+          class="label text-uppercase"
+          [ngClass]="{
+            'label-success': transaction.status == 'success',
+            'label-danger': transaction.status == 'failed'
+          }"
+          >{{ transaction.status }}
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>

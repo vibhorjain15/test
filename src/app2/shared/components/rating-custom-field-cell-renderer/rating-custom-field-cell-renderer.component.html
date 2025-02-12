@@ -1,0 +1,12 @@
+<div *ngIf="params.value">
+  <span
+    class="label label-default space-on-right"
+    [style.background]="backgroundColor"
+    [style.color]="textColor"
+    [tippyTooltip]="tooltip"
+    container="body"
+    [adaptivePosition]="false"
+  >
+    {{ params.value.display_format == "name" ? name : score }}
+  </span>
+</div>

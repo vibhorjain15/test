@@ -1,0 +1,19 @@
+<div class="navbar navbar-default navbar-fixed-bottom dv-alert-navbar"
+     data-ng-class="{'dv-alert-warning': type == 'warning'}">
+  <div class="container-fluid">
+    <div class="dv-alert-message">
+      <span class="lead space-on-right-lg align-middle">{{message}}</span>
+      <button data-ng-click="onSave(null,button_label)"
+              size="lg"
+              class="btn"
+              data-ng-class="{'btn-orange': type != 'warning', 'btn-default': type == 'warning' }"
+              button-loader="is_loading && button_selected == button_label">{{button_label}}</button>
+              
+      <button data-ng-click="onSave(null,button_label2)" ng-if="button_label2"
+              size="lg"
+              class="btn"
+              data-ng-class="{'btn-orange': type != 'warning', 'btn-default': type == 'warning' }"
+              button-loader="is_loading && button_selected == button_label2">{{button_label2}}</button>
+    </div>
+  </div>
+</div>

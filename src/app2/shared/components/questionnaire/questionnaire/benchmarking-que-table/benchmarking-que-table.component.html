@@ -1,0 +1,27 @@
+<app-spinner *ngIf="!aggregations"></app-spinner>
+<div class="row clearfix">
+  <div col="12">
+    <app-empty-state
+      message="No responses for this question yet"
+      *ngIf="aggregations && !aggregations?.length"
+    ></app-empty-state>
+    <table
+      class="table table-bordered table-layout-fixed"
+      *ngIf="aggregations?.length"
+    >
+      <thead>
+        <tr>
+          <th width="20%">Entity</th>
+          <th>Response</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let aggregation of aggregations">
+          <td>{{ aggregation.entity_name }}</td>
+          <td [innerHtml]="aggregation.response_display"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<span *ngIf="!params.node.group">
+  <div
+    class="assignment-labels"
+    *ngIf="params.data.status"
+    [adaptivePosition]="false"
+    [tooltip]="params.data.status"
+    container="body"
+    placement="left"
+  >
+    <span
+      appIcon
+      name="check"
+      class="text-success font-size-20"
+      *ngIf="params.data.status == 'Answered'"
+    ></span>
+    <span
+      appIcon
+      name="under-construction-2"
+      class="font-size-20 text-orange"
+      *ngIf="params.data.status == 'WIP'"
+    ></span>
+    <span
+      appIcon
+      name="check"
+      class="text-muted font-size-20"
+      *ngIf="params.data.status == 'Unanswered'"
+    ></span>
+  </div>
+  <span class="label label-success" *ngIf="!params.data.status"> N/A </span>
+</span>
+
+<span *ngIf="params.node.group && params.node.childrenAfterGroup.length">
+  <div class="dv-table full-width full-height">
+    <div class="cell align-left align-middle">
+      <dv-progress-bar [value]="percentage_completed" type="success">
+      </dv-progress-bar>
+    </div>
+  </div>
+</span>

@@ -1,0 +1,216 @@
+<dv-form-element
+  label="{{
+    user.isManager && !user.isFreeSubscription ? 'Content' : 'Entity'
+  }} Settings"
+  elementCol="12"
+  labelPosition="top"
+  [infoText]="infoText"
+  *ngIf="
+    selectedTab === TabType.Standard &&
+    !(
+      user.isManager &&
+      user.isFreeSubscription &&
+      !showFirmToggle &&
+      !showEntityToggle
+    ) &&
+    ((user.isManager && !user.isFreeSubscription) ||
+      showFirmToggle ||
+      showEntityToggle)
+  "
+>
+  <ng-container *ngIf="user.isManager && !user.isFreeSubscription">
+    <div>
+      <ui-switch
+        size="small"
+        class="align-middle"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="includeStandard"
+        (ngModelChange)="onIncludeStandardChange($event)"
+        [disabled]="firmPreferences.autofill_restrict_modifications"
+        title="Include project responses"
+        UiSwitchButton
+      ></ui-switch>
+      <span class="align-middle space-on-left-lg entity-setting"
+        >Include project responses
+      </span>
+      <span
+        appIcon
+        name="info"
+        class="info-icon"
+        tooltip="Project responses include responses from investor requests and standard DDQ projects. If disabled, only the library will be searched."
+        aria-label="Information: Project responses include responses from investor requests and standard DDQ projects. If disabled, only the library will be searched."
+      ></span>
+    </div>
+    <div>
+      <ui-switch
+        size="small"
+        class="align-middle nested-switch"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="prioritizeMostRecent"
+        [disabled]="
+          firmPreferences.autofill_restrict_modifications || !includeStandard
+        "
+        title="Prioritize the most recent responses"
+        UiSwitchButton
+      ></ui-switch>
+      <span
+        class="align-middle space-on-left-lg entity-setting nested-switch-text"
+        >Prioritize the most recent responses (when searching library AND
+        project responses)
+      </span>
+    </div>
+  </ng-container>
+  <div *ngIf="showFirmToggle">
+    <ui-switch
+      size="small"
+      class="align-middle"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="onlyFirm"
+      [disabled]="
+        firmPreferences.autofill_restrict_modifications ||
+        (user.isManager && !user.isFreeSubscription && !includeStandard)
+      "
+      title="Only include responses {{
+        user.isManager ? 'submitted' : 'associated'
+      }} to firm"
+      UiSwitchButton
+    ></ui-switch>
+    <span class="align-middle space-on-left-lg entity-setting"
+      >Only include responses
+      {{ user.isManager ? "submitted" : "associated" }} to
+      <strong>{{
+        user.isManager
+          ? diligence.investorfirm_name
+          : diligence.managerfirm_name
+      }}</strong>
+    </span>
+  </div>
+  <div *ngIf="showEntityToggle" class="d-flex">
+    <ui-switch
+      size="small"
+      class="align-middle"
+      [ngModelOptions]="{ standalone: true }"
+      [(ngModel)]="onlyEntity"
+      [disabled]="firmPreferences.autofill_restrict_modifications"
+      tabindex="0"
+      aria-label="Only include responses associated to entity"
+      title="Only include responses associated to entity"
+      UiSwitchButton
+    ></ui-switch>
+    <span class="align-middle space-on-left-lg entity-setting"
+      >Only include responses associated to
+      <strong>{{
+        diligence.entity_id === user.firmInfo.id &&
+        diligence.entity_type === keywordConstants.Firm
+          ? "My Firm"
+          : diligence.entity_name
+      }}</strong>
+    </span>
+  </div>
+</dv-form-element>
+
+<dv-form-element
+  label="Entity Settings"
+  elementCol="12"
+  labelPosition="top"
+  *ngIf="selectedTab === TabType.Advanced"
+  aria-label="Entity Settings"
+>
+  <div class="entity-autofill-wrapper">
+    <div>
+      <ui-switch
+        size="small"
+        class="align-middle"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="onlyFirm"
+        [disabled]="firmPreferences.autofill_restrict_modifications"
+        title="Include responses submitted to specific investor firms"
+        UiSwitchButton
+      ></ui-switch>
+      <span class="align-middle space-on-left-lg entity-setting"
+        >Include responses submitted to specific investor firms
+      </span>
+    </div>
+    <div
+      *ngIf="onlyFirm"
+      [formGroup]="entityForm"
+      class="space-on-top space-on-bottom"
+    >
+      <dv-form-element
+        [showRightIcon]="false"
+        fieldName="Firm"
+        [modelController]="entityForm.get('firms')"
+        label="Firms"
+        labelPosition="top"
+        elementCol="12"
+      >
+        <dv-select  
+          [id]="'firms'"
+          formControlName="firms"
+          [clearable]="false"
+          [searchable]="true"
+          [loading]="firmsLoading"
+          [placeholder]="'Select an option'"
+          bindLabel="name"
+          bindValue="id"
+          [list]="firms"
+          [contoller]="entityForm.get('firms')"
+          [multiple]="true"
+          [disabled]="firmPreferences.autofill_restrict_modifications"
+          [aria-label]="'Select firms'"
+        >
+        </dv-select>
+      </dv-form-element>
+    </div>
+    <div>
+      <ui-switch
+        size="small"
+        class="align-middle"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="onlyEntity"
+        [disabled]="firmPreferences.autofill_restrict_modifications"
+        title="Include response from specific entities"
+        UiSwitchButton
+      ></ui-switch>
+      <span class="align-middle space-on-left-lg entity-setting"
+        >Include responses from specific entities</span
+      >
+    </div>
+    <div
+      *ngIf="onlyEntity"
+      [formGroup]="entityForm"
+      class="space-on-top entity-selector"
+    >
+      <dv-form-element label="Entities" elementCol="6" [for]="'entityType'" labelPosition="top">
+        <dv-select
+          [id]="'entityType'"
+          [list]="entityTypes"
+          [(ngModel)]="entityType"
+          [ngModelOptions]="{ standalone: true }"
+          name="entity"
+          (onSelectChange)="setEntityType($event)"
+          [disabled]="firmPreferences.autofill_restrict_modifications"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-form-element label="" elementCol="12">
+        <dv-select
+          formControlName="entities"
+          [clearable]="true"
+          [searchable]="true"
+          [loading]="entitiesLoading"
+          groupBy="groupType"
+          [placeholder]="'Select an option'"
+          bindLabel="name"
+          bindValue=""
+          [list]="entities"
+          [contoller]="entityForm.get('entities')"
+          [multiple]="true"
+          [disabled]="firmPreferences.autofill_restrict_modifications"
+          [aria-label]="'Select Entity'"
+        >
+        </dv-select>
+      </dv-form-element>
+    </div>
+  </div>
+</dv-form-element>

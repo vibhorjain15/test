@@ -1,0 +1,51 @@
+<!-- <dv-filters-sidebar></dv-filters-sidebar> -->
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-functions></ng2-functions> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">User Roles</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a id="js-add-team-members" class="panel-control"
+                   data-ng-click="vm.openAddUsersToFunctionModal()"
+                   uib-tooltip="Add user roles">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading">Manage user roles and associate users to each user role from here.</div>
+    </div>
+
+    <div>
+      <!-- <div data-ng-if="vm.loading" class="text-center space-on-top-lg">
+          <spinner></spinner>
+      </div> -->
+      <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+        <div class="panel-body padded-lg">
+          <h5 class="inline space-on-right-lg">
+            <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+          </h5>
+          <a class="btn btn-default success space-on-right-lg"
+             uib-tooltip="Edit user roles"
+             data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+             data-ng-click="vm.bulkAddUsersToFunctions()">
+            <strong><span class="dvi dvi-pencil"></span>  </strong>
+          </a>
+          <a class="btn btn-default danger space-on-right-lg"
+             uib-tooltip="Remove selected assignments"
+             data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+             data-ng-click="vm.bulkRemoveFunctions()">
+            <strong><span class="dvi dvi-trashcan"></span>  </strong>
+          </a>
+          <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+            <strong><icon name="close"></icon></strong>
+          </a>
+        </div>
+      </div>
+      <div class="panel-body" ng-if="vm.renderGrid">
+        <dv-grid grid-resource="vm.all_functions" name="vm.functionsGrid" grid-name="'functions'"></dv-grid>
+      </div>
+    </div>
+</div>

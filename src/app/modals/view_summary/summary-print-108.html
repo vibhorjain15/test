@@ -1,0 +1,243 @@
+<div id="js-print-area">
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-body">
+            <!--<spinner data-ng-hide="vm.formadv_firm"></spinner>-->
+
+            <div class="dv-table dv-table-middle dd-info-panel">
+                <div class="bordered-right cell">
+                    <h4 class="clear-margin lh1-5 word-break-break-all">
+                        {{::vm.entity_name}} ({{::vm.strategy_name}})
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Investment Strategy</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.investment_strategy"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+              <span class="align-middle">
+              Summary Stats
+              </span>
+        </div>
+        <div class="panel-body full-height align-middle">
+            <!--<spinner data-ng-hide="vm.profile"></spinner>-->
+            <table class="fund-profile-items space-on-top space-on-bottom">
+                <tbody>
+                <tr class="title-row">
+                    <td><small class="text-uppercase">Fund Size</small></td>
+                    <td><small class="text-uppercase">Location</small></td>
+                    <td><small class="text-uppercase">Style</small></td>
+                    <td><small class="text-uppercase">Expected Return</small></td>
+                    <td><small class="text-uppercase">Benchmark</small></td>
+                    <td><small class="text-uppercase">Use Leverage</small></td>
+                </tr>
+                <tr class="icon-row text-muted">
+                    <td><icon name="tasks" size="2x"></icon></td>
+                    <td><icon name="location" size="2x"></icon></td>
+                    <td><icon name="strategy" size="2x"></icon></td>
+                    <td><icon name="grid" size="2x"></icon></td>
+                    <td><icon name="bar-graph" size="2x"></icon></td>
+                    <td><icon name="bar-graph" size="2x"></icon></td>
+                </tr>
+                <tr>
+                    <td><small>{{::vm.assets | toMillion}} <br> ({{vm.assets_date | date : 'shortDate'}})</small></td>
+                    <td><small>{{::vm.incorporation_location}}</small></td>
+                    <td><small>{{::vm.style}}</small></td>
+                    <td><small>{{::vm.target_return}}</small></td>
+                    <td><small>{{::vm.benchmark}}</small></td>
+                    <td><small>{{::vm.leverage}}</small></td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Key Person(s)</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.key_person"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Investment Limitation</h5>
+        </div>
+        <div class="panel-body">
+            <div class="panel-body full-height align-middle">
+                <span ng-bind-html="vm.limitations"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default avoid-page-break-inside">
+        <div class="panel-heading">
+            <h5 class="panel-title">Internal Notes</h5>
+        </div>
+        <div class="panel-body has-notes-form"
+           data-ng-if="vm.notes && vm.notes.length != 0">
+        <ul class="list-unstyled clear-margin-bottom list-bordered-bottom">
+            <li data-ng-repeat="note in vm.notes">
+              <div class="media">
+                <div class="media-left padded-top">
+                  <span class="circled-initials">
+                    {{$index+1}}
+                  </span>
+                </div>
+
+                <div class="media-body">
+                  <p class="space-on-bottom">
+                    <small class="text-muted">
+                      {{::note.first_name}} {{::note.last_name}} added {{note.updated_at|fromNow}}
+                    </small>
+                  </p>
+
+                  <p class="clear-margin">
+                    <span ng-bind-html="note.text | cleanhtml"></span>
+                  </p>
+                  </div>
+
+                </div>
+            </li>
+          </ul>
+      </div>
+    </div>
+
+
+    <div class="row clearfix avoid-page-break-inside">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Liquidity</h5>
+                </div>
+                <div class="panel-body">
+                    <div class="panel-body full-height align-middle">
+
+                        <table class="fund-term-items space-on-top space-on-bottom">
+                            <tbody>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Redemption Schedule</small></td>
+                                <td><small>{{::vm.red_schedule}}</small></td>
+
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Notification</small></td>
+                                <td><small>{{::vm.red_notification}}</small></td>
+
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Lockup</small></td>
+                                <td><small>{{::vm.red_lockup}}</small></td>
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Gates</small></td>
+                                <td><small>{{::vm.red_gates}}</small></td>
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Sidepocket</small></td>
+                                <td><small>{{::vm.red_sidepocket}}</small></td>
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Subscription Period</small></td>
+                                <td><small>{{::vm.subscription}}</small></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Fees</h5>
+                </div>
+                <div class="panel-body">
+                    <div class="panel-body full-height align-middle">
+
+                        <table class="fund-term-items space-on-top space-on-bottom">
+                            <tbody>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Management Fees</small></td>
+                                <td><small>{{::vm.mgmt_fees}}</small></td>
+
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Direct Fees</small></td>
+                                <td><small>{{::vm.direct_fees}}</small></td>
+
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Performance Fees</small></td>
+                                <td><small>{{::vm.perf_fees}}</small></td>
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Catch Up</small></td>
+                                <td><small>{{::vm.catch_up}}</small></td>
+
+                            </tr>
+                            <tr class="title-row"">
+                                <td><small class="text-uppercase">Interest to GP</small></td>
+                                <td><small>{{::vm.gp_interest}}</small></td>
+
+                            </tr>
+                            <tr class="title-row">
+                                <td><small class="text-uppercase">Preferred Returns</small></td>
+                                <td><small>{{::vm.pref_return}}</small></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <!--<div class="row clearfix avoid-page-break-inside">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+            <span class="align-middle">
+              Key Service Providers
+            </span>
+                </div>
+                <div class="panel-body">
+                    PANEL 1
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+            <span class="align-middle">
+              Exceptions
+            </span>
+                </div>
+                <div class="panel-body">
+                    PANEL 2
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>

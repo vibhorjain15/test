@@ -1,0 +1,43 @@
+button {
+  border: none;
+  background: none;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.normal-label {
+  cursor: default;
+}
+.button-label {
+  cursor: pointer;
+}
+.button-label:hover {
+  color: #16a1ab !important;
+}
+button:disabled,
+button[disabled] {
+  color: #b1b1b1;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+.icon-class {
+  font-size: 24px;
+}
+
+.hover-transform {
+  transition: all 0.3s ease-in-out; /* Adds smooth transition */
+}
+
+.hover-transform:hover {
+  color: #16a1ab !important;
+  transform: scale(1.1); /* Enlarges the icon by 10% */
+}
+.flex-column-reverse {
+  flex-direction: column-reverse;
+}

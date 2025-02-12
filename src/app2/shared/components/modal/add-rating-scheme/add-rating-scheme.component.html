@@ -1,0 +1,77 @@
+<app-modal
+  [title]="'New Rating Scheme'"
+  [firstButtonLabel]="isEdit ? 'Update' : 'Add'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="Ratingmodalref"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="ratingForm.invalid"
+></app-modal>
+
+<ng-template #Ratingmodalref>
+  <form class="form-horizontal" [formGroup]="ratingForm" autocomplete="off">
+    <div class="row clearfix">
+      <div col="12">
+        <dv-form-element
+          [fieldName]="'name'"
+          [modelController]="ratingForm.get('name')"
+          label="Rating Scheme Name"
+          [labelCol]="4"
+          [elementCol]="6"
+          [errorMessage]="
+            ratingForm.get('name').touched &&
+            ratingForm.get('name').invalid &&
+            (ratingForm.get('name').errors?.required ||
+              ratingForm.get('name').errors?.whitespace)
+              ? 'Rating Scheme name is required'
+              : ratingForm.get('name').errors?.notUnique
+              ? 'A rating with same name already exists'
+              : ratingForm.get('name').errors?.maxlength
+              ? 'Rating Scheme Name is too long. Maximum 20 characters allowed'
+              : ratingForm.get('name').errors?.containsHtml
+              ? 'Please Enter Valid Name'
+              : ''
+          "
+          [isRequired]="true"
+        >
+          <input
+            type="text"
+            name="scheme_name"
+            id="name"
+            maxlength="20"
+            class="form-control"
+            placeholder="New rating scheme"
+            formControlName="name"
+            required
+          />
+        </dv-form-element>
+        <dv-form-element
+          [fieldName]="'Field Name'"
+          [modelController]="ratingForm.get('rating_scale_id')"
+          [showRightIcon]="false"
+          [labelCol]="4"
+          [elementCol]="6"
+          [isRequired]="!isEdit"
+          [label]="'Select Rating Scale'"
+          [errorMessage]="
+            ratingForm.get('rating_scale_id').touched &&
+            ratingForm.get('rating_scale_id').invalid
+              ? 'Rating scale is required'
+              : ''
+          "
+        >
+          <dv-select
+            name="rating-scale"
+            [id]="'rating_scale_id'"
+            formControlName="rating_scale_id"
+            [disabled]="isEdit"
+            [clearable]="false"
+            required
+            placeholder="Select Rating Scale"
+            [list]="scalesTypes"
+          >
+          </dv-select>
+        </dv-form-element>
+      </div>
+    </div>
+  </form>
+</ng-template>

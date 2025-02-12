@@ -1,0 +1,78 @@
+.review-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.wrapper {
+  border: 1px solid #cbcbcb;
+  border-radius: 2px;
+  padding: 10px;
+}
+
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.label-group {
+  display: grid;
+  max-width: 60%;
+}
+
+.details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+:host ::ng-deep .hover-red span.dvi.dvi-trashcan:hover {
+  color: #dc3545;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.save-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.add-reviewr {
+  display: flex;
+  justify-content: center;
+}
+
+:host ::ng-deep .specialSelect .ng-select .ng-select-container {
+  color: #333;
+  background-color: #fff;
+  border-radius: 4px;
+  border: none !important;
+  min-height: none !important;
+  align-items: center;
+}
+
+:host ::ng-deep .specialSelect .ng-select .ng-select-container:hover {
+  box-shadow: none !important;
+  border-color: none !important;
+}
+
+:host
+  ::ng-deep
+  .specialSelect
+  .ng-select.ng-select-focused:not(.ng-select-opened)
+  > .ng-select-container {
+  box-shadow: none !important;
+}
+
+.hover-red:hover {
+  color: #dc3545;
+}
+.move-icon-color {
+  color: #bfbfbf;
+}
+.nested-panel {
+  font-size: 13px;
+}

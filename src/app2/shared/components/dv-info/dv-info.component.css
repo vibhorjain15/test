@@ -1,0 +1,38 @@
+.info-main {
+  padding: 2%;
+  font-size: 12px;
+  font-weight: bold;
+}
+.lighter {
+  opacity: 0.7;
+}
+.statusbar {
+  font-size: 12px;
+  display: flex;
+  justify-content: space-evenly;
+}
+.status-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+li {
+  padding: 1%;
+}
+
+ul {
+  margin-left: -5mm;
+  margin-top: 3mm;
+  margin-bottom: 0mm;
+}
+
+ul,
+li {
+  list-style: disc;
+}
+.dottedBorder {
+  background: #f9f9f9 0% 0% no-repeat padding-box;
+  border: 1px dashed #a9a9a9;
+  border-radius: 2px;
+  margin-top: 24px;
+}

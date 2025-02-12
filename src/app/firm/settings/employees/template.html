@@ -1,0 +1,172 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-users></ng2-users> </div>
+<!-- <dv-filters-sidebar></dv-filters-sidebar> -->
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">All Users</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a id="js-add-team-members" class="panel-control"
+                   data-ng-click="vm.openNewUserDialog()"
+                   uib-tooltip="Add New User">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading">Please click username to review permissions for that user. View access level configuration (<a ui-sref="app.settings.access_level_map" target="_blank">click here</a>)</div>
+    </div>
+    <!-- <div class="row clearfix">
+      <div class="text-right padding-10">
+        <div class="btn-group space-on-right-lg">
+            <label uib-tooltip="List View" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedView == 'grid'}" data-ng-click="vm.changeView('grid')"><icon name="list-view"></icon></label>
+            <label uib-tooltip="Card View" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectedView == 'card'}" data-ng-click="vm.changeView('card')"><icon name="card-view"></icon></label>
+        </div>
+      </div>
+    </div> -->
+
+    <div data-ng-if="vm.selectedView == 'grid'">
+      <div data-ng-if="vm.loading" class="text-center space-on-top-lg">
+          <spinner></spinner>
+      </div>
+      <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+        <div class="panel-body padded-lg">
+          <h5 class="inline space-on-right-lg">
+            <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+          </h5>
+          <a class="btn btn-default success space-on-right-lg"
+             uib-tooltip="Add to user role"
+             data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+             data-ng-click="vm.bulkAddToFunctions()">
+            <strong><span class="dvi dvi-plus"></span>  </strong>
+          </a>
+          <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+            <strong><icon name="close"></icon></strong>
+          </a>
+        </div>
+      </div>
+      <div class="panel-body" ng-if="!vm.loading && vm.renderGrid">
+        <dv-grid grid-resource="vm.all_users" name="vm.usersGrid" grid-name="'users'"></dv-grid>
+      </div>
+    </div>
+    <div data-ng-if="vm.selectedView == 'card'">
+      <div class="row clear-margin space-on-top">
+          <div class="col-sm-1"></div>
+          <div class="col-sm-4">
+              <input type="text" placeholder="Search users" data-ng-model="vm.search_string" class="form-control round-borders">
+          </div>
+          <div class="col-sm-7">
+            <ul class="nav nav-pills">
+              <li class="clickable" data-ng-class="{'active': vm.selectedFilter == vm.userFilter.All}"><a data-ng-click="vm.toggleFilter(vm.userFilter.All)">All</a></li>
+              <li class="clickable" data-ng-class="{'active': vm.selectedFilter == vm.userFilter.Active}"><a data-ng-click="vm.toggleFilter(vm.userFilter.Active)">Active</a></li>
+              <li class="clickable" data-ng-class="{'active': vm.selectedFilter == vm.userFilter.Inactive}"><a data-ng-click="vm.toggleFilter(vm.userFilter.Inactive)">Inactive</a></li>
+              <li class="clickable" data-ng-class="{'active': vm.selectedFilter == vm.userFilter.Invited}"><a data-ng-click="vm.toggleFilter(vm.userFilter.Invited)">Invited</a></li>
+              <li class="clickable" data-ng-class="{'active': vm.selectedFilter == vm.userFilter.Locked}"><a data-ng-click="vm.toggleFilter(vm.userFilter.Locked)">Locked</a></li>
+              <li class="clickable" data-ng-class="{'active': vm.selectedFilter == vm.userFilter.Pending}"><a data-ng-click="vm.toggleFilter(vm.userFilter.Pending)">Pending Approval</a></li>
+            </ul>
+          </div>
+      </div>
+      <div class="panel-body">
+        <div data-ng-if="!vm.team_members.length && !vm.loading" class="text-center">
+            <span class="text-muted">No Users Found</span>
+        </div>
+          <div data-ng-if="vm.loading" class="text-center space-on-top-lg">
+              <spinner></spinner>
+          </div>
+          <br>
+          <div data-ng-show="vm.team_members.length">
+              <div col="3" data-ng-repeat="member in vm.team_members | orderBy : 'firstname' | filter: vm.search_string" class="cell" id="{{member.id}}">
+                <div class="user_card" data-ng-init="vm.getRandomColor(member)" data-ng-class="{'semi-transparent': member.status == 'Invited'}">
+                  <div class="userIcon clickable" style="{{member.style}}" data-ng-click="vm.goToSelectedEntity(member)">
+                    <h4>{{member.firstname[0]}}{{member.lastname[0]}}
+                    </h4>
+                  </div>
+                  <div class="space-on-top-lg text-center">
+                      <h5 class="break-all">
+                        <a data-ng-click="vm.goToSelectedEntity(member)" class="clickable text-black">{{member.fullName}}</a>
+                        <span data-ng-if="member.bounced_at">
+                          <small class="text-danger" uib-tooltip="Emails to this contact have bounced in the past.">
+                              <icon name="warning"></icon>
+                          </small>
+                        </span>
+                      </h5>
+                  </div>
+                  <p class="no-margin"><small><a href="mailto:{{member.userName}}">{{member.userName}}</a></small></p>
+                  <p class="space-on-top-lg" data-ng-if="member.status == vm.userFilter.Inactive"><small class="label label-warning">INACTIVE</small></p>
+                  <ul class="list-unstyled clear-margin-bottom list-with-icons">
+                      <li class="space-on-bottom-lg">
+                          <span uib-dropdown dropdown-append-to-body>
+                            <p class="align-middle clickable space-on-bottom" uib-dropdown-toggle>
+                              {{member.alias}}
+                              <span class="caret" data-ng-hide="member.status == vm.userFilter.Inactive"></span>
+                            </p>
+                            <small>
+                                <p data-ng-show="member.status == 'Invited'" class="space-on-top"><strong>Invited by</strong>: {{member.invited_by_name}}</p>
+                            </small>
+                            <ul class="dropdown-menu"
+                                uib-dropdown-menu
+                                role="menu"
+                                data-ng-hide="member.status == vm.userFilter.Inactive">
+                                <li role="menuitem"
+                                    data-ng-repeat="role in vm.roles" data-ng-hide="role.name == member.firmwide_role_name">
+                                    <a class="clickable" data-ng-click="vm.displayChangeUserAccessConfirmation(member, role)">
+                                        {{role.alias}}
+                                    </a>
+                                </li>
+                            </ul>
+                          </span>
+                      </li>
+                      <li>
+                        <span ng-repeat="function in member.functions"  class="label label-default label-sm functionsTag" uib-tooltip="{{function.function_name}}">{{function.tag2}}</span>
+                      </li>
+                      <li>
+                          <div class="controls-wrapper">
+
+                              <a uib-tooltip="{{ member.id == vm.current_user.id ? 'We care about our users, so no self deletion. If you want to deactivate your account, please contact your admin listed under My Settings.' : 'Remove this user' }}"
+                                 data-ng-class="{'disabled': member.id == vm.current_user.id, danger: member.id != vm.current_user.id}"
+                                 data-ng-show="vm.is_admin && member.status != vm.userFilter.Inactive"
+                                 data-ng-click="vm.displayUserRemovalConfirmation(member)"
+                                 class="btn btn-xs btn-default">
+                                  <icon name="trashcan"></icon>
+                              </a>
+
+                              <a uib-tooltip="Unlock user account immediately."
+                                 data-ng-show="member.isLocked"
+                                 data-ng-click="vm.unlockUser(member)"
+                                 class="btn btn-xs btn-default">
+                                  <icon name="unlock-alt"></icon>
+                              </a>
+
+                              <a uib-tooltip="Resend activation"
+                                 data-ng-show="vm.is_admin && (member.status == vm.userFilter.Invited)"
+                                 data-ng-click="vm.resendActivation(member)"
+                                 class="btn btn-xs btn-default">
+                                  <icon name="refresh"></icon>
+                              </a>
+
+                              <a uib-tooltip="Approve the user"
+                                 data-ng-if="vm.is_admin && (member.status == vm.userFilter.Pending)"
+                                 data-ng-click="vm.approveUser(member)"
+                                 class="btn btn-xs btn-orange">
+                                  <icon name="check"></icon>
+                              </a>
+
+                              <span class="pull-right" data-ng-show="member.twoFactorEnabled">
+                                <icon name="secure"
+                                      tooltip-placement="left"
+                                      size="lg"
+                                      uib-tooltip="Two-factor authentication enabled"
+                                      class="text-success"></icon>
+                              </span>
+                          </div>
+                      </li>
+                  </ul>
+                  <div ng-if="member.is_key_person" class="ribbon"><span>Key Person</span></div>
+                </div>
+                </div>
+                <div ng-show="!(vm.team_members| filter:vm.search_string).length" class="text-center">No Users Found</div>
+          </div>
+      </div>
+    </div>
+</div>

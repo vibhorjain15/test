@@ -1,0 +1,12 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <span class="text-muted dd-status-icon"
+        enable-tooltip="true"
+        tooltip-placement="right" data-ng-if="row.entity.is_verified">
+      <icon name="check2" class="text-success" uib-tooltip="This is a verified answer"></icon>
+  </span>
+  <span class="text-muted dd-status-icon"
+        enable-tooltip="true"
+        tooltip-placement="right" data-ng-if="!row.entity.is_verified">
+      <icon name="close" class="text-danger" uib-tooltip="This answer has not been verified"></icon>
+  </span>
+</ui-grid-cell-contents>

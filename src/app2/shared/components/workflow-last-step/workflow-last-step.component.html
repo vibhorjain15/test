@@ -1,0 +1,6 @@
+<div *ngIf="params.data">
+    <span *ngIf="!params.data[field]">--</span>
+    <span *ngIf="params.data[field]" [adaptivePosition]="false" tooltip="{{params.data[field]}}" container="body"
+        [appLimitWord]="params.data[field]" charLimit="40">{{
+        params.data[field]}}</span>
+</div>

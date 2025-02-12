@@ -1,0 +1,19 @@
+<span>
+    <span data-ng-if="!(previous==0 || previous== null)">
+        <span data-ng-class="{'text-success': (((current - previous)/previous))>0, 'text-danger': (((current - previous)/previous))<0}" data-ng-if="current!=previous">
+            <span data-ng-if="(((current - previous)/previous))>0">+</span>{{((current - previous)/previous)*100 | number:2}}%
+        </span>
+        <span data-ng-if="current==previous">
+            None
+        </span>
+    </span>
+
+    <span data-ng-if="previous==0 || previous==null" class="text-success">
+        <span data-ng-if="current==0 || current==null">
+            0%
+        </span>
+        <span data-ng-if="!(current==0 || current==null)">
+            +100%
+        </span>
+    </span>
+</span>

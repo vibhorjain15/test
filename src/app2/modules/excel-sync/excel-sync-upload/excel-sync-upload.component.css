@@ -1,0 +1,3 @@
+:host ::ng-deep div.ngx-file-drop__drop-zone {
+    border: none;
+}

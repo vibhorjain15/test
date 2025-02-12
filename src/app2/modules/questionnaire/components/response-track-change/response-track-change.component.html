@@ -1,0 +1,15 @@
+<plain-grid
+  [rowHeaders]="rowHeaders"
+  [colHeaders]="colHeaders"
+  [data]="data"
+  [enableHeaders]="true"
+  [trackChange]="isTrackChange"
+  *ngIf="type == ResponseType.Grid || type == ResponseType.DynamicGrid"
+></plain-grid>
+<p
+  class="clear-margin word-break-break-all revisions-responsive-image"
+  *ngIf="type !== ResponseType.TextMultiLine"
+  htmlDiff
+  [previous]="previous ?? ''"
+  [current]="current ?? ''"
+></p>

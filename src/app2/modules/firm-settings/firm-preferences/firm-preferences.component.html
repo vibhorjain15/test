@@ -1,0 +1,1444 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Firm Preferences</h5>
+  </div>
+  <div class="panel-body affix_bottom_parent">
+    <dv-tabs
+      *ngIf="headingList"
+      class="width-100-pct firm_pref_tab"
+      [list]="headingList"
+      (onTabClick)="handleTabChange($event, true)"
+    ></dv-tabs>
+    <div class="row clearfix">
+      <div col="12">
+        <app-spinner *ngIf="!firm_preferences"></app-spinner>
+
+        <form
+          class="form-horizontal"
+          name="preferences_form"
+          id="preferences_form"
+          (ngSubmit)="submit()"
+          *ngIf="firm_preferences"
+          autocomplete="off"
+        >
+          <!-- #platformDefaults -->
+
+          <div id="PlatformDefaults" offset="2"></div>
+          <div
+            [class]="activeMenu == 'PlatformDefaults' ? 'pt-78' : 'pt-50'"
+            role="navigation"
+          >
+            <div PlatformDefaults #tab></div>
+          </div>
+          <div offset="2">
+            <h3 class="text-muted">Platform Defaults</h3>
+          </div>
+          <div class="form-group">
+            <label
+              class="control-label text-align-start"
+              col="3"
+              offset="2"
+              for="default_daterange_months"
+              >Default Date Range</label
+            >
+            <div col="5">
+              <dv-select
+                [(ngModel)]="default_daterange_months"
+                name="default_daterange_months"
+                [clearable]="false"
+                bindLabel="label"
+                bindValue="value"
+                [list]="dateRanges"
+                [searchable]="true"
+                placeholder="Select an Option"
+                [id]="'default_daterange_months'"
+              ></dv-select>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="default_preference_firm"
+                name="default_preference_firm"
+                label="Set <span class='fw-bolder'>firm as default entity for all views</span>. <span class='text-info'>You can always toggle to product on the platform</span>"
+                ariaLabel="Set firm as default entity for all views. You can always toggle to product on the platform"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_system_rating"
+                name="include_system_rating"
+                label="Show <span class='fw-bolder'>system rating definitions</span>. <span class='text-info'>This will show your rating definitions along with system ones on the platform</span>"
+                ariaLabel="Show system rating definitions. This will show your rating definitions along with system ones on the platform"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.apply_ScoreRules_PreviousVersions
+                "
+                name="apply_ScoreRules_PreviousVersions"
+                label="Apply <span class='fw-bolder'>rating/score rules to all previous versions of the template.</span> <span class='text-info'>This will auto-calculate the rating/score rules for all completed projects created using the template.</span>"
+                ariaLabel="Apply rating/score rules to all previous versions of the template. This will auto-calculate the rating/score rules for all completed projects created using the template."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_system_document_tags"
+                name="enable_system_document_tags"
+                label="Enable <span class='fw-bolder'>System Document Tags</span>. <span class='text-info'>This will enable system document tags along with custom ones on the platform</span>"
+                ariaLabel="Enable System Document Tags. This will enable system document tags along with custom ones on the platform"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.copy_manager_tags"
+                name="copy_manager_tags"
+                label="Copy <span class='fw-bolder'>document tags added by manager</span>. <span class='text-info'>This will show you system documents tags added by your managers while sharing documents with you.</span>"
+                ariaLabel="Copy document tags added by manager. This will show you system documents tags added by your managers while sharing documents with you."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_system_strategies"
+                name="enable_system_strategies"
+                label="Enable <span class='fw-bolder'>System Classification tags</span>. <span class='text-info'>This will enable default system product classifications along with custom ones on the platform</span>"
+                ariaLabel="Enable System Classification tags. This will enable default system product classifications along with custom ones on the platform"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="assignDefaultRole"
+                name="assignDefaultRole"
+                label="Assign a default access level to all new users added by your {{
+                  is_investor ? 'managers' : 'investors'
+                }}."
+                ariaLabel="Assign a default access level to all new users added by your {{
+                  is_investor ? 'managers' : 'investors'
+                }}."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="assignDefaultRole">
+            <label
+              for="defaultAccessLevelLabelLevel"
+              class="control-label text-align-start"
+              col="2"
+              offset="2"
+              >Default Access Level:</label
+            >
+            <div col="5" offset="1">
+              <dv-select
+                [list]="roles"
+                [(ngModel)]="firm_preferences_copy.default_user_access_role"
+                name="default_user_access_role"
+                bindLabel="alias"
+                [id]="'defaultAccessLevelLabelLevel'"
+              ></dv-select>
+            </div>
+          </div>
+
+          <div id="PermissionDefaults" offset="2"></div>
+          <div
+            [class]="activeMenu == 'PermissionDefaults' ? 'pt-78' : 'pt-50'"
+            role="region"
+          >
+            <div PermissionDefaults #tab></div>
+          </div>
+          <div offset="2">
+            <h3 class="text-muted padded-top-xl">Permission Defaults</h3>
+          </div>
+          <div class="form-group">
+            <label
+              class="control-label text-align-start"
+              col="2"
+              for="default_permission_type"
+              offset="2"
+              >Permission Mode:</label
+            >
+            <div col="5" offset="1">
+              <dv-select
+                [list]="permissionTypes"
+                [(ngModel)]="firm_preferences_copy.default_permission_type"
+                (onSelectChange)="onPermissionTypeChange($event)"
+                name="default_permission_type"
+                [id]="'default_permission_type'"
+              ></dv-select>
+            </div>
+            <div col="8" offset="2" class="space-on-top-lg">
+              <helper-text [innerHtml]="permissionTypeHelpText"></helper-text>
+            </div>
+          </div>
+
+          <div
+            class="form-group"
+            *ngIf="
+              firm_preferences_copy.default_permission_type ===
+              EveryonePermissionTypeId
+            "
+            role="group"
+          >
+            <label
+              for="permissionAccessLevelLabel"
+              class="control-label text-align-start"
+              col="3"
+              offset="2"
+              >Permission Access Level:</label
+            >
+            <div col="5">
+              <dv-select
+                [list]="permissionRoles"
+                bindLabel="alias"
+                [(ngModel)]="firm_preferences_copy.default_permission_role"
+                name="default_permission_role"
+                [id]="'permissionAccessLevelLabel'"
+              ></dv-select>
+            </div>
+            <div col="8" offset="2" class="space-on-top-lg">
+              <helper-text
+                innerHtml="Please select the default access level that everyone will be assigned for above settings. If you select 'Highest Access Level', it will automatically set their permission access level to their highest existing access level that they have for any team or permission assignments. Example: If a user has contributor access to Product A and owner access to Template A, then they will automatically receive owner access by default."
+              ></helper-text>
+            </div>
+          </div>
+
+          <div id="ControlWorkflowDefaults" offset="2"></div>
+          <div
+            [class]="
+              activeMenu == 'ControlWorkflowDefaults' ? 'pt-78' : 'pt-50'
+            "
+            role="region"
+          >
+            <div ControlWorkflowDefaults #tab></div>
+          </div>
+
+          <div offset="2">
+            <h3 class="text-muted padded-top-xl">Control Workflow Defaults</h3>
+          </div>
+
+          <div
+            class="form-group"
+            *ngIf="firm_preferences_copy.enable_system_gen_ai"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_gen_ai"
+                (onValChange)="handleShowAIpolicy($event)"
+                [policyChange]="true"
+                name="enable_gen_ai"
+                label="Enable <strong>Generative AI Application use</strong>. <span class='text-info'>This will enable use of DiligenceVault generative AI applications for all users in this account throughout the platform.</span>"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_Review_Workflow"
+                name="enable_Review_Workflow"
+                label="Enable <span class='fw-bolder'>Review Workflow for projects</span>. <span class='text-info'>This will enable review workflow for the project to collaborate with reviewers</span>"
+                ariaLabel="Enable Review Workflow for projects. This will enable review workflow for the project to collaborate with reviewers"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div
+            class="form-group"
+            *ngIf="firm_preferences_copy.enable_Review_Workflow"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.review_workflow_mandatory_for_internal_diligence
+                "
+                name="review_workflow_mandatory_for_internal_diligence"
+                label="Make <span class='fw-bolder'>Review Workflow</span> mandatory for internal diligence. <span class='text-info'>This will make the review workflow mandatory for all internal projects.</span>"
+                ariaLabel="Make Review Workflow mandatory for internal diligence. This will make the review workflow mandatory for all internal projects."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div
+            class="form-group"
+            *ngIf="firm_preferences_copy.enable_Review_Workflow"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.review_workflow_mandatory_for_external_diligence
+                "
+                name="review_workflow_mandatory_for_external_diligence"
+                label="Make <span class='fw-bolder'>Review Workflow</span> mandatory for external diligence. <span class='text-info'>This will make the review workflow mandatory for all external projects.</span>"
+                ariaLabel="Make Review Workflow mandatory for external diligence. This will make the review workflow mandatory for all external projects."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.allow_restart_review_process"
+                name="allow_restart_review_process"
+                label="<span class='fw-bolder'>Re-open already approved reviews </span> to all parallel/sequential reviewers <span class='fw-bolder'> when sending back revision requests for review. </span>"
+                ariaLabel="Re-open already approved reviews to all parallel/sequential reviewers when sending back revision requests for review."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_auto_review_again"
+                name="enable_auto_review_again"
+                label="<strong>If an edit to the response is made, re-open already fully approved reviews</strong> to all parallel/sequential reviewers for them to review again. <span class='text-info'>This will send a notification to all reviewers who have approved the response to review again.</span>"
+                ariaLabel="If an edit to the response is made, re-open already fully approved reviews to all parallel/sequential reviewers for them to review again. This will send a notification to all reviewers who have approved the response to review again."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.allow_only_authors_to_change_response
+                "
+                name="allow_only_authors_to_change_response  "
+                label="Allow <span class='fw-bolder'>only authors</span> to edit the rejected responses"
+                ariaLabel="Allow only authors to edit the rejected responses"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_rating_custom_fields_review
+                "
+                name="enable_rating_custom_fields_review"
+                label="Enable <span class='fw-bolder'>Review Workflow</span> for ratings. <span class='text-info'>This will enable the review workflow for ratings in Analyst Evaluation projects.</span>"
+                ariaLabel="Enable Review Workflow for ratings. This will enable the review workflow for ratings in Analyst Evaluation projects."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_track_changes"
+                name="enable_track_changes"
+                label="Set <span class='fw-bolder'>Track Changes to Enabled by Default</span>. <span class='text-info'>This will enable track changes for responses. If disabled, you can still turn on track changes at the individual response level in the project.</span>"
+                ariaLabel="Set Track Changes to Enabled by Default. This will enable track changes for responses. If disabled, you can still turn on track changes at the individual response level in the project."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_internal_project_to_external_option
+                "
+                name="enable_internal_project_to_external_option"
+                label="Enable <span class='fw-bolder'> internal projects to external </span>. <span class='text-info'>This will allow users to send Internal projects to external managers.</span>"
+                ariaLabel="Enable internal projects to external. This will allow users to send Internal projects to external managers."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.allow_review_template_in_standard_diligence
+                "
+                name="allow_review_template_in_standard_diligence"
+                label="Allow <span class='fw-bolder'> Analyst Evaluation template to be used in Standard DDQs</span>. <span class='text-info'>This will allow users to use the Analyst Evaluation template in a Standard DDQ.</span>"
+                ariaLabel="Allow Analyst Evaluation template to be used in Standard DDQs. This will allow users to use the Analyst Evaluation template in a Standard DDQ."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+
+          <ng-container *ngIf="is_investor">
+            <div class="form-group">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.enable_approval_flow_information_request
+                  "
+                  name="enable_approval_flow_information_request"
+                  label="Enable approval requirement for new information request"
+                  ariaLabel="Enable approval requirement for new information request"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div
+              class="form-group"
+              *ngIf="
+                firm_preferences_copy.enable_approval_flow_information_request
+              "
+              role="group"
+              aria-labelledby="thresholdForApprovalLabel"
+            >
+              <div col="3" offset="2">
+                <label
+                  id="thresholdForApprovalLabel"
+                  for="threshold_for_approval_flow"
+                >
+                  Threshold for approval requirement
+                  <span
+                    tooltip="Setup maximum number of requests that can be sent out without requiring approval."
+                    placement="right"
+                    container="body"
+                    ><i appIcon name="info"></i
+                  ></span>
+                </label>
+              </div>
+              <div col="7">
+                <input
+                  id="threshold_for_approval_flow"
+                  [(ngModel)]="
+                    firm_preferences_copy.threshold_for_approval_flow
+                  "
+                  name="threshold_for_approval_flow"
+                  placeholder="0"
+                  ng-pattern="/^-?\d+$/"
+                  class="form-control"
+                  (ngModelChange)="handleThresholdLimit($event)"
+                  aria-label="Threshold for approval requirement"
+                  autocomplete="off"
+                />
+                <div *ngIf="threshold_for_approval_flow_error" class="danger">
+                  {{ threshold_for_approval_flow_error }}
+                </div>
+              </div>
+            </div>
+            <div
+              class="form-group"
+              *ngIf="
+                firm_preferences_copy.enable_approval_flow_information_request
+              "
+            >
+              <div col="3" offset="2">
+                <label for="assignApproversLabel">
+                  Assign approver(s)
+                  <span
+                    tooltip="Selected users will be assigned as approvers and will have the final say before the request is sent out to external partners."
+                    placement="right"
+                    container="body"
+                    ><i appIcon name="info"></i
+                  ></span>
+                </label>
+              </div>
+              <div col="7">
+                <dv-select
+                  class="padded-top"
+                  [multiple]="true"
+                  [clearable]="false"
+                  [(ngModel)]="
+                    firm_preferences_copy.approver_list_for_information_request
+                  "
+                  name="approver_list_for_information_request"
+                  notFoundText="Could not find any action items"
+                  placeholder="Select Some Options"
+                  bindValue="id"
+                  bindLabel="fullName"
+                  [list]="teamMembers"
+                  [id]="'assignApproversLabel'"
+                >
+                </dv-select>
+              </div>
+            </div>
+          </ng-container>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.export_custom_report_all_checkboxes
+                "
+                name="export_custom_report_all_checkboxes"
+                label="Include all checkboxes in Presentation Report. <span class='text-info'>This functionality will export all checkbox responses, irrespective of which ones are selected/not selected.</span>"
+                ariaLabel="Include all checkboxes in Presentation Report. This functionality will export all checkbox responses, irrespective of which ones are selected/not selected."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.export_custom_report_draft_responses
+                "
+                name="export_custom_report_draft_responses"
+                label="Include draft responses in Presentation Report. <span class='text-info'>This will export all draft responses as well in the presentation report.</span>"
+                ariaLabel="Include draft responses in Presentation Report. This will export all draft responses as well in the presentation report."
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div id="OutboundEmailSettings" offset="2"></div>
+          <div id="js-firms-preferences">
+            <div
+              [class]="
+                activeMenu == 'OutboundEmailSettings' ? 'pt-78' : 'pt-50'
+              "
+            >
+              <div OutboundEmailSettings #tab></div>
+            </div>
+            <div id="js-firms-preferences">
+              <div offset="2">
+                <h3 class="text-muted padded-top-xl">
+                  Outbound Email Settings
+                </h3>
+              </div>
+              <div class="form-group" *ngIf="is_investor">
+                <div col="10" offset="2">
+                  <dv-checkbox
+                    [(ngModel)]="
+                      firm_preferences_copy.disable_accept_decline_outbound_emails
+                    "
+                    name="disable_accept_decline_outbound_emails"
+                    label="<span class='fw-bolder'>Disable outbound system emails for project closure.</span> <span class='text-info'>No notification will be sent to the responders when you Approve/Not Approve a project.</span>"
+                    ariaLabel="Disable outbound system emails for project closure. No notification will be sent to the responders when you Approve/Not Approve a project."
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="!firm_preferences_copy.disable_all_outbound_emails"
+              >
+                <div col="10" offset="2">
+                  <dv-checkbox
+                    [(ngModel)]="firm_preferences_copy.add_sender_email"
+                    name="add_sender_email"
+                    label="Set <span class='fw-bolder'>sender email address</span> for all outbound notifications. <span class='text-info'>Please confirm with your administrator that your firm's DMARC policy supports this feature</span>"
+                    ariaLabel="Set sender email address for all outbound notifications. Please confirm with your administrator that your firm's DMARC policy supports this feature"
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="
+                  firm_preferences_copy.add_sender_email &&
+                  !firm_preferences_copy.disable_all_outbound_emails
+                "
+              >
+                <div col="2" offset="2">
+                  <label for="sender-email">Sender Emails&nbsp;</label>
+                  <span
+                    appIcon
+                    name="info"
+                    tooltip="Please enter email id's separated by a comma. Default sender is the first contact entered by you."
+                    container="body"
+                  >
+                  </span>
+                </div>
+                <div col="8" offset="2" class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="mail"></span>
+                  </span>
+                  <input
+                    type="text"
+                    id="sender-email"
+                    [(ngModel)]="firm_preferences_copy.sender_email"
+                    name="sender_email"
+                    placeholder="sender1@yourfirm.com,sender2@yourfirm.com"
+                    class="form-control"
+                    aria-label="Sender Emails"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="!firm_preferences_copy.disable_all_outbound_emails"
+              >
+                <div col="10" offset="2">
+                  <dv-checkbox
+                    [(ngModel)]="firm_preferences_copy.add_cc_email"
+                    name="add_cc_email"
+                    label="Enable <span class='fw-bolder'>copy/blind copy </span> to all outbound notifications.</strong> <span class='text-info'>You can retain the emails for your records.</span>"
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="
+                  firm_preferences_copy.add_cc_email &&
+                  !firm_preferences_copy.disable_all_outbound_emails
+                "
+              >
+                <div col="2" offset="2">
+                  <label id="cc-emails">CC Emails&nbsp;</label>
+                  <span
+                    appIcon
+                    name="info"
+                    tooltip="Please enter email id's separated by a comma. Default cc is the first contact entered by you."
+                    container="body"
+                  >
+                  </span>
+                </div>
+                <div col="8" class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="mail"></span>
+                  </span>
+                  <input
+                    type="text"
+                    id="cc-email"
+                    [(ngModel)]="firm_preferences_copy.cc_email"
+                    name="cc_email"
+                    placeholder="contact1@yourfirm.com,contact2@yourfirm.com"
+                    class="form-control"
+                    aria-labelledby="cc-emails"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="
+                  firm_preferences_copy.add_cc_email &&
+                  !firm_preferences_copy.disable_all_outbound_emails
+                "
+              >
+                <div col="2" offset="2">
+                  <label id="bcc-emails">BCC Email&nbsp;</label>
+                  <span
+                    appIcon
+                    name="info"
+                    tooltip="Please enter email id's separated by a comma. Default bcc is the first contact entered by you."
+                    container="body"
+                  >
+                  </span>
+                </div>
+                <div col="8" class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="mail"></span>
+                  </span>
+                  <input
+                    type="text"
+                    id="bcc-email"
+                    [(ngModel)]="firm_preferences_copy.bcc_email"
+                    name="bcc_email"
+                    placeholder="contact@yourfirm.com"
+                    class="form-control"
+                    aria-labelledby="bcc-emails"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <div col="10" offset="2">
+                  <dv-checkbox
+                    [(ngModel)]="firm_preferences_copy.customize_intro"
+                    name="customize_intro"
+                    label="Manage the <span class='fw-bolder'>custom introduction</span> about your firm. <span class='text-info'>Personalize your sent invitations.</span>"
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="firm_preferences_copy.customize_intro"
+              >
+                <label
+                  class="control-label text-align-start"
+                  for="email-template"
+                  col="2"
+                  offset="2"
+                  >Email Template</label
+                >
+                <div col="7" *ngIf="email_templates.length > 0">
+                  <dv-select
+                    [id]="'email-template'"
+                    [(ngModel)]="
+                      firm_preferences_copy.default_email_template_message_id
+                    "
+                    name="default_email_template_message_id"
+                    [list]="email_templates"
+                    (onSelectChange)="
+                      renderEmailTemplate(
+                        firm_preferences_copy.default_email_template_message_id
+                      )
+                    "
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Select an Option"
+                  ></dv-select>
+                </div>
+                <div col="5" *ngIf="email_templates.length === 0">
+                  <p class="space-on-top">
+                    No email templates present,
+                    <a
+                      class="clickable"
+                      role="button"
+                      tabindex="0"
+                      (click)="navigateToEmailTemplates()"
+                      >click here</a
+                    >
+                    to add one
+                  </p>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="
+                  firm_preferences_copy.customize_intro &&
+                  email_templates.length &&
+                  email_text
+                "
+              >
+                <span
+                  class="control-label text-align-start fw-bolder"
+                  col="2"
+                  offset="2"
+                  >Email Msg</span
+                >
+                <div col="7">
+                  <div class="email-text-wrapper">
+                    <span
+                      aria-hidden="true"
+                      class="word-break-break-all"
+                      [innerHtml]="email_text"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div col="10" offset="2">
+                  <dv-checkbox
+                    [(ngModel)]="
+                      firm_preferences_copy.disallow_custom_email_template_edit
+                    "
+                    name="disallow_custom_email_template_edit"
+                    label="Disable user edits to custom introductions"
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+              <div offset="2">
+                <h3 class="text-muted padded-top-xxl">
+                  Inbound Email Notifications
+                </h3>
+              </div>
+              <div class="form-group">
+                <div col="10" offset="2">
+                  <dv-checkbox
+                    [(ngModel)]="firm_preferences_copy.add_generic_email"
+                    name="add_generic_email"
+                    label="Set <span class='fw-bolder'>generic email address</span> for all inbound system notifications. <span class='text-info'>Individual team members will not receive notifications.</span>"
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+              <div
+                class="form-group"
+                *ngIf="firm_preferences_copy.add_generic_email"
+              >
+                <div col="2" offset="2">
+                  <label for="generic-email">Generic Email</label>
+                </div>
+                <div col="8" offset="2" class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="mail"></span>
+                  </span>
+                  <input
+                    type="email"
+                    id="generic-email"
+                    [(ngModel)]="firm_preferences_copy.generic_email"
+                    name="generic_email"
+                    placeholder="contact@yourfirm.com"
+                    class="form-control"
+                    (ngModelChange)="handleGenricEmailAddress($event)"
+                    aria-label="Generic Email"
+                    autocomplete="off"
+                  />
+                </div>
+                <div
+                  *ngIf="generic_email_error"
+                  class="input-group col-md-8 col-md-offset-4 danger"
+                >
+                  {{ generic_email_error }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- platformDefaults -->
+
+          <!-- HeatMapDisplay -->
+          <div id="HeatmapDisplay" offset="2" *ngIf="is_investor"></div>
+          <div
+            [class]="activeMenu == 'HeatmapDisplay' ? 'pt-78' : 'pt-50'"
+            *ngIf="is_investor"
+          >
+            <div HeatmapDisplay #tab></div>
+          </div>
+          <div offset="2" *ngIf="is_investor">
+            <h3 class="text-muted padded-top-xl">Heatmap Display</h3>
+            <h5 class="text-info">
+              Note: The policy will apply to all heatmaps across the platform.
+            </h5>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_yaxis_entity"
+                name="enable_yaxis_entity"
+                ariaLabel="Toggle showing entity names on the y-axis"
+                label="Show entity names on <span class='fw-bolder'>the y-axis</span>"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.invert_color"
+                name="invert_color"
+                ariaLabel="Toggle showing high score in red and low score in green shades"
+                label="Show high score in red and low score in green shades"
+              ></dv-checkbox>
+            </div>
+          </div>
+          <!-- HeatMapDisplay -->
+
+          <!-- QNA  -->
+          <div id="QandAContentDefaults" offset="2" *ngIf="!is_investor"></div>
+          <div
+            [class]="activeMenu == 'QandAContentDefaults' ? 'pt-78' : 'pt-50'"
+            *ngIf="!is_investor"
+          >
+            <div QandAContentDefaults #tab></div>
+          </div>
+          <div offset="2" *ngIf="!is_investor">
+            <h3 class="text-muted">Q/A Content Defaults</h3>
+          </div>
+          <div
+            class="form-group"
+            *ngIf="!is_investor && !currentUser.isFreeSubscription"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.set_preapproved_default"
+                name="set_preapproved_default"
+                ariaLabel="Toggle setting the Library as the default view for the Q/A Center and Q/A Search"
+                label="Set the <span class='fw-bolder'>Library</span> as the default view for the Q/A Center and Q/A Search. <span class='text-info'>You can always toggle to Project Responses.</span>"
+              ></dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="!is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enableQASearch"
+                name="enableQASearch"
+                ariaLabel="Toggle enabling Q/A search in questionnaire"
+                label="Enable <span class'fw-bolder'>Q/A search</span> in questionnaire"
+              ></dv-checkbox>
+            </div>
+          </div>
+          <!-- QNA -->
+
+          <!-- QuestionnaireDefault -->
+          <div id="QuestionnaireDefaults"></div>
+          <!-- <div class="top-50"> -->
+          <div
+            [class]="activeMenu == 'QuestionnaireDefaults' ? 'pt-78' : 'pt-50'"
+          >
+            <div QuestionnaireDefaults #tab></div>
+          </div>
+          <div offset="2">
+            <h3 class="text-muted padded-top-xl">Questionnaire Defaults</h3>
+            <h5 class="text-info">
+              Note: The policy will apply to all questionnaire templates.
+            </h5>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_questionnaire_numbering
+                "
+                name="enable_questionnaire_numbering"
+                ariaLabel="Toggle enabling auto-numbering of questions in questionnaire template"
+                label="Enable <span class='fw-bolder'>auto-numbering of questions</span> in questionnaire template"
+              ></dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.disable_response_followups"
+                name="disable_response_followups"
+                ariaLabel="Toggle disabling follow-ups for responses"
+                label="Disable <span class='fw-bolder'>follow-ups for responses</span>. <span class='text-info'>You can respond when the other party initiates a follow-up</span>"
+              ></dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_system"
+                name="include_system"
+                ariaLabel="Toggle showing system / industry questionnaires such as ILPA, PRI, InvestEurope"
+                label="Show <span class='fw-bolder'>system / industry questionnaires such as ILPA, PRI, InvestEurope</span>. <span class='text-info'>This will show your questionnaires along with standard ones on the platform. Please reach out to our customer service at <a href='mailto:ask@diligencevault.com'><span class='fw-bolder'>ask@diligencevault.com</span></a> to enable the AIMA template.</span>"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="7" offset="2">
+              <label for="default_response_word_limit"
+                >Set your default word limit for question from here</label
+              >
+            </div>
+            <div col="3">
+              <input
+                [(ngModel)]="firm_preferences_copy.default_response_word_limit"
+                name="default_response_word_limit"
+                id="default_response_word_limit"
+                placeholder="0"
+                class="form-control"
+                (ngModelChange)="handleQuestionLimit($event)"
+                autocomplete="off"
+              />
+              <div *ngIf="default_response_word_limit_error" class="danger">
+                {{ default_response_word_limit_error }}
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.disable_project_info_popup"
+                name="dont_show_project_information"
+                ariaLabel="Toggle disabling the project information pop-up when opening the questionnaire tab"
+                label="<span class='fw-bolder'>Disable the project information pop-up when opening the questionnaire tab.</span> You can always access it from More > Project Information."
+              ></dv-checkbox>
+            </div>
+          </div>
+          <!-- QuestionnaireDefault -->
+
+          <!-- Recommendation -->
+          <div id="RecommendationsTracker" offset="2"></div>
+          <ng-container *ngTemplateOutlet="Recommendation"></ng-container>
+          <!-- Recommendation -->
+
+          <!-- RegulatoryFillings -->
+          <div id="RegulatoryFilings" offset="2" class="display-inline"></div>
+          <div offset="2">
+            <div
+              [class]="activeMenu == 'RegulatoryFilings' ? 'pt-78' : 'pt-50'"
+            >
+              <div RegulatoryFilings #tab></div>
+            </div>
+            <h3 class="text-muted">Regulatory Filings</h3>
+          </div>
+          <!-- added here because above one not scrolling into element  -->
+          <div class="form-group">
+            <label
+              class="control-label text-align-start"
+              for="regulatory-alert-frequency"
+              col="3"
+              offset="2"
+              >Regulatory alert frequency</label
+            >
+            <div col="5">
+              <dv-select
+                [(ngModel)]="firm_preferences_copy.regulatory_alert_frequency"
+                name="regulatory_alert_frequency"
+                [clearable]="false"
+                [searchable]="true"
+                [list]="frequencies"
+                [bindLabel]="'value'"
+                [bindValue]="'id'"
+                [id]="'regulatory-alert-frequency'"
+              >
+              </dv-select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.set_materialADV_default"
+                name="set_materialADV_default"
+                ariaLabel="Toggle making material changes view default when reviewing ADV filing changes"
+                label="Make <span class='fw-bolder'>material changes view default</span> when reviewing ADV filing changes. <span class='text-info'>You can always toggle to view all changes</span>"
+              ></dv-checkbox>
+            </div>
+          </div>
+          <!-- RegulatoryFillings -->
+
+          <!-- AutofillDefaults -->
+          <div id="AutofillDefaults"></div>
+          <div [class]="activeMenu == 'AutofillDefaults' ? 'pt-78' : 'pt-50'">
+            <div AutofillDefaults #tab></div>
+          </div>
+          <div offset="2">
+            <h3 class="text-muted">Auto-fill Defaults</h3>
+            <h5 class="text-info">
+              Note: Auto-fill will use these default settings in projects and
+              users will be able to overwrite if lock and restrict settings are
+              disabled.
+            </h5>
+            <h4><strong>Content Settings</strong></h4>
+          </div>
+          <div
+            class="form-group"
+            *ngIf="currentUser.isManager && !currentUser.isFreeSubscription"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.autofill_include_pre_approved
+                "
+                name="autofill_include_pre_approved"
+                ariaLabel="Toggle including Q/A library content"
+                label="Include Q/A library content"
+              >
+              </dv-checkbox>
+            </div>
+            <div
+              col="10"
+              offset="2"
+              class="nested-preference"
+              *ngIf="firm_preferences_copy.autofill_include_pre_approved"
+            >
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.autofill_include_pre_approved_expired
+                "
+                name="autofill_include_pre_approved_expired"
+                ariaLabel="Toggle including expired Q/A library content"
+                label="Include expired Q/A library content"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div
+            class="form-group"
+            *ngIf="currentUser.isManager && !currentUser.isFreeSubscription"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.autofill_include_standard"
+                name="autofill_include_standard"
+                ariaLabel="Toggle including project responses"
+                label="Include project responses"
+              >
+              </dv-checkbox>
+            </div>
+            <div
+              col="10"
+              offset="2"
+              class="nested-preference"
+              *ngIf="firm_preferences_copy.autofill_include_standard"
+            >
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.autofill_prioritize_most_recent
+                "
+                name="autofill_prioritize_most_recent"
+                ariaLabel="Toggle prioritizing the most recent responses"
+                label="Prioritize the most recent responses (when searching library and project responses)"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.autofill_restrict_same_entity
+                "
+                name="autofill_restrict_same_entity"
+                ariaLabel="Toggle restricting projects to only be auto-filled with the responses provided for the same entity"
+                label="Restrict projects to only be auto-filled with the responses provided for the same entity"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.autofill_restrict_same_requestor
+                "
+                name="autofill_restrict_same_requestor"
+                ariaLabel="Toggle restricting projects to only be auto-filled with the responses provided by/for the same responder/associated firm"
+                label="Restrict projects to only be auto-filled with the responses provided {{
+                  currentUser.isManager
+                    ? 'to the same requestor'
+                    : 'by/for the same responder'
+                }}/associated firm"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div
+            class="form-group"
+            *ngIf="currentUser.isManager && !currentUser.isFreeSubscription"
+          >
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="customizeMatchSettings"
+                name="customizeMatchSettings"
+                ariaLabel="Toggle customizing match settings percentage"
+                label="Customize match settings percentage"
+              >
+              </dv-checkbox>
+            </div>
+            <div
+              col="10"
+              offset="2"
+              class="nested-preference"
+              *ngIf="customizeMatchSettings"
+            >
+              <div col="2" class="space-on-top">
+                <input
+                  id="match_settings_percentage"
+                  [(ngModel)]="
+                    firm_preferences_copy.autofill_match_settings_percentage
+                  "
+                  [ngModelOptions]="{ standalone: true }"
+                  name="match_settings_percentage"
+                  placeholder=""
+                  class="form-control"
+                  type="number"
+                  aria-label="Match settings percentage"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.autofill_restrict_modifications
+                "
+                name="autofill_restrict_modifications"
+                ariaLabel="Toggle locking and restricting modifications to the above content settings within projects"
+                label="<span class='fw-bolder'>Lock and restrict modifications to the above content settings within projects</span>"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+
+          <div id="DocumentDefaults" offset="2"></div>
+          <div [class]="activeMenu == 'DocumentDefaults' ? 'pt-78' : 'pt-50'">
+            <div DocumentDefaults #tab></div>
+          </div>
+          <div offset="2">
+            <h3 class="text-muted">Document Defaults</h3>
+          </div>
+          <div class="form-group">
+            <label class="control-label text-align-start" col="3" offset="2"
+              >Default Tab</label
+            >
+            <div col="5">
+              <dv-select
+                id="document-default-tab"
+                [(ngModel)]="firm_preferences_copy.default_document_tab"
+                name="document_default_tab"
+                [clearable]="false"
+                [searchable]="false"
+                [list]="documentTabs"
+                [bindLabel]="'value'"
+                [bindValue]="'id'"
+                aria-label="Default Tab"
+              >
+              </dv-select>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="!currentUser.isFreeSubscription">
+            <label class="control-label text-align-start" col="3" offset="2"
+              >Default View</label
+            >
+            <div col="5">
+              <dv-select
+                id="document-default-view"
+                [(ngModel)]="firm_preferences_copy.default_document_view"
+                name="document_default_view"
+                [clearable]="false"
+                [searchable]="false"
+                [list]="documentViews"
+                [bindLabel]="'value'"
+                [bindValue]="'id'"
+                aria-label="Default View"
+              >
+              </dv-select>
+            </div>
+          </div>
+        </form>
+        <ng-template #Recommendation>
+          <form
+            *ngIf="firm_preferences"
+            [formGroup]="designPreferenceForm"
+            (keydown.enter)="$event.preventDefault()"
+            autocomplete="off"
+          >
+            <div col="10" offset="2" class="bottom-50">
+              <div
+                [class]="
+                  activeMenu == 'RecommendationsTracker' ? 'pt-78' : 'pt-50'
+                "
+              >
+                <div RecommendationsTracker #tab></div>
+              </div>
+              <div>
+                <h3
+                  class="text-muted"
+                  *ngIf="firm_preferences_copy?.issue_tracker_default_name"
+                  aria-label="{{
+                    firm_preferences_copy?.issue_tracker_default_name
+                  }} Tracker"
+                >
+                  {{ firm_preferences_copy.issue_tracker_default_name }} Tracker
+                </h3>
+              </div>
+              <div class="form-group space-on-top-xxl">
+                <div col="12">
+                  <label for="issue_tracker_default_name">Default Name</label>
+                </div>
+                <div col="5" class="space-on-bottom-xxl">
+                  <input
+                    id="issue_tracker_default_name"
+                    [(ngModel)]="
+                      firm_preferences_copy.issue_tracker_default_name
+                    "
+                    [ngModelOptions]="{ standalone: true }"
+                    name="issue_tracker_default_name"
+                    placeholder=""
+                    class="form-control"
+                    dvHtmlTagValidator
+                    #issue_tracker_default_name="ngModel"
+                    (ngModelChange)="handleIssueTrackerName($event)"
+                    aria-label="Default Name"
+                    autocomplete="off"
+                  />
+                  <div
+                    *ngIf="issue_tracker_default_name_error"
+                    class="danger"
+                    aria-live="assertive"
+                  >
+                    {{ issue_tracker_default_name_error }}
+                  </div>
+                </div>
+              </div>
+              <div col="12" class="row" formGroupName="priority">
+                <div col="8">
+                  <helper-text class="space-on-bottom-xxl">
+                    You can personalize your priorities by changing the names
+                    and color scales below.
+                  </helper-text>
+                </div>
+                <div
+                  col="12"
+                  *ngFor="let color of priorities; let $index = index"
+                  class="no-padding"
+                >
+                  <div col="4">
+                    <ng-container formArrayName="priorityNames">
+                      <span
+                        class="control-label space-on-bottom-lg fw-bolder"
+                        *ngIf="$index == 0"
+                      >
+                        Priority Names
+                      </span>
+                      <dv-form-element
+                        [modelController]="priorityNames.controls[$index]"
+                        fieldName="priorityName"
+                        [elementCol]="12"
+                      >
+                        <input
+                          [formControl]="priorityNames.controls[$index]"
+                          [value]="priorityNames.controls[$index].name"
+                          class="form-control space-on-right"
+                          name="priority_name_{{ $index }}"
+                          id="priority_name_{{ $index }}"
+                          [attr.aria-label]="'priority_name_{{ $index }}'"
+                          autocomplete="off"
+                        />
+                        <div
+                          class="danger"
+                          *ngIf="
+                            priorityNames.controls[$index].errors?.required
+                          "
+                        >
+                          *Name is required
+                        </div>
+                      </dv-form-element>
+                    </ng-container>
+                  </div>
+                  <div col="4">
+                    <ng-container formArrayName="priorityColors">
+                      <span
+                        class="control-label space-on-bottom-lg fw-bolder"
+                        *ngIf="$index == 0"
+                      >
+                        Color Scales
+                      </span>
+                      <dv-form-element
+                        fieldName="priorityColor"
+                        [modelController]="priorityColors.controls[$index]"
+                        [elementCol]="12"
+                      >
+                        <input
+                          class="form-control text-uppercase space-on-left"
+                          type="text"
+                          name="priority_color_{{ $index }}"
+                          id="priority_color_{{ $index }}"
+                          [attr.aria-label]="'priority_color_{{ $index }}'"
+                          [formControl]="priorityColors.controls[$index]"
+                          [colorPicker]="priorityColors.controls[$index].value"
+                          [cpOKButton]="true"
+                          [cpOKButtonClass]="'btn btn-primary btn-xs'"
+                          (colorPickerChange)="
+                            onPriorityColorPickerChange($event, $index)
+                          "
+                          [style.background]="
+                            priorityColors.controls[$index].value
+                          "
+                          [style.color]="
+                            getColor(
+                              priorityColors.controls[$index].value,
+                              $index
+                            )
+                          "
+                          [cpOutputFormat]="'hex'"
+                          (change)="handlePriorityColorChange($event, $index)"
+                          autocomplete="off"
+                        />
+                        <div
+                          class="danger"
+                          *ngIf="
+                            priorityColors.controls[$index].errors?.required
+                          "
+                        >
+                          *Color is required
+                        </div>
+                        <div
+                          class="danger"
+                          *ngIf="
+                            priorityColors.controls[$index].errors?.pattern
+                          "
+                        >
+                          Please enter a valid 6-digit color code starting with
+                          a #.
+                        </div>
+                        <div
+                          class="danger"
+                          *ngIf="
+                            !priorityColors.controls[$index].errors?.required &&
+                            this.colorMap.get(
+                              priorityColors.controls[
+                                $index
+                              ].value.toUpperCase()
+                            ) > 1
+                          "
+                        >
+                          You can't have duplicate colors in the list.
+                        </div>
+                      </dv-form-element>
+                    </ng-container>
+                  </div>
+                  <div col="4"></div>
+                </div>
+                <div colType="sm" class="cell col-xs-12">
+                  <div class="row">
+                    <div col="12" class="space-on-top-lg space-on-bottom-lg">
+                      <dv-button
+                        [btnType]="'default'"
+                        (onClick)="resetColors()"
+                        [btnClass]="'space-on-right'"
+                        [type]="'button'"
+                      >
+                        Reset colors
+                      </dv-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" *ngIf="!currentUser.isFreeSubscription">
+                <div col="10">
+                  <dv-checkbox
+                    [(ngModel)]="firm_preferences_copy.allow_external_issues"
+                    name="allow_external_issues"
+                    [ngModelOptions]="{ standalone: true }"
+                    ariaLabel="Toggle allowing creation of external {{
+                      firm_preferences_copy?.issue_tracker_default_name
+                        | lowercase
+                    }}"
+                    label="
+                  Allow creation of
+                  <span class='fw-bolder'>external {{
+                      firm_preferences_copy?.issue_tracker_default_name
+                        | lowercase
+                    }}</span>.
+                  <span class='text-info'>
+                    This will allow you to create external
+                    {{
+                      firm_preferences_copy?.issue_tracker_default_name
+                        | lowercase
+                    }}
+                    for your {{
+                      is_investor ? 'responders' : 'requestors'
+                    }}.</span>"
+                  >
+                  </dv-checkbox>
+                </div>
+              </div>
+            </div>
+          </form>
+        </ng-template>
+        <div
+          class="form-group sticky_savebar firm-pref-sticky"
+          *ngIf="firm_preferences"
+        >
+          <div
+            col="10"
+            offset="2"
+            class="space-on-top-xl space-on-bottom-xl sticky-button"
+          >
+            <dv-button
+              [loader]="saving_preferences"
+              [btnClass]="'minwidth'"
+              [btnType]="'primary'"
+              type="button"
+              (onClick)="submit()"
+            >
+              Save Firm Preferences
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div *ngIf="params.data">
+  <span>
+    <dv-button
+      btnType="transparent"
+      *ngIf="params?.data?.status == downloadStatus.started"
+      ariaLabel="preparing download"
+    >
+      <span appIcon name="hour-glass"></span>
+    </dv-button>
+    <dv-button
+      btnType="transparent"
+      (onClick)="downloadFile()"
+      *ngIf="
+        params?.data?.is_downloadable &&
+        params?.data?.status == downloadStatus.success
+      "
+      ariaLabel="Download File"
+    >
+      <span appIcon name="download3"></span>
+    </dv-button>
+    <dv-button
+      btnType="transparent"
+      *ngIf="params?.data?.status == downloadStatus.failed"
+      ariaLabel="download failed"
+    >
+      <span appIcon name="warning"></span
+    ></dv-button>
+  </span>
+  <span [adaptivePosition]="false" [tooltip]="filename" container="body">
+    <span [appLimitWord]="filename" charLimit="40"></span>
+  </span>
+</div>

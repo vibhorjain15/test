@@ -1,0 +1,35 @@
+:host ::ng-deep span.show {
+  display: inline !important;
+}
+
+.flex-property {
+  flex: 1;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.ellipsis-margin-top {
+  margin-top: 3px !important;
+  rotate: 90deg;
+  margin-right: 5px;
+  margin-left: auto;
+}
+
+.margin-skip-expand-collapse {
+  padding-left: 28px !important;
+}
+.folder-grid-align {
+  display: flex;
+  align-items: center;
+}
+:host ::ng-deep .ag-group-value {
+  width: 100%;
+}
+.folder-class {
+  color: #34495e !important;
+}
+.no-underline {
+  text-decoration: none;
+}

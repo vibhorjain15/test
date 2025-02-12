@@ -1,0 +1,7 @@
+<!-- <spinner data-ng-show="vm.loading_prefs && !vm.diligences && !vm.showNudges"></spinner> -->
+<div data-ng-if="!vm.loading_prefs && vm.diligences">
+    <dv-grid id="js-dd-grid" grid-resource="vm.diligences"
+         refresh-data="vm.refreshGridData"
+         name="vm.diligences_grid"
+         grid-name="'projects_{{vm.type}}'"></dv-grid>
+</div>

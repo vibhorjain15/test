@@ -1,0 +1,16 @@
+.danger {
+  color: #cd3333;
+}
+
+.minwidth {
+  min-width: 203px;
+}
+
+.design-pref-sticky {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 100 !important;
+  padding: 10px;
+  margin-left: 10px;
+}

@@ -1,0 +1,70 @@
+<div class="panel panel-default addcontact-panel">
+  <div class="panel-heading bordered-top">
+    <h5 class="panel-title">
+      {{ isInvestor ? "Add Contact(s)" : "Add Investor Contact(s)" }}
+    </h5>
+  </div>
+  <form [formGroup]="contactForm" autocomplete="off">
+    <div class="panel-body" formArrayName="contacts">
+      <div *ngFor="let contact of contacts.controls; let i = index">
+        <div [formGroupName]="i">
+          <dv-form-element
+            [fieldName]="'Contact email'"
+            [errorMessage]="
+              !contacts.controls[i].get('username').value && isInvestor
+                ? 'Contact email is required'
+                : contacts.controls[i].get('username').errors?.errorRepeat
+                ? message
+                : 'Please enter a valid Email'
+            "
+            [label]="'Email #' + (i + 1)"
+            elementCol="8"
+            [labelCol]="'4'"
+            [modelController]="contacts.controls[i].get('username')"
+            [isRequired]="isInvestor"
+          >
+            <input
+              class="form-control"
+              formControlName="username"
+              placeholder="email@example.com"
+              (input)="checkFormArray()"
+              dvTrimValue
+              id="username"
+            />
+          </dv-form-element>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div col="8" offset="4">
+          <div class="pull-right">
+            <button
+              appButton
+              btnType="default"
+              (click)="contacts.push(createRep(contacts.controls.length))"
+              class="space-on-right"
+              id="add-another-contact"
+            >
+              Add Another Contact
+            </button>
+            <button
+              appButton
+              btnType="danger"
+              id="remove"
+              [disabled]="contacts.length == 1"
+              (click)="removeLastContact()"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!isInvestor">
+        <small class="text-bold"
+          >Note: Please note that adding investor contact(s) here is optional
+          and they will not receive any notification if added.</small
+        >
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,17 @@
+<span class="form-control-static booleanplus-preview">
+
+  <span data-ng-show="response.attributes.responseDisplay">
+    {{(response.attributes.booleanResponse ? 'Yes' : response.attributes.booleanResponse == false?'No':'')}}
+    <p data-ng-hide="!response.attributes.textResponse" class="space-on-top-lg comments-border" data-ng-bind-html="::response.attributes.textResponse">
+    </p>
+  </span>
+
+  <i class="text-muted" data-ng-show="!response.attributes.responseDisplay">
+    <small>*No Response Available*</small>
+  </i>
+
+  <i class="text-danger" data-ng-show="response.is_na">
+    <small>*Marked as Not Applicable*</small>
+    (<span ng-bind-html="response.attributes.textResponse" class="inline word-break-break-all"></span>)
+  </i>
+</span>

@@ -1,0 +1,144 @@
+<app-modal
+  [title]="
+    edit_mode
+      ? 'Editing AUM / Track Record Table'
+      : 'Add New AUM / Track Record Table'
+  "
+  [firstButtonLabel]="'Save'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="aumRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #aumRef>
+  <form class="form-horizontal" [formGroup]="aumForm" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [fieldName]="'Name'"
+        [modelController]="aumForm.get('name')"
+        label="Name"
+        labelCol="4"
+        [isRequired]="true"
+        [errorMessage]="
+          aumForm.get('name').touched && aumForm.get('name').errors?.required
+            ? 'Name is Required'
+            : aumForm.get('name').touched && aumForm.get('name').errors?.pattern
+            ? (errorMessageMap.avoidFirstSplCharacter | interpolate : 'Name')
+            : ''
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          id="name"
+        />
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Period'"
+        [modelController]="aumForm.get('period')"
+        [showRightIcon]="false"
+        labelCol="4"
+        label="Reporting Frequency"
+        [isRequired]="true"
+      >
+        <dv-select
+          [id]="'period'"
+          name="period"
+          [clearable]="false"
+          chosen
+          formControlName="period"
+          [disabled]="edit_mode && aumForm.get('period').value"
+          [list]="periods"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'Type'"
+        [modelController]="aumForm.get('type')"
+        [showRightIcon]="false"
+        labelCol="4"
+        label="Type of History"
+      >
+        <dv-select
+          [id]="'type'"
+          name="type"
+          chosen
+          [clearable]="false"
+          formControlName="type"
+          [disabled]="edit_mode && aumForm.get('type').value"
+          [list]="types"
+          [bindLabel]="'label'"
+          [bindValue]="'value'"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="Currency"
+        [modelController]="aumForm.get('currency_id')"
+        [showRightIcon]="false"
+        label="Currency"
+        labelCol="4"
+        [isRequired]="true"
+      >
+        <div>
+          <dv-select
+            [id]="'currency_id'"
+            name="type"
+            chosen
+            placeholder="-- Select Currency --"
+            formControlName="currency_id"
+            [clearable]="false"
+            [list]="currencies"
+            [bindLabel]="'value'"
+          >
+          </dv-select>
+          <div
+            class="text-danger"
+            *ngIf="
+              aumForm.get('currency_id').touched &&
+              aumForm.get('currency_id').errors?.required
+            "
+          >
+            Currency is required
+          </div>
+        </div>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="Profile"
+        [modelController]="aumForm.get('profile_type')"
+        *ngIf="aumForm.get('type').value === 'track_record'"
+        [showRightIcon]="false"
+        labelCol="4"
+        [label]="'Gross/Net'"
+      >
+        <dv-radio-group type="none">
+          <dv-radio
+            class="width-radio"
+            formControlName="profile_type"
+            groupName="gross_net"
+            valueName="Gross"
+            name="Profile"
+            [value1]="'Gross'"
+            [label]="'Gross'"
+            [id]="'radio1'"
+          ></dv-radio>
+          &nbsp;
+          <dv-radio
+            [label]="'Net'"
+            [value1]="'Net'"
+            [id]="'radio2'"
+            formControlName="profile_type"
+            groupName="gross_net"
+            valueName="Net"
+          ></dv-radio>
+        </dv-radio-group>
+      </dv-form-element>
+    </div>
+  </form>
+</ng-template>

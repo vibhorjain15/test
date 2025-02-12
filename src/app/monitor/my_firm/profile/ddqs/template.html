@@ -1,0 +1,88 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-my-firm-ddqs></ng2-my-firm-ddqs>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.firm"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-show="vm.firm">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5">
+              {{vm.firm.name}}
+            </h4>
+          </div>
+
+          <div class="cell">
+            <p class="alert alert-info">
+              <small>
+                Easily access or create new firm level investor requests, standard DDQs, and pre-approved projects here. If you have shared DDQs with investors, you will be able to track their views / activities here.
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="4" data-ng-class="{'col-md-offset-4': !vm.is_manager}">
+        <fund-ddqs ddqs="vm.investorDdqs" modal-open="vm.invokeAddInvestorDDQDialog()"
+                  modal-title="'Investor Requests'"
+                  ddq-type="'investor'"
+                  help-text="'For RFP and investor relations teams to respond to or set up and manage inbound investor requests.'"
+                  empty-state-message="'No investor requests available for this '+vm.entity_type+'. Please add'"></fund-ddqs>
+      </div>
+      <div col="4" data-ng-class="{'col-md-offset-4': !vm.is_manager}" data-ng-disabled="vm.is_freeSubscriber">
+        <fund-ddqs ddqs="vm.ddqs" modal-open="vm.invokeAddDDQDialog()"
+                  modal-title="'Standard DDQs'"
+                  help-text="'For your team to maintain historical and current annual and quarterly DDQs at the firm level. You can create new versions, update content, and then share with your investors.'"
+                  empty-state-message="'No internal / standard DDQ available for this '+vm.entity_type+'. Please add'"></fund-ddqs>
+      </div>
+      <div col="4" authorized-view accessible-to="manager" data-ng-disabled="vm.is_freeSubscriber">
+        <profile-ddq ddqs="vm.profileddqs" modal-open="vm.invokeAddProfileDDQDialog()"
+                    help-text="'For SMEs to build and maintain your firm’s Q/A content library with the most recent and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Bank.'"
+                    tooltip-text="'Build and maintain your firm’s Q/A content library with compliant and up-to-date responses for use in investor requests and standard DDQs. Updates here will reflect in your Q/A Bank. Pro tip: It is best practice for SMEs to regularly review this content and treat these responses as your one source of truth.'"
+                    empty-state-message="'No Q/A Library Content available for this '+vm.entity_type+'. Please add'"></profile-ddq>
+      </div>
+
+      <!-- <div col="4" authorized-view accessible-to="manager">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">Investor Views ({{vm.views.length}})</h5>
+          </div>
+          <div class="panel-body"
+               data-ng-if="!vm.views || !vm.views.length">
+            <spinner data-ng-show="!vm.views"></spinner>
+
+            <empty-state icon-name="bar-graph"
+                         data-ng-show="vm.views && !vm.views.length"
+                         message="No Views">
+            </empty-state>
+          </div>
+
+
+          <ul class="list-group">
+            <li class="list-group-item"
+                data-ng-repeat="view in vm.views">
+              <div class="space-on-bottom-lg">
+                <a ui-sref="app.diligence.project.questionnaire({diligenceId: view.targetID})">
+                  {{view.targetName}}
+                </a>
+              </div>
+              <div class="clearfix">
+                <div class="pull-left">
+                  <small>
+                    <span class="text-muted">Viewed {{view.viewTimeStamp | fromNow}} by {{view.viewer.firstName}} {{view.viewer.lastName}} ({{view.viewer.firmInfo.name}})</span>
+                  </small>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+

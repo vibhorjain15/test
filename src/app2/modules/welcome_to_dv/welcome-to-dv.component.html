@@ -1,0 +1,57 @@
+<div class="panel panel-default space-on-top-xxl welcome_to_dv">
+  <div class="panel-body">
+
+    <div col="12" class="clear-padding">
+      <img src="assets/images/DV_logo.png" alt="DiligenceVault" class="logo pull-left h-50" />
+    </div>
+
+
+    <div col="8" offset="2">
+      <h1 class="text-center font-size-48">
+        <span
+        appIcon
+        name="hand-wave"
+        class="text-bold space-on-right space-on-top-n align-middle"
+      ></span>Welcome!
+      </h1>
+
+      <br/>
+
+      <p class="lead text-center lh2-em">
+        {{lead_text}}
+      </p>
+
+      <br/>
+      <br/>
+      <br/>
+
+      <div class="text-center">
+        <button class="btn btn-success btn-lg"
+                *ngIf="!loadingTour && is_admin"
+                (click)="inviteTeamMember()">Invite a Team Member</button>
+        <button class="btn btn-success btn-lg margin-left"
+                *ngIf="!loadingTour"
+                (click)="exploreDV()">Explore DiligenceVault</button>
+
+        <div class="text-success" *ngIf="loadingTour">
+          <app-spinner broad-spinner spinner-height="40" spinnerText={{spinner_text}}></app-spinner>
+        </div>
+      </div>
+
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+
+      <div class="text-center space-on-bottom-lg">
+        <a class="clickable" (click)="skipTutorial()">
+          Skip the tutorial. I have gotten to know DiligenceVault :)
+        </a>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>
+

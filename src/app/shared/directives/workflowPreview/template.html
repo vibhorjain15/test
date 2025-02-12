@@ -1,0 +1,77 @@
+<div col="12" class="workflow-panel" id="workflow-preview">
+    <spinner data-ng-show="!vm.workflow || vm.loading_workflow">
+    </spinner>   
+    <empty-state
+    message="There are no steps added for this workflow"
+    data-ng-show="!vm.loading_workflow && !vm.has_steps"
+  >
+  </empty-state>     
+    <table class="table table-borderless clear-margin-bottom workflow-preview-table" data-ng-if="!vm.loading_workflow && vm.has_steps">
+        <thead>
+            <tr>
+                <th class="text-center" width="15%">Workflow Steps</th>
+                <th class="text-center" width="20%">Actions for the Step</th>
+                <th class="text-center" width="15%">DueDate</th>
+                <th class="text-center" width="25%">Owner</th>
+                <th class="text-center" width="25%">Checklist</th>
+            </tr>
+        </thead>
+
+        <tbody class="borderless" data-ng-repeat="step in vm.workflow.steps track by $index" data-ng-init="step.stepIndex = $index">
+            <tr data-ng-repeat-start="action in step.actions track by $index">
+                <td data-ng-class="{'vertical-border-td':step.stepIndex != vm.workflow.steps.length - 1,'relative': $index==0 && step.stepIndex == vm.workflow.steps.length - 1}">
+                    <div data-ng-show="$index==0" class="wordflow-step-action">
+                        {{action.name}}
+                        <icon name="info" class="space-on-left text-info"
+                            data-ng-class="{'disableField':!action.description}" uib-tooltip="{{action.description}}">
+                        </icon>
+                    </div>
+                    <!-- <div data-ng-hide="$index==0" class="vertical-line-outbound-one">&nbsp;</div> -->
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-default" uib-tooltip="{{action.action_id}}">
+                        <icon name="notepad" data-ng-if="action.action_id=='add_note'"></icon>
+                        <icon name="thumbs-up" data-ng-if="action.action_id=='approve'"></icon>
+                        <icon name="thumbs-down" data-ng-if="action.action_id=='non_approval'"></icon>
+                        <icon name="star" data-ng-if="action.action_id=='rate'"></icon>
+                        <icon name="mail" data-ng-if="action.action_id=='alert'"></icon>
+                        <icon name="file-pdf-o" data-ng-if="action.action_id=='extract_data'"></icon>
+                        <icon name="eye" data-ng-if="action.action_id=='review'"></icon>
+                        <icon name="check2" data-ng-if="action.action_id=='complete'"></icon>
+                        <icon name="hour-glass" data-ng-if="!action.action_id"></icon>
+                    </button>
+                </td>
+                <td>
+                    <input type="text" class="form-control" data-ng-model="action.due_at" disabled />
+                </td>
+                <td>
+                    <div data-ng-if="action.is_owner_task">
+                        <small class="w-210 text-muted">Assigned to Process Owner</small>
+                    </div>
+                    <div data-ng-if="!action.is_owner_task" class="ownerDiv">
+                        <span class="label text-uppercase label-default"
+                            data-ng-repeat="user in action.users" uib-tooltip="{{vm.displayUserName(user, 'user')}}">
+                            <small>{{vm.showInitials(user, 'user')}}</small>
+                        </span>
+                        <span class="label text-uppercase label-default"
+                            data-ng-repeat="function in action.functions" uib-tooltip="{{vm.displayUserName(function, 'function')}}">
+                            <small>{{vm.showInitials(function, 'function')}}</small>
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <ul data-ng-if="action.checklist.length" class="todo-list">
+                            <li data-ng-repeat="todo in action.checklist" data-ng-if="todo.is_active"
+                                class="todo-list-item">
+                                <small uib-tooltip="{{::todo.text}}">{{::todo.text}}</small>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            <tr data-ng-repeat-end>
+            </tr>
+        </tbody>
+    </table>
+</div>

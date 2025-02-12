@@ -1,0 +1,26 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div class="text-center">
+    <button btn-type="default"
+            size="sm"
+            class="space-on-right-lg"
+            data-ng-class="{'disabled': ((row.entity.response_count != 1) || row.entity.expired)}"
+            tooltip-placement="right"
+            uib-tooltip="{{(row.entity.response_count == 1 && !row.entity.expired) ? 'Copy the answer of this question' : (row.entity.response_count != 1 && !row.entity.expired) ? 'This question has more than 1 response. Please go to details page to copy': 'Response is expired'}}"
+            data-ng-click="grid.appScope.vm.copyResponse(row.entity)">
+        <icon name="copy"></icon>
+    </button>
+    <button btn-type="default"
+            size="sm"
+            class="hidden"
+            id="copyButton"
+            data-ng-if="grid.appScope.vm.responseToCopy"
+            ngclipboard
+            data-clipboard-target="#textToCopy"
+            data-ng-click="grid.appScope.vm.copyButtonClick()">
+    </button>
+  </div>
+  <div data-ng-if="grid.appScope.vm.responseToCopy">
+    <span ng-bind-html="grid.appScope.vm.responseToCopy | cleanhtml | trusthtml" id="textToCopy"></span>
+  </div>
+
+</ui-grid-cell-contents>

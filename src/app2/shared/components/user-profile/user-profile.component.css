@@ -1,0 +1,65 @@
+.container {
+  position: relative;
+}
+
+.profile-pic:hover .profilepic-content {
+  opacity: 1;
+}
+
+.profile-pic:hover .profilepic-image {
+  opacity: .5;
+}
+
+.profilepic-image {
+  object-fit: cover;
+  opacity: 1;
+  transition: opacity .2s ease-in-out;
+  line-height: 115px;
+  height: 85px;
+}
+
+.profilepic-content {
+  height: 90px;
+  position: absolute;
+  top: 8px;
+  right: 0;
+  left: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+}
+
+.profilepic-icon {
+  position: relative;
+  top: 15px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: linear-gradient(360deg, rgba(115, 115, 115, 0.86) 46.16%, rgba(201, 197, 197, 0.86) 46.17%, rgba(251, 251, 251, 0.86) 48.17%);
+}
+.profilepic-text {
+  font-size: 8px;
+  position: relative;
+  word-break: break-all;
+  bottom: 10px;
+  width: 35px;
+}
+.user-profile .avatar {
+  height: 105px !important;
+  width: 160px !important;
+}
+.profile-pic {
+  position: relative;
+  top: 0px;
+  left: 42px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+}
+.h-110{
+  height: 110px;
+}

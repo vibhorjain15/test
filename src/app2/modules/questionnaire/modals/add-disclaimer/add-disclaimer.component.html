@@ -1,0 +1,51 @@
+<app-modal
+  title="{{ updating ? 'Update' : 'Attach' }} Disclaimer for {{ entityName }}"
+  [initialTemplate]="addDisclaimerRef"
+  [firstButtonLabel]="updating ? 'Update Disclaimer' : 'Add Disclaimer'"
+  (onFirstClick)="submit($event)"
+  [isFirstButtonDisabled]="!disclaimers?.length || !disclaimer"
+  [isLoading]="saving"
+></app-modal>
+
+<ng-template #addDisclaimerRef>
+  <dv-form-element
+    label="Disclaimer"
+    elementCol="12"
+    labelPosition="top"
+    [isRequired]="true"
+    *ngIf="disclaimers?.length"
+    [for]="'Select-a-disclaimer'"
+  >
+    <dv-select
+      [list]="disclaimers"
+      [(ngModel)]="disclaimer"
+      bindValue=""
+      (onSelectChange)="onSelectChange($event)"
+      [aria-label]="'Select a disclaimer'"
+      [id]="'Select-a-disclaimer'"
+      ></dv-select>
+  </dv-form-element>
+
+  <dv-form-element
+    label=""
+    elementCol="12"
+    *ngIf="disclaimers && !disclaimers.length"
+  >
+    <div class="text-center">
+      <span  class="control-label text-muted fw-bolder">
+        No disclaimers present,
+        <a
+          class="clickable"
+          (click)="redirectToDisclaimerDefinitions()"
+          role="button"
+          tabindex="0"
+          aria-labelledby="disclaimers"
+          (keydown.enter)="redirectToDisclaimerDefinitions()"
+          >click here</a
+        >
+        to add one
+      </span>
+    </div>
+  </dv-form-element>
+  &nbsp;
+</ng-template>

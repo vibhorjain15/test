@@ -1,0 +1,21 @@
+tinymce.addI18n("id", {
+  "Advanced sort...": "Sortir lanjutan...",
+  "Advanced Sort": "Sortir Lanjutan",
+  "Sort table by column ascending": "Sortir tabel menurut kolom secara menaik",
+  "Sort table by column descending": "Sortir tabel menurut kolom secara menurun",
+  "Sort": "Sortir",
+  "Order": "Urutan",
+  "Sort by": "Sortir menurut",
+  "Ascending": "Menaik",
+  "Descending": "Menurun",
+  "Selection": "Pemilihan",
+  "Table": "Tabel",
+  "Column": "Kolom",
+  "Row": "Baris",
+  "Column {0}": "Kolom {0}",
+  "Row {0}": "Baris {0}",
+  "Row numbering": "Penomoran baris",
+  "None": "Tidak ada",
+  "Numeric": "Numerik",
+  "Alpha": "Alfabet"
+});

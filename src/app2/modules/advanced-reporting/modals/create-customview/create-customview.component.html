@@ -1,0 +1,91 @@
+<app-modal
+  [title]="title"
+  firstButtonLabel="Save"
+  (onFirstClick)="handleSaveClick($event)"
+  [initialTemplate]="createEditViewRef"
+  [isLoading]="isSaving"
+>
+</app-modal>
+
+<ng-template #createEditViewRef>
+  <form class="form-horizontal" [formGroup]="customViewForm" autocomplete="off">
+    <dv-form-element
+      errorMessage="Please enter a name"
+      [label]="customView ? 'Rename this view' : 'Enter a name for this view'"
+      elementCol="12"
+      labelPosition="top"
+      [modelController]="customViewForm.get('name')"
+      [showRightIcon]="false"
+    >
+      <input
+        id="name"
+        formControlName="name"
+        placeholder="Enter a name"
+        class="form-control"
+        name="custom-view-name"
+      />
+    </dv-form-element>
+    <dv-form-element
+      errorMessage="Please select a group"
+      [label]="customView ? 'Move to' : 'Save to'"
+      labelPosition="top"
+      [modelController]="customViewForm.get('groupId')"
+      [showRightIcon]="false"
+      elementCol="12"
+      *ngIf="!isNewGroup"
+    >
+      <div
+        class="custom-view-group-radio-container"
+        *ngIf="customViewGroups?.length"
+      >
+        <dv-radio-group type="none">
+          <div
+            *ngFor="let customViewGroup of customViewGroups"
+            class="custom-view-group-row"
+          >
+            <dv-radio
+              [label]="customViewGroup.name"
+              [valueName]="customViewGroup.id"
+              [checkedVal]="
+                customView && customView.parent_id === customViewGroup.id
+              "
+              groupName="customview-group"
+              formControlName="groupId"
+            >
+            </dv-radio>
+          </div>
+        </dv-radio-group>
+      </div>
+      <app-empty-state
+        message="No groups available. Please add the view to a new group."
+        *ngIf="!customViewGroups?.length"
+      ></app-empty-state>
+    </dv-form-element>
+    <dv-form-element
+      errorMessage="Please enter a group name"
+      label="New group"
+      elementCol="12"
+      labelPosition="top"
+      [modelController]="customViewForm.get('groupName')"
+      [showRightIcon]="false"
+      *ngIf="isNewGroup"
+    >
+      <input
+        id="groupName"
+        formControlName="groupName"
+        placeholder="Enter a group name"
+        class="form-control"
+        name="custom-view-group-name"
+      />
+    </dv-form-element>
+    <dv-form-element [showRightIcon]="false">
+      <dv-checkbox
+        name="isNewGroup"
+        label="Add to a new group"
+        formControlName="isNewGroup"
+        (onValChange)="handleIsNewGroupChange($event)"
+      >
+      </dv-checkbox>
+    </dv-form-element>
+  </form>
+</ng-template>

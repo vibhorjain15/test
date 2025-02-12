@@ -1,0 +1,71 @@
+<app-modal
+  [title]="'Add Domain'"
+  firstButtonLabel="Add Domain"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="addDomain"
+  [isLoading]="loading"
+>
+  <ng-template #addDomain>
+    <form class="form-horizontal" [formGroup]="domainForm" autocomplete="off">
+      <dv-form-element
+        [fieldName]="'Domain'"
+        [modelController]="domainForm.get('domain_name')"
+        [showRightIcon]="false"
+        [labelCol]="4"
+        label="Domain"
+        [elementCol]="6"
+        [errorMessage]="
+          domainForm.get('domain_name').touched &&
+          domainForm.get('domain_name').invalid
+            ? 'Domain is Required'
+            : ''
+        "
+      >
+        <dv-select
+          [id]="'domain_name'"
+          formControlName="domain_name"
+          [clearable]="false"
+          [searchable]="true"
+          [list]="userDomains"
+          [loading]="userDomainsLoading"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element [fieldName]="'is_sso_enabled'" elementCol="16">
+        <span class="control-label col-sm-4 fw-bolder">
+          Enable
+          <small
+            tooltip="Check here to auto-enable SSO for all users of this domain"
+          >
+            <span appIcon name="info" size="fw"></span>
+          </small>
+        </span>
+
+        <div class="col-sm-6">
+          <dv-checkbox
+            formControlName="is_sso_enabled"
+            label="SSO"
+          ></dv-checkbox>
+        </div>
+      </dv-form-element>
+
+      <dv-form-element [fieldName]="'is_auto_approve_enabled'" elementCol="16">
+        <span for="domainUrl" class="control-label col-sm-4 fw-bolder">
+          Enable
+          <small
+            tooltip="Check here to enable auto user approval for this domain"
+          >
+            <span appIcon name="info" size="fw" colored></span>
+          </small>
+        </span>
+        <div class="col-sm-6">
+          <dv-checkbox
+            formControlName="is_auto_approve_enabled"
+            label="Domain Whitelisting"
+          ></dv-checkbox>
+        </div>
+      </dv-form-element>
+    </form>
+  </ng-template>
+</app-modal>

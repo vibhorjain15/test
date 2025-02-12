@@ -1,0 +1,3 @@
+:host ::ng-deep .col-list-wrapper > *:not(:last-child) {
+  margin-right: 20px;
+}

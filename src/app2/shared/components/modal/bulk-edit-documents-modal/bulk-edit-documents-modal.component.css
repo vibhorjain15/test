@@ -1,0 +1,5 @@
+.helper-edit-class {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

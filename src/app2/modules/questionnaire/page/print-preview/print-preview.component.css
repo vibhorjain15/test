@@ -1,0 +1,32 @@
+.print-header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.print-header-right-part {
+  display: flex;
+  justify-content: space-between;
+  width: 53%;
+}
+
+@media print {
+  ::ng-deep body * {
+    visibility: hidden;
+  }
+  ::ng-deep #subsectionPrint,
+  ::ng-deep #subsectionPrint * {
+    visibility: visible;
+  }
+  ::ng-deep #subsectionPrint {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+
+.print-preview-spinner {
+  display: flex;
+  justify-content: center;
+  margin: 100px;
+}

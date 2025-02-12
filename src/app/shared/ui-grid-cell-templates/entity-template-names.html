@@ -1,0 +1,5 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <span data-ng-repeat="template in row.entity.templates">
+    {{template.name}} <span ng-if="$index<row.entity.templates.length">, </span>
+  </span>
+</ui-grid-cell-contents>

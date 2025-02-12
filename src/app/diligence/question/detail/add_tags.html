@@ -1,0 +1,58 @@
+
+
+<div class="panel panel-primary">
+  <div class="panel-heading text-center">
+    <h5>
+      <b>Assign Tags</b>
+      <a class="pull-right clickable link-disguise"
+        data-ng-click="vm.displaySidebarPanel = false">
+        <icon name="close" size="lg"></icon>
+      </a>
+    </h5>
+  </div>
+
+  <div class="panel-body has-tags-form">
+    <!--<spinner data-ng-show="vm.loading_tags"></spinner>-->
+
+  <div data-ng-if="!vm.tags.length">
+    <empty-state data-ng-if="vm.is_admin" 
+                 icon-name="tag"
+                 action="vm.redirectToFirmSettings()"
+                 action-label="Set Firm Tags"
+                 message="No tags available. Please get in touch with your admin to set your firm-specific tags">
+    </empty-state>
+    <empty-state data-ng-if="!vm.is_admin" 
+                 icon-name="tag"
+                 message="No tags available. Please get in touch with your admin to set your firm-specific tags">
+    </empty-state>
+  </div>
+
+  <form novalidate
+        name="vm.tag_form"
+        data-ng-if="vm.tags.length"
+        data-ng-submit="vm.saveTags()">
+    <form-group field-name="Question Tags">
+      <tags-input ng-model="vm.temp_assigned_tags"
+                  id="tag"
+                  add-from-autocomplete-only="true"
+                  display-property="name">
+        <auto-complete source="vm.filterTags($query)"
+                       load-on-focus=true
+                       load-on-down-arrow=true
+                       load-on-empty=true
+                       min-length="1"></auto-complete>
+      </tags-input>
+    </form-group>
+  
+    <div class="form group">
+      <button type="submit"
+              button-loader="vm.saving_tags">Assign Tags</button>
+
+      <p class="text-muted space-on-top-lg">
+        <small>
+          <i>This helps tag investments for easier tracking of questions and answers.</i>
+        </small>
+      </p>
+    </div>
+  </form>
+</div>

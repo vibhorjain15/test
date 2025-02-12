@@ -1,0 +1,169 @@
+<div data-ng-if="vm.Utils.isAngular()" >
+<ng2-private-fund-detail></ng2-private-fund-detail>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <spinner data-ng-hide="vm.fund"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel"
+           data-ng-show="vm.fund">
+        <div class="bordered-right cell">
+          <h4 class="clear-margin max-w-350 lh1-5 word-wrap-break-word">
+            {{::vm.fund.name}}<br>
+            <small class="text-uppercase">({{::vm.fund.type}})</small>
+          </h4>
+        </div>
+
+        <div class="cell bordered-right text-center">
+          <span class="align-middle">PF #</span>
+            <small data-ng-if="vm.fund.id">{{::vm.fund.id}}</small>
+            <small data-ng-if="!vm.fund.id">N/A</small>
+            <br>
+          <small class="text-uppercase" data-ng-if="vm.fund.parent_name">({{::vm.fund.parent_name}})</small>
+          <small class="text-uppercase" data-ng-if="!vm.fund.parent_name">(Parent Firm: N/A)</small>
+        </div>
+
+        <div class="cell bordered-right text-center">
+            Is Subadvisor<br>{{vm.fund.is_subadvisor ? 'Yes' : 'No'}}
+        </div>
+        <div class="cell bordered-right text-center">
+            Has Subadvisor(s)<br> {{vm.fund.has_subadvisor ? 'Yes' : 'No'}}
+        </div>
+          <div class="cell text-center">
+              <button btn-type="transparent" data-ng-click="vm.goBack()">
+                  <div><icon name="arrow-back" size="2x"></icon></div>
+                  <small>Go back</small>
+              </button>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div col="6" offset="3"
+       authorized-view
+       hidden-from="InstitutionalSubscription, ProductiveSubscription, FormADVSubscription, FormADVAnalyticsSubscription, FullSubscription, SmartSubscription">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <empty-state icon-name="ban"
+                     message="This view is limited to premium subscribers of ADV Module. To learn more, or to unlock this analysis, please get in touch with us at subscriptions@diligencevault.com"
+                     action="vm.returnToList()"
+                    action-label="Back to list"></empty-state>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default" authorized-view hidden-from="FreeSubscription">
+    <div class="panel-heading">
+      <span class="align-middle">
+        Fund Summary
+      </span>
+    </div>
+    <div class="panel-body full-height align-middle">
+      <spinner data-ng-hide="vm.fund"></spinner>
+      <table class="fund-profile-items space-on-top space-on-bottom" data-ng-show="vm.fund">
+        <tbody>
+          <tr class="title-row">
+            <td><small class="text-uppercase">Gross Assets</small></td>
+            <td><small class="text-uppercase">Beneficial Owners</small></td>
+            <td><small class="text-uppercase">Master/Feeder</small></td>
+            <td><small class="text-uppercase">Exemption</small></td>
+            <td><small class="text-uppercase">Min Investment Amt</small></td>
+            <td><small class="text-uppercase">Domicile</small></td>
+
+          </tr>
+          <tr class="icon-row text-muted">
+              <td><icon name="tasks" size="2x"></icon></td>
+              <td><icon name="user" size="2x"></icon></td>
+              <td><icon name="branches" size="2x"></icon></td>
+              <td><icon name="bookmark" size="2x"></icon></td>
+              <td><icon name="fund" size="2x"></icon></td>
+              <td><icon name="home" size="2x"></icon></td>
+          </tr>
+          <tr>
+              <td><small>{{vm.fund.assets ? (vm.fund.assets | toMillion) : 'N/A'}}</small></td>
+              <td><small>{{vm.fund.beneficial_owner ? vm.fund.beneficial_owner : 'N/A'}}</small></td>
+              <td><small>{{vm.fund.master_feeder ? vm.fund.master_feeder : 'N/A' }}</small></td>
+              <td><small>{{vm.fund.structure ? vm.fund.structure : 'None'}}</small></td>
+              <td><small>{{vm.fund.min_amt ? (vm.fund.min_amt | toMillion) : 'N/A'}}</small></td>
+              <td><small>{{vm.fund.domicile ? vm.fund.domicile : 'N/A'}}</small></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row clearfix" authorized-view hidden-from="FreeSubscription">
+      <div col="4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">
+              Summary Facts
+            </span>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled due-diligence-history">
+              <li>
+                Ownership - Related Parties
+                <span class="pull-right">{{vm.fund.owner_related}}%</span>
+              </li>
+               <li>
+                Ownership - Fund of Funds
+                <span class="pull-right">{{vm.fund.owner_fof}}%</span>
+              </li>
+              <li>
+                Ownership - Non-US Persons
+                <span class="pull-right">{{vm.fund.owner_non_us}}%</span>
+              </li>
+              <li>
+                Unqualified Audit Opinion
+                <span class="pull-right">{{vm.fund.has_unqualified_opinion}}</span>
+              </li>
+              <li>
+                % Independent Asset Valuation
+                <span class="pull-right">{{vm.fund.pct_independent_valuation}}%</span>
+              </li>
+              <li>
+                # of Prime Brokers
+                <span class="pull-right">{{vm.fund.pb_count}}</span>
+              </li>
+              <li>
+                # of Custodians
+                <span class="pull-right">{{vm.fund.custodian_count}}</span>
+              </li>
+              <li>
+                # of Marketers
+                <span class="pull-right">{{vm.fund.marketer_count}}</span>
+              </li>
+            </ul>
+          </div>
+        </div> -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">
+              General Partner, Manager, Trustee or Director
+            </span>
+          </div>
+          <div class="panel-body">
+            <ul class="list-unstyled due-diligence-history">
+              <li>
+                List
+              </li>
+            </ul>
+          </div>
+        </div>
+     </div>
+
+      <div col="8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="align-middle">
+              Service Providers
+            </span>
+          </div>
+          <div class="panel-body">
+            <dv-grid grid-resource="vm.service_providers_resource" grid-name="'formadv-private-fund-service-provider'"></dv-grid>
+          </div>
+        </div>
+      </div>
+   </div>
+</div>

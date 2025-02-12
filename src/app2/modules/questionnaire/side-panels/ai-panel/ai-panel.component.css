@@ -1,0 +1,8 @@
+.ai-panel {
+  display: flex;
+  padding-top: 10px;
+  flex-direction: column;
+}
+.note-container-heading {
+  color: #27b098;
+}

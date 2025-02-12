@@ -1,0 +1,27 @@
+.clickable {
+  cursor: pointer;
+}
+.form-control{
+  background-color: none !important;
+}
+.danger {
+  color: #cd3333;
+}
+.danger-icon:hover {
+  color: #cd3333;
+}
+.info-icon-right-space {
+  left: -22px;
+}
+::ng-deep  .request-confidential-checkbox .checkbox-fit-width {
+    display: inline-block;
+}
+::ng-deep .width-29-pct {
+  width: 50%;
+}
+::ng-deep .width-70-pct{
+  width: 50%;
+}
+.checkbox-margin {
+  margin-left: 17px;
+}

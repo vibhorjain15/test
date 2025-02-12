@@ -1,0 +1,13 @@
+<div class="empty-state">
+  <div class="es-icon-wrapper" data-ng-show="iconName">
+    <icon name="{{iconName}}"></icon>
+  </div>
+
+  <div class="es-message-wrapper">
+    <p class="es-message">{{message}}</p>
+    <button btn-type="default"
+            size="sm"
+            data-ng-show="actionLabel"
+            data-ng-click="action()">{{actionLabel}}</button>
+  </div>
+</div>

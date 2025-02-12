@@ -1,0 +1,14 @@
+<app-modal [title]="'Approver Notes'" [initialTemplate]="viewApproverNotsRef">
+</app-modal>
+
+<ng-template #viewApproverNotsRef>
+  <div class="padding-10 disclaimerContainer">
+    <div id="approver-notes" class="approver-notes">
+      <span
+        *ngIf="approver_notes"
+        [innerHtml]="approver_notes | cleanHtml | dvSafeHtml"
+      >
+      </span>
+    </div>
+  </div>
+</ng-template>

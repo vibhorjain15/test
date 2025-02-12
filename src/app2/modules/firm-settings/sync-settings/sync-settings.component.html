@@ -1,0 +1,89 @@
+<div class="panel panel-default">
+  <div class="panel-heading border-btm-none sync-heading">
+    <h5 class="panel-title heading-text">Sync Settings</h5>
+  </div>
+  <div class="panel-body">
+    <div class="panel-info">
+      <div class="panel-heading">
+        Auto-sync will update the data from Dynamics365 to DiligenceVault at the
+        given frequency.
+      </div>
+    </div>
+    <div class="row clearfix mt">
+      <div col="6">
+        <h5 class="panel-title heading-text" style="margin-top: 3px">
+          Enable Auto-Sync
+        </h5>
+      </div>
+      <div col="6">
+        <ui-switch
+          size="small"
+          [(ngModel)]="enable_sync"
+          [ngModelOptions]="{ standalone: true }"
+          ariaLabel="Enable Auto-Sync"
+          tabindex="0"
+          title="Enable Auto Sync"
+          UiSwitchButton
+        ></ui-switch>
+      </div>
+    </div>
+
+    <div class="clearfix panel panel-default mt border-none">
+      <div col="12" id="js-firms-profile" class="panel-heading div-border m-0">
+        <form
+          class="form-horizontal"
+          name="sync_form"
+          [formGroup]="enableSyncForm"
+          autocomplete="off"
+        >
+          <div>
+            <span col="6" class="text-muted mt">Set Frequency</span>
+            <ng-select
+              class="mt"
+              col="6"
+              formControlName="frequencyVal"
+              placeholder="-- Modify Frequency --"
+              name="frequency"
+              [clearable]="false"
+              [searchable]="true"
+            >
+              <ng-option
+                *ngFor="let frequency of frequencyList"
+                [value]="frequency.id"
+              >
+                {{ frequency.value }}
+              </ng-option>
+            </ng-select>
+          </div>
+
+          <div>
+            <span col="6" class="text-muted mt">Start Date</span>
+            <app-date-picker
+              class="mt"
+              col="6"
+              [value]="enableSyncForm.value.startDate"
+              [placeholder]="'Select start date'"
+            >
+            </app-date-picker>
+          </div>
+
+          <div>
+            <span col="6" class="text-muted mt">Start Time</span>
+            <app-dv-timepicker
+              class="mt"
+              col="6"
+              [selectedTime]="enableSyncForm.value.startTime"
+            >
+            </app-dv-timepicker>
+          </div>
+
+          <div class="form-group">
+            <div col="5" offset="5">
+              <dv-button [loader]="saving" ariaLabel="Save"> Save </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

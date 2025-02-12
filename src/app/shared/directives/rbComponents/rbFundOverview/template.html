@@ -1,0 +1,42 @@
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <span class="pull-left"><b>Fund Profile</b></span>
+
+          <span class="pull-right">
+            Strategy: <b>{{ fund_overview.profile_data.strategy || 'HF-Equity Hedge'}}</b>
+          </span>
+    </div>
+
+    <div class="panel-body full-height align-middle">
+        <table class="fund-profile-items space-on-top space-on-bottom">
+            <tbody>
+            <tr class="title-row">
+                <td><small class="text-uppercase">Fund AUM</small></td>
+                <td><small class="text-uppercase">Fees</small></td>
+                <td><small class="text-uppercase">{{!fund_overview.is_PE ? 'Soft Lock' : 'Tenor'}}</small></td>
+                <td><small class="text-uppercase">Incep. Date</small></td>
+                <td><small class="text-uppercase">HWM</small></td>
+
+            </tr>
+            <tr class="icon-row">
+                <td><icon name="tasks" size="2x"></icon></td>
+                <td><icon name="briefcase" size="2x"></icon></td>
+                <td><icon name="unlock-alt" size="2x"></icon></td>
+                <td><icon name="calendar" size="2x"></icon></td>
+                <td><icon name="warning" size="2x"></icon></td>
+            </tr>
+            <tr>
+                <td><small>{{fund_overview.profile_data.firm_aum}} MM</small></td>
+                <td><small>{{fund_overview.profile_data.management_fee}}% mgmt <br> {{!fund_overview.is_PE ? fund_overview.profile_data.performance_fee : fund_overview.profile_data.carry_fee }}% {{!fund_overview.is_PE ? 'perf' : 'carry'}}</small></td>
+                <td>
+                    <small data-ng-hide="fund_overview.is_category3">7 yrs with <br> 1 yr ext</small>
+                    <small data-ng-show="fund_overview.is_category3">3.00% fees <br> 15% gate <br> 1 year <br> 30 day notice</small>
+                </td>
+                <td><small>{{fund_overview.profile_data.inception_date}}</small></td>
+                <td><small>{{fund_overview.profile_data.hwm}}</small></td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

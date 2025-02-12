@@ -1,0 +1,21 @@
+<div class="horizontal-stacked-chart">
+  <ul class="hsc-legends list-inline">
+    <li data-ng-repeat="row in data"
+        class="scl-info clickable"
+        data-ng-click="selectRow(row)"
+        data-ng-class="{'defocus': selectedRow && selectedRow != row}">
+      <span class="scl-color-block" data-ng-style="row.legendStyle"></span>
+      <strong>{{row.label}}</strong>
+      <span class="text-muted">{{row.percent}} %</span>
+      <strong data-ng-if="row.displayCompletionText">{{row.completionText}}</strong>
+    </li>
+  </ul>
+
+  <div class="progress hsc-progress">
+    <div class="progress-bar"
+         data-ng-style="row.progressBarStyle"
+         data-ng-click="selectRow(row)"
+         data-ng-class="{'defocus': selectedRow && selectedRow != row}"
+         data-ng-repeat="row in data"></div>
+  </div>
+</div>

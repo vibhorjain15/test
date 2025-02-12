@@ -1,0 +1,59 @@
+<side-panel-wrapper
+  [title]="'Internal Notes'"
+  [isLoading]="buttonLoader"
+  (onCancelClick)="onCancel()"
+  [isFirstButtonDisabled]="!noteText || readOnly"
+  (onFirstClick)="saveNote($event)"
+>
+  <div class="notes-helper">
+    <helper-text class="helper-text">
+      These notes are internal to your team and are not visible externally
+    </helper-text>
+  </div>
+  <div class="note-container">
+    <div class="more-text">
+      <span *ngIf="type == 'Question'">
+        <b class="note-container-heading">Question: </b>
+        <span [innerHTML]="question?.text"></span>
+      </span>
+      <span *ngIf="type != 'Question'">
+        <b class="note-container-heading">Sub-category: </b>
+        <span [innerHTML]="question?.name"></span>
+      </span>
+    </div>
+    <div *ngIf="loading" class="text-center loader" aria-hidden="true">
+      <app-spinner></app-spinner>
+    </div>
+    <div class="notes" *ngIf="!loading">
+      <ng-container *ngFor="let note of notes; let i = index">
+        <dv-qa-info-tab
+          #notes
+          class="dv-notes space-on-bottom-xl"
+          [note]="note.text"
+          [firstName]="note.first_name"
+          [lastName]="note.last_name"
+          [userId]="note.created_by"
+          [showNumber]="false"
+          noteType="revision"
+          [index]="i"
+          [lastEdited]="note.updated_at"
+          (onDeleteEvent)="handleDelete($event)"
+          (onEditMode)="handleEditMode($event, i)"
+          (onEditNote)="handleEditNote($event)"
+          [readOnly]="readOnly"
+        ></dv-qa-info-tab>
+      </ng-container>
+    </div>
+    <div>
+      <dv-editor
+        [configObj]="tinyMceInit"
+        [literVersion]="true"
+        [isMentions]="true"
+        [value]="noteText"
+        (onChange)="handleNoteEdit($event)"
+        role="region"
+        aria-label="Internal Note Editor"
+      ></dv-editor>
+    </div>
+  </div>
+</side-panel-wrapper>

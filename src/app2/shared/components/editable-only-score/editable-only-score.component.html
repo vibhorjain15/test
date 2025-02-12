@@ -1,0 +1,29 @@
+<div class="dd-editable-score">
+  <div class="input-group input-group-sm">
+    <input
+      type="number"
+      class="form-control"
+      [(ngModel)]="score"
+      [ngStyle]="{ background: score_class, color: font_color }"
+      (change)="onScoreChanged()"
+      min="0"
+      [max]="maxScore"
+      [tooltip]="score_tooltip"
+      placement="top"
+      [disabled]="type == 'simple' ? readonly : true"
+      [attr.aria-label]="score_tooltip"
+      autocomplete="off"
+    />
+    <div class="input-group-btn">
+      <button
+        (click)="handleIconClick($event)"
+        appButton
+        class="btn btn-default btn-xs"
+        [attr.aria-label]="type == 'simple' ? 'pencil' : 'customize'"
+        [disabled]="iconReadonly"
+      >
+        <span appIcon [name]="type == 'simple' ? 'pencil' : 'customize'"></span>
+      </button>
+    </div>
+  </div>
+</div>

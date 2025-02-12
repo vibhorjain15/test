@@ -1,0 +1,603 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <b>
+          Choose a DDQ workflow to set up and respond to an investor request,
+          create a standard DDQ for your product(s)/firm, or build your Q/A
+          content library.
+        </b>
+      </div>
+      <app-spinner
+        [broadSpinner]="true"
+        [spinnerHeight]="35"
+        *ngIf="loading_data"
+      ></app-spinner>
+      <div class="panel-body clearfix" *ngIf="!loading_data">
+        <div class="row space-on-bottom-xl">
+          <div col="12" class="text-center">
+            <div class="btn-group">
+              <span
+                class="btn btn-default"
+                [ngClass]="{
+                  'btn-primary':
+                    request?.type?.toLowerCase() ==
+                    RequestTypes.INVESTOR.toLowerCase()
+                }"
+                (click)="changeRequestType($event, RequestTypes.INVESTOR, true)"
+                >Manage Investor Request</span
+              >
+              <span
+                class="btn btn-default"
+                [ngClass]="{
+                  'btn-primary':
+                    request?.type?.toLowerCase() ==
+                    RequestTypes.SHAREABLE.toLowerCase()
+                }"
+                (click)="
+                  changeRequestType($event, RequestTypes.SHAREABLE, true)
+                "
+                >Create Standard DDQ</span
+              >
+              <span
+                class="btn btn-default"
+                [ngClass]="{
+                  'btn-primary':
+                    request?.type?.toLowerCase() ==
+                    RequestTypes.PREAPPROVED.toLowerCase()
+                }"
+                (click)="
+                  changeRequestType($event, RequestTypes.PREAPPROVED, true)
+                "
+                >Build Your Q/A Library</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="row space-on-bottom-xl">
+          <div col="12">
+            <helper-text
+              *ngIf="
+                request?.type?.toLowerCase() ==
+                RequestTypes.INVESTOR.toLowerCase()
+              "
+            >
+              For RFP and investor relations teams to respond to or set up and
+              manage inbound investor requests.
+            </helper-text>
+            <helper-text
+              *ngIf="
+                request?.type?.toLowerCase() ==
+                RequestTypes.SHAREABLE.toLowerCase()
+              "
+            >
+              For your team to build and maintain historical and current annual
+              and quarterly DDQs at the firm or product level. You can create
+              new versions, update content, and then share with your investors.
+            </helper-text>
+            <helper-text
+              *ngIf="
+                request?.type?.toLowerCase() ==
+                RequestTypes.PREAPPROVED.toLowerCase()
+              "
+            >
+              For SMEs to build and maintain your firm’s Q/A content library
+              with compliant and up-to-date responses for use in investor
+              requests and standard DDQs. Updates here will reflect in your Q/A
+              Library.
+            </helper-text>
+          </div>
+        </div>
+
+        <div class="row">
+          <div col="12">
+            <app-spinner
+              [broadSpinner]="true"
+              [spinnerHeight]="35"
+              *ngIf="loading_request"
+            ></app-spinner>
+            <form
+              novalidate
+              name="vm.investor_request_form"
+              class="form-horizontal"
+              [formGroup]="ddqForm"
+              *ngIf="
+                request?.type?.toLowerCase() !==
+                RequestTypes.PREAPPROVED.toLowerCase()
+              "
+              autocomplete="off"
+            >
+              <dv-form-element
+                [showRightIcon]="false"
+                *ngIf="shownMap['investor']"
+                fieldName="Pick an Investor"
+                [modelController]="ddqForm.get('investorId')"
+                label="Pick an Investor"
+                [elementCol]="'4'"
+                [labelCol]="'4'"
+                [isRequired]="true"
+              >
+                <dv-select
+                  name="investor"
+                  [id]="'investorId'"
+                  [list]="investors"
+                  formControlName="investorId"
+                  (onSelectChange)="onInvestorChange()"
+                  bindLabel="display_name"
+                  [clearable]="false"
+                  [virtualScroll]="true"
+                  [searchable]="true"
+                  placeholder=" Please type to search or add investor "
+                  addTagText="Add New Investor : "
+                  [addTag]="openAddInvestorModal"
+                  [loading]="investorLoading"
+                  #ddInvestor
+                ></dv-select>
+                <small class="pull-right">
+                  <a class="clickable" (click)="openAddInvestorModal('')"
+                    >Add New Investor</a
+                  >
+                </small>
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    ddqForm.get('investorId').touched &&
+                    ddqForm.get('investorId').invalid
+                  "
+                >
+                  Investor Name is required
+                </div>
+              </dv-form-element>
+              <dv-form-element
+                [showRightIcon]="false"
+                fieldName="Entity Type"
+                *ngIf="shownMap['product']"
+                [modelController]="ddqForm.get('entityType')"
+                label="Entity Type"
+                [elementCol]="'4'"
+                [labelCol]="'4'"
+                [isRequired]="true"
+                errorMessage="Entity type is required"
+              >
+                <dv-select
+                  [id]="'entityType'"
+                  formControlName="entityType"
+                  bindLabel="label"
+                  bindValue="name"
+                  [clearable]="false"
+                  [searchable]="true"
+                  placeholder="Select an entity type"
+                  (onSelectChange)="setEntity($event)"
+                  [list]="entityTypes"
+                  [contoller]="ddqForm.get('entityType')"
+                >
+                </dv-select>
+              </dv-form-element>
+              <ng-container
+                *ngIf="
+                  current_selected_entity_type == keywordConstants.Product &&
+                  shownMap['product']
+                "
+              >
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Product"
+                  [modelController]="ddqForm.get('entityId')"
+                  label="Product"
+                  [elementCol]="'4'"
+                  [labelCol]="'4'"
+                  [isRequired]="true"
+                  errorMessage="Product is required"
+                >
+                  <dv-select
+                    [id]="'entityId'"
+                    formControlName="entityId"
+                    bindLabel="name"
+                    [required]="!request.is_firm_dd"
+                    [disabled]="request.is_firm_dd"
+                    bindValue="id"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Select a product"
+                    (onSelectChange)="
+                      setEntities($event, keywordConstants.Product)
+                    "
+                    [list]="funds"
+                    [contoller]="ddqForm.get('entityId')"
+                    appendTo="body"
+                    [errorMessage]="'Invalid Entity Id'"
+                  >
+                  </dv-select>
+                  <small class="pull-right">
+                    <a class="clickable" (click)="openAddProductModal('')"
+                      >Add New Product</a
+                    >
+                  </small>
+                </dv-form-element>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  current_selected_entity_type == keywordConstants.Firm &&
+                  shownMap['product']
+                "
+              >
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Firm"
+                  label="Firm"
+                  [elementCol]="'4'"
+                  [labelCol]="'4'"
+                  [isRequired]="true"
+                >
+                  <div class="col-md-12">
+                    <p class="control-label pull-left">
+                      {{ current_firm?.name }}
+                    </p>
+                  </div>
+                </dv-form-element>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  current_selected_entity_type == keywordConstants.Strategy &&
+                  shownMap['product']
+                "
+              >
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Strategy"
+                  [modelController]="ddqForm.get('entityId')"
+                  label="Strategy"
+                  [elementCol]="'4'"
+                  [labelCol]="'4'"
+                  [isRequired]="true"
+                  errorMessage="Strategy is required"
+                >
+                  <dv-select
+                    formControlName="entityId"
+                    [required]="!request.is_firm_dd"
+                    [disabled]="request.is_firm_dd"
+                    bindLabel="name"
+                    bindValue="id"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Select a strategy"
+                    (onSelectChange)="
+                      setEntities($event, keywordConstants.Strategy)
+                    "
+                    [list]="strategies"
+                    [contoller]="ddqForm.get('entityId')"
+                    appendTo="body"
+                    #ddStrategy
+                    [id]="'entityId'"
+                  >
+                  </dv-select>
+                  <small class="pull-right">
+                    <a class="clickable" (click)="openAddStrategyModal('')"
+                      >Add New Strategy</a
+                    >
+                  </small>
+                </dv-form-element>
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  current_selected_entity_type == keywordConstants.Vehicle &&
+                  shownMap['product']
+                "
+              >
+                <dv-form-element
+                  [showRightIcon]="false"
+                  fieldName="Vehicle"
+                  [modelController]="ddqForm.get('entityId')"
+                  label="Vehicle"
+                  [elementCol]="'4'"
+                  [labelCol]="'4'"
+                  [isRequired]="true"
+                  errorMessage="Vehicle is required"
+                >
+                  <dv-select
+                    [id]="'entityId'"
+                    formControlName="entityId"
+                    bindLabel="name"
+                    [required]="!request.is_firm_dd"
+                    [disabled]="request.is_firm_dd"
+                    bindValue="id"
+                    [clearable]="false"
+                    [searchable]="true"
+                    placeholder="Select a vehicle"
+                    (onSelectChange)="
+                      setEntities($event, keywordConstants.Vehicle)
+                    "
+                    [list]="vehicles"
+                    [contoller]="ddqForm.get('entityId')"
+                    appendTo="body"
+                    #ddVehicle
+                  >
+                  </dv-select>
+                  <small class="pull-right">
+                    <a class="clickable" (click)="openAddVehicleModal('')"
+                      >Add New Vehicle</a
+                    >
+                  </small>
+                </dv-form-element>
+              </ng-container>
+
+              <dv-form-element
+                [showRightIcon]="false"
+                *ngIf="shownMap['name']"
+                fieldName="Name this Project"
+                [modelController]="ddqForm.get('name')"
+                [isRequired]="true"
+                label="Name this Project"
+                [elementCol]="'4'"
+                [labelCol]="'4'"
+              >
+                <input
+                  type="text"
+                  [id]="'name'"
+                  class="form-control"
+                  formControlName="name"
+                  maxlength="320"
+                  required
+                  placeholder="Example: Investment Profile"
+                />
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    ddqForm.get('name').touched &&
+                    ddqForm.get('name').errors?.required
+                  "
+                >
+                  Name is required
+                </div>
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    ddqForm.get('name').touched &&
+                    ddqForm.get('name').errors?.pattern
+                  "
+                >
+                  {{
+                    errorMessageMap.avoidFirstSplCharacter
+                      | interpolate : "Project Name"
+                  }}
+                </div>
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    ddqForm.get('name').touched &&
+                    ddqForm.get('name').errors?.containsHtml
+                  "
+                >
+                  {{
+                    errorMessageMap.containsHtml | interpolate : "Project Name"
+                  }}
+                </div>
+
+                <div
+                  class="space-on-top-sm"
+                  *ngIf="checkInvestor() && checkProduct()"
+                >
+                  Suggested Name:
+                  <a class="clickable" (click)="setSuggestedProjectName()">
+                    {{ getSuggestedProjectName() }}
+                  </a>
+                </div>
+              </dv-form-element>
+              <dv-form-element
+                [showRightIcon]="false"
+                *ngIf="shownMap['dueDate']"
+                fieldName="Assign Due Date"
+                label="Assign Due Date"
+                [elementCol]="'4'"
+                [modelController]="ddqForm.get('due_at')"
+                [labelCol]="'4'"
+                infoIcon="Due date should be greater than or equal to as of date"
+                [isRequired]="true"
+              >
+                <app-date-picker
+                  [id]="'due_at'"
+                  [value]="ddqForm.get('due_at').value"
+                  [minDate]="minDate"
+                  (change)="handleDueDate($event)"
+                  [class]="dueDateError ? 'has-error' : ''"
+                  [placeholder]="'Select due date'"
+                >
+                </app-date-picker>
+                <div class="space-on-top-sm" *ngIf="suggestedDueDate">
+                  <small>
+                    Suggested Due Date is:
+                    <a
+                      class="clickable"
+                      title="Click to select"
+                      (click)="setSuggestedDueDate()"
+                      tabindex="0"
+                    >
+                      {{ suggestedDueDate | date }}
+                    </a>
+                  </small>
+                </div>
+              </dv-form-element>
+              <dv-form-element
+                [showRightIcon]="false"
+                *ngIf="shownMap['asOfDate']"
+                fieldName="As of Date"
+                [modelController]="ddqForm.get('as_of_date')"
+                label="As of Date"
+                [elementCol]="'4'"
+                [labelCol]="'4'"
+                infoIcon="As of date should be less than or equal to due date"
+                [isRequired]="true"
+              >
+                <app-date-picker
+                  [id]="'as_of_date'"
+                  [value]="ddqForm.get('as_of_date').value"
+                  [maxDate]="maxAsOfDate"
+                  (change)="handleAsOfDate($event)"
+                  [placeholder]="'Select as of date'"
+                >
+                </app-date-picker>
+                <div class="space-on-top-sm" *ngIf="suggestedAsOfDate">
+                  <small>
+                    Suggested As of Date is:
+                    <a
+                      class="clickable"
+                      title="Click to select"
+                      (click)="setSuggestedAsOfDate()"
+                      tabindex="0"
+                    >
+                      {{ suggestedAsOfDate | date }}
+                    </a>
+                  </small>
+                </div>
+              </dv-form-element>
+
+              <dv-form-element
+                [showRightIcon]="false"
+                fieldName="Questionnaire name"
+                [modelController]="ddqForm.get('questionnaire')"
+                label="Upload a New Questionnaire"
+                [elementCol]="'4'"
+                [disabled]="ddqForm.get('reuseQuestionnaireCheck').value"
+                [labelCol]="'4'"
+                infoText="Attach and digitize your questionnaire (.docx or .xlxs file)"
+              >
+                <dv-uploader
+                  *ngIf="
+                    request.type.toLowerCase() ==
+                    RequestTypes.INVESTOR.toLowerCase()
+                  "
+                  dragLabel="Drag & Drop your file here"
+                  [disabled]="ddqForm.get('reuseQuestionnaireCheck').value"
+                  [isMultiple]="false"
+                  (onFileUpload)="handleQuestionnaireUpload($event)"
+                  [accept]="'.docx,.xlsx'"
+                ></dv-uploader>
+                <dv-uploader
+                  *ngIf="
+                    request.type.toLowerCase() ==
+                    RequestTypes.SHAREABLE.toLowerCase()
+                  "
+                  dragLabel="Drag & Drop your file here"
+                  [disabled]="ddqForm.get('reuseQuestionnaireCheck').value"
+                  [isMultiple]="false"
+                  (onFileUpload)="handleQuestionnaireUpload($event)"
+                  [accept]="'.docx,.xlsx'"
+                ></dv-uploader>
+              </dv-form-element>
+
+              <dv-form-element
+                [showRightIcon]="false"
+                fieldName="Reuse an Existing Questionnaire"
+                label="Reuse an Existing Questionnaire"
+                [elementCol]="'4'"
+                [labelCol]="'4'"
+                [centerAligned]="true"
+              >
+                <ui-switch
+                  formControlName="reuseQuestionnaireCheck"
+                  size="small"
+                  class="space-on-left"
+                  (change)="handleReuseQuestionnaire($event)"
+                >
+                  <div class="sr-only">Reuse an Existing Questionnaire</div>
+                </ui-switch>
+              </dv-form-element>
+
+              <dv-form-element
+                [showRightIcon]="false"
+                *ngIf="
+                  shownMap['template'] && !ddqForm.get('templateId').disabled
+                "
+                fieldName="Template Name"
+                [modelController]="ddqForm.get('templateId')"
+                [label]="
+                  shownMap['investor']
+                    ? 'Select a Questionnaire'
+                    : 'Select Template'
+                "
+                [elementCol]="'4'"
+                [disabled]="ddqForm.get('templateId').disabled"
+                [labelCol]="'4'"
+                infoText="{{
+                  shownMap['investor']
+                    ? 'Reuse an existing questionnaire if you are responding to a similar request received in the past from this investor.'
+                    : 'Create or use templates from the drop down.'
+                }}"
+              >
+                <dv-select
+                  [list]="templates"
+                  formControlName="templateId"
+                  (ngModelChange)="onTemplateChange()"
+                  [disabled]="ddqForm.get('templateId').disabled"
+                  bindLabel="name"
+                  bindValue="id"
+                  [clearable]="false"
+                  [searchable]="true"
+                  [placeholder]="
+                    shownMap['investor']
+                      ? 'Search for a questionnaire'
+                      : 'Please type to search or add template'
+                  "
+                  create-option-text="'Add New Template'"
+                  [addTagText]="
+                    shownMap['investor'] ? '' : 'Add New Template : '
+                  "
+                  [addTag]="shownMap['investor'] ? '' : openAddTemplateModal"
+                  #ddTemplate
+                  name="template"
+                  [id]="'templateId'"
+                  [virtualScroll]="false"
+                ></dv-select>
+
+                <div
+                  class="text-danger"
+                  *ngIf="
+                    ddqForm.get('templateId').touched &&
+                    ddqForm.get('templateId').invalid
+                  "
+                >
+                  Template Name is required
+                </div>
+              </dv-form-element>
+              <div col="4" offset="4" class="text-center new-ddq-buttons">
+                <dv-button
+                  [disabled]="!ddqForm.valid || dueDateError"
+                  [loader]="creating_ddq || saving_template"
+                  (onClick)="
+                    ddqForm.get('questionnaire').value &&
+                    !ddqForm.get('reuseQuestionnaireCheck').value
+                      ? uploadParserFile()
+                      : createDueDiligence()
+                  "
+                >
+                  {{
+                    ddqForm.get("questionnaire").value &&
+                    !ddqForm.get("reuseQuestionnaireCheck").value
+                      ? "Import"
+                      : "Start Populating"
+                  }}
+                </dv-button>
+                <dv-button btnType="default" (onClick)="handleGoBack()">
+                  Back
+                </dv-button>
+              </div>
+            </form>
+            <new-qa-library
+              [entityTypes]="entityTypes"
+              [products]="funds"
+              [strategies]="strategies"
+              [vehicles]="vehicles"
+              [templates]="templates"
+              [currentFirm]="current_firm"
+              (emitAddTemplateModal)="openAddTemplateModal('', $event)"
+              *ngIf="
+                request?.type?.toLowerCase() ===
+                RequestTypes.PREAPPROVED.toLowerCase()
+              "
+            ></new-qa-library>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

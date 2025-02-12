@@ -1,0 +1,76 @@
+<div class="panel panel-default relative">
+  <dv-panel-heading
+    [heading]="'User Roles'"
+    [controls]="panelHeadingControls"
+    class="panel-heading"
+  ></dv-panel-heading>
+
+  <div class="panel-info">
+    <div class="panel-heading">
+      Manage user roles and associate users to each user role from here.
+    </div>
+  </div>
+
+  <div>
+    <div
+      class="panel panel-default bg-sky-blue"
+      *ngIf="show_bulk_actions"
+      aria-label="Bulk Actions Panel"
+    >
+      <div class="panel-body padded-lg">
+        <h5 class="inline space-on-right-lg">
+          <strong
+            >Selected Records :
+            <span class="badge">{{ totalSelectedRecords }}</span>
+          </strong>
+        </h5>
+        <a
+          class="btn btn-default success space-on-right-lg"
+          tooltip="Edit user roles"
+          [ngClass]="{
+            linkDisabled: totalSelectedRecords > 1000 || freeSubscription
+          }"
+          (click)="bulkAddUsersToFunctions()"
+          aria-label="Edit user roles"
+        >
+          <strong><span appIcon name="pencil"></span> </strong>
+        </a>
+        <a
+          class="btn btn-default space-on-right-lg"
+          tooltip="Remove selected assignments"
+          [ngClass]="{
+            linkDisabled: totalSelectedRecords > 1000 || freeSubscription
+          }"
+          (click)="bulkRemoveFunctions()"
+          aria-label="Remove selected assignments"
+        >
+          <strong><span appIcon name="trashcan"></span> </strong>
+        </a>
+        <a
+          class="btn pull-right text-black danger"
+          tooltip="Close"
+          (click)="closeQuickActions()"
+          aria-label="Close"
+        >
+          <strong>
+            <span appIcon name="close"></span>
+          </strong>
+        </a>
+      </div>
+    </div>
+    <div class="panel-body" *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="gridData"
+        [name]="gridName"
+        [onSelectionChanged]="onSelectionChanged"
+        [onRowSelected]="onRowSelected"
+        #functionsGrid
+      ></app-dv-grid>
+    </div>
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="50"
+      *ngIf="!render_grid"
+    ></app-spinner>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+<dv-radio
+  type="info inline"
+  data-ng-value="true"
+  data-ng-change="vm.onResponseChange('booleanResponse')"
+  data-ng-model="vm.response.attributes.booleanResponse"
+  label="Yes">
+</dv-radio>
+
+<dv-radio
+  type="info inline"
+  data-ng-value="false"
+  class="space-on-left"
+  data-ng-change="vm.onResponseChange('booleanResponse')"
+  data-ng-model="vm.response.attributes.booleanResponse"
+  label="No"
+  data-ng-disabled="vm.response.attributes.is_NA">
+</dv-radio>
+
+<div data-ng-show="vm.response.attributes.booleanResponse" class="space-on-top">
+  <textarea class="form-control"
+          placeholder="Please provide explanation"
+          ui-tinymce="vm.tinymceOptions"
+          data-ng-model-options="{ debounce: { 'default': 500 } }"
+          data-ng-change="vm.onResponseChange('textResponse')"
+          data-ng-model="vm.response.attributes.textResponse"
+          required></textarea>          
+</div>

@@ -1,0 +1,16 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-investor-pitch></ng2-investor-pitch>
+</div>
+<div class="panel panel-default" data-ng-if="vm.Utils.isAngularJS()">
+    <div class="panel-heading">
+      <h5 class="panel-title">Firms Open to Opportunities</h5>
+    </div>
+    <div class="panel-body">
+      <div class="row clearfix">
+        <div>
+            <dv-grid grid-resource="vm.investor_pitch" grid-name="'investor_pitch'"></dv-grid>
+          </div>
+      </div>
+    </div>
+</div>
+  

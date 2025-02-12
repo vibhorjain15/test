@@ -1,0 +1,63 @@
+<!--<div class="tab-main">
+ <div class="panel panel-default tab-bar">
+    <div class="panel-body list-wrapper dv-tab">
+      <ng-container *ngFor="let item of headingList; let i = index">
+        <div *ngIf="item.condition" class="dv-border">
+          <dv-label
+            class="clickable tab-label"
+            (click)="handleUnsavedChanges(item.link, i)"
+            [label]="item.name"
+            [type]="item.active ? 'bold' : ''"
+            [color]="item.active ? 'primary' : 'default'"
+            size="large"
+          ></dv-label>
+          <diV class="border" *ngIf="item.active"></diV>
+        </div>
+      </ng-container>
+      <div class="tab-spinner text-center" *ngIf="loading">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+  </div> 
+   <div
+    class="tab-button"
+    *ngIf="
+      user && user.isManager && isQuestionnaireAngular && currentState == 1
+    "
+  >
+    <dv-button
+      btnType="darkBlue"
+      (onClick)="handleQaBankOpen()"
+      leftIcon="search"
+      borderRadius="2px"
+      fontSizeType="large"
+      >Q/A Search</dv-button
+    >
+  </div>
+</div>-->
+<dv-tabs
+  *ngIf="headingList"
+  [list]="headingList"
+  [loading]="loading"
+  [canChangeLocally]="false"
+  (onTabClick)="handleUnsavedChanges($event)"
+  class="sticky-tab"
+>
+  <div
+    class="tab-button"
+    *ngIf="
+      user && user.isManager && isQuestionnaireAngular && currentState == 1
+    "
+  >
+    <dv-button
+      btnType="darkBlue"
+      (onClick)="handleQaBankOpen()"
+      leftIcon="search"
+      borderRadius="2px"
+      fontSizeType="large"
+      ariaLabel="Open Q&A Search"
+    >
+      Q/A Search
+    </dv-button>
+  </div>
+</dv-tabs>

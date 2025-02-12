@@ -1,0 +1,7 @@
+<div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+        class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{grid.appScope.vm.displayGroupHeaderName(grid, row, col).length > 0? grid.appScope.vm.displayGroupHeaderName(grid, row, col): COL_FIELD CUSTOM_FILTERS}}">
+        {{grid.appScope.vm.displayOwnerHeaderName(grid, row, col)}}
+</div>
+<div class="ui-grid-cell-contents" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}" ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    {{COL_FIELD CUSTOM_FILTERS}}
+</div>

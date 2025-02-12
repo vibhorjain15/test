@@ -1,0 +1,435 @@
+<div class="workflow-panel" role="region" aria-label="Workflow Management">
+  <div class="text-center">
+    <app-spinner
+      *ngIf="!workflow_steps || loading_workflow_steps"
+    ></app-spinner>
+  </div>
+
+  <span *ngIf="workflow_steps">
+    <div class="row clearfix">
+      <div class="col-md-3">
+        <div class="panel panel-default md-panel">
+          <div class="panel-heading">
+            <h5 class="panel-title">Workflow Steps</h5>
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a
+                  tooltip="New Step"
+                  container="body"
+                  class="panel-control"
+                  (click)="manageWorkflowStep()"
+                  role="button"
+                  tabindex="0"
+                  title="Manage work flow step"
+                >
+                  <span appIcon name="plus" aria-hidden="true"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <app-empty-state
+              message="No Workflow steps added. Add one by clicking the add button above."
+              *ngIf="!(workflow_steps.length > 0)"
+            ></app-empty-state>
+            <div class="list-group" *ngIf="workflow_steps.length">
+              <div
+                [elemPosition]="$index"
+                [list]="workflow_steps"
+                DvDragDrop
+                (returnUpdatedList)="handleUpdateList(step, $event, $index)"
+                [ngClass]="{ active: selectedStep === step }"
+                class="list-group-item has-controls"
+                *ngFor="let step of workflow_steps; let $index = index"
+                (click)="getWorkflowActions(step)"
+              >
+                <div>
+                  <span class="space-on-right align-middle sort-handle">
+                    <span
+                      appIcon
+                      name="th"
+                      class="js-sort-handle"
+                      aria-hidden="true"
+                    ></span>
+                  </span>
+                  <span>{{ step.name }}</span>
+                  <span
+                    [tooltip]="step.description"
+                    container="body"
+                    appIcon
+                    name="info"
+                    class="space-on-left"
+                    [ngClass]="{
+                      disableField: !step.description,
+                    }"
+                    aria-label="{{
+                      step.description ? 'Description: ' + step.description : ''
+                    }}"
+                  ></span>
+                </div>
+                <div class="controls">
+                  <span
+                    class="control js-edit-category"
+                    (click)="manageWorkflowStep(step, $index)"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Edit Step ' + step.name"
+                  >
+                    <span appIcon name="pencil" aria-hidden="true"></span>
+                  </span>
+                  <span
+                    class="control js-delete-category control-danger"
+                    (click)="confirmRemoveStep(step)"
+                    placement="left"
+                    role="button"
+                    title="Remove step"
+                    tabindex="0"
+                    aria-label="Remove Step {{ step.name }}"
+                    title="Remove step"
+                  >
+                    <span appIcon name="trashcan" aria-hidden="true"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="text-center">
+          <app-spinner *ngIf="loading_workflow_actions"></app-spinner>
+        </div>
+
+        <div *ngIf="!loading_workflow_actions && workflowactions">
+          <accordion [closeOthers]="true">
+            <div
+              *ngFor="let action of workflowactions; let $index = index"
+              class="space-on-bottom"
+            >
+              <accordion-group
+                [isOpen]="action.isOpen"
+                (isOpenChange)="isOpenChange($event, action)"
+              >
+                <div
+                  accordion-heading
+                  [attr.aria-hidden]="action.isOpen ? 'false' : 'true'"
+                >
+                  <h4 class="panel-title">
+                    <a class="link-unstyled">
+                      <span
+                        appIcon
+                        [name]="
+                          action.isOpen ? 'chevron-down' : 'chevron-right'
+                        "
+                        class="font-size-12"
+                        [style.margin-right.px]="action.isOpen ? '7' : '10'"
+                        aria-hidden="true"
+                      ></span>
+                      <span>{{ $index + 1 }}</span>
+                      <span class="space-on-left-lg actionName">{{
+                        action.action_id | removeUnderscores
+                      }}</span>
+                    </a>
+                    <span
+                      class="unsavedAction text-orange"
+                      *ngIf="action.has_unsaved_changes"
+                    >
+                      <span appIcon name="hour-glass"></span>
+                    </span>
+                  </h4>
+                  <div class="panel-controls" *ngIf="action.id">
+                    <div class="panel-controls-wrapper">
+                      <a
+                        tooltip="Delete Parallel Action"
+                        container="body"
+                        class="panel-control link-unstyled"
+                        [ngClass]="{
+                          'disabled-Element': workflowactions.length === 1
+                        }"
+                        (click)="confirmRemoveAction(action, $index)"
+                        placement="left"
+                        role="button"
+                        aria-label="delete action"
+                        tabindex="0"
+                      >
+                        <span appIcon name="trashcan" aria-hidden="true"></span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <form
+                  class="form-horizontal"
+                  [formGroup]="workFlowForm"
+                  autocomplete="off"
+                >
+                  <ng-container formArrayName="workflows">
+                    <ng-container [formGroupName]="$index">
+                      <dv-form-element
+                        [modelController]="
+                          workflows.controls[$index].get('actionNameControl')
+                        "
+                        [fieldName]="'Action Name'"
+                        [showRightIcon]="false"
+                        [label]="'Select Action'"
+                        [labelCol]="2"
+                        [labelClass]="'text-align-start'"
+                        [elementCol]="6"
+                        [errorMessage]="'Action Name is required'"
+                        [for]="'actionNameControl_' + $index"
+                      >
+                        <dv-select
+                          [clearable]="false"
+                          [searchable]="true"
+                          (onSelectChange)="
+                            actionChanged(action, 'action_id', $index)
+                          "
+                          formControlName="actionNameControl"
+                          notFoundText="Could not find any action items"
+                          placeholder="Select an action"
+                          [list]="action_types"
+                          [bindLabel]="'label'"
+                          [bindValue]="'value'"
+                          [id]="'actionNameControl_' + $index"
+                        >
+                        </dv-select>
+                      </dv-form-element>
+                      <dv-form-element
+                        [showRightIcon]="false"
+                        [label]="'Assign Owner'"
+                        [labelCol]="2"
+                        [labelClass]="'text-align-start'"
+                        [elementCol]="0"
+                      >
+                        <span col="6">
+                          <app-dv-subscriber-selection
+                            [selection]="action.assigned_users_id"
+                            (selectionChanged)="
+                              actionChanged(action, 'assigned_users_id', $index)
+                            "
+                            [functions]="functions"
+                          ></app-dv-subscriber-selection>
+                          <!-- dv-form-element error not showing error in correct place -->
+                          <div
+                            *ngIf="
+                              !action.assigned_users_id.length &&
+                              !this.workflows.controls[$index].get(
+                                'processOwnerControl'
+                              ).value
+                            "
+                            class="danger"
+                          >
+                            Owner is required
+                          </div>
+                        </span>
+                        <span col="4">
+                          <div class="workflow-builder-info">
+                            <dv-checkbox
+                              formControlName="processOwnerControl"
+                              (ngModelChange)="
+                                actionChanged(action, 'is_owner_task', $index)
+                              "
+                              label="Assign to process owner "
+                              [isWorkflow]="true"
+                              [id]="'is_owner_task' + $index"
+                              ariaLabel="Assign to process owner"
+                            ></dv-checkbox>
+                            <span
+                              tooltip="You can select this later at workflow preview step"
+                              placement="left"
+                              ><span appIcon name="info"></span
+                            ></span>
+                          </div>
+                        </span>
+                      </dv-form-element>
+                      <dv-form-element
+                        [fieldName]="'Duration'"
+                        [showRightIcon]="false"
+                        [label]="'Set Timeline'"
+                        [labelCol]="2"
+                        [labelClass]="'text-align-start'"
+                        [elementCol]="0"
+                      >
+                        <span col="2">
+                          <input
+                            type="number"
+                            min="1"
+                            [id]="'duration_days_' + $index"
+                            class="form-control"
+                            (change)="
+                              actionChanged(action, 'duration_days', $index)
+                            "
+                            formControlName="durationDaysControl"
+                            aria-label="Set Timeline"
+                            autocomplete="off"
+                          />
+                          <div
+                            *ngIf="
+                              workflows.controls[$index].get(
+                                'durationDaysControl'
+                              ).errors?.required
+                            "
+                            class="danger"
+                          >
+                            Duration is required
+                          </div>
+                          <div
+                            *ngIf="
+                              workflows.controls[$index].get(
+                                'durationDaysControl'
+                              ).errors?.pattern &&
+                              !workflows.controls[$index].get(
+                                'durationDaysControl'
+                              ).errors?.min
+                            "
+                            class="danger"
+                          >
+                            Please enter a valid value
+                          </div>
+                          <div
+                            *ngIf="
+                              workflows.controls[$index].get(
+                                'durationDaysControl'
+                              ).errors?.min
+                            "
+                            class="danger"
+                          >
+                            Duration should be greater than 1
+                          </div>
+                        </span>
+                        <span col="3">
+                          <dv-select
+                            [list]="duration_types"
+                            [aria-label]="'Duration Type' + $index"
+                            (onSelectChange)="
+                              actionChanged(action, 'duration_type', $index)
+                            "
+                            formControlName="durationTypeControl"
+                            bindLabel="value"
+                            bindValue="value"
+                            [disabled]="false"
+                            [clearable]="false"
+                            [searchable]="true"
+                          ></dv-select>
+                          <div
+                            *ngIf="
+                              workflows.controls[$index].get(
+                                'durationTypeControl'
+                              ).errors?.required
+                            "
+                            class="danger"
+                          >
+                            Duration is required
+                          </div>
+                        </span>
+                      </dv-form-element>
+                      <dv-form-element
+                        [fieldName]="'Todo'"
+                        [showRightIcon]="false"
+                        [label]="'Add Checklist'"
+                        [labelCol]="2"
+                        [labelClass]="'text-align-start'"
+                        [elementCol]="0"
+                      >
+                        <div col="10">
+                          <div class="row">
+                            <span col="10">
+                              <input
+                                [(ngModel)]="action.new_todo"
+                                name="new_todo"
+                                [ngModelOptions]="{ standalone: true }"
+                                placeholder="Type a new to-do, and press enter to add"
+                                class="form-control"
+                                (keypress)="
+                                  addNewTodo($event, action, action.new_todo)
+                                "
+                                aria-label="Add Checklist Item"
+                                autocomplete="off"
+                                id="new_todo"
+                              />
+                            </span>
+                          </div>
+                          <p
+                            class="text-muted"
+                            *ngIf="action.checklist && !action.checklist.length"
+                          >
+                            <i> There are no to-dos for this checklist. </i>
+                          </p>
+                          <ul
+                            *ngIf="action.checklist.length"
+                            class="todo-list"
+                            col="10"
+                            aria-label="Checklist Items"
+                          >
+                            <ng-container *ngFor="let todo of action.checklist">
+                              <li
+                                *ngIf="todo.is_active"
+                                class="todo-list-item"
+                                col="12"
+                              >
+                                <small
+                                  [tooltip]="todo.text"
+                                  container="body"
+                                  col="11"
+                                  >{{ todo.text }}</small
+                                >
+                                <span
+                                  class="removeTaskBtn"
+                                  (click)="
+                                    removeTask(action, todo, $index);
+                                    actionChanged(action, 'checklist')
+                                  "
+                                  placement="left"
+                                  role="button"
+                                  title="Remove Task"
+                                  aria-label="Remove Task"
+                                  tabindex="0"
+                                >
+                                  <span
+                                    appIcon
+                                    name="trashcan"
+                                    aria-hidden="true"
+                                  ></span>
+                                </span>
+                              </li>
+                            </ng-container>
+                          </ul>
+                        </div>
+                      </dv-form-element>
+                      <div class="row pull-right">
+                        <dv-button
+                          [loader]="saving_action"
+                          [disabled]="
+                            workflows.controls[$index].invalid ||
+                            (!action.is_owner_task &&
+                              !action.assigned_users_id?.length)
+                          "
+                          [btnType]="'primary'"
+                          [btnClass]="'space-on-right minwidth'"
+                          (onClick)="saveWorkflowAction(action, $index)"
+                        >
+                          Save
+                        </dv-button>
+                        <dv-button
+                          [btnType]="'default'"
+                          (onClick)="cancelUpdate(action, $index)"
+                        >
+                          Cancel
+                        </dv-button>
+                      </div>
+                    </ng-container>
+                  </ng-container>
+                </form>
+              </accordion-group>
+            </div>
+          </accordion>
+          <div class="text-center" col="12">
+            <!-- left icon prop not used intentionally -->
+            <dv-button (onClick)="addNewAction()">
+              + Add Parallel Action
+            </dv-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </span>
+</div>

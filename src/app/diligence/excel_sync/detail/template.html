@@ -1,0 +1,261 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-excel-sync-download></ng2-excel-sync-download> 
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+    <form novalidate name="vm.excel_sync_{{vm.sync_type}}" data-ng-submit="vm.processExcelSync()">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    <icon name="institution" class="space-on-right"></icon>
+                    Excel Sync ({{vm.sync_type}})
+                </h5>
+            </div>
+
+            <div class="panel-body" data-ng-if="vm.sync_type == 'download'">
+                <p class="alert alert-info" data-ng-if="!vm.products_list.length">
+                    Select {{vm.isInvestor?'manager':'investor'}}, questionnaire, and projects to {{vm.sync_type}} excel. Once you are done filling your
+                    responses, please go to excel sync > excel upload to directly upload it to the platform.
+                </p>
+                <div class="row clearfix space-on-top-lg clearfix space-on-bottom-lg">
+                    <spinner data-ng-show="vm.loading_prefs"></spinner>
+                    <div col="12" data-ng-if="!vm.loading_prefs">
+                        <div class="row">
+                            <div col="3" data-ng-if="!vm.isInvestor">
+                                <form-group field-name="Investor" tooltip-placement="left">
+                                    <div class="col-md-11">
+                                        <label for="select-investor" class="control-label">1. Select an Investor Firm</label>
+
+                                        <select id="select-investor" chosen class="form-control"
+                                            data-ng-disabled="!vm.active_investors" data-ng-model="vm.selected_investor"
+                                            data-ng-change="vm.investorSelected()"
+                                            data-ng-options="investor as investor.name for investor in vm.active_investors"
+                                            ng-required="true">
+                                            <option value="" disabled selected hidden>Please select an investor firm</option>
+                                        </select>
+                                    </div>
+                                </form-group>
+                            </div>
+                            <div col="3" data-ng-if="vm.isInvestor">
+                                <form-group field-name="Manager" tooltip-placement="left">
+                                    <div class="col-md-11">
+                                        <label for="select-manager" class="control-label">1. Select a Manager Firm</label>
+
+                                        <select id="select-manager" chosen class="form-control"
+                                            data-ng-disabled="!vm.active_managers" data-ng-model="vm.selected_manager"
+                                            data-ng-change="vm.managerSelected()"
+                                            data-ng-options="manager as manager.name for manager in vm.active_managers"
+                                            ng-required="true">
+                                            <option value="" disabled selected hidden>Please select a manager firm</option>
+                                        </select>
+                                    </div>
+                                </form-group>
+                            </div>
+                            <div col="3" data-ng-if="!vm.isInvestor">
+                                <form-group field-name="Questionnaire" tooltip-placement="left">
+                                    <div class="col-md-11">
+                                        <label for="select-template" class="control-label">2. Select a Questionnaire</label>
+                                        <select id="select-template" chosen class="form-control"
+                                            data-ng-model="vm.selected_template"
+                                            data-ng-change="vm.investorTemplateSelected()"
+                                            data-ng-options="template as template.name for template in vm.templates_list"
+                                            ng-required="true">
+                                            <option value="" disabled selected hidden>Please select a questionnaire</option>
+                                        </select>
+                                    </div>
+                                </form-group>
+                            </div>
+                            <div col="3" data-ng-if="vm.isInvestor">
+                                <form-group field-name="Questionnaire" tooltip-placement="left">
+                                    <div class="col-md-11">
+                                        <label for="select-template" class="control-label">2. Select a Questionnaire</label>
+                                        <select id="select-template" chosen class="form-control"
+                                            data-ng-model="vm.selected_template"
+                                            data-ng-change="vm.managersTemplateSelected()"
+                                            data-ng-options="template as template.name for template in vm.templates_list"
+                                            ng-required="true">
+                                            <option value="" disabled selected hidden>Please select a questionnaire</option>
+                                        </select>
+                                    </div>
+                                </form-group>
+                            </div>
+                            <div col="3" class="excel_sync_date_picker">
+                                <label for="strategy-selection" class="control-label space-on-left">Select dates:</label>
+                                <div col="12">
+                                    <dv-daterangepicker ng-model="vm.customDateFilter" min-date="vm.minDate"
+                                        max-date="vm.maxDate" apply-method="vm.applyMethod"></dv-daterangepicker>
+                                </div>
+                            </div>
+                            <div col="3">
+                                <div class="text-center space-on-top-lg" col="6" col-type="xs">
+                                    <button btn-type="transparent" data-ng-click="vm.resetFilter()">
+                                        <div>
+                                            <icon name="refresh" size="2x"
+                                                uib-tooltip="Reset the filters, or options for comparison"></icon>
+                                        </div>
+                                        <small>Reset Selection/ Filters</small>
+                                    </button>
+                                </div>
+
+                                <div class="text-center space-on-top-lg" col="6" col-type="xs">
+                                    <a data-ng-click="vm.goBack()" class="btn btn-transparent">
+                                        <div>
+                                            <icon name="arrow-back" size="2x"></icon>
+                                        </div>
+                                        <small>Go back</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center"
+                            data-ng-if="vm.selected_template && (!vm.products_list || vm.products_list.length == 0)">
+                            <br>
+                            <small class="text-muted"><i>No products found for selected {{vm.isInvestor?'manager':'investor'}}/questionnaire</i></small>
+                        </div>
+
+                        <div col="12 clearfix space-on-top-lg" data-ng-if="vm.products_list && vm.products_list.length > 0">
+                            <div class="panel panel-default dd-multiselect relative dd-excel-sync"
+                                data-ng-class="{'semi-transparent': vm.products_disabled}">
+                                <div class="mask transparent" data-ng-show="vm.products_disabled"></div>
+
+                                <div class="panel-heading">
+                                    <div class="row clearfix">
+                                        <div col="5" class="space-on-top space-on-bottom">
+                                            <h5 class="panel-title space-on-top-2 space-on-bottom-2">
+                                                Projects ({{vm.products_list.length}})
+                                            </h5>
+                                        </div>
+                                        <div col="3" data-ng-if="vm.products_list.length">
+                                            <input type="text" data-ng-model="vm.filters.product_name" class="form-control"
+                                                placeholder="Search by name" />
+                                        </div>
+                                        <div col="4" data-ng-if="vm.products_list.length">
+                                            <button btn-type="default" size="sm"
+                                                class="space-on-top-2 space-on-left btn-sm btn btn-default"
+                                                uib-tooltip="Select all projects"
+                                                data-ng-disabled="vm.disable_selected_all_products"
+                                                data-ng-click="vm.selectedAllProducts()" type="button">
+                                                <span class="align-middle">Select All</span>
+                                            </button>
+                                            <button btn-type="default" size="sm"
+                                                class="space-on-top-2 space-on-left btn-sm btn btn-default"
+                                                uib-tooltip="Deselect all projects"
+                                                data-ng-disabled="vm.getSelectedProducts().length == 0"
+                                                data-ng-click="vm.clearAllProducts()" type="button">
+                                                <span class="align-middle">Clear
+                                                    ({{vm.getSelectedProducts().length}})</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="list-group">
+                                    <div class="list-group-item" data-ng-class="{'bg-sky-blue': product.is_selected}"
+                                        data-ng-if="vm.products_list.length"
+                                        data-ng-repeat="product in vm.products_list | filter: vm.filters.product_name | orderBy:'name'">
+                                        <div class="row clearfix">
+                                            <span class="space-on-right" uib-tooltip="Select {{product.name}}"
+                                                data-ng-hide="product.is_selected">
+                                                <icon name="plus-circle"
+                                                    data-ng-click="vm.toggleProductSelection(product, true)" size="lg"
+                                                    class="text-primary" role="button"></icon>
+                                            </span>
+                                            <span uib-tooltip="Remove {{product.name}}" class="space-on-right"
+                                                data-ng-show="product.is_selected">
+                                                <icon name="minus-circle" class="text-danger" role="button" size="lg"
+                                                    data-ng-click="vm.toggleProductSelection(product, false)"></icon>
+                                            </span>
+                                            <!-- <span>{{product.name}}</span> -->
+                                            <span data-ng-if="product.tofirm_name">{{product.tofirm_name}} - </span>
+                                            <span data-ng-if="vm.isInvestor">{{product.name}}</span>
+                                            <span data-ng-if="!vm.isInvestor">{{product.entity_name}}</span>
+                                            <span data-ng-if="product.as_of_date">- As of {{product.as_of_date | date}}</span>
+                                            <span data-ng-if="product.due_at">- Due at {{product.due_at | date}}</span>
+                                            <span class="space-on-left badge"
+                                                data-ng-class="{'badge-info':product.entity_type == 'Strategy', 'badge-success':product.entity_type == 'Fund', 'badge-warning':product.entity_type == 'Firm', 'badge-primary':product.entity_type == 'Vehicle'}">{{product.display_name}}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="empty-msg" data-ng-if="!vm.products_list.length">
+                                        <empty-state
+                                            message="Please select an investor firm and a questionnaire to view the associated projects">
+                                        </empty-state>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" data-ng-if="vm.products_list.length">
+                        <div col="12">
+                            <hr>
+                            <div class="row space-on-top space-on-bottom">
+                                <div col="11" class="text-center">
+                                    <button type="submit" class="btn space-on-left btn-orange w-160"
+                                        button-loader="vm.processing_excel">
+                                        <icon data-ng-if="vm.sync_type == 'upload'" name="upload3"
+                                            class="space-on-right align-middle"></icon>
+                                        <icon data-ng-if="vm.sync_type == 'download'" name="download3"
+                                            class="space-on-right align-middle"></icon>
+                                        <span class="text-capitalize">{{vm.sync_type}}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body" data-ng-if="vm.transaction_diligences && vm.transaction_diligences.length == 0">
+                <empty-state message="Audit history not available"></empty-state>
+            </div>
+
+            <div class="panel-body" data-ng-if="vm.transaction_diligences && vm.transaction_diligences.length != 0">
+                <div class="space-on-top-xl padded-bottom-xl col-md-12">
+                    <div col="4">
+                        <label class="control-label">Name</label>
+                    </div>
+                    <div col="1" class="text-center">
+                        <label class="control-label">% Complete</label>
+                    </div>
+                    <div col="6" class="text-center">
+                        <label class="control-label">Error Description</label>
+                    </div>
+
+                    <div col="1" class="text-center">
+                        <label class="control-label">Status</label>
+                    </div>
+                </div>
+
+                <ul class="list-unstyled clear-margin-bottom">
+                    <li data-ng-repeat="transaction in vm.transaction_diligences" class="col-md-12">
+                        <div col="4">
+                            <h5><a ui-sref="app.diligence.project.questionnaire({diligenceId: transaction.duediligence_id})"
+                                    uib-tooltip="{{transaction.entity_name}}" tooltip-placement="right">
+                                    {{transaction.entity_name}}
+                                </a></h5>
+                        </div>
+                        <div col="1" class="text-center">
+                            <h5>{{transaction.pct_complete}}</h5>
+                        </div>
+                        <div col="6" data-ng-if="transaction.errors.length != 0">
+                            <ul class="list-unstyled clear-margin-bottom">
+                                <li data-ng-repeat="error in transaction.errors">
+                                    <h5><span class="text-danger">{{$index+1}}: {{error.Error}}</span> for
+                                        {{error.Question}} ({{error.Section}})</h5>
+                                </li>
+                            </ul>
+                        </div>
+                        <div col="6" data-ng-if="transaction.errors.length == 0">
+                            <h5 class="text-muted text-center">N/A</h5>
+                        </div>
+                        <div col="1" class="text-center">
+                            <span class="label text-uppercase"
+                                data-ng-class="{'label-success' : transaction.status == 'success', 'label-danger' : transaction.status == 'failed'}">{{transaction.status}}
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>

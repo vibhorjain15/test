@@ -1,0 +1,25 @@
+.checkbox-bold {
+  font-weight: bold;
+  line-height: 16px;
+}
+
+.checkbox-fit-width {
+  width: fit-content;
+  /* display: flex; */
+}
+
+.checkbox {
+  color: #333 !important;
+  cursor: pointer;
+}
+
+::ng-deep .concentment-imp {
+  color: #126b82;
+}
+
+.concentment {
+  font-size: 12px;
+}
+.disabled {
+  cursor: context-menu !important;
+}

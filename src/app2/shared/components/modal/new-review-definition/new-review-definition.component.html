@@ -1,0 +1,63 @@
+<app-modal
+  [title]="
+    type === 'new' ? 'Create New Review Definition' : 'Edit Review Definition'
+  "
+  [firstButtonLabel]="type === 'new' ? 'Create' : 'Save'"
+  [initialTemplate]="newDefinition"
+  (onFirstClick)="handleDefinitionClick($event)"
+  [isFirstButtonDisabled]="nameError || !definitionName"
+  [isLoading]="loader"
+>
+  <ng-template #newDefinition>
+    <div class="new-definition">
+      <dv-form-element
+        label="Name"
+        labelPosition="top"
+        elementCol="12"
+        [isRequired]="true"
+      >
+        <input
+          type="text"
+          class="form-control"
+          [ngModel]="definitionName"
+          ngModel
+          (ngModelChange)="checkNameValid($event)"
+          [max]="50"
+          placeholder="Enter the definition name here"
+          autocomplete="off"
+        />
+        <div
+          class="text-danger"
+          *ngIf="
+            nameError &&
+            definitionName !== currDef?.name.trim() &&
+            definitionName
+          "
+        >
+          Name already exists, please enter a new name.
+        </div>
+        <div
+          class="text-danger"
+          *ngIf="definitionName && definitionName.length >= 50"
+        >
+          Name should be less than 50 characters.
+        </div>
+      </dv-form-element>
+
+      <dv-form-element
+        label="Apply to"
+        labelPosition="top"
+        elementCol="12"
+        *ngIf="type == 'new'"
+        [for]="'Apply'"
+      >
+        <dv-select
+          [list]="questionFilterList"
+          [(ngModel)]="questionFilter"
+          bindLabel="display_name"
+          [id]="'Apply'"
+        ></dv-select>
+      </dv-form-element>
+    </div>
+  </ng-template>
+</app-modal>

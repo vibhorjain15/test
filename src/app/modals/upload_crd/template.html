@@ -1,0 +1,42 @@
+<form name="vm.upload_crd_form"
+      data-ng-submit="vm.submit()"
+      class="form-horizontal">
+  <div class="modal-header">
+    <h3 class="modal-title">Upload CRDs</h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="CRD Upload">
+      <div class="form-group">
+        <label for="section-description" class="control-label col-sm-4">
+          Add CRDs to track
+          <small>(one per line)</small>
+        </label>
+
+        <div class="col-sm-8">
+          <textarea id="crd-input"
+                    class="form-control"
+                    rows="3"
+                    data-ng-model="vm.crds"
+                    dv-integers-only
+                    required></textarea>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-4">
+          <span data-ng-show="vm.crds && vm.crds.split('\n').length">{{vm.crds.split("\n").length}} added</span>
+          <span data-ng-hide="vm.crds || vm.crds.split('\n').length">0 added</span>
+        </label>
+      </div>
+    </form-group>
+
+    
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.loading">Upload</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

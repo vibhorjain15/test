@@ -1,0 +1,19 @@
+<div class="row clearfix">
+  <div class="col-xs-6">
+    <input type="text"
+           class="form-control"
+           placeholder="Min"
+           data-ng-change="vm.onResponseChange()"
+           ng-model-options="{ debounce: { 'default': 500 } }"
+           data-ng-model="vm.response.attributes.numericResponseA"/>
+  </div>
+
+  <div class="col-xs-6">
+    <input type="text"
+           class="form-control"
+           placeholder="Max"
+           data-ng-change="vm.onResponseChange()"
+           ng-model-options="{ debounce: { 'default': 500 } }"
+           data-ng-model="vm.response.attributes.numericResponseB"/>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<app-modal
+  [title]="'Add Existing'"
+  [initialTemplate]="useExistingDocuments"
+  titleIcon="file-doc-grid"
+  [titleIconColor]="colorTheme.primary"
+  [isFirstButtonDisabled]="!selectedDocumentsIds.length"
+  [isLoading]="savingDocument"
+  (onFirstClick)="submit($event)"
+  firstButtonLabel="Add"
+>
+</app-modal>
+<ng-template #useExistingDocuments>
+  <div class="use-existing-wrapper">
+    <div class="doc-filters">
+      <dv-form-element
+        label="Search"
+        [style.flex]="1"
+        labelPosition="top"
+        elementCol="12"
+        labelCol="12"
+        [showRightIcon]="false"
+      >
+        <input
+          type="text"
+          placeholder="Search by name"
+          class="form-control"
+          [(ngModel)]="folderSearch"
+        />
+      </dv-form-element>
+      <dv-form-element
+        label="As of Date"
+        [style.flex]="1"
+        labelPosition="top"
+        [showRightIcon]="false"
+        elementCol="12"
+        labelCol="12"
+        [for]="'as-of-date'"
+      >
+        <app-date-range-picker
+          [id]="'as-of-date'"
+          [customDate]="dates"
+          (change)="onDateRangeRatingSchemeChange($event)"
+          (clearDateFilter)="onClearDateFilter()"
+          [format]="'DD-MMM-YYYY'"
+        ></app-date-range-picker>
+      </dv-form-element>
+    </div>
+
+    <dv-form-element
+      label="Select item(s)"
+      labelPosition="top"
+      [showRightIcon]="false"
+      [isRequired]="true"
+      elementCol="12"
+    >
+      <dv-folder-selection-grid
+        [rowData]="documents"
+        *ngIf="!apiLoader"
+        [entityId]="entityId"
+        [onlyFolders]="false"
+        [isRadioButton]="false"
+        [entityType]="entityType"
+        [filterValue]="folderSearch"
+        class="space-on-top folder-upload-grid"
+        (selectionChange)="selectedDocument($event)"
+      ></dv-folder-selection-grid>
+      <app-spinner
+        *ngIf="apiLoader"
+        class="text-cetner d-flex justify-center"
+      ></app-spinner>
+    </dv-form-element>
+  </div>
+</ng-template>

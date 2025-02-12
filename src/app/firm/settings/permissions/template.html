@@ -1,0 +1,145 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-permissions></ng2-permissions> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">Permissions</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a id="js-add-team-members" class="panel-control"
+                   data-ng-click="vm.openNewPermissionDialog()"
+                   tooltip-placement="left"
+                   uib-tooltip="Add New Permission">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info" data-ng-hide="vm.permissions_enabled">
+      <div class="panel-heading permissionsHelpText">You are eligible for permissioning/team module. Please reach out to our customer service at <a href="mailto:ask@diligencevault.com?subject=Team permission">ask@diligencevault.com</a> to enable this.</div>
+    </div>
+    <div class="panel-body">
+      <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+        <div class="panel-body padded-lg">
+          <h5 class="inline space-on-right-lg">
+            <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+          </h5>
+          <a class="btn btn-default danger space-on-right-lg"
+             uib-tooltip="Delete Selected"
+             data-ng-hide="vm.bulkResourceEditMode"
+             data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+             data-ng-click="vm.confirmBulkResourceDeletion()">
+            <strong><icon name="trashcan"></icon>  </strong>
+          </a>
+
+          <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions('assignments_grid')">
+            <strong><icon name="close"></icon></strong>
+          </a>
+        </div>
+      </div>
+        <div data-ng-if="vm.render_grid">
+            <dv-grid grid-resource="vm.permissions" name="vm.permissions_grid" grid-name="'permissions'"></dv-grid>
+        </div>
+        <div class="text-center" data-ng-if="!vm.render_grid">
+            <spinner></spinner>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">Permissions</h5>
+
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+        </div>
+    </div>
+
+    <div class="panel-body">
+
+        <div class="text-center">
+          <div class="btn-group">
+              <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectionType == 'team'}" data-ng-click="vm.setSelectionType('team')"><icon name="fund" class="space-on-right"></icon>Team</label>
+              <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.selectionType == 'person'}" data-ng-click="vm.setSelectionType('person')"><icon name="institution" class="space-on-right"></icon>Individual</label>
+          </div>
+        </div>
+        <br>
+
+        <form class="form-horizontal" name="vm.new_team_form" novalidate data-ng-submit="vm.submit()">
+            <form-group field-name="Name">
+              <label for="first-name" class="control-label" col ="4" col-type="sm">{{(vm.selectionType == "team")? 'Team': 'Individual'}} Name</label>
+              <div col="6" col-type="sm">
+                <select id="category-id"
+                        class="form-control"
+                        required
+                        chosen
+                        data-ng-model="vm.formData.name"
+                        create-option-text="'Add New'"
+                        create-option="vm.createOption"
+                        persistent-create-option="true"
+                        skip-no-results="true"
+                        data-ng-options="category as category.name for category in vm.names">
+                  <option value=""></option>
+                </select>
+              </div>
+            </form-group>
+            <form-group field-name="Name">
+              <label for="first-name" class="control-label" col ="4" col-type="sm">Resource</label>
+              <div col="6" col-type="sm">
+                <select id="category-id"
+                        class="form-control"
+                        required
+                        chosen
+                        data-ng-model="vm.formData.resource"
+                        create-option-text="'Add New'"
+                        create-option="vm.createOption"
+                        persistent-create-option="true"
+                        skip-no-results="true"
+                        data-ng-options="category as category.name for category in vm.resources">
+                  <option value=""></option>
+                </select>
+              </div>
+            </form-group>
+            <form-group field-name="resource_list">
+              <label for="resource_list" class="control-label" col ="4" col-type="sm">Resource List</label>
+              <div col="6" col-type="sm">
+                  <tags-input data-ng-model="vm.formData.resource_list"
+                              display-property="name"
+                              key-property="id"
+                              placeholder="Select resources"
+                              add-from-autocomplete-only=true
+                              id="resource_list">
+                      <auto-complete source="vm.filterResources($query)"
+                                     load-on-focus=true
+                                     load-on-down-arrow=true
+                                     load-on-empty=true
+                                     min-length="1"></auto-complete>
+                  </tags-input>
+              </div>
+            </form-group>
+            <form-group field-name="Name">
+              <label for="first-name" class="control-label" col ="4" col-type="sm">Private Access</label>
+              <div col="6" col-type="sm">
+                <select id="category-id"
+                        class="form-control"
+                        required
+                        chosen
+                        data-ng-model="vm.formData.name"
+                        create-option-text="'Add New'"
+                        create-option="vm.createOption"
+                        persistent-create-option="true"
+                        skip-no-results="true"
+                        data-ng-options="category as category.name for category in vm.accessList">
+                  <option value=""></option>
+                </select>
+              </div>
+            </form-group>
+
+            <div class="modal-footer">
+                <button type="submit"
+                        button-loader="vm.saving_user">Save</button>
+                <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div> -->

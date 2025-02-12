@@ -1,0 +1,62 @@
+<div class="preview">
+  <div class="preview-generate">
+    <div>
+      Preview the counts of matches that will be auto-filled based on your
+      settings.
+    </div>
+    <dv-button
+      btnType="secondary"
+      leftIcon="eye"
+      (onClick)="getAutoFillPreview(!loading && !showText ? 'hide' : 'preview')"
+    >
+      {{ !loading && !showText ? "Hide" : "" }} Preview</dv-button
+    >
+  </div>
+  <div class="text-center" *ngIf="loading">
+    <app-spinner></app-spinner>
+  </div>
+
+  <div *ngIf="!loading && !showText" [style.width.%]="100">
+    <div class="info-main-wrapper preview-background">
+      <div class="info-main">
+        <p>
+          We found the following responses to be auto-filled given your defined
+          settings. You can adjust your settings to change the result.
+        </p>
+        <p class="preview-response">
+          <strong
+            >{{
+              previewData.potential_autofill.exact_matches +
+                previewData.potential_autofill.similar_matches
+            }}
+            out of {{ previewData.unanswered_questions_count }} ({{
+              previewData.percentage
+            }}%)</strong
+          >
+          total response(s){{
+            previewData.potential_autofill.nested_count
+              ? " (incl. conditional)"
+              : ""
+          }}
+          will be auto-filled
+        </p>
+        <dv-divider></dv-divider>
+        <p *ngIf="fromType === 'es'">
+          <strong>{{ previewData.potential_autofill.exact_matches }}</strong>
+          exact match response(s) based on the defined settings
+          {{ getConditionalResponsesText(previewData.potential_autofill) }}
+        </p>
+        <p *ngIf="showMatchText">
+          <strong>{{ previewData.potential_autofill.similar_matches }}</strong>
+          additional response(s) based on the similarity percentage
+        </p>
+        <dv-button
+          leftIcon="refresh"
+          btnType="secondary"
+          (onClick)="getAutoFillPreview()"
+          >Refresh</dv-button
+        >
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<form class="form-horizontal" name="vm.contact_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            {{vm.edit_mode ? 'Editing Internal Contact' : 'Assign Internal Contacts'}}
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div data-ng-if="vm.loading_data">
+            <spinner broad-spinner spinner-height='25'></spinner>
+        </div>
+        <div data-ng-if="!vm.loading_data">
+            <form-group field-name="entityName">
+                <label for="username" class="control-label" col="3" >{{vm.entity_type == 'Fund'? 'Product' : vm.entity_type}} Name</label>
+                <div col="9" class="space-on-top">
+                    <label class="label label-default space-on-top">{{vm.entity_details.name}}</label>
+                </div>
+            </form-group>
+            <form-group field-name="entityName" ng-if="vm.edit_mode">
+                <label for="username" class="control-label" col="3" >Member Name</label>
+                <div col="9" class="space-on-top">
+                    <label class="label label-default space-on-top">{{vm.contact.fullName}}</label>
+                </div>
+            </form-group>
+            <form-group field-name="User Role"  uib-tooltip="{{(vm.params.departments.length > 0) ? '' : 'Please select a user role'}}">
+                <label for="parent-fund" class="control-label" col="3" >User Role</label>
+                  <div col="9"  data-ng-if="vm.departments.length">
+                        <tags-input data-ng-model="vm.params.departments"
+                                    display-property="description"
+                                    key-property="id"
+                                    placeholder="Select user role(s)"
+                                    add-from-autocomplete-only=true
+                                    id="contact_type"
+                                    min-length="1"
+                                    replace-spaces-with-dashes="false">
+                            <auto-complete source="vm.filterDepartments($query)"
+                                        load-on-focus=true
+                                        load-on-down-arrow=true
+                                        load-on-empty=true
+                                        max-results-to-show="{{vm.departments.length}}"
+                                        min-length="1"></auto-complete>
+                        </tags-input>
+                    </div>
+                    <div data-ng-if="!vm.departments || !vm.departments.length" class="text-muted space-on-top">
+                        <small><i>*No user role(s) found*</i></small>
+                    </div>
+            </form-group>
+
+            <form-group field-name="Member" tooltip-placement="left" data-ng-if="vm.team_members && !vm.edit_mode">
+              <label class="control-label" col="3">Members</label>
+              <div col="9">
+                <dv-selector-list name="resource_list" entity-type="'Users'" entities="vm.team_members" filter-params="{}" display-params="vm.teamSelectorDisplayParams" selection="vm.membersObject.memberNames"></dv-selector-list>
+              </div>
+            </form-group>
+
+            <div col="12"  col-type="sm" ng-if="!vm.edit_mode">
+              <p class="alert alert-info">
+                Primary contact(s) of an entity will be notified of any activities related to the entities assigned to them. Investor will not be able to remove these contact(s) while sending out request(s).
+              </p>
+            </div>
+
+            <form-group>
+              <label class="control-label" col ="3" col-type="sm"></label>
+              <div col="9" col-type="sm" ng-if="vm.edit_mode">
+                <dv-checkbox
+                        data-ng-model="vm.is_primary"
+                        label="Is primary contact?">
+                </dv-checkbox>
+                <span class="space-on-top infoIconEmailTemplate">
+                    <icon name="info"
+                          tooltip-placement="right"
+                          uib-tooltip="These are primary contacts of the firm. This contact will be notified of any activities related to their assigned entities. Investor will not be able to remove these contacts while sending out requests.">
+                    </icon>
+                </span>
+              </div>
+              <div col="9" col-type="sm" ng-if="!vm.edit_mode">
+                <dv-checkbox
+                        data-ng-model="vm.is_primary"
+                        label="Mark selected users as primary contact?">
+                </dv-checkbox>
+              </div>
+            </form-group>
+
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+        <button data-ng-disabled="vm.loading_data" type="submit" button-loader="vm.saving">{{vm.edit_mode ? 'Update Contact' : 'Assign Contacts'}}</button>
+
+        <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,170 @@
+<app-modal
+  [title]="title"
+  [secondButtonLabel]="type === 'sub-category' ? 'Convert to Category' : ''"
+  [initialTemplate]="template"
+  [firstButtonLabel]="firstButtonTitle"
+  (onFirstClick)="moveButton($event, type)"
+  [isLoading]="buttonLoader"
+  [isSecondaryLoading]="secondButtonLoader"
+  (onSecondClick)="convertCategory($event)"
+>
+</app-modal>
+
+<ng-template #template>
+  <div class="main-section" role="form" aria-label="Move Category Form">
+    <div
+      *ngIf="type === 'sub-category'"
+      class="sub-heading break-all"
+      aria-live="assertive"
+    >
+      <b
+        >Moving Sub-category(s) from
+        <span [style.color]="color['primary']">{{ parentCatName }}</span></b
+      >
+    </div>
+    <div class="tags-group" *ngIf="type === 'sub-category'">
+      <div
+        *ngFor="let tag of subCategoryList; let i = index"
+        class="tag-wrapper"
+      >
+        <div class="tag break-all" aria-label="Sub Category Tag">
+          <div class="tag-content">
+            {{ tag.name }}
+            <span
+              tooltip="Delete Sub-category"
+              appIcon
+              name="times"
+              *ngIf="subCategoryList.length > 1"
+              (click)="onDelete(i, 'sub-category')"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-element-wrapper">
+      <dv-form-element
+        labelPosition="top"
+        [label]="inpLabel"
+        elementCol="12"
+        [isRequired]="true"
+      >
+        <input
+          class="form-control"
+          ngModel
+          (ngModelChange)="onParameterChange($event)"
+          placeholder="Search categories"
+          role="textbox"
+          aria-label="Search input field"
+        />
+      </dv-form-element>
+    </div>
+    <div class="radio-fields" *ngIf="type == 'question'">
+      <div class="accordion-group" role="group">
+        <accordion [isAnimated]="true" [closeOthers]="true" id="manage-move">
+          <ng-container *ngFor="let category of CategoryList; let i = index">
+            <accordion-group
+              id="manage-move-group"
+              *ngIf="category.list.length"
+              [isOpen]="accordionIsOpen[i] || categorySelected == category.id"
+              (click)="emittedValue($event, category.id, i)"
+              role="presentation"
+            >
+              <dv-radio
+                accordion-heading
+                [label]="category.label"
+                groupName="category-manage-move"
+                [valueName]="category.id"
+                [disabled]="false"
+                [(ngModel)]="categorySelected"
+                (innerValueEmitter)="emittedValue($event, category.id, i)"
+                [checkedVal]="
+                  accordionIsOpen[i] || categorySelected == category.id
+                "
+                color="primary"
+              ></dv-radio>
+
+              <ng-container *ngIf="!isCopy">
+                <div
+                  class="radio-buttons"
+                  *ngFor="let subCategory of category.list"
+                >
+                  <dv-radio
+                    [label]="
+                      sourceQuestionSectionID == subCategory.id
+                        ? subCategory.name + ' (source)'
+                        : subCategory.name
+                    "
+                    groupName="subCategoryList-manage-move"
+                    [valueName]="subCategory.id"
+                    [checkedVal]="subCategorySelected == subCategory.id"
+                    [disabled]="sourceQuestionSectionID == subCategory.id"
+                    [(ngModel)]="subCategorySelected"
+                  ></dv-radio>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="isCopy">
+                <div
+                  class="check-boxes break-all"
+                  *ngFor="let subCategory of category.list"
+                >
+                  <dv-checkbox
+                    [label]="
+                      sourceQuestionSectionID == subCategory.id
+                        ? subCategory.name + ' (source)'
+                        : subCategory.name
+                    "
+                    name="subCategoryList-manage-move"
+                    [id]="'manage-move' + subCategory.id"
+                    [value]="subCategory.id"
+                    [ngModel]="copyQuestionsToSubcategories[subCategory.id]"
+                    [disabled]="sourceQuestionSectionID == subCategory.id"
+                    (onValChange)="
+                      selectedSubCategoryCheckbox(
+                        $event,
+                        subCategory.id,
+                        category.id,
+                        selectedQuestions[0].sectionID
+                      )
+                    "
+                  ></dv-checkbox>
+                </div>
+              </ng-container>
+            </accordion-group>
+          </ng-container>
+        </accordion>
+      </div>
+    </div>
+
+    <div
+      *ngIf="type == 'sub-category'"
+      class="radio-fields-subcategory"
+    >
+      <div
+        *ngFor="let category of CategoryList; let subCatIndex = index"
+        (click)="moveSubcatCategory(category.id)"
+        class="subcategory-radio"
+        role="presentation"
+      >
+        <dv-radio
+          [label]="
+            category.id == parentCatId
+              ? category.label + ' (source)'
+              : category.label
+          "
+          groupName="manage-move-categorylist"
+          [valueName]="category.id"
+          [disabled]="category.id == parentCatId"
+          [checkedVal]="categorySelected == category.id"
+          [(ngModel)]="categorySelected"
+          [color]="categorySelected == category.id ? 'primary' : 'default'"
+        ></dv-radio>
+
+        <dv-divider
+          type="horizontal"
+          *ngIf="subCatIndex != CategoryList.length - 1"
+          role="separator"
+        ></dv-divider>
+      </div>
+    </div>
+  </div>
+</ng-template>

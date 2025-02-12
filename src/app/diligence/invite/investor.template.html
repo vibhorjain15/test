@@ -1,0 +1,1432 @@
+<ng2-invite-investor data-ng-if="vm.Utils.isAngular()"></ng2-invite-investor>
+<div data-ng-if="vm.Utils.isAngularJS()">
+   <spinner broad-spinner spinner-height='50' data-ng-hide="vm.is_data_loaded"></spinner>
+<form-wizard name="new-request-investor" display-footer="vm.display_wizard_footer" show-top-back-button="vm.display_wizard_top_back_button"
+   on-finish="vm.sendDueDiligenceRequest()"
+   data-ng-show="vm.is_data_loaded && (vm.request.duediligence_type != 'dd_scheduled' && vm.request.duediligence_type != 'dd_review' && vm.request.duediligence_type != 'dd_pending' )">
+   <wizard-step step-title="'Purpose'" step-content-header-title="'Select the purpose for this information request'"
+      before-enter="vm.display_wizard_footer = false;">
+      <div class="row clearfix">
+         <div col="4" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Scheduled / Pending Approval Requests</b>
+            </p>
+            <div class="text-center pa-tb-lg">
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_scheduled')"
+                     uib-tooltip="View all periodic and automatically scheduled requests here"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_scheduled'}">
+                     <div class="space-on-bottom">
+                        <icon name="calendar" size="2x"></icon>
+                     </div>
+                     Scheduled Requests
+                  </a>
+               </div>
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_pending')"
+                     uib-tooltip="View all requests which require approval before sending"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_pending'}">
+                     <div class="space-on-bottom">
+                        <icon name="pending_approval" size="2x"></icon>
+                     </div>
+                     Requests Pending Approval(s)
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="6" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Build From Scratch</b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_new')"
+                     uib-tooltip="Research and due diligence preceding the initial engagement or allocation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_new'}">
+                     <div class="space-on-bottom">
+                        <icon name="file-add" size="2x"></icon>
+                     </div>
+                     {{(vm.entity_type == 'Product' ? 'Pre-Investment' : 'Pre-Engagement')}}
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_ongoing')"
+                     uib-tooltip="Post investment, ongoing information request"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_ongoing'}">
+                     <div class="space-on-bottom">
+                        <icon name="clock-o" size="2x"></icon>
+                     </div>
+                     Ongoing Monitoring
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_event_related')"
+                     uib-tooltip="Post investment request triggered by a specific event or circumstance, such as personnel change, drawdown, et al."
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_event_related'}">
+                     <div class="space-on-bottom">
+                        <icon name="thunder" size="2x"></icon>
+                     </div>
+                     Adhoc / Event Related
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="2">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="padded-bottom">
+                  <span class="white-text-color">
+                     Analyst Evaluation
+                  </span>
+               </b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="12">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_review')"
+                     uib-tooltip="Create analyst evaluation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_review'}">
+                     <div class="space-on-bottom">
+                        <icon name="notepad" size="2x"></icon>
+                     </div>
+                     Analyst Evaluation
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="vm.dd_for"
+      step-content-header-title="'Select '+ vm.dd_for +' on the left hand panel, using search and filters to narrow your search and dynamically assign templates based on selected tags. Don’t see the '+vm.dd_for+' you want? Add a new one to the list.'"
+      can-exit="vm.canProceedToTemplateStep">
+      <div class="row clearfix">
+         <div class="clear-padding-left clear-padding-right text-center">
+            <div class="btn-group space-on-bottom-xxl">
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.dd_for == 'Firm'}"
+                  data-ng-click="vm.setDDFor('Firm')">
+                  <icon name="institution" class="space-on-right"></icon>
+                  FIRMS
+               </label>
+               <label class="btn btn-default font-size-12 text-uppercase" data-ng-class="{'btn-primary': vm.dd_for == vm.hierarchyConstants.Title}"
+                  data-ng-click="vm.setDDFor(vm.hierarchyConstants.Title)">
+                  <icon name="strategy" class="space-on-right"></icon>
+                  {{vm.hierarchyConstants.Title}}
+               </label>
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.dd_for == 'Product'}"
+                  data-ng-click="vm.setDDFor('Product')">
+                  <icon name="fund" class="space-on-right"></icon>
+                  PRODUCTS
+               </label>
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.dd_for == 'Vehicle'}"
+                  data-ng-click="vm.setDDFor('Vehicle')">
+                  <icon name="vehicle-car" class="space-on-right"></icon>
+                  VEHICLES
+               </label>
+            </div>
+         </div>
+         <div col="12">
+            <p class="alert alert-danger" data-ng-show="vm.display_entity_selection_error">
+               Please select at least one {{vm.dd_for == 'Strategies'? 'Strategy' : vm.dd_for}} with at least one contact / recipient to proceed
+            </p>
+            <div data-ng-if="vm.dd_for == 'Product'" class="text-center">
+               <div class="inline-block space-on-right">
+                  <small>
+                     <icon name="info" class="text-info" tooltip-placement="right"
+                        uib-tooltip="Check here to include vehicle related questionnaires in this information request">
+                     </icon>
+                  </small>
+               </div>
+               <div class="inline-block">
+                  <dv-checkbox data-ng-model="vm.showVehicles">
+                     <dv-checkbox-label>
+                        <b>Would you like to collect data for Vehicles?</b>
+                     </dv-checkbox-label>
+                  </dv-checkbox>
+               </div>
+            </div>
+            <div data-ng-if="vm.dd_for == vm.hierarchyConstants.Title" class="text-center">
+               <div class="inline-block space-on-right">
+                  <small>
+                     <icon name="info" class="text-info" tooltip-placement="right"
+                        uib-tooltip="Check here to include product related questionnaires in this information request">
+                     </icon>
+                  </small>
+               </div>
+               <div class="inline-block">
+                  <dv-checkbox data-ng-model="vm.showFunds">
+                     <dv-checkbox-label>
+                        <b>Would you like to collect data for Products?</b>
+                     </dv-checkbox-label>
+                  </dv-checkbox>
+               </div>
+            </div>
+            <div col="12">
+               <dd-strategy-selector selected-strategies="vm.selected_entities" standalone="true" data-ng-if="vm.dd_for == vm.hierarchyConstants.Title" total-records="vm.total_entity_records" search-criterias="vm.selectedFilters" global-ternary-operator="vm.selectedGlobalTernaryOperator">
+               </dd-strategy-selector>
+               <dd-fund-selector selection="vm.selected_entities" select-all-entities="vm.request.all_entity_flag"
+                  total-records="vm.total_entity_records" data-ng-if="vm.dd_for == 'Product'" search-criterias="vm.selectedFilters" global-ternary-operator="vm.selectedGlobalTernaryOperator"></dd-fund-selector>
+               <dd-firm-selector selection="vm.selected_entities" select-all-entities="vm.request.all_entity_flag"
+                  total-records="vm.total_entity_records" data-ng-if="vm.dd_for == 'Firm'" search-criterias="vm.selectedFilters" global-ternary-operator="vm.selectedGlobalTernaryOperator"></dd-firm-selector>
+               <dd-vehicle-selector selected-vehicles="vm.selected_entities" selected-funds="vm.selected_funds"
+                  standalone="true" data-ng-if="vm.dd_for == 'Vehicle'" search-criterias="vm.selectedFilters" global-ternary-operator="vm.selectedGlobalTernaryOperator"></dd-vehicle-selector>
+            </div>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Product'"
+      step-content-header-title="'Select Fund on the left hand panel, using search and filters to narrow your search. Don\'t see the Fund you want? Add a new one to the list.'"
+      step-show="vm.dd_for == vm.hierarchyConstants.Title && vm.showFunds" can-exit="vm.canExitProductsStep" level="3">
+      <div class="row clearfix">
+         <p class="alert alert-danger" data-ng-show="vm.show_funds_selection_error">
+            Please select at least one Product with at least one contact / recipient to proceed
+         </p>
+         <dd-fund-selector selection="vm.selected_funds" selected-strategies="vm.selected_entities" total-records="vm.total_entity_records" search-criterias="vm.selectedSubFilters" global-ternary-operator="vm.selectedSubGlobalTernaryOperator">
+         </dd-fund-selector>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Vehicle'"
+      step-content-header-title="'Select Vehicle on the left hand panel, using search and filters to narrow your search. Don\'t see the vehicle you want? Add a new one to the list.'"
+      step-show="vm.dd_for == 'Product' && vm.showVehicles" can-exit="vm.canExitVehiclesStep" level="3">
+      <div class="row clearfix">
+         <p class="alert alert-danger" data-ng-show="vm.show_vehicles_selection_error">
+            Please select at least one Vehicle to proceed
+         </p>
+         <dd-vehicle-selector selected-vehicles="vm.selected_vehicles" selected-funds="vm.selected_entities"
+            total-records="vm.total_entity_records" search-criterias="vm.selectedSubFilters" global-ternary-operator="vm.selectedSubGlobalTernaryOperator"></dd-vehicle-selector>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Questionnaire & Due Date'"
+      step-content-header-title="'Assign your questionnaire template and pick a due date '"
+      can-exit="vm.canExitQuestionnaireStep" before-enter="vm.beforeLoadingQuestionnaireSelect()">
+      <div class="alert alert-info clear-border-radius borderless" data-ng-if="(vm.dd_for == 'Product' && vm.showVehicles) || (vm.dd_for == vm.hierarchyConstants.Title && vm.showFunds)">
+         <div>
+            <span class="break_word">
+               Only one template selection is allowed when sending out a combined request.
+            </span>
+         </div>
+      </div>
+      <div class="row clearfix">
+         <p class="alert alert-danger" data-ng-show="vm.selected_entity_grid.length == 0">
+            Please select at least one {{vm.dd_for}} {{vm.subdd_for?'or '+vm.subdd_for:''}} to proceed
+         </p>
+         <div col="12">
+            <form novalidate name="vm.template_selection_form">
+               <div class="col-md-3 col-md-offset-1">
+                  <empty-state icon-name="file"
+                     message="You do not have any questionnaires setup on the platform. New questionaire templates can be created at New -> Templates."
+                     data-ng-show="!vm.templates.length"></empty-state>
+
+                  <form-group field-name="As of Date" data-ng-show="vm.templates.length" control-selector="dv-datepicker">
+                     <label for="due-date">As of Date</label>
+                     <dv-datepicker data-ng-model="vm.request.as_of_date" ng-required="true" id="as-of-date"
+                        name="as-of-date" max-date="vm.maxAsOfDate" data-ng-change="vm.validateDueDate()"></dv-datepicker>
+                  </form-group>
+                  <form-group field-name="Due Date" data-ng-show="vm.templates.length" control-selector="dv-datepicker">
+                     <label for="due-date">Due Date</label>
+                     <dv-datepicker data-ng-model="vm.request.due_at" ng-required="true" id="due-date" name="due-date"
+                        min-date="vm.minDate" data-ng-change="vm.validateDueDate()"></dv-datepicker>
+                     <div class="space-on-top-sm">
+                        Suggested due date is:
+                        <a class="clickable" data-ng-click="vm.setSuggestedDueDate(); vm.validateDueDate()">
+                           {{vm.getSuggestedDueDate(vm.request.duediligence_type)|date}}
+                        </a>
+                     </div>
+                  </form-group>
+                  <form-group data-ng-if="vm.request.duediligence_type == 'dd_event_related'" field-name="Event Trigger">
+                     <label for="event-trigger">Adhoc / Event Related Trigger</label>
+                     <select name="event_trigger" id="event-trigger" required chosen
+                        data-ng-model="vm.request.event_trigger"
+                        data-ng-options="event.value for event in vm.events track by event.id" class="form-control">
+                        <option value="">--Select--</option>
+                     </select>
+                  </form-group>
+               </div>
+               <div class="col-md-6 col-md-offset-2">
+                  <div class="form-group" data-ng-show="vm.filterApplied">
+                     <filtered-entity-selector entity-search-map="vm.entitySearchMap" templates="vm.templates"
+                        checkbox-label="'Dynamically assign questionnaire templates for '+ vm.dd_for.toLowerCase() +' based on selected filters?'"
+                        selected-entities="vm.selected_entities" global-ternary-operator="vm.selectedGlobalTernaryOperator"
+                        selected-filters="vm.searchByFiltersData" show-filter-based-selection="vm.showMainFilterBasedSelection"
+                        all-filter-template-id="vm.allFilterTemplateId" entity-type="vm.dd_for"
+                        unfiltered-selected-entities="vm.unfilteredSelectedEntities"
+                        is-filter-form-valid="vm.mainFilterSelectionValid"
+                        template-form="vm.template_selection_form"
+                        on-change="vm.onSelectedEntityChanged()"
+                        max-selected-templates="vm.maxSelectedTemplates"></filtered-entity-selector>
+                  </div>
+                  <form-group class="col-md-7" field-name="Template" data-ng-show="vm.templates.length && !vm.showMainFilterBasedSelection">
+                     <label for="template">Select a Questionnaire Template {{vm.dd_for == 'Product' && vm.showVehicles?'for
+                        Product':vm.dd_for == vm.hierarchyConstants.Title && vm.showFunds?'for '+vm.hierarchyConstants.Title:''}}</label>
+                     <select name="template" id="template" chosen
+                        data-ng-options="template.name for template in vm.templates track by template.id"
+                        data-ng-model="vm.request.template" no-results-text="'Could not find any templates'"
+                        class="form-control" multiple max-selected-options="vm.maxSelectedTemplates" data-ng-required="!vm.showMainFilterBasedSelection"
+                        >
+                     </select>
+                  </form-group>
+                  <div col="12" data-ng-if="(vm.dd_for == 'Product' && vm.showVehicles) || (vm.dd_for == vm.hierarchyConstants.Title && vm.showFunds) && vm.templates.length">
+                     <div class="form-group" data-ng-if="vm.subFilterApplied">
+                        <filtered-entity-selector entity-search-map="vm.subEntitySearchMap" templates="vm.templates"
+                           checkbox-label="'Dynamically assign questionnaire templates for '+ vm.subdd_for.toLowerCase() +' based on selected filters?'"
+                           selected-entities="vm.selectedSubEntities" global-ternary-operator="vm.selectedSubGlobalTernaryOperator"
+                           selected-filters="vm.searchBySubFiltersData" show-filter-based-selection="vm.showSubFilterBasedSelection"
+                           all-filter-template-id="vm.allSubFilterTemplateId" entity-type="vm.subdd_for"
+                           unfiltered-selected-entities="vm.unfilteredSelectedSubEntities"
+                           is-filter-form-valid="vm.subFilterSelectionValid"
+                           template-form="vm.template_selection_form"
+                           max-selected-templates="vm.maxSelectedVehicleTemplates"></filtered-entity-selector>
+                     </div>
+                     <form-group field-name="Template" class="col-md-7"
+                           data-ng-if="vm.dd_for == 'Product' && vm.showVehicles && vm.templates.length && (!vm.subFilterApplied || !vm.showSubFilterBasedSelection)">
+                           <label for="template">Select a Questionnaire Template for Vehicles</label>
+                           <select name="vehicletemplate" id="vehicletemplate" chosen
+                              data-ng-options="template.name for template in vm.templates track by template.id"
+                              data-ng-model="vm.request.vehicleTemplate" no-results-text="'Could not find any templates'"
+                              class="form-control" multiple max-selected-options="vm.maxSelectedVehicleTemplates" data-ng-required="!vm.showSubFilterBasedSelection"
+                              >
+                           </select>
+                     </form-group>
+                     <form-group field-name="Template" class="col-md-7"
+                        data-ng-if="vm.dd_for == vm.hierarchyConstants.Title && vm.showFunds && vm.templates.length && (!vm.subFilterApplied || !vm.showSubFilterBasedSelection)">
+                        <label for="template">Select a Questionnaire Template for Products</label>
+                        <select name="producttemplate" id="producttemplate" chosen
+                           data-ng-options="template.name for template in vm.templates track by template.id"
+                           data-ng-model="vm.request.productsTemplate" no-results-text="'Could not find any templates'"
+                           class="form-control" multiple max-selected-options="vm.maxSelectedVehicleTemplates" data-ng-required="!vm.showSubFilterBasedSelection"
+                           >
+                        </select>
+                     </form-group>
+                  </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Review'" before-enter="vm.loadGrid()"
+      step-content-header-title="'Please review your due diligence request'" next-button-label="{{vm.nextBtnText}}"
+      next-button-type="orange">
+      <div class="row clearfix">
+         <div col="6" class="bordered-right">
+            <div col="10" offset="1">
+               <div class="row space-on-bottom">
+                  <label class="col-md-3">From</label>
+                  <p col="9">{{vm.currentUser.firstName}} {{vm.currentUser.lastName}}</p>
+               </div>
+               <div class="row space-on-bottom">
+                  <label class="col-md-3">Request Type</label>
+                  <p col="9">{{vm.request.DDTypeDisplayName}} <span
+                        data-ng-show="vm.request.duediligence_type === 'dd_event_related'">({{vm.request.event_trigger.value}})</span>
+                  </p>
+               </div>
+               <div class="row space-on-bottom">
+                  <label class="col-md-3">As of Date</label>
+                  <p col="9">{{vm.request.as_of_date|date}}</p>
+               </div>
+               <div class="row space-on-bottom">
+                  <label class="col-md-3">Due Date</label>
+                  <p col="9">{{vm.request.due_at|date}}</p>
+               </div>
+               <div class="row space-on-bottom">
+                  <label class="col-md-3" data-ng-if="vm.request.is_internal">Internal Project</label>
+                  <p col="9" data-ng-if="vm.request.is_internal">{{vm.request.is_internal? 'Yes' : 'No'}}</p>
+               </div>
+               <form name="vm.project_name_form">
+                  <form-group field-name="Project Name" tooltip-placement="left" class="row">
+                     <label class="control-label col-md-3 space-on-top">Project Name</label>
+                     <div col="9">
+                        <input type="text" data-ng-model="vm.project_name" required focus-me="true"
+                           placeholder="Project Name" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                           class="form-control space-on-bottom-xl" />
+                        </div>
+                  </form-group>
+               </form>
+               <div col="12">
+                  <dv-checkbox data-ng-model="vm.request.is_internal">
+                     <dv-checkbox-label>
+                        <b>Mark as Internal <small>(Manager won't be notified)</small></b>
+                     </dv-checkbox-label>
+                  </dv-checkbox>
+               </div>
+               <div class="col-sm-12 space-on-bottom space-on-top-lg" style="padding: 0" col="12">
+                  <label class="control-label space-on-left-lg" data-ng-if="!vm.request.is_internal"><span
+                        uib-tooltip="These internal users will be added as subscribers to this project"
+                        tooltip-placement="right"><i class="dvi dvi-info"></i></span>&nbsp; Internal Subscribers</label>
+                  <div class="col-sm-12" style="padding: 0">
+                     <div col="12" data-ng-if="!vm.request.is_internal">
+                        <dv-subscriber-selection selection="vm.internalSubscribers" functions="vm.functions"></dv-subscriber-selection>
+                     </div>
+                     <div col="12" data-ng-if="!vm.request.is_internal">
+                        <div class="pos-rel space-on-left-xxl">
+                           <span class="subscriberSpan"
+                              uib-tooltip="This will auto subscribe the primary owners related to the selected Entity/Entities"
+                              tooltip-placement="right"><i class="dvi dvi-info"></i></span>&nbsp;
+                           <dv-checkbox data-ng-model="vm.autoSubscribeOwners">
+                              <dv-checkbox-label>
+                                 <p> Auto-Subscribe Primary Owners</p>
+                              </dv-checkbox-label>
+                           </dv-checkbox>
+                        </div>
+                     </div>
+                     <div col="12 space-on-top"
+                        data-ng-if="vm.selected_entities_temp.length > vm.firm_preferences.threshold_for_approval_flow && vm.firm_preferences.enable_approval_flow_information_request">
+                        <div col="4">
+                           <label>
+                              <span
+                                 uib-tooltip="These people will be assigned as approvers and will have the final say before the request is sent out to managers."
+                                 tooltip-placement="right"><i class="dvi dvi-info"></i></span>&nbsp;
+                              Assign approver(s)
+                           </label>
+                        </div>
+                        <div col="8">
+                           <select class="form-control padded-top" chosen multiple data-ng-model="vm.assignedApprovers"
+                              no-results-text="'Could not find any action items'" data-placeholder="Select team member"
+                              data-ng-options="member.id as member.fullName for member in vm.assignedApproversList">
+                           </select>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div col="6">
+            <div col="11">
+               <form name="email_text_form" data-ng-if="!vm.request.is_internal" col="12" class="space-on-top">
+                  <form-group field-name="Email Text" tooltip-placement="left">
+                     <div class="col-sm-5">
+                        <div class="pos-rel" style="margin-left: 17px">
+                           <span class="infoIconEmailTemplate">
+                              <icon name="info" tooltip-placement="right"
+                                 uib-tooltip="Firm admins can create additional templates from Firm Settings">
+                              </icon>
+                           </span>
+                           <dv-checkbox data-ng-model="vm.use_email_templates"
+                              data-ng-change="vm.getDefaultEmailTemplate(vm.use_email_templates)"
+                              data-ng-disabled="vm.disallow_custom_edits">
+                              <dv-checkbox-label>
+                                 <b>
+                                    Use email templates
+                                 </b>
+                              </dv-checkbox-label>
+                           </dv-checkbox>
+                        </div>
+                     </div>
+                     <div class="col-sm-6" data-ng-if="vm.email_templates.length == 0 && vm.use_email_templates">
+                        <p>No email templates present, <a class="clickable"
+                              ui-sref="app.firm.settings.email_templates">click
+                              here</a> to add one
+                        </p>
+                     </div>
+                     <div class="col-sm-6 space-on-top"
+                        data-ng-if="vm.email_templates.length > 0 && vm.use_email_templates">
+                        <select class="form-control" id="alert-frequency" chosen
+                           data-ng-model="vm.default_email_template_message_id"
+                           data-ng-options="template.id as template.name for template in vm.email_templates"
+                           data-ng-change="vm.renderEmailTemplate(vm.default_email_template_message_id)">
+                           <option value=""></option>
+                        </select>
+                     </div>
+                  </form-group>
+                  <br>
+                  <form-group field-name="Email Text" tooltip-placement="left" data-ng-if="!vm.disallow_custom_edits">
+                     <label class="col-sm-12">Email Message</label>
+                     <div class="col-sm-12">
+                        <textarea id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                           data-ng-model="vm.email_text"></textarea>
+                     </div>
+                  </form-group>
+               </form>
+               <div class="col-md-12 space-on-top-lg space-on-bottom-lg" data-ng-if="!vm.request.is_internal">
+                  <a class="link clickable pull-right" data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions">
+                     <icon name="chevron-up" data-ng-show="vm.showAdvanceOptions"></icon>
+                     <icon name="chevron-down" data-ng-show="!vm.showAdvanceOptions"></icon>
+                     {{vm.showAdvanceOptions? 'Hide': 'Show'}} Advanced Options
+                  </a>
+               </div>
+               <div class="bordered-bottom padded-top padded-bottom space-on-bottom"
+                  data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                  <span class="text-muted">Optional Fields</span>
+               </div>
+               <div class="padded-left" data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                  <small class="text-dark-blue text-bold">Note: Default email is set to <span
+                        class="link-underline">notifications@diligencevault.com</span>.<br> To change, go to Firm
+                     Settings >
+                     Preferences > Firm Preferences > Outbound email notifications</small>
+               </div>
+               <div col="12" class="space-on-top space-on-bottom"
+                  data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                  <label class="control-label col-sm-3 space-on-top">Sender Email</label>
+                  <div class="col-sm-9"
+                     data-ng-if="vm.sender_emails.length > 0 && vm.firm_preferences.add_sender_email">
+                     <select class="form-control" id="sender-email" chosen data-ng-model="vm.selected_sender_email"
+                        data-ng-options="email as email for email in vm.sender_emails">
+                        <option value=""></option>
+                     </select>
+                  </div>
+                  <div class="col-sm-8 space-on-top"
+                     data-ng-if="vm.sender_emails.length == 0 || !vm.firm_preferences.add_sender_email">
+                     <p class="clear-margin">No sender emails present, <a class="clickable"
+                           ui-sref="app.firm.settings.preferences">click here</a> to add one</p>
+                  </div>
+               </div>
+               <div col="12" class="space-on-top space-on-bottom"
+                  data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                  <label class="control-label col-sm-3 space-on-top">CC Email List</label>
+                  <div class="col-sm-9" data-ng-if="vm.cc_emails.length > 0 && vm.firm_preferences.add_cc_email">
+                     <select class="form-control" id="cc-email-list" chosen multiple
+                        data-ng-model="vm.selected_cc_email_list"
+                        data-ng-options="email as email for email in vm.cc_emails">
+                        <option value=""></option>
+                     </select>
+                  </div>
+                  <div class="col-sm-8 space-on-top"
+                     data-ng-if="vm.cc_emails.length == 0 || !vm.firm_preferences.add_cc_email">
+                     <p class="clear-margin">No cc emails present, <a class="clickable"
+                           ui-sref="app.firm.settings.preferences">click here</a> to add one</p>
+                  </div>
+               </div>
+               <div col="12" class="space-on-top space-on-bottom"
+                  data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                  <label class="control-label col-sm-3 space-on-top">BCC Email List</label>
+                  <div class="col-sm-9" data-ng-if="vm.bcc_emails.length > 0 && vm.firm_preferences.add_cc_email">
+                     <select class="form-control" id="cc-email-list" chosen multiple
+                        data-ng-model="vm.selected_bcc_email_list"
+                        data-ng-options="email as email for email in vm.bcc_emails">
+                        <option value=""></option>
+                     </select>
+                  </div>
+                  <div class="col-sm-8 space-on-top"
+                     data-ng-if="vm.bcc_emails.length == 0 || !vm.firm_preferences.add_cc_email">
+                     <p class="clear-margin">No bcc emails present, <a class="clickable"
+                           ui-sref="app.firm.settings.preferences">click here</a> to add one</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div col="12">
+            <spinner broad-spinner spinner-height='60' data-ng-if="vm.loading_grid"></spinner>
+            <div data-ng-if="!vm.loading_grid && vm.selectedGridResource" class="space-on-top-lg">
+               <dv-grid grid-resource="vm.selectedGridResource" name="vm.selected_entity_grid_name"></dv-grid>
+           </div>
+         </div>
+         <div col="10" offset="1" class="text-center">
+            <hr>
+            <dv-checkbox data-ng-model="vm.accept_confidential_agreement"
+               label="I certify that our firm will share the information received only with authorized personnels and clients.">
+            </dv-checkbox>
+         </div>
+      </div>
+   </wizard-step>
+</form-wizard>
+<form-wizard name="new-request-investor-scheduled" display-footer="vm.display_wizard_footer"
+   on-finish="vm.sendScheduledDDRequest()" show-top-back-button="vm.display_wizard_top_back_button"
+   data-ng-show="vm.is_data_loaded && (vm.request.duediligence_type == 'dd_scheduled')">
+   <wizard-step step-title="'Purpose'" step-content-header-title="'Select the purpose for this information request'"
+      before-enter="vm.display_wizard_footer = false;">
+      <div class="row clearfix">
+         <div col="4" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Scheduled / Pending Approval Requests</b>
+            </p>
+            <div class="text-center pa-tb-lg">
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_scheduled')"
+                     uib-tooltip="View all periodic and automatically scheduled requests here"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_scheduled'}">
+                     <div class="space-on-bottom">
+                        <icon name="calendar" size="2x"></icon>
+                     </div>
+                     Scheduled Requests
+                  </a>
+               </div>
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_pending')"
+                     uib-tooltip="View all requests which require approval before sending"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_pending'}">
+                     <div class="space-on-bottom">
+                        <icon name="pending_approval" size="2x"></icon>
+                     </div>
+                     Requests Pending Approval(s)
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="6" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Build From Scratch</b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_new')"
+                     uib-tooltip="Research and due diligence preceding the initial engagement or allocation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_new'}">
+                     <div class="space-on-bottom">
+                        <icon name="file-add" size="2x"></icon>
+                     </div>
+                     {{(vm.entity_type == 'Product' ? 'Pre-Investment' : 'Pre-Engagement')}}
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_ongoing')"
+                     uib-tooltip="Post investment, ongoing information request"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_ongoing'}">
+                     <div class="space-on-bottom">
+                        <icon name="clock-o" size="2x"></icon>
+                     </div>
+                     Ongoing Monitoring
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_event_related')"
+                     uib-tooltip="Post investment request triggered by a specific event or circumstance, such as personnel change, drawdown, et al."
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_event_related'}">
+                     <div class="space-on-bottom">
+                        <icon name="thunder" size="2x"></icon>
+                     </div>
+                     Adhoc / Event Related
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="2">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="padded-bottom">
+                  <span class="white-text-color">
+                     Analyst Evaluation
+                  </span>
+               </b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="12">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_review')"
+                     uib-tooltip="Create analyst evaluation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_review'}">
+                     <div class="space-on-bottom">
+                        <icon name="notepad" size="2x"></icon>
+                     </div>
+                     Analyst Evaluation
+                  </a>
+                  <!-- <p class="text-muted text-center space-on-top-lg">
+                     <small><i>*Preview for limited time*</i></small>
+                  </p> -->
+               </div>
+            </div>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Select Auto Scheduled Requests'"
+      step-content-header-title="'Scheduled Requests are listed below.'" can-exit="vm.canProceedToScheduledDDReviewStep"
+      before-enter="vm.is_loading_scheduled_dds = true;">
+      <div class="row clearfix relative">
+         <div col="12" data-ng-class="{'visibility-hidden': vm.is_loading_scheduled_dds}">
+            <div col="12" class="space-on-bottom">
+               <div class="panel panel-default bg-sky-blue" data-ng-if="!vm.show_bulk_edit_actions">
+                  <div class="panel-body padded-lg">
+                     <div col="4">
+                        <span data-ng-if="vm.show_bulk_actions">
+                           <h5 class="inline space-on-right-lg">
+                              <strong>Quick Actions:</strong>
+                           </h5>
+                           <a class="btn btn-default space-on-right-lg danger" uib-tooltip="Delete Selected"
+                              data-ng-click="vm.confirmScheduledDDBulkAction('delete')"
+                              data-ng-if="vm.show_bulk_actions">
+                              <strong>
+                                 <icon name="trashcan"></icon>
+                              </strong>
+                           </a>
+                           <a class="btn btn-default space-on-right-lg" uib-tooltip="Edit Selected"
+                              data-ng-click="vm.editScheduledDDBulkActionActive()" data-ng-if="vm.show_bulk_actions">
+                              <strong>
+                                 <icon name="pencil"></icon>
+                              </strong>
+                           </a>
+                        </span>
+                     </div>
+                     <div col="8">
+                        <div col="9">
+                           <span class="space-on-top pull-right" data-ng-if="vm.activeDateRange">
+                              Showing scheduled diligence projects for <b><u>{{vm.activeDateRange.name}}</u></b>
+                              <icon name="times-circle-o" class="space-on-left clickable space-on-right-lg"
+                                 uib-tooltip="Clear selection" data-ng-click="vm.clearDateRange()"></icon>
+                           </span>
+                        </div>
+                        <div col="3">
+                           <span class="dropdown" uib-dropdown>
+                              <button btn-type="default" block size="sm" class="space-on-top-2 dropdown-toggle"
+                                 uib-dropdown-toggle>Filter Requests <span class="caret space-on-left"></span></button>
+                              <ul class="dropdown-menu" uib-dropdown-menu>
+                                 <li data-ng-repeat="range in vm.dateFiltersMap">
+                                    <a class="clickable font-size-12" data-ng-click="vm.filterByDateRange(range)"
+                                       role="menuitem">
+                                       <span
+                                          data-ng-class="{'text-orange': vm.activeDateRange.value == range.value}">{{range.name}}</span>
+                                       <icon name="times-circle-o" class="space-on-left" uib-tooltip="Clear selection"
+                                          data-ng-click="vm.clearDateRange()"
+                                          data-ng-show="vm.activeDateRange.value == range.value">
+                                       </icon>
+                                    </a>
+                                 </li>
+                              </ul>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_edit_actions">
+                  <div class="panel-body padded-lg">
+                     <div class="row">
+                        <div col="6" class="clear-padding text-align-right">
+                           <span>
+                              <h5 class="inline space-on-right">
+                                 <strong>Selected Records : <span
+                                       class="badge">{{vm.totalSelectedRecords}}</span></strong>
+                              </h5>
+                           </span>
+                           <span>Select Scheduled Date:</span>
+                           <a style="width:45%;" class="btn btn-default clear-padding borderless space-on-right-lg">
+                              <dv-datepicker min-date="vm.minDateEditSection"
+                                 data-ng-model="vm.scheduled_diligences_scheduled_date" ng-required="true"
+                                 id="scheduled-date">
+                              </dv-datepicker>
+                           </a>
+                        </div>
+                        <div col="5" class="clear-padding">
+                           <span>Select Due Date:</span>
+                           <a style="width:45%;" class="btn btn-default space-on-right-lg clear-padding borderless">
+                              <dv-datepicker min-date="vm.minDateEditSection"
+                                 data-ng-model="vm.scheduled_diligences_due_date" ng-required="true" id="due-date">
+                              </dv-datepicker>
+                           </a>
+                           <a class="btn btn-default space-on-right-lg clear-padding borderless"
+                              data-ng-click="vm.editScheduledDDBulkAction()">
+                              <button button-loader="vm.loading" class="btn btn-primary btn-loader"
+                                 btn-type="submit">Save</button>
+                           </a>
+                           <a class="btn btn-default clear-padding borderless" data-ng-click="vm.closeQuickActions()">
+                              <button btn-type="default">Cancel</button>
+                           </a>
+                        </div>
+                        <div col="1">
+                           <a class="btn pull-right text-black danger" uib-tooltip="Close"
+                              data-ng-click="vm.closeQuickActions()">
+                              <strong>
+                                 <icon name="close"></icon>
+                              </strong>
+                           </a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div col="12">
+               <dv-grid grid-resource="vm.scheduled_diligences" name="vm.scheduled_diligences_grid"
+                  grid-name="'investor-scheduled'"></dv-grid>
+            </div>
+         </div>
+         <div class="full-width pos-abs" data-ng-if="vm.is_loading_scheduled_dds">
+            <spinner broad-spinner spinner-height='400'></spinner>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Review'" step-content-header-title="'Please review your due diligence request'"
+      next-button-label="Send Request" next-button-type="orange">
+      <div class="row clearfix">
+         <div col="6" class="bordered-right">
+            <div col="10" offset="1">
+               <form name="vm.scheduled_dd_project_name_form">
+                  <form-group field-name="Project Name" tooltip-placement="left">
+                     <label>Project Name</label>
+                     <input type="text" data-ng-model="vm.project_name" required focus-me="true"
+                        placeholder="Project Name" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                        class="form-control space-on-bottom-xl" />
+                  </form-group>
+               </form>
+               <form name="email_text_form">
+                  <form-group field-name="Email Text" tooltip-placement="left">
+                     <div class="col-sm-5" style="margin-left: 17px">
+                        <div class="pos-rel">
+                           <small class="infoIconEmailTemplate">
+                              <icon name="info" tooltip-placement="right"
+                                 uib-tooltip="Firm admins can create additional templates from Firm Settings">
+                              </icon>
+                           </small>
+                           <dv-checkbox data-ng-model="vm.use_email_templates"
+                              data-ng-change="vm.getDefaultEmailTemplate(vm.use_email_templates)"
+                              data-ng-disabled="vm.disallow_custom_edits">
+                              <dv-checkbox-label>
+                                 <b>
+                                    Use email templates
+                                 </b>
+                              </dv-checkbox-label>
+                           </dv-checkbox>
+                        </div>
+                     </div>
+                     <div class="col-sm-6" data-ng-if="vm.email_templates.length == 0 && vm.use_email_templates">
+                        <p>No email templates present, <a class="clickable"
+                              ui-sref="app.firm.settings.email_templates">click
+                              here</a> to add one
+                        </p>
+                     </div>
+                     <div class="col-sm-6" data-ng-if="vm.email_templates.length > 0 && vm.use_email_templates">
+                        <select class="form-control" id="alert-frequency" chosen
+                           data-ng-model="vm.default_email_template_message_id"
+                           data-ng-options="template.id as template.name for template in vm.email_templates"
+                           data-ng-change="vm.renderEmailTemplate(vm.default_email_template_message_id)">
+                           <option value=""></option>
+                        </select>
+                     </div>
+                  </form-group>
+                  <br>
+                  <form-group field-name="Email Text" tooltip-placement="left" data-ng-if="!vm.disallow_custom_edits">
+                     <div class="margin-top-50">
+                        <label>Email Message</label>
+                        <textarea id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                           data-ng-model="vm.email_text"></textarea>
+                     </div>
+                  </form-group>
+               </form>
+            </div>
+         </div>
+         <div col="6">
+            <h4 class="alert alert-info text-center clear-margin-top space-on-left-lg">
+               Scheduled Request Preview
+            </h4>
+            <div col="11">
+               <dl class="dl-horizontal clear-margin-bottom">
+                  <dt>Request Type</dt>
+                  <dd>{{vm.request.DDTypeDisplayName}}</dd>
+                  <dt>Entities</dt>
+                  <dd>
+                     Total {{vm.final_schedule_diligences_list.length}} diligence projects have been selected
+                  </dd>
+                  <dt data-ng-class="{'space-on-top-lg': vm.email_text}">Email Msg</dt>
+                  <dd class="word-break-break-all">
+                     <div data-ng-if="vm.email_text" class="email-text-wrapper">
+                        <span class="word-break-break-all" data-ng-bind-html="vm.email_text"></span>
+                     </div>
+                     <span data-ng-if="!vm.email_text">--</span>
+                  </dd>
+               </dl>
+            </div>
+         </div>
+         <div col="10" offset="1" class="text-center">
+            <hr>
+            <dv-checkbox data-ng-model="vm.accept_confidential_agreement"
+               label="I certify that our firm will share the information received only with authorized personnels and clients.">
+            </dv-checkbox>
+         </div>
+      </div>
+   </wizard-step>
+</form-wizard>
+<form-wizard name="new-request-review" display-footer="vm.display_wizard_footer" on-finish="vm.sendReviewDDRequest()"
+   data-ng-show="vm.request.duediligence_type == 'dd_review'" show-top-back-button="vm.display_wizard_top_back_button">
+   <wizard-step step-title="'Purpose'" step-content-header-title="'Select the purpose for this information request'"
+      before-enter="vm.display_wizard_footer = false;">
+      <div class="row clearfix">
+         <div col="4" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Scheduled / Pending Approval Requests</b>
+            </p>
+            <div class="text-center pa-tb-lg">
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_scheduled')"
+                     uib-tooltip="View all periodic and automatically scheduled requests here"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_scheduled'}">
+                     <div class="space-on-bottom">
+                        <icon name="calendar" size="2x"></icon>
+                     </div>
+                     Scheduled Requests
+                  </a>
+               </div>
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_pending')"
+                     uib-tooltip="View all requests which require approval before sending"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_pending'}">
+                     <div class="space-on-bottom">
+                        <icon name="pending_approval" size="2x"></icon>
+                     </div>
+                     Requests Pending Approval(s)
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="6" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Build From Scratch</b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_new')"
+                     uib-tooltip="Research and due diligence preceding the initial engagement or allocation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_new'}">
+                     <div class="space-on-bottom">
+                        <icon name="file-add" size="2x"></icon>
+                     </div>
+                     {{(vm.entity_type == 'Product' ? 'Pre-Investment' : 'Pre-Engagement')}}
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_ongoing')"
+                     uib-tooltip="Post investment, ongoing information request"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_ongoing'}">
+                     <div class="space-on-bottom">
+                        <icon name="clock-o" size="2x"></icon>
+                     </div>
+                     Ongoing Monitoring
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_event_related')"
+                     uib-tooltip="Post investment request triggered by a specific event or circumstance, such as personnel change, drawdown, et al."
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_event_related'}">
+                     <div class="space-on-bottom">
+                        <icon name="thunder" size="2x"></icon>
+                     </div>
+                     Adhoc / Event Related
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="2">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="padded-bottom">
+                  <span class="white-text-color">
+                     Analyst Evaluation
+                  </span>
+               </b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="12">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_review')"
+                     uib-tooltip="Create analyst evaluation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_review'}">
+                     <div class="space-on-bottom">
+                        <icon name="notepad" size="2x"></icon>
+                     </div>
+                     Analyst Evaluation
+                  </a>
+                  <!-- <p class="text-muted text-center space-on-top-lg">
+                     <small><i>*Preview for limited time*</i></small>
+                  </p> -->
+               </div>
+            </div>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Analyst Evaluation Template & Due Date'"
+      step-content-header-title="'Pick an analyst evaluation and select a due date.'"
+      before-enter="vm.shouldFooterBeVisible()"
+      can-exit="vm.canProceedToDiligenceSelection && vm.review_template_selection_form.$valid"
+      step-selection-control="vm.request.review_template.id">
+      <div class="row clearfix">
+         <div col="4" offset="4">
+            <form novalidate name="vm.review_template_selection_form">
+               <empty-state icon-name="file"
+                  message="You do not have any analyst evaluation templates setup on the platform. New analyst evaluation templates can be created at New -> Templates."
+                  data-ng-show="!vm.review_templates.length"></empty-state>
+               <form-group field-name="Template" data-ng-show="vm.review_templates.length">
+                  <label for="template">Select an Analyst Evaluation Template</label>
+                  <select name="template" id="template" chosen
+                     data-ng-options="template.name for template in vm.review_templates track by template.id"
+                     data-ng-model="vm.request.review_template" data-ng-change="vm.getDataForSteps()"
+                     class="form-control" required>
+                     <option value="">--Select--</option>
+                  </select>
+               </form-group>
+               <form-group ng-show="vm.review_diligence_templates.length">
+                  <div class="panel panel-info">
+                     <div class="panel-heading">
+                        <small>Selected template is mapped to {{vm.review_diligence_templates.length}} template(s).
+                           Please select projects for each mapped template in next steps.</small>
+                     </div>
+                  </div>
+               </form-group>
+               <form-group field-name="As of Date" data-ng-show="vm.review_templates.length"
+                  control-selector="dv-datepicker">
+                  <label for="due-date">As of Date</label>
+                  <dv-datepicker data-ng-model="vm.request.as_of_date" ng-required="true" id="as-of-date"
+                     name="as-of-date" max-date="vm.maxAsOfDate" data-ng-change="vm.validateDueDateReview()">
+                  </dv-datepicker>
+               </form-group>
+               <form-group field-name="Due Date" data-ng-show="vm.review_templates.length"
+                  control-selector="dv-datepicker">
+                  <label for="due-date">Due Date</label>
+                  <dv-datepicker data-ng-model="vm.request.due_at" ng-required="true" id="due-date" name="due-date"
+                     min-date="vm.minDate" data-ng-change="vm.validateDueDateReview()"></dv-datepicker>
+                  <div class="space-on-top-sm">
+                     Suggested due date is:
+                     <a class="clickable" data-ng-click="vm.setSuggestedDueDate(); vm.validateDueDateReview()">
+                        {{vm.getSuggestedDueDate(vm.request.duediligence_type)|date}}
+                     </a>
+                  </div>
+               </form-group>
+            </form>
+         </div>
+      </div>
+      <div class="row clearfix" data-ng-if="vm.show_dilignece_zero_text">
+         <p class="text-center text-muted space-on-top-xxl">
+            <i>No projects found for selected template</i>
+         </p>
+      </div>
+   </wizard-step>
+   <wizard-step ng-repeat="entry in vm.review_diligence_templates"
+      step-title="'Select Source Project - Step ' + ($index + 1)"
+      step-content-header-title="'<p>Select project for <b>'+(entry.name)+'</b> template on the left hand panel, using search and filters to narrow your search.</p>'"
+      step-content-header-type="'html'" before-enter="vm.projectsSelectionBeforeEnter(entry, $index)"
+      ng-init="entry.rowIndex = $index; vm.show_review_step = true" step-name="entry.id"
+      step-is-alive="vm.entryExists(results)">
+      <div class="row space-on-top-lg">
+         <div class="text-center">
+            <div class="btn-group">
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'All'}"
+                  data-ng-click="vm.setEntityType('All')">All</label>
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Firm'}"
+                  data-ng-click="vm.setEntityType('Firm')">Firm</label>
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Strategy'}"
+                  data-ng-click="vm.setEntityType('Strategy')">Strategy</label>
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Fund'}"
+                  data-ng-click="vm.setEntityType('Fund')">Product</label>
+               <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Vehicle'}"
+                  data-ng-click="vm.setEntityType('Vehicle')">Vehicle</label>
+               <label uib-tooltip="Analyst Evaluation projects created for any entity types (combination of Product, Firm, Strategy or Vehicle)"
+                  class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.review_entity_type == 'Custom'}"
+                  data-ng-click="vm.setEntityType('Custom')">Multi-entity</label>
+            </div>
+         </div>
+      </div>
+      <div class="row clearfix space-on-top-lg">
+         <div col="6">
+            <div class="panel panel-default dd-multiselect">
+               <div class="panel-heading">
+                  <div class="row clearfix">
+                     <div col="6">
+                        <div class="input-group-rename-this-class-when-filters-are-enabled">
+                           <input type="text" data-ng-model="vm.filterBy" class="form-control"
+                              placeholder="Search Projects by name" />
+                        </div>
+                     </div>
+                     <div col="6">
+                        <div data-ng-show="(vm.review_entity_type == 'Fund' || vm.review_entity_type == 'Firm' || vm.review_entity_type == 'Strategy' || vm.review_entity_type == 'Vehicle') && (vm.filters_applied || vm.diligences.length > 0)">
+                           <button btn-type="default" class="space-on-top-2" size="sm"
+                              uib-tooltip="{{vm.filters_section.show ? 'Hide' : 'Apply' }} Filters"
+                              data-ng-click="vm.toggleFiltersSection()">
+                              <icon name="filter" data-ng-class="{'text-orange': vm.filters_section.show}"></icon>
+                           </button>
+                           <button btn-type="default" class="space-on-top-2" size="sm"
+                              data-ng-click="vm.clearEntityFilter()">
+                              Clear
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="row clearfix space-on-top-lg" data-ng-show="vm.filters_section.show">
+                     <div col="12">
+                        <select data-ng-if="vm.review_entity_type == 'Fund'" id="template-selection" col="4"
+                           class="form-control" chosen required data-ng-model="vm.filter.diligence_entity"
+                           no-results-text="'Could not find any funds'"
+                           data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Fund')"
+                           data-placeholder="Filter by Funds"
+                           data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_funds track by diligence.entity_id">
+                        </select>
+                        <select data-ng-if="vm.review_entity_type == 'Firm'" id="template-selection" col="4"
+                           class="form-control" chosen required data-ng-model="vm.filter.diligence_entity"
+                           no-results-text="'Could not find any firms'"
+                           data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Firm')"
+                           data-placeholder="Filter by Firms"
+                           data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_firms track by diligence.entity_id">
+                        </select>
+                        <select data-ng-if="vm.review_entity_type == 'Strategy'" id="template-selection" col="4" class="form-control" chosen
+                           required data-ng-model="vm.filter.diligence_entity" no-results-text="'Could not find any strategies'"
+                           data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Strategy')" data-placeholder="Filter by Strategies"
+                           data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_strategies track by diligence.entity_id">
+                        </select>
+                        <select data-ng-if="vm.review_entity_type == 'Vehicle'" id="template-selection" col="4"
+                           class="form-control" chosen required data-ng-model="vm.filter.diligence_entity"
+                           no-results-text="'Could not find any vehicles'"
+                           data-ng-change="vm.filterDiligences(vm.filter.diligence_entity, 'Vehicle')"
+                           data-placeholder="Filter by Vehicles"
+                           data-ng-options="diligence as diligence.entity_name for diligence in vm.diligence_vehicles track by diligence.entity_id">
+                        </select>
+                     </div>
+                  </div>
+               </div>
+               <div class="list-group clear-margin-bottom">
+                  <div class="list-group-item"
+                     data-ng-repeat="diligence in vm.diligences | filter: vm.filterBy | orderBy:'name'">
+                     <div class="row clearfix">
+                        <span data-ng-show="diligence.is_selected || vm.select_all_entities" class="space-on-right">
+                           <icon name="check" size="lg" class="text-success"></icon>
+                        </span>
+                        <span class="space-on-right" uib-tooltip="Select {{diligence.name}}"
+                           data-ng-hide="diligence.is_selected || vm.select_all_entities">
+                           <icon name="plus-circle" data-ng-click="vm.addToSelection(entry, diligence)" size="lg"
+                              class="text-primary" role="button"></icon>
+                        </span>
+                        <span>{{diligence.tofirm_name}} - {{diligence.name}} - As of {{diligence.as_of_date |
+                           date}}</span>
+                        <span class="space-on-left badge"
+                           data-ng-class="{'badge-info':diligence.entity_type == 'Strategy', 'badge-success':diligence.entity_type == 'Fund', 'badge-warning':diligence.entity_type == 'Firm', 'badge-primary':(diligence.entity_type == 'Vehicle' || diligence.entity_type == 'Review')}">
+                           {{diligence.entity_type == 'Fund'?'Product': diligence.entity_type}}</span>
+                     </div>
+                  </div>
+                  <div class="list-group-item" data-ng-if="vm.is_loading">
+                     <div class="row clearfix">
+                        <div>
+                           <spinner broad-spinner spinner-height='20'></spinner>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <h5 class="pull-right" data-ng-show="vm.diligences.length">Total {{vm.diligences.length}} Projects
+                  available
+               </h5>
+               <div class="panel-body" data-ng-if="!vm.filters_applied && !vm.is_loading && !vm.diligences.length">
+                  <empty-state message="Try changing your filters if you don't see what you're looking for"
+                     ></empty-state>
+               </div>
+               <div class="panel-body" data-ng-if="!vm.is_loading && vm.filters_applied && vm.diligences.length == 0">
+                  <empty-state message="No Projects match applied filters"></empty-state>
+               </div>
+            </div>
+         </div>
+         <div class="dd-multiselect-selection" col="6">
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                  <div class="row clearfix">
+                     <div col="8">
+                        <p class="form-control-static inline-block">
+                           Projects Selected <span
+                              data-ng-show="(vm.selection_list.length > 0)||(vm.select_all_entities)">({{vm.selection_list.length}})</span>
+                        </p>
+                     </div>
+                     <div col="4">
+                        <span class="pull-right">
+                           <button btn-type="default" size="sm" data-ng-if="entry.selection_list.length" data-ng-click="vm.clearSelectionList(entry)">Clear
+                              Selection</button>
+                        </span>
+                     </div>
+                  </div>
+               </div>
+               <ul class="list-group clear-margin-bottom" data-ng-if="entry.selection_list.length">
+                  <li class="list-group-item" data-ng-repeat="diligence in entry.selection_list"
+                     data-ng-class="{'active-item': diligence.hoverState}" ng-mouseover="diligence.hoverState = true;"
+                     ng-mouseleave="diligence.hoverState = false;">
+                     <div class="media">
+                        <div class="media-body">
+                           <div class="dv-table full-width">
+                              <div class="cell align-middle">
+                                 <div class="clearfix">
+                                    <div class="inline-block">
+                                       <span uib-tooltip="Remove {{diligence.name}}" class="space-on-right">
+                                          <icon name="minus-circle" class="text-danger" role="button" size="lg"
+                                             data-ng-click="vm.removeFromSelection(entry, diligence)"></icon>
+                                       </span>
+                                       <span class="space-on-right">{{diligence.tofirm_name}} - {{diligence.name}} - As
+                                          of
+                                          {{diligence.as_of_date | date}}</span>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </li>
+               </ul>
+               <div class="panel-body text-center" data-ng-if="vm.select_all_entities">
+                  All {{vm.data_length}} projects are selected.
+               </div>
+               <div class="panel-body" data-ng-if="!entry.selection_list.length && !vm.select_all_entities">
+                  <empty-state
+                     message="You have not selected any projects. Please select them from the panel in the left">
+                  </empty-state>
+               </div>
+            </div>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Review'" step-content-header-title="'Please review your due diligence request'"
+      next-button-label="Start Analyst Evaluation Project" next-button-type="orange"
+      before-enter="vm.combineSelectedDiligences()" ng-if="vm.show_review_step"
+      step-name="vm.request.review_template.id" step-is-alive="vm.reviewIsAlive(results)">
+      <div class="row clearfix">
+         <div col="6" class="bordered-right">
+            <div col="10" offset="1">
+               <form name="vm.scheduled_dd_project_name_form">
+                  <form-group field-name="Project Name" tooltip-placement="left">
+                     <label>Project Name</label>
+                     <input type="text" data-ng-model="vm.project_name" required focus-me="true"
+                        placeholder="Project Name" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                        class="form-control space-on-bottom-xl" />
+                  </form-group>
+               </form>
+            </div>
+         </div>
+         <div col="6">
+            <h4 class="alert alert-info text-center clear-margin-top space-on-left-lg">
+               Request Preview
+            </h4>
+            <div col="11" class="review-request">
+               <dl class="dl-horizontal clear-margin-bottom">
+                  <dt>Request Type</dt>
+                  <dd>{{vm.request.DDTypeDisplayName}}</dd>
+                  <dt>Mapped projects</dt>
+                  <dd>
+                     Total {{vm.combinedDiligences.length}} projects have been selected
+                  </dd>
+                  <dt uib-tooltip="Analyst Evaluation Template">Analyst Evaluation Template</dt>
+                  <dd>{{vm.request.review_template.name}}</dd>
+                  <dt>As of Date</dt>
+                  <dd>{{vm.request.as_of_date|date}}</dd>
+                  <dt>Due Date</dt>
+                  <dd>{{vm.request.due_at|date}}</dd>
+               </dl>
+            </div>
+         </div>
+         <div col="10" offset="1" class="text-center">
+            <hr>
+         </div>
+      </div>
+   </wizard-step>
+</form-wizard>
+<form-wizard name="new-request-investor-pending" display-footer="vm.display_wizard_footer"
+   on-finish="vm.aprrovePendingRequest()" data-ng-show="vm.request.duediligence_type == 'dd_pending'" show-top-back-button="vm.display_wizard_top_back_button">
+   <wizard-step step-title="'Purpose'" step-content-header-title="'Select the purpose for this due diligence request'"
+      before-enter="vm.display_wizard_footer = false;">
+      <div class="row clearfix">
+         <div col="4" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Scheduled / Pending Approval Requests</b>
+            </p>
+            <div class="text-center pa-tb-lg">
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_scheduled')"
+                     uib-tooltip="View all periodic and automatically scheduled requests here"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_scheduled'}">
+                     <div class="space-on-bottom">
+                        <icon name="calendar" size="2x"></icon>
+                     </div>
+                     Scheduled Requests
+                  </a>
+               </div>
+               <div col="6">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_pending')"
+                     uib-tooltip="View all requests which require approval before sending"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_pending'}">
+                     <div class="space-on-bottom">
+                        <icon name="pending_approval" size="2x"></icon>
+                     </div>
+                     Requests Pending Approval(s)
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="6" class="bordered-right-silver">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="bordered-bottom padded-bottom">Build From Scratch</b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_new')"
+                     uib-tooltip="Research and due diligence preceding the initial engagement or allocation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_new'}">
+                     <div class="space-on-bottom">
+                        <icon name="file-add" size="2x"></icon>
+                     </div>
+                     {{(vm.entity_type == 'Product' ? 'Pre-Investment' : 'Pre-Engagement')}}
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_ongoing')"
+                     uib-tooltip="Post investment, ongoing information request"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_ongoing'}">
+                     <div class="space-on-bottom">
+                        <icon name="clock-o" size="2x"></icon>
+                     </div>
+                     Ongoing Monitoring
+                  </a>
+               </div>
+               <div class="text-center" col="4">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_event_related')"
+                     uib-tooltip="Post investment request triggered by a specific event or circumstance, such as personnel change, drawdown, et al."
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_event_related'}">
+                     <div class="space-on-bottom">
+                        <icon name="thunder" size="2x"></icon>
+                     </div>
+                     Adhoc / Event Related
+                  </a>
+               </div>
+            </div>
+         </div>
+         <div col="2">
+            <p class="text-center space-on-bottom-xxxl font-size-16">
+               <b class="padded-bottom">
+                  <span class="white-text-color">
+                     Analyst Evaluation
+                  </span>
+               </b>
+            </p>
+            <div class="pa-tb-lg">
+               <div class="text-center" col="12">
+                  <a class="link-disguise clickable" data-ng-click="vm.setDDType('dd_review')"
+                     uib-tooltip="Create analyst evaluation"
+                     data-ng-class="{'text-orange': vm.request.duediligence_type == 'dd_review'}">
+                     <div class="space-on-bottom">
+                        <icon name="notepad" size="2x"></icon>
+                     </div>
+                     Analyst Evaluation
+                  </a>
+                  <!-- <p class="text-muted text-center space-on-top-lg">
+                     <small><i>*Preview for limited time*</i></small>
+                  </p> -->
+               </div>
+            </div>
+         </div>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Pending Approval(s)'" can-exit="vm.isPendingOrDraftRequestSelected"
+      step-content-header-title="'Pending Approval(s)'">
+      <div data-ng-show="vm.is_pending_data_loaded">
+         <pending-draft-requests on-selected-row="vm.onRowSelect(response)"></pending-draft-requests>
+      </div>
+      <div data-ng-hide="vm.is_pending_data_loaded">
+         <spinner broad-spinner spinner-height='50'></spinner>
+      </div>
+   </wizard-step>
+   <wizard-step step-title="'Review'" step-content-header-title="'Please review your due diligence request'"
+      next-button-label="{{vm.nextBtnText}}" next-button-type="orange">
+      <div class="panel panel-default">
+         <div class="panel-body clearfix">
+            <div class="text-center"
+               data-ng-if="vm.currentUserIsApprover && vm.requestDataById.draft_status == 'InProgress'">
+               <div class="inline-block">
+                  <button btn-type="transparent" data-ng-click="vm.aprrovePendingRequest()"
+                     button-loader="vm.performing_action">
+                     <div>
+                        <icon name="thumbs-o-up" size="2x"></icon>
+                     </div>
+                     <small>Approve</small>
+                  </button>
+               </div>
+               <div class="inline-block">
+                  <button btn-type="transparent" data-ng-click="vm.rejectPendingRequest()"
+                     button-loader="vm.performing_action">
+                     <div>
+                        <icon name="thumbs-o-down" size="2x"></icon>
+                     </div>
+                     <small>Not Approve</small>
+                  </button>
+               </div>
+               <div class="inline-block">
+                  <a class="btn btn-transparent" data-ng-click="vm.goBackToRequestsList()">
+                     <div><i class="dvi ng-isolate-scope dvi-arrow-back fa-2x" name="arrow-back" size="2x"></i></div>
+                     <small>Back</small>
+                  </a>
+               </div>
+            </div>
+            <div class="dv-table dv-table-middle dd-info-panel width-100-pct"
+               data-ng-if="!vm.currentUserIsApprover || vm.requestDataById.draft_status == 'Approved' || vm.requestDataById.draft_status == 'Rejected'">
+               <div class="cell text-left">
+                  <div class="inline-block">
+                     <span class="align-middle">Status:</span>
+                     <span class="label text-uppercase"
+                        data-ng-class="{'label-danger': vm.getRequestStatus(vm.requestDataById.draft_status)=='Rejected', 'label-warning': vm.getRequestStatus(vm.requestDataById.draft_status)=='Pending approval','label-info': vm.getRequestStatus(vm.requestDataById.draft_status)=='Waiting for approval'}">
+                        <small>{{vm.getRequestStatus(vm.requestDataById.draft_status)}}</small>
+                     </span>
+                  </div>
+                  <div class="inline-block space-on-left-xxxxl"
+                     data-ng-if="vm.requestDataById.draft_status == 'Approved' || vm.requestDataById.draft_status == 'Rejected'">
+                     <button btn-type="transparent" data-ng-click="vm.viewDisclaimer()" type="button"
+                        class="btn btn-transparent">
+                        <div><i class="dvi dvi-disclaimer dvi ng-isolate-scope fa-2x" size="2x"></i></div>
+                        <small>View Approver Notes</small>
+                     </button>
+                  </div>
+               </div>
+               <div class="cell text-right">
+                  <a class="btn btn-transparent" data-ng-click="vm.goBackToRequestsList()">
+                     <div><i class="dvi ng-isolate-scope dvi-arrow-back fa-2x" name="arrow-back" size="2x"></i></div>
+                     <small>Back</small>
+                  </a>
+               </div>
+            </div>
+         </div>
+      </div>
+      <br
+         data-ng-if="!vm.currentUserIsApprover || vm.requestDataById.draft_status == 'Approved' || vm.requestDataById.draft_status == 'Rejected'">
+      <div col="10" offset="1" class="text-center"
+         data-ng-if="vm.currentUserIsApprover && vm.requestDataById.draft_status != 'Approved' && vm.requestDataById.draft_status != 'Rejected'">
+         <dv-checkbox data-ng-model="vm.accept_confidential_agreement"
+            label="I certify that our firm will share the information received only with authorized personnels and clients.">
+         </dv-checkbox>
+         <hr>
+      </div>
+      <div class="row clearfix">
+         <div col="10" offset="1">
+            <div col="6" class="bordered-right">
+               <dl class="dl-horizontal clear-margin-bottom">
+                  <dt>Project Name:</dt>
+                  <dd>
+                     {{vm.requestAuthorJsonData.name}}
+                  </dd>
+                  <dt>Request Type:</dt>
+                  <dd>{{vm.request.DDTypeDisplayName}} <span
+                        data-ng-show="vm.request.duediligence_type === 'dd_event_related'">({{vm.request.event_trigger.value}})</span>
+                  </dd>
+                  <dt>From:</dt>
+                  <dd>{{vm.currentUser.firstName}} {{vm.currentUser.lastName}}</dd>
+                  <dt>Entities:</dt>
+                  <dd data-ng-if="vm.all_selected_entities_arr.length > 0">
+                     <span data-ng-hide="vm.request.all_entity_flag">
+                        <a>{{vm.all_selected_entities_arr.length}}</a>
+                        entities with <a>{{vm.all_selected_entities_contacts_arr.length}}</a>
+                        recipients
+                     </span>
+                     <span data-ng-show="vm.request.all_entity_flag">This request is for all {{((vm.dd_for ==
+                        'Product')?
+                        'active investments' : 'firms')}}</span>
+                  </dd>
+               </dl>
+            </div>
+            <div col="6">
+               <dl class="dl-horizontal clear-margin-bottom">
+                  <dt>As of Date:</dt>
+                  <dd>
+                     {{vm.getFormattedDate(vm.requestAuthorJsonData.as_of_date)|date}}
+                  </dd>
+                  <dt>Due Date:</dt>
+                  <dd>
+                     {{vm.getFormattedDate(vm.requestAuthorJsonData.due_at)|date}}
+                  </dd>
+                  <dt data-ng-if="!vm.requestAuthorJsonData.is_internal"
+                     data-ng-class="{'space-on-top-lg': vm.requestAuthorJsonData.email_text}">Email Msg</dt>
+                  <dd data-ng-if="!vm.requestAuthorJsonData.is_internal" class="word-break-break-all">
+                     <div data-ng-if="vm.requestAuthorJsonData.email_text" class="email-text-wrapper">
+                        <span class="word-break-break-all"
+                           data-ng-bind-html="vm.requestAuthorJsonData.email_text"></span>
+                     </div>
+                     <span data-ng-if="!vm.requestAuthorJsonData.email_text">--</span>
+                  </dd>
+                  <br>
+                  <br>
+                  <dt data-ng-if="vm.requestAuthorJsonData.cc_emails">
+                     CC
+                  </dt>
+                  <dd data-ng-if="vm.requestAuthorJsonData.cc_emails">
+                     {{vm.requestAuthorJsonData.cc_emails}}
+                  </dd>
+                  <dt data-ng-if="vm.requestAuthorJsonData.bcc_emails">
+                     BCC
+                  </dt>
+                  <dd data-ng-if="vm.requestAuthorJsonData.bcc_emails">
+                     {{vm.requestAuthorJsonData.bcc_emails}}
+                  </dd>
+               </dl>
+               <br>
+               <br>
+            </div>
+         </div>
+      </div>
+      <div data-ng-if="vm.is_pending_data_loaded">
+         <to-approve-requests-entities to-approve-request-data="vm.requestDataById"></to-approve-requests-entities>
+      </div>
+   </wizard-step>
+</form-wizard>
+
+</div>

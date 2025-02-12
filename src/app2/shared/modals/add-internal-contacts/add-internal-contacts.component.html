@@ -1,0 +1,118 @@
+<app-modal
+  [title]="'Assign Internal Contacts'"
+  [firstButtonLabel]="'Assign Contacts'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="addContactRef"
+  [isLoading]="is_saving"
+  [isFirstButtonDisabled]="loading"
+  (onCancelClick)="handleCancelClick()"
+>
+</app-modal>
+
+<ng-template #addContactRef>
+  <div class="add-internal-contacts-container">
+    <div *ngIf="loading" class="text-center">
+      <app-spinner></app-spinner>
+    </div>
+    <div *ngIf="!loading">
+      <div class="panel panel-info" *ngIf="help_text">
+        <div class="panel-heading" [innerHtml]="help_text"></div>
+      </div>
+      <form
+        class="form-horizontal"
+        [formGroup]="internal_contacts_form"
+        autocomplete="off"
+      >
+        <dv-form-element
+          [showRightIcon]="false"
+          [label]="'Selected ' + entity_type_name | titlecase"
+          labelPosition="top"
+          [elementCol]="12"
+          [modelController]="
+            internal_contacts_form.get('selectedEntitiesControl')
+          "
+          [fieldName]="'SelectedEntities'"
+          [isRequired]="true"
+          [errorMessage]="'Please select one or more ' + entity_type_name"
+        >
+          <dv-select
+            [id]="'selectedEntitiesControl'"
+            [multiple]="true"
+            [clearable]="false"
+            formControlName="selectedEntitiesControl"
+            [placeholder]="'Select ' + entity_type_name"
+            [name]="'SelectedEntities'"
+            [list]="entities"
+          >
+          </dv-select>
+        </dv-form-element>
+        <dv-form-element
+          [fieldName]="'User Role'"
+          [showRightIcon]="false"
+          label="User Role(s)"
+          errorMessage="Role is required"
+          labelPosition="top"
+          [elementCol]="12"
+          [modelController]="internal_contacts_form.get('userRolesControl')"
+          [isRequired]="true"
+          infoText="Any existing User Roles will be overwritten with your selections here."
+        >
+          <dv-select
+            [id]="'userRolesControl'"
+            [multiple]="true"
+            [clearable]="false"
+            [readonly]="disabled"
+            formControlName="userRolesControl"
+            placeholder="Select user role(s)"
+            [name]="'User Role'"
+            [list]="internal_contact_types"
+            [bindLabel]="'description'"
+            [bindValue]="'id'"
+          >
+          </dv-select>
+        </dv-form-element>
+        <dv-form-element
+          labelPosition="top"
+          [elementCol]="12"
+          [fieldName]="'Users'"
+          label="Selected Users"
+          [modelController]="internal_contacts_form.get('usersControl')"
+          *ngIf="all_users && all_users.length > 0"
+          [isRequired]="true"
+          [showRightIcon]="false"
+        >
+          <app-dv-selector-list
+            [name]="'Users'"
+            [entity_type]="'User'"
+            [entities]="all_users"
+            [filter_params]="{}"
+            [displayParams]="selector_params"
+            [KeepSelectionAfterOnChange]="true"
+            (onChangeEntity)="selectUsers($event)"
+          ></app-dv-selector-list>
+          <div
+            *ngIf="
+              internal_contacts_form.get('usersControl')?.touched &&
+              internal_contacts_form.get('usersControl')?.invalid
+            "
+            class="alert alert-danger"
+          >
+            Please select at least one user to assign to the selected entities.
+          </div>
+        </dv-form-element>
+      </form>
+      <helper-text>
+        Primary contact(s) of an entity will be notified of any activities
+        related to the entities assigned to them. Investor will not be able to
+        remove these contact(s) while sending out request(s).
+      </helper-text>
+      <dv-checkbox
+        [(ngModel)]="is_primary_contact"
+        [label]="'Mark selected users as primary contact ?'"
+        name="is_primary_contact"
+        class="primary-contact-checkbox"
+      >
+      </dv-checkbox>
+    </div>
+  </div>
+</ng-template>

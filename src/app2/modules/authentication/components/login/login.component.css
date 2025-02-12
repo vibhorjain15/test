@@ -1,0 +1,136 @@
+.helper_text {
+  background-color: #f0fafd;
+  padding: 10px 15px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #31708f;
+  border-color: #bce8f1;
+}
+.skeleton-loader {
+  width: 25vw;
+  height: 75vh;
+  background: linear-gradient(-90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 400% 400%;
+  animation: gradientAnimation 1.5s ease infinite;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+.parent-container {
+  margin-top: -40px;
+  margin-left: 0;
+  margin-right: 0;
+}
+.banner-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+}
+.banner-image-wrapper {
+  margin-left: 20%;
+}
+.redirect-link-button {
+  background-color: transparent;
+  padding: 7px 12px;
+  border-radius: 5px;
+  margin-top: 15px;
+  display: inline-block;
+}
+.megaphone-image-wrapper {
+  align-self: flex-end;
+  margin-bottom: 10vh;
+}
+.megaphone-image {
+  width: 10vw;
+  margin-left: -5vh;
+  height: 10vw;
+}
+
+.login-section {
+  background: white;
+  height: 100vh;
+  overflow: hidden;
+}
+.toaster {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  max-width: 350px;
+  background-color: white;
+}
+.person-icon {
+  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  min-width: 40px;
+  background: #27b098;
+  color: white;
+}
+.close-icon {
+  margin-left: auto;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+}
+.close-icon:hover {
+  background-color: #f4f4f4;
+  border-radius: 4px;
+}
+.timer {
+  margin-top: 0px;
+  font-size: 12px;
+}
+.help-link-button {
+  position: fixed;
+  bottom: 20px; /* Adjust top position */
+  right: 20px;
+  color: #9a9a9a;
+  border: 1px solid #9a9a9a;
+  padding: 7px 12px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  max-width: 320px;
+}
+@media only screen and (max-width: 1023px) {
+  .banner-image-wrapper {
+    width: 50%;
+    margin-left: 15%;
+  }
+}
+.mt-12{
+  margin-top: 12px;
+}
+
+.new-custom-error {
+  border-radius: 4px;
+  border: 1px solid rgba(220, 53, 69, 0.15);
+  background: var(--Error-BG-Red, #fbe9eb);
+}
+
+.new-custom-error-para {
+  color: var(--Error-Text-Red, #bd2130);
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+}

@@ -1,0 +1,20 @@
+<form novalidate name="vm.feedback_form" data-ng-submit="vm.processRequest()">
+  <div class="modal-header">
+    <h3 class="modal-title">Request a Fund Research
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="This field" validate-on="submit">
+      <textarea class="form-control h-200"
+        placeholder="Share a list of funds for Mercer Fund Watch research and someone from DiligenceVault will reach out to you."
+        ng-model="vm.feedVals.FeedbackText" focus-me="vm.set_textarea_focus" name="feedback_text" required></textarea>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button btn-type="default" data-ng-click="vm.close()">Cancel</button>
+    <button type="submit" button-loader="vm.loading">Submit</button>
+  </div>
+</form>

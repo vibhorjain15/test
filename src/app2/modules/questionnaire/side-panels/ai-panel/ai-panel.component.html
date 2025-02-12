@@ -1,0 +1,20 @@
+<side-panel-wrapper
+  [title]="isReadonly ? 'AI Analysis Assistant' : 'AI Writing Assistant'"
+  [isFooter]="false"
+  (onCancelClick)="onSidePanelCancel()"
+  infoText="AI Assistants use a version of the Azure OpenAI model, similar to ChatGPT but customized with specific instructions and restrictions for DiligenceVault's client needs. Your data is secure in this closed system and won't be used for training public-facing models."
+>
+  <b class="note-container-heading">Question: </b>
+  <span [innerHTML]="question?.text"></span>
+  <div class="ai-panel">
+    <ai-text-generator
+      [selectedPrompt]="selectedPrompt"
+      [selectedResponse]="selectedResponse"
+      (onAction)="handleOnAction($event)"
+      (onGenerating)="onGenerating($event)"
+      [question]="question"
+      [isReadonly]="isReadonly"
+      [diligence]="diligence"
+    ></ai-text-generator>
+  </div>
+</side-panel-wrapper>

@@ -1,0 +1,23 @@
+<div class="nudgeContainer">
+  <img
+    src="assets/images/nudges_background.png"
+    class="background-image-nudge"
+    alt="nudge background image"
+  />
+  <div class="nudgeTextContainer">
+    <div class="logoDiv">
+      <img src="assets/images/DV_logo.png" alt="DiligenceVault brand logo"/>
+    </div>
+    <h2 class="text-center leadText">
+      <strong
+        >{{ leadText }} &nbsp; <span class="dvi dvi-smile-o"></span
+      ></strong>
+    </h2>
+    <br />
+    <div class="subtext text-center" *ngIf="nudge.response">
+      <p>{{ nudge.response }}</p>
+    </div>
+    <br />
+    <app-spinner *ngIf="!nudge.response"></app-spinner>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+tinymce.addI18n("fi", {
+  "Advanced sort...": "Lajittelun lis\xe4asetukset...",
+  "Advanced Sort": "Lajittelun lis\xe4asetukset",
+  "Sort table by column ascending": "Lajittele taulukko sarakkeen nousevassa j\xe4rjestyksess\xe4",
+  "Sort table by column descending": "Lajittele taulukko sarakkeen laskevassa j\xe4rjestyksess\xe4",
+  "Sort": "Lajittele",
+  "Order": "J\xe4rjestys",
+  "Sort by": "Lajittelutapa",
+  "Ascending": "Nouseva",
+  "Descending": "Laskeva",
+  "Selection": "Valinta",
+  "Table": "Taulukko",
+  "Column": "Sarake",
+  "Row": "Rivi",
+  "Column {0}": "Sarake {0}",
+  "Row {0}": "Rivi {0}",
+  "Row numbering": "Rivien numerointi",
+  "None": "Ei mit\xe4\xe4n",
+  "Numeric": "Numeerinen",
+  "Alpha": "Aakkoset"
+});

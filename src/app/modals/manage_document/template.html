@@ -1,0 +1,1002 @@
+<ng2-upload-document-folder
+  data-ng-if="vm.Utils.isAngular()"
+  data-is-angular-js="true"
+  data-upload-type="file"
+  data-show-upload-type-toggler="true"
+></ng2-upload-document-folder>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div  class="modal-header">
+  <div ng-switch="vm.mode">
+    <div ng-switch-when="update">
+      <h3 class="modal-title" data-ng-if="vm.mode != 'new-upload'">
+        {{vm.editMode ? 'Update ' : 'Add New '}} Document
+        <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.close()">
+          &times;
+        </a>
+      </h3>
+    </div>
+    <div ng-switch-when="new-upload">
+      <h3 class="modal-title" data-ng-if="vm.mode == 'new-upload'">
+        Add New Document
+        <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.close()">
+          &times;
+        </a>
+      </h3>
+    </div>
+    <div ng-switch-when="add">
+      <h3 class="modal-title">Add New Document(s) <small>(Up to 10 files)</small>
+        <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.close()">
+          &times;
+        </a>
+      </h3>
+    </div>
+    <div ng-switch-when="update_document_tags">
+      <h3 class="modal-title">Update Document Meta Data
+        <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.close()">
+          &times;
+        </a>
+      </h3>
+    </div>
+  </div>
+</div>
+<!-- -->
+<div class="text-center" data-ng-show="vm.showToggleButton">
+  <br>
+  <div class="btn-group">
+      <button data-ng-disabled="false" class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.sourceType == 'existing'}" data-ng-click="vm.setUploadType('existing')">Use Existing</button>
+      <button data-ng-disabled="false"  class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.sourceType == 'new'}" data-ng-click="vm.setUploadType('new')">New Upload</button>
+  </div>
+</div>
+<div data-ng-show="vm.loading" class="text-center">
+  <br>
+   <spinner></spinner>
+</div>
+
+<div data-ng-if="vm.sourceType == 'new'">
+<form name="vm.documentForm" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+  <div class="modal-body">
+    <div ng-switch="vm.mode">
+      <div ng-switch-when="update">
+
+        <form-group field-name="Entity Type" data-ng-if="vm.showEntityRelatedFields">
+          <label for="entity-type" class="col-md-4 control-label">
+            Entity Type
+          </label>
+
+          <div class="col-md-7">
+            <select id="entity-type"
+                    class="form-control"
+                    chosen required
+                    data-ng-model="vm.entityType"
+                    data-placeholder-text-multiple="'Select Entity Type'">
+              <option value=""></option>
+              <option value="Firm">Firm</option>
+              <option value="Fund">Product</option>
+              <option value="Vehicle">Vehicle</option>
+              <option value="Strategy">Strategy</option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="Associated Product" data-ng-if="vm.entityType == 'Fund' && vm.showEntityRelatedFields">
+          <label for="associated-product" class="col-md-4 control-label">
+            Associated Product
+          </label>
+
+          <div class="col-md-7">
+            <select id="associated-product"
+                    class="form-control"
+                    chosen multiple
+                    data-ng-model="vm.entityId"
+                    data-ng-change="vm.setEntityData(vm.entityId, 'Fund')"
+                    ng-required="true"
+                    data-ng-disabled="!vm.funds"
+                    data-ng-options="fund.id as fund.name for fund in vm.funds">
+              <option value=""></option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="Associated Firm" data-ng-if="vm.entityType == 'Firm' && vm.showEntityRelatedFields">
+          <label for="associated-firm" class="col-md-4 control-label">
+            Associated Firm
+          </label>
+
+          <div class="col-md-7">
+            <select id="associated-firm"
+                    class="form-control"
+                    chosen multiple
+                    data-ng-model="vm.entityId"
+                    data-ng-change="vm.setEntityData(vm.entityId, 'Firm')"
+                    ng-required="true"
+                    data-ng-disabled="!vm.firms"
+                    data-ng-options="firm.id as firm.display_name for firm in vm.firms">
+              <option value=""></option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="Associated Vehicle" data-ng-if="vm.entityType == 'Vehicle' && vm.showEntityRelatedFields">
+          <label for="associated-vehicle" class="col-md-4 control-label">
+            Associated Vehicle
+          </label>
+
+          <div class="col-md-7">
+            <select id="associated-vehicle"
+                    class="form-control"
+                    chosen multiple
+                    data-ng-model="vm.entityId"
+                    data-ng-change="vm.setEntityData(vm.entityId, 'Vehicle')"
+                    ng-required="true"
+                    data-ng-disabled="!vm.firms"
+                    data-ng-options="vehicle.id as vehicle.display_name for vehicle in vm.vehicles">
+              <option value=""></option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="Associated Strategy" data-ng-if="vm.entityType == 'Strategy' && vm.showEntityRelatedFields">
+          <label for="associated-strategy" class="col-md-4 control-label">
+            Associated Strategy
+          </label>
+
+          <div class="col-md-7">
+            <select id="associated-strategy"
+                    class="form-control"
+                    chosen multiple
+                    data-ng-model="vm.entityId"
+                    data-ng-change="vm.setEntityData(vm.entityId, 'Strategy')"
+                    ng-required="true"
+                    data-ng-disabled="!vm.strategies"
+                    data-ng-options="strategy.id as strategy.name for strategy in vm.strategies">
+              <option value=""></option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="Document Name">
+          <label for="attachment-name" class="col-md-4 control-label">
+            Document Name
+          </label>
+
+          <div class="col-md-7">
+            <input type="text"
+                   id="attachment-name"
+                   class="form-control"
+                   data-ng-model="vm.params.name"
+                   dv-restrict-input="{type: 'validName'}"
+                   focus-me="vm.focusAttachmentName"
+                   required/>
+          </div>
+        </form-group>
+
+        <form-group field-name="Document Type">
+          <label for="document-type-new" class="col-md-4 control-label">
+            Document Types
+          </label>
+
+          <div class="col-md-7">
+            <select id="document-tag"
+                    class="form-control"
+                    chosen multiple
+                    data-ng-model="vm.params.tags"
+                    data-ng-disabled="!vm.attachmentTypes"
+                    data-placeholder-text-multiple="'Select Document Tags'"
+                    data-ng-options="type.id as type.name for type in vm.attachmentTypes"
+                    data-ng-required="vm.isManager && vm.managerCheck">
+              <option value=""></option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="As of Date" control-selector="dv-datepicker" data-ng-if="vm.editAccess">
+          <label for="as-of-date" class="col-md-4 control-label">
+            As of Date
+          </label>
+
+          <div class="col-md-7">
+            <dv-datepicker id="as-of-date" data-ng-model="vm.params.as_of_date"
+                           ng-required="true"
+                           max-date="vm.maxAsOfDate"></dv-datepicker>
+          </div>
+        </form-group>
+
+        <form-group field-name="As of Date" data-ng-if="!vm.editAccess">
+          <label for="as-of-date" class="col-md-4 control-label">
+            As of Date
+          </label>
+          <div class="col-md-7">
+            <dv-datepicker id="as-of-date" data-ng-model="vm.params.as_of_date"
+                           ng-required="true"
+                           max-date="vm.maxAsOfDate"></dv-datepicker>
+          </div>
+        </form-group>
+
+        <div class="form-group" data-ng-if="vm.editAccess">
+          <label for="select-file" class="col-md-4 control-label">
+            {{ vm.uploaded_file ? 'Selected' : 'Select' }} File
+          </label>
+
+          <div class="col-md-7">
+
+            <div data-ng-if="vm.editMode">
+              <div class="dd-doc-selection-wrapper padded-right" data-ng-hide="vm.upload_in_progress">
+                <div class="panel panel-default dd-doc-drop-panel"
+                     dv-file-handler
+                     name="file-handler-one"
+                     dv-droppable
+                     dv-manual-upload
+                     ngf-multiple="true"
+                     ngf-select-disabled="true"
+                     dv-bind-files-to="vm.drop_files"
+                     dv-on-drop="vm.uploadDropAttachment()"
+                     dv-accept="::vm.allowed_file_extensions_str"
+                     dv-pattern="::vm.allowed_file_extensions_str"
+                     dv-max-file-size="::vm.maxFileSize"
+                     ngf-max-files="1"
+                     ngf-drag-over-class="'panel-primary'"
+                     ngf-model-invalid="vm.rejectedFiles">
+                  <div class="panel-body">
+                    <p class="text-muted text-center">
+                      <strong>Drag & Drop your file here</strong>
+                    </p>
+
+                    <p class="text-muted text-center">
+                      <icon name="upload" size="2x"></icon>
+                    </p>
+
+                    <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+                  </div>
+                </div>
+
+                <div class="dd-doc-select-button-container">
+                  <button btn-type="default"
+                          ngf-select
+                          ngf-accept="'{{::vm.allowed_file_extensions_str}}'"
+                          ngf-pattern="'{{::vm.allowed_file_extensions_str}}'"
+                          ngf-max-size="'{{::vm.maxFileSize}}'"
+                          ng-model="vm.files"
+                          ngf-change="vm.uploadAttachment($files)"
+                          ngf-model-invalid="vm.rejectedFiles">
+                    <icon name="upload" class="align-middle"></icon>
+                    Upload Different File
+                  </button>
+                  <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+                </div>
+              </div>
+
+              <a document-viewer="vm.document"
+                 class="link-disguise">
+                <dv-checkbox
+                        disabled="disabled"
+                        checked="checked"
+                        data-ng-show="vm.uploaded_file">
+                  <dv-checkbox-label>
+                      <span dv-limit-word="vm.uploaded_file.name"
+                            char-limit="30"
+                            uib-tooltip="{{vm.uploaded_file.name}}">
+                      </span>
+                  </dv-checkbox-label>
+                </dv-checkbox>
+              </a>
+
+              <div data-ng-show="vm.upload_in_progress">
+                <div>
+                  <small>
+                    Uploading
+                    <span data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></span>
+                  </small>
+                </div>
+
+                <uib-progressbar value="vm.progressPercentage"
+                                 type="success"
+                                 class="progress-striped active"></uib-progressbar>
+              </div>
+
+              <div>
+                <small class="text-danger"
+                       data-ng-show="vm.attachment_form.$submitted && !vm.uploaded_file && !vm.rejectedFiles.length">
+                  Please attach a file
+                </small>
+
+                <small class="text-danger" data-ng-show="vm.rejectedFiles.length">
+                  <span data-ng-repeat="file in vm.rejectedFiles">{{file.name}}</span> is not a valid file. Valid
+                  formats are <b>{{::vm.allowed_file_extensions_str}}</b>
+                </small>
+              </div>
+            </div>
+            <div data-ng-if="!vm.editMode && vm.sourceType == 'new'">
+              <div class="dd-doc-selection-wrapper">
+                <div class="panel panel-default dd-doc-drop-panel"
+                     dv-file-handler
+                     name="file-handler-one"
+                     dv-droppable
+                     dv-manual-upload
+                     dv-fields="vm.updatedParams"
+                     ngf-multiple="true"
+                     ngf-select-disabled="true"
+                     dv-bind-files-to="vm.files"
+                     ngf-max-files="1"
+                     dv-accept="::vm.allowed_file_extensions_str"
+                     dv-pattern="::vm.allowed_file_extensions_str"
+                     dv-max-file-size="::vm.maxFileSize"
+                     dv-upload-url="/attachments"
+                     dv-on-upload="vm.documentUploadCompleteBulk(response)"
+                     dv-on-upload-error="vm.documentUploadFailed(response)"
+                     ngf-drag-over-class="'panel-primary'">
+                  <div class="panel-body">
+                    <p class="text-muted text-center">
+                      <strong>Drag & Drop your file here</strong>
+                    </p>
+
+                    <p class="text-muted text-center">
+                      <icon name="upload" size="2x"></icon>
+                    </p>
+
+                    <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30" data-ng-init="vm.setDocName(vm.drop_files)"></div>
+
+                  </div>
+                </div>
+
+                <div class="dd-doc-select-button-container">
+                  <button btn-type="default"
+                          dv-file-handler
+                          dv-manual-upload
+                          dv-fields="vm.updatedParams"
+                          name="file-handler-two"
+                          dv-bind-files-to="vm.files"
+                          dv-upload-url="/attachments"
+                          dv-accept="::vm.allowed_file_extensions_str"
+                          dv-pattern="::vm.allowed_file_extensions_str"
+                          dv-max-file-size="::vm.maxFileSize"
+                          dv-on-upload="vm.documentUploadCompleteBulk(response)"
+                          dv-on-upload-error="vm.documentUploadFailed(response)">
+                    Select File
+                  </button>
+                  <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30" data-ng-init="vm.setDocName(vm.files)"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- <div class="form-group" data-ng-if="!vm.editAccess">
+          <div col="6" offset="4">
+            <p>
+              As your firm didn't upload this document, you have restricted access to the document i.e. <span
+                    class="text-danger">Document Types</span> only.
+            </p>
+          </div>
+        </div> -->
+      </div>
+
+      <div ng-switch-when="add">
+        <form-group field-name="Document Context">
+          <label for="document-name" class="col-md-4 control-label">
+            Document Context
+            <br>
+            <small class="text-muted">(Add a note to provide additional context / color)</small>
+          </label>
+
+          <div class="col-md-7">
+                          <textarea rows="4"
+                                    id="document-name"
+                                    class="form-control"
+                                    data-ng-model="vm.params.context"
+                                    msd-elastic="\n"
+                                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                    required></textarea>
+          </div>
+        </form-group>
+
+        <form-group field-name="Document Source">
+          <label for="document-source" class="col-md-4 control-label">
+            Document Source
+          </label>
+
+          <div class="col-md-7">
+            <select id="document-source"
+                    class="form-control"
+                    chosen
+                    data-ng-model="vm.params.source"
+                    data-ng-options="source_obj.id as source_obj.value for source_obj in vm.sources_options"
+                    required>
+              <option value="">--Select--</option>
+            </select>
+          </div>
+        </form-group>
+
+        <div class="dd-doc-selection-wrapper space-on-top-xxl">
+          <div class="panel panel-default dd-doc-drop-panel"
+               dv-file-handler
+               name="file-handler-one"
+               dv-fields="vm.params"
+               dv-droppable
+               dv-manual-upload
+               dv-aggregate-upload
+               ngf-multiple="true"
+               ngf-select-disabled="true"
+               dv-bind-files-to="vm.files"
+               ngf-max-files="5"
+               dv-accept="'.pdf'"
+               dv-pattern="'.pdf'"
+               dv-max-file-size="::vm.maxFileSize"
+               dv-upload-url="/attachments "
+               dv-on-upload="vm.getDocumentUploadResponse(response)"
+               dv-on-upload-error="vm.handleUploadError(response)"
+               ngf-drag-over-class="'panel-primary'">
+            <div class="panel-body">
+              <p class="text-muted text-center">
+                <strong>Drag & Drop your file here</strong>
+              </p>
+
+              <p class="text-muted text-center">
+                <icon name="upload" size="2x"></icon>
+              </p>
+            </div>
+          </div>
+
+          <div class="dd-doc-select-button-container">
+            <button btn-type="default"
+                    dv-file-handler
+                    name="file-handler-two"
+                    dv-fields="vm.params"
+                    dv-bind-files-to="vm.files"
+                    dv-manual-upload
+                    dv-aggregate-upload
+                    dv-upload-url="/attachments "
+                    ngf-max-files="10"
+                    ngf-multiple="true"
+                    dv-accept="'.pdf'"
+                    dv-pattern="'.pdf'"
+                    dv-max-file-size="::vm.maxFileSize"
+                    dv-on-upload="vm.getDocumentUploadResponse(response)"
+                    dv-on-upload-error="vm.handleUploadError(response)">
+              Select File
+            </button>
+          </div>
+        </div>
+        <div class="space-on-top-xxl" data-ng-if="vm.files.length>0">
+          <div class="space-on-bottom-lg" data-ng-repeat="file in vm.files">
+            <span class="space-on-right-lg">{{$index+1}}.</span>
+            <span dv-limit-word="file.name" char-limit="30"></span>
+            <button btn-type="default"
+                    class="danger"
+                    size="sm"
+                    uib-tooltip="Delete File"
+                    data-ng-click="vm.deleteFile($index)">
+              <icon name="trashcan"></icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div ng-switch-when="update_document_tags">
+        <form-group field-name="Document Name">
+          <label for="attachment-update-tag-name" class="col-md-4 control-label">
+            Document Name
+          </label>
+
+          <div class="col-md-7">
+            <input type="text"
+                   id="attachment-update-tag-name"
+                   class="form-control"
+                   data-ng-model="vm.params.name"
+                   dv-restrict-input="{type: 'validName'}"
+                   focus-me="vm.focusAttachmentName"
+                   required/>
+          </div>
+        </form-group>
+
+        <form-group field-name="As of Date" control-selector="dv-datepicker">
+          <label for="as-of-date" class="col-md-4 control-label">
+            As of Date
+          </label>
+
+          <div class="col-md-7">
+            <dv-datepicker id="as-of-date" data-ng-model="vm.params.as_of_date"
+                           ng-required="true"
+                           max-date="vm.maxAsOfDate"></dv-datepicker>
+          </div>
+        </form-group>
+
+        <form-group field-name="Associated Product Name">
+          <label for="entity_name" class="col-md-4 control-label">
+            Associated Product
+          </label>
+
+          <div class="col-md-7">
+            <select name="entity_name"
+                    id="entity_name"
+                    class="form-control"
+                    chosen
+                    ng-required="true"
+                    data-ng-disabled="!vm.funds"
+                    data-ng-options="fund.id as fund.name for fund in vm.funds"
+                    data-ng-model="vm.params.entity_id">
+              <option value="">--Select--</option>
+            </select>
+          </div>
+        </form-group>
+
+        <form-group field-name="Document Type">
+          <label for="document-type-new" class="col-md-4 control-label">Document Type</label>
+
+          <div class="col-md-7">
+            <select id="document-type-new"
+                    class="form-control"
+                    required
+                    chosen multiple
+                    data-ng-model="vm.params.tag_ids_copy"
+                    data-ng-disabled="!vm.attachmentTypes"
+                    data-placeholder-text-multiple="'Select Document Tags'"
+                    data-ng-options="type.id as type.name for type in vm.attachmentTypes">
+              <option value=""></option>
+            </select>
+          </div>
+        </form-group>
+      </div>
+    </div>
+
+    <p class="alert alert-info clear-margin-bottom space-on-top-xl" data-ng-if="vm.editMode && vm.editAccess && vm.new_document_uploaded">
+      The updated version will be accessible to all {investors / managers} who have access to this document.
+    </p>
+  </div>
+
+  <div class="modal-footer">
+    <div ng-switch="vm.mode">
+      <div ng-switch-when="update|add" ng-switch-when-separator="|">
+        <button type="submit"
+                button-loader="vm.savingDocument">{{vm.editMode ? 'Update' : 'Upload'}}</button>
+        <button btn-type="default" data-ng-click="vm.customCloseModal()">Cancel</button>
+      </div>
+      <div ng-switch-when="update_document_tags">
+        <button type="submit"
+                button-loader="vm.savingDocument">Update</button>
+        <button btn-type="success"
+                button-loader="vm.approvingDocument" data-ng-click="vm.updateApproveDocumentSubmit()">Update and Approve</button>
+        <button btn-type="default" data-ng-click="vm.customCloseModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+
+<!-- ******************************************  Assign Existing ************************************************ -->
+
+<div data-ng-if="vm.sourceType == 'existing' && !vm.loading">
+  <form name="vm.existingDocForm" class="form-horizontal" novalidate>
+  <div class="modal-body pd-10">
+    <!-- <div data-ng-if="vm.attachments.length == 0 && !vm.loading">
+      <p>No documents available. Once a document is <b><a data-ng-click="vm.sourceType = 'new'" class="clickable">attached</a></b>, you can reuse it across investor requests</p>
+    </div> -->
+    <div>
+      <form-group field-name="Entity Type" data-ng-if="vm.showEntityRelatedFields && !vm.editMode">
+        <label for="entity-type" class="col-md-3 control-label">
+          Entity Type
+        </label>
+
+        <div class="col-md-8">
+          <select id="entity-type"
+                  class="form-control"
+                  chosen required
+                  data-ng-model="vm.entityType"
+                  data-placeholder-text-multiple="'Select Entity Type'">
+            <option value=""></option>
+            <option value="Firm">Firm</option>
+            <option value="Fund">Product</option>
+            <option value="Vehicle">Vehicle</option>
+            <option value="Strategy">Strategy</option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group field-name="Associated Firm" data-ng-if="vm.entityType == 'Firm' && vm.showEntityRelatedFields">
+        <label for="associated-firm" class="col-md-3 control-label">
+          Associated Firm
+        </label>
+
+        <div class="col-md-8">
+          <select id="associated-firm"
+                  class="form-control"
+                  chosen multiple
+                  data-ng-model="vm.entityId"
+                  ng-required="true"
+                  data-ng-change="vm.getAttactments(vm.entityId, vm.entityType)"
+                  data-ng-disabled="!vm.firms"
+                  data-ng-options="firm.id as firm.display_name for firm in vm.firms">
+            <option value=""></option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group field-name="Associated Product" data-ng-if="vm.entityType == 'Fund' && vm.showEntityRelatedFields">
+        <label for="associated-product" class="col-md-3 control-label">
+          Associated Product
+        </label>
+
+        <div class="col-md-8">
+          <select id="associated-product"
+                  class="form-control"
+                  chosen multiple
+                  data-ng-model="vm.entityId"
+                  ng-required="true"
+                  data-ng-change="vm.getAttactments(vm.entityId, vm.entityType)"
+                  data-ng-disabled="!vm.funds"
+                  data-ng-options="fund.id as fund.name for fund in vm.funds">
+            <option value=""></option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group field-name="Associated Vehicle" data-ng-if="vm.entityType == 'Vehicle' && vm.showEntityRelatedFields">
+        <label for="associated-vehicle" class="col-md-3 control-label">
+          Associated Vehicle
+        </label>
+
+        <div class="col-md-8">
+          <select id="associated-vehicle"
+                  class="form-control"
+                  chosen multiple
+                  data-ng-model="vm.entityId"
+                  data-ng-change="vm.getAttactments(vm.entityId, vm.entityType)"
+                  ng-required="true"
+                  data-ng-disabled="!vm.vehicles"
+                  data-ng-options="vehicle.id as vehicle.display_name for vehicle in vm.vehicles">
+            <option value=""></option>
+          </select>
+        </div>
+      </form-group>
+
+      <form-group field-name="Associated Strategy" data-ng-if="vm.entityType == 'Strategy' && vm.showEntityRelatedFields">
+        <label for="associated-strategy" class="col-md-3 control-label">
+          Associated Strategy
+        </label>
+
+        <div class="col-md-8">
+          <select id="associated-strategy"
+                  class="form-control"
+                  chosen multiple
+                  data-ng-model="vm.entityId"
+                  data-ng-change="vm.getAttactments(vm.entityId, 'Strategy')"
+                  ng-required="true"
+                  data-ng-disabled="!vm.strategies"
+                  data-ng-options="strategy.id as strategy.name for strategy in vm.strategies">
+            <option value=""></option>
+          </select>
+        </div>
+      </form-group>
+
+      <div class="row" data-ng-show="vm.attachments && !vm.loading && vm.showEntityRelatedFields">
+        <div class="col-md-2"></div>
+        <div class="col-md-10">
+          <div class="col-md-12">
+            <div class="col-md-5">
+              <label class="text-muted">Search:</label>
+              <div class="searchTextDiv">
+                <input type="text" data-ng-model="vm.searchtext" class="form-control" placeholder="Search by name">
+                <icon data-ng-if="vm.searchtext.length >= 4" class="closeIcon" name="close"
+                  data-ng-click="vm.searchtext = ''">
+                </icon>
+              </div>
+            </div>
+            <div class="col-md-7" data-ng-if="vm.customDateFilter">
+              <label class="text-muted">As of date:</label>
+              <dv-daterangepicker ng-model="vm.customDateFilter" min-date="vm.minDate" max-date="vm.maxDate"
+                apply-method="vm.applyMethod"></dv-daterangepicker>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" data-ng-show="vm.attachments && !vm.loading && !vm.showEntityRelatedFields">
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <label class="text-muted">Search:</label>
+            <div class="searchTextDiv">
+              <input type="text" data-ng-model="vm.searchtext" class="form-control" placeholder="Search by name">
+              <icon data-ng-if="vm.searchtext.length >= 4" class="closeIcon" name="close" data-ng-click="vm.searchtext = ''">
+              </icon>
+            </div>
+          </div>
+          <div class="col-md-6" data-ng-if="vm.customDateFilter">
+            <label class="text-muted">As of date:</label>
+            <dv-daterangepicker ng-model="vm.customDateFilter" min-date="vm.minDate" max-date="vm.maxDate"
+              apply-method="vm.applyMethod"></dv-daterangepicker>
+          </div>
+        </div>
+      </div>
+      <br>
+      <form-group data-ng-show="vm.attachments && !vm.loading">
+        <div class="col-md-3" data-ng-if="vm.showEntityRelatedFields">
+          <label class="control-label">Assign Documents</label>
+        </div>
+        <div class="col-md-9" data-ng-if="vm.showEntityRelatedFields">
+          <ul class="list-group dd-attachments-selector overflow-x-hidden m-h-300">
+            <empty-state data-ng-if="vm.attachments && vm.attachments.length == 0" message="No documents available. Once a document is attached, you can reuse it across investor requests"></empty-state>
+            <li class="list-group-item clearfix"
+                data-ng-repeat="attachment in vm.attachments | filter: {name: vm.searchtext}">
+              <div class="pull-left">
+                <!-- <attachment-icon filename="attachment.name"></attachment-icon> -->
+                <a document-viewer="attachment">
+                  {{attachment.name}}
+                </a>
+                 <small class="text-muted"><i>{{attachment.as_of_date | date}}</i></small>
+              </div>
+
+              <div class="pull-right">
+                <icon name="check"
+                    size="lg"
+                    data-ng-show="attachment.assigned"
+                    uib-tooltip="Unassign Document"
+                    data-ng-click="vm.removeAttachment(attachment)"
+                    class="text-success clickable"></icon>
+
+                <button btn-type="default"
+                      size="sm"
+                      data-ng-class="{'disabled': !vm.entityId}"
+                      button-loader="attachment.being_assigned"
+                      uib-tooltip="{{vm.entityId ? 'Assign Document' : 'Please select associated ' +vm.entityType}}"
+                      data-ng-click="vm.assignAttachment(attachment)"
+                      data-ng-hide="attachment.assigned"
+                      data-ng-disabled="vm.entityId.length == 0"
+                      class="btn-attachment-selector">
+                    <icon name="plus"></icon>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <!-- Full width assignment pannel -->
+        <div data-ng-if="!vm.showEntityRelatedFields" class="pd-10">
+          <label class="control-label">Assign Documents</label>
+        </div>
+        <div class="col-md-12" data-ng-if="!vm.showEntityRelatedFields">
+
+          <ul class="list-group dd-attachments-selector overflow-x-hidden m-h-300">
+            <empty-state data-ng-if="vm.attachments && vm.attachments.length == 0" message="No documents available. Once a document is attached, you can reuse it across investor requests"></empty-state>
+            <li class="list-group-item clearfix"
+                data-ng-repeat="attachment in vm.attachments | filter: {name: vm.searchtext}">
+              <div class="pull-left">
+                <!-- <attachment-icon filename="attachment.name"></attachment-icon> -->
+                <a document-viewer="attachment">
+                  {{attachment.name}}
+                </a>
+                 <small class="text-muted"><i>{{attachment.as_of_date | date}}</i></small>
+              </div>
+
+              <div class="pull-right">
+                <icon name="check"
+                    size="lg"
+                    data-ng-show="attachment.assigned"
+                    uib-tooltip="Unassign Document"
+                    data-ng-click="vm.removeAttachment(attachment)"
+                    class="text-success clickable"></icon>
+
+                <button btn-type="default"
+                      size="sm"
+                      data-ng-class="{'disabled': !vm.entityId}"
+                      button-loader="attachment.being_assigned"
+                      uib-tooltip="{{vm.entityId ? 'Assign Document' : 'Please select associated ' +vm.entityType}}"
+                      data-ng-click="vm.assignAttachment(attachment)"
+                      data-ng-hide="attachment.assigned"
+                      class="btn-attachment-selector">
+                    <icon name="plus"></icon>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        </form-group>
+    </div>
+      </div>
+    <div class="modal-footer pd-10">
+        <div ng-switch="vm.mode">
+          <div ng-switch-when="update|add" ng-switch-when-separator="|">
+            <button data-ng-class="{'disabled': vm.disableFinishButton}"
+                       type="submit"
+                       data-ng-disabled="!vm.entityId"
+                       uib-tooltip="{{vm.disableFinishButton ? 'No changes detected' : ''}}"
+                       button-loader="vm.finishingDocsAssignments"
+                       data-ng-click="vm.finishAssignDocuments()">Save</button>
+            <button btn-type="default" data-ng-click="vm.customCloseModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </form>
+</div>
+
+
+<!-- ******************************************  Upload New Document ************************************************ -->
+
+<div data-ng-if="vm.sourceType == 'new-upload'">
+  <form name="vm.documentForm" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-body">
+      <div>
+        <div>
+          <form-group field-name="Document Name">
+            <label for="attachment-name" class="col-md-4 control-label">
+              Document Name
+            </label>
+
+            <div class="col-md-7">
+              <input type="text" id="attachment-name" class="form-control" data-ng-model="vm.params.name"
+                dv-restrict-input="{type: 'validName'}" focus-me="vm.focusAttachmentName" required />
+            </div>
+          </form-group>
+
+          <form-group field-name="Document Type">
+            <label for="document-type-new" class="col-md-4 control-label">
+              Document Types
+            </label>
+
+            <div class="col-md-7">
+              <select id="document-tag" class="form-control" chosen multiple data-ng-model="vm.params.tags"
+                data-ng-disabled="!vm.attachmentTypes" data-placeholder-text-multiple="'Select Document Tags'"
+                data-ng-options="type.id as type.name for type in vm.attachmentTypes"
+                data-ng-required="vm.isManager && vm.managerCheck">
+                <option value=""></option>
+              </select>
+            </div>
+          </form-group>
+
+          <form-group field-name="As of Date" control-selector="dv-datepicker" data-ng-if="vm.editAccess">
+            <label for="as-of-date" class="col-md-4 control-label">
+              As of Date
+            </label>
+
+            <div class="col-md-7">
+              <dv-datepicker id="as-of-date" data-ng-model="vm.params.as_of_date" ng-required="true"
+                max-date="vm.maxAsOfDate"></dv-datepicker>
+            </div>
+          </form-group>
+
+          <form-group field-name="As of Date" data-ng-if="!vm.editAccess">
+            <label for="as-of-date" class="col-md-4 control-label">
+              As of Date
+            </label>
+            <div class="col-md-7">
+              <dv-datepicker id="as-of-date" data-ng-model="vm.params.as_of_date" ng-required="true"
+                max-date="vm.maxAsOfDate"></dv-datepicker>
+            </div>
+          </form-group>
+
+          <div class="form-group" data-ng-if="vm.editAccess">
+            <label for="select-file" class="col-md-4 control-label">
+              {{ vm.uploaded_file ? 'Selected' : 'Select' }} File
+            </label>
+            <div class="col-md-7">
+              <div data-ng-if="vm.editMode">
+                <div class="dd-doc-selection-wrapper padded-right" data-ng-hide="vm.upload_in_progress">
+                  <div class="panel panel-default dd-doc-drop-panel" dv-file-handler name="file-handler-one"
+                    dv-droppable dv-manual-upload ngf-multiple="true" ngf-select-disabled="true"
+                    dv-bind-files-to="vm.drop_files" dv-on-drop="vm.uploadDropAttachment()"
+                    dv-accept="::vm.allowed_file_extensions_str" dv-pattern="::vm.allowed_file_extensions_str"
+                    dv-max-file-size="::vm.maxFileSize" ngf-max-files="1" ngf-drag-over-class="'panel-primary'"
+                    ngf-model-invalid="vm.rejectedFiles">
+                    <div class="panel-body">
+                      <p class="text-muted text-center">
+                        <strong>Drag & Drop your file here</strong>
+                      </p>
+
+                      <p class="text-muted text-center">
+                        <icon name="upload" size="2x"></icon>
+                      </p>
+
+                      <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+                    </div>
+                  </div>
+
+                  <div class="dd-doc-select-button-container">
+                    <button btn-type="default" ngf-select ngf-accept="'{{::vm.allowed_file_extensions_str}}'"
+                      ngf-pattern="'{{::vm.allowed_file_extensions_str}}'" ngf-max-size="'{{::vm.maxFileSize}}'"
+                      ng-model="vm.files" ngf-change="vm.uploadAttachment($files)" ngf-model-invalid="vm.rejectedFiles">
+                      <icon name="upload" class="align-middle"></icon>
+                      Upload Different File
+                    </button>
+                    <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+                  </div>
+                </div>
+
+                <a document-viewer="vm.document" class="link-disguise">
+                  <dv-checkbox disabled="disabled" checked="checked" data-ng-show="vm.uploaded_file">
+                    <dv-checkbox-label>
+                      <span dv-limit-word="vm.uploaded_file.name" char-limit="30"
+                        uib-tooltip="{{vm.uploaded_file.name}}">
+                      </span>
+                    </dv-checkbox-label>
+                  </dv-checkbox>
+                </a>
+
+                <div data-ng-show="vm.upload_in_progress">
+                  <div>
+                    <small>
+                      Uploading
+                      <span data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></span>
+                    </small>
+                  </div>
+
+                  <uib-progressbar value="vm.progressPercentage" type="success" class="progress-striped active">
+                  </uib-progressbar>
+                </div>
+
+                <div>
+                  <small class="text-danger"
+                    data-ng-show="vm.attachment_form.$submitted && !vm.uploaded_file && !vm.rejectedFiles.length">
+                    Please attach a file
+                  </small>
+
+                  <small class="text-danger" data-ng-show="vm.rejectedFiles.length">
+                    <span data-ng-repeat="file in vm.rejectedFiles">{{file.name}}</span> is not a valid file. Valid
+                    formats are <b>{{::vm.allowed_file_extensions_str}}</b>
+                  </small>
+                </div>
+              </div>
+              <div data-ng-if="!vm.editMode && vm.sourceType == 'new-upload'">
+                <div class="dd-doc-selection-wrapper">
+                  <div class="panel panel-default dd-doc-drop-panel" dv-file-handler name="file-handler-one"
+                    dv-droppable dv-manual-upload dv-fields="vm.updatedParams" ngf-multiple="true"
+                    ngf-select-disabled="true" dv-bind-files-to="vm.files" ngf-max-files="1"
+                    dv-accept="::vm.allowed_file_extensions_str" dv-pattern="::vm.allowed_file_extensions_str"
+                    dv-max-file-size="::vm.maxFileSize" dv-upload-url="/attachments"
+                    dv-on-upload="vm.newDocumentUploadComplete(response)"
+                    dv-on-upload-error="vm.newDocumentUploadFailed(response)" ngf-drag-over-class="'panel-primary'">
+                    <div class="panel-body">
+                      <p class="text-muted text-center">
+                        <strong>Drag & Drop your file here</strong>
+                      </p>
+
+                      <p class="text-muted text-center">
+                        <icon name="upload" size="2x"></icon>
+                      </p>
+
+                      <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"
+                        data-ng-init="vm.setDocName(vm.drop_files)"></div>
+
+                    </div>
+                  </div>
+
+                  <div class="dd-doc-select-button-container">
+                    <button btn-type="default" dv-file-handler dv-manual-upload dv-fields="vm.updatedParams"
+                      name="file-handler-two" dv-bind-files-to="vm.files" dv-upload-url="/attachments"
+                      dv-accept="::vm.allowed_file_extensions_str" dv-pattern="::vm.allowed_file_extensions_str"
+                      dv-max-file-size="::vm.maxFileSize" dv-on-upload="vm.newDocumentUploadComplete(response)"
+                      dv-on-upload-error="vm.newDocumentUploadFailed(response)">
+                      Select File
+                    </button>
+                    <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"
+                      data-ng-init="vm.setDocName(vm.files)"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div ng-switch="vm.mode">
+        <div ng-switch-when="update|add" ng-switch-when-separator="|">
+          <button type="submit" button-loader="vm.savingDocument">{{vm.editMode ? 'Update' : 'Upload'}}</button>
+          <button btn-type="default" data-ng-click="vm.customCloseModal()">Cancel</button>
+        </div>
+        <div ng-switch-when="new-upload" ng-switch-when-separator="|">
+          <button type="submit" button-loader="vm.savingDocument">Upload</button>
+          <button btn-type="default" data-ng-click="vm.customCloseModal()">Cancel</button>
+        </div>
+        <div ng-switch-when="update_document_tags">
+          <button type="submit" button-loader="vm.savingDocument">Update</button>
+          <button btn-type="success" button-loader="vm.approvingDocument"
+            data-ng-click="vm.updateApproveDocumentSubmit()">Update and Approve</button>
+          <button btn-type="default" data-ng-click="vm.customCloseModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+</div>

@@ -1,0 +1,265 @@
+<div class="container">
+  <div class="row clearfix">
+    <div class="authentication-form-wrapper max-width-50-pct">
+      <div class="logo-wrapper back_button_container">
+        <a class="clickable" (click)="goBackToLogin()"
+          ><img
+            src="https://img.icons8.com/ios/64/000000/circled-left-2.png"
+            class="back_img"
+            alt="back image"
+        /></a>
+        <img [src]="logoLink" alt="Logo" class="logo" />
+      </div>
+      <div>
+        <form
+          autocomplete="off"
+          novalidate
+          [formGroup]="signupForm"
+          autocomplete="off"
+        >
+          <div class="row">
+            <div class="col-md-6 space-on-top col-sm-12">
+              <dv-form-element
+                [modelController]="signupForm.get('emailControl')"
+                [showRightIcon]="false"
+                label="Email"
+                elementCol="12"
+                labelPosition="top"
+                [isRequired]="true"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="mail"></span>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control inputHight"
+                    id="emailControl"
+                    formControlName="emailControl"
+                    placeholder="Enter email address"
+                  />
+                </div>
+                <div
+                  *ngIf="signupForm.get('emailControl').invalid"
+                  class="danger"
+                >
+                  {{ getErrorMessage("emailControl", "Email") }}
+                </div>
+              </dv-form-element>
+            </div>
+            <div class="col-md-6 space-on-top col-sm-12">
+              <dv-form-element
+                [modelController]="signupForm.get('firmControl')"
+                [showRightIcon]="false"
+                label="Name of Your Firm"
+                elementCol="12"
+                labelPosition="top"
+                [isRequired]="true"
+              >
+                <div class="input-group ngSelectRadius">
+                  <span class="input-group-addon">
+                    <span appIcon name="institution"></span>
+                  </span>
+                  <dv-select
+                    [id]="'firmControl'"
+                    *ngIf="firms.length"
+                    formControlName="firmControl"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [loading]="showSpinner"
+                    [placeholder]="'--Select a firm--'"
+                    bindLabel="name"
+                    bindValue=""
+                    [list]="firms"
+                    addTagText="Add Firm"
+                    [addTag]="true"
+                    [contoller]="signupForm.get('firmControl')"
+                  >
+                  </dv-select>
+                  <input
+                    *ngIf="!firms.length"
+                    type="text"
+                    class="form-control inputHight"
+                    id="firm-name"
+                    formControlName="firmControl"
+                    placeholder="Enter firm name"
+                  />
+                </div>
+                <div
+                  *ngIf="signupForm.get('firmControl').invalid"
+                  class="danger"
+                >
+                  {{ getErrorMessage("firmControl", "Firm Name") }}
+                </div>
+              </dv-form-element>
+            </div>
+          </div>
+          <div class="row space-on-top">
+            <div class="col-md-6 space-on-top col-sm-12">
+              <dv-form-element
+                fieldName="First name"
+                [modelController]="signupForm.get('firstNameControl')"
+                [showRightIcon]="false"
+                label="First Name"
+                elementCol="12"
+                labelPosition="top"
+                [isRequired]="true"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="user"></span>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control inputHight"
+                    id="firstNameControl"
+                    formControlName="firstNameControl"
+                    placeholder="Enter your first name"
+                  />
+                </div>
+                <div
+                  *ngIf="signupForm.get('firstNameControl').invalid"
+                  class="danger"
+                >
+                  {{ getErrorMessage("firstNameControl", "First Name") }}
+                </div>
+              </dv-form-element>
+            </div>
+            <div class="col-md-6 space-on-top col-sm-12">
+              <dv-form-element
+                fieldName="Last name"
+                [modelController]="signupForm.get('lastNameControl')"
+                [showRightIcon]="false"
+                label="Last Name"
+                elementCol="12"
+                labelPosition="top"
+                [isRequired]="true"
+              >
+                <div class="input-group" style="clear: both">
+                  <span class="input-group-addon">
+                    <span appIcon name="user"></span>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control inputHight"
+                    id="lastNameControl"
+                    formControlName="lastNameControl"
+                    placeholder="Enter your last name"
+                  />
+                </div>
+                <div
+                  *ngIf="signupForm.get('lastNameControl').invalid"
+                  class="danger"
+                >
+                  {{ getErrorMessage("lastNameControl", "Last Name") }}
+                </div>
+              </dv-form-element>
+            </div>
+          </div>
+          <div class="row space-on-top">
+            <div class="col-md-12 col-sm-12">
+              <dv-password
+                placeholder="New Password"
+                [keepSpacing]="false"
+                [twoColumnLayout]="true"
+                (onSubmit)="submit()"
+                #password
+              ></dv-password>
+            </div>
+          </div>
+          <div class="row space-on-top">
+            <div class="col-md-6 space-on-top col-sm-12">
+              <dv-form-element
+                fieldName="verificationCode"
+                [modelController]="signupForm.get('verificationCodeControl')"
+                [showRightIcon]="false"
+                label="Verification Code"
+                elementCol="12"
+                labelPosition="top"
+                [isRequired]="true"
+              >
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <span appIcon name="unlock-alt"></span>
+                  </span>
+                  <input
+                    [type]="passwordElementType"
+                    class="form-control inputHight"
+                    id="verificationCodeControl"
+                    formControlName="verificationCodeControl"
+                    placeholder="Enter the verification code sent to your email."
+                  />
+                </div>
+                <div
+                  *ngIf="signupForm.get('verificationCodeControl').invalid"
+                  class="danger"
+                >
+                  {{
+                    getErrorMessage(
+                      "verificationCodeControl",
+                      "Verification Code"
+                    )
+                  }}
+                </div>
+                <span>
+                  Click <a (click)="sendVerificationCode()">here</a> if you
+                  haven't received the verification code.
+                </span>
+              </dv-form-element>
+            </div>
+          </div>
+
+          <div class="captcha">
+            <ngx-recaptcha2
+              (resolved)="resolved($event)"
+              #captchaElem
+              [siteKey]="siteKey"
+              formControlName="recaptchaControl"
+            >
+            </ngx-recaptcha2>
+            <div
+              *ngIf="signupForm.get('recaptchaControl').invalid"
+              class="danger"
+            >
+              {{ getErrorMessage("recaptchaControl", "Recaptcha") }}
+            </div>
+          </div>
+          <div
+            *ngIf="duplicateFirms?.length > 0"
+            class="alert alert-danger margin-20"
+          >
+            <p>
+              {{ duplicateFirmsCount }} possible matching firms found, click
+              <a (click)="openDuplicateFirmsModal()">here</a> to view.
+            </p>
+          </div>
+          <div class="col-md-offset-3 col-md-6">
+            <div class="form-group text-center">
+              <dv-button
+                btnClass="justify-center"
+                [btnWidth]="100"
+                [loader]="loading"
+                (onClick)="submit()"
+                [disabled]="
+                  signupForm.invalid || !passwordComponent?.isPasswordValid()
+                "
+                *ngIf="!duplicateFirms?.length"
+              >
+                Create Account
+              </dv-button>
+              <dv-button
+                btnClass="justify-center"
+                [btnWidth]="100"
+                [loader]="saving"
+                *ngIf="duplicateFirms?.length > 0"
+                (onClick)="saveNewFirm()"
+              >
+                Yes, Please Create Account
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

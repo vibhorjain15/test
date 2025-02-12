@@ -1,0 +1,47 @@
+<app-modal
+  [title]="isEdit ? 'Editing Disclaimer' : 'Add New Disclaimer'"
+  [firstButtonLabel]="isEdit ? 'Update Disclaimer' : 'Add Disclaimer'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="ManageDisclaimerModalref"
+  [isLoading]="loading"
+></app-modal>
+
+<ng-template #ManageDisclaimerModalref>
+  <form
+    class="form-horizontal"
+    [formGroup]="manageDisclaimerForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      [fieldName]="'name'"
+      [modelController]="manageDisclaimerForm.get('name')"
+      [isRequired]="true"
+      label="Name"
+      errorMessage="Name is required"
+    >
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        formControlName="name"
+        required
+      />
+    </dv-form-element>
+
+    <dv-form-element
+      [fieldName]="'text'"
+      [modelController]="manageDisclaimerForm.get('text')"
+      label="Disclaimer Text"
+      [isRequired]="true"
+      [showRightIcon]="false"
+      errorMessage="Disclaimer Text is required"
+    >
+      <dv-editor
+        [value]="manageDisclaimerForm.value.text"
+        [configObj]="tinyMceInit"
+        (onChange)="handleEditChange($event)"
+      ></dv-editor>
+    </dv-form-element>
+  </form>
+</ng-template>

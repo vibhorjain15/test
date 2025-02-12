@@ -1,0 +1,85 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.strategy"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel"
+             data-ng-show="vm.strategy">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{vm.strategy.display_name}}
+            </h4>
+          </div>
+          <div class="cell text-center">
+            <button btn-type="transparent"
+                    data-ng-click="vm.openAddressDialog()">
+              <div><icon name="location" size="2x"></icon></div>
+              <small>Add Address</small>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clearfix">
+      <div class="panel panel-default col-md-12 clear-padding-left clear-padding-right" data-ng-show="vm.addresses && vm.addresses.length">
+        <div class="panel-heading">
+          <h5 class="panel-title">Address Details</h5>
+        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item col-md-12 padded-xl"
+              data-ng-repeat="address in vm.addresses">
+            <div class="col-md-11" data-ng-class="{'text-primary': address.is_headquarter}">
+              <p data-ng-if="address.is_headquarter"><strong>(Headquarter)</strong></p>
+              <p><strong>Street Address:</strong> {{address.address_line_1}}, {{address.address_line_2}} |
+              <strong>City, State, Zipcode:</strong> {{address.city}}, {{address.state}}, {{address.zip_code}} |
+              <strong>Country:</strong> {{address.country_name}} |
+              <strong>Phone(s):</strong> {{address.phone_1}}, {{address.phone_2}} |      
+              <strong>Fax:</strong> {{address.fax}}</p>
+            </div>
+            <span class="pull-right" uib-dropdown>
+              <button btn-type="transparent"
+                      size="sm"
+                      class="dropdown-toggle js-response-control-more-actions"
+                      data-ng-class="{'active': vm.active_actions}"
+                      uib-dropdown-toggle
+                      uib-tooltip="Actions"
+                      tabindex="-1">
+                  <icon name="ellipsis-h"></icon>
+              </button>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                  <li>
+                      <a data-ng-click="vm.openEditAddressDialogue(address)" role="button">Edit Address</a>
+                  </li>
+                  <li class="divider js-delete-button"></li>
+                  <li>
+                      <a data-ng-click="vm.deleteAddress(address)" role="button">Delete Address</a>
+                  </li>
+              </ul>
+          </span>
+          </li>
+        </ul>
+      </div>
+
+        <div class="panel panel-default" data-ng-hide="vm.addresses">
+            <div class="panel-body">
+                <spinner broad-spinner spinner-height='100'></spinner>
+            </div>
+        </div>
+    </div>
+
+    <div class="row clearfix" data-ng-show="vm.addresses && !vm.addresses.length">
+        <div col="6" offset="3">
+            <empty-state icon-name="location"
+                     action="vm.openAddressDialog()"
+                     action-label="Add address"
+                     message="No address available for {{vm.strategy.display_name}}. Why not add?">
+            </empty-state>
+        </div>
+    </div>
+
+  </div>
+</div>

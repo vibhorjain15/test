@@ -1,0 +1,99 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-not-approval-reasons></ng2-not-approval-reasons>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div
+  class="panel panel-default borderless-top"
+>
+  <div class="panel-body clearfix">
+    <spinner data-ng-if="!vm.diligence"></spinner>
+
+    <div
+      class="dv-table dv-table-middle dd-info-panel"
+      data-ng-if="vm.diligence"
+    >
+      <div class="bordered-right cell">
+        <h4 class="clear-margin">{{::vm.diligence.entity_name}}</h4>
+
+        <small class="text-muted">
+          Decision on {{::vm.note.updated_at|date}}
+        </small>
+      </div>
+
+      <div class="cell">
+        <a ui-sref="^.summary" class="btn btn-transparent">
+          <div><icon name="arrow-back" size="2x"></icon></div>
+          <small>Back to Summary</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<spinner data-ng-hide="vm.dataIsLoaded"></spinner>
+
+<div class="panel panel-default" data-ng-show="vm.dataIsLoaded">
+  <div class="panel-body">
+    <div data-ng-show="vm.note">
+      <label
+        >Reasons for not approving this due diligence (Submitted by
+        {{vm.note.first_name}} {{vm.note.last_name}})</label
+      >
+      <ul class="space-on-top-lg clear-margin-bottom">
+        <li data-ng-repeat="reason in vm.reasons">{{reason}}</li>
+      </ul>
+    </div>
+
+    <form data-ng-hide="vm.note">
+      <div class="row">
+        <div col="6">
+          <label class="control-label"
+            >Investment Reasons for Not Approving</label
+          >
+
+          <div
+            data-ng-repeat="reason in vm.investment_reasons"
+            class="space-on-bottom-lg"
+          >
+            <switch
+              name="enabled"
+              data-ng-model="reason.selected"
+              class="align-middle"
+            ></switch>
+            <span class="align-middle"> {{reason.value}} </span>
+          </div>
+        </div>
+
+        <div col="6">
+          <label>Business Reasons for Not Approving</label>
+
+          <div
+            data-ng-repeat="reason in vm.business_reasons"
+            class="space-on-bottom-lg"
+          >
+            <switch
+              name="enabled"
+              data-ng-model="reason.selected"
+              class="align-middle"
+            ></switch>
+            <span class="align-middle"> {{reason.value}} </span>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div>
+        <button
+          type="submit"
+          button-loader="vm.saving"
+          data-ng-click="vm.submit()"
+          class="btn btn-default"
+        >
+          Confirm
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>

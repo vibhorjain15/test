@@ -1,0 +1,49 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Documents</h5>
+  </div>
+
+  <div class="panel-body" data-ng-if="!vm.attachments">
+    <spinner></spinner>
+  </div>
+
+  <ul class="list-group">
+    <empty-state data-ng-if="vm.attachments && !vm.attachments.length"
+      message="No documents found.">
+    </empty-state>
+    <li class="list-group-item"
+        data-ng-repeat="attachment in vm.attachments | limitTo: 5">
+      <div class="clearfix">
+        <div class="pull-left">
+          <a document-viewer="attachment">
+            {{attachment.file_name}}
+          </a>
+          <br data-ng-if="attachment.type_name">
+          <span class="text-muted" data-ng-if="attachment.type_name">({{attachment.type_name}})</span>
+          <br>
+          <small class="text-muted">
+            as of {{::attachment.as_of_date|date:'dd-MMMM-yyyy'}}
+          </small>
+          <br>
+          <small class="text-muted" data-ng-if="vm.is_manager">
+            <icon name="eye"></icon>
+            {{::attachment.view_count}} views
+          </small>
+          <!--<small class="text-muted" data-ng-if="!vm.is_manager" data-ng-show="attachment.noteCount > 0">
+            <icon name="notepad"></icon>
+            {{::attachment.noteCount}} Notes
+          </small>-->
+        </div>
+
+        <div class="pull-right">
+          <attachment-icon filename="attachment.file_name"
+                           size="2x"
+                           class="file-attachment-icon">
+          </attachment-icon>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <ng-transclude></ng-transclude>
+</div>

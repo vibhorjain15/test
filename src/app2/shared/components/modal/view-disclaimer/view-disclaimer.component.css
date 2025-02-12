@@ -1,0 +1,8 @@
+.view-template {
+  white-space: pre-line;
+}
+
+.overflow {
+  display: block;
+  overflow: auto;
+}

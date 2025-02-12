@@ -1,0 +1,95 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-my-permissions></ng2-my-permissions> </div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel panel-default borderless-top">
+    <div class="panel-body clearfix">
+      <spinner broad-spinner spinner-height='65' data-ng-show="vm.loading"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel">
+        <div class="bordered-right cell">
+          <div class="lh1-5">
+            <strong>{{vm.current_user.fullName}}</strong>
+          </div>
+        </div>
+        <div class="cell">
+          <a data-ng-click="vm.goBack()"
+             class="btn btn-transparent">
+            <div><icon name="arrow-back" size="2x"></icon></div>
+            <small>Back</small>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default permissions-details">
+    <div class="panel-heading">
+      <h5 class="panel-title">Teams</h5>
+    </div>
+      <div class="panel-body">
+        <div class="row clear-margin">
+          <div class="com-sm-12">
+            <!-- <p class="text-muted">Teams</p> -->
+              <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                    data-ng-repeat="team in vm.teams" ng-mouseover="team.hoverState = true;" ng-mouseleave="team.hoverState = false;" >
+                  <small>
+                    <a class="space-on-left clickable link-disguise"
+                       data-ng-click="vm.goToSelectedEntity(team)">
+                       <strong>{{team.team_name}}</strong>
+                       </a>
+                  </small>
+                  <small class="text-muted">{{team.role_name}}</small>
+              </span>
+              <div data-ng-if="(!vm.teams || !vm.teams.length)">
+                <p class="text-muted"><small>You are not part of any team</small></p>
+              </div>
+          </div>
+
+        </div>
+      </div>
+
+  </div>
+
+  <!-- Nav tabs -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">Permissions</h5>
+    </div>
+    <div class="panel-body">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a data-target="#funds" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('Fund')">
+               Products
+            </a>
+        </li>
+        <li><a data-target="#firms" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('Firm')">
+             Firms
+            </a>
+        </li>
+        <li>
+            <a data-target="#diligence" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('DueDiligence')">
+               Projects
+            </a>
+        </li>
+        <li>
+          <a data-target="#template" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('Template')">
+             Templates
+          </a>
+      </li>
+      </ul>
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div data-ng-if="!vm.loading_assignments" class="space-on-top-lg">
+          <dv-grid grid-resource="vm.assignmentResources" grid-name="'my-permissions'"></dv-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- <div class="text-center space-on-top" data-ng-if="vm.hasFirmWideRole">
+  <div class="panel panel-info">
+    <div class="panel-heading">{{vm.roleDescription}}</div>
+  </div>
+</div> -->

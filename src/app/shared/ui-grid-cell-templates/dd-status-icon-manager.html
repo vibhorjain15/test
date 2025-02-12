@@ -1,0 +1,12 @@
+<ui-grid-cell-contents>
+  <icon name="flag"
+        class="text-danger dd-status-icon"
+        uib-tooltip="The ball is in your court"
+        tooltip-placement="left"
+        data-ng-if="row.entity.status === 'Started' || row.entity.status === 'Followup' || row.entity.status === 'InReview'"></icon>
+  <icon name="check"
+        class="text-success dd-status-icon"
+        uib-tooltip="Under review by investor"
+        tooltip-placement="left"
+        data-ng-if="row.entity.status === 'Completed' || row.entity.status === 'PendingRestart' || row.entity.status === 'ExtensionRequested' || row.entity.status === 'Evaluation'"></icon>
+</ui-grid-cell-contents>

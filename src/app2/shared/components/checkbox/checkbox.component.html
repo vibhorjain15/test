@@ -1,0 +1,21 @@
+<span class="checkbox checkbox-info">
+  <span (click)="handleOnClick()" class="checkbox-inner-div">
+    <input
+      class="styled"
+      type="checkbox"
+      [class.disabled]="disabled"
+      [(ngModel)]="value"
+      [id]="name"
+      [name]="name"
+      [disabled]="disabled"
+      (click)="handleOnClick()"
+    />
+    <label [class.disabled]="disabled" [innerHtml]="label" [for]="name"></label>
+    <span
+      *ngIf="isWorkflow"
+      tooltip="You can select this later at workflow preview step"
+    >
+      &nbsp;<i class="dvi dvi-info"></i
+    ></span>
+  </span>
+</span>

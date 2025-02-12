@@ -1,0 +1,33 @@
+<app-modal
+  title="Manage Details"
+  [initialTemplate]="manageSubscribers"
+  [isCancelButton]="true"
+  cancelButtonLabel="Close"
+></app-modal>
+
+<ng-template #manageSubscribers>
+  <app-dv-subscriber-selection
+    [showHeader]="true"
+    [functions]="functions"
+    [selection]="selection"
+    (selectionChanged)="selectionChanged($event)"
+    [infoTooltipText]="
+      'Add a team member as a subscriber to keep them informed with timely project updates and notifications.'
+    "
+  >
+  </app-dv-subscriber-selection>
+
+  <app-dv-sent-to-info
+    [diligence]="diligence"
+    [user]="current_user"
+  ></app-dv-sent-to-info>
+
+  <app-dv-audit [diligence]="diligence"></app-dv-audit>
+
+  <app-dv-related-diligences
+    *ngIf="related_diligences.length"
+    [diligences]="related_diligences"
+    [isModal]="true"
+    [isInvestor]="isInvestor"
+  ></app-dv-related-diligences>
+</ng-template>

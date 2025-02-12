@@ -1,0 +1,17 @@
+.text-code {
+  max-height: none;
+  overflow: hidden;
+}
+
+.collapsed {
+  max-height: 80px;
+}
+
+a {
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.margin-top {
+  margin-top: 10px;
+}

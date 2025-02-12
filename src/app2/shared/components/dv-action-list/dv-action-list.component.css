@@ -1,0 +1,51 @@
+.action-list {
+  position: relative;
+  display: flex;
+  min-height: 20px;
+}
+
+.action-list .action-list-body {
+  display: flex;
+  align-items: center;
+}
+
+.action-list .action-list-body .action-list-item {
+  align-items: center;
+  padding: 5px 10px;
+}
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+}
+
+.actionlist-overflow-container {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  position: absolute;
+  right: 0;
+}
+
+.push-content-right {
+  flex-grow: 1;
+}
+
+.d-inline-flex {
+  display: inline-flex !important;
+}
+
+.list-style-none {
+  list-style: none !important;
+}
+
+.no-wrap {
+  white-space: nowrap !important;
+}
+
+.text-decoration-none {
+  text-decoration: none;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}

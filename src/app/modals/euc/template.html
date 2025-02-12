@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    Terms and Conditions
+  </h3>
+</div>
+
+<div class="modal-body euc-content">
+  <div data-ng-include="vm.template" data-onload="vm.templateLoaded = true"></div>
+</div>
+
+<div class="modal-footer">
+  <dv-checkbox data-ng-model="vm.acceptedAgreement" class="pull-left text-left space-on-top" type="inline info"
+    name="acceptedAgreement" label="I’ve read and accept the terms & conditions"></dv-checkbox>
+
+  <button type="submit" data-ng-class="{'disabled' : !vm.acceptedAgreement}" data-ng-click="vm.acceptAgreement()"
+    uib-tooltip="{{vm.acceptedAgreement ? '' : 'Please click on the checkbox to approve Terms and conditions'}}"
+    button-loader="vm.loading">Proceed to product tour</button>
+
+  <!-- <button btn-type="default" data-ng-click="vm.close()" data-ng-disabled="!vm.templateLoaded">Disagree</button> -->
+</div>

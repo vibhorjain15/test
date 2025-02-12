@@ -1,0 +1,134 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-new-fund is-angular-js="true"  fund-type="strategy"></ng2-new-fund>
+</div>
+<form class="form-horizontal" name="vm.fund_form" data-ng-if="vm.Utils.isAngularJS()" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Strategy' : 'Create Strategy'}}
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <form-group field-name="Name">
+      <label for="name" class="control-label" col="4" col-type="sm">Strategy Name<span
+          class="font-size-10 text-orange align-top">*</span></label>
+      <div col="8" col-type="sm">
+        <input type="text" class="form-control" id="name" name="fund_name" data-ng-model="vm.params.name"
+          dv-restrict-input="{type: 'avoidFirstSplCharacter'}" placeholder="Example: Arthance Capital Offshore Strategy"
+          required>
+      </div>
+    </form-group>
+    <form-group field-name="Alias" data-ng-if="vm.is_investor">
+      <label for="alternate-name" class="control-label" col="4" col-type="sm">Alias
+      </label>
+      <div col="8" col-type="sm">
+        <input type="text" class="form-control" id="alternate-name" name="alternate_name"
+          data-ng-model="vm.params.alternate_name" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+          placeholder="Your internal alias for this strategy">
+      </div>
+    </form-group>
+    <form-group field-name="Internal Key">
+      <label for="internal-key" class="control-label" col="4" col-type="sm">Internal Key
+      </label>
+      <div col="8" col-type="sm">
+        <input type="text" class="form-control" id="internal-key" name="internal_key"
+          dv-restrict-input="{type: 'avoidFirstSplCharacter'}" data-ng-model="vm.params.key"
+          placeholder="Example: HG36FG">
+      </div>
+    </form-group>
+    <div class="panel panel-default">
+      <div class="panel-heading bordered-top">
+        <h5 class="panel-title">Associated Product(s)</h5>
+      </div>
+      <div class="panel-body">
+        <form-group field-name="Parent Firm" data-ng-if="vm.is_investor">
+          <label for="parent-firm" class="control-label" col="4" col-type="sm">Parent Firm <span
+              class="font-size-10 text-orange align-top">*</span></label>
+          <div col="8" col-type="sm">
+            <select name="parent_firm" id="parent-firm" class="form-control" chosen data-ng-options="firm.id as firm.display_name for firm in vm.firms"
+              data-ng-model="vm.params.parentFirm.id" data-ng-change="vm.parentFirmSelected(vm.params.parentFirm)" data-ng-disabled="!vm.productSearchAPIDataLoaded || (!vm.isUserFirmOwner && vm.edit_mode)" required>
+              <option value="">--Select--</option>
+            </select>
+          </div>
+        </form-group>
+        <form-group field-name="Associated Products">
+          <label for="entity_type_associated_products" class="control-label" col="4" col-type="sm">
+            Associated Products
+          </label>
+          <div col="8" col-type="sm">
+            <select name="associated_products" id="entity_type_associated_products" class="form-control" multiple chosen
+              data-ng-change="vm.associatedProductsSelected()" data-ng-model="vm.params.associated_products"
+              data-ng-options="option as option.description for option in vm.getAllProductsListData"
+              data-ng-disabled="vm.getAllProductsListData.length == 0">
+            </select>
+          </div>
+        </form-group>
+      </div>
+    </div>
+    <div class="panel panel-default" data-ng-if="vm.is_investor">
+      <div class="panel-body">
+        <form-group field-name="Relationship Status">
+          <label for="relationship-status" class="control-label" col="4" col-type="sm">Relationship Status
+          </label>
+
+          <div col="8" col-type="sm">
+            <select name="relationship_status" id="relationship-status" class="form-control" chosen
+              data-ng-disabled="!vm.statuses" data-ng-options="status.id as status.name for status in vm.statuses"
+              data-ng-model="vm.params.relationship_status_id">
+              <option value="">--Select--</option>
+            </select>
+          </div>
+        </form-group>
+      </div>
+      <div class="panel-heading bordered-top" data-ng-if="!vm.edit_mode">
+        <h5 class="panel-title">Add Contact(s)</h5>
+      </div>
+      <div class="panel-body" data-ng-if="!vm.edit_mode">
+        <form-group field-name="Contact email" data-ng-repeat="contact in vm.params.contacts">
+          <label for="contact-email-{{$index}}" class="control-label" col="4" col-type="sm">Email #{{$index + 1}} <span
+              class="font-size-10 text-orange align-top">*</span></label>
+          <div col="8" col-type="sm">
+            <input type="email" class="form-control" id="contact-email-{{$index}}" data-ng-model="contact.username"
+              placeholder="email@example.com" unique-item="vm.params.contacts" value-attr="username" required>
+          </div>
+        </form-group>
+        <div class="form-group">
+          <div col="8" offset="4">
+            <div class="pull-right">
+              <button btn-type="default" data-ng-click="vm.addNewContact()">Add Another Contact</button>
+              <button btn-type="danger" data-ng-disabled="vm.params.contacts.length == 1"
+                data-ng-click="vm.removeLastContact()">Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-if="vm.showAddOwners">
+      <dv-owners entity="vm.strategy" entity-type="'Strategy'" params="vm.params" owners="vm.ownerList"></dv-owners>
+    </div>
+    <div class="panel panel-default" data-ng-if="!vm.edit_mode">
+      <div class="panel-heading bordered-top">
+        <h5 class="panel-title">Add Custom Fields</h5>
+      </div>
+      <div class="panel-body" data-ng-if="!vm.edit_mode">
+        <div class="form-group">
+          <field-selection custom-url="'strategy_tags'" fieldselection-form="vm.fieldselectionForm"
+            split-mandatory="true" on-close="vm.cancel()" disabled="false" fields="vm.fields"></field-selection>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div col="8">
+        <small><span class="font-size-10 text-orange align-top">*</span><i>Required field</i></small>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving" ng-disabled="vm.savingAnother">
+      {{vm.edit_mode ? 'Update strategy' : 'Create strategy'}}
+    </button>
+    <button btn-type="default" data-ng-hide="vm.hideAddAnother" button-loader="vm.savingAnother" ng-disabled="vm.saving"
+      data-ng-click="vm.addAnotherProduct()">{{vm.edit_mode ? 'Update ' : 'Create '}}& Add Another</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

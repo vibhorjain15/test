@@ -1,0 +1,21 @@
+<div
+  *ngIf="!params?.node?.group"
+  class="label space-on-right text-uppercase tag-wrapper"
+  [ngClass]="{
+    strategy: label == 'Strategy',
+    project: label == 'Project',
+    product: label == 'Product' || label == 'Fund',
+    question: label == 'Response' || label == 'Question',
+    firm: label == 'Firm',
+    vehicle: label == 'Vehicle'
+  }"
+>
+  <span>
+    {{ label }}
+  </span>
+</div>
+<div *ngIf="params?.node?.group">
+  <span>
+    {{ label }}
+  </span>
+</div>

@@ -1,0 +1,123 @@
+.flex {
+  display: flex;
+}
+.align-items-center {
+  align-items: center;
+}
+.justify-space-between {
+  justify-content: space-between;
+}
+div > hr {
+  margin: 05px 0px 5px 25px;
+}
+
+div > accordion {
+  margin: 0 0px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+:host ::ng-deep .accordion-header .checkbox label {
+  color: #126b82 !important;
+}
+
+.icon-wrapper > span {
+  margin-left: 15px;
+}
+
+.accordion-header:hover {
+  text-decoration: none;
+}
+
+:host ::ng-deep .panel-body {
+  padding: 0;
+  border-top: none !important;
+}
+:host ::ng-deep .panel {
+  box-shadow: none;
+}
+:host ::ng-deep .panel-title {
+  font-size: 14px;
+}
+:host ::ng-deep .panel-heading {
+  padding: 0px;
+}
+:host ::ng-deep .checkbox {
+  margin: 0;
+}
+
+.move-icon-size {
+  font-size: 13px;
+}
+
+.add-sub {
+  padding: 5px 10px;
+  margin: 05px 0px 5px 25px;
+  display: flex;
+  align-items: center;
+}
+.add-sub:hover {
+  text-decoration: none;
+}
+.add-sub > span {
+  margin-right: 5px;
+}
+
+.spinner-display {
+  height: 400px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.disable {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.recommendation {
+  width: inherit;
+  border: 1px solid #bfbfbf;
+  margin: 5px 0;
+  border-radius: 4px;
+  padding: 5px;
+}
+.no-items {
+  font-style: italic;
+  border-radius: 4px;
+  padding: 5px 15px;
+  border: 1px dashed rgb(0 0 0 / 0.3);
+}
+.description-and-comments {
+  background-color: #cccccc36;
+  border: 1px solid #cccccc36;
+}
+.status {
+  background: #cccccc36;
+  border: #cccccc36;
+  padding: 0px 5px;
+  border-radius: 4px;
+  color: black;
+  border: 1px solid #cccccc36;
+}
+.index {
+  margin: 0px 15px 0 0;
+  font-weight: bold;
+  opacity: 0.6;
+}
+.priority,
+.tag {
+  background: #cccccc36;
+  padding: 2px 10px;
+  display: inline;
+  border-radius: 4px;
+  color: black;
+}
+.moreInfo {
+  border-top: 1px solid #b4b4b4;
+  margin-top: 6px;
+  padding-top: 4px;
+}

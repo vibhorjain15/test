@@ -1,0 +1,15 @@
+<div>
+  <select class="form-control"
+          data-ng-model="response.listValueID"
+          chosen
+          data-ng-options="item.id as item.value for item in list">
+    <option value="">--Select--</option>
+  </select>
+
+  <div data-ng-show="otherOption && response.listValueID == otherOption.id" class="space-on-top">
+    <textarea class="form-control"
+              placeholder="Please provide explanation"
+              msd-elastic="\n"
+              data-ng-model="response.textResponse"></textarea>
+  </div>
+</div>

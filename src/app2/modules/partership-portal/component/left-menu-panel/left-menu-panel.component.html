@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      {{ header }}
+      <span class="btn-xs label-padding customTag fw-bolder" *ngIf="isNew">New</span>
+    </h5>
+  </div>
+  <app-spinner
+    *ngIf="loader"
+    broadSpinner="true"
+    spinnerHeight="250"
+  ></app-spinner>
+  <div class="list-group" *ngIf="list.length">
+    <ng-container
+      *ngFor="let menu of list; let index = index; trackBy: menuKey"
+    >
+      <div class="list-group-menu">
+        <a
+          class="list-group-item left-menu-border-bottom-width"
+          [ngClass]="{ 'left-menu-active': menu.state === 'active' }"
+          (click)="handleMenuClick(index)"
+        >
+          {{ menu.label }}
+        </a>
+      </div></ng-container
+    >
+  </div>
+</div>

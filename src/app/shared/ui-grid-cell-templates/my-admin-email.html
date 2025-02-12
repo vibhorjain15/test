@@ -1,0 +1,11 @@
+<ui-grid-cell-contents>
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <p ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)"
+     tooltip-placement="left">
+     <a class="unstyledLink" href="mailto:{{row.entity.email}}"><icon name="mail" size="fw"></icon></a>
+     <span uib-tooltip="{{row.entity.email}}">{{row.entity.email}}</span>
+  </p>
+</ui-grid-cell-contents>

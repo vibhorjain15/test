@@ -1,0 +1,11 @@
+<div *ngIf="params.data">
+  <a
+    (click)="navigateToUrl(params.data[field], params.data['type'], $event)"
+    [tooltip]="params.data[field]"
+    [adaptivePosition]="false"
+    container="body"
+    tooltip-placement="right"
+  >
+    {{ params.data[field] }}
+  </a>
+</div>

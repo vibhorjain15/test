@@ -1,0 +1,19 @@
+<div
+  col="12"
+  id="new-notes-section-div"
+  class="clear-padding-left clear-padding-right space-on-bottom-xxl"
+>
+  <dv-editor
+    [isMentions]="true"
+    [value]="add_new_activity.text"
+    [configObj]="init"
+    [literVersion]="true"
+    (onChange)="handleEditChange($event)"
+  ></dv-editor>
+  <div
+    class="text-danger text-left"
+    *ngIf="!add_new_activity.text && submitClicked"
+  >
+    Note is required
+  </div>
+</div>

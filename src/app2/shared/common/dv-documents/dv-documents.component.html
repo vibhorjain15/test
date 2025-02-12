@@ -1,0 +1,81 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <span appIcon name="file" class="space-on-right align-middle"></span>
+      <span class="align-middle">
+        Documents
+        <span *ngIf="documents?.length"> ({{ documents.length }}) </span>
+      </span>
+    </span>
+
+    <div
+      class="panel-controls"
+      (click)="handleNewDropdownToggle(!toggleNewOptionDropdown, $event)"
+    >
+      <div class="panel-controls-wrapper">
+        <dv-dropdown
+          [dropDownList]="newOptions"
+          class="panel-control"
+          dropdownPlacement="bottom"
+          (onDropdownClick)="handleNewDropdownClick($event)"
+          type="default"
+          [toggleDropDown]="toggleNewOptionDropdown"
+        >
+          <a tooltip="Add New Document" dropdownLabelContent class="text-black">
+            <span appIcon name="plus"></span>
+          </a>
+        </dv-dropdown>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body" *ngIf="!documents">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="60"></app-spinner>
+  </div>
+
+  <div class="panel-body dash-recent-documents">
+    <table
+      class="table table-borderless documents-table"
+      *ngIf="documents?.length"
+    >
+      <tr>
+        <th>Document</th>
+        <th class="text-center">As of Date</th>
+      </tr>
+
+      <tr
+        class="document-item"
+        *ngFor="let doc of documents"
+        (click)="redirectToDetailsPage(doc)"
+      >
+        <td class="document-row">
+          <app-attachment-icon
+            [filename]="doc.file_name"
+            size="lg"
+            class="file-attachment-icon align-middle"
+            color="#4986e7"
+          >
+          </app-attachment-icon>
+          <span
+            [tooltip]="doc.name"
+            container="body"
+            placement="right"
+            class="link-disguise align-middle"
+          >
+            {{ doc.name | truncate : 27 }}
+          </span>
+        </td>
+        <td class="text-center document-row">
+          {{ doc.as_of_date | dvDate : ["isLocaleDate"] }}
+        </td>
+      </tr>
+    </table>
+
+    <div class="padded-xl" *ngIf="documents && !documents.length">
+      <app-empty-state
+        iconName="file"
+        message="No documents available"
+      ></app-empty-state>
+    </div>
+  </div>
+</div>

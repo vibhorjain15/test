@@ -1,0 +1,169 @@
+<form class="form-horizontal" name="vm.address_form" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Address' : 'Add New Address'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Street Address">
+      <label for="street-address-1" class="control-label" col="4" col-type="sm">Street Address 1<span class="font-size-10 text-orange align-top">*</span></label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="street-address-1"
+               name="street_address_1"
+               maxlength="250"
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.params.address_line_1"
+               required>
+      </div>
+    </form-group>
+
+    <form-group field-name="Street Address-2">
+      <label for="street-address-2" class="control-label" col="4" col-type="sm">Street Address 2</label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="street-address-2"
+               name="street_address_2"
+               maxlength="250"
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.params.address_line_2">
+      </div>
+    </form-group>
+
+    <form-group field-name="City">
+      <label for="city" class="control-label" col="4" col-type="sm">City<span class="font-size-10 text-orange align-top">*</span></label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="city"
+               name="city"
+               maxlength="50"
+               dv-restrict-input="{type: 'validCityName'}"
+               required
+               data-ng-model="vm.params.city">
+      </div>
+    </form-group>
+
+
+    <form-group field-name="State">
+      <label for="state" class="control-label" col="4" col-type="sm">State<span class="font-size-10 text-orange align-top">*</span></label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="state"
+               name="state"
+               maxlength="50"
+               dv-restrict-input="{type: 'validCityName'}"
+               required
+               data-ng-model="vm.params.state">
+      </div>
+    </form-group>
+
+
+    <form-group field-name="Zipcode">
+      <label for="zipcode" class="control-label" col="4" col-type="sm">Zipcode</label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="zipcode"
+               name="zipcode"
+               maxlength="10"
+               dv-restrict-input="{type: 'validZipcode'}"
+               data-ng-model="vm.params.zip_code">
+      </div>
+    </form-group>
+
+    <form-group field-name="Country">
+      <label for="country" class="control-label" col="4" col-type="sm">Country<span class="font-size-10 text-orange align-top">*</span></label>
+
+      <div col="8" col-type="sm">
+        <select id="country"
+              class="form-control"
+              chosen
+              required
+              data-ng-disabled="!vm.countries"
+              data-ng-model="vm.params.country"
+              data-ng-options="country.id as country.value for country in vm.countries">
+          <option value="">{{ vm.countries ? "--Select Country--" : "Loading countries..."}}</option>
+        </select>
+      </div>
+    </form-group>
+
+    <form-group field-name="Phone">
+      <label for="phone" class="control-label" col="4" col-type="sm">Primary Phone</label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="phone"
+               name="phone"
+               maxlength="30"
+               dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+               data-ng-model="vm.params.phone_1">
+      </div>
+    </form-group>
+
+     <form-group field-name="Phone2">
+      <label for="phone2" class="control-label" col="4" col-type="sm">Secondary Phone</label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="phone2"
+               maxlength="30"
+               name="phone2"
+               dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+               data-ng-model="vm.params.phone_2">
+      </div>
+    </form-group>
+
+    <form-group field-name="Fax">
+      <label for="fax" class="control-label" col="4" col-type="sm">Fax</label>
+
+      <div col="8" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="fax"
+               name="fax"
+               maxlength="30"
+               dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+               data-ng-model="vm.params.fax">
+      </div>
+    </form-group>
+
+    <form-group field-name="is_headquarter">
+
+      <div col="8" offset="4" col-type="sm">
+         <dv-checkbox
+        data-ng-model="vm.params.is_headquarter"
+        label="This is firm headquarter">
+      </dv-checkbox>
+      </div>
+    </form-group>
+
+    <div class="form-group">
+      <div col="8" offset="2">
+          <small><span class="font-size-10 text-orange align-top">*</span><i>Required field</i></small>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving">{{vm.edit_mode ? 'Update Address' : 'Add Address'}}</button>
+    <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

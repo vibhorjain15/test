@@ -1,0 +1,42 @@
+<form class="form-horizontal" name="vm.contact_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Edit Working Sheets
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row clearfix">
+          <div col="12">
+            <table class="table table-condensed table-striped">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Sheets</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="entry in vm.sheetsData">
+                  <td>
+                    <dv-checkbox
+                      data-ng-disabled="entry.sheet_no == vm.active_sheet_no"
+                      data-ng-model="entry.is_active">
+                    </dv-checkbox>
+                  </td>
+                  <td class="break-spaces">{{entry.sheet_name}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" button-loader="vm.loading" >Save</button>
+      <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

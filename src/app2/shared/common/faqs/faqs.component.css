@@ -1,0 +1,40 @@
+.danger {
+  color: #cd3333;
+}
+.minwidth {
+  min-width: 55px;
+}
+
+.workflow-builder-info {
+  display: flex;
+  align-items: flex-end;
+}
+
+.workflow-builder-info > span {
+  margin-left: 3px;
+}
+.accordion-selected .panel-heading {
+  background-color: #1890af !important;
+}
+.accordion-selected .panel-heading .panel-controls .panel-control {
+  background-color: #1890af !important;
+}
+.accordion-selected .panel-heading .panel-controls .panel-control:hover {
+  color: #d75c5c !important;
+}
+.accordion-selected .panel-title{
+  color: #fff !important;
+}
+.accordion-selected .indicating-icons {
+  color: #fff !important;
+}
+.indicating-icons{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.indicating-icons {
+  color: #999999 !important;
+}
+
+

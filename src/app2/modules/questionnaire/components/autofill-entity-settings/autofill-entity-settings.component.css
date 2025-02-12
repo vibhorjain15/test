@@ -1,0 +1,25 @@
+.entity-setting {
+  font-size: 13px;
+  position: relative;
+  top: 2px;
+}
+.nested-switch {
+  margin-left: 30px;
+}
+.nested-switch-text {
+  display: inline-block;
+  width: 400px;
+}
+.info-icon {
+  vertical-align: super;
+  font-size: smaller;
+}
+.entity-autofill-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.entity-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

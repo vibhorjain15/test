@@ -1,0 +1,80 @@
+export interface QaItem {
+  associated_entity: string;
+  associated_entity_id: number;
+  associated_entity_short: string;
+  associated_entity_type: string;
+  associated_entity_type_id: number;
+  associated_investor: string;
+  associated_investor_id: number;
+  associated_investor_short: string;
+  associated_template: string;
+  associated_template_id: number;
+  child_section_id: number;
+  comments: any[];
+  diligence_type: number;
+  duediligence_id: number;
+  expiry_date?: string;
+  fund_firm_id: number;
+  is_active: boolean;
+  is_verified: boolean;
+  response_status: string;
+  parent_section_id: number;
+  question_id: number;
+  question_text: string;
+  question_text_short: string;
+  response_created_at: string;
+  response_created_by: number;
+  response_created_by_name: string;
+  response_id: number;
+  response_is_na: boolean;
+  response_text: string;
+  response_text_copy: string;
+  response_text_short: string;
+  response_type: string;
+  score: number;
+  tags_text: string;
+  verified_at: string;
+  verified_by: number;
+  verified_by_name: string;
+  is_archived: boolean;
+  is_merged: boolean;
+  is_standard_ddq: boolean;
+  last_reviewed_by_name: string;
+  last_reviewed_at: string;
+  is_investor_request: boolean;
+  duediligence_name: string;
+  grid_response?: {
+    Columns: { name: any; order: number }[];
+    Rows: { name: any; order: number; responses: any[] }[];
+  };
+}
+
+export interface SuggestedResponseItem {
+  max_response_created_at: string;
+  question_created_at: string;
+  question_id: number;
+  question_text: string;
+  responses: {
+    associated_entity: string;
+    associated_entity_id: number;
+    associated_entity_type: number;
+    associated_investor: string;
+    associated_investor_id: number;
+    associated_template: string;
+    associated_template_id: number;
+    diligence_type: number;
+    duediligence_id: number;
+    expiry_date?: string;
+    fund_firm_id: number;
+    fund_id?: number;
+    is_verified: boolean;
+    response_created_at: string;
+    response_created_by: number;
+    response_created_by_name: string;
+    response_id: number;
+    response_text: string;
+    response_type: string;
+    strategy_id?: number;
+    tags: any[];
+  }[];
+}

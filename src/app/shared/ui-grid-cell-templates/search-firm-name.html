@@ -1,0 +1,11 @@
+<ui-grid-cell-contents class="text-left">
+    <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+      class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">{{COL_FIELD CUSTOM_FILTERS}}
+    </div>
+    <a class="js-projects-dd-name"
+        ui-sref="app.form_adv.firm.snapshot({firmCRD: row.entity.firmcrd})"
+        uib-tooltip="{{row.entity.info_legalname}}"
+        tooltip-placement="top">
+      {{row.entity.info_legalname}}
+    </a>
+  </ui-grid-cell-contents>

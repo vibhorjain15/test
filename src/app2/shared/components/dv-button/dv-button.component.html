@@ -1,0 +1,61 @@
+<button
+  [disabled]="disabled || loader"
+  [attr.aria-disabled]="disabled || loader ? 'true' : 'false'"
+  [attr.aria-busy]="loader ? 'true' : null"
+  [attr.aria-label]="ariaLabel || tooltipText"
+  role="button"
+  [tabindex]="disabled || loader ? -1 : tabIndex"
+  [class]="'btn button-component ' + btnClass + ' btn-' + size"
+  [ngClass]="{
+    'btn-primary': btnType === 'primary',
+    'btn-default': btnType === 'default',
+    'btn-new-orange': btnType === 'orange' || btnType === 'orange-border',
+    'btn-secondary': btnType === 'secondary',
+    'btn-darkBlue': btnType === 'darkBlue',
+    'btn-link': btnType == 'link',
+    'btn-success': btnType === 'success',
+    'btn-cursor': loader,
+    'btn-orange-fill': btnType === 'orange-fill',
+    'btn-blue-border': btnType === 'blue-border',
+    'btn-transparent': btnType === 'transparent',
+    'btn-danger': btnType === 'danger',
+    'btn-tab': btnType === 'tab-selection',
+    disabledClass: disabledClass
+  }"
+  [tooltip]="tooltipText"
+  [placement]="tooltipPlacement"
+  [ngStyle]="{
+    width: btnWidth + '%',
+    borderRadius: borderRadius,
+    fontSize: fontSize
+  }"
+  (click)="handleOnClick($event)"
+  [adaptivePosition]="adaptivePosition"
+  [type]="type"
+  (keydown.enter)="handleOnClick($event)"
+  (keydown.space)="handleOnClick($event)"
+>
+  <div [ngClass]="{ visibility: loader }">
+    <span
+      *ngIf="leftIcon"
+      [ngClass]="{ 'left-icon': !onlyIcon }"
+      [customSize]="iconSize || fontSizeType"
+      appIcon
+      [name]="leftIcon"
+    ></span>
+    <span class="dv-button-content" #buttonContent>
+      <ng-content></ng-content>
+    </span>
+  </div>
+
+  <span
+    [ngClass]="{
+      'button-loader': loader,
+      'orange-loader': btnType === 'orange',
+      'btn-darkBlue-loader': btnType === 'darkBlue'
+    }"
+    *ngIf="loader"
+  >
+    <app-spinner></app-spinner>
+  </span>
+</button>

@@ -1,0 +1,68 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-password-settings></ng2-password-settings> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Change Password</h5>
+  </div>
+
+  <div class="panel-body">
+    <form novalidate class="form-horizontal" name="vm.change_password_form" data-ng-submit="vm.submit()">
+      <form-group field-name="Current Password">
+        <label class="control-label" col="3" for="current-password">Current Password</label>
+
+        <div col="4">
+          <input id="current-password"
+                 type="{{vm.passwordElementType}}"
+                 class="form-control"
+                 data-ng-model="vm.params.password"
+                 placeholder="Current Password"
+                 required />
+          <a class="password-style-element clickable" data-ng-click="vm.showPasswordToggle()">
+            <icon name="eye" data-ng-if="vm.passwordNotVisible"></icon>
+            <icon name="view-hide" data-ng-if="!vm.passwordNotVisible"></icon>
+          </a>
+        </div>
+      </form-group>
+
+      <form-group field-name="Password">
+        <label class="control-label" col="3" for="new-password">New Password</label>
+
+        <div col="4">
+          <dv-password-field id="new-password" type="{{vm.passwordElementType2}}" password="vm.params.NewPassword"
+            placeholder="New Password"></dv-password-field>
+          <a class="password-style-element clickable" data-ng-click="vm.showPasswordToggle2()">
+            <icon name="eye" data-ng-if="vm.passwordNotVisible2"></icon>
+            <icon name="view-hide" data-ng-if="!vm.passwordNotVisible2"></icon>
+          </a>
+        </div>
+      </form-group>
+
+      <form-group field-name-map="{'validateEquals': 'Passwords', 'required': 'Confirm Password'}">
+        <label class="control-label" col="3" for="password-confirmation">
+          Password Confirmation
+        </label>
+
+        <div col="4">
+          <input id="password-confirmation"
+                 type="{{vm.passwordElementType3}}"
+                 class="form-control"
+                 validate-equals="vm.params.NewPassword"
+                 placeholder="Confirm Password"
+                 data-ng-model="vm.params.confirmPassword"
+                 required />
+          <a class="password-style-element clickable"
+            ng-style="{ 'right' : (vm.params.NewPassword == vm.params.confirmPassword && vm.params.NewPassword) ? '35px' : '12px' }"
+            data-ng-click="vm.showPasswordToggle3()">
+            <icon name="eye" data-ng-if="vm.passwordNotVisible3"></icon>
+            <icon name="view-hide" data-ng-if="!vm.passwordNotVisible3"></icon>
+          </a>
+        </div>
+      </form-group>
+
+      <div class="form-group">
+        <div col="4" offset="3">
+          <button type="submit" button-loader="vm.saving">Change Password</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

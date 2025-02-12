@@ -1,0 +1,17 @@
+<div class="video-player-container">
+  <video
+    #video
+    *ngIf="!isEmbeddedVideo; else embeddedVideoTemplate"
+    controls
+    preload="metadata"
+    class="video-player"
+  >
+    <source
+      [src]="videoSrc"
+      [type]="videoType"
+    />
+  </video>
+</div>
+<ng-template #embeddedVideoTemplate>
+  <div [innerHTML]="videoSrc | dvSafeHtml"></div>
+</ng-template>

@@ -1,0 +1,49 @@
+<div *ngIf="params.data">
+  <button
+    [tooltip]="
+      params?.data?.is_default
+        ? 'This is default template'
+        : 'Make this default'
+    "
+    container="body"
+    [ngClass]="{ 'active disabled': params?.data?.is_default }"
+    appButton
+    btnType="default"
+    size="sm"
+    [adaptivePosition]="false"
+    (click)="markDefault()"
+    class="space-on-right"
+    [attr.aria-label]="params?.data?.is_default
+    ? 'This is default template'
+    : 'Make this default'"
+  >
+    <span appIcon name="check"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Edit Template"
+    container="body"
+    triggers="mouseenter:mouseleave"
+    [adaptivePosition]="false"
+    (click)="editTemplate()"
+    class="space-on-right"
+    [attr.aria-label]="'Edit Template'"
+  >
+    <span appIcon name="pencil"></span>
+  </button>
+  <button
+    appButton
+    btnType="default"
+    size="sm"
+    tooltip="Delete Template"
+    container="body"
+    [adaptivePosition]="false"
+    triggers="mouseenter:mouseleave"
+    (click)="deleteTemplate()"
+    [attr.aria-label]="'Delete Template'"
+  >
+    <span appIcon name="trashcan"></span>
+  </button>
+</div>

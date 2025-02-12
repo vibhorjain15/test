@@ -1,0 +1,399 @@
+<app-modal
+  [title]="modalTitle"
+  [firstButtonLabel]="'Start'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="ddqRef"
+  [isLoading]="loading && isSubmitting"
+  [isFirstButtonDisabled]="ddqForm.invalid"
+>
+</app-modal>
+
+<ng-template #ddqRef>
+  <form class="form-horizontal" [formGroup]="ddqForm" autocomplete="off">
+    <div class="modal-body">
+      <div class="text-center" *ngIf="!entity_name">
+        <div class="btn-group">
+          <span
+            class="btn btn-default font-size-12"
+            *ngFor="let type of entityTypes"
+            [ngClass]="{
+              'btn-primary': type.name == entity_type
+            }"
+            (click)="setEntityType(type.name)"
+          >
+            <span
+              appIcon
+              [name]="type.icon"
+              [size]="type.size"
+              class="space-on-right"
+            ></span>
+            {{ type.label }}
+          </span>
+        </div>
+      </div>
+      <br />
+
+      <div class="row">
+        <dv-form-element
+          [fieldName]="investor_id"
+          elementCol="8"
+          labelCol="3"
+          label="Pick an Investor"
+          errorMessage="Investor is required"
+          [modelController]="ddqForm.get('investor_id')"
+          [showRightIcon]="false"
+          *ngIf="
+            is_manager &&
+            diligence_type != 'dd_profile' &&
+            showInvestorSelection
+          "
+          [isRequired]="true"
+        >
+          <dv-select
+            [list]="firms"
+            [id]="'investor_id'"
+            name="investor"
+            chosen
+            formControlName="investor_id"
+            [clearable]="false"
+            [disabled]="internalOnly"
+            [loading]="firms_loading"
+            placeholder="Select an option"
+            [loading]="loading"
+          ></dv-select>
+          <div class="space-on-top pull-right" *ngIf="source == 'template'">
+            <dv-checkbox
+              [(ngModel)]="internalOnly"
+              [ngModelOptions]="{ standalone: true }"
+              (onValChange)="onInternalCheckboxChanged()"
+              label="This request is not specific to an investor"
+            >
+            </dv-checkbox>
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="Template"
+          elementCol="8"
+          labelCol="3"
+          label="Template"
+          [modelController]="ddqForm.get('template_id')"
+          [showRightIcon]="false"
+          [isRequired]="true"
+        >
+          <dv-select
+            [id]="'template_id'"
+            [clearable]="false"
+            name="template"
+            chosen
+            formControlName="template_id"
+            [disabled]="request"
+            placeholder="--Select Template--"
+            [loading]="!isTemplateLoaded"
+            [disabled]="!isTemplateLoaded"
+            [list]="templates"
+          ></dv-select>
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('template_id').touched &&
+              ddqForm.get('template_id').errors?.required
+            "
+          >
+            Template is required
+          </div>
+        </dv-form-element>
+        <dv-form-element
+          [fieldName]="Strategy"
+          [modelController]="ddqForm.get('entity_id')"
+          [showRightIcon]="false"
+          *ngIf="entity_type === 'Strategy' && !entity_name"
+          elementCol="8"
+          labelCol="3"
+          [isRequired]="true"
+          label="Strategy"
+        >
+          <dv-select
+            [id]="'entity_id'"
+            [list]="strategies"
+            formControlName="entity_id"
+            bindLabel="name"
+            bindValue="id"
+            [disabled]="is_firm_dd || !strategies"
+            [loading]="!strategies?.length"
+            [clearable]="false"
+            [searchable]="true"
+            placeholder="Select an option"
+            id="strategy"
+            name="strategy"
+          ></dv-select>
+          <div
+            class="space-on-top pull-right"
+            *ngIf="!(is_investor && diligence_type === 'dd_profile')"
+          >
+            <dv-checkbox
+              [(ngModel)]="is_firm_dd"
+              [ngModelOptions]="{ standalone: true }"
+              (onValChange)="onFirmLevelCheckboxChanged()"
+              label="This is firm level DDQ"
+            >
+            </dv-checkbox>
+          </div>
+
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('entity_id').touched &&
+              ddqForm.get('entity_id').errors?.required
+            "
+          >
+            Strategy is required
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="Vehicle"
+          [modelController]="ddqForm.get('entity_id')"
+          [showRightIcon]="false"
+          *ngIf="entity_type === 'Vehicle' && !entity_name"
+          elementCol="8"
+          labelCol="3"
+          [isRequired]="true"
+          label="Vehicle"
+        >
+          <dv-select
+            [id]="'entity_id'"
+            name="vehicle"
+            [clearable]="false"
+            chosen
+            formControlName="entity_id"
+            [disabled]="!vehicles"
+            placeholder="Select an option"
+            [loading]="!vehicles?.length"
+            [list]="vehicles"
+          >
+          </dv-select>
+
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('entity_id').touched &&
+              ddqForm.get('entity_id').errors?.required
+            "
+          >
+            Vehicle is required
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          field-name="Fund"
+          elementCol="8"
+          labelCol="3"
+          label="Product"
+          [isRequired]="true"
+          [showRightIcon]="false"
+          [modelController]="ddqForm.get('entity_id')"
+          *ngIf="
+            entity_type !== 'Firm' &&
+            entity_type !== 'Strategy' &&
+            entity_type !== 'Vehicle' &&
+            !entity_name &&
+            entity_type
+          "
+        >
+          <dv-select
+            [id]="'entity_id'"
+            name="fund"
+            [list]="funds"
+            formControlName="entity_id"
+            [disabled]="is_firm_dd || !funds"
+            placeholder="Select an option"
+            [loading]="!funds?.length"
+          ></dv-select>
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('entity_id').touched &&
+              ddqForm.get('entity_id').errors?.required
+            "
+          >
+            Product is required
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          field-name="Firm"
+          elementCol="8"
+          labelCol="3"
+          [showRightIcon]="false"
+          label="Firm"
+          [isRequired]="true"
+          [modelController]="ddqForm.get('entity_id')"
+          *ngIf="entity_type == 'Firm' && !entity_name && !is_manager"
+          [errorMessage]="'Firm is Required'"
+        >
+          <dv-select
+            [id]="'entity_id'"
+            name="firm"
+            [clearable]="false"
+            chosen
+            formControlName="entity_id"
+            [disabled]="!firms"
+            placeholder="Select an option"
+            [loading]="!firms?.length"
+            [list]="firms"
+          ></dv-select>
+        </dv-form-element>
+        <dv-form-element
+          [showRightIcon]="false"
+          fieldName="Firm"
+          label="Firm"
+          elementCol="8"
+          labelCol="3"
+          *ngIf="entity_type == 'Firm' && !entity_name && is_manager"
+          [isRequired]="true"
+        >
+          <div class="col-md-6">
+            <p class="control-label pull-left">
+              {{ current_firm?.name }}
+            </p>
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="Fund"
+          elementCol="8"
+          elementClass="control-label text-align-start"
+          labelCol="3"
+          *ngIf="entity_name"
+          [label]="
+            entity_type === 'Firm'
+              ? 'Firm'
+              : entity_type === 'Strategy'
+              ? 'Strategy'
+              : entity_type === 'Vehicle'
+              ? 'Vehicle'
+              : 'Product'
+          "
+        >
+          <div class="space-on-top-2 space-on-left-3">{{ entity_name }}</div>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="Name"
+          elementCol="8"
+          labelCol="3"
+          label="{{ is_manager ? 'Project' : '' }} Name"
+          [modelController]="ddqForm.get('name')"
+          [isRequired]="true"
+        >
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+            placeholder="Example: Investment Profile"
+          />
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('name').touched &&
+              ddqForm.get('name').errors?.required
+            "
+          >
+            Name is required
+          </div>
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('name').touched && ddqForm.get('name').errors?.pattern
+            "
+          >
+            {{ errorMessageMap.avoidFirstSplCharacter | interpolate : "Name" }}
+          </div>
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('name').touched &&
+              ddqForm.get('name').errors?.containsHtml
+            "
+          >
+            {{
+              errorMessageMap.containsHtml
+                | interpolate : (is_manager ? "Project Name" : "Name")
+            }}
+          </div>
+        </dv-form-element>
+        <dv-form-element
+          [fieldName]="due_at"
+          elementCol="8"
+          labelCol="3"
+          [modelController]="ddqForm.get('due_at')"
+          *ngIf="diligence_type !== 'dd_profile'"
+          [showRightIcon]="false"
+          label="Due Date"
+        >
+          <app-date-picker
+            [id]="'due_at'"
+            [minDate]="minDate"
+            [value]="ddqForm.get('due_at').value"
+            (change)="setDateValue($event, 'due_at')"
+            [placement]="'top'"
+            [class]="
+              ddqForm.get('due_at').errors?.inValidDueDate ? 'has-error' : ''
+            "
+          >
+          </app-date-picker>
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('due_at').touched &&
+              ddqForm.get('due_at').errors?.required
+            "
+          >
+            Due Date is required
+          </div>
+          <div
+            class="text-danger"
+            *ngIf="ddqForm.get('due_at').errors?.inValidDueDate"
+          >
+            Due date should be greater than or equal to as of date
+          </div>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="as_of_date"
+          elementCol="8"
+          labelCol="3"
+          [modelController]="ddqForm.get('as_of_date')"
+          [showRightIcon]="false"
+          label="As of Date"
+        >
+          <app-date-picker
+            [id]="'as_of_date'"
+            [maxDate]="maxAsOfDate"
+            [value]="ddqForm.get('as_of_date').value"
+            (change)="setDateValue($event, 'as_of_date')"
+            [placement]="'top'"
+            [class]="
+              ddqForm.get('as_of_date').touched &&
+              ddqForm.get('as_of_date').errors?.required
+                ? 'has-error'
+                : ''
+            "
+          >
+          </app-date-picker>
+          <div
+            class="text-danger"
+            *ngIf="
+              ddqForm.get('as_of_date').touched &&
+              ddqForm.get('as_of_date').errors?.required
+            "
+          >
+            As of Date is required
+          </div>
+        </dv-form-element>
+      </div>
+    </div>
+  </form>
+</ng-template>

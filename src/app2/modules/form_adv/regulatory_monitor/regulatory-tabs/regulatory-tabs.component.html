@@ -1,0 +1,8 @@
+<dv-tabs
+  [list]="tabList"
+  size="large"
+  (onTabClick)="handleTabChange($event)"
+></dv-tabs>
+<ng-container>
+  <router-outlet></router-outlet>
+</ng-container>

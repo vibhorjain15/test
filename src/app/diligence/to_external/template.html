@@ -1,0 +1,211 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-Send-To-Manager></ng2-Send-To-Manager>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<spinner broad-spinner spinner-height='50' data-ng-hide="vm.is_data_loaded"></spinner>
+
+<form-wizard name="to-manager-request"
+        display-footer="vm.display_wizard_footer"
+        on-finish="vm.sendDueDiligenceRequest()"
+        data-ng-show="vm.is_data_loaded">
+    <wizard-step step-title="'Contact & Due Date'"
+        step-content-header-title="'Select associated contacts to whom you would like to send this diligence'"
+        can-exit="vm.contact_selection_form.$valid"
+        back-button-label="Back"
+        on-back-button-click="vm.gotoPreviousPage()">
+        <div class="row clearfix">
+            <div col="4" offset="4">
+                <form novalidate name="vm.contact_selection_form">
+                    <form-group field-name="Contact">
+                        <label for="contact">Select Contacts</label>
+                        <select name="contact" id="contact" chosen multiple
+                            data-ng-options="contact.id as contact.fullName for contact in vm.related_contacts"
+                            data-ng-model="vm.request.contact" class="form-control" required>
+                            <option value="">--Select--</option>
+                        </select>
+                    </form-group>
+
+                    <form-group field-name="As of Date" control-selector="dv-datepicker">
+                        <label for="due-date">As of Date</label>
+
+                        <dv-datepicker data-ng-model="vm.request.as_of_date" ng-required="true" id="as-of-date"
+                            max-date="vm.maxAsOfDate"></dv-datepicker>
+                    </form-group>
+
+                    <form-group field-name="Due Date" control-selector="dv-datepicker">
+                        <label for="due-date">Due Date</label>
+
+                        <dv-datepicker data-ng-model="vm.request.due_at" ng-required="true" id="due-date" min-date="vm.minDate">
+                        </dv-datepicker>
+                        <div class="space-on-top-sm">
+                            Suggested due date is:
+                            <a class="clickable" data-ng-click="vm.setSuggestedDueDate()">
+                                {{vm.getSuggestedDueDate(vm.request.duediligence_type)|date}}
+                            </a>
+                        </div>
+                    </form-group>
+
+                </form>
+            </div>
+        </div>
+    </wizard-step>
+    <wizard-step step-title="'Please review your due diligence request'"
+            step-content-header-title="'Send Request'"
+            next-button-label="Send Request"
+            next-button-type="orange">
+        <div class="row clearfix">
+            <div col="6" class="bordered-right">
+                <div col="10" offset="1">
+                    <form name="vm.project_name_form" col="12">
+                        <form-group field-name="Project Name" tooltip-placement="left">
+                            <label>Project Name</label>
+                            <input type="text" data-ng-model="vm.project_name" required focus-me="true"
+                                placeholder="Project Name" dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                class="form-control space-on-bottom-xl" />
+                        </form-group>
+                    </form>
+
+                    <form name="email_text_form" data-ng-if="!vm.request.is_internal" col="12" class="space-on-top">
+                        <form-group field-name="Email Text" tooltip-placement="left">
+                            <div class="col-sm-5">
+                                <div class="pos-rel">
+                                    <small class="infoIconEmailTemplate">
+                                        <icon name="info" class="text-info" tooltip-placement="right"
+                                            uib-tooltip="Firm admins can create additional templates from Firm Settings">
+                                        </icon>
+                                    </small>
+                                    <dv-checkbox data-ng-model="vm.use_email_templates"
+                                        data-ng-change="vm.getDefaultEmailTemplate(vm.use_email_templates)"
+                                        data-ng-disabled="vm.disallow_custom_edits">
+                                        <dv-checkbox-label>
+                                            <b>
+                                                Use email templates
+                                            </b>
+                                        </dv-checkbox-label>
+                                    </dv-checkbox>
+                                </div>
+                            </div>
+                            <div class="col-sm-6" data-ng-if="vm.email_templates.length == 0 && vm.use_email_templates">
+                                <p>No email templates present, <a class="clickable"
+                                        ui-sref="app.firm.settings.email_templates">click here</a> to add one</p>
+                            </div>
+                            <div class="col-sm-6 space-on-top"
+                                data-ng-if="vm.email_templates.length > 0 && vm.use_email_templates">
+                                <select class="form-control" id="alert-frequency" chosen
+                                    data-ng-model="vm.default_email_template_message_id"
+                                    data-ng-options="template.id as template.name for template in vm.email_templates"
+                                    data-ng-change="vm.renderEmailTemplate(vm.default_email_template_message_id)">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </form-group>
+                        <br>
+                        <form-group field-name="Email Text" tooltip-placement="left" data-ng-if="!vm.disallow_custom_edits">
+                            <label class="col-sm-12">Email Message</label>
+                            <div class="col-sm-12">
+                                <textarea id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                                    data-ng-model="vm.email_text"></textarea>
+                            </div>
+                        </form-group>
+                    </form>
+
+                    <div class="col-md-12 space-on-top-lg space-on-bottom-lg" data-ng-if="!vm.request.is_internal">
+                        <a class="link clickable pull-right" data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions">
+                            <icon name="chevron-up" data-ng-show="vm.showAdvanceOptions"></icon>
+                            <icon name="chevron-down" data-ng-show="!vm.showAdvanceOptions"></icon>
+                            {{vm.showAdvanceOptions? 'Hide': 'Show'}} Advanced Options
+                        </a>
+                    </div>
+                    <div class="bordered-bottom padded-top padded-bottom space-on-bottom"
+                        data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                        <span class="text-muted">Optional Fields</span>
+                    </div>
+                    <div class="padded-left" data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                        <small class="text-dark-blue text-bold">Note: Default email is set to <span
+                                class="link-underline">notifications@diligencevault.com</span>.<br> To change, go to Firm
+                            Settings > Preferences > Firm Preferences > Outbound email notifications</small>
+                    </div>
+                    <div col="12" class="space-on-top space-on-bottom"
+                        data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                        <label class="control-label col-sm-3 space-on-top">Sender Email</label>
+                        <div class="col-sm-9" data-ng-if="vm.sender_emails.length > 0 && vm.firm_preferences.add_sender_email">
+                            <select class="form-control" id="sender-email" chosen data-ng-model="vm.selected_sender_email"
+                                data-ng-options="email as email for email in vm.sender_emails">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8 space-on-top"
+                            data-ng-if="vm.sender_emails.length == 0 || !vm.firm_preferences.add_sender_email">
+                            <p class="clear-margin">No sender emails present, <a class="clickable"
+                                    ui-sref="app.firm.settings.preferences">click here</a> to add one</p>
+                        </div>
+                    </div>
+                    <div col="12" class="space-on-top space-on-bottom"
+                        data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                        <label class="control-label col-sm-3 space-on-top">CC Email List</label>
+                        <div class="col-sm-9" data-ng-if="vm.cc_emails.length > 0 && vm.firm_preferences.add_cc_email">
+                            <select class="form-control" id="cc-email-list" chosen multiple
+                                data-ng-model="vm.selected_cc_email_list"
+                                data-ng-options="email as email for email in vm.cc_emails">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8 space-on-top"
+                            data-ng-if="vm.cc_emails.length == 0 || !vm.firm_preferences.add_cc_email">
+                            <p class="clear-margin">No cc emails present, <a class="clickable"
+                                    ui-sref="app.firm.settings.preferences">click here</a> to add one</p>
+                        </div>
+                    </div>
+                    <div col="12" class="space-on-top space-on-bottom"
+                        data-ng-if="!vm.request.is_internal && vm.showAdvanceOptions">
+                        <label class="control-label col-sm-3 space-on-top">BCC Email List</label>
+                        <div class="col-sm-9" data-ng-if="vm.bcc_emails.length > 0 && vm.firm_preferences.add_cc_email">
+                            <select class="form-control" id="cc-email-list" chosen multiple
+                                data-ng-model="vm.selected_bcc_email_list"
+                                data-ng-options="email as email for email in vm.bcc_emails">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8 space-on-top"
+                            data-ng-if="vm.bcc_emails.length == 0 || !vm.firm_preferences.add_cc_email">
+                            <p class="clear-margin">No bcc emails present, <a class="clickable"
+                                    ui-sref="app.firm.settings.preferences">click here</a> to add one</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div col="6">
+                <h4 class="alert alert-info text-center clear-margin-top space-on-left-lg">
+                    Information Request Preview
+                </h4>
+
+                <div col="11">
+                    <dl class="dl-horizontal clear-margin-bottom">
+                        <dt>From</dt>
+                        <dd>{{vm.currentUser.firstName}} {{vm.currentUser.lastName}}</dd>
+                        <dt>As of Date</dt>
+                        <dd>{{vm.request.as_of_date|date}}</dd>
+                        <dt>Due Date</dt>
+                        <dd>{{vm.request.due_at|date}}</dd>
+                        <dt data-ng-if="!vm.request.is_internal" data-ng-class="{'space-on-top-lg': vm.email_text}">Email Msg
+                        </dt>
+                        <dd data-ng-if="!vm.request.is_internal" class="word-break-break-all">
+                            <div data-ng-if="vm.email_text" class="email-text-wrapper">
+                                <span class="word-break-break-all" data-ng-bind-html="vm.email_text"></span>
+                            </div>
+                            <span data-ng-if="!vm.email_text">--</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div col="10" offset="1" class="text-center">
+                <hr>
+
+                <dv-checkbox data-ng-model="vm.accept_confidential_agreement"
+                    label="I certify that our firm will share the information received only with authorized personnels and clients.">
+                </dv-checkbox>
+            </div>
+        </div>
+    </wizard-step>
+</form-wizard>
+</div>

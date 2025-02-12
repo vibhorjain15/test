@@ -1,0 +1,127 @@
+<div class="row clearfix">
+
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <spinner data-ng-show="vm.loading"></spinner>
+
+                <div data-ng-hide="vm.loading">
+                    <form class="form-horizontal"
+                          data-ng-submit="vm.addOrSaveQuestion()"
+                          novalidate
+                          name="vm.question_form">
+
+                        <form-group field-name="Question Title" validate-on="submit">
+                            <div class="space-on-bottom-xl">
+                                <p class="alert alert-warning text-center">
+                                    <icon name="warning" class="space-on-right"></icon>
+                                    Editing Question Text will affect export of the document
+                                </p>
+                            </div>
+
+                            <label class="control-label" col="4" for="question-title">
+                                Question Text
+                            </label>
+
+                            <div col="8">
+                                <textarea class="form-control"
+                                          id="question-title"
+                                          placeholder="Example: What is your firm name?"
+                                          focus-me="vm.edit_mode"
+                                          data-ng-model="vm.question.extracted_text"
+                                          msd-elastic="\n"
+                                          dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                                          required></textarea>
+                                <a role="button"
+                                   data-ng-if="!vm.adding_advance_options"
+                                   data-ng-click="vm.revealAdvanceOptions()">
+                                    Add Help Text / Mandatory Flag Options
+                                </a>
+                            </div>
+                        </form-group>
+
+                        <div class="panel panel-default"
+                             data-ng-if="vm.adding_advance_options">
+                            <div class="panel-body">
+                                <form-group field-name="Question Hint Text" validate-on="submit">
+                                    <label class="control-label" col="4" for="question-hint-text">
+                                        Instructions / Tips
+                                    </label>
+
+                                    <div col="8">
+                                        <textarea class="form-control" id="question-hint-text" ui-tinymce="vm.tinymceOptions"
+                                            placeholder="Examples, guidelines on answering" focus-me="vm.edit_mode"
+                                            data-ng-model="vm.question.hint_text" msd-elastic="\n"></textarea>
+                                    </div>
+                                    <div col="12" class="space-on-top-lg text-right">
+                                        <span
+                                            data-ng-class="{'text-success':vm.question.hint_text.length < vm.dvTextLimits.HELP_TEXT_LIMIT, 'text-danger':vm.question.hint_text.length >= vm.dvTextLimits.HELP_TEXT_LIMIT, 'bold-text':vm.question.hint_text.length >= vm.dvTextLimits.HELP_TEXT_LIMIT }">
+                                            <span data-ng-if="vm.question.hint_text.length > 0">
+                                                {{vm.question.hint_text.length}} characters
+                                            </span>
+                                            (maximum {{vm.dvTextLimits.HELP_TEXT_LIMIT}} characters)
+                                        </span>
+                                    </div>
+                                </form-group>
+                                <div class="alert alert-danger" data-ng-if="vm.question.hint_text.length > vm.dvTextLimits.HELP_TEXT_LIMIT">
+                                    Instructions / Tips is limited to {{vm.dvTextLimits.HELP_TEXT_LIMIT}} characters, you entered {{vm.question.hint_text.length}}
+                                </div>
+                                <form-group field-name="Mandatory Question" validate-on="submit">
+                                    <div col="8" class="col-md-offset-4">
+                                        <dv-checkbox
+                                                data-ng-model="vm.question.is_mandatory"
+                                                label="Mark this question as mandatory">
+                                        </dv-checkbox>
+                                        <a role="button"
+                                           data-ng-if="vm.adding_advance_options"
+                                           data-ng-click="vm.hideAdvanceOptions()">
+                                            Hide Options
+                                        </a>
+                                    </div>
+                                </form-group>
+                            </div>
+                        </div>
+
+                        <form-group field-name="Response Type">
+                            <label for="response-type" class="control-label" col="4">
+                                Response Type
+                            </label>
+
+                            <div col="8" data-ng-if="!vm.resettingDefaultResponsesState">
+                                <select class="form-control"
+                                        required
+                                        chosen
+                                        data-ng-model="vm.question.responseType"
+                                        data-ng-options="responseType as responseType.description for responseType in vm.responseTypes">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+
+                            <div col="8" data-ng-if="vm.resettingDefaultResponsesState">
+                                <spinner broad-spinner spinner-height='35'></spinner>
+                            </div>
+                        </form-group>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-4" col="8">
+                                <div class="well well-sm clear-margin">
+                                    <field-preview question="vm.question" editable></field-preview>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                    <div class="text-right space-on-top">
+                        <button type="submit"
+                                data-ng-disabled="vm.question.hint_text.length >= vm.dvTextLimits.HELP_TEXT_LIMIT"
+                                class="space-on-right"
+                                data-ng-click="vm.save()"
+                                button-loader="vm.saving_questions">Save</button>
+                        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

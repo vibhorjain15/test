@@ -1,0 +1,41 @@
+.user-card {
+  .box-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+
+  display: table;
+  width: 100%;
+  border: 1px solid #dddddd;
+  margin-bottom: 10px;
+
+  .avatar-wrapper, .content-wrapper {
+    display: table-cell;
+  }
+
+  .avatar-wrapper {
+    @img-width: 100px;
+    @padding: 10px;
+
+    width: @img-width + 2*@padding;
+    vertical-align: middle;
+    border-right: 1px solid #efefef;
+    padding: @padding;
+    text-align: center;
+
+    img {
+      .square(@img-width);
+    }
+  }
+
+  .info-wrapper, .controls-wrapper {
+    padding: 10px;
+  }
+
+  .controls-wrapper { // This div is conditional, so it's absence shouldn't effect the UI
+    border-top: 1px solid #efefef;
+  }
+}
+
+
+
+.loggedin-account{
+  background-color: #dff2ff !important;
+}

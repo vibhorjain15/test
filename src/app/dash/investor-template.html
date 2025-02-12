@@ -1,0 +1,13 @@
+<!-- app2(Angular) ==> modules ==> dashboard ==> pages ==> investor-view component will get downgraded over here -->
+<ng2-investor-view data-ng-if="vm.Utils.isAngular()"></ng2-investor-view>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <div
+    data-ng-if="vm.dashType == 'Activity'"
+    ng-include="'dash/sub-views/investor-activity-template.html'"
+  ></div>
+  <div
+    data-ng-if="vm.dashType == 'Monitor'"
+    ng-include="'dash/sub-views/investor-monitor-template.html'"
+  ></div>
+</div>
+

@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Banners</h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          tooltip="Create New Banner"
+          container="body"
+          class="panel-control"
+          placement="left"
+          (click)="addBanner()"
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      Caution: The changes applied will be universal for all users.
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-dv-grid [rowData]="banners" [name]="gridName"></app-dv-grid>
+  </div>
+</div>

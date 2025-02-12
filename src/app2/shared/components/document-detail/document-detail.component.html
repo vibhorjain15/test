@@ -1,0 +1,524 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <app-spinner *ngIf="!document"></app-spinner>
+        <div
+          class="dv-table dv-table-middle dd-info-panel full-width"
+          *ngIf="document"
+        >
+          <div class="bordered-right text-center cell col-sm-4">
+            <h4 class="clear-margin lh1-5 word-break-break-all">
+              {{ document.name | truncate : 55 }}
+            </h4>
+            <span
+              *ngIf="document.reviews?.length"
+              customSize="big"
+              class="space-on-left"
+              appIcon
+              name="reviewed-document"
+            ></span>
+            <div class="space-on-top-lg">
+              <a
+                class="space-on-left-lg"
+                (click)="viewDocument(document)"
+                clickable
+              >
+                <app-attachment-icon
+                  [filename]="document.file_name"
+                  class="file-attachment-icon"
+                  [color]="'#1d9c5a'"
+                ></app-attachment-icon>
+                {{ document.blob_name }} (V{{ document.version }})</a
+              >
+              <span
+                appIcon
+                name="tag"
+                class="space-on-left-lg clickable"
+                *ngIf="document.group_names.length"
+                placement="right"
+                tooltip="Grouped under {{
+                  formatDocumentGroupTooltip(document.group_names)
+                }}"
+                container="body"
+              ></span>
+              <div *ngIf="document.updated_at">
+                <small class="text-muted"
+                  >(Last updated on {{ document.updated_at | dvDate }})</small
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="bordered-right cell text-center"
+            *ngIf="document.tag_names.length"
+          >
+            <span>
+              <span class="label-list">
+                <span
+                  class="label label-default space-on-right text-uppercase"
+                  *ngFor="let tag of document.tag_names"
+                >
+                  <small>{{ tag }}</small>
+                </span>
+              </span>
+            </span>
+          </div>
+          <div class="cell text-center bordered-right">
+            <span dropdown container="body">
+              <a
+                class="dropdown-toggle btn btn-transparent"
+                dropdownToggle
+                role="button"
+                tooltip="Update, Review, Delete and more"
+                container="body"
+                clickable
+              >
+                <div><span appIcon name="ellipsis-h" size="2x"></span></div>
+                <div class="space-on-top-n"><small>More Actions</small></div>
+              </a>
+              <ul class="dropdown-menu" *dropdownMenu role="menu">
+                <li role="menuitem">
+                  <a (click)="viewDocument(document)" role="button" tabindex="0"
+                    ><app-attachment-icon
+                      [filename]="document.file_name"
+                      class="file-attachment-icon space-on-right-lg"
+                    ></app-attachment-icon
+                    >View Document (V{{ document.version }})</a
+                  >
+                </li>
+                <li class="divider js-delete-button" aria-hidden="true"></li>
+                <li role="menuitem">
+                  <a (click)="openAddNodeModal()" role="button" tabindex="0"
+                    ><span
+                      appIcon
+                      name="notepad"
+                      class="space-on-right-lg"
+                    ></span
+                    >Add a Note</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a (click)="addTask(document.id)" role="button" tabindex="0"
+                    ><span appIcon name="tasks" class="space-on-right-lg"></span
+                    >Add a Task</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    (click)="displayAttachmentReviewConfirmation()"
+                    role="button"
+                    tabindex="0"
+                    ><span
+                      appIcon
+                      name="check2"
+                      class="space-on-right-lg"
+                    ></span
+                    >Mark as Reviewed</a
+                  >
+                </li>
+                <li
+                  *ngIf="canUserModify"
+                  authorized-view
+                  hiddenFrom="FreeSubscription"
+                  role="menuitem"
+                >
+                  <a
+                    (click)="openDocumentShareDialog(document)"
+                    role="button"
+                    tabindex="0"
+                    ><b
+                      ><span
+                        class="dvi dvi-share space-on-right-lg font-weight-600"
+                      ></span></b
+                    >Share Document</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a (click)="triggerWorkflow()" role="button" tabindex="0"
+                    ><span appIcon name="cogs" class="space-on-right-lg"></span
+                    >Start Workflow Process</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    (click)="openDocumentUpdateDialog(document)"
+                    role="button"
+                    tabindex="0"
+                    ><span
+                      appIcon
+                      name="pencil"
+                      class="space-on-right-lg"
+                    ></span
+                    >Update Document</a
+                  >
+                </li>
+                <li
+                  class="divider js-delete-button"
+                  *ngIf="canUserModify"
+                  aria-hidden="true"
+                ></li>
+                <li role="menuitem" *ngIf="canUserModify">
+                  <a
+                    (click)="confirmDocumentDeletion(document)"
+                    role="button"
+                    tabindex="0"
+                    ><span
+                      appIcon
+                      name="trashcan"
+                      class="space-on-right-lg"
+                    ></span
+                    >Delete Document</a
+                  >
+                </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="cell text-center">
+            <a
+              class="btn btn-transparent"
+              (click)="goToPreviousPage()"
+              clickable
+              aria-label="Go back"
+            >
+              <div><span appIcon name="arrow-back" size="2x"></span></div>
+              <small>Go back</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row clearfix dv-notes-list-panel">
+  <div col="8">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>
+          <span
+            appIcon
+            name="notepad"
+            class="space-on-right align-middle"
+          ></span>
+          <span class="align-middle">
+            Notes
+            <span *ngIf="documentNotes?.length">
+              ({{ documentNotes?.length }})
+            </span>
+          </span>
+        </span>
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a
+              class="panel-control"
+              (click)="openAddNodeModal()"
+              placement="left"
+              tooltip="Add New Note"
+              container="body"
+              clickable
+            >
+              <span appIcon name="plus"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" *ngIf="!documentNotes">
+        <app-spinner></app-spinner>
+      </div>
+      <div
+        class="panel-body"
+        *ngIf="documentNotes && documentNotes?.length === 0"
+      >
+        <app-empty-state
+          message="There are no notes for this document"
+        ></app-empty-state>
+      </div>
+      <div
+        class="panel-body has-notes-form"
+        *ngIf="documentNotes && documentNotes?.length !== 0"
+      >
+        <ul class="list-unstyled clear-margin-bottom list-bordered-bottom">
+          <li *ngFor="let note of documentNotes; let $index = index">
+            <div class="media">
+              <div class="media-left padded-top">
+                <span class="circled-initials">
+                  {{ $index + 1 }}
+                </span>
+              </div>
+              <div class="media-body">
+                <p class="space-on-bottom">
+                  <small class="text-muted">
+                    {{ note.first_name }} {{ note.last_name }} added on
+                    {{ note.updated_at | dvDate }}
+                  </small>
+                  <span
+                    class="pull-right space-on-right-xxl"
+                    *ngIf="!note.editing && canEditNote(note)"
+                  >
+                    <small
+                      class="text-muted v-align-text-top space-on-right"
+                      tooltip="Edit this note"
+                      container="body"
+                    >
+                      <a
+                        class="link-disguise clickable"
+                        (click)="editNote(note)"
+                        clickable
+                        >edit</a
+                      >
+                    </small>
+                    <small
+                      class="text-muted v-align-text-top"
+                      tooltip="Delete this note"
+                      container="body"
+                    >
+                      <a
+                        class="link-disguise clickable"
+                        (click)="deleteNote(note)"
+                        clickable
+                        >delete</a
+                      >
+                    </small>
+                  </span>
+                </p>
+                <p *ngIf="!note.editing" class="clear-margin">
+                  <span
+                    class="word-break-break-all"
+                    [innerHtml]="note.text"
+                  ></span>
+                </p>
+                <div class="padded-right-sm" *ngIf="note.editing">
+                  <dv-editor
+                    [value]="note.text"
+                    [id]="note.id"
+                    [literVersion]="true"
+                    (onChange)="note.text = $event"
+                    [configObj]="tinymceOptions"
+                    [isMentions]="true"
+                  ></dv-editor>
+                  <div class="space-on-top">
+                    <dv-button
+                      [loader]="updating_note"
+                      [btnType]="'primary'"
+                      (onClick)="updateNote(note)"
+                      [fontSizeType]="'medium'"
+                      name="update"
+                    >
+                      Update
+                    </dv-button>
+                    <dv-button
+                      [disabled]="updating_note"
+                      [btnType]="'default'"
+                      (onClick)="cancel(note)"
+                      class="space-on-left"
+                      name="cancel"
+                    >
+                      Cancel
+                    </dv-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <app-dv-workflows
+      *ngIf="document"
+      [entityType]="'Document'"
+      [entityId]="documentId"
+      [entityName]="document.name"
+      [pageUrl]="pageUrl"
+    ></app-dv-workflows>
+
+    <div class="panel panel-default" *ngIf="canUserModify">
+      <div class="panel-heading">
+        <span>
+          <span appIcon name="key" class="space-on-right align-middle"></span>
+          <span class="align-middle">
+            {{ counterparty }} Access Details
+            <span *ngIf="document_assignments?.length">
+              ({{ document_assignments?.length }})
+            </span>
+          </span>
+        </span>
+        <div
+          class="panel-controls"
+          *ngIf="canUserModify"
+          authorized-view
+          hiddenFrom="FreeSubscription"
+        >
+          <div class="panel-controls-wrapper">
+            <a
+              class="panel-control"
+              (click)="openDocumentShareDialog(document)"
+              placement="left"
+              tooltip="Share this document"
+              container="body"
+              clickable
+            >
+              <b><span class="dvi dvi-share font-weight-600"></span></b>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" *ngIf="!document_assignments">
+        <app-spinner></app-spinner>
+      </div>
+      <ul class="list-group" *ngIf="document_assignments">
+        <li
+          class="list-group-item"
+          *ngFor="let assignment of document_assignments"
+        >
+          <div class="clearfix">
+            <span class="pull-left">
+              {{ assignment.firm_name }} ({{ assignment.view_count }} Views)
+            </span>
+            <span class="pull-left" *ngIf="assignment.last_view_date">
+              <strong>{{ assignment.viewed_user_name }}</strong> last viewed on
+              {{ assignment.last_view_date | dvDate }}
+            </span>
+            <span class="pull-right">
+              <button
+                appButton
+                btnType="default"
+                size="sm"
+                (click)="confirmAccessRevoke(assignment)"
+                tooltip="Revoke"
+                container="body"
+                triggers="mouseenter:mouseleave"
+                [attr.aria-label]="'Revoke'"
+              >
+                <span appIcon name="close"></span>
+              </button>
+            </span>
+          </div>
+          <div>
+            <small class="text-muted">
+              Granted by {{ assignment.created_by_name }} on
+              {{ assignment.created_at | dvDate }}
+            </small>
+          </div>
+        </li>
+      </ul>
+      <div
+        class="panel-body"
+        *ngIf="document_assignments && document_assignments.length === 0"
+      >
+        <app-empty-state
+          message="This document has not been shared with anyone"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+  <div col="4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <span>
+          <span
+            appIcon
+            name="thumbs-o-up"
+            class="space-on-right align-middle"
+          ></span>
+          <span class="align-middle">
+            Review History
+            <span *ngIf="documentReviews?.length">
+              ({{ documentReviews?.length }})
+            </span>
+          </span>
+        </span>
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper">
+            <a
+              class="panel-control"
+              (click)="displayAttachmentReviewConfirmation()"
+              placement="left"
+              tooltip="Mark this document as reviewed"
+              clickable
+            >
+              <span appIcon name="check"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" *ngIf="!documentReviews">
+        <app-spinner></app-spinner>
+      </div>
+      <div
+        class="panel-body"
+        *ngIf="documentReviews && documentReviews.length === 0"
+      >
+        <app-empty-state
+          message="There is no review history for this document"
+        ></app-empty-state>
+      </div>
+      <ul
+        class="list-group"
+        *ngIf="documentReviews && documentReviews?.length !== 0"
+      >
+        <li
+          class="list-group-item"
+          *ngFor="let review of documentReviews; let $index = index"
+        >
+          <h5>Review {{ $index + 1 }}</h5>
+          <div>
+            <small class="text-muted">
+              Reviewed by {{ review.created_by_name }} on
+              {{ review.created_at | dvDate }}
+            </small>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <app-dv-tasks
+      *ngIf="document"
+      [entityType]="'Attachment'"
+      [entityId]="documentId"
+      [pageUrl]="pageUrl"
+    ></app-dv-tasks>
+    <div class="panel panel-default" *ngIf="canUserModify">
+      <div class="panel-heading">
+        <span>
+          <span
+            appIcon
+            name="history"
+            class="space-on-right align-middle"
+          ></span>
+          <span class="align-middle">
+            Version History
+            <span *ngIf="document_versions?.length">
+              ({{ document_versions?.length }})
+            </span>
+          </span>
+        </span>
+      </div>
+      <div class="panel-body" *ngIf="!document_versions">
+        <app-spinner></app-spinner>
+      </div>
+      <div
+        class="panel-body"
+        *ngIf="document_versions && document_versions.length === 0"
+      >
+        <app-empty-state
+          message="There is no version history for this document"
+        ></app-empty-state>
+      </div>
+      <ul class="list-group" *ngIf="document_versions">
+        <li class="list-group-item" *ngFor="let version of document_versions">
+          <a role="button" (click)="getVersionedDocument(version)" tabindex="0"
+            >Version {{ version.version }}</a
+          >
+          <div>
+            <small class="text-muted">
+              As of {{ version.as_of_date | dvDate }} by
+              {{ version.created_by_name }}
+            </small>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="dv-pagination-bar">
+  <span class="dv-pageSize" *ngIf="!lite">
+    <dv-select
+      (onSelectChange)="handleOnPageSizeChanged($event)"
+      id="page-size"
+      [list]="pageSizes"
+      [disabled]="!totalCount || loader"
+      [ngModel]="pageSize"
+      [aria-label]="'page Size'"
+    >
+    </dv-select>
+    <span> items per page</span>
+  </span>
+  <span class="pagination-summary">
+    <span>{{ totalCount ? startCount : 0 }}</span>
+    <span>-</span>
+    <span>{{ endCount >= totalCount ? totalCount : endCount }}</span>
+    <span> of </span>
+    <span>{{ totalCount }}</span>
+    <span> items</span>
+  </span>
+  <span class="pagination-nav" role="presentation">
+    <dv-button
+      btnType="transparent"
+      (onClick)="onFirstClicked()"
+      [disabled]="startCount === 1 || loader"
+      ariaLabel="Go to first page"
+    >
+      <span appIcon name="chevron-left"></span>
+      <span appIcon name="chevron-left"></span>
+    </dv-button>
+    <dv-button
+      btnType="transparent"
+      (onClick)="onPrevClicked()"
+      [disabled]="startCount === 1 || loader"
+      ariaLabel="Go to previous page"
+    >
+      <span appIcon name="chevron-left"></span>
+    </dv-button>
+    <span>
+      <span>Page</span>
+      <span> {{ currentPage }} </span>
+      <span>of</span>
+      <span> {{ totalPages }} </span>
+    </span>
+    <dv-button
+      (onClick)="onNextClicked()"
+      btnType="transparent"
+      [disabled]="endCount >= totalCount || loader"
+      ariaLabel="Go to next page"
+    >
+      <span appIcon name="chevron-right"></span>
+    </dv-button>
+    <dv-button
+      btnType="transparent"
+      (onClick)="onLastClicked()"
+      [disabled]="endCount >= totalCount || loader"
+      ariaLabel="Go to last page"
+    >
+      <span appIcon name="chevron-right"></span>
+      <span appIcon name="chevron-right"></span>
+    </dv-button>
+  </span>
+</div>

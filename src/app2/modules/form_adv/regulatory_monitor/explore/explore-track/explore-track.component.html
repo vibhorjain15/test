@@ -1,0 +1,317 @@
+<div class="panel panefault">
+  <div class="panel-body clear-padded-bottom" *ngIf="is_collapsed">
+    <div class="row clearfix relative">
+      <div col="12">
+        <div class="panel panel-default bg-sky-blue clear-margin-bottom">
+          <div class="panel-body padded-lg">
+            <div col="4">
+              <div>
+                <a (click)="openBulkModal()" class="btn btn-default"
+                  ><strong>Upload CRDs in Bulk</strong></a
+                >
+              </div>
+            </div>
+
+            <div
+              col="8"
+              authorized-view
+              hiddenFrom="FreeSubscription, SmartSubscription, FormADVSubscription"
+            >
+              <div col="9">
+                <span
+                  class="space-on-top pull-right"
+                  *ngIf="activeTeamMember_name"
+                >
+                  Showing firms tracked by
+                  <b
+                    ><u>{{ activeTeamMember_name }}</u></b
+                  >
+                  <span
+                    appIcon
+                    name="times-circle-o"
+                    class="space-on-left clickable space-on-right-lg"
+                    tooltip="Clear selection"
+                    container="body"
+                    (click)="clearTeamMember()"
+                  ></span>
+                </span>
+              </div>
+              <div col="3">
+                <dv-select
+                  [id]="'tag-type'"
+                  [clearable]="false"
+                  [searchable]="true"
+                  placeholder="Filter By"
+                  [(ngModel)]="activeTeamMember_name"
+                  (onSelectChange)="filterByTeamMember($event)"
+                  [list]="teamMembers"
+                  [bindValue]="null"
+                  [bindLabel]="'fullName'"
+                  [aria-label]="'Filter by active team member name'"
+                >
+                </dv-select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div
+      #searchPanel
+      class="panel panel-default report-panel js-search-panel search-string-panel space-on-bottom-xl"
+      authorized-view
+      hiddenFrom="FreeSubscription, SmartSubscription, FullSubscription, ProductiveSubscription, FormADVSubscription, FormADVAnalyticsSubscription"
+    >
+      <div class="panel-heading clearfix">
+        <div class="content-wrapper">
+          <div class="content-block">
+            <strong>
+              <span appIcon name="bank" class="space-on-right"
+                >Explore Firms & Filings</span
+              >
+            </strong>
+          </div>
+
+          <div class="pull-right clickable" *ngIf="is_collapsed">
+            <a (click)="toggleSearchPanel()">Search with Filters</a>
+          </div>
+
+          <div
+            class="pull-right space-on-top clickable"
+            container="body"
+            tooltip="Hide Search with Filters"
+            *ngIf="!is_collapsed"
+            (click)="toggleSearchPanel()"
+          >
+            <span appIcon name="chevron-up"></span>
+          </div>
+        </div>
+      </div>
+
+      <form
+        class="form-horizontal"
+        name="search_filings_form"
+        novalidate
+        autocomplete="off"
+      >
+        <div class="panel-body">
+          <div col="12" class="space-on-bottom-lg">
+            <div offset="1" col="11" class="">
+              <label
+                for="operators"
+                class="control-label clear-margin-bottom inline-block space-on-right"
+                >Firms / filings matching</label
+              >
+              <ng-select
+                labelForId="operators"
+                class="inline-block w-80"
+                required
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="global_ternary_operator"
+              >
+                <ng-option value="or">ANY</ng-option>
+                <ng-option value="and">ALL</ng-option>
+              </ng-select>
+              <span
+                class="control-label clear-margin-bottom inline-block space-on-left fw-bolder"
+                >of the following criteria</span
+              >
+            </div>
+          </div>
+
+          <div
+            col="12"
+            class="space-on-top-xl"
+            *ngFor="let criteria of search_criterias; let criteriaIndex = index"
+          >
+            <div col="1" class="pa-lr-lg">
+              <span class="control-label" *ngIf="criteriaIndex == 0"
+                >&nbsp;</span
+              >
+              <h5
+                class="text-right clear-margin-bottom text-uppercase"
+                *ngIf="criteriaIndex > 0"
+              >
+                {{ global_ternary_operator }}
+              </h5>
+            </div>
+            <div col="6" class="pa-lr-lg">
+              <app-form-group [fieldName]="Criteria">
+                <label
+                  for="criteria_{{ criteriaIndex }}"
+                  class="control-label text-capitalize"
+                  *ngIf="criteriaIndex == 0"
+                  >Criteria</label
+                >
+                <ng-select
+                  labelForId="criteria_{{ criteriaIndex }}"
+                  name="criteria_{{ criteriaIndex }}"
+                  chosen
+                  required
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="criteria.criteria_obj"
+                  placeholder="Select a criteria"
+                  (change)="selectCriteria(criteria, criteriaIndex)"
+                >
+                  <ng-option
+                    *ngFor="let option of criteria_options"
+                    [value]="option"
+                    >{{ option.label }}
+                  </ng-option>
+                </ng-select>
+              </app-form-group>
+            </div>
+
+            <div col="4" class="pa-lr-lg">
+              <app-form-group
+                *ngIf="!criteria.criteria_obj.value"
+                [fieldName]="'value'"
+              >
+                <label
+                  for="value_{{ criteriaIndex }}"
+                  class="control-label"
+                  *ngIf="criteriaIndex == 0"
+                  >Value</label
+                >
+                <input
+                  type="text"
+                  id="value_{{ criteriaIndex }}"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="criteria.value"
+                  required
+                  [ngModelOptions]="{ standalone: true }"
+                  placeholder="Type a value"
+                  dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                  class="form-control"
+                />
+              </app-form-group>
+
+              <app-form-group
+                *ngIf="criteria.criteria_obj.value == 'keyword_match'"
+                [fieldName]="'value'"
+              >
+                <label
+                  for="value_{{ criteriaIndex }}"
+                  class="control-label"
+                  *ngIf="criteriaIndex == 0"
+                  >Value</label
+                >
+                <input
+                  type="text"
+                  id="value_{{ criteriaIndex }}"
+                  name="value_{{ criteriaIndex }}"
+                  [(ngModel)]="criteria.value"
+                  [ngModelOptions]="{ standalone: true }"
+                  required
+                  placeholder="Type a value"
+                  [ngModelOptions]="{ standalone: true }"
+                  dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                  class="form-control"
+                />
+              </app-form-group>
+
+              <app-form-group
+                *ngIf="criteria.criteria_obj.value == 'not_updated_since'"
+                [fieldName]="'value'"
+                control-selector="dv-datepicker"
+              >
+                <label
+                  for="value_{{ criteriaIndex }}"
+                  class="control-label"
+                  *ngIf="criteriaIndex == 0"
+                  >Value</label
+                >
+                <dv-datepicker
+                  [(ngModel)]="criteria.value"
+                  id="value_{{ criteriaIndex }}"
+                  [ngModelOptions]="{ standalone: true }"
+                  name="value_{{ criteriaIndex }}"
+                  ng-required="true"
+                ></dv-datepicker>
+              </app-form-group>
+            </div>
+          </div>
+
+          <div col="12" class="space-on-top-xxl">
+            <div offset="9" col="2" class="">
+              <div class="pull-right">
+                <button
+                  btn-type="default"
+                  size="sm"
+                  class="space-on-right"
+                  container="body"
+                  tooltip="Add Criteria"
+                  aria-label="Add Criteria"
+                  (click)="addNewCriteria()"
+                >
+                  <span appIcon name="plus"></span>
+                </button>
+
+                <button
+                  btn-type="default"
+                  data-ng-disabled="search_criterias.length<2"
+                  size="sm"
+                  container="body"
+                  tooltip="Remove Criteria"
+                  aria-label="Remove Criteria"
+                  (click)="removeCriteria()"
+                >
+                  <span appIcon name="minus"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div col="12" class="space-on-bottom-xl">
+            <div offset="1" col="6" class="">
+              <button
+                type="submit"
+                btn-type="primary"
+                class="space-on-right-lg"
+                (click)="searchFilings()"
+              >
+                <span appIcon name="search" class="space-on-right"></span>
+                Start Searching
+              </button>
+
+              <button btn-type="default" (click)="resetQuestionFiltersData()">
+                <span appIcon name="refresh" class="space-on-right"></span>
+                Reset Filters
+              </button>
+
+              <button
+                btn-type="default"
+                (click)="downloadSearchResultsToExcel()"
+              >
+                <span
+                  appIcon
+                  name="external-link"
+                  class="space-on-right"
+                ></span>
+                Export To Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="loading_grid">
+      <app-dv-grid
+        [rowData]="gridDatasource"
+        [name]="'formadv-regulatory-monitor-explore'"
+        (gridReady)="gridReady($event)"
+        #regulatoryMonitorExplore
+      >
+      </app-dv-grid>
+    </div>
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="560"
+      *ngIf="!loading_grid"
+    ></app-spinner>
+  </div>
+</div>

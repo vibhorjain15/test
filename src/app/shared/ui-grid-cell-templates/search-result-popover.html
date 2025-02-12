@@ -1,0 +1,4 @@
+<div data-ng-repeat="content in row.entity.highlights.content | limitTo:3" >
+  <hr class="space-on-top space-on-bottom" data-ng-if="!$first">
+  <p ng-bind-html="content | limitTo: 1000" class="search-content word-break-break-all"></p>
+</div>

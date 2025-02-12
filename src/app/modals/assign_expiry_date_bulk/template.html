@@ -1,0 +1,93 @@
+<div class="qa-bank-bulk-upload-modal">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+            Manage Expiry Date
+            <p>
+                {{vm.tempQuestionsList.length}} questions selected
+            </p>
+        </h3>
+    </div>
+    <div class="modal-body" data-ng-if="vm.tempQuestionsList.length > 0">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Expiry date can be approved only for pre approved content
+            </div>
+        </div>
+        <div data-ng-if="vm.loadingData">
+            <div class="tab-spinner-div">
+                <spinner></spinner>
+            </div>
+        </div>
+        <div data-ng-if="!vm.loadingData">
+            <div class="remove-all-action" data-ng-if="!vm.hideRemoveAllTagsOption">
+                <a data-ng-click="vm.removeAllExpiryDate()" class="danger text-danger pull-right">
+                    Remove All Expiry Dates
+                </a>
+            </div>
+            <div class="qa-list-container">
+                <div class="qa-list-wrapper" data-ng-repeat="question in vm.tempQuestionsList">
+                    <div class="qa-list-left-p">
+                        <p>
+                            <span id="question_{{$index}}" class="responsive-image"
+                                ng-bind-html="question.question_text | cleanhtml">
+                            </span>
+                        </p>
+                    </div>
+                    <div data-ng-if="question.showAddDate" class="qa-list-right-p label-list customFieldList">
+                        <dv-datepicker min-date="vm.minDate" id="expiry-date" data-ng-model="question.temp_expiryDate" name="expiry-date">
+                        </dv-datepicker>
+                        <a class="hide-add-options-cta space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                            data-ng-click="question.showAddDate = false;question.temp_expiryDate = null">
+                            &times;
+                        </a>
+                    </div>
+                    <div class="qa-list-right-p" data-ng-if="!question.showAddDate">
+                        <div data-ng-if="question.expiry_date">
+                            <span>{{question.expiry_date | date}}</span>&nbsp;&nbsp;
+                            <icon name="calendar"></icon>
+                            <a data-ng-click="vm.markRemoveDateFromCurrentQuestion(question)"
+                                class="clickable danger text-danger pull-right">
+                                <icon name="trashcan"></icon>
+                            </a>
+                        </div>
+                        <div data-ng-if="!question.expiry_date"
+                            class="label label-default text-uppercase m-2-0 space-on-left-2">
+                            <a href>
+                                <small class="word-wrap-with-break-word">
+                                    <a class="clickable" data-ng-click="question.showAddDate = true">
+                                        + Add
+                                    </a>
+                                </small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="space-on-top-xxl list-bulk-items width-50-pct">
+                <p space-on-bottom-xl>
+                    Assign Expiry date to all selected records
+                    <icon name="info" class="grey-info align-middle"
+                        uib-tooltip="Expiry date added from this section will override the expiry date in the above section.">
+                    </icon>
+                </p>
+                <dv-datepicker id="expiry-date" data-ng-model="vm.expiryDate" name="expiry-date" min-date="vm.minDate">
+                </dv-datepicker>
+            </div>
+            <div class="space-on-top-xxl">
+                <div style="text-align: right;">
+                    <button class="cancel-btn-action" data-ng-click="vm.cancel()">CANCEL</button>
+                    <button class="update-btn-action" data-ng-click="vm.updateDatesBulkData()">UPDATE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body" data-ng-if="vm.tempQuestionsList.length == 0">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Expiry date can be approved only for pre approved content
+            </div>
+        </div>
+        <empty-state message="No Pre-approved Question Selected"></empty-state>
+    </div>
+</div>

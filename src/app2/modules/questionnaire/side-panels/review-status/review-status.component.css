@@ -1,0 +1,12 @@
+.question {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 15px;
+}
+.review-status {
+  margin-top: 20px;
+}
+.accordion {
+  margin-top: 20px;
+}

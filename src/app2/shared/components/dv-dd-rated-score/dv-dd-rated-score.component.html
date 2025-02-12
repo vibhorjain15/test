@@ -1,0 +1,13 @@
+<div
+  class="dd-score-display from-dir cursor-default"
+  [tooltip]="scope?.score_tooltip"
+  [ngStyle]="{
+    'background-color': scope?.score_class,
+    color: scope?.font_color
+  }"
+>
+  <span
+    >{{ scope?.score != null ? score : "N/A"
+    }}<small *ngIf="scope?.show_total">/{{ scope?.total }}</small></span
+  >
+</div>

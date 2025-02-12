@@ -1,0 +1,31 @@
+<div class="row clearfix relative" *ngIf="!parent_sections">
+  <app-spinner include-panel></app-spinner>
+</div>
+
+<div class="row clearfix relative" *ngIf="parent_sections">
+  <div class="col-md-2">
+    <div class="list-group clear-margin-bottom">
+      <a
+        class="list-group-item text-ellipsis"
+        [tooltip]="section.name"
+        (click)="handleRouting(section.id)"
+        [ngClass]="{ active: sectionId == section.id }"
+        *ngFor="let section of parent_sections"
+        clickable
+        >{{ section.name | truncate : 20 }}</a
+      >
+    </div>
+  </div>
+  <div class="col-md-10">
+    <benchmarking-questionnaire *ngIf="child_section_show"
+      [questionCount]="questionCount"
+      [noResponseControls]="true"
+      [analyticsMode]="true"
+      [templateId]="templateId"
+      [tagId]="tagId"
+      [startDate]="start_date"
+      [endDate]="end_date"
+      [sectionId]="sectionId"
+    ></benchmarking-questionnaire>
+  </div>
+</div>

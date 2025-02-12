@@ -1,0 +1,58 @@
+ 
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Outlook Plugin Download and Help</h5>
+  </div>
+  
+
+  <div class="panel-body"> <!-- data-ng-if="vm.integrations.length && !vm.isLoading">-->
+      <div col="12" class="space-on-top-xl padded-bottom-xl bordered-bottom">
+          <div col="2" class="pa-lr-lg">
+             <label class="control-label text-capitalize">Plugin Version</label> 
+          </div>
+          <div col="6" class="pa-lr-lg">
+             <label class="control-label">Description</label> 
+          </div>
+          <div col="2" class="pa-lr-lg">
+              <label class="control-label">As-of-Date</label>
+          </div>
+          <div col="2" class="pa-lr-lg text-center">
+              <label class="control-label">Actions</label>
+          </div>
+      </div>
+	 
+
+	<div col="12" data-ng-repeat="plugin in vm.outlook_plugins">
+	<div class="pa-tb-lg">
+       <div col="2" class="pa-lr-lg">
+          {{plugin.name}} ({{plugin.version}})
+       </div>
+       <div col="6" class="pa-lr-lg padding-right-xl">
+          {{plugin.description}} {{plugin.release_notes}}
+       </div>
+
+       <div col="2" class="pa-lr-lg padding-right-xl">
+          {{plugin.created_at | date:'longDate'}}
+       </div>
+       <div col="2" class="pa-lr-lg space-on-top-lg">
+	     <a class="btn btn-transparent"
+            target="_blank"
+            ng-href="{{plugin.download_url}}"
+            uib-tooltip="Yes, I want this integration">
+            <span class="inline-block relative">
+            <icon name="mail" size="2x"></icon>
+            </span>
+        </a>
+        <a class="btn btn-transparent"
+            target="_blank"
+            ng-href="{{plugin.help_url}}"
+            uib-tooltip="Help for this plugin">
+            <span class="inline-block relative">
+            <icon name="question-circle" size="2x"></icon>
+            </span>
+         </a>
+      </div>
+  </div>
+      
+  </div>
+</div>

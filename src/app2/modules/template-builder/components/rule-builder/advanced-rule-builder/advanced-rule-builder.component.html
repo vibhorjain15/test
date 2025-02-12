@@ -1,0 +1,315 @@
+<form class="form-horizontal" [formGroup]="addRuleForm" autocomplete="off">
+  <ng-container>
+    <div
+      class="display-flex space-on-top-lg align-items-center space-on-bottom-lg"
+    >
+      <div class="space-on-right" id="rule-group-label">
+        Apply the new rule to
+      </div>
+      <dv-select
+        [contoller]="addRuleForm.get('entityType')"
+        error="Please select entity type"
+        [appendTo]="'body'"
+        [list]="entityTypes"
+        placeholder="Select entity type"
+        formControlName="entityType"
+        [searchable]="false"
+        (onSelectChange)="handleOnEntityTypeChange($event)"
+        class="space-on-left-lg space-on-right-lg min-width-150"
+        [disabled]="title == 'Editing Rule'"
+        *ngIf="type == 'advanced'"
+        aria-label="Apply the new rule to"
+      ></dv-select>
+      <dv-select
+        [contoller]="addRuleForm.get('entityId')"
+        [appendTo]="'body'"
+        error="Please select entity"
+        [list]="entities"
+        placeholder="Select entity"
+        formControlName="entityId"
+        class="col-sm-6"
+        bindValue="group_id"
+        [groupBy]="
+          addRuleForm.get('entityType').value == KeywordConstants.Question
+            ? 'groupName'
+            : addRuleForm.get('entityType').value ==
+              KeywordConstants.Subcategory
+            ? 'catName'
+            : null
+        "
+        [searchFn]="
+          addRuleForm.get('entityType').value == KeywordConstants.Question
+            ? questionSearchFunction
+            : addRuleForm.get('entityType').value ==
+              KeywordConstants.Subcategory
+            ? subcategorySearchFunction
+            : null
+        "
+        (onSelectChange)="handleOnEntityChange($event)"
+        [disabled]="title == 'Editing Rule'"
+        *ngIf="addRuleForm.get('entityType').value != KeywordConstants.Project"
+        [aria-label]="'Select entity'"
+      ></dv-select>
+    </div>
+
+    <div
+      *ngIf="
+        type === 'advanced' &&
+        ratingMode &&
+        ratingMode.ratingLevel === 'Question' &&
+        addRuleForm.get('entityType').value !== 'Question'
+      "
+    >
+      <div
+        class="row space-on-top-xl rule-modal-container"
+        [ngClass]="{ 'disabled-div': disableBulkSection }"
+      >
+        <div class="padded-left">
+          <div
+            class="space-on-top-xl space-on-bottom-xl bold-text"
+            id="rule-actions-label"
+          >
+            Exclude Questions from Rating
+            <span
+              appIcon
+              name="info"
+              tooltip="Exclude multiple questions from the total project score"
+            >
+            </span>
+          </div>
+          <div>
+            <dv-checkbox
+              [label]="
+                'All questions <strong>marked as NA</strong> in this ' +
+                entityTypeLabel.toLowerCase()
+              "
+              [id]="'na-responses-rule-card'"
+              formControlName="allNAResponses"
+              class="space-on-right-lg rule-builder-checkbox"
+              (onValChange)="
+                setValidators(addRuleForm.value); toggleDisableRuleSection()
+              "
+            ></dv-checkbox>
+            <dv-checkbox
+              [label]="
+                'All questions <strong>left unanswered</strong> in this ' +
+                entityTypeLabel.toLowerCase()
+              "
+              [id]="'blank-responses-rule-card'"
+              formControlName="allBlankResponses"
+              class="space-on-right-lg rule-builder-checkbox"
+              (onValChange)="
+                setValidators(addRuleForm.value); toggleDisableRuleSection()
+              "
+            ></dv-checkbox>
+          </div>
+        </div>
+      </div>
+      <span class="or-option-center">OR</span>
+    </div>
+
+    <div
+      class="row space-on-top-xl rule-modal-container"
+      [ngClass]="{ 'disabled-div': disableRuleSection }"
+    >
+      <div class="col-sm-3 padded-left">
+        <div
+          class="space-on-top-xl space-on-bottom-xl bold-text"
+          id="rule-actions-label"
+        >
+          Trigger the actions
+        </div>
+        <div>
+          <dv-checkbox
+            [label]="'Flag the response'"
+            [id]="'flag-response-rule-card'"
+            [disabled]="isFlagDisabled"
+            formControlName="flag"
+            class="space-on-right-lg rule-builder-checkbox"
+            [Tooltip]="
+              isFlagDisabled ? 'Flags can be applied for questions' : null
+            "
+            (onValChange)="toggleDisableBulkSection()"
+          ></dv-checkbox>
+          <dv-checkbox
+            label="Exclude from rating"
+            [id]="'na-rating-rule-card'"
+            [disabled]="
+              isFlagDisabled ||
+              !ratingMode ||
+              addRuleForm.get('assignScore').value
+            "
+            [Tooltip]="scoreRatingDisabledTooltip"
+            formControlName="naRating"
+            class="space-on-right-lg rule-builder-checkbox"
+            [rightIcon]="scoreRatingDisabledTooltip ? '' : 'info'"
+            iconClass="space-on-left"
+            iconTooltip="Exclude this question from the total project score"
+            (onValChange)="
+              setValidators(addRuleForm.value); toggleDisableBulkSection()
+            "
+          ></dv-checkbox>
+          <dv-checkbox
+            [label]="
+              ratingMode && ratingMode.ratingScaleMode == 'Absolute'
+                ? 'Assign rating of'
+                : 'Assign a score (out of 100)'
+            "
+            [id]="'assign-score-rule-card'"
+            [disabled]="!ratingMode || addRuleForm.get('naRating').value"
+            [Tooltip]="scoreRatingDisabledTooltip"
+            formControlName="assignScore"
+            class="space-on-right-lg rule-builder-checkbox"
+            (onValChange)="
+              setValidators(addRuleForm.value); toggleDisableBulkSection()
+            "
+          ></dv-checkbox>
+          <div
+            class="score-input"
+            *ngIf="ratingMode && addRuleForm.get('assignScore').value"
+          >
+            <dv-rating
+              [value]="addRuleForm.get('score')?.value"
+              [max]="selectedRateMap.length"
+              (onChange)="submitRating($event - 1)"
+              [ratingScales]="selectedRateMap"
+              *ngIf="
+                ratingMode &&
+                ratingMode.ratingScaleMode == 'Absolute' &&
+                ratingScaleDefinition
+              "
+              offColor="white"
+            ></dv-rating>
+            <dv-form-element
+              [errorMessage]="scoreBandErrorMessage"
+              [modelController]="addRuleForm.get('score')"
+              [showRightIcon]="false"
+              spacing="small"
+              *ngIf="
+                ratingMode &&
+                !scoreRatingDisabledTooltip &&
+                ratingMode.ratingScaleMode == 'ScoreBand' &&
+                ratingScaleDefinition
+              "
+              elementCol="12"
+            >
+              <div class="display-flex align-items-center">
+                <input
+                  type="number"
+                  autocomplete="nope"
+                  maxlength="50"
+                  min="0"
+                  max="100"
+                  step=".01"
+                  id="score"
+                  formControlName="score"
+                  placeholder="Type a score"
+                  class="form-control space-on-right-lg min-width-150"
+                  id="responseType_score"
+                  name="responseType_score"
+                />
+                <dv-rating-chip
+                  [color]="getColorCode(addRuleForm.get('score').value)"
+                  *ngIf="addRuleForm.get('score').value !== null"
+                  [hidden]="
+                    addRuleForm.get('score').value < 0 ||
+                    addRuleForm.get('score').value > 100
+                  "
+                  [label]="addRuleForm.get('score').value"
+                  textColor="white"
+                >
+                </dv-rating-chip>
+              </div>
+            </dv-form-element>
+          </div>
+        </div>
+        <div
+          class="small space-on-top-lg legend-wrapper"
+          *ngIf="
+            ratingMode &&
+            addRuleForm.get('assignScore').value &&
+            ratingMode.ratingScaleMode == 'ScoreBand' &&
+            ratingScaleDefinition &&
+            selectedRateMap?.length > 0
+          "
+        >
+          Score traffic light legend:
+          <div
+            class="scoreband"
+            *ngFor="let rating of selectedRateMap; let i = index"
+          >
+            <ng-container>
+              <dv-rating-chip
+                [color]="rating.color_code"
+                [label]="rating.name"
+                textColor="white"
+              >
+              </dv-rating-chip>
+              Score between {{ rating.range_min_value }} &
+              {{ rating.range_max_value }}
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-9 padded-right">
+        <div
+          class="display-flex space-on-top-lg space-on-bottom-lg align-items-center"
+        >
+          <div
+            class="flex-no-grow space-on-right bold-text"
+            id="rule-condition-label"
+          >
+            If
+          </div>
+          <dv-select
+            [contoller]="addRuleForm.get('globalOperator')"
+            error="Please select a global operator"
+            [appendTo]="'body'"
+            [list]="globalOperators"
+            placeholder="Select a global operator"
+            formControlName="globalOperator"
+            class="col-sm-2 flex-no-grow"
+            [searchable]="false"
+            [aria-label]="'select a global operator'"
+          ></dv-select>
+          <div class="flex-no-grow bold-text">
+            of the following conditions are met
+          </div>
+        </div>
+        <div *ngFor="let rule of rules; let i = index">
+          <rule-card
+            [rule]="rule"
+            [questions]="displayQuestions"
+            [categories]="categories"
+            [subcategories]="subcategories"
+            [templateRatingSchemeMapping]="templateRatingSchemeMapping"
+            [ratingScaleDefinition]="ratingScaleDefinition"
+            [questionWiseOptionList]="questionWiseOptionList"
+            [destinationEntityType]="
+              addRuleForm.get('entityType').value ?? KeywordConstants.Question
+            "
+            [isDeleteDisabled]="isDeleteRuleDisabled"
+            (onDeleteRuleClick)="deleteRule(i)"
+            [type]="type"
+            [ratingMode]="ratingMode"
+            #ruleCard
+            class="space-on-top space-on-bottom"
+          ></rule-card>
+          <div
+            *ngIf="i != rules.length - 1"
+            class="text-center secondary-text-color space-on-top-lg space-on-bottom-lg font-size-12"
+          >
+            {{
+              addRuleForm.get("globalOperator").value == "AND" ? "AND" : "OR"
+            }}
+          </div>
+        </div>
+        <div class="space-on-top-xxl add-rule-btn space-on-bottom-xxl">
+          <dv-button (onClick)="addRule()" btnType="default" leftIcon="plus">
+            Add New Condition
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</form>

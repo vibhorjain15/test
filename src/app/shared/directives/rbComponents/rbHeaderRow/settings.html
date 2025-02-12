@@ -1,0 +1,87 @@
+<rb-component-width></rb-component-width>
+
+<div class="form-group">
+  <label>Header Title</label>
+
+  <div>
+    <input type="text"
+           class="form-control"
+           focus-me="true"
+           select-all-text
+           data-ng-model-options="{ debounce: { 'default': 300 } }"
+           data-ng-model="component.options.text">
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Font Size</label>
+
+  <div>
+    <select class="form-control"
+            chosen
+            data-ng-model="component.options.size"
+            data-ng-options="fontSize.value as fontSize.label for fontSize in fontSizes">
+      <option value=""></option>
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Alignment</label>
+
+  <div>
+    <div class="btn-group">
+      <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.alignment == 'left'}" data-ng-click="component.options.alignment = 'left'">
+        <icon name="align-left" class="space-on-right"></icon>LEFT
+      </label>
+      <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.alignment == 'center'}" data-ng-click="component.options.alignment = 'center'">
+        <icon name="align-center" class="space-on-right"></icon>CENTER
+      </label>
+      <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': component.options.alignment == 'right'}" data-ng-click="component.options.alignment = 'right'">
+        <icon name="align-right" class="space-on-right"></icon>RIGHT
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Font Color</label>
+
+  <div>
+    <ui-select ng-model="component.options.fontColor" theme="bootstrap" title="Choose font color">
+      <ui-select-match placeholder="Select font color">
+        <div class="relative">
+          <div class="selected-color-box" ng-style="{'background-color': $select.selected.label}"></div>
+          <span class="selected-color-text" ng-bind-html="$select.selected.value"></span>
+        </div>
+      </ui-select-match>
+      <ui-select-choices repeat="color.value as color in colorMap | filter: $select.search">
+        <div class="relative">
+          <div class="select-color-box" ng-style="{'background-color': color.value}"></div>
+          <span class="select-color-text" ng-bind-html="color.label | highlight: $select.search"></span>
+        </div>
+      </ui-select-choices>
+    </ui-select>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Background Color</label>
+
+  <div>
+    <ui-select ng-model="component.options.backgroundColor" theme="bootstrap" title="Choose background color">
+      <ui-select-match placeholder="Select background color">
+        <div class="relative">
+          <div class="selected-color-box" ng-style="{'background-color': $select.selected.label}"></div>
+          <span class="selected-color-text" ng-bind-html="$select.selected.value"></span>
+        </div>
+      </ui-select-match>
+      <ui-select-choices repeat="color.value as color in colorMap | filter: $select.search">
+        <div class="relative">
+          <div class="select-color-box" ng-style="{'background-color': color.value}"></div>
+          <span class="select-color-text" ng-bind-html="color.label | highlight: $select.search"></span>
+        </div>
+      </ui-select-choices>
+    </ui-select>
+  </div>
+</div>

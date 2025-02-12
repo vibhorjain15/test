@@ -1,0 +1,9 @@
+<div *ngIf="params.data">
+  <div *ngIf="params.data.tag.length">
+    <span
+      class="label label-default space-on-right"
+      *ngFor="let tag of params.data.tag"
+      >{{ tag }}</span
+    >
+  </div>
+</div>

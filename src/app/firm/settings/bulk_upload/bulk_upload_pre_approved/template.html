@@ -1,0 +1,55 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-pre-approved-content></ng2-pre-approved-content> </div>
+<div class="panel panel-default" data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel-heading">
+    <h5 class="panel-title">Upload your data into DiligenceVault</h5>
+  </div>
+  <div class="panel-body">
+    <p class="alert alert-info">
+      <span class="block-display">Download example excel file by clicking <a class="clickable"
+          data-ng-click="vm.downloadEmptySampleFile()"> here</a></span>
+      <span class="block-display">Download excel file with all your existing data related to pre approved content by clicking <a class="clickable"
+          data-ng-click="vm.downloadSampleFile()"> here</a></span>
+    </p>
+    <div>
+      <div class="dd-doc-selection-wrapper">
+        <div class="panel panel-default dd-doc-drop-panel" dv-file-handler name="file-handler-one" dv-droppable
+          dv-manual-upload dv-fields="vm.updatedParams" ngf-multiple="true" ngf-select-disabled="true"
+          dv-bind-files-to="vm.files" ngf-max-files="1" dv-accept="::vm.allowed_file_extensions_str"
+          dv-pattern="::vm.allowed_file_extensions_str" dv-max-file-size="::vm.maxFileSize" dv-upload-url="/attachments"
+          dv-on-upload="vm.documentUploadComplete(response)" dv-on-upload-error="vm.documentUploadFailed(response)"
+          ngf-drag-over-class="'panel-primary'">
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your bulk upload Excel here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+            <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"
+              data-ng-init="vm.setDocName(vm.drop_files)"></div>
+
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button btn-type="default" dv-file-handler dv-manual-upload dv-fields="vm.updatedParams"
+            name="file-handler-two" dv-bind-files-to="vm.files" dv-upload-url="/attachments"
+            dv-accept="::vm.allowed_file_extensions_str" dv-pattern="::vm.allowed_file_extensions_str"
+            dv-max-file-size="::vm.maxFileSize" dv-on-upload="vm.documentUploadComplete(response)"
+            dv-on-upload-error="vm.documentUploadFailed(response)">
+            Select File
+          </button>
+          <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"
+            data-ng-init="vm.setDocName(vm.files)"></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="form-group text-center space-on-top-lg">
+      <button type="button" class="btn btn-primary" button-loader="vm.uploading_excel"
+        data-ng-click="vm.addDocumentSubmit()">Process Upload</button>
+    </div>
+  </div>
+</div>

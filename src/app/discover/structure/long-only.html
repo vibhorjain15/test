@@ -1,0 +1,134 @@
+<div class="panel panel-default report-panel js-search-panel">
+  <div class="panel-heading clearfix">
+    <div class="content-wrapper">
+      <div class="content-block">
+        Search by name or select filters
+      </div>
+
+      <div class="filter-summary" data-ng-show="vm.is_collapsed">
+        <div class="content-block separator"
+             data-ng-show="vm.filters.name || vm.filters.aum"></div>
+
+        <div class="content-block">
+          <div data-ng-show="vm.filters.name">
+            <small>
+              <b>Name:</b>
+              <span>{{vm.filters.name}}</span>
+            </small>
+          </div>
+          <small data-ng-show="vm.filters.aum">
+            <b>AUM(Rs. Cr):</b>
+            <span>{{vm.filters.aum}}</span>
+          </small>
+        </div>
+
+        <div class="content-block separator"
+             data-ng-show="vm.filters.strategy || vm.filters.category.length"></div>
+
+        <div class="content-block">
+          <div data-ng-show="vm.filters.strategy">
+            <small>
+              <b>{{vm.entity_sub_type}}:</b>
+              <span>{{vm.filters.strategy}}</span>
+            </small>
+          </div>
+          <small data-ng-show="vm.filters.category.length">
+            <b>Status:</b>
+            <span>{{vm.filters.category.join(",")}}</span>
+          </small>
+        </div>
+
+        <div class="content-block separator" data-ng-show="vm.filters.city"></div>
+
+        <div class="content-block">
+          <small data-ng-show="vm.filters.city">
+            <b>Location:</b>
+            <span>{{vm.filters.city}}</span>
+          </small>
+        </div>
+      </div>
+
+      <span class="pull-right toggle-collapse"
+            data-ng-click="vm.toggleSearchPanel()">
+        <i class="dvi"
+           data-ng-class="{'dvi-chevron-up': !vm.is_collapsed, 'dvi-chevron-down': vm.is_collapsed}"></i>
+      </span>
+    </div>
+
+  </div>
+
+  <div class="panel-body">
+    <form ng-submit="vm.performSearch('LO')" class="form-vertical filter-form">
+      <div class="row clearfix">
+        <div col="4">
+          <div class="form-group">
+            <label for="name" class="control-label">
+              Name of the Investment Fund
+            </label>
+
+            <div id="scrollable-dropdown-menu">
+              <input type="text"
+                     id="name"
+                     name="name"
+                     data-ng-model="vm.filters.name"
+                     dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                     placeholder="Eg: Startup Village"
+                     class="form-control" />
+            </div>
+          </div>
+        </div>
+
+        <div col="4">
+          <div class="form-group">
+            <label for="{{vm.entity_sub_type}}" class="control-label">{{vm.entity_sub_type}}</label>
+            <select name="{{vm.entity_sub_type}}"
+                    id="{{vm.entity_sub_type}}"
+                    chosen
+                    data-ng-model="vm.filters.strategy"
+                    class="form-control">
+              <option value="">All Strategies</option>
+              <option value="Fixed Income">Fixed Income</option>
+              <option value="Large Cap">Large Cap</option>
+              <option value="Small Cap">Small Cap</option>
+              <option value="Sector Focus">Sector Focus</option>
+            </select>
+          </div>
+        </div>
+        <div col="4">
+          <div class="form-group">
+            <label for="aum" class="control-label">
+              Assets Under Management
+            </label>
+            <div class="text-center">
+              <input id="aum"
+                     type="text"
+                     name="aum"
+                     data-ng-model="vm.filters.aum"
+                     class="form-control js-aum-slider"
+                     data-slider-min="0"
+                     data-slider-max="500"
+                     data-slider-step="1"
+                     data-slider-value="[0, 500]">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row space-on-top-lg">
+        <div col="12">
+          <button type="submit">
+            <icon name="search" class="space-on-right"></icon>
+            Search Funds
+          </button>
+
+          <button btn-type="default" data-ng-click="vm.resetSearch('LO')">
+            <icon name="refresh" class="space-on-right"></icon>
+            Reset
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="results-table" style="height: 500px" class="slickgrid-wrapper"></div>

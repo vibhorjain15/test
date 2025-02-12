@@ -1,0 +1,7 @@
+app-dv-grid
+  ::ng-deep
+  .ag-theme-alpine
+  .ag-checkbox-input-wrapper.ag-checked::after {
+  color: #5bc0de;
+  border-color: #5bc0de;
+}

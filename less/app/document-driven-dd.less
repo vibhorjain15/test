@@ -1,0 +1,133 @@
+// dddd = document driven due diligence
+.dddd-upload-progress-circle {
+  @radius: 14px;
+  .circle(2 * @radius);
+
+  line-height: 2 * @radius;
+  text-align: center;
+  display: inline-block;
+  margin-right: 5px;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.offline-dd-table{
+  tbody{
+    tr{
+      td{
+        vertical-align: middle;
+        border: none;
+        border-top: 1px solid #ddd;
+
+        .checkbox{
+          margin: 0;
+        }
+
+        .btn-add-new-section{
+          position: absolute;
+          top: -10px;
+          left: 0;
+          z-index: 99;
+          background: transparent;
+        }
+      }
+
+      &.ignore-line-item{
+        td  {
+          color: lighten(@dv-gray, 5%);
+
+          .extracted-text{
+            padding-left: 40px;
+          }
+        }
+      }
+
+      &.is-section{
+        td  {
+          background-color: @dv-sky-blue;
+
+          .extracted-text{
+            font-weight: bold;
+          }
+        }
+      }
+
+      &.is-question{
+        td  {
+
+          .extracted-text{
+            padding-left: 40px;
+            color: @brand-primary;
+          }
+        }
+      }
+
+      &.is-new-section{
+        td  {
+          background-color: darken(@dv-sky-blue, 10%);
+
+          .extracted-text{
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}
+
+.icon-active{
+  i{
+    color: @brand-primary
+  }
+}
+
+.icon-inactive{
+  i{
+    color: @dv-gray
+  }
+}
+
+.icon-inactive:hover{
+  i{
+    color: @brand-primary
+  }
+}
+
+.datePickerDiv{
+  position: relative;
+  height: 35px;
+  margin-bottom: 8px;
+
+}
+.datePickerDiv{
+  dv-daterangepicker{
+    position: absolute;
+    width: 240px;
+    right: 0;
+  }
+  .date-label{
+    right: 246px;
+    position: absolute;
+  }
+  i{
+    display: none;
+  }
+}
+.hideDateIcon{
+  i{
+    display: none;
+  }
+}
+.searchTextDiv{
+  position: relative;
+}
+.searchTextDiv{
+  .closeIcon{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+  }
+}

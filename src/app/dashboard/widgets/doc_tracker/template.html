@@ -1,0 +1,24 @@
+<div class="panel-body doc-tracker">
+  <p class="no-data-message" data-ng-show="vm.documents && !vm.documents.length">
+    No Documents to show
+  </p>
+
+  <table class="table table-borderless clear-margin" data-ng-show="vm.documents.length">
+    <thead>
+      <tr>
+        <th>Document</th>
+        <th>Last Updated</th>
+      </tr>
+    </thead>
+
+    <tbody>
+       <tr ng-repeat="document in vm.documents">
+        <td>
+          <icon name="file" class="text-orange" size="lg"></icon>
+          {{document.name}}
+        </td>
+        <td>{{document.updated_date}}</td>
+       </tr>
+    </tbody>
+  </table>
+</div>

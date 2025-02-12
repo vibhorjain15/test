@@ -1,0 +1,66 @@
+<form name="vm.custom_export_form"
+      data-ng-submit="vm.submit()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">Generate Presentation Report
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="text-center" data-ng-if="vm.loading_templates">
+        <spinner></spinner>
+    </div>
+    <form-group data-ng-if="vm.templates && !vm.templates.length">
+        <div col="12" col-type="sm" class="text-center">
+          <label for="" class="control-label text-muted">
+            No reporting definition available, <a class="clickable" data-ng-click="vm.redirectToTemplateDefinitions()">click here</a> to add one
+          </label>
+        </div>
+    </form-group>
+
+    <form-group field-name="disclaimer" data-ng-if="vm.templates && vm.templates.length">
+        <label for="fund" class="control-label" col="4" col-type="sm">
+          Select Reporting Definition
+        </label>
+
+        <div col="7" col-type="sm" data-ng-if="vm.templates && vm.templates.length">
+            <select name="template"
+                    id="templates"
+                    class="form-control"
+                    chosen
+                    data-ng-options="template.id as template.report_definition_name for template in vm.templates"
+                    data-ng-model="vm.request.template_id"
+                    required>
+              <option value="" disabled>--Select Reporting Definition--</option>
+            </select>
+        </div>
+    </form-group>
+    
+    <form-group field-name="Report Name" data-ng-if="vm.templates && vm.templates.length">
+        <label for="report-name" class="control-label" col="4" col-type="sm">
+            Report Name
+        </label>
+
+        <div col="7" col-type="sm">
+          <input type="text"
+                 class="form-control"
+                 id="report-name"
+                 name="report-name"
+                 data-ng-model="vm.request.name"
+                 dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                 required>
+        </div>
+    </form-group>
+
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            data-ng-class="{'disabled': (!vm.templates.length)}"
+            uib-tooltip="{{vm.templates.length? '' : 'No reporting definition available'}}"
+            button-loader="vm.exporting_report">Export</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

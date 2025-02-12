@@ -1,0 +1,41 @@
+<ui-grid-cell-contents data-ng-if="!row.groupHeader">
+  <div ng-controller="DocumentListConditionalActionController as vm">
+    <button btn-type="default"
+	          size="sm"
+	          class="space-on-right"
+	          uib-tooltip="Update"
+            data-ng-disabled="grid.appScope.vm.disableActionButton()"
+	          ng-click="grid.appScope.vm.openDocumentUpdateDialog(row.entity)">
+      <icon name="pencil"></icon>
+    </button>
+
+    <button btn-type="default"
+            size="sm"
+            class="space-on-right"
+            uib-tooltip="Add/View Notes"
+            data-ng-show="grid.appScope.vm.showNotesBtn()"
+            data-ng-disabled="grid.appScope.vm.disableActionButton()"
+            ng-click="grid.appScope.vm.displayNotesController(row.entity)">
+      <icon name="notepad"></icon>
+    </button>
+
+    <button btn-type="default"
+            size="sm"
+            class="space-on-right"
+            uib-tooltip="Share"
+            data-ng-if="vm.showUpdate(row.entity) && !grid.appScope.vm.freeSubscription"
+            data-ng-disabled="grid.appScope.vm.disableActionButton()"
+            ng-click="grid.appScope.vm.openDocumentShareDialog(row.entity)">
+      <icon name="share"></icon>
+    </button>
+
+    <button btn-type="default"
+            size="sm"
+            class="space-on-right"
+            uib-tooltip="Delete"
+            data-ng-disabled="grid.appScope.vm.disableActionButton()"
+            ng-click="grid.appScope.vm.confirmDocumentDeletion(row.entity)">
+      <icon name="trashcan"></icon>
+    </button>
+  </div>
+</ui-grid-cell-contents>

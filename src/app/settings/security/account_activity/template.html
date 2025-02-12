@@ -1,0 +1,27 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-account></ng2-account> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Account Activity</h5>
+  </div>
+
+  <div class="panel-body">
+    <spinner data-ng-hide="vm.sessions"></spinner>
+
+    <ul class="list-unstyled clear-margin-bottom list-bordered-bottom"
+        data-ng-show="vm.sessions">
+      <li data-ng-repeat="session in vm.sessions">
+        <dl class="dl-horizontal clear-margin-bottom">
+          <dt>Last Accessed</dt>
+          <dd><b>{{session.loginTime | date:"MMMM dd yyyy 'at' hh:mm a Z"}}</b></dd>
+
+          <dt>IP Address:</dt>
+          <dd>{{session.ipAddress}}</dd>
+        </dl>
+      </li>
+    </ul>
+
+    <p class="alert alert-info" data-ng-show="vm.sessions && !vm.sessions.length">
+      No Session Information is available
+    </p>
+  </div>
+</div>

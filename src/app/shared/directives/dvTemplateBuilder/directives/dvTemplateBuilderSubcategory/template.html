@@ -1,0 +1,53 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      <dv-transparent-input
+        data-ng-model="vm.subcategory.name"
+        data-ng-model-options="{'debounce': 500}"
+        data-ng-change="vm.saveSubcategory()">>
+      </dv-transparent-input>
+    </h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control"
+           data-ng-click="vm.moveUp(vm.subcategory, $index)"
+           uib-tooltip="Move up"
+           data-ng-hide="$first">
+          <icon name="chevron-up"></icon>
+        </a>
+        <a class="panel-control"
+           data-ng-click="vm.moveDown(vm.subcategory, $index)"
+           uib-tooltip="Move down"
+           data-ng-hide="$last">
+          <icon name="chevron-down"></icon>
+        </a>
+
+        <a class="panel-control danger"
+           data-ng-click="vm.confirmSubsectionRemoval()"
+           uib-tooltip="Delete  ">
+          <icon name="trashcan"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body" data-ng-if="!vm.subcategory.questions">
+    <spinner></spinner>
+  </div>
+
+  <div class="list-group js-questions-container js-subcategory-questions"
+       ui-sortable="vm.sortableOptions"
+       data-ng-show="vm.subcategory.questions"
+       data-ng-model="vm.subcategory.questions">
+    <div class="sortable-placeholder"
+         data-ng-if="!vm.subcategory.questions.length">
+      Drop questions here
+    </div>
+    <div class="list-group-item movable"
+         ui-sortable-selectable
+         data-ng-repeat="question in vm.subcategory.questions">
+      <span>{{question.text}}</span>
+    </div>
+  </div>
+</div>

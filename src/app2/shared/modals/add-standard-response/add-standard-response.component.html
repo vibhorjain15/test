@@ -1,0 +1,46 @@
+<app-modal
+  [title]="'Use Smart Text Intelligence'"
+  [firstButtonLabel]="'Add Response'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="templateRef"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="loadingData"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div class="row clearfix">
+    <div col="12" class="space-on-bottom-lg">
+      <dv-form-element label="Question" labelCol="2" elementCol="9">
+        <p>
+          <strong>{{ question?.text }}</strong>
+        </p>
+      </dv-form-element>
+    </div>
+    <div col="12" class="standard_response_row">
+      <div *ngIf="loadingData" class="text-center">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <app-spinner></app-spinner>
+        </div>
+      </div>
+      <dv-form-element
+        label="Response"
+        labelCol="2"
+        elementCol="9"
+        *ngIf="!loadingData"
+      >
+        <div
+          *ngIf="standardText?.text?.length"
+          id="preview"
+          [innerHTML]="standardText.html | dvSafeHtml"
+          class="preview_div space-on-top"
+        ></div>
+        <div *ngIf="!standardText?.text?.length">
+          <div class="text-center space-on-top-lg">
+            <p><i>No smart text found</i></p>
+          </div>
+        </div>
+      </dv-form-element>
+    </div>
+  </div>
+</ng-template>

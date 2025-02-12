@@ -1,0 +1,31 @@
+.list-group-menu {
+  .nested-list-group-container {
+    > .list-group-item {
+      .state-label, .dvi {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .dvi {
+        margin-left: 5px;
+        padding-top: 1px;
+      }
+
+      &:first-child {
+        border-top-width: 1px;
+      }
+    }
+
+    > .list-group {
+      margin-bottom: 0;
+
+      > .list-group-item {
+        padding-left: 45px !important;
+
+        &:first-child {
+          border-top-width: 1px;
+        }
+      }
+    }
+  }
+}

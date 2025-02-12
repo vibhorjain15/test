@@ -1,0 +1,30 @@
+<div>
+  <div *ngIf="linkText.length">
+    <span
+      class="label label-default space-on-right"
+      [tooltip]="linkTooltip"
+      container="body"
+      (click)="$event.stopPropagation()"
+      [adaptivePosition]="false"
+    >
+      <a
+        [href]="linkTooltip"
+        target="_blank"
+        [attr.aria-label]="linkText + ' (opens in a new window)'"
+      >
+        <span>
+          {{ linkText | slice : 0 : 25 }}
+        </span>
+      </a>
+    </span>
+    <span *ngIf="otherLinksTooltip?.length">and </span>
+    <span
+      class="link-underline clickable space-on-right"
+      *ngIf="otherLinksTooltip?.length"
+      [tooltip]="otherLinksTooltip?.toString()"
+      container="body"
+      [adaptivePosition]="false"
+      >{{ otherLinksTooltip?.length }} more</span
+    >
+  </div>
+</div>

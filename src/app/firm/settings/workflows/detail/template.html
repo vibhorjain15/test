@@ -1,0 +1,91 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-workflow-details></ng2-workflow-details> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">Workflow Definition</h5>
+    </div>
+    <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-body clearfix">
+                <div class="dv-table dv-table-middle dd-info-panel full-width">
+                    <div class="bordered-right text-center cell col-sm-5">
+                        <h4 class="clear-margin lh1-5 word-break-break-all">
+                            {{vm.workflow.name}}
+                            <button btn-type="transparent" data-ng-click="vm.openEditWorkflowModal()"
+                                uib-tooltip="Edit workflow name">
+                                <small>
+                                    <icon name="pencil" size="1x"></icon>
+                                </small>
+                            </button>
+                        </h4>
+
+                        <div>
+                            <small class="text-muted">
+                                <i>updated
+                                    {{(vm.workflow.updated_at? vm.workflow.updated_at : vm.workflow.created_at) | fromNow}}</i>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="bordered-right text-center cell">
+                        <h4 class="clear-margin space-on-bottom">
+                            <span>{{vm.getEntityTypeName(vm.workflow.entity_type)}}</span>
+                        </h4>
+
+                        <label class="btn btn-primary btn-sm"
+                            data-ng-if="vm.workflow.entity_sub_type_name">{{vm.workflow.entity_sub_type_name}}</label>
+                    </div>
+
+                    <div class="bordered-right text-center cell" data-ng-hide="$state.$current.name == 'app.firm.settings.workflows.detail.edit'">
+                        <a class="btn btn-transparent" ui-sref="app.firm.settings.workflows.detail.edit({workflowId: vm.workflowId})"
+                            uib-tooltip="Edit Workflow">
+                            <div>
+                                <icon name="pencil" size="2x"></icon>
+                            </div>
+                            <small>Edit</small>
+                        </a>
+                    </div>
+
+                    <div class="bordered-right text-center cell" data-ng-hide="$state.$current.name == 'app.firm.settings.workflows.detail.preview'">
+                        <a class="btn btn-transparent" ui-sref="app.firm.settings.workflows.detail.preview({workflowId: vm.workflowId})"
+                            uib-tooltip="Preview Workflow">
+                            <div>
+                                <icon name="eye" size="2x"></icon>
+                            </div>
+                            <small>Preview</small>
+                        </a>
+                    </div>
+                    <div class="bordered-right text-center cell" data-ng-show="$state.$current.name == 'app.firm.settings.workflows.detail.preview'">
+                        <button btn-type="transparent"
+                                print-section
+                                print-options="vm.printOptions"
+                                section-id="workflow-preview">
+                            <div><icon name="print" size="2x"></icon></div>
+                            <small>Print</small>
+                        </button>
+                    </div>
+
+                    <div class="bordered-right text-center cell">
+                        <a class="btn btn-transparent" data-ng-click="vm.confirmWorkflowDeletion()"
+                            uib-tooltip="Delete Workflow">
+                            <div>
+                                <icon name="trashcan" size="2x"></icon>
+                            </div>
+                            <small>Delete</small>
+                        </a>
+                    </div>
+
+                    <div class="cell text-center">
+                        <a btn-type="default" ui-sref="app.firm.settings.workflows.list" class="btn btn-transparent">
+                            <div>
+                                <icon name="arrow-back" size="2x"></icon>
+                            </div>
+                            <small>Back to all workflows</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <ui-view />
+    </div>
+</div>

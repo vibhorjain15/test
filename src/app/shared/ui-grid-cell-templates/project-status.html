@@ -1,0 +1,5 @@
+<ui-grid-cell-contents>
+  <div>
+    {{grid.appScope.vm.getRequestStatus(row.entity[col.field],row.entity.created_by,row.entity.approver_ids)}}
+  </div>
+</ui-grid-cell-contents>

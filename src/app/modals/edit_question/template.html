@@ -1,0 +1,60 @@
+<div class="modal-header">
+  <h3 class="modal-title">Edit Question<span data-ng-show="vm.questions.length>1">s</span>
+   <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+  </h3>
+</div>
+
+<div class="modal-body multiple-questions-mode">
+    <spinner data-ng-show="!vm.question_tree"></spinner>
+    <span data-ng-show="vm.question_tree">
+        <div class="space-on-bottom-xxl">
+
+            <div class="panel panel-default borderless">
+                <div class="panel-heading">
+                    <h5 class="panel-title" ng-bind-html="vm.question_tree.question.text">
+                    </h5>
+                    <div class="panel-controls">
+                        <div class="panel-controls-wrapper">
+                            <a class="panel-control"
+                               uib-tooltip="{{vm.question_tree.question.editSectionOpened ? 'Cancel' : 'Edit Question'}}"
+                               data-ng-click="vm.toggleQuestionEdit(vm.question_tree.question)">
+                                <i class="dvi"
+                                   data-ng-class="{'dvi-pencil': !vm.question_tree.question.editSectionOpened, 'dvi-close': vm.question_tree.question.editSectionOpened}"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div data-ng-if="vm.question_tree.question.editSectionOpened">
+                    <template-question-builder on-save="vm.onSave(vm.question_tree.question)"
+                                               template-id="vm.templateId"
+                                               question-params="vm.question_tree.question"
+                                               single-question-mode
+                                               hide-panel-header
+                                               edit-multiple-questions
+                                               on-cancel="vm.toggleQuestionEdit(vm.question_tree.question)"
+                                               on-error="vm.close()">
+                    </template-question-builder>
+                </div>
+            </div>
+        </div>
+
+        <span data-ng-if="vm.question_tree.children.length>0">
+            <h4 class="space-on-top-xxl">Nested Questions</h4>
+            <hr class="space-on-top">
+            <div ng-repeat="question_item in vm.question_tree.children" data-ng-include="vm.edit_question_tree_template"></div>
+        </span>
+
+        <span data-ng-if="vm.is_investor && vm.Utils.getObjectLength(vm.mappedQuestions)">
+            <h4 class="space-on-top-xxl">Mapped Questions</h4>
+            <hr class="space-on-top">
+            <mapped-questions-grouped-view mapped-questions="vm.mappedQuestions" question="vm.question_params" readonly="true"></mapped-questions-grouped-view>
+        </span>
+
+    </span>
+
+</div>
+
+<div class="modal-footer">
+    <button btn-type="default" data-ng-click="vm.cancel()">Close</button>
+</div>

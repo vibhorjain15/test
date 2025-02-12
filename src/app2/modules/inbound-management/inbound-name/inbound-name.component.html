@@ -1,0 +1,10 @@
+<div *ngIf="params?.data" class="more-text">
+  <span
+    class="space-on-right"
+    [adaptivePosition]="false"
+    [tooltip]="params?.data?.name"
+    container="body"
+  >
+    {{ params?.data?.name }}
+  </span>
+</div>

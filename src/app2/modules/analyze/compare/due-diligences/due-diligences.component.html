@@ -1,0 +1,534 @@
+<div class="comare-panel-bg-main"></div>
+<div StickyDiv top="55px" class="comare-panel-bg">
+  <div class="panel panel-default clear-margin">
+    <div class="panel-body padding-0 clear-margin">
+      <div class="dv-table full-width dd-info-panel">
+        <div col="3" class="bordered-right cell text-center">
+          <h4 class="text-uppercase space-on-top-lg">Compare Due diligences</h4>
+        </div>
+        <div col="6" class="cell bordered-right text-center">
+          <div class="btn-group space-on-top-lg">
+            <span
+              *ngIf="selectedDueDiligences.length == 2"
+              class="btn btn-default font-size-12"
+              [ngClass]="{
+                'btn-primary': activeTab == 'trackChanges',
+                disabled:
+                  selectedDueDiligences.length != 2 &&
+                  activeTab != 'trackChanges'
+              }"
+              (click)="toggleComparisonTab('trackChanges')"
+              clickable
+              >Track Changes</span
+            >
+            <span
+              *ngIf="selectedDueDiligences.length != 2"
+              class="btn btn-default font-size-12"
+              tooltip="Changes can only be tracked between 2 diligences"
+              container="body"
+              [ngClass]="{
+                'btn-primary': activeTab == 'trackChanges',
+                disabled:
+                  selectedDueDiligences.length != 2 &&
+                  activeTab != 'trackChanges'
+              }"
+              (click)="toggleComparisonTab('trackChanges')"
+              clickable
+              >Track Changes</span
+            >
+
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': activeTab == 'showAll' }"
+              (click)="toggleComparisonTab('showAll')"
+              clickable
+              >Show All</span
+            >
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': activeTab == 'showFlagged' }"
+              (click)="toggleComparisonTab('showFlagged')"
+              clickable
+              >Flagged</span
+            >
+            <span
+              class="btn btn-default font-size-12"
+              [ngClass]="{ 'btn-primary': activeTab == 'showScoreMap' }"
+              (click)="toggleComparisonTab('showScoreMap')"
+              clickable
+              >Score Map</span
+            >
+          </div>
+        </div>
+
+        <div col="2" class="cell text-center">
+          <dv-button btnType="transparent" (onClick)="returnToDDList()">
+            <div><span appIcon name="arrow-back" size="2x"></span></div>
+            <small>Go back</small>
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="compare_screen_second">
+  <div class="panel panel-default" *ngIf="!compareResults?.length">
+    <div class="panel-body">
+      <div class="text-center text-muted">
+        <small style="font-size: 14px"><i>*No results found*</i></small>
+      </div>
+    </div>
+  </div>
+  <div
+    [id]="headersRow"
+    scroll-group
+    *ngIf="compareResults?.length"
+    class="panel panel-default panel-compare overflow-x-scroll"
+    StickyDiv
+    top="130px"
+  >
+    <div class="panel-body padding-0">
+      <div class="dv-table dv-table-middle compare-dd-results">
+        <div
+          class="cell text-center pos-rel padding-0"
+          *ngFor="let fundName of fundNames; let index = index; let last = last"
+          [ngClass]="{
+            'col-md-4': fundNames.length == 3,
+            'col-md-6': fundNames.length == 2,
+            'vs bordered-right': !last
+          }"
+        >
+          <span
+            appIcon
+            *ngIf="fundNames.length > 2"
+            name="close"
+            class="closeIcon"
+            size="lg"
+            (click)="removeSelectedItem(fundName.id, fundName.idx)"
+            clickable
+          ></span>
+          <h5 [tooltip]="fundName.name">
+            {{ fundName.name | truncate : 25 }}
+          </h5>
+          <h6 class="fw-bolder">
+            {{ fundName.created_at | dvDate : ["isLocaleDate"] }}
+          </h6>
+          <br />
+          <small class="scoreAndFlagInTrackChanges">
+            <b *ngIf="fundName.total_flags && activeTab != 'showScoreMap'">
+              {{ fundName.total_flags }}
+              <span
+                appIcon
+                class="align-middle space-on-left"
+                name="flag"
+                container="body"
+                tooltip="{{
+                  fundName.total_flags
+                    ? fundName.total_flags + ' flag(s) have been set'
+                    : 'No flag set'
+                }}"
+                [ngClass]="{
+                  'dd-no-flag-set': !fundName.total_flags,
+                  'text-danger': fundName.total_flags
+                }"
+              ></span>
+            </b>
+            <b
+              *ngIf="
+                fundName.aggregate_score &&
+                fundName.aggregate_total &&
+                secondary_rating_scales &&
+                secondaryNaValue
+              "
+            >
+              <dv-dd-rated-score
+                [score]="fundName.aggregate_score"
+                [keepWatcherOn]="true"
+                [ratingScale]="secondary_rating_scales"
+                [naValue]="secondaryNaValue"
+                [total]="fundName.aggregate_total"
+                [showTotal]="
+                  ratingScheme.primary_rating_scale_mode == 'ScoreBand'
+                "
+                [ratingValue]="fundName.aggregate_rating"
+                [useRatingValue]="true"
+                class="compare"
+              ></dv-dd-rated-score>
+            </b>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default" *ngIf="compareResults?.length">
+    <div class="text-center space-on-top-lg" *ngIf="isLoading">
+      <app-spinner></app-spinner>
+    </div>
+
+    <div
+      class="panel-body dd-compare-view scroll_container"
+      *ngIf="!isLoading && compareResults.length"
+      [id]="headersRowBody"
+    >
+      <table class="table clear-margin-bottom">
+        <tbody>
+          <tr>
+            <td class="borderless align-middle">
+              <div>
+                <div>
+                  <div
+                    class="text-center text-muted panel-heading"
+                    *ngIf="
+                      compareResults &&
+                      compareResults[0]?.response.length == 2 &&
+                      activeTab == 'trackChanges' &&
+                      compareResults[0].response[1].fundName !=
+                        compareResults[0].response[0].fundName
+                    "
+                  ></div>
+                  <table
+                    class="table no-margin-fixed-table"
+                    *ngIf="activeTab == 'trackChanges' && compareResults.length"
+                  >
+                    <tbody>
+                      <tr>
+                        <td>
+                          <h5>
+                            <b>{{ compareResults[0].response[0].fundName }} </b>
+                          </h5>
+                        </td>
+                        <td>
+                          <h5>
+                            <b>{{ compareResults[0].response[1].fundName }} </b>
+                          </h5>
+                        </td>
+                        <td>
+                          <h5><b>Changes</b></h5>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div
+                    *ngIf="activeTab == 'showAll' || activeTab == 'showFlagged'"
+                    dvScroll
+                    [items]="compareResults"
+                    loadingItems="20"
+                    uniqueKey="questionID"
+                    (onChange)="handleScrollChange($event)"
+                  >
+                    <div
+                      class="panel panel-default panel-compare"
+                      *ngFor="let result of compareResultsLocal"
+                      [id]="result.questionID"
+                    >
+                      <div class="panel-heading">
+                        <span
+                          [innerHTML]="result.questionText | dvSafeHtml"
+                        ></span>
+                      </div>
+                      <div class="panel-body">
+                        <div
+                          class="dv-table dv-table-middle compare-dd-results"
+                        >
+                          <div
+                            class="cell compare-dd-results-responses text-center pos-rel no-padding-imp"
+                            *ngFor="
+                              let response of result.response;
+                              let last = last
+                            "
+                            [ngClass]="{
+                              'col-md-4': fundNames.length == 3,
+                              'col-md-6': fundNames.length == 2,
+                              'bordered-right': !last
+                            }"
+                          >
+                            <div
+                              *ngIf="response.responseText"
+                              class="text-align-justify text-center max-w-100-p overflow-auto padded-xl"
+                              [innerHTML]="response.responseText | dvSafeHtml"
+                            ></div>
+                            <small
+                              class="text-muted block-display"
+                              *ngIf="!response.responseText"
+                            >
+                              <i>No response</i>
+                            </small>
+                            <br />
+                            <small class="scoreAndFlagInTrackChanges">
+                              <b *ngIf="response.is_flagged">
+                                <span
+                                  appIcon
+                                  class="align-middle space-on-left"
+                                  name="flag"
+                                  [ngClass]="{
+                                    'dd-no-flag-set': !response.is_flagged,
+                                    'text-danger': response.is_flagged
+                                  }"
+                                ></span>
+                              </b>
+                              <b
+                                *ngIf="
+                                  response.score &&
+                                  response.aggregate_score &&
+                                  rating_scales &&
+                                  naValue
+                                "
+                              >
+                                <dv-dd-rated-score
+                                  [score]="response.score"
+                                  [keepWatcherOn]="true"
+                                  [ratingScale]="rating_scales"
+                                  [naValue]="naValue"
+                                  [total]="response.aggregate_score"
+                                  [ratingValue]="response.rating"
+                                  [useRatingValue]="true"
+                                ></dv-dd-rated-score>
+                              </b>
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="activeTab == 'trackChanges'"
+                    dvScroll
+                    [items]="compareResults"
+                    loadingItems="20"
+                    uniqueKey="questionID"
+                    (onChange)="handleScrollChange($event)"
+                  >
+                    <div
+                      class="panel panel-default panel-compare"
+                      *ngFor="let result of compareResultsLocal"
+                      [id]="result.questionID"
+                    >
+                      <div class="panel-heading">
+                        <span
+                          [innerHTML]="result.questionText | dvSafeHtml"
+                        ></span>
+                      </div>
+                      <div class="panel-body">
+                        <div
+                          class="dv-table dv-table-middle compare-dd-results"
+                        >
+                          <div
+                            class="cell compare-dd-results-responses text-center pos-rel no-padding-imp"
+                            *ngFor="
+                              let response of result.response;
+                              let last = last
+                            "
+                            [ngClass]="{
+                              'col-md-4': fundNames.length == 3,
+                              'col-md-6': fundNames.length == 2,
+                              'bordered-right': !last
+                            }"
+                          >
+                            <div
+                              *ngIf="response.responseText"
+                              class="text-align-justify text-center max-w-100-p overflow-auto padded-xl"
+                              [innerHTML]="response.responseText | dvSafeHtml"
+                            ></div>
+                            <small
+                              class="text-muted block-display padded-bottom"
+                              *ngIf="!response.responseText"
+                            >
+                              <i>No response</i>
+                            </small>
+                          </div>
+                          <div class="cell text-center overflow-x-scroll">
+                            <span
+                              jsdiff-compare
+                              [current]="result.response[1].responseText"
+                              [previous]="result.response[0].responseText"
+                              consider-null
+                              *ngIf="
+                                (result.response[0].response_type == 'Date' ||
+                                  result.response[0].response_type ==
+                                    'TextEmail' ||
+                                  result.response[0].response_type ==
+                                    'CheckBox' ||
+                                  result.response[0].response_type ==
+                                    'Dropdown' ||
+                                  result.response[0].response_type ==
+                                    'Bookends' ||
+                                  result.response[0].response_type == 'Text' ||
+                                  result.response[0].response_type ==
+                                    'NoPlus' ||
+                                  result.response[0].response_type ==
+                                    'Boolean' ||
+                                  result.response[0].response_type ==
+                                    'Percentage' ||
+                                  result.response[0].response_type ==
+                                    'TextPhone' ||
+                                  result.response[0].response_type ==
+                                    'BooleanPlus' ||
+                                  result.response[0].response_type ==
+                                    'Identifier') &&
+                                (result.response[1].response_type == 'Date' ||
+                                  result.response[1].response_type ==
+                                    'TextEmail' ||
+                                  result.response[1].response_type ==
+                                    'CheckBox' ||
+                                  result.response[1].response_type ==
+                                    'Dropdown' ||
+                                  result.response[1].response_type ==
+                                    'Bookends' ||
+                                  result.response[1].response_type == 'Text' ||
+                                  result.response[1].response_type ==
+                                    'NoPlus' ||
+                                  result.response[1].response_type ==
+                                    'Boolean' ||
+                                  result.response[1].response_type ==
+                                    'Percentage' ||
+                                  result.response[1].response_type ==
+                                    'TextPhone' ||
+                                  result.response[1].response_type ==
+                                    'BooleanPlus' ||
+                                  result.response[1].response_type ==
+                                    'Identifier')
+                              "
+                            ></span>
+
+                            <span
+                              numericdiff
+                              consider-null
+                              [current]="result.response[1].numericResponseA"
+                              [previous]="result.response[0].numericResponseA"
+                              *ngIf="
+                                (result.response[0].response_type ==
+                                  'Integer' ||
+                                  result.response[0].response_type ==
+                                    'integer' ||
+                                  result.response[0].response_type ==
+                                    'Numeric') &&
+                                (result.response[1].response_type ==
+                                  'Integer' ||
+                                  result.response[1].response_type ==
+                                    'Numeric' ||
+                                  result.response[1].response_type == 'integer')
+                              "
+                            ></span>
+
+                            <span
+                              htmlDiff
+                              consider-null
+                              [current]="
+                                result.response[1].responseText | cleanHtml
+                              "
+                              [previous]="result.response[0].responseText"
+                              *ngIf="
+                                (result.response[0].response_type == 'Grid' &&
+                                  result.response[1].response_type == 'Grid') ||
+                                (result.response[0].response_type ==
+                                  'DynamicGrid' &&
+                                  result.response[1].response_type ==
+                                    'DynamicGrid') ||
+                                result.response[1].response_type ==
+                                  'TextMultiLine' ||
+                                result.response[0].response_type ==
+                                  'TextMultiLine'
+                              "
+                            ></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    *ngIf="activeTab == 'showScoreMap' && fundNames.length"
+                    dvScroll
+                    [items]="compareResults"
+                    loadingItems="20"
+                    uniqueKey="questionID"
+                    (onChange)="handleScrollChange($event)"
+                  >
+                    <div
+                      class="panel panel-default panel-compare"
+                      *ngFor="let result of compareResultsLocal"
+                      [id]="result.questionID"
+                    >
+                      <div class="panel-heading">
+                        <span
+                          [innerHTML]="result.questionText | dvSafeHtml"
+                        ></span>
+                      </div>
+                      <div class="panel-body">
+                        <div
+                          class="dv-table dv-table-middle compare-dd-results"
+                        >
+                          <div
+                            class="cell compare-dd-results-responses text-center pos-rel"
+                            *ngFor="
+                              let response of result.response;
+                              let last = last
+                            "
+                            [ngClass]="{
+                              'col-md-4': fundNames.length == 3,
+                              'col-md-6': fundNames.length == 2,
+                              'bordered-right': !last
+                            }"
+                          >
+                            <small class="scoreAndFlagInTrackChanges">
+                              <b
+                                *ngIf="
+                                  response.score && response.aggregate_score
+                                "
+                              >
+                                <dv-dd-rated-score
+                                  [score]="response.score"
+                                  [keepWatcherOn]="true"
+                                  [ratingScale]="rating_scales"
+                                  [naValue]="naValue"
+                                  [total]="response.aggregate_score"
+                                  [ratingValue]="response.rating"
+                                  [useRatingValue]="true"
+                                ></dv-dd-rated-score>
+                              </b>
+                              <b
+                                *ngIf="
+                                  !response.score || !response.aggregate_score
+                                "
+                              >
+                                <small class="text-muted">
+                                  <i>*N/A*</i>
+                                </small>
+                              </b>
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    col="6"
+                    offset="3"
+                    *ngIf="
+                      compareResults && !compareResults.length && !isLoading
+                    "
+                  >
+                    <div class="panel panel-default">
+                      <div class="panel-body">
+                        <app-empty-state
+                          iconName="compare"
+                          message="Nothing to compare on the selected due diligences"
+                          (action)="returnToDDList()"
+                          actionLabel="Back to list"
+                        ></app-empty-state>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

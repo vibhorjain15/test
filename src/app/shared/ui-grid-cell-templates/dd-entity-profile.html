@@ -1,0 +1,21 @@
+<ui-grid-cell-contents class="text-left unstyledLink" data-ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel">
+    <a
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+       {{COL_FIELD CUSTOM_FILTERS}}
+    </a>
+</ui-grid-cell-contents>
+<ui-grid-cell-contents class="text-left">
+    <a ui-sref="app.funds.profile.summary({fundId: row.entity.entity_id})"
+       data-ng-if="row.entity.entity_type=='Fund'"
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+        {{row.entity.entity_name}}
+    </a>
+    <a ui-sref="app.firms.profile.monitor({firmId: row.entity.entity_id})"
+       data-ng-if="row.entity.entity_type=='Firm'"
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+        {{row.entity.entity_name}}
+    </a>
+</ui-grid-cell-contents>

@@ -1,0 +1,497 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title" id="exportPreferencesTitle">Export Preferences</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      You can define preferences on how your Word or Excel report would be
+      exported. These would be applicable firm wide for all your exports.
+    </div>
+  </div>
+  <div class="panel-body affix_bottom_parent row clearfix">
+    <div>
+      <div col="12">
+        <app-spinner *ngIf="!firm_preferences" aria-hidden="true"></app-spinner>
+        <form
+          class="form-horizontal"
+          name="preferences_form"
+          (ngSubmit)="submit()"
+          *ngIf="firm_preferences"
+          autocomplete="off"
+        >
+          <div offset="2">
+            <h3 class="text-muted">Platform Exports</h3>
+          </div>
+          <div class="form-group">
+            <label
+              class="control-label text-align-start"
+              for="exportPref"
+              col="3"
+              offset="2"
+              >Export preference</label
+            >
+            <div col="5">
+              <dv-select
+                [list]="exportPrefList"
+                name="document_export_pref"
+                [(ngModel)]="firm_preferences_copy.doc_access_preference"
+                bindLabel="label"
+                bindValue="value"
+                [id]="'exportPref'"
+              ></dv-select>
+            </div>
+          </div>
+          <div offset="2">
+            <h3 class="text-muted">Word Exports</h3>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                class="inline-block"
+                [(ngModel)]="firm_preferences_copy.include_question_only_export"
+                name="include_question_only_export"
+                label="Export empty questionnaire with all conditional questions"
+                (onValChange)="
+                  handleExportPreferenceChange('include_question_only_export')
+                "
+              >
+              </dv-checkbox
+              >&nbsp;
+              <span
+                appIcon
+                name="info"
+                class="align-middle"
+                tooltip="This will export all questions, and no responses."
+                container="body"
+              >
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_project_documents"
+                name="include_project_documents"
+                label="Include attachments in a ZIP file"
+                (onValChange)="
+                  handleExportPreferenceChange('include_project_documents')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_internal_notes_export"
+                name="enable_internal_notes_export"
+                label="Include internal notes"
+                (onValChange)="
+                  handleExportPreferenceChange('enable_internal_notes_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_followups_export"
+                name="enable_followups_export"
+                label="Include follow-ups"
+                (onValChange)="
+                  handleExportPreferenceChange('enable_followups_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_flags_word_export"
+                name="include_flags_word_export"
+                label="Include flags"
+                (onValChange)="
+                  handleExportPreferenceChange('include_flags_word_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group" *ngIf="is_investor">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.include_ratings_word_export"
+                name="include_ratings_word_export"
+                label="Include ratings/scores"
+                (onValChange)="
+                  handleExportPreferenceChange('include_ratings_word_export')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.enable_grid_numbering"
+                label="Number the rows in custom grids"
+                name="enable_grid_numbering"
+                (onValChange)="
+                  handleExportPreferenceChange('enable_grid_numbering')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_question_instructions_export
+                "
+                label="Include question instructions"
+                name="enable_question_instructions_export"
+                (onValChange)="
+                  handleExportPreferenceChange(
+                    'enable_question_instructions_export'
+                  )
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="
+                  firm_preferences_copy.enable_category_instructions_export
+                "
+                label="Include sub-category instructions"
+                name="enable_category_instructions_export"
+                (onValChange)="
+                  handleExportPreferenceChange(
+                    'enable_category_instructions_export'
+                  )
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.exclude_comments"
+                label="Exclude comments"
+                name="exclude_comments"
+                (onValChange)="handleExportPreferenceChange('exclude_comments')"
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <dv-checkbox
+                [(ngModel)]="firm_preferences_copy.exclude_empty_response"
+                label="Exclude unanswered questions"
+                name="exclude_empty_response"
+                (onValChange)="
+                  handleExportPreferenceChange('exclude_empty_response')
+                "
+              >
+              </dv-checkbox>
+            </div>
+          </div>
+          <div class="form-group">
+            <div col="10" offset="2">
+              <span class="control-label fw-bolder text-align-start" role="text"
+                >Select Template</span
+              >
+            </div>
+            <div col="10" offset="2" class="space-on-top-lg">
+              <p class="text-muted">
+                <small>
+                  <a
+                    href="http://diligencevault.com/word-export-style-guide/"
+                    target="_blank"
+                    >Please review this style-guide to design export templates
+                  </a>
+                </small>
+              </p>
+              <div col="8" class="export-template">
+                <div class="list-group-item top-bar">
+                  <div class="search-bar">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Search templates"
+                      [(ngModel)]="filterTemplate"
+                      name="filterTemplate"
+                    />
+                  </div>
+                  <div
+                    class="add-button"
+                    [tooltip]="
+                      is_freeSubscription
+                        ? is_investor
+                          ? 'Available for premium subscribers'
+                          : 'Custom export templates are available to premium subscribers. Learn more.'
+                        : 'Add new template'
+                    "
+                    container="body"
+                  >
+                    <a
+                      (click)="addNewTemplate()"
+                      [ngClass]="{
+                        'disabled-Element': is_freeSubscription && is_investor,
+                        'route-link-disabled':
+                          is_freeSubscription && !is_investor
+                      }"
+                      role="button"
+                      tabindex="0"
+                      title="Add New Template"
+                      aria-label="Add New Template"
+                    >
+                      <span appIcon name="plus"></span>
+                    </a>
+                  </div>
+                </div>
+                <ul
+                  class="list-group template-list"
+                  [ngClass]="{ 'overflow-y-scroll': templates?.length > 3 }"
+                  tabindex="0"
+                >
+                  <app-empty-state
+                    message="No Export templates added. Add one by clicking the add button above."
+                    *ngIf="!templates?.length"
+                  ></app-empty-state>
+                  <app-empty-state
+                    message="No templates found."
+                    *ngIf="
+                      templates?.length > 0 &&
+                      (templates | filterBy : { name: filterTemplate })
+                        ?.length === 0
+                    "
+                  ></app-empty-state>
+                  <li
+                    class="list-group-item template-item"
+                    *ngFor="
+                      let template of templates
+                        | filterBy : { name: filterTemplate };
+                      let $index = index;
+                      trackBy: trackByIndex
+                    "
+                    [ngClass]="{
+                      activeTemplateRow:
+                        firm_preferences_copy.default_document_export_template_id ===
+                        template.id
+                    }"
+                  >
+                    <div class="container-fluid itemsRow">
+                      <div class="defaultSelection pull-left">
+                        <span
+                          [tooltip]="
+                            firm_preferences_copy.default_document_export_template_id ===
+                            template.id
+                              ? 'Marked as default'
+                              : 'Mark as Default'
+                          "
+                          container="body"
+                          [adaptivePosition]="false"
+                          (click)="selectDefaultTemplate(template)"
+                        >
+                          <span
+                            [ngClass]="{
+                              activeTemplate:
+                                firm_preferences_copy.default_document_export_template_id ===
+                                template.id
+                            }"
+                            appIcon
+                            name="check"
+                          ></span>
+                        </span>
+                      </div>
+                      <div class="textRow">
+                        <a
+                          role="button"
+                          (click)="downloadTemplate(template)"
+                          clickable
+                          >{{ template.name }}</a
+                        >
+                        <p>
+                          <small class="text-muted">
+                            Last Updated on
+                            {{
+                              (template.updated_at
+                                ? template.updated_at
+                                : template.created_at
+                              ) | dvDate
+                            }}
+                            by
+                            {{
+                              template.updated_by_name
+                                ? template.updated_by_name
+                                : template.created_by_name
+                            }}
+                          </small>
+                        </p>
+                      </div>
+                      <div class="controls">
+                        <span
+                          [tooltip]="
+                            template.is_system_template
+                              ? 'You cannot edit system level templates'
+                              : 'Edit this template'
+                          "
+                          container="body"
+                          class="edit"
+                          [adaptivePosition]="false"
+                          [ngClass]="{
+                            'disabled-Element': template.is_system_template
+                          }"
+                          (click)="editTemplate(template, $index)"
+                          clickable
+                        >
+                          <span appIcon name="pencil"></span>
+                        </span>
+                        <span
+                          [tooltip]="
+                            template.is_system_template
+                              ? 'You cannot delete system level templates'
+                              : 'Delete this template'
+                          "
+                          container="body"
+                          [adaptivePosition]="false"
+                          class="remove"
+                          [ngClass]="{
+                            'disabled-Element': template.is_system_template
+                          }"
+                          (click)="confirmTemplateDeletion(template, $index)"
+                          clickable
+                        >
+                          <span appIcon name="trashcan"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-on-bottom-xxl">
+            <div offset="2">
+              <h3 class="text-muted">Excel Exports</h3>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.include_responses_excel_export
+                  "
+                  name="include_responses_excel_export"
+                  label="Include responses"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.include_comments_excel_export
+                  "
+                  name="include_comments_excel_export"
+                  label="Include comments"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.split_comments"
+                  name="split_comments"
+                  label="Split comments"
+                  class="inline-block"
+                >
+                </dv-checkbox
+                >&nbsp;
+                <span
+                  appIcon
+                  name="info"
+                  class="align-middle"
+                  tooltip="Split comments associated with responses in another cell"
+                  container="body"
+                >
+                </span>
+              </div>
+            </div>
+            <div class="form-group" *ngIf="is_investor">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="
+                    firm_preferences_copy.include_ratings_excel_export
+                  "
+                  name="include_ratings_excel_export"
+                  label="Include ratings/scores"
+                  [id]="'include_ratings_excel_export'"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group" *ngIf="is_investor">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.include_flags_excel_export"
+                  name="include_flags_excel_export"
+                  [id]="'include_flags_excel_export'"
+                  label="Include flags"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.include_internal_key"
+                  label="Include internal key column"
+                  name="include_internal_key"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+            <div class="form-group">
+              <div col="10" offset="2">
+                <dv-checkbox
+                  [(ngModel)]="firm_preferences_copy.transpose_excel_columns"
+                  label="Transpose export to show questions in columns"
+                  name="transpose_excel_columns"
+                  class="inline-block"
+                >
+                </dv-checkbox>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="form-group sticky_savebar makeItSticky"
+            role="group"
+            aria-label="Save Export Preferences"
+          >
+            <div col="10" offset="2" class="space-on-top-xl space-on-bottom-xl">
+              <dv-button
+                [loader]="saving_preferences"
+                [btnClass]="'minwidth'"
+                type="submit"
+              >
+                Save Export Preferences
+              </dv-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

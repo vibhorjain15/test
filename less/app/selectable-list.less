@@ -1,0 +1,36 @@
+.dv-selectable {
+  .panel-selectable {
+    cursor: pointer;
+
+    &:hover {
+      border-color: darken(@panel-default-border, 10%);
+    }
+  }
+}
+
+.dv-selected {
+  .panel-selectable.panel {
+    border-color: @panel-success-border;
+    position: relative;
+
+    &:after {
+      .dvi();
+      content: @dvi-check-circle;
+      position: absolute;
+      top: 0;
+      right: 0;
+      font-size: 2em;
+      color: @panel-success-border;
+    }
+  }
+}
+
+.dv-selection-disabled {
+  .panel-selectable.panel {
+    opacity: 0.6;
+
+    &:hover {
+      border-color: @panel-default-border;
+    }
+  }
+}

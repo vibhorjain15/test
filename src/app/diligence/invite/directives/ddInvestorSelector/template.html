@@ -1,0 +1,311 @@
+<p class="alert alert-info" data-ng-show="vm.display_selection_warning">
+  <span data-ng-hide="vm.select_all_investors">
+    <ng-pluralize count="vm.selection_list.length" when="{'1': '1 investor', 'other': '{} investors'}"></ng-pluralize>
+    on this page are selected. If you wish to unselect any investor, you can do it at the panel on the right.
+  </span>
+
+  <span data-ng-show="vm.select_all_investors">
+    All {{vm.data_length}} investors are selected.
+    <a role="button" class="link-disguise" data-ng-click="vm.clearSelection()">
+      <u>Clear Selection</u>
+    </a>
+  </span>
+</p>
+
+<div class="row clearfix">
+  <div col="6">
+    <div class="panel panel-default dd-multiselect relative">
+
+      <div class="panel-heading">
+        <div class="row clearfix">
+          <div col="6">
+            <div class="input-group-rename-this-class-when-filters-are-enabled">
+              <input type="text" data-ng-model="vm.filters.name" class="form-control"
+                data-ng-model-options="{'debounce': 500}" data-ng-change="vm.applyFilters()"
+                placeholder="Search Firms by name" />
+            </div>
+          </div>
+
+          <div col="6">
+            <div>
+              <button btn-type="default" class="space-on-top-2" size="sm" data-ng-if="vm.filters_data_loaded"
+                uib-tooltip="{{vm.filters_section.show ? 'Hide' : 'Apply' }} Filters"
+                data-ng-click="vm.toggleFiltersSection()">
+                <icon name="filter" data-ng-class="{'text-orange': vm.filterApplied}"></icon>
+              </button>
+
+              <button btn-type="default" class="space-on-top-2" size="sm" data-ng-click="vm.resetFiltersData()"
+                uib-tooltip="Clear Filters" data-ng-if="vm.filterApplied">
+                <icon name="refresh"></icon>
+              </button>
+
+              <button btn-type="default" size="sm" data-ng-disabled="vm.disable_select_all"
+                class="space-on-top-2 space-on-left" data-ng-click="vm.selectAll()">
+                <span class="align-middle">Select All</span>
+              </button>
+
+              <button btn-type="default" size="sm" class="space-on-top-2 space-on-left" uib-tooltip="Add new firm here"
+                data-ng-click="vm.openNewInvestorDialog()">
+                <icon name="plus" class="space-on-right align-middle"></icon>
+                <span class="align-middle">New</span>
+              </button>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <div>
+        <div class="label-list space-on-bottom-lg space-on-left" data-ng-if="vm.filterApplied">
+          <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+            data-ng-repeat="criterion in vm.search_criterias" data-ng-if="criterion.advance_filter_value">
+            <small>{{vm.displayFilter(criterion)}}</small>
+            <a class="space-on-left clickable link-disguise"
+              data-ng-click="vm.removeFilterCriterion($index)">&times;</a>
+          </span>
+        </div>
+
+        <spinner broad-spinner spinner-height='60' data-ng-show="vm.processing_data"></spinner>
+
+        <div class="list-group">
+          <div class="list-group-item" data-ng-repeat="investor in vm.investors | orderBy:'display_name'">
+            <div class="row clearfix">
+              <span data-ng-show="investor.is_selected || vm.select_all_investors" class="space-on-right">
+                <icon name="check" size="lg" class="text-success"></icon>
+              </span>
+
+              <span class="space-on-right" uib-tooltip="Select {{investor.display_name}}"
+                data-ng-hide="investor.is_selected || vm.select_all_investors">
+                <icon name="plus-circle" data-ng-disabled="vm.disable_view" data-ng-click="vm.addToSelection(investor)"
+                  size="lg" class="text-primary" role="button"></icon>
+              </span>
+
+              <span>{{investor.display_name}}</span>
+            </div>
+          </div>
+
+          <div class="list-group-item" data-ng-if="vm.is_loading_investors">
+            <div class="row clearfix">
+              <div>
+                <spinner broad-spinner spinner-height='20'></spinner>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h5 class="pull-right" data-ng-show="vm.investors.length">Total {{vm.data_length}} investors available</h5>
+
+        <div class="panel-body" data-ng-if="!vm.filters_applied && !vm.is_loading_investors && !vm.investors.length">
+          <empty-state message="No investors available" action="vm.openNewInvestorDialog()"
+            action-label="Add New Investor" data-ng-show="vm.is_admin"></empty-state>
+          <empty-state message="No investors available. Please contact your administrator" data-ng-hide="vm.is_admin">
+          </empty-state>
+        </div>
+
+        <div class="panel-body" data-ng-if="!vm.is_loading_investors && vm.filters_applied && vm.investors.length == 0">
+          <empty-state message="No investors match applied filters"></empty-state>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div col="6">
+    <div class="panel panel-default dd-multiselect-selection" data-ng-class="{'semi-transparent': vm.disabled}">
+      <div class="mask transparent" data-ng-show="vm.disabled"></div>
+      <div class="panel-heading">
+        <div class="row clearfix">
+          <div col="8">
+            <p class="form-control-static inline-block">
+              <icon name="fund" class="space-on-right"></icon>Investors Selected <span
+                data-ng-show="(vm.selection_list.length > 0)||(vm.select_all_investors)">({{vm.select_all_investors ?
+                vm.data_length : vm.selection_list.length}})</span>
+            </p>
+
+            <button btn-type="default" size="sm" class="space-on-left"
+              data-ng-if="vm.selection_list.length || vm.select_all_entities"
+              uib-tooltip="{{vm.selected_list_filters_section.show ? 'Hide' : 'Apply' }} contact filters"
+              data-ng-click="vm.toggleSelectedListFiltersSection()">
+              <icon name="filter" data-ng-class="{'text-orange': vm.selected_list_filters_section.show}"></icon>
+            </button>
+          </div>
+
+          <div col="4">
+            <span class="pull-right">
+              <button btn-type="default" size="sm" class="space-on-left" data-ng-if="vm.checkIfAnyBouncedEmail()"
+                data-ng-click="vm.deleteAllBouncedEmails()" uib-tooltip="Remove All Bounced Emails">
+                <icon name="trashcan" class="text-danger"></icon>
+              </button>
+              <button btn-type="default" size="sm" data-ng-click="vm.clearSelection()">Clear Selection</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body has-notes-form clear-padding"
+        data-ng-if="vm.selection_list.length && !vm.select_all_investors">
+        <div class="panel-body padded-top-lg bg-sky-blue" data-ng-if="vm.selected_list_filters_section.show">
+          <div class="row clearfix">
+            <div col="6">
+              <div class="form-group clear-margin-bottom">
+                <div>
+                  <select id="tags" class="form-control" chosen allow-single-deselect="true"
+                    data-ng-model="vm.selected_list_filters_section.contact_id"
+                    data-placeholder="Filter by contact type"
+                    data-ng-options="tag.id as tag.name for tag in vm.contact_tags">
+                    <option value="">Filter by contact type</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="pull-right space-on-right-xl">
+              <span>
+                <strong>
+                  Filters
+                </strong>
+              </span>
+              <a role="button" class="link-disguise space-on-left" uib-tooltip="Clear Filters"
+                data-ng-click="vm.resetSelectedListFilters()">
+                <u>Clear</u>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <ul class="list-group clear-margin-bottom tasks-list">
+          <li class="list-group-item pa-tb-xl pa-lr-xl task-item"
+            data-ng-repeat="investor in vm.selection_list | entitiesWithContactTag:vm.selected_list_filters_section.contact_id"
+            data-ng-class="{'active-item': investor.hoverState}" ng-mouseover="investor.hoverState = true;"
+            ng-mouseleave="investor.hoverState = false;">
+            <div class="media">
+              <div class="media-body">
+                <div class="dv-table full-width">
+                  <div class="cell align-middle">
+                    <div class="clearfix">
+                      <div class="inline-block entity-name">
+                        <span uib-tooltip="Remove {{investor.display_name}}" class="space-on-right">
+                          <icon name="minus-circle" class="text-danger" role="button" size="lg"
+                            data-ng-click="vm.removeFromSelection(investor)"></icon>
+                        </span>
+                        <span class="space-on-right">{{investor.display_name}}
+                          <span>({{investor.total_recipients_count}} recipients)</span></span>
+                      </div>
+
+                      <div>
+                        <div class="entity-contacts" data-ng-if="investor.notification_contacts.length">
+                          <ul>
+                            <li
+                              data-ng-repeat="contact in investor.notification_contacts | contactsWithContactTag:vm.selected_list_filters_section.contact_id">
+                              <div class="inline-block">
+                                <small data-ng-class="{'text-striken': contact.is_removed}">{{contact.name}}
+                                  ({{contact.email}})</small>
+                                <small data-ng-if="contact.has_bounce_history" class="text-danger"
+                                  uib-tooltip="Emails to this contact have bounced in the past.">
+                                  <icon name="warning"></icon>
+                                </small>
+                                <button btn-type="default" class="btn-close space-on-left danger" size="sm"
+                                  tabindex="-1" data-ng-if="investor.hoverState && !contact.is_removed"
+                                  uib-tooltip="Remove contact from this diligence request"
+                                  data-ng-click="vm.setContactRemovalState(investor, contact, true)">
+                                  <icon name="minus" class="align-middle"></icon>
+                                </button>
+                                <button btn-type="default" class="btn-close space-on-left" size="sm" tabindex="-1"
+                                  data-ng-if="investor.hoverState && contact.is_removed"
+                                  uib-tooltip="Add contact to this diligence request"
+                                  data-ng-click="vm.setContactRemovalState(investor, contact, false)">
+                                  <icon name="plus" class="align-middle text-info"></icon>
+                                </button>
+
+                              </div>
+                            </li>
+                          </ul>
+                          <div>
+                            <small class="space-on-left text-muted">
+                              <a class="link-disguise link-underline clickable"
+                                data-ng-click="vm.addNewContact(investor)">Click here</a> to add more contacts to this
+                              firm.
+                            </small>
+                          </div>
+
+                        </div>
+
+                        <div data-ng-if="!investor.notification_contacts.length">
+                          <small class="space-on-left text-muted">
+                            No active contacts available for this firm, <a
+                              class="link-disguise link-underline clickable"
+                              data-ng-click="vm.addNewContact(investor)">click here</a> to add a new one.
+                          </small>
+                        </div>
+                        <div class="space-on-top" data-ng-if="!investor.notification_contacts.length">
+                          <small class="space-on-left text-muted">
+                            <icon name="warning" class="space-on-right align-middle"></icon>This firm cannot be
+                            processed as no contact / recipient is associated with it!
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- <div class="list-group" data-ng-if="vm.selection_list.length && !vm.select_all_investors">
+        <div class="list-group-item"
+             data-ng-repeat="investor in vm.selection_list">
+          <div class="clearfix">
+            <span class="space-on-right" uib-tooltip="Remove {{investor.display_name}}">
+              <icon name="minus-circle"
+                    class="text-danger"
+                    role="button"
+                    size="lg"
+                    data-ng-click="vm.removeFromSelection(investor)"></icon>
+            </span>
+
+            <span>{{investor.display_name}}</span>
+          </div>
+          <div data-ng-if="investor.notification_contacts.length > 0">
+            <ul>
+                <li data-ng-repeat="contact in investor.notification_contacts | contactsWithContactTag:vm.selected_list_filters_section.contact_id"
+                    data-ng-class="{'active-item': contact.hoverState}"
+                    ng-mouseover="contact.hoverState = true;" ng-mouseleave="contact.hoverState = false;">
+                    <div class="inline-block">
+                        <small data-ng-class="{'text-striken': contact.is_removed}">{{contact.name}} ({{contact.email}})</small>
+                        <button btn-type="default"
+                                class="btn-close space-on-left danger"
+                                size="sm"
+                                tabindex="-1"
+                                data-ng-if="investor.hoverState && !contact.is_removed"
+                                uib-tooltip="Remove contact from this diligence request"
+                                data-ng-click="vm.setContactRemovalState(firm, contact, true)">
+                            <icon name="minus" class="align-middle"></icon>
+                        </button>
+                        <button btn-type="default"
+                                class="btn-close space-on-left"
+                                size="sm"
+                                tabindex="-1"
+                                data-ng-if="investor.hoverState && contact.is_removed"
+                                uib-tooltip="Add contact to this diligence request"
+                                data-ng-click="vm.setContactRemovalState(firm, contact, false)">
+                            <icon name="plus" class="align-middle text-info"></icon>
+                        </button>
+
+                    </div>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="panel-body text-center" data-ng-if="vm.select_all_investors">
+        All {{vm.data_length}} Investors are selected.
+      </div>
+
+      <div class="panel-body" data-ng-if="!vm.selection_list.length && !vm.select_all_investors">
+        <empty-state message="You have not selected any investors. Please select them from the panel in the left">
+        </empty-state>
+      </div>
+    </div>
+  </div>
+</div>

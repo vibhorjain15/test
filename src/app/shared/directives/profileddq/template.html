@@ -1,0 +1,77 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h5 class="panel-title">
+            Q/A Library Content
+            <icon name="info" uib-tooltip="{{tooltipText}}" data-ng-if="tooltipText"></icon>
+        </h5>
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a ng-if="!vm.isFreeSubscription" class="panel-control"
+                    data-ng-click="vm.openModal()"
+                    uib-tooltip="Add New Q/A Library Content">
+                    <icon name="plus"></icon> Add New
+                </a>
+                <a ng-if="vm.isFreeSubscription" ui-sref="app.premium" class="panel-control route-link-disabled"
+                    uib-tooltip="This feature is available for premium users. Learn more">
+                    <icon name="plus"></icon> Add New
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- <p class="alert alert-info clear-margin font-size-12" data-ng-if="helpText">
+        {{helpText}}
+    </p> -->
+
+    <div class="panel-body"
+            data-ng-if="!vm.ddqs || !vm.ddqs.length">
+        <spinner data-ng-show="!vm.ddqs"></spinner>
+
+        <empty-state icon-name="search"
+                    data-ng-show="vm.ddqs && !vm.ddqs.length"
+                    message="{{vm.empty_state_message}}">
+        </empty-state>
+    </div>
+
+    <ul class="list-group" data-ng-class="{'scroll-body':vm.ddqs.length > 5}">
+        <li class="list-group-item"
+            data-ng-repeat="ddq in vm.ddqs">
+            <div class="space-on-bottom-lg">
+                <a ui-sref="app.diligence.project.questionnaire({diligenceId: ddq.id})">
+                {{ddq.name}}
+                </a>
+                <br>
+                <small class="text-muted" data-ng-show="ddq.lastupdated_at">
+                Updated {{ddq.lastupdated_at | fromNow}}
+                </small>
+            </div>
+
+            <div class="space-on-bottom-lg">
+                <uib-progressbar value="ddq.percentage_completed"
+                                type="success"
+                                class="bs-progress">
+                <span data-ng-class="{'text-black': ddq.percentage_completed == 0}"
+                        class="text-nowrap">
+                    {{ddq.percentage_completed}}% Complete
+                </span>
+                </uib-progressbar>
+            </div>
+
+            <div class="clearfix">
+
+                <!-- <div class="pull-right">
+                    <button btn-type="default"
+                            data-ng-hide="vm.readonly"
+                            uib-tooltip="Retire this DDQ"
+                            data-ng-click="vm.retireDDQ(ddq)"
+                            class="danger"
+                            size="xs">
+                        <icon name="ban"></icon>
+                    </button>
+                </div> -->
+            </div>
+        </li>
+    </ul>
+
+    <ng-transclude></ng-transclude>
+</div>

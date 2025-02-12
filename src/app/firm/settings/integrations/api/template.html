@@ -1,0 +1,34 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-open-api></ng2-open-api> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">API Integration Key & Documentation</h5>
+  </div>
+
+  <div class="panel-body">
+    <p class="alert alert-info">
+     If you want to talk to DiligenceVault in special API way, you can. Our entire platform is based on robust REST APIs, and you can access your API key here.
+    </p>
+
+    <spinner data-ng-show="vm.loading_api_key"></spinner>
+
+    <button btn-type="primary"
+            data-ng-click="vm.generateAPIKey()"
+            button-loader="vm.generating_api_key"
+            data-ng-show="!vm.loading_api_key && !vm.api_key">Generate API Key</button>
+
+    <div data-ng-show="vm.api_key">
+
+      <div class="row clearfix">
+        <div class="col-md-5">
+          <input type="text" class="form-control" readonly="readonly" data-ng-model="vm.api_key" />
+        </div>
+        <button btn-type="default" uib-tooltip="Reset api key" button-loader="vm.generating_api_key" data-ng-click="vm.regenerateAPIKey()">
+          <icon name="refresh"></icon>
+        </button>
+      </div>
+
+      <small class="text-danger"><i>Be sure to keep your API key a secret.</i></small>
+
+    </div>
+  </div>
+</div>

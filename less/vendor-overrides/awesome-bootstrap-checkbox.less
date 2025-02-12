@@ -1,0 +1,18 @@
+@font-family-icon: 'icomoon';
+@check-icon: "\f00c";
+
+.checkbox{
+  label::before{
+    border: 1px solid #aaa;
+  }
+
+  input[type="checkbox"], input[type="radio"]{
+    z-index: 0;
+  }
+}
+
+.ui-grid .ui-grid-row .ui-grid-cell .ui-grid-cell-contents {
+  .checkbox {
+    line-height: 16px;
+  }
+}

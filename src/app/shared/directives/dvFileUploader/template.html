@@ -1,0 +1,81 @@
+<div>
+  <div>
+    <small class="text-danger" data-ng-show="vm.rejectedFiles.length">
+      <span data-ng-repeat="file in vm.rejectedFiles">{{file.name}}</span> is not a valid file. Valid formats are <b>{{::vm.allowed_file_extensions_str}}</b>
+    </small>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">Attachments</h5>
+
+      <div class="panel-controls" data-ng-hide="vm.readonly">
+        <div class="panel-controls-wrapper">
+          <a class="panel-control"
+             uib-tooltip="{{vm.label}}"
+             ngf-select
+             data-ng-disabled="vm.upload_in_progress"
+             ngf-accept="'{{::vm.allowed_file_extensions}}'"
+             ngf-pattern="'{{::vm.allowed_file_extensions}}'"
+             ngf-max-size="'{{::vm.maxFileSize}}'"
+             ng-model="vm.files"
+             ngf-change="vm.uploadAttachment($files)"
+             ngf-model-invalid="vm.rejected_files">
+            <icon name="upload"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <ul class="list-group dd-attachments-selector" >
+      <li data-ng-repeat="attachment in vm.attachments" class="list-group-item clearfix">
+        <div class="pull-left">
+          <a document-viewer="attachment" target="_blank">
+            <attachment-icon filename="attachment.file_name"></attachment-icon>
+
+            <span dv-limit-word="attachment.name" char-limit="32"></span>
+          </a>
+        </div>
+
+        <div class="pull-right" data-ng-hide="vm.readonly">
+          <button btn-type="default"
+                  size="sm"
+                  data-ng-click="vm.removeAttachment(attachment)"
+                  uib-tooltip="Remove Attachment"
+                  class="btn-attachment-selector danger">
+              <icon name="trashcan"></icon>
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <div class="panel-body" data-ng-hide="vm.attachments.length">
+      <empty-state icon-name="upload"
+                   data-ng-hide="vm.readonly"
+                   message="No attachments uploaded. Click the upload button to upload few"></empty-state>
+
+        <i class="text-muted" data-ng-show="vm.readonly">
+            <small>*No documents attached*</small>
+        </i>
+
+    </div>
+
+    <div class="panel-footer" data-ng-show="vm.attachments.length || vm.upload_in_progress">
+      <div class="clearfix">
+        <div data-ng-show="vm.upload_in_progress">
+          <uib-progressbar value="vm.progress_percentage"
+                           type="success"
+                           class="progress-striped active"></uib-progressbar>
+        </div>
+
+        <div data-ng-hide="vm.upload_in_progress">
+          <small>
+            <ng-pluralize count="vm.attachments.length"
+                when="{'1': '1 attachment uploaded', 'other': '{} attachments uploaded'}"></ng-pluralize>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

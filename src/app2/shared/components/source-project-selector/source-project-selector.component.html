@@ -1,0 +1,343 @@
+<div class="row space-on-top-lg">
+  <div class="text-center">
+    <div class="btn-group space-on-bottom-xxl">
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': review_entity_type == 'All' }"
+        (click)="setEntityType('All')"
+        >All</span
+      >
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': review_entity_type == 'Firm' }"
+        (click)="setEntityType('Firm')"
+        >Firm</span
+      >
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': review_entity_type == 'Strategy' }"
+        (click)="setEntityType('Strategy')"
+        >Strategy</span
+      >
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': review_entity_type == 'Fund' }"
+        (click)="setEntityType('Fund')"
+        >Product</span
+      >
+      <span
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': review_entity_type == 'Vehicle' }"
+        (click)="setEntityType('Vehicle')"
+        >Vehicle</span
+      >
+      <span
+        tooltip="Analyst Evaluation projects created for any entity types (combination of Product, Firm, Strategy or Vehicle)"
+        class="btn btn-default font-size-12"
+        [ngClass]="{ 'btn-primary': review_entity_type == 'Custom' }"
+        (click)="setEntityType('Custom')"
+        >Multi-entity</span
+      >
+    </div>
+  </div>
+</div>
+
+<div class="row clearfix space-on-top-lg">
+  <div col="6">
+    <div class="panel panel-default dd-multiselect">
+      <div class="panel-heading">
+        <div class="row clearfix">
+          <div col="6">
+            <div class="input-group-rename-this-class-when-filters-are-enabled">
+              <input
+                type="text"
+                [(ngModel)]="filterBy"
+                (ngModelChange)="handleInputChange($event)"
+                class="form-control"
+                placeholder="Search Projects by name"
+              />
+            </div>
+          </div>
+          <div col="6">
+            <div
+              *ngIf="
+                (review_entity_type == 'Fund' ||
+                  review_entity_type == 'Firm' ||
+                  review_entity_type == 'Strategy' ||
+                  review_entity_type == 'Vehicle') &&
+                (filters_applied || diligences.length > 0)
+              "
+            >
+              <button
+                class="space-on-top-2 btn btn-sm btn-default investor-button-right-margin"
+                tooltip="{{ filters_section.show ? 'Hide' : 'Apply' }} Filters"
+                (click)="toggleFiltersSection()"
+                [attr.aria-label]="
+                  (filters_section.show ? 'Hide' : 'Apply') + 'Filters'
+                "
+              >
+                <span
+                  appIcon
+                  name="filter"
+                  [ngClass]="{ 'text-orange': filters_section.show }"
+                ></span>
+              </button>
+              <button
+                class="space-on-top-2 btn btn-sm btn-default"
+                (click)="clearEntityFilter()"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row clearfix space-on-top-lg" *ngIf="filters_section.show">
+          <div col="12">
+            <ng-select
+              [items]="diligence_funds"
+              id="diligence_funds"
+              bindLabel="entity_name"
+              bindValue="entity_id"
+              [clearable]="false"
+              [searchable]="true"
+              [(ngModel)]="filter.diligence_entity"
+              placeholder="Filter by Products"
+              (change)="filterDiligences($event, 'Fund')"
+              *ngIf="review_entity_type == 'Fund'"
+            >
+            </ng-select>
+            <ng-select
+              [items]="diligence_firms"
+              id="diligence_firms"
+              bindLabel="entity_name"
+              bindValue="entity_id"
+              [clearable]="false"
+              [searchable]="true"
+              [(ngModel)]="filter.diligence_entity"
+              placeholder="Filter by Firms"
+              (change)="filterDiligences($event, 'Firm')"
+              *ngIf="review_entity_type == 'Firm'"
+            >
+            </ng-select>
+            <ng-select
+              [items]="diligence_strategies"
+              id="diligence_strategies"
+              bindLabel="entity_name"
+              bindValue="entity_id"
+              [clearable]="false"
+              [searchable]="true"
+              [(ngModel)]="filter.diligence_entity"
+              placeholder="Filter by Strategies"
+              (change)="filterDiligences($event, 'Strategy')"
+              *ngIf="review_entity_type == 'Strategy'"
+            >
+            </ng-select>
+            <ng-select
+              [items]="diligence_vehicles"
+              id="diligence_vehicles"
+              bindLabel="entity_name"
+              bindValue="entity_id"
+              [clearable]="false"
+              [searchable]="true"
+              [(ngModel)]="filter.diligence_entity"
+              placeholder="Filter by Vehicles"
+              (change)="filterDiligences($event, 'Vehicle')"
+              *ngIf="review_entity_type == 'Vehicle'"
+            >
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="list-group clear-margin-bottom">
+        <div
+          class="list-group-item"
+          *ngFor="let diligence of diligences; trackBy: trackById"
+        >
+          <div class="row clearfix">
+            <span
+              *ngIf="diligence.is_selected || select_all_entities"
+              class="space-on-right"
+            >
+              <span appIcon name="check" size="lg" class="text-success"></span>
+            </span>
+            <span
+              class="space-on-right"
+              tooltip="Select {{ diligence.name }}"
+              *ngIf="!diligence.is_selected"
+            >
+              <span
+                appIcon
+                name="plus-circle"
+                (click)="addToSelection(review_template, diligence, $index)"
+                size="lg"
+                class="text-primary"
+                role="button"
+                tabindex="0"
+                aria-label="add to selection"
+              ></span>
+            </span>
+            <span *ngIf="!isReport"
+              >{{ diligence.tofirm_name }} - {{ diligence.name }} - As of
+              {{ diligence.as_of_date | dvDate : ["isLocaleDate"] }}</span
+            >
+            <!-- TODO report -->
+            <span *ngIf="isReport"
+              >{{ diligence.name }} -
+              <small class="text-muted">{{
+                diligence.entity_name
+              }}</small></span
+            >
+            <span
+              class="space-on-left badge"
+              [ngClass]="{
+                'badge-info': diligence.entity_type == 'Strategy',
+                'badge-success': diligence.entity_type == 'Fund',
+                'badge-warning': diligence.entity_type == 'Firm',
+                'badge-primary':
+                  diligence.entity_type == 'Vehicle' ||
+                  diligence.entity_type == 'Review'
+              }"
+            >
+              {{
+                diligence.entity_type == "Fund"
+                  ? "Product"
+                  : diligence.entity_type == "Review"
+                  ? "Custom"
+                  : diligence.entity_type
+              }}</span
+            >
+          </div>
+        </div>
+        <div class="list-group-item" *ngIf="is_loading">
+          <div class="row clearfix">
+            <div>
+              <app-spinner spinnerHeight="20" broadSpinner="true"></app-spinner>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h5 class="pull-right" *ngIf="diligences.length">
+        Total {{ diligences.length }} Projects available
+      </h5>
+
+      <div
+        class="panel-body"
+        *ngIf="!filters_applied && !is_loading && !diligences.length"
+      >
+        <app-empty-state
+          message="Try changing your filters if you don't see what you're looking for"
+        ></app-empty-state>
+      </div>
+      <div
+        class="panel-body"
+        *ngIf="!is_loading && filters_applied && diligences.length == 0"
+      >
+        <app-empty-state
+          message="No Projects match applied filters"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+
+  <div class="dd-multiselect-selection" col="6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row clearfix">
+          <div col="8">
+            <p class="form-control-static inline-block">
+              Projects Selected
+              <span
+                *ngIf="
+                  review_template.selection_list.length > 0 ||
+                  select_all_entities
+                "
+                >({{ review_template.selection_list.length }})</span
+              >
+            </p>
+          </div>
+          <div col="4">
+            <span class="pull-right">
+              <button
+                class="btn btn-sm btn-default"
+                *ngIf="review_template.selection_list.length"
+                (click)="clearSelectionList(review_template)"
+              >
+                Clear Selection
+              </button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <ul
+        class="list-group clear-margin-bottom"
+        *ngIf="review_template.selection_list.length"
+      >
+        <li
+          class="list-group-item"
+          *ngFor="
+            let diligence of review_template.selection_list;
+            trackBy: trackById
+          "
+          [ngClass]="{ 'active-item': diligence.hoverState }"
+          (mouseenter)="diligence.hoverState = true"
+          (mouseleave)="diligence.hoverState = false"
+        >
+          <div class="media">
+            <div class="media-body">
+              <div class="dv-table full-width">
+                <div class="cell align-middle">
+                  <div class="clearfix">
+                    <div class="inline-block">
+                      <span
+                        tooltip="Remove {{ diligence.name }}"
+                        class="space-on-right"
+                      >
+                        <span
+                          appIcon
+                          name="minus-circle"
+                          class="text-danger"
+                          role="button"
+                          tabindex="0"
+                          aria-label="remove from selection"
+                          size="lg"
+                          (click)="
+                            removeFromSelection(review_template, diligence)
+                          "
+                        ></span>
+                      </span>
+                      <span class="space-on-right"
+                        >{{ diligence.tofirm_name }} - {{ diligence.name }} - As
+                        of
+                        {{
+                          diligence.as_of_date | dvDate : ["isLocaleDate"]
+                        }}</span
+                      >
+
+                      <!-- TODO report  -->
+                      <!-- <span class="space-on-right">{{
+                        diligence.name
+                      }}</span> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="panel-body text-center" *ngIf="select_all_entities">
+        All {{ data_length }} projects are selected.
+      </div>
+      <div
+        class="panel-body"
+        *ngIf="!review_template.selection_list.length && !select_all_entities"
+      >
+        <app-empty-state
+          message="You have not selected any projects. Please select them from the panel in the left"
+        ></app-empty-state>
+      </div>
+    </div>
+  </div>
+</div>

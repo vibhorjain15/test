@@ -1,0 +1,38 @@
+<form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">Edit {{vm.params.type}}
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row clearfix">
+          <div col="12">
+            <table class="table table-condensed table-striped">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>{{vm.params.type}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="entry in vm.selectionData">
+                  <td>
+                    <dv-checkbox
+                      data-ng-model="entry.is_selected">
+                    </dv-checkbox>
+                  </td>
+                  <td class="break-spaces">{{entry.text}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.loading">Save</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

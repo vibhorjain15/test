@@ -1,0 +1,17 @@
+.danger {
+  color: #cd3333;
+}
+.minwidth {
+  min-width: 124px;
+}
+
+.profile-form-group-margin {
+  margin-bottom: -15px;
+}
+.profile-form-margin {
+  margin-bottom: -10px;
+}
+.user-avatar{
+  height: 160px !important;
+  width: 160px !important;
+}

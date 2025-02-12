@@ -1,0 +1,120 @@
+
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-strategies-summary></ng2-strategies-summary>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-if="!vm.strategy"></spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel" data-ng-show="vm.strategy">
+          <div class="bordered-right cell">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{vm.strategy.display_name}}
+            </h4>
+
+            <span data-ng-if="vm.strategy.status == 'Following'" diligence-status="vm.strategy.status"></span>
+          </div>
+
+          <div class="bordered-right cell" accessible-to="manager" authorized-view>
+            <button btn-type="transparent" data-ng-if="vm.isEditable" data-ng-click="vm.editStrategy()"
+              uib-tooltip="Edit this strategy">
+              <div>
+                <icon name="pencil" size="2x"></icon>
+              </div>
+              <small>Edit Strategy</small>
+            </button>
+          </div>
+          <div class="cell bordered-right" accessible-to="investor" authorized-view>
+            <a class="clickable btn btn-transparent" ui-sref="app.firms.strategies.profile.related_entities"
+              uib-tooltip="Management firm, related strategies and strategies">
+              <div>
+                <icon name="branches" size="2x"></icon>
+              </div>
+              <small>Related Entities</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h4 class="clear-margin-top text-muted">Management Firm</h4>
+        <p class="clear-margin">
+          {{::vm.strategy.parentFirm.description}}
+          <span class="text-muted" data-ng-hide="vm.strategy.parentFirm.description">
+            <i>
+              Apparently, this firm prefers to keep an air of mystery about them.
+            </i>
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="panel-title">
+          Performance History
+
+          <small data-ng-show="vm.track_record_end_date && vm.track_record_start_date">
+            ({{vm.track_record_start_date|date:'MMMM yyyy'}} - {{vm.track_record_end_date|date:'MMMM yyyy'}})
+          </small>
+        </h5>
+
+        <div class="panel-controls" data-ng-show="vm.default_track_record">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control" target="_blank"
+              ui-sref="app.share_class_tables.detail({shareClassTableId: vm.default_track_record.id})"
+              uib-tooltip="View in Tabular format" tooltip-placement="left">
+              <icon name="table"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <c3-chart config="vm.return_chart_config"></c3-chart>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="panel-title">AUM History
+          <small>(in millions)</small>
+        </h5>
+
+        <div class="panel-controls" data-ng-show="vm.default_aum">
+          <div class="panel-controls-wrapper">
+            <a class="panel-control" target="_blank"
+              ui-sref="app.share_class_tables.detail({shareClassTableId: vm.default_aum.id})"
+              uib-tooltip="View in Tabular format" tooltip-placement="left">
+              <icon name="table"></icon>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <c3-chart config="vm.aum_chart_config"></c3-chart>
+      </div>
+    </div>
+
+      <div col="12">
+        <strategy-documents attachments="vm.attachments">
+          <div class="panel-footer" data-ng-hide="vm.attachments.length < 6">
+            <div class="clearfix">
+              <div class="pull-right">
+                <a ui-sref="app.firms.strategies.profile.documents.list" class="btn btn-default">
+                  View More &raquo;
+                </a>
+              </div>
+            </div>
+          </div>
+        </strategy-documents>
+      </div>
+    </div>
+  </div>
+</div>

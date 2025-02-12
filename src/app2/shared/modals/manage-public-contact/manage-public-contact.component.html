@@ -1,0 +1,130 @@
+<app-modal
+  [title]="edit_mode ? 'Editing Internal Contact' : 'Assign Internal Contacts'"
+  [firstButtonLabel]="edit_mode ? 'Update Contact' : 'Assign Contacts'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="templateRef"
+  [isFirstButtonDisabled]="loading_data"
+  [isLoading]="saving"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div *ngIf="loading_data" class="text-center">
+    <app-spinner spinner-height="25"></app-spinner>
+  </div>
+  <div *ngIf="!loading_data">
+    <div class="form-horizontal">
+      <dv-form-element
+        [label]="(entity_type == 'Fund' ? 'Product' : entity_type) + ' Name '"
+      >
+        <span class="label label-default space-on-top">{{
+          entity_details.name
+        }}</span>
+      </dv-form-element>
+      <dv-form-element
+        [showRightIcon]="false"
+        [isRequired]="!edit_mode"
+        [label]="'Member Name'"
+        *ngIf="edit_mode"
+      >
+        <span class="label label-default space-on-top">{{
+          contact?.fullName
+        }}</span>
+      </dv-form-element>
+
+      <dv-form-element
+        [modelController]="departmentsControl"
+        [fieldName]=""
+        [showRightIcon]="false"
+        [isRequired]="true"
+        [label]="'User Role'"
+        [elementCol]="9"
+        errorMessage="Please select a user role"
+        [for]="'departmentsControl'"
+      >
+        <ng-container *ngIf="departments.length">
+          <dv-select
+            [list]="departments"
+            [contoller]="departmentsControl"
+            [formControl]="departmentsControl"
+            [id]="'departmentsControl'"
+            (onSelectChange)="handleOnDepartmentChange($event)"
+            [bindLabel]="'description'"
+            [bindValue]="'id'"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            [multiple]="true"
+            [loading]="loading_data"
+            [placeholder]="loading_data ? 'Loading' : 'Select an Option'"
+            [aria-label]="'user role list'"
+          ></dv-select>
+        </ng-container>
+        <ng-container *ngIf="!departments.length && !loading_data">
+          <span>*No Departments Found*</span>
+        </ng-container>
+      </dv-form-element>
+
+      <dv-form-element
+        [showRightIcon]="false"
+        [isRequired]="false"
+        [label]="'Members'"
+        *ngIf="team_members && !edit_mode"
+        [elementCol]="9"
+      >
+        <app-dv-selector-list
+          name="resource_list"
+          [entity_type]="'User'"
+          [entities]="team_members"
+          [filter_params]="{}"
+          [displayParams]="teamSelectorDisplayParams"
+          (onChangeEntity)="handleEntitySelectionChange($event)"
+          [KeepSelectionAfterOnChange]="true"
+        ></app-dv-selector-list>
+      </dv-form-element>
+      <dv-form-element
+        [showRightIcon]="false"
+        [isRequired]="false"
+        [label]="' '"
+      >
+        <ng-container *ngIf="edit_mode">
+          <dv-checkbox [(ngModel)]="is_primary" [label]="'Is primary contact?'">
+          </dv-checkbox>
+          <span class="space-on-top infoIconEmailTemplate">
+            <span
+              name="info"
+              appIcon
+              [placement]="'right'"
+              container="body"
+              [tooltip]="
+                'These are primary contacts of the firm. This contact will be notified of any activities related to their assigned entities. Investor will not be able to remove these contacts while sending out requests.'
+              "
+            >
+            </span>
+          </span>
+        </ng-container>
+        <ng-container *ngIf="!edit_mode">
+          <dv-checkbox
+            [(ngModel)]="is_primary"
+            [label]="'Mark selected users as primary contact?'"
+          >
+          </dv-checkbox>
+          <span class="space-on-top infoIconEmailTemplate">
+            <icon
+              name="info"
+              [placement]="'right'"
+              [tooltip]="
+                'These are primary contacts of the entity. These contacts will be notified of any activities related to their assigned entities. Investor will not be able to remove these contacts while sending out requests.'
+              "
+            >
+            </icon>
+          </span>
+        </ng-container>
+      </dv-form-element>
+      <helper-text *ngIf="!edit_mode">
+        Primary contact(s) of an entity will be notified of any activities
+        related to the entities assigned to them. Investor will not be able to
+        remove these contact(s) while sending out request(s).
+      </helper-text>
+    </div>
+  </div>
+</ng-template>

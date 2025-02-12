@@ -1,0 +1,20 @@
+::ng-deep .ngx-slider-pointer  {
+  width: 12px !important;
+  height: 12px !important;
+  top: -4px !important;
+}
+  
+::ng-deep .ngx-slider-pointer:after {
+  width: 0px !important;
+  height: 0px !important;
+}
+
+::ng-deep .ngx-slider .ngx-slider-bubble {
+  bottom: 10px !important;
+  font-size: 12px !important;
+}
+
+::ng-deep .ngx-slider {
+  margin-top: 25px !important;
+}
+  

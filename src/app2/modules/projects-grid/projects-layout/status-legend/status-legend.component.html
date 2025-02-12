@@ -1,0 +1,33 @@
+<div
+  class="panel panel-default space-on-top-lg clear-margin-bottom"
+  *ngIf="legends"
+  role="region"
+  aria-label="Legends Panel"
+>
+  <div class="panel-body">
+    <ul
+      class="list-inline clear-margin"
+      [attr.role]="legends?.length ? 'list' : null"
+    >
+      <li
+        *ngFor="let legend of legends; let i = index"
+        class="space-on-right space-on-top"
+        role="listitem"
+      >
+        <span
+          class="label label-{{
+            legend.label_type
+          }}-light inline-block align-middle"
+          role="status"
+          aria-label="{{ legend.status }}"
+        >
+          <small class="project-status-label">{{ legend.status }}</small>
+        </span>
+
+        <span class="inline-block align-middle space-on-left">
+          {{ legend.desc }}
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

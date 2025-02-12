@@ -1,0 +1,77 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      Due diligence Activity
+
+      <span data-ng-show="vm.dd_activities.length">
+        ({{vm.dd_activities.length}})
+      </span>
+    </h5>
+  </div>
+
+  <div class="panel-body">
+    <spinner data-ng-hide="vm.dd_activities"></spinner>
+
+    <ul class="list-unstyled due-diligence-history" data-ng-show="vm.dd_activities.length">
+      <li data-ng-repeat="diligence in vm.dd_activities">
+        <div class="dv-table full-width">
+          <div class="cell padded icon-wrapper align-middle text-center">
+            <span diligence-type-icon="diligence.diligence_type"
+                  icon-size="lg"
+                  enable-tooltip="true"></span>
+          </div>
+
+          <div class="cell align-middle">
+            <div>
+              <small class="text-muted">
+                <span data-ng-show="diligence.status_date">
+                  <span am-time-ago="diligence.status_date"></span>
+                </span>
+              </small>
+            </div>
+
+            <div>
+              <span class="align-middle">
+                <a class="clickable">
+                  {{diligence.status_user.firstName}} {{diligence.status_user.lastName}}
+                </a>
+
+                updated
+
+                <span data-ng-show="vm.is_investor">
+                  diligence on
+                  <a class="clickable">{{diligence.entity_name}}</a>
+                </span>
+
+                <span data-ng-show="!vm.is_investor">
+                  diligence for
+                  <a class="clickable">{{diligence.investorfirm_name}}</a>
+                </span>
+
+                <small data-ng-show="diligence.is_internal">
+                  <i>(marked as private)</i>
+                </small>
+
+                to
+              </span>
+
+              <span class="align-middle" diligence-status="diligence.status"></span>
+            </div>
+
+            <div>
+              <small>
+                <a ui-sref="app.diligence.project.questionnaire({diligenceId: diligence.id})">View</a>
+              </small>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div data-ng-show="vm.dd_activities && !vm.dd_activities.length">
+      <p class="alert alert-info">
+        No due diligence activity yet. Get started by clicking on the + sign in the top navigation.
+      </p>
+    </div>
+  </div>
+</div>

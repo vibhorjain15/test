@@ -1,0 +1,249 @@
+<ng2-documents-grid data-ng-if="vm.Utils.isAngular()"></ng2-documents-grid>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-body">
+
+    <div data-ng-if="vm.documents.data && vm.documents.data.length">
+      <div chardin="vm.documentsChardinConfig" reveal-on-keypress></div>
+    </div>
+
+    <div class="panel panel-default search-string-panel">
+      <div class="panel-heading clearfix">
+      <div class="panel panel-info" data-ng-if="vm.subscription == 'Free'">
+          <div class="panel-heading">
+            <span>This is your centralized document library that houses all documents shared by you or with you. These documents are associated with Firm, Strategy, Product or Vehicle projects. You can reuse these documents across multiple diligence requests.</span>
+          </div>
+        </div>
+        <div class="content-wrapper">
+          <div class="content-block space-on-top-lg col-xs-12" col="2">
+            <strong>
+              <icon name="file" class="space-on-right"></icon>
+              Document Library
+            </strong>
+          </div>
+
+          <div class="pull-right" col="10" class="col-xs-12">
+            <div col="4" class="col-xs-12 pull-right" data-ng-if="vm.customDateFilter">
+                <dv-daterangepicker ng-model="vm.customDateFilter"
+                  min-date="vm.minDate" max-date="vm.maxDate" apply-method="vm.applyMethod"></dv-daterangepicker>
+            </div>
+
+            <div col="5" class="space-on-left bordered-left search-panel-box clickable col-xs-12 pull-right" style="margin-top:2px;" data-ng-if="vm.isSearchPanelCollapsed && vm.subscription != 'Free'">
+              <search-input router-state="app.content.documents"></search-input>
+              <a class="search-filter-text" ng-data-if="vm.subscription != 'Free'" data-ng-click="vm.toggleSearchPanel()">Search with Filters</a>
+            </div>
+
+            <div class="clickable space-on-left-xxl pull-right col-xs-10" col="1" style="margin-top:2px;"
+                uib-tooltip="Hide Search with Filters"
+                data-ng-if="!vm.isSearchPanelCollapsed"
+                data-ng-click="vm.toggleSearchPanel()">
+              <button btn-type="default">
+                <icon name="chevron-up"></icon>
+              </button>
+            </div>
+
+            <!-- We switched to using class to disable button since tooltip not working properly with ng-disabled in some browsers-->
+            <div class="pull-right col-xs-12" style="margin-top:2px;" col="2" >
+                <button btn-type="primary" data-ng-click="vm.addDocument()"
+                  data-ng-class="{'route-link-disabled':vm.freeSubscription}" ng-if="!vm.isFreeManager"
+                  uib-tooltip="{{vm.freeSubscription?'This feature is available for premium users.':''}}">
+                  <icon name="plus"></icon>
+                  <span>Add Document</span>
+                </button>
+                <a ui-sref="app.premium" class="btn btn-primary route-link-disabled" ng-if="vm.isFreeManager" uib-tooltip="Ability to maintain documents outside of a diligence project in the document library is enabled for premium subscribers. Learn more" tooltip-placement="left"> <icon name="plus"></icon> Add Document</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form class="form-horizontal" name="vm.searchForm" novalidate uib-collapse="vm.isSearchPanelCollapsed">
+        <div class="panel-body">
+          <div col="12" class="space-on-bottom-lg">
+            <div offset="1" col="11" class="">
+              <label class="control-label clear-margin-bottom inline-block space-on-right">Documents matching</label>
+              <select class="form-control inline-block w-80"
+                      required
+                      data-ng-model="vm.globalTernaryOperator">
+                <option value="or">ANY</option>
+                <option value="and">ALL</option>
+              </select>
+              <label class="control-label clear-margin-bottom inline-block space-on-left">of the following
+                criteria</label>
+            </div>
+          </div>
+
+          <div col="12" class="space-on-top-xl" data-ng-repeat="criteria in vm.searchCriteria">
+            <div col="1" class="pa-lr-lg">
+              <label class="control-label" data-ng-if="$index == 0">&nbsp;</label>
+              <h5 class="text-right clear-margin-bottom text-uppercase" data-ng-if="$index > 0">
+                {{vm.globalTernaryOperator}}</h5>
+            </div>
+            <div col="5" class="pa-lr-lg">
+              <form-group field-name="Criteria">
+                <label for="criteria_{{$index}}" class="control-label text-capitalize"
+                       data-ng-show="$index == 0">Criteria</label>
+                <select class="form-control"
+                        id="criteria_{{$index}}"
+                        name="criteria_{{$index}}"
+                        chosen
+                        required
+                        data-ng-model="criteria.criteriaObj"
+                        data-placeholder="Select a criteria"
+                        data-ng-change="vm.selectCriteria(criteria, $index)"
+                        data-ng-options="option as option.text for option in vm.criteriaOptions">
+                  <option value=""></option>
+                </select>
+              </form-group>
+            </div>
+
+            <div col="2" class="pa-lr-lg">
+              <label class="control-label" data-ng-if="$index == 0">Condition</label>
+              <form-group field-name="Condition">
+                <select class="form-control"
+                        required
+                        data-ng-model="criteria.condition">
+                  <option value="" disabled selected hidden>Select condition</option>
+                  <option value="greater_than"
+                          data-ng-if="criteria.criteriaObj.responseType == 'Date'">
+                    Greater Than Or Equal To
+                  </option>
+                  <option value="lesser_than"
+                          data-ng-if="criteria.criteriaObj.responseType == 'Date'">
+                    Lesser Than Or Equal To
+                  </option>
+                  <option value="equals">Equals</option>
+                </select>
+              </form-group>
+            </div>
+
+            <div col="3" class="pa-lr-lg">
+
+              <label class="control-label" data-ng-if="$index == 0">Value</label>
+              <form-group field-name="Value" data-ng-if="!criteria.criteriaObj.responseType">
+                <input type="text"
+                       data-ng-model="criteria.value"
+                       required
+                       placeholder="Type a value"
+                       dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                       class="form-control"/>
+              </form-group>
+
+              <form-group field-name="Value" data-ng-if="criteria.criteriaObj.responseType == 'Date'" control-selector="dv-datepicker">
+                <dv-datepicker data-ng-model="criteria.value"
+                               max-date="vm.maxDate"
+                               ng-required="true"></dv-datepicker>
+              </form-group>
+
+              <form-group field-name="Value"
+                          data-ng-if="criteria.criteriaObj.text == 'Document Type' && criteria.criteriaObj.responseType == 'Dropdown'">
+                <select class="form-control"
+                        chosen multiple
+                        required
+                        data-ng-model="criteria.value"
+                        data-ng-options="option.id as option.name for option in criteria.criteriaObj.childOptions">
+                  <option value=""></option>
+                </select>
+              </form-group>
+
+              <form-group field-name="Value"
+                          data-ng-if="criteria.criteriaObj.responseType == 'Integer' || criteria.criteriaObj.responseType == 'Percentage' || criteria.criteriaObj.responseType == 'Numeric'">
+                <input type="number"
+                       data-ng-model="criteria.value"
+                       class="form-control"
+                       required/>
+              </form-group>
+
+              <form-group field-name="Value"
+                          data-ng-if="criteria.criteriaObj.responseType == 'TextEmail' || criteria.criteriaObj.responseType == 'Text' || criteria.criteriaObj.responseType == 'TextMultiLine' || criteria.criteriaObj.responseType == 'TextPhone'">
+                <input type="text"
+                       data-ng-model="criteria.value"
+                       class="form-control"
+                       dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                       required/>
+              </form-group>
+
+              <form-group field-name="Value"
+                          data-ng-if="criteria.criteriaObj.text != 'Document Type' && criteria.criteriaObj.responseType == 'Dropdown'">
+                <select class="form-control"
+                        chosen multiple
+                        required
+                        data-ng-model="criteria.value"
+                        data-ng-options="option.id as option.name for option in criteria.criteriaObj.childOptions">
+                  <option value=""></option>
+                </select>
+              </form-group>
+            </div>
+          </div>
+
+          <div col="12" class="space-on-top-xxl">
+            <div offset="9" col="2" class="">
+              <div class="pull-right">
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right"
+                        uib-tooltip="Add Criteria"
+                        data-ng-click="vm.addNewCriteria()">
+                  <icon name="plus"></icon>
+                </button>
+
+                <button btn-type="default"
+                        data-ng-disabled="vm.searchCriteria.length < 2"
+                        size="sm"
+                        uib-tooltip="Remove Criteria"
+                        data-ng-click="vm.removeCriteria()">
+                  <icon name="minus"></icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div col="12" class="space-on-bottom-xl">
+            <div offset="1" col="4" class="">
+              <button type="submit" btn-type="primary" class="space-on-right-lg" data-ng-click="vm.getSearchResults()">
+                <icon name="search" class="space-on-right"></icon>
+                Start Searching
+              </button>
+
+              <button btn-type="default" data-ng-click="vm.resetFiltersData()">
+                <icon name="refresh" class="space-on-right"></icon>
+                Reset Filters
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+    <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+      <div class="panel-body padded-lg">
+        <h5 class="inline space-on-right-lg">
+          <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+        </h5>
+        <a class="btn btn-default success space-on-right-lg"
+           uib-tooltip="Download All (select up to 1000 documents)"
+           data-ng-class="{'linkDisabled': vm.totalSelectedRecords > 1000  || vm.isFreeManager}"
+           data-ng-click="vm.downloadAllDocuments()">
+          <strong><span class="dvi dvi-download3"></span>  </strong>
+        </a>
+        <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+          <strong><icon name="close"></icon></strong>
+        </a>
+      </div>
+    </div>
+
+    <div data-ng-if="vm.showFilters()" class="label-list space-on-bottom-lg">
+      <span class="btn btn-primary-outline text-uppercase space-on-right"
+            data-ng-repeat="criterion in vm.searchCriteria" data-ng-show="criterion.value && criterion.value !== ''">
+          <small>{{vm.displayFilter(criterion)}}</small>
+
+          <a class="space-on-left clickable link-disguise"
+             data-ng-click="vm.removeFilterCriterion($index)">&times;</a>
+        </span>
+    </div>
+
+    <spinner data-ng-if="!vm.initGridSection"></spinner>
+    <div data-ng-if="vm.initGridSection">
+      <dv-grid grid-resource="vm.documents" name="vm.documentsGrid" grid-name="'documents'"></dv-grid>
+    </div>
+  </div>
+</div>

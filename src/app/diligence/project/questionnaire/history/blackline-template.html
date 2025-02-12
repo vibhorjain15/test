@@ -1,0 +1,49 @@
+<spinner data-ng-show="vm.loading_histories"></spinner>
+
+<p class="text-muted" data-ng-if="!vm.loading_histories && !vm.revision">
+  <i>
+    No history available for this question.
+  </i>
+</p>
+
+<ul class="list-unstyled" data-ng-show="vm.revision">
+  <li class="padded-top padded-bottom">
+    <small class="text-muted">
+      <strong>
+        {{vm.revision.current.responseAuthor.firstName}} {{vm.revision.current.responseAuthor.lastName}} ({{vm.revision.current.responseAuthor.firmInfo.name}}):
+      </strong>
+    </small>
+
+    <p data-ng-if="vm.revision.current.is_NA">
+      <i>
+        <small class="text-muted">*Response Marked as Not Applicable*</small>
+      </i>
+    </p>
+
+    <p class="clear-margin word-break-break-all" data-ng-if="!vm.revision.current.is_NA"
+       htmldiff
+       current="vm.revision.current"
+       previous="vm.revision.previous"
+       text-property="responseDisplay"></p>
+
+    <small class="text-muted">{{vm.revision.current.responseTimeStamp|fromNow}}</small>
+
+    <div class="space-on-top" data-ng-hide="vm.revision.latest">
+      <a role="button" data-ng-click="vm.restoreRevision(vm.revision)">Restore this revision</a>
+    </div>
+  </li>
+</ul>
+
+<div class="sidebar-form fixed-bottom" data-ng-show="vm.revision">
+  <nav>
+    <ul class="pager">
+      <li data-ng-class="{'disabled': vm.revision.oldest}">
+        <a role="button" data-ng-click="vm.decrementRevision()">Previous</a>
+      </li>
+
+      <li data-ng-class="{'disabled': vm.revision.latest}">
+        <a role="button" data-ng-click="vm.incrementRevision()">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>

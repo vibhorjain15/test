@@ -1,0 +1,286 @@
+<form
+  novalidate
+  name="newDdqForm"
+  class="form-horizontal"
+  [formGroup]="ddqForm"
+  autocomplete="off"
+>
+  <dv-form-element
+    [showRightIcon]="false"
+    fieldName="Entity Type"
+    [modelController]="ddqForm.get('entityType')"
+    label="Entity Type"
+    [elementCol]="'4'"
+    [labelCol]="'4'"
+    [isRequired]="true"
+    errorMessage="Entity type is required"
+  >
+    <dv-select
+      [id]="'entityType'"
+      formControlName="entityType"
+      bindLabel="label"
+      bindValue="name"
+      [clearable]="false"
+      [searchable]="true"
+      placeholder="Select an entity type"
+      (onSelectChange)="setEntity($event)"
+      [list]="entityTypes"
+      [contoller]="ddqForm.get('entityType')"
+    >
+    </dv-select>
+  </dv-form-element>
+
+  <dv-form-element
+    [showRightIcon]="false"
+    *ngIf="ddqForm.get('entityType').value"
+    fieldName="entityId"
+    [modelController]="ddqForm.get('entityId')"
+    [label]="
+      currentEntityList
+        ? keywordConstants[ddqForm.get('entityType').value]
+        : 'My Firm'
+    "
+    [elementCol]="'4'"
+    [labelCol]="'4'"
+    [isRequired]="true"
+    errorMessage="{{
+      keywordConstants[ddqForm.get('entityType').value]
+    }} is required"
+  >
+    <ng-container *ngIf="!ddqForm.get('is_firm_dd').value">
+      <dv-select
+        [id]="'entityId'"
+        formControlName="entityId"
+        bindLabel="name"
+        bindValue="id"
+        [clearable]="false"
+        [searchable]="true"
+        placeholder="Select an Entity"
+        (onSelectChange)="setEntities($event)"
+        [list]="currentEntityList"
+        [contoller]="ddqForm.get('entityId')"
+        appendTo="body"
+      >
+      </dv-select>
+      <small class="pull-right">
+        <a class="clickable" (click)="openEntityAddModal()"
+          >Add New
+          {{ keywordConstants[this.ddqForm.get("entityType").value] }}</a
+        >
+      </small>
+    </ng-container>
+    <div class="col-md-12" *ngIf="ddqForm.get('is_firm_dd').value">
+      <p class="control-label pull-left">
+        {{ currentFirm?.name }}
+      </p>
+    </div>
+  </dv-form-element>
+
+  <dv-form-element
+    [showRightIcon]="false"
+    fieldName="Add to Master Project"
+    label="Add Q/As to Master Project"
+    [elementCol]="'4'"
+    [labelCol]="'4'"
+    [centerAligned]="true"
+    infoText="Q/As are added to the entity’s master project by default. This is recommend to keep all of the Library Q/As in a centralized place. Alternatively, you can disable and create a separate Library project."
+  >
+    <ui-switch
+      formControlName="addToMasterProject"
+      size="small"
+      class="space-on-left"
+      (change)="toggleAddToMasterProject($event)"
+    >
+    </ui-switch>
+  </dv-form-element>
+
+  <ng-container *ngIf="!ddqForm.get('addToMasterProject').value">
+    <dv-form-element
+      [showRightIcon]="false"
+      fieldName="Name this Project"
+      [modelController]="ddqForm.get('name')"
+      label="Name this Project"
+      [elementCol]="'4'"
+      [labelCol]="'4'"
+      [isRequired]="true"
+    >
+      <input
+        type="text"
+        id="name"
+        class="form-control"
+        formControlName="name"
+        maxlength="320"
+        required
+        placeholder="Example: Investment Profile"
+      />
+      <div
+        class="text-danger"
+        *ngIf="
+          ddqForm.get('name').touched && ddqForm.get('name').errors?.required
+        "
+      >
+        Name is required
+      </div>
+      <div
+        class="text-danger"
+        *ngIf="
+          ddqForm.get('name').touched && ddqForm.get('name').errors?.pattern
+        "
+      >
+        {{
+          errorMessageMap.avoidFirstSplCharacter | interpolate : "Project Name"
+        }}
+      </div>
+      <div
+        class="text-danger"
+        *ngIf="
+          ddqForm.get('name').touched && ddqForm.get('name').errors?.containsHtml
+        "
+      >
+        {{
+          errorMessageMap.containsHtml | interpolate : "Project Name"
+        }}
+      </div>
+
+      <div class="space-on-top-sm" *ngIf="true">
+        Suggested Name:
+        <a class="clickable" (click)="setSuggestedProjectName()">
+          {{ getSuggestedProjectName() }}
+        </a>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      [showRightIcon]="false"
+      fieldName="As of Date"
+      [modelController]="ddqForm.get('as_of_date')"
+      label="As of Date"
+      [elementCol]="'4'"
+      [labelCol]="'4'"
+    >
+      <app-date-picker
+        [id]="'as_of_date'"
+        [value]="asOfDate"
+        [maxDate]="maxAsOfDate"
+        (change)="handleAsOfDate($event)"
+      >
+      </app-date-picker>
+    </dv-form-element>
+  </ng-container>
+
+  <!-- Response Date -->
+  <dv-form-element
+    [showRightIcon]="false"
+    label="Response Date"
+    [elementCol]="'4'"
+    [labelCol]="'4'"
+  >
+    <div>
+      <app-date-picker
+        [id]="'reUseProjectAgain'"
+        (change)="handleResponseDateChange($event)"
+        [value]="responseDate"
+        [disabled]="ddqForm.get('reUseProjectAgain').value"
+        [maxDate]="responseDate"
+        placeholder="Set a response date"
+      ></app-date-picker>
+    </div>
+  </dv-form-element>
+  <!-- Response Date -->
+  <!-- Upload -->
+  <dv-form-element
+    [showRightIcon]="false"
+    label="Upload Q/As"
+    [elementCol]="'4'"
+    [isRequired]="true"
+    [disabled]="ddqForm.get('reUseProjectAgain').value"
+    [labelCol]="'4'"
+  >
+    <dv-uploader
+      [isMultiple]="false"
+      [disabled]="ddqForm.get('reUseProjectAgain').value"
+      (onFileUpload)="handleFileUpload($event)"
+      dragLabel="Drag & Drop your Word file here"
+      [accept]="accepted"
+    ></dv-uploader>
+  </dv-form-element>
+  <!-- Upload -->
+
+  <dv-form-element
+    [showRightIcon]="false"
+    fieldName="reUseProjectAgain"
+    *ngIf="!ddqForm.get('addToMasterProject').value"
+    label="Create New or Reuse an Existing Template"
+    [elementCol]="'4'"
+    [labelCol]="'4'"
+    [centerAligned]="true"
+    infoText="Create or use templates from the dropdown."
+  >
+    <ui-switch
+      formControlName="reUseProjectAgain"
+      size="small"
+      id="reUseProjectAgain"
+      class="space-on-left"
+      (change)="toggleReUseTemplate($event)"
+    >
+    </ui-switch>
+  </dv-form-element>
+
+  <dv-form-element
+    [showRightIcon]="false"
+    fieldName="Template Name"
+    *ngIf="ddqForm.get('reUseProjectAgain').value"
+    [modelController]="ddqForm.get('templateId')"
+    [label]="'Select Template'"
+    [elementCol]="'4'"
+    [disabled]="ddqForm.get('templateId').disabled"
+    [labelCol]="'4'"
+    [isRequired]="true"
+  >
+    <dv-select
+      [id]="'templateId'"
+      [list]="templates"
+      formControlName="templateId"
+      [disabled]="ddqForm.get('templateId').disabled"
+      bindLabel="name"
+      bindValue="id"
+      [clearable]="false"
+      [searchable]="true"
+      [placeholder]="'Please type to search or add template'"
+      create-option-text="'Add New Template'"
+      [addTagText]="'Add New Template'"
+      [addTag]="openAddTemplateModal"
+      #ddTemplate
+      name="template"
+      id="template"
+    ></dv-select>
+
+    <small class="pull-right">
+      <a
+        class="clickable"
+        (click)="openAddTemplateModal($event, requestSteps.DOC_PARSER)"
+        >Upload Document</a
+      >
+      /
+      <a
+        class="clickable"
+        (click)="openAddTemplateModal($event, requestSteps.TEMPLATE_BUILDER)"
+        >Use Template Builder</a
+      >
+    </small>
+  </dv-form-element>
+
+  <div col="4" offset="4" class="text-center new-ddq-formButtons">
+    <dv-button
+      [disabled]="!ddqForm.valid"
+      (onClick)="submit()"
+      [loader]="submitLoader"
+    >
+      {{
+        !ddqForm.get("reUseProjectAgain").value ? "Import" : "Start Populating"
+      }}
+    </dv-button>
+
+    <dv-button btnType="default" (onClick)="handleGoBack()"> Back </dv-button>
+  </div>
+</form>

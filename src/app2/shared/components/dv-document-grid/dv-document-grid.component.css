@@ -1,0 +1,106 @@
+.content-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.document-grid-actions {
+  display: flex;
+}
+.margin-left-auto {
+  margin-left: auto !important;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.hide-filter-toggle {
+  position: absolute;
+  right: 0px;
+  z-index: 999;
+}
+
+:host ::ng-deep .search-panel-box form {
+  width: 320px !important;
+}
+
+::ng-deep .document-dropdown-class {
+  right: -70px !important;
+  left: auto !important;
+}
+
+:host dv-tabs#document-tabs ::ng-deep .dv-border {
+  margin-right: 25px !important;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.display-contents {
+  display: contents;
+}
+
+:host ::ng-deep .filter-applied {
+  border: 1px solid #1890af;
+  color: #1890af;
+  background: #ecf7f9;
+}
+
+.filter-label {
+  color: #4d4d4d;
+  font-weight: 600;
+  display: flex;
+  font-size: 12px;
+  align-items: center;
+}
+.filter-chip {
+  border-radius: 4px;
+  border: 1px solid #a5d0dc;
+  background: #ecf7f9;
+  padding: 1px 8px;
+  display: flex;
+  align-items: center;
+}
+.closeIcon {
+  color: #818e9a !important;
+  font-size: 13px;
+}
+.badge {
+  border-radius: 30px;
+  background: #f0592b;
+  display: flex;
+  padding: 2px 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.selection-header {
+  display: flex;
+  align-items: center;
+}
+.selection-header-wrapper {
+  border-radius: 4px;
+  border: 1px solid #d2e5ea;
+  background: #ecf7f9;
+}
+.doc-grid ::ng-deep .ag-theme-alpine {
+  --ag-selected-row-background-color: rgb(24, 144, 175, 0.1);
+}
+.doc-grid ::ng-deep .ag-row-hover {
+  background-color: rgb(24, 144, 175, 0.1) !important;
+}
+
+:host ::ng-deep .hide-expand-icon .ag-group-contracted {
+  display: none !important;
+}
+
+:host ::ng-deep .hide-expand-icon .ag-group-expanded {
+  display: none !important;
+}
+
+:host ::ng-deep .hide-expand-icon .ag-group-child-count {
+  display: none !important;
+}

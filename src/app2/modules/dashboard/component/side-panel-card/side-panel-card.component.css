@@ -1,0 +1,111 @@
+.dv-dashboard-side-panel {
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  padding: 10px 5px;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.smaller-panel-heading {
+  width: 107px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.smaller-panel {
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0px;
+}
+
+.dv-dashboard-side-panel-data .heading {
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Open Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 36px;
+}
+.dv-dashboard-side-panel-data .wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.dv-dashboard-side-panel-data .badge {
+  color: #0071a4;
+  background-color: #e3f5ff;
+  height: 18px;
+  border-radius: 2px;
+}
+
+.dv-dashboard-side-panel-data {
+  display: flex;
+  flex-direction: column;
+  /* gap: 10px; */
+  width: 100%;
+}
+
+.dv-dashboard-side-panel-data-list {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.dv-dashboard-side-panel-data-list .light-count {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  /*  */
+  color: #666666;
+}
+
+.light-count-col {
+  color: #666666;
+}
+
+.color-update {
+  color: #0071a4;
+}
+.color-update-badge {
+  background-color: #0071a4 !important;
+  color: white !important;
+}
+
+.bg-active {
+  background: var(--Background-Accent-BG-1, #e3f5ff);
+}
+
+.dot-new {
+  height: 9px;
+  width: 9px;
+  background-color: #f0592b;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.dot-new-icon-expanded {
+  top: -16px;
+  left: 0px;
+}
+
+.dot-new-icon {
+  top: 4px;
+  left: -24px;
+}
+
+*:focus-visible {
+  outline: 2px solid #0ca6ed !important; /* A blue outline similar to the browser default */
+  outline-offset: 2px; /* Space between the outline and the element */
+  border-radius: 4px; /* Optional: make the outline rounded */
+  box-shadow: 0 0 5px rgba(0, 0, 255, 0.5); /* Optional: add a blue glow effect */
+}
+
+/* Optional: Reset the default focus outline when an element is clicked with the mouse */
+*:focus {
+  outline: none;
+}

@@ -1,0 +1,22 @@
+<app-modal [title]="modalTitle" [initialTemplate]="ref" [isLoading]="loading" cancelButtonLabel="Close">
+</app-modal>
+<ng-template #ref>
+  <div class="header">
+    Copy the link below and paste it on your website if you want the managers to
+    apply for this opportunity.
+  </div>
+  <div
+    class="link"
+    [ngClass]="copied ? 'link-border-success' : 'link-border-normal'"
+  >
+    <span class="link-text">
+      {{ link.length < 66 ? link : link.substring(0, 62) + "..." }}
+    </span>
+    <span
+      class="copy-link clickable pull-right"
+      [ngClass]="copied ? 'copy-link-success' : 'copy-link-normal'"
+      (click)="copyToClipboard()"
+      >{{ copied ? "COPIED" : "COPY LINK" }}</span
+    >
+  </div>
+</ng-template>

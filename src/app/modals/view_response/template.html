@@ -1,0 +1,72 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">Full Response
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" name="vm.response_form" novalidate>
+      <form-group field-name="Question">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Question</label>
+        <div col="8" col-type="sm">
+          <p class="response_label"><span ng-bind-html="vm.response.question_text" class="break_word"></span></p>
+        </div>
+      </form-group>
+      <form-group field-name="template">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Template</label>
+        <div col="8" col-type="sm">
+          <p class="label label-default space-on-top response_label"><span ng-bind-html="vm.response.associated_template" class="break_word"></span></p>
+        </div>
+      </form-group>
+      <form-group field-name="Investor">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Investor</label>
+        <div col="8" col-type="sm">
+          <p class="label label-default space-on-top response_label"><span ng-bind-html="vm.response.associated_investor" class="break_word"></span></p>
+        </div>
+      </form-group>
+      <form-group field-name="Entity">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Associated {{vm.response.associated_entity_type == "Fund"? 'Product' : vm.response.associated_entity_type}}</label>
+        <div col="8" col-type="sm">
+          <p class="label label-default space-on-top response_label"><span ng-bind-html="vm.response.associated_entity" class="break_word"></span></p>
+        </div>
+      </form-group>
+      <form-group field-name="template">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Expiry Date</label>
+        <div col="8" col-type="sm">
+          <p data-ng-if="vm.response.expiry_date" class="label label-default space-on-top response_label">{{vm.response.expiry_date | date}}</p>
+          <p data-ng-if="!vm.response.expiry_date" class="label label-default space-on-top response_label"><i>N/A</i></p>
+
+        </div>
+      </form-group>
+      <form-group field-name="template" data-ng-if="vm.selected_tab != 'All'">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Verified</label>
+        <div col="8" col-type="sm">
+          <p data-ng-if="vm.response.is_verified" class="label label-success space-on-top response_label"><icon name="check"></icon> Verified</p>
+          <p data-ng-if="!vm.response.is_verified" class="label label-warning space-on-top response_label"><icon name="close"></icon> Not Verified</p>
+
+        </div>
+      </form-group>
+      <form-group field-name="template">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Tags</label>
+        <div col="8" col-type="sm">
+          <p data-ng-if="vm.response.tags_text" class="label label-default space-on-top response_label">{{vm.response.tags_text}}</p>
+          <p data-ng-if="!vm.response.tags_text" class="label label-default space-on-top response_label"><i>N/A</i></p>
+
+        </div>
+      </form-group>
+      <form-group field-name="template">
+        <label for="first-name" class="control-label" col ="3" col-type="sm">Response</label>
+        <div col="8" col-type="sm">
+          <span id="response" ng-bind-html="vm.response_text" class="break_word response_label"></span>
+        </div>
+      </form-group>
+    </form>
+
+  </div>
+  <div class="modal-footer">
+    <button type="submit" ngclipboard data-clipboard-target="#response" data-ng-click="vm.copyResponse()">Copy Response</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</div>

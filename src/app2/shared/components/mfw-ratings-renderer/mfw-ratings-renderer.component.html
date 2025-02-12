@@ -1,0 +1,7 @@
+<div *ngIf="!params.node.group && params.data">
+    <span *ngFor="let item of [].constructor(+params.data.rating)" [adaptivePosition]="false" [tooltip]="params.data.rating"
+        container="body">&#11088;</span>
+</div>
+<div *ngIf="params.node.group">
+    {{params.value}}
+</div>

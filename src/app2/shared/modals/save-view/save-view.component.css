@@ -1,0 +1,10 @@
+.save-view,
+.rename-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+hr {
+  margin-top: 0;
+}

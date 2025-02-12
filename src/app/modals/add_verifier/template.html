@@ -1,0 +1,40 @@
+<form class="form-horizontal" name="vm.add_verifier_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Add Reviewer
+    
+          <a class="pull-right clickable link-disguise link-unstyled"
+             data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+    
+    <div class="modal-body">
+        <form-group field-name="Team Member Name">
+            <label for="teammemberName" class="control-label col-sm-3">
+            Select Team Member/User Role
+            </label>
+
+            <div class="col-sm-9">
+                <dv-subscriber-selection selection="vm.params.assigned_to_user" single-mode="true" functions="vm.functions"></dv-subscriber-selection>
+            </div>
+        </form-group>
+        <form-group field-name="Due Date">
+            <label for="dueDate" class="control-label col-sm-3">
+            Due Date
+            </label>
+
+            <div class="col-sm-9">
+                <dv-datepicker data-ng-model="vm.params.due_date"
+                        ng-required="true"
+                        id="dueDate"
+                        min-date="vm.minDate">
+                </dv-datepicker>
+            </div>
+        </form-group>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.saving">{{vm.edit_mode ? 'Update Reviewer' : 'Add Reviewer'}}</button>
+        <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

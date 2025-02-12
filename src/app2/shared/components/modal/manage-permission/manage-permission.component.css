@@ -1,0 +1,20 @@
+tag-input tag-input-dropdown ::ng-deep ng2-dropdown div.ng2-dropdown-menu {
+  top: inherit !important;
+  left: inherit !important;
+
+  margin-top: 7px;
+  margin-top: 5px;
+  margin-left: -5px;
+  position: absolute;
+  padding: 5px 0;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #0003;
+  box-shadow: 0 5px 10px #0003;
+}
+
+tag-input {
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 0 5px;
+}

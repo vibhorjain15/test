@@ -1,0 +1,18 @@
+{
+  "HELLO": "hello {{value}} {{name}}",
+  "LANGUAGE": "English",
+  "SENTENCE": "This sentence is in english",
+  "SELECT": "Change language here",
+  "NAME": "My name is {{name}}, which means 'king' in 'Kannada'.",
+  "WELCOME": "Welcome: {{role}}",
+  "YOUR_ACTIVITY_ON_DILIGENCEVAULT": "Your Activity on DiligenceVault",
+  "SUBSCRIPTION_EXPIRY":"Subscription Expiry",
+  "OF_TEAMS":"of Teams",
+  "OF_PROJECTS":"of Projects",
+  "OF_DOCUMENTS":"of Documents",
+  "OF_FT_ENTITIES":"of FT Entities",
+  "OF_LT_ENTITIES":"of LT Entities",
+  "PLEASE_CONTACT_TO_UPGRADE_CAPACITY":"Please contact ask@diligencevault.com to upgrade capacity",
+  "TAKE_ADVANTAGE_OF":"Take advantage of DiligenceVault's centralized content repo, user collaboration and a user friendly platform across all request types",
+  "REUSE_DOCUMENTS":"Reuse documents, trigger review workflows, maintain version history to minimize errors"
+}

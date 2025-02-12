@@ -1,0 +1,18 @@
+<ui-grid-cell-contents data-ng-if="!row.groupHeader">
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          data-ng-click="grid.appScope.vm.openFollowupDialog(row.entity)"
+          uib-tooltip="Follow-up">
+    <icon name="doubt"></icon>
+  </button>
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          uib-tooltip="{{(row.entity.acknowledged_at) ? 'Acknowledged diligences can not be un-shared' : 'Revoke Access'}}"
+          data-ng-class="{'disabled' : (row.entity.acknowledged_at)}"
+          ng-click="grid.appScope.vm.revokeAccessModal(row.entity)">
+    <icon name="close"></icon>
+  </button>
+
+</ui-grid-cell-contents>

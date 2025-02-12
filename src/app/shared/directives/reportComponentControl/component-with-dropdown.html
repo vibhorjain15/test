@@ -1,0 +1,18 @@
+<div uib-dropdown>
+  <button btn-type="default" uib-dropdown-toggle>
+    <icon name="{{::component_control.icon}}"></icon>
+    <small class="btn-label">{{::component_control.label}}</small>
+  </button>
+
+  <ul class="dropdown-menu"
+      uib-dropdown-menu
+      role="menu">
+    <li role="menuitem"
+        data-ng-repeat="sub_component in ::component_control.sub_components">
+      <a role="button"
+         data-ng-click="insertComponent(sub_component)">
+        {{::sub_component.label}}
+      </a>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,64 @@
+<div data-ng-if="vm.Utils.isAngular()"><ng2-report-templates-preview></ng2-report-templates-preview></div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <spinner data-ng-hide="vm.template"></spinner>
+  <div class="panel panel-default"
+      data-ng-show="vm.template">
+    <div class="panel-heading">
+      <h5 class="panel-title">{{vm.template.name}}</h5>
+
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper" data-ng-if="!vm.template.is_new_report">
+          <a class="panel-control"
+            ui-sref="app.reports.templates.detail.edit({templateId: vm.template.id})"
+            uib-tooltip="Edit this report definition">
+            <icon name="pencil"></icon>
+          </a>
+
+          <a class="panel-control"
+            ui-sref="app.reports.templates.detail.preview({templateId: vm.template.id})"
+            uib-tooltip="Preview this report definition">
+            <icon name="eye"></icon>
+          </a>
+
+          <a class="panel-control"
+            data-ng-click="vm.deleteCurrentTemplate(vm.template)"
+            uib-tooltip="Delete this report definition">
+            <icon name="trashcan text-danger"></icon>
+          </a>
+        </div>
+        <div class="panel-controls-wrapper" data-ng-if="vm.template.is_new_report">
+          <a class="panel-control"
+            ng-click="vm.editNewTemplate()"
+            uib-tooltip="Edit this report definition">
+            <icon name="pencil"></icon>
+          </a>
+          <a class="panel-control"
+              data-ng-click="vm.downloadReport()"
+            uib-tooltip="Download">
+            <strong><span class="dvi dvi-download3"></span>  </strong>
+          </a>
+          <a class="panel-control"
+            data-ng-click="vm.deleteCurrentTemplate(vm.template)"
+            uib-tooltip="Delete this report">
+            <icon name="trashcan text-danger"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div data-ng-if="!vm.template.is_new_report" class="word_view">
+      <report-builder data-ng-model="vm.template"
+                      readonly>
+      </report-builder>
+    </div>
+  </div>
+  <div class="container-fluid" data-ng-if="vm.template.is_new_report">
+    <div class="row clearfix">
+      <div class="word_view">
+        <div ng-bind-html="vm.template.definition | trusthtml" class="overflow-auto-relative"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>

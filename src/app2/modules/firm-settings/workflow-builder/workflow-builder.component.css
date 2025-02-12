@@ -1,0 +1,15 @@
+.danger {
+  color: #cd3333;
+}
+.minwidth {
+  min-width: 55px;
+}
+
+.workflow-builder-info {
+  display: flex;
+  align-items: flex-end;
+}
+
+.workflow-builder-info > span {
+  margin-left: 3px;
+}

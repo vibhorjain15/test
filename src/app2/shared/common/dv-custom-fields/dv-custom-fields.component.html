@@ -1,0 +1,245 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <span appIcon name="overview" class="space-on-right align-middle"></span>
+      <span
+        class="align-middle"
+        tooltip="This has static and live custom fields"
+        container="body"
+      >
+        Quick View
+        <span *ngIf="fields.length"> ({{ fields.length }}) </span>
+      </span>
+    </span>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          tooltip="Add New Custom Field"
+          container="body"
+          class="panel-control"
+          [ngClass]="{ linkDisabled: !fields }"
+          (click)="onAdding()"
+        >
+          <span appIcon name="pencil"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body" *ngIf="loading_data">
+    <app-spinner [broadSpinner]="true" [spinnerHeight]="60"></app-spinner>
+  </div>
+  <div class="panel-body" *ngIf="!loading_data && fields.length === 0">
+    <app-empty-state message="There are no custom fields!"></app-empty-state>
+  </div>
+  <div
+    class="panel-body has-notes-form clear-padding"
+    *ngIf="fields && fields.length > 0"
+  >
+    <ul
+      class="list-group clear-margin-bottom tasks-list overflow-scroll-y-axis overflow-x-hidden max-h-25-em"
+    >
+      <li
+        class="list-group-item task-item list-unstyled word-wrap-with-break-word"
+        *ngFor="let customField of fields"
+        col="12"
+      >
+        <span col="6">
+          <small
+            class="text-muted"
+            [ngClass]="{
+              'opacity-half': customField.value.display_text.length == 0
+            }"
+            *ngIf="
+              customField.type === 'question' &&
+              customField.value &&
+              customField.value.diligence_id
+            "
+          >
+            <a
+              (click)="redirectToProject(customField)"
+              class="text-uppercase word-wrap-with-break-word clickable"
+              [innerHTML]="customField.alias | dvSafeHtml"
+              >&nbsp;</a
+            >
+          </small>
+          <small
+            class="text-muted text-uppercase space-on-right word-wrap-with-break-word"
+            *ngIf="customField.type === 'rating'"
+          >
+            <a
+              *ngIf="
+                customField.value[0]?.total_score >= 0 &&
+                customField.value[0]?.project_id
+              "
+              (click)="redirectToProject(customField)"
+              class="text-uppercase word-wrap-with-break-word clickable"
+              [innerHTML]="customField.alias | dvSafeHtml"
+              >&nbsp;</a
+            >
+          </small>
+          <small
+            *ngIf="
+              customField.type !== 'question' && customField.type !== 'rating'
+            "
+            class="text-muted text-uppercase space-on-right word-wrap-with-break-word"
+            [innerHTML]="customField.alias | dvSafeHtml"
+          >
+          </small>
+          <span
+            appIcon
+            name="info"
+            class="space-on-right font-size-11"
+            *ngIf="customField.description"
+            tooltip="{{ customField.description }}"
+          ></span
+          >:
+        </span>
+        <span col="6">
+          <small
+            class="custom-field-flex-wrap"
+            *ngIf="
+              customFieldTypes.includes(customField.type) &&
+              !customField.has_href
+            "
+          >
+            <ng-container
+              *ngFor="
+                let field of customField.value;
+                let $index = index;
+                trackBy: trackByIndex
+              "
+            >
+              <p
+                *ngIf="
+                  customFieldTypes.includes(customField.type) &&
+                  field.value != 'other'
+                "
+                class="space-on-bottom"
+                [ngClass]="{
+                  'label label-default':
+                    customField.type == 'dropdown' ||
+                    customField.type == 'checkbox'
+                }"
+              >
+                <span
+                  *ngIf="
+                    customField.has_multiple && customField.value.length > 1
+                  "
+                  >{{ $index + 1 }}. </span
+                >{{
+                  customField.type == "time" ||
+                  customField.type == "datetime" ||
+                  customField.type == "date"
+                    ? field.dateDisplay
+                    : field.value
+                }}
+              </p>
+              <p
+                *ngIf="
+                  ['dropdown', 'checkbox'].includes(customField.type) &&
+                  field.value == 'other'
+                "
+                class="space-on-bottom"
+                [ngClass]="{
+                  'label label-default': ['dropdown', 'checkbox'].includes(
+                    customField.type
+                  )
+                }"
+              >
+                <span
+                  *ngIf="
+                    customField.has_multiple && customField.value.length > 1
+                  "
+                  >{{ $index + 1 }}. </span
+                >{{ field.value }},{{ field.explanation }}
+              </p>
+            </ng-container>
+          </small>
+          <small *ngIf="customField.type === 'textmultiline'">
+            <small
+              class="space-on-right word-wrap-with-break-word"
+              *ngFor="let field of customField.value; trackBy: trackByIndex"
+              [innerHtml]="field.value"
+            >
+            </small>
+          </small>
+          <small *ngIf="customField.type === 'dynamic'">
+            <small
+              class="text-uppercase space-on-right word-wrap-with-break-word"
+              *ngFor="let field of customField.value; trackBy: trackByIndex"
+            >
+              <a
+                class="link-underline wrap-all-fields"
+                [href]="field.redirect_url"
+                target="_blank"
+                >{{ field.value }}
+              </a>
+            </small>
+          </small>
+          <small *ngIf="customField.type === 'link'">
+            <small
+              class="text-uppercase space-on-right word-wrap-with-break-word"
+              *ngFor="let field of customField.value"
+            >
+              <a
+                class="link-underline wrap-all-fields"
+                [href]="field.value_url"
+                target="_blank"
+                >{{ field.value ? field.value : field.value_url }}
+              </a>
+            </small>
+          </small>
+          <small *ngIf="customField.has_href">
+            <small
+              class="text-uppercase space-on-right word-wrap-with-break-word wrap-all-fields"
+              *ngFor="let field of customField.value"
+            >
+              <a
+                class="link-underline"
+                [href]="field.dynamic_url"
+                target="_blank"
+                >{{ field.value }}
+              </a>
+            </small>
+          </small>
+          <small *ngIf="customField.type === 'question'">
+            <small
+              *ngIf="
+                customField.value && customField.value.display_text.length > 0
+              "
+              class="text-uppercase space-on-right word-wrap-with-break-word"
+              [innerHtml]="customField.value.display_text"
+            ></small>
+            <small *ngIf="customField.value.display_text.length == 0">
+              ---
+            </small>
+          </small>
+          <small *ngIf="customField.type === 'rating'">
+            <small *ngIf="customField.value[0]?.total_score == null">
+              ---
+            </small>
+            <p
+              class="label label-default"
+              *ngIf="customField.value[0]?.total_score >= 0"
+              [style.backgroundColor]="getBackgroundColor(customField.value[0])"
+              [style.color]="getTextColor(customField.value[0]?.color_code)"
+              [tippyTooltip]="
+                customField.display_format == 'score'
+                  ? customField.value[0].rating_label
+                  : customField.value[0].total_score
+              "
+            >
+              <small>
+                {{
+                  customField.display_format == "score"
+                    ? customField.value[0].total_score
+                    : customField.value[0].rating_label
+                }}
+              </small>
+            </p>
+          </small>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

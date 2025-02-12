@@ -1,0 +1,14 @@
+<div
+  class="label label-default text-uppercase tag-wrapper"
+  *ngIf="!params?.node?.group && label"
+>
+  <span>
+    {{ label }}
+  </span>
+</div>
+
+<div *ngIf="params?.node?.group && label" class="text-uppercase tag-wrapper">
+  <span>
+    {{ label }}
+  </span>
+</div>

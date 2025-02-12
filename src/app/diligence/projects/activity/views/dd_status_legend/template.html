@@ -1,0 +1,17 @@
+<div class="panel panel-default space-on-top-lg clear-margin-bottom"
+     data-ng-show="vm.legends">
+  <div class="panel-body">
+    <ul class="list-inline clear-margin">
+      <li data-ng-repeat="legend in vm.legends"
+          class="space-on-right">
+        <span class="label label-{{legend.label_type}} text-uppercase inline-block align-middle">
+          <small>{{legend.status}}</small>
+        </span>
+
+        <span class="inline-block align-middle space-on-left">
+          {{legend.desc}}
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

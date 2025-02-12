@@ -1,0 +1,34 @@
+<app-modal
+  [title]="'Request a Fund Research'"
+  [firstButtonLabel]="'Submit'"
+  (onFirstClick)="requestResearch($event)"
+  [initialTemplate]="mfwModalRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #mfwModalRef>
+  <form class="form-horizontal" [formGroup]="mfwForm" autocomplete="off">
+    <div class="modal-body">
+      <app-form-group
+        [fieldName]="'text'"
+        [modelController]="mfwForm.get('text')"
+      >
+        <textarea
+          class="form-control h-200"
+          placeholder="Share a list of funds for Mercer Fund Watch research and someone from DiligenceVault will reach out to you."
+          formControlName="text"
+          focus-me="true"
+        ></textarea>
+        <div
+          class="danger"
+          *ngIf="
+            mfwForm.get('text').touched && mfwForm.get('text').errors?.required
+          "
+        >
+          Text is required
+        </div>
+      </app-form-group>
+    </div>
+  </form>
+</ng-template>

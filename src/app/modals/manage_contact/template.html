@@ -1,0 +1,503 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-new-contact is-angular-js="true"></ng2-new-contact>
+</div>
+<form class="form-horizontal" data-ng-if="vm.Utils.isAngularJS()" name="vm.contact_form" novalidate data-ng-submit="vm.save()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            {{vm.edit_mode ? "Editing "+ vm.modalLabel+ " Contact" : "Create New "+ vm.modalLabel+ " Contact"}}
+
+            <a class="pull-right clickable link-disguise link-unstyled"
+               data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <p class="alert alert-info">
+            You can add your external contacts in this form.
+        </p>
+        <div data-ng-if="vm.loading_data">
+            <spinner broad-spinner spinner-height='25'></spinner>
+        </div>
+        <div data-ng-if="!vm.loading_data">
+            <form-group field-name="username">
+                <label for="username" class="control-label" col ="4" col-type="sm">Email <span class="font-size-10 text-orange align-top">*</span></label>
+                <div col="8" col-type="sm">
+                    <div class="input-group" uib-tooltip="{{(vm.params.conversionDateTime) ? 'Cannot edit email for active user on DiligenceVault. To edit this, please contact us at support@diligencevault.com' : ''}}">
+                    <span class="input-group-addon">
+                    <icon name="mail"></icon>
+                    </span>
+                        <input type="email"
+                            class="form-control"
+                            id="userName"
+                            name="userName"
+                            data-ng-model="vm.params.userName"
+                            ng-change="vm.checkUserExistence()"
+                            ng-model-options="{ debounce: { 'default': 500 } }"
+                            data-ng-disabled="vm.params.conversionDateTime || vm.edit_mode"
+                            validate-email
+                            required>
+                    </div>
+                </div>
+            </form-group>
+            <div class="text-center text-orange space-on-bottom-lg" ng-if="vm.user_check_obj.length > 0">
+              <i>
+                We found {{vm.user_check_obj.length}} associated firm(s) for this contact. How about adding
+                <ng-pluralize count="vm.user_check_obj.length"
+                          when="{'one': 'this?', 'other': 'one of these?'}">
+                </ng-pluralize>
+              </i>
+            </div>
+            <div ng-if="vm.user_check_obj.length > 0" data-ng-repeat="firm in vm.user_check_obj">
+              <div class="panel panel-default firm-list-container">
+                <div class="panel-body">
+                  <div class="dv-table dv-table-middle full-width">
+                    <div class="cell bordered-right text-center" col="10">
+                      <div class="max-w-360 lh15 word-break-break-all">
+                        <span class="text-primary" data-ng-class="{ 'text-gray': !firm.is_tracking }"
+                           uib-tooltip="{{firm.fullName}}" dv-limit-word="firm.fullName" char-limit="40">
+                        </span> <br>
+                        <small class="text-muted"
+                               uib-tooltip="{{firm.firmInfo.display_name}}" dv-limit-word="firm.firmInfo.display_name" char-limit="40">{{firm.firmInfo.display_name}}</small>
+                      </div>
+                    </div>
+                    <div class="cell bordered-left text-center" col="2">
+                      <button btn-type="default"
+                              size="sm"
+                              uib-tooltip="This firm exists on DiligenceVault. Click to add to your portfolio"
+                              data-ng-if="!firm.is_tracking && firm.firmInfo.is_tracking"
+                              ng-click="vm.prePopulateFirmForm(firm)">
+                        <icon name="plus"></icon>
+                      </button>
+
+                      <a class="text-primary clickable"
+                            uib-tooltip="This firm is in your portfolio. Go to detail"
+                            data-ng-if="firm.is_tracking && firm.firmInfo.is_tracking"
+                            ng-click="vm.goToContactPage(firm)">
+                        View Contact
+                      </a>
+                      <span data-ng-if="!firm.firmInfo.is_tracking"><small uib-tooltip="{{firm.firmInfo.display_name}} is not in your portfolio. Add this firm to your portfolio and then you can add this contact">Firm is not in your portfolio <a ng-click="vm.goToFirmCreation(firm)" class="clickable">Click Here</a> to add</small></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="form-group" data-ng-if="!vm.user_exists_in_current_firm && vm.user_exists_in_dv && vm.user_check_obj" ng-show="vm.user_check_obj.length == 1">
+                <div col="8" offset="4">
+                    <p class="alert alert-info">
+                        Some of the contact information related to the email <b>{{vm.params.userName}}</b> has been populated from our system. You can update the info if you wish to!
+                    </p>
+                </div>
+            </div> -->
+
+            <form-group field-name="Invite" data-ng-if="vm.edit_mode && !vm.params.conversionDateTime && !vm.hideInviteContact">
+                <div col="8" offset="4">
+                    <dv-checkbox
+                            data-ng-model="vm.params.send_invitation"
+                            label="Invite contact to join DiligenceVault">
+                    </dv-checkbox>
+                </div>
+            </form-group>
+
+            <div data-ng-if="!vm.user_exists_in_current_firm">
+
+                <form-group field-name="Invite" data-ng-if="!vm.edit_mode && !vm.params.conversionDateTime && !vm.hideInviteContact">
+                    <div col="8" offset="4">
+                        <dv-checkbox
+                                data-ng-model="vm.params.send_invitation"
+                                label="Invite contact to join DiligenceVault">
+                        </dv-checkbox>
+                    </div>
+                </form-group>
+
+                <form-group field-name="Internal Key">
+                    <label for="firm-name" class="control-label" col="4" col-type="sm">Internal Key</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                            class="form-control"
+                            id="firm-name"
+                            name="firm_name"
+                            data-ng-model="vm.params.key"
+                            dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                            placeholder="Example: HG36FG">
+                    </div>
+                </form-group>
+
+                <form-group field-name="First Name">
+                    <label for="first-name" class="control-label" col ="4" col-type="sm">First Name <span class="font-size-10 text-orange align-top">*</span></label>
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                            class="form-control"
+                            id="firstname"
+                            name="firstname"
+                            dv-restrict-input="{type: 'validPersonName'}"
+                            data-ng-model="vm.params.firstName"
+                            required>
+
+                    <p class="error-message" data-ng-if="vm.contact_form.firstname.$invalid && vm.contact_form.firstname.$touched">Please enter a valid first name</p>
+                    </div>
+                </form-group>
+                <form-group field-name="Last Name">
+                    <label for="last-name" class="control-label" col ="4" col-type="sm">Last Name <span class="font-size-10 text-orange align-top">*</span></label>
+                    <div col="8" col-type="sm">
+
+                        <input type="text"
+                            class="form-control"
+                            id="lastname"
+                            name="lastname"
+                            dv-restrict-input="{type: 'validPersonName'}"
+                            data-ng-model="vm.params.lastName"
+                            required>
+
+                    <p class="error-message" data-ng-if="vm.contact_form.lastname.$invalid && vm.contact_form.lastname.$touched">Please enter a valid last name</p>
+                    </div>
+                </form-group>
+
+                <form-group field-name="Title">
+                    <label for="title" class="control-label" col ="4" col-type="sm">Title</label>
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                            class="form-control"
+                            id="title"
+                            name="title"
+                            dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                            data-ng-model="vm.params.title">
+                    </div>
+                </form-group>
+
+                <form-group field-name="Parent Firm">
+                    <label for="parent-firm" class="control-label" col="4" col-type="sm">Parent Firm <span class="font-size-10 text-orange align-top">*</span></label>
+
+                    <div col="8" col-type="sm" uib-tooltip="{{(vm.params.conversionDateTime) ? 'Cannot edit parent firm for active user on DiligenceVault. To edit this, please contact us at support@diligencevault.com' : ''}}">
+                        <select name="parent_firm"
+                                id="parent-firm"
+                                class="form-control"
+                                chosen
+                                data-ng-disabled="((!vm.firms) || (vm.params.conversionDateTime) || (!vm.is_owner && vm.edit_mode)) || (vm.disableParentFirm)"
+                                data-ng-options="firm.id as firm.display_name for firm in vm.firms"
+                                data-ng-model="vm.params.firmInfo.id"
+                                data-ng-change="vm.filterAssociatedFunds(vm.params.firmInfo.id)"
+                                required>
+                            <option value="">--Select--</option>
+                        </select>
+                    </div>
+                </form-group>
+
+                <form-group field-name="Associated Product"  uib-tooltip="{{(vm.params.associated_funds.length > 0) ? '' : 'Please select a product'}}" data-ng-if="vm.isInvestor">
+                        <label for="parent-fund" class="control-label" col="4" col-type="sm">Associated Product</label>
+                        <div col="8" col-type="sm" data-ng-if="vm.funds && vm.funds.length && vm.fundsCopy.length">
+                            <tags-input data-ng-model="vm.params.associated_funds"
+                                        display-property="display_name"
+                                        data-ng-disabled="!vm.params.firmInfo.id"
+                                        key-property="id"
+                                        placeholder="Select product"
+                                        add-from-autocomplete-only=true
+                                        id="contact_type"
+                                        replace-spaces-with-dashes="false">
+                                <auto-complete source="vm.filterProducts($query)"
+                                            load-on-focus=true
+                                            load-on-down-arrow=true
+                                            load-on-empty=true
+                                            max-results-to-show="{{vm.funds.length}}"
+                                            min-length="1"></auto-complete>
+                            </tags-input>
+                        </div>
+                        <div data-ng-if="!vm.funds || !vm.funds.length" class="text-muted">
+                            <small><i>*No products found*</i></small>
+                        </div>
+                    <!-- <div col="8" col-type="sm" uib-tooltip="{{(!vm.funds || vm.funds.length == 0) ? 'No associated products found for selected parent firm' : ''}}">
+                        <select name="associated_product"
+                                id="parent-fund"
+                                class="form-control"
+                                chosen
+                                data-ng-disabled="!vm.funds"
+                                data-ng-options="fund.id as fund.name for fund in vm.funds"
+                                data-ng-model="vm.params.associated_funds">
+                            <option value="">--Select--</option>
+                        </select>
+                    </div> -->
+                </form-group>
+
+                <form-group field-name="Associated Strategy"
+                    uib-tooltip="{{(vm.params.associated_strategies.length > 0) ? '' : 'Please select a strategy'}}" data-ng-if="vm.isInvestor">
+                    <label for="parent-strategy" class="control-label" col="4" col-type="sm">Associated Strategy</label>
+                    <div col="8" col-type="sm" data-ng-if="vm.strategies.length > 0">
+                        <tags-input data-ng-model="vm.params.associated_strategies" display-property="display_name"
+                            data-ng-disabled="!vm.params.firmInfo.id" key-property="id" placeholder="Select strategy"
+                            add-from-autocomplete-only=true id="contact_type"
+                            replace-spaces-with-dashes="false">
+                            <auto-complete source="vm.filterStrategies($query)" load-on-focus=true load-on-down-arrow=true
+                                load-on-empty=true max-results-to-show="{{vm.strategies.length}}" min-length="1"></auto-complete>
+                        </tags-input>
+                    </div>
+                    <div data-ng-if="vm.strategies.length == 0" class="text-muted">
+                        <small><i>*No strategies found*</i></small>
+                    </div>
+                </form-group>
+
+
+                <form-group field-name="DiligenceVault Owner">
+                    <label for="parent-fund" class="control-label" col="4" col-type="sm">DiligenceVault Owner</label>
+
+                    <div col="8" col-type="sm">
+                        <select name="diligencevault_owner"
+                                id="diligencevault-owner"
+                                class="form-control"
+                                chosen
+                                data-ng-disabled="!vm.teamMembers"
+                                data-ng-options="team_member.id as team_member.fullname for team_member in vm.teamMembers"
+                                data-ng-model="vm.params.owner_user_id">
+                            <option value="">--Select--</option>
+                        </select>
+                    </div>
+                </form-group>
+
+                <form-group field-name="contact-type" uib-tooltip="{{(vm.params.contact_types.length > 0) ? 'Please select a tag' : ''}}">
+                    <label for="contact-type" class="control-label" col ="4" col-type="sm">Contact Type</label>
+
+                    <div col="8" col-type="sm" data-ng-if="vm.tags && vm.tags.length">
+                        <tags-input data-ng-model="vm.params.contact_types"
+                                    display-property="name"
+                                    placeholder="Select tag"
+                                    key-property="id"
+                                    add-from-autocomplete-only=true
+                                    min-length="1"
+                                    id="contact_type"
+                                    replace-spaces-with-dashes="false">
+                            <auto-complete source="vm.filterTags($query)"
+                                        load-on-focus=true
+                                        load-on-down-arrow=true
+                                        load-on-empty=true
+                                        min-length="1"></auto-complete>
+                        </tags-input>
+                    </div>
+
+                    <div col="8" col-type="sm" data-ng-if="vm.tags && !vm.tags.length">
+                        To assign tags to this contact, please set it <a class="clickable" data-ng-click="vm.redirectToContactTags()">here.</a>
+                    </div>
+
+                    <div col="8" col-type="sm" data-ng-if="!vm.tags">
+                        <spinner broad-spinner spinner-height='25'></spinner>
+                    </div>
+                </form-group>
+
+            <div class="panel panel-default">
+                <div class="panel-heading bordered-top" data-ng-if="!vm.edit_mode">
+                  <h5 class="panel-title">Add Custom Fields</h5>
+                </div>
+
+                <div class="panel-body" data-ng-if="!vm.edit_mode">
+                  <div class="form-group">
+                    <field-selection custom-url="'contact_tags'" fieldselection-form="vm.fieldselectionForm" split-mandatory="true" on-close="vm.cancel()" disabled="false" fields="vm.fields"></field-selection>
+                  </div>
+                </div>
+            </div>
+
+            <div class="form-group clear-margin">
+                <div col="8" offset="4" class="text-right">
+                    <small>
+                        <a class="clickable" data-ng-click="vm.toggleAddressView()">
+                            {{vm.show_address_details ? 'Hide' : (vm.edit_mode ? 'Show' : 'Add')}} Address Details
+                        </a>
+                    </small>
+                </div>
+            </div>
+
+            <span data-ng-show="vm.show_address_details">
+
+                <hr class="space-on-top"/>
+
+                <form-group field-name="Street Address">
+                    <label for="street-address-1" class="control-label" col="4" col-type="sm">Street Address 1</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="street-address-1"
+                               name="street_address_1"
+                               maxlength="200"
+                               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                               data-ng-model="vm.params.street_address_1">
+                    </div>
+                </form-group>
+
+                <form-group field-name="Street Address-2">
+                    <label for="street-address-2" class="control-label" col="4" col-type="sm">Street Address 2</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="street-address-2"
+                               name="street_address_2"
+                               maxlength="200"
+                               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                               data-ng-model="vm.params.street_address_2">
+                    </div>
+                </form-group>
+
+                <form-group field-name="City">
+                    <label for="city" class="control-label" col="4" col-type="sm">City</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="city"
+                               name="city"
+                               maxlength="60"
+                               dv-restrict-input="{type: 'validCityName'}"
+                               data-ng-model="vm.params.city">
+                    </div>
+                </form-group>
+
+                <form-group field-name="State">
+                    <label for="state" class="control-label" col="4" col-type="sm">State</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="state"
+                               name="state"
+                               maxlength="60"
+                               dv-restrict-input="{type: 'validCityName'}"
+                               data-ng-model="vm.params.state">
+                    </div>
+                </form-group>
+
+
+                <form-group field-name="Zipcode">
+                    <label for="zipcode" class="control-label" col="4" col-type="sm">Zipcode</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="zipcode"
+                               name="zipcode"
+                               maxlength="10"
+                               dv-restrict-input="{type: 'validZipcode'}"
+                               data-ng-model="vm.params.zipcode">
+                    </div>
+                </form-group>
+
+                <form-group field-name="Country">
+                    <label for="country" class="control-label" col="4" col-type="sm">Country</label>
+
+                    <div col="8" col-type="sm">
+                        <select id="country"
+                                class="form-control"
+                                chosen
+                                data-ng-disabled="!vm.countries"
+                                data-ng-model="vm.params.country_id"
+                                data-ng-options="country.id as country.value for country in vm.countries">
+                            <option value="">{{ vm.countries ? "--Select Country--" : "Loading countries..."}}</option>
+                        </select>
+                    </div>
+                </form-group>
+
+                <form-group field-name="Phone">
+                    <label for="phone" class="control-label" col="4" col-type="sm">Primary Phone</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="phone"
+                               name="phone"
+                               maxlength="30"
+                               dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+                               data-ng-model="vm.params.phone_1">
+                    </div>
+                </form-group>
+
+                <form-group field-name="Phone2">
+                    <label for="phone2" class="control-label" col="4" col-type="sm">Secondary Phone</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               maxlength="30"
+                               id="phone2"
+                               name="phone2"
+                               dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+                               data-ng-model="vm.params.phone_2">
+                    </div>
+                </form-group>
+
+                <form-group field-name="Fax">
+                    <label for="fax" class="control-label" col="4" col-type="sm">Fax</label>
+
+                    <div col="8" col-type="sm">
+                        <input type="text"
+                               class="form-control"
+                               id="fax"
+                               maxlength="30"
+                               name="fax"
+                               dv-restrict-input="{type: 'validPhoneCharsOnly'}"
+                               data-ng-model="vm.params.fax">
+                    </div>
+                </form-group>
+            </span>
+
+            <div class="form-group">
+                <div col="8" offset="2">
+                    <small><span class="font-size-10 text-orange align-top">*</span><i>Required field</i></small>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- <div class="form-group" data-ng-if="false">
+            <div col="10" offset="1">
+                <div class="text-center text-orange space-on-bottom-lg">
+                    <i>
+                        Looks like a contact already exists with the email <b>{{vm.params.userName}}</b>!
+                    </i>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="dv-table dv-table-middle full-width">
+                            <div class="bordered-right cell text-center padded-lg">
+                                <div><icon name="user" size="3x" class="text-light-blue"></icon></div>
+                            </div>
+
+                            <div class="cell bordered-left text-center">
+                                <h4 class="margin-0-auto max-w-320 lh15 word-break-break-all">
+                                    <a class="clickable"
+                                       data-ng-click="vm.goToContactPage()"
+                                       data-ng-if="(vm.user_check_obj.firstName || vm.user_check_obj.lastName)"
+                                       uib-tooltip="{{vm.user_check_obj.firstName}} {{vm.user_check_obj.lastName}}">
+                                        {{vm.user_check_obj.firstName}} {{vm.user_check_obj.lastName}}
+                                    </a>
+
+                                    <a class="clickable"
+                                       data-ng-click="vm.goToContactPage()"
+                                       data-ng-if="!(vm.user_check_obj.firstName || vm.user_check_obj.lastName)"
+                                       uib-tooltip="{{vm.params.userName}}">
+                                        {{vm.params.userName}}
+                                    </a>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <span data-ng-if="vm.params.userName && !vm.user_exists_in_current_firm && !vm.checking_user_existence">
+            <button type="submit" button-loader="vm.saving" ng-disabled="vm.savingAnother || vm.user_exists_in_current_firm">{{vm.edit_mode ? 'Update Contact' : 'Create Contact'}}</button>
+            <button btn-type="default" button-loader="vm.savingAnother" ng-disabled="vm.saving || vm.user_exists_in_current_firm" data-ng-click="vm.addAnotherContact()">{{vm.edit_mode ? 'Update ' : 'Create '}}& Add Another</button>
+        </span>
+        <span data-ng-if="vm.user_exists_in_current_firm">
+            <button class="btn btn-primary" button-loader="vm.saving" ng-click="vm.populateNewContact()">No, Create a new contact</button>
+        </span>
+
+        <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

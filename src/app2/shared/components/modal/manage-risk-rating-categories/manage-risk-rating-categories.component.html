@@ -1,0 +1,271 @@
+<app-modal
+  [title]="'Manage ' + category_type + ' for ' + rating_scheme.name"
+  firstButtonLabel="Save"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="RatingCatmodalref"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="
+    unAllocatedWeight > this.precision || unAllocatedWeight < 0
+  "
+></app-modal>
+
+<ng-template #RatingCatmodalref>
+  <div class="row clearfix">
+    <div class="space-on-bottom-lg" *ngIf="activeCount === 0">
+      <helper-text>
+        There are no {{ category_type }}. Get started by adding new
+        {{ category_type }} and weights
+      </helper-text>
+    </div>
+
+    <div
+      class="alert alert-danger space-on-bottom-lg"
+      *ngIf="unAllocatedWeight < 0"
+    >
+      All the {{ category_type }} weightages must add up to {{ maxWeightage }}!
+      It exceeds by {{ -unAllocatedWeight }}%
+    </div>
+
+    <div
+      class="space-on-bottom-lg"
+      *ngIf="activeCount >= 1 || activeCount === 0"
+    >
+      <p
+        class="alert alert-danger"
+        *ngIf="activeCount >= 1 && unAllocatedWeight > precision"
+      >
+        Please assign remaining {{ unAllocatedWeight }}% weightage to any of the
+        {{ category_type }}
+      </p>
+
+      <p class="alert alert-danger" *ngIf="activeCount === 0">
+        Please add atleast one {{ category_type }}
+      </p>
+    </div>
+
+    <div col="8">
+      <div class="row">
+        <div col="4">
+          <label for="name">{{ labelCat }} Name</label>
+        </div>
+        <div col="2">
+          <label for="weightage">Weightage</label>
+        </div>
+        <div col="6">
+          <label for="description">Description</label>
+        </div>
+      </div>
+
+      <div
+        *ngFor="let group of ratingsForm.controls; let index = index"
+        class="space-on-top-lg"
+      >
+        <ng-container [formGroup]="group">
+          <div
+            *ngIf="group.get('is_active').value"
+            class="row space-on-bottom-lg space-on-top-lg"
+          >
+            <div col="4">
+              <dv-form-element
+                elementCol="16"
+                [fieldName]="labelCat + ' Name'"
+                [modelController]="group.get('name')"
+              >
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="name"
+                  id="name"
+                  [placeholder]="labelCat + ' Name'"
+                />
+                <div
+                  *ngIf="group.get('name').touched && group.get('name').invalid"
+                >
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      group.get('name').touched &&
+                      group.get('name').errors?.notUnique
+                    "
+                  >
+                    You can't have duplicate categories.
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      group.get('name').touched &&
+                      (group.get('name').errors?.required ||
+                        group.get('name').errors?.whitespace)
+                    "
+                  >
+                    {{ labelCat }} Name is required
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      group.get('name').touched &&
+                      group.get('name').errors?.pattern
+                    "
+                  >
+                    {{
+                      errorMessageMap.avoidFirstSplCharacter
+                        | interpolate : "Name"
+                    }}
+                  </div>
+                  <div
+                    class="text-danger"
+                    *ngIf="
+                      group.get('name').touched &&
+                      group.get('name').errors?.containsHtml
+                    "
+                  >
+                    {{
+                      errorMessageMap?.containsHtml
+                        | interpolate : "Name"
+                    }}
+                  </div>
+                </div>
+              </dv-form-element>
+            </div>
+            <div col="2">
+              <dv-form-element
+                elementCol="16"
+                [fieldName]="Weightage"
+                [modelController]="group.get('weightage')"
+                [showRightIcon]="false"
+              >
+                <input
+                  class="form-control"
+                  formControlName="weightage"
+                  id="weightage"
+                  (input)="handleWeightChange($event)"
+                />
+                <div
+                  *ngIf="
+                    group.get('weightage').touched &&
+                    (group.get('weightage').errors?.required ||
+                      group.get('weightage').errors?.whitespace)
+                  "
+                  class="text-danger"
+                >
+                  Weightage is required
+                </div>
+                <div
+                  *ngIf="
+                    group.get('weightage').touched &&
+                    !group.get('weightage').errors?.required &&
+                    !group.get('weightage').errors?.whitespace &&
+                    group.get('weightage').errors?.pattern
+                  "
+                  class="text-danger"
+                >
+                  Weightage should be between 0-100
+                </div>
+              </dv-form-element>
+            </div>
+            <div col="5">
+              <dv-form-element
+                elementCol="16"
+                [fieldName]="Description"
+                [modelController]="group.get('description')"
+              >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="description"
+                  formControlName="description"
+                />
+                <div
+                  *ngIf="
+                    group.get('description').touched &&
+                    group.get('description').errors?.maxlength
+                  "
+                  class="text-danger"
+                >
+                  Description can not be more than 200 characters long
+                </div>
+              </dv-form-element>
+            </div>
+            <div col="1">
+              <dv-button
+                btnType="default"
+                btnClass="btn btn-transparent"
+                [disabled]="rating_scheme.source == 'AutoMap'"
+                (onClick)="removeDefinition(index)"
+                tooltipText="Remove"
+                *ngIf="activeCount > 1"
+              >
+                <span appIcon name="trashcan" size="fw"></span>
+              </dv-button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="row">
+        <div col="12">
+          <span col="11" [ngClass]="{ 'visibility-hidden': !parent }">
+            <dv-form-element
+              elementCol="16"
+              [fieldName]="'weigh_categories_equally'"
+              [showRightIcon]="false"
+              *ngIf="category_type != catMap[category_type]"
+            >
+              <dv-checkbox
+                [(ngModel)]="weigh_categories_equally"
+                label="Weigh {{ category_type }} Equally"
+                (onValChange)="weighCategoriesEqually()"
+              ></dv-checkbox>
+            </dv-form-element>
+          </span>
+          <span col="1">
+            <dv-button
+              btnClass="center-block btn-sm"
+              btnType="default"
+              [disabled]="rating_scheme.source == 'AutoMap'"
+              [tooltipText]="
+                rating_scheme.source == 'AutoMap'
+                  ? 'You can add more ' +
+                    category_type.toLowerCase() +
+                    ' from the template page.'
+                  : 'Add ' + labelCat
+              "
+              tooltipPlacement="left"
+              (onClick)="addDefinitionToForm()"
+            >
+              <span appIcon name="plus" size="fw"></span>
+            </dv-button>
+          </span>
+        </div>
+      </div>
+      <div class="space-on-top">
+        <helper-text>
+          <span>
+            If you want to exclude a {{ categoryLabel.toLowerCase() }} from the
+            rating scheme, you can update the weightage to 0 and it won’t show
+            up on the template page.
+          </span>
+        </helper-text>
+      </div>
+    </div>
+
+    <div col="4">
+      <div id="chart"></div>
+    </div>
+  </div>
+  <div *ngIf="showScoreEngineSelection">
+    <app-scoring-engine-scale-selection
+      [ratingScheme]="rating_scheme"
+      [existingCalculationType]="ratingSubtype[0].rating_calculation_type"
+      [existingSecondaryScaleId]="ratingSubtype[0].rating_scale_id"
+      [categoryLevel]="category_level"
+      title="Configure aggregation logic and scales for {{
+        category_level === 1 ? 'categories' : 'subcategories'
+      }}"
+      titleTooltip="Change the scoring engine and rating scale for {{
+        category_level === 1 ? 'categories' : 'subcategories'
+      }}"
+      #scoreEngineSelection
+    ></app-scoring-engine-scale-selection>
+  </div>
+</ng-template>

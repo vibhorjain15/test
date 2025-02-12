@@ -1,0 +1,64 @@
+<div *ngIf="onlyCount" class="draft-container">
+  <div class="draft-wrapper">
+    <div id="draft-button-wrapper">
+      <div class="draft-label-wrapper">
+        <div class="draft-left-wrapper">
+          <span appIcon name="check-circle" size="lg" color="green"></span>
+          <dv-label
+            color="white"
+            size="large"
+            label="
+                  {{ progress }}% complete
+                "
+          >
+          </dv-label>
+        </div>
+
+        <div
+          class="draft-button"
+          [ngStyle]="{
+            'justify-content': defaultDisplay,
+            'padding-right': defaultPadding
+          }"
+        >
+          <dv-label
+            size="large"
+            color="white"
+            label="
+              You have {{ onlyCount }} unsaved {{
+              onlyCount > 1 ? 'changes' : 'change'
+            }}
+            "
+          >
+          </dv-label>
+
+          <dv-button-group>
+            <dv-button
+              [disabled]="isSaving"
+              [loader]="isDraftSaving"
+              btnType="darkBlue"
+              (onClick)="handleDraftSave()"
+              [ariaLabel]="'Save as draft'"
+            >
+              Save as draft
+            </dv-button>
+            <dv-button
+              [disabled]="isDraftSaving"
+              [loader]="isSaving"
+              btnType="primary"
+              (onClick)="handleSave()"
+              [ariaLabel]="'Save'"
+            >
+              Save
+            </dv-button>
+          </dv-button-group>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="draft-progress">
+      <div class="draft-bar" [style.width]="progress + '%'"></div>
+    </div>
+  </div>
+</div>

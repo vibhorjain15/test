@@ -1,0 +1,95 @@
+.flex {
+  display: flex;
+}
+.align-items-center {
+  align-items: center;
+}
+.justify-space-between {
+  justify-content: space-between;
+}
+div > hr {
+  margin: 05px 0px 5px 25px;
+}
+
+div > accordion {
+  margin: 0 0px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+:host ::ng-deep .accordion-header .checkbox label {
+  color: #126b82 !important;
+}
+
+.icon-wrapper > span {
+  margin-left: 15px;
+}
+
+.accordion-header:hover {
+  text-decoration: none;
+}
+
+:host ::ng-deep .panel-body {
+  padding: 0;
+  border-top: none !important;
+}
+:host ::ng-deep .panel {
+  box-shadow: none;
+}
+:host ::ng-deep .panel-title {
+  font-size: 14px;
+}
+:host ::ng-deep .panel-heading {
+  /* padding: 5px 10px; */
+  padding: 0px;
+}
+:host ::ng-deep .checkbox {
+  margin: 0;
+}
+
+.move-icon-size {
+  font-size: 13px;
+}
+
+.add-sub {
+  padding: 5px 10px;
+  margin: 05px 0px 5px 25px;
+  display: flex;
+  align-items: center;
+}
+.add-sub:hover {
+  text-decoration: none;
+}
+.add-sub > span {
+  margin-right: 5px;
+}
+
+.spinner-display {
+  height: 400px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+.disable {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.recommendation {
+  width: inherit;
+  border: 1px solid #bfbfbf;
+  margin: 5px 0;
+  border-radius: 4px;
+  padding: 5px;
+}
+.custom-divider {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: -10px;
+  margin-right: -10px;
+  border-top: 1px solid #bfbfbf;
+}

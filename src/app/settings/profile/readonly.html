@@ -1,0 +1,106 @@
+<div class="form-horizontal my-profile">
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <user-avatar avatar-icon-size="4x"
+                   avatar-icon-class="avatar"
+                   avatar-img-class="img-thumbnail avatar"></user-avatar>
+    </div>
+    <div class="col-md-9">
+      <h3 class="clear-margin-top">{{vm.user.firstname}} {{vm.user.lastname}}</h3>
+
+      <ul class="list-unstyled user-info-list">
+        <li>
+          <span data-ng-if="vm.user.title">
+            <icon name="briefcase" size="fw"></icon>
+            {{vm.user.title}}
+          </span>
+          <small data-ng-if="!vm.user.title" class="text-muted">
+            <i>**Title not set**</i>
+          </small>
+        </li>
+
+        <li>
+          <icon name="mail" size="fw"></icon>
+          {{vm.user.userName}}
+        </li>
+
+        <li>
+          <icon name="institution" size="fw"></icon>
+          {{vm.user.firm_name}}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <label>Phone</label>
+    </div>
+    <div class="col-md-9">
+      <span>{{vm.user.phoneNumber}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.phoneNumber">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <label>Street Address</label>
+    </div>
+    <div class="col-md-9">
+      <span>{{vm.user.address}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.address">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <label>City</label>
+    </div>
+    <div class="col-md-9">
+      <span>{{vm.user.city}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.city">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <label>State</label>
+    </div>
+    <div class="col-md-9">
+      <span>{{vm.user.state}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.state">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <label>Zipcode</label>
+    </div>
+    <div class="col-md-9">
+      <span>{{vm.user.zipcode}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.zipcode">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-3 text-right">
+      <label>Country</label>
+    </div>
+    <div class="col-md-9">
+      <span>{{vm.getCountryById(vm.user.country_id)}}</span>
+      <small class="text-muted" data-ng-if="!vm.user.country_id">
+        <i>**Not set**</i>
+      </small>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+<div class="authentication-form-wrapper login-form-wrapper" data-ng-class="{'custom-css-for-firm-selection':vm.showFirmSelection && vm.user_firms.length > 5}">
+  <div class="logo-wrapper back_button_container pos-rel" data-ng-class="{'min-height-50px':vm.isInboundRequest}">
+    <a data-ng-if="vm.showLoginWithPass" ng-hide="vm.showFirmSelection" class="clickable" data-ng-click="vm.goBackToEnterEmail();hideMessage()"><img src="https://img.icons8.com/ios/64/000000/circled-left-2.png" class="back_img" alt="back button"></a>
+    <img src="/assets/images/logo.png" alt="DiligenceVault" class="logo" data-ng-if="!vm.isInboundRequest">
+    <img src="{{vm.inboundLogo}}" alt="Logo" class="logo" data-ng-if="vm.isInboundRequest">
+  </div>
+
+  <div class="alert alert-custom-danger" data-ng-show="vm.messageShown">
+    <p ng-repeat="message in vm.alertMessage">
+      {{message}}<span data-ng-hide="$last">.</span>
+    </p>
+  </div>
+  <div data-ng-if="!vm.showLoginWithPass && !vm.showFirmSelection">
+    <form novalidate name="vm.sso_login_form" data-ng-submit="vm.checkSamlConnection()">
+      <form-group field-name="Email" >
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="mail"></icon>
+          </span>
+
+          <input type="email"
+                 class="form-control"
+                 data-ng-model="vm.user.userName"
+                 data-ng-disabled="vm.disableEmail"
+                 name="userName"
+                 placeholder="Email"
+                 required>
+        </div>
+      </form-group>
+
+      <div class="form-group">
+        <button type="submit" button-loader="vm.loading" block="true">Next</button>
+      </div>
+    </form>
+  </div>
+  <div data-ng-if="vm.showFirmSelection" class="firm_selection_container">
+    <div class="firm_loader" ng-if="vm.settingUpFirm">
+      <spinner></spinner>
+    </div>
+    <div class="row clearfix">
+      <div class="text-center">
+        <h5>Note: You appear to have multiple DV accounts. Please select a firm account on DiligenceVault to login. If you would like to merge these, please email us at <a href="mailto:ask@diligencevault.com">ask@diligencevault.com</a></h5>
+      </div>
+    </div>
+    <div class="firm_selection_card">
+      <div ng-repeat="firm in vm.user_firms" data-ng-init="vm.getRandomColor(firm)" class="firm_row row clearfix" ng-class="{'active_row': firm.firm_id == vm.current_user.firmInfo.id}">
+        <div class="col-sm-1">
+          <div class="firm_initial clickable" style="{{firm.firm_logo? 'background-color: #fff !important;border: 1px solid #989898;padding-top: 15px;' : firm.style}}">
+            <div ng-if="firm.firm_logo"><img src="{{firm.firm_logo}}" class="img-responsive" alt="{{ firm.firm_name[0] }} logo"></div>
+            <div ng-if="!firm.firm_logo">{{firm.firm_name[0]}}</div>
+          </div>
+        </div>
+        <div class="col-sm-11">
+          <div class="firm_name_container">
+            <p class="firm_name">
+              <a ng-if="firm.status == vm.userFilter.Active" class="clickable" ng-click="vm.setSelectedfirm(firm)">{{firm.firm_name}}</a>
+              <span ng-if="firm.status != vm.userFilter.Active" class="text-muted">{{firm.firm_name}}</span>
+            </p>
+          </div>
+          <span class="firm_action">
+            <button ng-if="firm.status == vm.userFilter.Invited"  type="button" class="btn btn-xs btn-primary activateBtn" uib-tooltip="Send Activation Link to My Email" ng-click="vm.resendActivation(firm)">Activate</button>
+            <span ng-if="firm.status == vm.userFilter.Pending" class="label label-warning" role="text">Approval Pending</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div data-ng-if="vm.showLoginWithPass && !vm.showFirmSelection">
+    <div  class="helper_text" data-ng-if="vm.otp_mode">
+      Enter the code displayed in the Google Authenticator App on your mobile device.</div>
+    <form novalidate name="vm.login_form" data-ng-submit="vm.login()" id="loginFormMain" autocomplete="off">
+      <form-group field-name="Email" data-ng-hide="vm.otp_mode">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="mail"></icon>
+          </span>
+
+          <input type="email"
+                 class="form-control"
+                 data-ng-model="vm.user.userName"
+                 data-ng-disabled="vm.disableEmail"
+                 name="userName"
+                 placeholder="Email"
+                 required>
+        </div>
+      </form-group>
+
+      <form-group field-name="Password" data-ng-if="!vm.otp_mode && !vm.isSamlLogin">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="key"></icon>
+          </span>
+          <input type="{{vm.passwordElementType}}"
+                 class="form-control"
+                 name="password"
+                 data-ng-model="vm.user.password"
+                 placeholder="Password"
+                 required>
+          <a class="password-style-element clickable" data-ng-click="vm.showPasswordToggle()">
+            <icon name="eye" data-ng-if="vm.passwordNotVisible"></icon>
+            <icon name="view-hide" data-ng-if="!vm.passwordNotVisible"></icon>
+          </a>
+        </div>
+      </form-group>
+
+      <form-group field-name="Authentication code"
+                  data-ng-show="vm.otp_mode">
+        <div class="input-group">
+          <span class="input-group-addon">
+            <icon name="mobile"></icon>
+          </span>
+
+          <input type="text"
+                 class="form-control"
+                 name="otp_code"
+                 focus-me="vm.otp_mode"
+                 data-ng-model="vm.user.otp_code"
+                 placeholder="Two-factor authentication code"
+                 ng-required="vm.otp_mode"/>
+        </div>
+      </form-group>
+
+      <div class="form-group">
+        <button type="submit" button-loader="vm.loading" block="true">Log in</button>
+      </div>
+    </form>
+  </div>
+  <div col="12" class="form-group space-on-top-lg">
+    <div class="text-right">
+      <a ui-sref="authentication.begin_password_reset({userName: vm.user.userName})"
+        class="fw-bolder"
+         ng-mousedown="$state.go('authentication.begin_password_reset', {userName: vm.user.userName})" ng-hide="vm.showFirmSelection || vm.showAccountCreationButton">Forgot your password?</a>
+      <a class="clickable fw-bolder" ng-show="vm.showFirmSelection" ng-click="vm.goToRequiredState()">Keep me logged in with default firm</a>
+    </div>
+  </div>
+
+  <div class="login-footer text-center" data-ng-if="vm.isInboundRequest">
+    <label class="text-gray">Powered By </label>
+    <img src="/assets/images/logo-small.png" alt="Diligence Vault" class="logo height-30">
+  </div>
+</div>
+<div data-ng-if="vm.showNudges">
+  <dv-nudges nudges="vm.selectedNudge"></dv-nudges>
+</div>

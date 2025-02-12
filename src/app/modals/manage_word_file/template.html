@@ -1,0 +1,46 @@
+<form name="vm.manage_template_form" novalidate class="form-horizontal" data-ng-submit="vm.submit()">
+  <div class="modal-header">
+    <h3 class="modal-title">Change Word file
+      <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a></h3>
+  </div>
+
+  <div class="modal-body" col="12">
+    <div col="12">
+      <div class="dd-doc-selection-wrapper">
+        <div class="panel panel-default dd-doc-drop-panel" dv-file-handler dv-droppable dv-manual-upload
+          name="file-handler-one" ngf-multiple="true" ngf-select-disabled="true" dv-bind-files-to="vm.files"
+          dv-accept="vm.allowed_file_extensions_str" dv-pattern="vm.allowed_file_extensions_str" dv-max-file-size="::vm.maxFileSize" ngf-max-files="1"
+          ngf-drag-over-class="'panel-primary'" dv-fields="vm.documentParams" dv-upload-url="/dd_documents"
+          dv-on-upload="vm.documentUploadComplete(response)">
+          <div class="panel-body">
+            <p class="text-muted text-center">
+              <strong>Drag & Drop your file here</strong>
+            </p>
+
+            <p class="text-muted text-center">
+              <icon name="upload" size="2x"></icon>
+            </p>
+
+            <div data-ng-repeat="file in vm.drop_files" dv-limit-word="file.name" char-limit="30"></div>
+
+          </div>
+        </div>
+
+        <div class="dd-doc-select-button-container">
+          <button btn-type="default" dv-file-handler dv-manual-upload dv-bind-files-to="vm.files"
+            dv-upload-url="/dd_documents" name="file-handler-two" dv-accept="vm.allowed_file_extensions_str" dv-pattern="vm.allowed_file_extensions_str"
+            dv-fields="vm.documentParams" dv-max-file-size="::vm.maxFileSize"
+            dv-on-upload="vm.documentUploadComplete(response)">
+            Select File
+          </button>
+          <div data-ng-repeat="file in vm.files" dv-limit-word="file.name" char-limit="30"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving_template">Import and close</button>
+
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

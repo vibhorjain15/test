@@ -1,0 +1,30 @@
+<div class="panel panel-default relative">
+  <dv-panel-heading
+    class="panel-heading"
+    heading="Teams"
+    [controls]="panelHeadingControls"
+    *ngIf="panelHeadingControls.length"
+  ></dv-panel-heading>
+  <div class="panel panel-info" *ngIf="!permissions_enabled">
+    <div class="panel-heading permissionsHelpText">
+      You are eligible for permissioning/team module. Please reach out to our
+      customer service at
+      <a
+        href="mailto:ask@diligencevault.com?subject=Team permission"
+        role="link"
+        >ask@diligencevault.com</a
+      >
+      to enable this.
+    </div>
+  </div>
+  <div class="panel-body">
+    <div *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="teams"
+        [name]="gridName"
+        [onRowClicked]="onRowClicked"
+        groupRowClickEnabled="true"
+      ></app-dv-grid>
+    </div>
+  </div>
+</div>

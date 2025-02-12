@@ -1,0 +1,81 @@
+<form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">Include Tags
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+
+    <div class="modal-body">
+      <table class="table">
+        <tbody>
+          <tr ng-repeat="question in subSection.questions">
+            <td width="5%" class="text-center">
+              <dv-checkbox ng-model="question.is_selected" ng-change="vm.valildateQuestionSelection(question, subSection)"></dv-checkbox>
+            </td>
+            <td width="95%">
+              <div class="row clearfix">
+                <div class="col-sm-10">
+                  <div ng-show="question.responseType != 'Grid'" class="parserTextQ">
+                    {{question.text}}
+                  </div>
+                  <div ng-show="question.responseType == 'Grid'" class="gridPreview">
+                    <p>{{question.text}}</p>
+                    <div ng-bind-html="question.html | trusthtml" class="space-on-top-lg"></div>
+                  </div>
+                </div>
+                <div class="col-sm-2">
+                  <span class="entity-group-container">
+                     <span class="clickable dropdown-toggle w-95" data-toggle="dropdown"
+                        btn-type="default">
+                        {{question.responseType}}&nbsp;<span class="caret"></span>
+                     </span>
+                     <ul class="dropdown-menu" role="menu">
+                        <li ng-repeat="resType in vm.responseTypes">
+                           <a data-ng-click="vm.changeResponseType(resType, question)" role="button">
+                              {{resType.description}}
+                           </a>
+                        </li>
+                     </ul>
+                  </span>
+                </div>
+              </div>
+
+              <div class="space-on-top res_container" ng-if="vm.source && vm.source == 'QA' && section.isOpen" ng-mouseover="question.hoverState = true;" ng-mouseleave="question.hoverState = false;">
+                <button class="btn btn-sm editResButton" ng-show="question.hoverState && !question.editable" uib-tooltip="Edit Response" ng-click="question.editable = !question.editable"><icon name="pencil"></icon></button>
+                <button class="btn btn-sm editResButton" ng-show="question.hoverState && question.editable" uib-tooltip="Save Changes" ng-click="question.editable = !question.editable"><icon name="check"></icon></button>
+                <textarea ng-if="question.responseHTML.length && question.editable" id="email-text" ui-tinymce="vm.tinymceOptions" class="form-control"
+                   data-ng-model="question.responseHTML"></textarea>
+                <div ng-if="question.responseHTML.length && !question.editable" ng-bind-html="question.responseHTML | trusthtml | sanitizehtml"></div>
+              </div>
+            </td>
+            <!-- <td width="30%">
+              <div data-ng-show="question.responseType == 'Grid' || question.responseType == 'DynamicGrid'">
+                <span class="text-center space-on-top">{{question.responseType == 'DynamicGrid'? 'Customizable Grid' : 'Static Grid'}}</span>
+              </div>
+              <div data-ng-show="question.responseType != 'Grid' && question.responseType != 'DynamicGrid'" class="space-on-top">
+                <div>
+                  <label for="">Response type</label>
+                </div>
+                <select id="tag-selection"
+                        class="form-control"
+                        chosen
+                        data-ng-model="question.responseType"
+                        ng-disabled="question.responseType == 'Dropdown'"
+                        no-results-text="'Could not find any response types'"
+                        data-placeholder="Filter by response type"
+                        data-ng-options="option.text as option.description for option in vm.responseTypes">
+                  <option value=""></option>
+                </select>
+              </div>
+            </td> -->
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.loading">Save</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

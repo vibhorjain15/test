@@ -1,0 +1,23 @@
+<app-modal
+  [title]="title"
+  [firstButtonLabel]="firstButtonLabel"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="templateRef"
+  [isLoading]="saving_template"
+  [isFirstButtonDisabled]="!files.length"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div class="row clearfix">
+    <div col="12">
+      <div class="dd-doc-selection-wrapper">
+        <dv-uploader
+          dragLabel="Drag & Drop your file here"
+          [isMultiple]="false"
+          (onFileUpload)="documentUploadComplete($event)"
+          [accept]="allowed_file_extensions_str"
+        ></dv-uploader>
+      </div>
+    </div>
+  </div>
+</ng-template>

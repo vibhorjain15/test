@@ -1,0 +1,17 @@
+<ui-grid-cell-contents class="text-left">
+  <span data-ng-show="row.entity_type == 'Firm'">
+    <a ui-sref="app.firms.profile.monitor({firmId: row.entity.entity_id})"
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+       {{row.entity.entity_name}}
+    </a>
+  </span>
+
+  <span data-ng-show="row.entity_type == 'Fund'">
+    <a ui-sref="app.funds.profile.monitor({fundId: row.entity.entity_id})"
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+       {{row.entity.entity_name}}
+    </a>
+  </span>
+</ui-grid-cell-contents>

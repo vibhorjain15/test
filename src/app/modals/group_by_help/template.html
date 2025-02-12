@@ -1,0 +1,20 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">Help: Documents Group By
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+    <img class="img-responsive" src="assets/images/group-by-help.png">
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            data-ng-click="vm.dontShowAgain()"
+            button-loader="vm.savingChoice">Don't Show Again</button>
+    <button btn-type="default"
+            data-ng-click="vm.cancel()"
+            button-loader="vm.savingChoice">Close</button>
+  </div>
+</div>

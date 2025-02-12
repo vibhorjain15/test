@@ -1,0 +1,82 @@
+.stat-block {
+  @border-color: #ddd;
+  @height: 75px;
+
+  .box-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+  width: 100%;
+  background-color: white;
+  border: 1px solid @border-color;
+  margin-bottom: 20px;
+
+  .stat-left, .stat-right, .stat-top, .stat-bottom {
+    box-sizing: border-box;
+    height: 100%;
+  }
+
+  [class*="bg-"] {
+    color: white;
+  }
+
+  &:hover {
+    .box-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+    border-color: darken(@border-color, 10%);
+  }
+
+  &.stat-block-horizontal {
+    .stat-header {
+      height: @height;
+      font-size: 0;
+      position: relative;
+
+      .stat-anchor {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+      }
+
+      .stat-left, .stat-right {
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      > * {
+        font-size: 14px;
+      }
+
+      .stat-left {
+        width: @height;
+        text-align: center;
+
+        .dvi {
+          line-height: @height;
+        }
+      }
+
+      .stat-right {
+        padding: 10px;
+        width: calc(~"100% - @{height}")
+      }
+    }
+
+    .stat-body {
+      padding: 10px;
+      border-top: 1px solid @border-color;
+    }
+  }
+
+  &.stat-block-vertical {
+    height: 125px;
+
+    .stat-top {
+      height: 50px;
+    }
+
+    .stat-bottom {
+      height: calc(~"100% - 50px");
+      padding: 5px 10px;
+    }
+  }
+}

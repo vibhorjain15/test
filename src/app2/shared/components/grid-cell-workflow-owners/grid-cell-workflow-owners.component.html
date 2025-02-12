@@ -1,0 +1,15 @@
+<ng-container *ngIf="this.isSelfGrouped || !this.isGrouped">
+  <div
+    *ngFor="let avatar of avatars; let i = index"
+    [ngClass]="{ 'is-grouped': isGrouped, avatar: true }"
+    [style.left.px]="(i + 1) * 25"
+    [style.zIndex]="avatars.length - i"
+    tooltip="{{ params?.data?.owner_name }}"
+    container="body"
+  >
+    <img *ngIf="avatar" [src]="avatar" />
+    <div *ngIf="!avatar" class="avatar-alt">
+      {{ this.name }}
+    </div>
+  </div>
+</ng-container>

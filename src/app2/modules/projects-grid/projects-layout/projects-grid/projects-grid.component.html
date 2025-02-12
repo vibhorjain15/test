@@ -1,0 +1,271 @@
+<app-spinner
+  [broadSpinner]="true"
+  [spinnerHeight]="50"
+  *ngIf="!render_grid"
+  role="alert"
+  aria-live="assertive"
+></app-spinner>
+<div
+  col="12"
+  class="panel panel-default pos-abs stick-top bg-sky-blue"
+  *ngIf="show_bulk_actions && render_grid"
+  role="region"
+  aria-label="Bulk Actions Panel"
+>
+  <div class="panel-body padded-lg" *ngIf="!show_bulk_edit_actions">
+    <h5 class="inline space-on-right-xl">
+      <strong
+        >Selected Records :
+        <span class="badge">{{ totalSelectedRecords }}</span></strong
+      >
+    </h5>
+    <h5 class="inline space-on-right-lg">
+      <strong>Quick actions:</strong>
+    </h5>
+    <a
+      class="btn btn-default space-on-right-lg"
+      *ngIf="is_investor && type != 'closed' && type != 'all'"
+      tooltip="Remind"
+      (click)="confirmBulkAction('remind')"
+      tabindex="0"
+    >
+      <strong>
+        <span appIcon name="history"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default space-on-right-lg"
+      *ngIf="is_investor && type === 'sent'"
+      tooltip="Withdraw requests"
+      (click)="confirmBulkAction('withdraw')"
+      tabindex="0"
+      role="button"
+      aria-label="Withdraw requests"
+    >
+      <strong>
+        <span appIcon name="close"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default success space-on-right-lg"
+      *ngIf="is_investor && (type === 'in-progress' || type === 'my projects')"
+      tooltip="Approve projects (only projects after manager completion will be approved)"
+      (click)="confirmBulkAction('approve')"
+      tabindex="0"
+      role="button"
+      aria-label="Approve projects (only projects after manager completion will be approved)"
+    >
+      <strong>
+        <span appIcon name="check"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default success space-on-right-lg"
+      *ngIf="is_manager && (type === 'in-progress' || type === 'my projects')"
+      tooltip="Submit requests"
+      (click)="confirmBulkAction('complete')"
+      tabindex="0"
+      role="button"
+      aria-label="Submit requests"
+    >
+      <strong>
+        <span appIcon name="check"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default success space-on-right-lg"
+      *ngIf="is_manager && type === 'invites'"
+      tooltip="Accept requests"
+      (click)="confirmBulkAction('accept')"
+      tabindex="0"
+      role="button"
+      aria-label="Accept requests"
+    >
+      <strong>
+        <span appIcon name="check"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default success space-on-right-lg"
+      *ngIf="is_manager && type === 'invites'"
+      tooltip="Decline requests"
+      (click)="confirmBulkAction('decline')"
+      tabindex="0"
+      role="button"
+      aria-label="Decline requests"
+    >
+      <strong>
+        <span appIcon name="close"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default danger space-on-right-lg"
+      *ngIf="
+        is_investor &&
+        (type === 'in-progress' || type === 'my projects' || type === 'closed')
+      "
+      tooltip="Delete Selected"
+      (click)="confirmBulkAction('delete')"
+      tabindex="0"
+      role="button"
+      aria-label="Delete Selected"
+    >
+      <strong>
+        <span appIcon name="trashcan"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default space-on-right-lg"
+      tooltip="Edit Selected"
+      (click)="editSentdDDBulkActionActive()"
+      *ngIf="
+        is_investor &&
+        (type === 'sent' || type === 'in-progress' || type === 'my projects')
+      "
+      tabindex="0"
+      role="button"
+      aria-label="Edit Selected"
+    >
+      <strong>
+        <span appIcon name="pencil"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn btn-default space-on-right-lg"
+      tooltip="Export selected Project(s)"
+      (click)="exportSelectedQuestions()"
+      tabindex="0"
+      role="button"
+      aria-label="Export selected Projects"
+    >
+      <strong>
+        <span appIcon name="download3"></span>
+      </strong>
+    </a>
+
+    <a
+      class="btn pull-right text-black danger"
+      tooltip="Close"
+      (click)="closeQuickActions()"
+      tabindex="0"
+      role="button"
+      aria-label="Close Quick Actions"
+    >
+      <strong>
+        <span appIcon name="close"></span>
+      </strong>
+    </a>
+  </div>
+  <div class="panel-body padded-lg" *ngIf="show_bulk_edit_actions">
+    <div class="row" role="group" aria-label="Selected Records and Actions">
+      <div col="6" class="clear-padding text-align-right">
+        <span>
+          <h5 class="inline space-on-right">
+            <strong
+              >Selected Records :
+              <span class="badge">{{ totalSelectedRecords }}</span></strong
+            >
+          </h5>
+        </span>
+        <span>Select As of Date: </span>
+        <a
+          style="width: 45%"
+          class="btn btn-default clear-padding borderless space-on-right-lg"
+          tabindex="0"
+          role="button"
+          aria-label="select as of date"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <app-date-picker
+            [maxDate]="maxAsOfDate"
+            [ariaLabel]="'select as of date'"
+            [value]="sent_diligences_as_of_date"
+            (change)="onAsOfDateChange($event)"
+          ></app-date-picker>
+        </a>
+      </div>
+      <div col="5" class="clear-padding">
+        <span>Select Due Date: </span>
+        <a
+          style="width: 45%"
+          class="btn btn-default clear-padding borderless space-on-right-lg"
+          tabindex="0"
+          role="button"
+          aria-label="select due date"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <app-date-picker
+            [minDate]="minDateEditSection"
+            [ariaLabel]="'Select Due Date'"
+            [value]="sent_diligences_due_date"
+            (change)="onDueDateChange($event)"
+          ></app-date-picker>
+        </a>
+
+        <dv-button
+          btnType="primary"
+          (onClick)="editSentDDBulkAction()"
+          [loader]="loading"
+        >
+          Save
+        </dv-button>
+
+        <dv-button
+          btnType="default"
+          (onClick)="cancelQuickActions()"
+          btnClass="space-on-left-lg"
+        >
+          Cancel
+        </dv-button>
+      </div>
+      <div col="1">
+        <a
+          class="btn pull-right text-black danger"
+          (click)="closeQuickActions()"
+          tabindex="0"
+          role="button"
+          aria-label="Close quick actions"
+        >
+          <strong>
+            <span appIcon name="close"></span>
+          </strong>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="show_bulk_actions && render_grid" class="space-on-top-xl">
+  <helper-text>
+    Please note that selecting all records and applying filters will not reset
+    the current selection of records.
+  </helper-text>
+</div>
+
+<div class="space-on-top-lg" *ngIf="render_grid">
+  <app-dv-grid
+    [rowData]="gridData"
+    [name]="gridName"
+    [onSelectionChanged]="onSelectionChanged"
+    [onRowClicked]="onRowClicked"
+    [onRowSelected]="onRowSelected"
+    [filterData]="filterData"
+    [customFilterInitValue]="customFilterInitValue"
+    (onLoadView)="loadView($event)"
+    [noRowsTemplate]="
+      !initGridSection && !gridData.length ? 'Loading...' : 'No results found'
+    "
+    #projectsGrid
+  >
+    <ng-content></ng-content>
+  </app-dv-grid>
+</div>

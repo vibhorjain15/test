@@ -1,0 +1,298 @@
+<div class="row clearfix" role="region" aria-label="Diligence Details">
+  <div class="col-md-12" *ngIf="diligence && !questionCountLoader">
+    <div class="panel panel-default">
+      <div class="panel-body clearfix">
+        <div class="display-flex flex-wrap align-items-center">
+          <div
+            class="display-flex align-items-center justify-content-space-between min-width-fit-content flex-1 flex-gap-10"
+          >
+            <div>
+              <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                {{
+                  diligence.entity_name ? diligence.entity_name : diligence.name
+                }}
+                <dv-button
+                  tooltip="Edit project info"
+                  [btnType]="'transparent'"
+                  (onClick)="openUpdateDiligenceModal()"
+                  *ngIf="
+                    current_user.firmInfo.id == diligence.fromfirm_id &&
+                    diligence.status != diligenceStatusConstant.Scheduled
+                  "
+                  ariaLabel="Edit project info"
+                >
+                  <small>
+                    <span appIcon name="pencil" size="1x"></span>
+                  </small>
+                </dv-button>
+              </h4>
+              <span
+                class="text-capitalize"
+                *ngIf="
+                  current_user.firmInfo.id == diligence.fromfirm_id &&
+                  diligence.entity_name &&
+                  diligence.entity_id != -1
+                "
+              >
+                {{ diligence.name }}
+              </span>
+            </div>
+            <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+            <div class="text-center">
+              <span class="align-middle display-block">Status</span>
+              <span diligenceStatus [status]="diligence.status"></span>
+
+              <div *ngIf="diligence.status == 'NotApproved'">
+                <a
+                  (click)="redirectToNotApprovalReasons()"
+                  class="link-disguise"
+                  tabindex="0"
+                >
+                  <small>See Reasons</small>
+                </a>
+              </div>
+            </div>
+            <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+            <div *ngIf="!diligence.alwaysOpen">
+              <div *ngIf="canFinishDD">
+                <app-dv-questionnaire-submit-button
+                  [diligence]="diligence"
+                  [related_diligences]="related_diligences"
+                  [readonly]="current_user.isReadOnly"
+                  [wipCount]="wipCount"
+                  [mandatoryUnansweredCount]="mandatoryUnansweredCount"
+                  [totalReviewFailed]="totalReviewFailed"
+                  [totalReviewAssignmentPending]="totalReviewAssignmentPending"
+                  [totalReviewPending]="totalReviewPending"
+                  [totalUnResolvedComments]="totalUnResolvedComments"
+                  [totalTrackChangesCount]="totalTrackChangesCount"
+                  [totalRatingReviewFailed]="totalRatingReviewFailed"
+                  [totalRatingReviewAssignmentPending]="
+                    totalRatingReviewAssignmentPending
+                  "
+                  [totalRatingTrackChangesCount]="totalRatingTrackChangesCount"
+                  [totalRatingReviewPending]="totalRatingReviewPending"
+                  [user]="current_user"
+                  [diligence_status]="diligence.status"
+                  [review_mandatory]="diligence.review_mandatory"
+                >
+                </app-dv-questionnaire-submit-button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="display-flex align-items-center min-width-0-pct flex-2 flex-basis-250"
+          >
+            <div class="min-width-0-pct flex-1">
+              <dv-action-list
+                [actionList]="dvActionList"
+                (onClick)="handleActionList($event)"
+              ></dv-action-list>
+            </div>
+            <div class="padded-lg clear-vertical-padding">
+              <dv-logo-label
+                icon="arrow-back"
+                label="Back to all projects"
+                (onClick)="redirectToProjectsGrid()"
+              ></dv-logo-label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="row">
+          <div col="4">
+            <app-project-info *ngIf="diligence" [diligence]="diligence">
+            </app-project-info>
+            <app-dv-subscriber-selection
+              [selection]="subscribers"
+              [showHeader]="true"
+              (selectionChanged)="onSubscriberChanged($event)"
+              [functions]="functions"
+              [infoTooltipText]="
+                'Add a team member as a subscriber to keep them informed with timely project updates and notifications.'
+              "
+            >
+            </app-dv-subscriber-selection>
+            <app-dv-custom-fields
+              *ngIf="diligence"
+              [entityType]="'Diligence'"
+              [entityId]="diligenceId"
+              [customFields]="customFields"
+              (onAdd)="manageCustomFields()"
+            >
+            </app-dv-custom-fields>
+            <app-dv-audit *ngIf="diligence" [diligence]="diligence">
+            </app-dv-audit>
+          </div>
+
+          <div col="8">
+            <app-project-stats
+              *ngIf="diligence"
+              [diligence]="diligence"
+              [issueTrackerDefaultName]="issueTrackerDefaultName"
+            ></app-project-stats>
+
+            <div
+              class="panel panel-default"
+              *ngIf="diligence && !diligence.is_internal"
+            >
+              <div class="panel-heading">
+                <span>
+                  <span class="align-middle">
+                    Conversations between You and Responder
+                  </span>
+                </span>
+              </div>
+              <div class="panel-body full-width full-height">
+                <div
+                  #scrollBottomDiv
+                  [scrollTop]="scrollBottomDiv.scrollHeight"
+                  class="summary-followup-container"
+                >
+                  <ul class="list-unstyled chat-bubbles" tabindex="0">
+                    <li
+                      *ngFor="
+                        let response of conversations;
+                        trackBy: trackByResponseId
+                      "
+                    >
+                      <div
+                        class="bubble"
+                        id="followup-response-{{ response.id }}"
+                        [ngClass]="{
+                          'bubble-primary':
+                            response.firm_id == current_user.firmInfo.id,
+                          'bubble-default':
+                            response.firm_id != current_user.firmInfo.id,
+                          'pull-right': response.created_by == current_user.id,
+                          'pull-left': response.created_by != current_user.id
+                        }"
+                      >
+                        <div class="bubbler">
+                          <span *ngIf="response.created_by == current_user.id"
+                            >You</span
+                          >
+
+                          <span *ngIf="response.created_by !== current_user.id">
+                            {{ response.first_name }}
+                            {{ response.last_name }} ({{ response.firm_name }})
+                          </span>
+                        </div>
+
+                        <div
+                          class="bubble-message"
+                          [tooltip]="formatDateTimeFormat(response.updated_at)"
+                        >
+                          <span
+                            class="pre-wrap"
+                            [innerHtml]="response.text | dvSafeHtml"
+                          ></span>
+
+                          <div class="bubble-meta clearfix">
+                            <span class="pull-right">
+                              {{
+                                Utils.getLocalDateTimeGeneric(
+                                  response.updated_at
+                                ) | dvDate
+                              }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <form
+                  name="followup_form"
+                  class="sidebar-form fixed-bottom"
+                  (ngSubmit)="saveFollowupResponse()"
+                  *ngIf="!diligence.isLocked"
+                  #followupForm="ngForm"
+                  autocomplete="off"
+                >
+                  <dv-form-element elementCol="0" fieldName="Response">
+                    <textarea
+                      placeholder="Enter response here"
+                      class="form-control"
+                      msd-elastic="\n"
+                      ngModel
+                      name="new_followup_response"
+                      required
+                      style="min-height: 50px"
+                      #new_followup_response="ngModel"
+                    ></textarea>
+                    <div
+                      *ngIf="
+                        !new_followup_response?.valid &&
+                        new_followup_response?.touched
+                      "
+                      class="danger"
+                    >
+                      Response is Required
+                    </div>
+                  </dv-form-element>
+
+                  <dv-button
+                    [loader]="saving_followup_response"
+                    [btnClass]="'space-on-right'"
+                    [disabled]="
+                      diligence.status == diligenceStatusConstant.Scheduled
+                    "
+                  >
+                    Follow up with Responder
+                  </dv-button>
+
+                  <dv-button
+                    [loader]="saving_followup_response"
+                    (onClick)="showRequestRevisionAlert()"
+                    [btnType]="'danger'"
+                    type="button"
+                    tooltipText="To unlock and enable managers to update responses"
+                    *ngIf="
+                      diligence.status == 'Completed' &&
+                      diligence.diligence_type !== 'shared_profile'
+                    "
+                  >
+                    Request Revision
+                  </dv-button>
+                </form>
+              </div>
+            </div>
+            <mapped-entities
+              [diligenceId]="diligence.id"
+              *ngIf="diligence && diligence.diligence_type == 'dd_review'"
+            ></mapped-entities>
+            <app-dv-related-diligences
+              (refreshLinkedProjects)="getRelatedDiligences()"
+              *ngIf="
+                related_diligences?.length > 0 &&
+                diligence &&
+                (diligence.entity_type == 'Strategy' ||
+                  diligence.entity_type == 'Fund' ||
+                  diligence.entity_type == 'Vehicle')
+              "
+              [diligences]="related_diligences"
+              [isInvestor]="current_user.isInvestor"
+            ></app-dv-related-diligences>
+            <app-dv-workflows
+              *ngIf="diligence"
+              [entityType]="'Duediligence'"
+              [entityId]="diligence.id"
+              [entityName]="diligence.entity_name"
+              [disableInsert]="diligence.isLocked || is_freeSubscription"
+              [dateFilter]="dateRangeForDirectives"
+            ></app-dv-workflows>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-spinner
+    class="laoder-class"
+    *ngIf="!diligence || questionCountLoader"
+  ></app-spinner>
+</div>

@@ -1,0 +1,195 @@
+<div data-ng-if="vm.Utils.isAngular()">
+    <ng2-contacts></ng2-contacts>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="row clearfix">
+    <div class="col-md-12">
+        <div class="panel panel-default borderless-top hide-in-print-view">
+            <div class="panel-body clearfix">
+                <spinner data-ng-if="!vm.contact"></spinner>
+
+                <div class="dv-table dv-table-middle dd-info-panel"
+                     data-ng-show="vm.contact">
+                    <div class="bordered-right cell">
+                        <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                            {{vm.contact.fullName}} <span class="space-on-left label label-warning"  uib-tooltip="Deactivated by the owner firm"  ng-show="!vm.contact.platform_active">{{vm.statusLabel.INACTIVE}}</span>
+                            <span class="dot-success"
+                                  uib-tooltip="Active DiligenceVault user"
+                                  data-ng-if="vm.contact.conversionDateTime && !vm.contact.bounced_at"></span>
+                            <span data-ng-if="vm.contact.bounced_at">
+                                <small class="text-danger" uib-tooltip="Emails to this contact have bounced in the past.">
+                                    <icon name="warning"></icon>
+                                </small>
+                            </span>
+                        </h4>
+                        <small class="text-muted">
+                            {{vm.contact.title}} at {{vm.contact.firmInfo.name}}
+                        </small>
+                        <div data-ng-show="!vm.contact.active" class="space-on-top">
+                          <span class="label label-danger">
+                            INACTIVE
+                          </span>
+                        </div>
+                    </div>
+
+                    <div class="cell text-center bordered-right">
+                        <h4 class="clear-margin">
+                            {{vm.contact.owner_name}}
+                        </h4>
+                        <small class="text-muted">
+                            DiligenceVault Owner
+                        </small>
+                    </div>
+
+                    <div class="cell bordered-right">
+                        <span class="pull-right" uib-dropdown>
+                           <a href="" class="dropdown-toggle btn btn-transparent"
+                              uib-dropdown-toggle
+                              uib-tooltip="Edit / Deactivate">
+                               <div><icon name="ellipsis-h" size="2x"></icon></div>
+                               <div class="space-on-top-n"><small>More Actions</small></div>
+                           </a>
+
+                          <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                              <li>
+                                  <a data-ng-click="vm.addTask()" role="button"><icon name="tasks" class="space-on-right-lg"></icon>Add task</a>
+                              </li>
+                              <li>
+                                <a ui-sref="app.partnership({entity_id: vm.contactId, entity_type: vm.entityType, entity_name: vm.contact.fullName })" role="button"><icon name="bg-check" class="space-on-right-lg"></icon>Request background check</a>
+                              </li>
+                              <li>
+                                  <a data-ng-click="vm.editContact()" role="button"><icon name="pencil" class="space-on-right-lg"></icon>Edit contact</a>
+                              </li>
+                              <li class="divider js-delete-button" data-ng-hide="!vm.contact.active"></li>
+                              <li data-ng-hide="!vm.contact.active">
+                                  <a data-ng-click="vm.deactivateContact()" role="button"><icon name="ban" class="space-on-right-lg"></icon>Mark as inactive</a>
+                              </li>
+                          </ul>
+                        </span>
+                    </div>
+
+                    <div class="bordered-right w-320 cell" data-ng-if="vm.customDateFilter">
+                        <dv-daterangepicker ng-model="vm.customDateFilter"
+                                min-date="vm.minDate" max-date="vm.maxDate"
+                                apply-method="vm.applyMethod"></dv-daterangepicker>
+                    </div>
+
+                    <div class="cell text-center">
+                        <a class="btn btn-transparent"
+                           ui-sref="app.monitor.contacts">
+                            <div><icon name="arrow-back" size="2x"></icon></div>
+                            <small>Back to all contacts</small>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div col="4" class="dv-notes-list-panel hide-in-print-view">
+                <div class="dv-notes-list-panel">
+                    <dv-custom-fields entity-type="'Vehicle'" entity-id="vm.vehicleId" custom-fields="vm.customFields" on-add="vm.manageCustomfield()"></dv-custom-fields>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <span>
+                          <icon name="fund" class="space-on-right align-middle"></icon>
+                          <span class="align-middle">
+                            Associated Products <span data-ng-if="vm.all_products.length">(Top {{vm.associated_products.length}} of {{vm.all_products.length}} products)</span>
+                          </span>
+                        </span>
+                    </div>
+                    <div class="panel-body has-notes-form clear-padding">
+                        <spinner broad-spinner spinner-height='80' data-ng-if="!vm.associated_products"></spinner>
+                        <ul class="list-group clear-margin-bottom tasks-list" data-ng-if="vm.associated_products && vm.associated_products.length">
+                            <li class="list-group-item pa-tb-xl pa-lr-xxl task-item" data-ng-repeat="product in vm.associated_products track by $index">
+                                <!--<a ui-sref="app.funds.profile.monitor({fundId: product.id})">
+                                    <span dv-limit-word="product.name" char-limit="75" uib-tooltip="{{product.name}}"></span>
+                                </a>-->
+                                <div class="media">
+                                    <div class="media-left">
+                                        <span class="circled-initials clear-margin-left">
+                                          {{$index+1}}
+                                        </span>
+                                    </div>
+
+                                    <div class="media-body">
+                                        <div class="dv-table full-width">
+                                            <div class="cell align-middle">
+                                                  <span>
+                                                    <a class="link-disguise" ui-sref="app.funds.profile.summary({fundId: product.id})" data-ng-if="vm.is_manager">
+                                                        <span dv-limit-word="product.name" char-limit="40" uib-tooltip="{{product.name}}"></span>
+                                                    </a>
+                                                    <a class="link-disguise" ui-sref="app.funds.profile.monitor({fundId: product.id})" data-ng-if="!vm.is_manager">
+                                                        <span dv-limit-word="product.name" char-limit="40" uib-tooltip="{{product.name}}"></span>
+                                                    </a>
+                                                  </span>
+
+                                                <button btn-type="default"
+                                                        uib-tooltip="Remove product association"
+                                                        data-ng-click="vm.confirmRemoveProductAssociation(product, $index)"
+                                                        class="danger pull-right"
+                                                        size="xs">
+                                                    <icon name="close"></icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
+                        <div class="text-muted padded-xl" data-ng-if="vm.associated_products && !vm.associated_products.length">
+                            <i>**No products associated**</i>
+                        </div>
+                    </div>
+                </div>
+
+                <dv-tasks data-ng-if="vm.contact" entity-type="'User'" entity-id="vm.contactId" page-url="vm.pageUrl" refresh-tasks="vm.refreshTasksList" date-filter="vm.dateRangeForDirectives"></dv-tasks>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+            <span>
+              <icon name="bookmark" class="space-on-right align-middle"></icon>
+
+              <span class="align-middle">
+                Contact Details
+              </span>
+            </span>
+                    </div>
+                    <div class="panel-body">
+                        <spinner data-ng-if="!vm.contact"></spinner>
+                        <ul class="list-unstyled due-diligence-history" data-ng-if="vm.contact">
+                            <li><small class="text-muted text-uppercase">Email:</small> {{vm.contact.userName}}</li>
+                            <li><small class="text-muted text-uppercase">Phone:</small> {{vm.contact.phone_1}}</li>
+                            <li><small class="text-muted text-uppercase">Phone 2:</small> {{vm.contact.phone_2}}</li>
+                            <li>
+                                <div>
+                                    <small class="text-muted text-uppercase">Contact Type:</small>
+                                </div>
+                                <span data-ng-show="vm.contact.contact_types">
+                                    <span class="label-list">
+                                      <span class="label label-default space-on-right text-uppercase"
+                                            data-ng-repeat="tag in vm.contact.contact_types track by $index">
+                                            <small>{{tag.name}}</small>
+                                      </span>
+                                    </span>
+                                </span>
+                            </li>
+                            <li><small class="text-muted text-uppercase">Street Address:</small> {{vm.contact.street_address_1}}</li>
+                            <li><small class="text-muted text-uppercase">Street Address 2:</small> {{vm.contact.street_address_2}}</li>
+                            <li><small class="text-muted text-uppercase">City:</small> {{vm.contact.city}}</li>
+                            <li><small class="text-muted text-uppercase">State:</small> {{vm.contact.state}}</li>
+                            <li><small class="text-muted text-uppercase">Zipcode:</small> {{vm.contact.zipcode}}</li>
+                            <li><small class="text-muted text-uppercase">Country:</small> {{vm.contact.country}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div col="8">
+              <dv-notes data-ng-if="vm.contact" entity-type="vm.entityType" entity-id="vm.contactId" notes-options="vm.notesOptions" entity-name="vm.contact.fullName" date-filter="vm.dateRangeForDirectives" page-url="vm.pageUrl"></dv-notes>
+            </div>
+        </div>
+    </div>
+</div>

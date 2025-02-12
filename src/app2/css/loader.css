@@ -1,0 +1,19 @@
+.loader-wrapper .loader-logo,
+.loader-wrapper .artboard {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+.loader-wrapper .loader-logo {
+  margin-left: -100px;
+  margin-top: 0;
+}
+.loader-wrapper .artboard {
+  margin-left: -65px;
+  margin-top: -112.5px;
+}
+.loader-wrapper .artboard canvas {
+  position: absolute;
+  top: 0px;
+  left: 8px;
+}

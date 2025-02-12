@@ -1,0 +1,376 @@
+<nav
+  class="navbar navbar-default navbar-fixed-top js-navbar-default hide-in-print-view"
+  id="dv-navbar"
+  data-ng-if="vm.showTopNav"
+>
+  <div class="container-fluid relative">
+    <div class="navbar-header">
+      <a ui-sref="app.home" class="navbar-brand">
+        <img
+          src="assets/images/DV_logo.png"
+          alt="Diligence Vault logo"
+          class="logo"
+        />
+      </a>
+
+      <button
+        type="button"
+        class="navbar-toggle bg-white"
+        data-toggle="collapse"
+        data-target="#js-navbar"
+        aria-label="menubar icon"
+      >
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <nav class="collapse navbar-collapse" id="js-navbar">
+      <menubar></menubar>
+
+      <ul class="nav navbar-nav navbar-menu navbar-right" role="menu">
+        <li
+          class="dropdown notification-dropdown"
+          uib-dropdown
+          role="menuitem"
+          tabindex="0"
+        >
+          <a
+            role="button"
+            tabindex="0"
+            uib-dropdown-toggle
+            uib-tooltip="Discover What's New"
+            tooltip-placement="bottom"
+            class="clear-padding"
+            id="release-toggle"
+            aria-label="Discover What's New"
+            tabindex="0"
+            role="button"
+          >
+            <icon class="nav-icon" ng-class="{'dvi-shine':!vm.allReleaseViewed}" name="announcements" size="lg"></icon>
+          </a>
+          <div class="dropdown-menu dropdown-release-note-menu" uib-dropdown-menu role="menu">
+            <ng2-release-note-panel (unseen)="vm.checkForUnSeenNotes($event)" (close)="vm.closeReleaseNotePanel()"></ng2-release-note-panel>
+          </div>
+        </li>
+        <li
+          class="dropdown notification-dropdown hidden-xs"
+          uib-dropdown
+          data-ng-hide="vm.is_security_admin"
+          role="menuitem"
+          tabindex="0"
+        >
+          <a role="button" tabindex="0" uib-dropdown-toggle uib-tooltip="Notifications"  aria-label="Notifications" tooltip-placement="bottom" data-ng-click="vm.getUnreadNotifications()">
+            <icon name="bell" size="lg"></icon>
+            <span
+              class="notification-badge"
+              data-ng-show="vm.unread_notification_count"
+            >
+              {{vm.unread_notification_count}}
+            </span>
+          </a>
+
+          <div class="dropdown-menu" uib-dropdown role="menu">
+            <platform-activity-panel preview="true" name="vm.platform_activity">
+            </platform-activity-panel>
+          </div>
+        </li>
+        <li
+          ng-click="vm.addTeamMembers()"
+          class="dropdown"
+          uib-tooltip="Invite a User"
+          tooltip-placement="bottom"
+          aria-label="Invite a User"
+          role="menuitem"
+          tabindex="0"
+        >
+          <a role="button" tabindex="0" class="clear-padding" aria-label="Add Team Member">
+            <icon class="nav-icon font-size-25" name="add-team-member"></icon>
+          </a>
+        </li>
+        <li
+          ui-sref="app.my_downloads"
+          class="download-view"
+          uib-tooltip="My Downloads"
+          tooltip-placement="bottom"
+          aria-label="My Downloads"
+          role="menuitem"
+          tabindex="0"
+        >
+          <a role="button" tabindex="0" class="clear-padding" aria-label="Go to My download pages">
+            <icon class="nav-icon font-size-25" name="download-install-line"></icon>
+          </a>
+        </li>
+
+        <hr class="clear-margin-top space-on-bottom-xl visible-xs" />
+
+          <li class="dropdown js-settings-toggle" uib-dropdown role="menuitem" tabindex="0">
+          <a
+            uib-dropdown-toggle
+            id="settings-toggle"
+            class="clear-vertical-padding link-unstyled dropdown-toggle pa-lr-lg"
+            role="button"
+            tabindex="0"
+          >
+            <div class="profile-box">
+              <div class="profile-picture-wrapper">
+                <user-avatar
+                  avatar-icon-size="2x"
+                  avatar-img-class="img-responsive img-circle"
+                >
+                </user-avatar>
+              </div>
+
+              <div class="user-info">
+                <b
+                  uib-tooltip="{{vm.currentUser.firstName}} {{vm.currentUser.lastName}}"
+                  tooltip-placement="bottom"
+                  >{{vm.currentUser.firstName}} {{vm.currentUser.lastName}}</b
+                >
+                <br />
+                <small
+                  uib-tooltip="{{vm.currentUser.firmInfo.name}}"
+                  tooltip-placement="bottom"
+                  >{{vm.currentUser.firmInfo.name}}</small
+                >
+              </div>
+
+              <div class="cell align-middle padded">
+                <icon name="angle-down" size="lg"></icon>
+              </div>
+            </div>
+          </a>
+
+          <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+            <li role="menuitem" tabindex="0">
+              <a
+                ui-sref="app.settings.profile"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+                tabindex="0"
+                
+              >
+                <icon name="cogs" class="space-on-right"></icon>
+                My Settings
+              </a>
+            </li>
+            <li
+              class="no-space-divider"
+              data-ng-if="vm.has_multiple_accounts"
+              role="menuitem"
+              tabindex="0"
+              aria-hidden="true"
+            ></li>
+            <li data-ng-if="vm.has_multiple_accounts" role="menuitem">
+              <a
+                ui-sref="app.settings.my_accounts"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+              >
+                <icon name="institution" class="space-on-right"></icon>
+                Switch Accounts
+              </a>
+            </li>
+
+            <li class="no-space-divider" data-ng-if="vm.is_admin" aria-hidden="true" role="menuitem" tabindex="0"></li>
+
+            <li id="js-team-member-settings" data-ng-if="vm.is_admin" role="menuitem" tabindex="0">
+              <a
+                ui-sref="app.firm.settings.employees"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+              >
+                <icon name="meeting" class="space-on-right"></icon>
+                Users & Teams
+              </a>
+            </li>
+
+            <li
+              id="js-firm-settings"
+              data-ng-if="vm.is_admin && !vm.is_security_admin"
+              role="menuitem"
+              tabindex="0"
+            >
+              <a
+                ui-sref="app.firm.settings.profile"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+              >
+                <icon name="institution" class="space-on-right"></icon>
+                Firm Settings
+              </a>
+            </li>
+
+            <li
+              id="js-firm-settings"
+              data-ng-if="vm.is_admin && vm.is_security_admin"
+              role="menuitem"
+              tabindex="0"
+            >
+              <a
+                ui-sref="app.firm.settings.employees"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+              >
+                <icon name="institution" class="space-on-right"></icon>
+                Firm Settings
+              </a>
+            </li>
+
+            <li
+              id="js-privacy-policy-settings"
+              data-ng-if="vm.is_admin"
+              data-ng-click="vm.closeMenu()"
+              role="menuitem"
+              tabindex="0"
+            >
+              <a
+                target="_blank"
+                ng-href="https://diligencevault.com/privacy-policy/"
+                class="sub-menu-item"
+              >
+                <icon name="secure" class="space-on-right"></icon>
+                Privacy Policy
+              </a>
+            </li>
+
+            <li
+              id="js-terms-and-conditions"
+              role="menuitem"
+              tabindex="0"
+            >
+              <a
+                ui-sref="app.terms-and-conditions"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+              >
+                <icon name="terms-and-conditions" class="space-on-right"></icon>
+                Terms and Conditions
+              </a>
+            </li>
+
+             <li
+              id="js-ai-terms-of-use"
+              role="menuitem"
+              tabindex="0"
+            >
+              <a
+                ui-sref="app.ai-terms-of-use"
+                class="sub-menu-item"
+                data-ng-click="vm.closeMenu()"
+              >
+                <icon name="terms-and-conditions" class="space-on-right"></icon>
+                AI Terms of Use
+              </a>
+            </li>
+
+            <li class="no-space-divider" aria-hidden="true" role="menuitem" tabindex="0" ></li>
+
+            <li role="menuitem" tabindex="0">
+              <a
+                data-ng-click="vm.logout();vm.closeMenu();"
+                class="clickable sub-menu-item"
+                role="button"
+                tabindex="0"
+              >
+                <icon name="sign-out" class="space-on-right"></icon>
+                Sign out
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="dropdown notification-dropdown visible-xs" uib-dropdown role="menuitem" tabindex="0">
+          <a role="button" tabindex="0" uib-dropdown-toggle>
+            <icon name="bell" size="lg"></icon>
+            <span
+              class="notification-badge"
+              data-ng-show="vm.unread_notification_count"
+            >
+              {{vm.unread_notification_count}}
+            </span>
+          </a>
+
+          <div class="dropdown-menu padded-xl" uib-dropdown role="menu">
+            <platform-activity-panel preview="true" name="vm.platform_activity">
+            </platform-activity-panel>
+          </div>
+        </li>
+
+        <li class="dropdown js-help-toggle" uib-dropdown role="menuitem" tabindex="0">
+          <a id="js-help-nav-btn" uib-dropdown-toggle role="button" tabindex="0" uib-tooltip="Help" tooltip-placement="bottom" aria-label="Help">
+            <icon
+              name="question-circle"
+              size="lg"
+              data-ng-class="{'text-orange': has_help}"
+            ></icon>
+          </a>
+
+          <ul
+            class="dropdown-menu dropdown-menu-right"
+            uib-dropdown-menu
+            role="menu"
+          >
+            <li data-ng-show="has_help && vm.showPageHelp" role="menuitem" tabindex="0">
+              <a
+                role="button"
+                tabindex="0"
+                data-ng-click="vm.triggerHelp();vm.closeMenu();"
+                class="sub-menu-item"
+                tabindex="0"
+              >
+                View Help on this Page
+              </a>
+            </li>
+
+            <li id="js-feedback-li" role="menuitem" tabindex="0">
+              <a
+                role="button"
+                tabindex="0"
+                data-ng-click="vm.toggleFeedbackPanel();vm.closeMenu();"
+                class="sub-menu-item"
+                tabindex="0"
+              >
+                Write to us
+              </a>
+            </li>
+            <li data-ng-if="!vm.is_manager || !vm.is_freeSubscription" data-ng-click="vm.closeMenu()" role="menuitem" tabindex="0">
+              <a
+                target="_blank"
+                href="https://faq.diligencevault.com/hc/en-us"
+                class="sub-menu-item"
+                role="button"
+                tabindex="0"
+              >
+                FAQs
+              </a>
+            </li>
+            <li data-ng-if="vm.is_manager && vm.is_freeSubscription" role="menuitem" tabindex="0">
+              <a
+                target="_blank"
+                href="https://faq.diligencevault.com"
+                class="sub-menu-item"
+                role="button"
+                tabindex="0"
+              >
+                FAQs
+              </a>
+            </li>
+
+            <li id="js-product-tour" data-ng-if="vm.is_manager" role="menuitem" tabindex="0">
+              <a
+                class="sub-menu-item clickable"
+                data-ng-click="vm.productTour();closeMenu();"
+                role="button"
+                tabindex="0"
+              >
+                Product Tour
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</nav>

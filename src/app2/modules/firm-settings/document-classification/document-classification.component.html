@@ -1,0 +1,141 @@
+<div class="panel panel-default relative">
+  <div class="panel-heading">
+    <h5 class="panel-title">Document Classification</h5>
+  </div>
+  <div class="panel-info" *ngIf="document_groups">
+    <div class="panel-heading">
+      Organize your documents. Associate document types with document groups.
+    </div>
+  </div>
+  <app-spinner
+    [broadSpinner]="true"
+    [spinnerHeight]="100"
+    *ngIf="!document_groups"
+  ></app-spinner>
+  <div class="panel-body" *ngIf="document_groups">
+    <div *ngFor="let group of document_groups">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h5 class="panel-title">{{ group.name }}</h5>
+          <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+              <a
+                container="body"
+                placement="left"
+                tooltip="Add Document Type"
+                class="panel-control"
+                (click)="displayAssignTagsController(group)"
+                role="button"
+                tabindex="0"
+                aria-label="Add Document Type"
+              >
+                <span appIcon name="pencil"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div *ngIf="group.tags?.length" class="label-list">
+            <span
+              class="label label-default text-uppercase space-on-right"
+              *ngFor="let tags of group.tags"
+            >
+              <small>{{ tags.type_name }}</small>
+            </span>
+          </div>
+          <div col="8" offset="2" *ngIf="!group.tags?.length">
+            <app-empty-state
+              [iconName]="'tag'"
+              *ngIf="is_admin"
+              (action)="displayAssignTagsController(group)"
+              [actionLabel]="getActionLabel(group)"
+              [message]="getMessage(group)"
+            >
+            </app-empty-state>
+            <app-empty-state
+              [iconName]="'tag'"
+              *ngIf="!is_admin"
+              [message]="
+                'No types available for this category. Please contact your admin to get started'
+              "
+            >
+            </app-empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div col="8" offset="2" *ngIf="document_groups && !document_groups.length">
+      <app-empty-state
+        [iconName]="'tag'"
+        *ngIf="is_admin"
+        (action)="initiateDocGroupAddition()"
+        [actionLabel]="'Add a document classification'"
+        [message]="'None available. Why not add?'"
+      >
+      </app-empty-state>
+    </div>
+  </div>
+</div>
+<div
+  class="dd-sidebar-panel dv-sidebar-panel sidebar-lg"
+  [ngClass]="{ in: displaySidebarPanel }"
+  *ngIf="displaySidebarPanel"
+>
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5 id="sidebarTitle">
+        <b>{{ sidebarTitle }}</b>
+        <a
+          class="pull-right clickable link-disguise"
+          (click)="displaySidebarPanel = false"
+          role="button"
+          tabindex="0"
+          aria-label="Close sidebar"
+        >
+          <span appIcon name="close" size="lg"></span>
+        </a>
+      </h5>
+    </div>
+    <div class="panel-body" *ngIf="displaySidebarPanel">
+      <form novalidate autocomplete="off">
+        <dv-form-element
+          [fieldName]="'Document Group'"
+          [showRightIcon]="false"
+          *ngIf="document_types.length"
+          [elementCol]="12"
+          [elementClass]="'no-padding space-on-bottom-xl'"
+          [for]="'document-tag'"
+        >
+          <dv-select
+            [list]="document_types"
+            [(ngModel)]="document_tags"
+            bindLabel="name"
+            bindValue="id"
+            [disabled]="!document_types"
+            [clearable]="false"
+            [searchable]="true"
+            [multiple]="true"
+            [id]="'document-tag'"
+            name="document-tag"
+            placeholder="Select Document Types"
+          ></dv-select>
+        </dv-form-element>
+        <div class="form group">
+          <dv-button
+            [loader]="saving_tags"
+            [btnType]="'primary'"
+            (onClick)="saveAssignment()"
+            ariaLabel="Save Grouping"
+          >
+            <span>Save Grouping</span>
+          </dv-button>
+          <p class="text-muted space-on-top-lg">
+            <small>
+              <i>This helps to group documents for easier tracking.</i>
+            </small>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

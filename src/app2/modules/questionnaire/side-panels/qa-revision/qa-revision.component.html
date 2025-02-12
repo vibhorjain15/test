@@ -1,0 +1,218 @@
+<side-panel-wrapper
+  [title]="'Response History'"
+  [isLoading]="false"
+  [isFooter]="false"
+  (onCancelClick)="cancelPanel()"
+>
+  &nbsp;&nbsp;
+  <app-spinner
+    *ngIf="loader"
+    aria-hidden="true"
+    class="activate-btn"
+  ></app-spinner>
+  <app-empty-state
+    *ngIf="!loader && !history"
+    message="No revisions found"
+    aria-hidden="true"
+  ></app-empty-state>
+  <div *ngIf="history && !loader">
+    <dv-qa-info-tab
+      [firstName]="
+        (history.deleted
+          ? 'Deleted'
+          : history.response_source === responseSource.AutoFill
+          ? 'Auto-filled'
+          : history.response_source === responseSource.ExcelSync
+          ? 'Added via Excel Sync'
+          : history.is_submitted_by_investor
+          ? currUser.isInvestor
+            ? 'You or your team member has cancelled any pending revisions and resolved the follow-up'
+            : 'The requestor has resolved this follow-up and cancelled any pending revisions'
+          : history?.audits?.length
+          ? 'Revised'
+          : 'Added') +
+        ' by ' +
+        history.created_by
+      "
+      [readOnly]="readOnly"
+      [isDeleted]="history.deleted"
+      [lastEdited]="history.created_at"
+      [showIcons]="false"
+      [userId]="history.created_by_id"
+      [showNumber]="false"
+      [customNoteButton]="false"
+      [sourceInput]="historyDetails"
+      [customClass]="
+        !history.deleted
+          ? history.response_type === ResponseType.Grid ||
+            history.response_type === ResponseType.DynamicGrid
+            ? gridClass
+            : 'note-content'
+          : ''
+      "
+      [mainObj]="history"
+      aria-label="Revision details"
+    >
+      <response-history-display
+        [currentResponse]="history"
+        [prevResponse]="
+          history.audits?.length && !history.audits[0].deleted
+            ? history.audits[0]
+            : null
+        "
+        [response_type]="history.response_type"
+        [grid_id]="history.grid_id"
+        *ngIf="!history.deleted"
+        [grid_version]="history.grid_version"
+        aria-label="Response history"
+      ></response-history-display>
+    </dv-qa-info-tab>
+    <ng-container
+      *ngTemplateOutlet="sourceInputInfo; context: { revision: history }"
+      #historyDetails
+    ></ng-container>
+
+    <dv-divider
+      horizontalMargin="mini"
+      *ngIf="history.audits?.length"
+    ></dv-divider>
+
+    <div class="revisions" *ngIf="history?.audits?.length">
+      <div
+        *ngFor="let audit of history?.audits; let i = index; let last = last"
+      >
+        <dv-qa-info-tab
+          [firstName]="
+            (audit.deleted
+              ? 'Deleted'
+              : (currUser.isInvestor && audit?.is_submitted_by_investor) ||
+                history.audits[i + 1]?.is_submitted_by_investor
+              ? currUser.isInvestor
+                ? 'You or your team member has cancelled any pending revisions and resolved the follow-up'
+                : 'The requestor has resolved this follow-up and cancelled any pending revisions'
+              : audit.response_source === responseSource.AutoFill
+              ? 'Auto-filled'
+              : audit.response_source === responseSource.ExcelSync
+              ? 'Added via Excel Sync'
+              : last
+              ? 'Added'
+              : 'Revised') +
+            ' by ' +
+            audit.created_by
+          "
+          [index]="i"
+          *ngIf="audit"
+          [readOnly]="readOnly"
+          [lastEdited]="audit.created_at"
+          [showIcons]="false"
+          [userId]="audit.created_by_id"
+          [showNumber]="false"
+          [sourceInput]="auditDetails"
+          [customNoteButton]="isRestorable"
+          [customClass]="
+            !audit.deleted
+              ? history.response_type === ResponseType.Grid ||
+                history.response_type === ResponseType.DynamicGrid
+                ? gridClass
+                : 'note-content'
+              : ''
+          "
+          (onCustomButtonClick)="handleRestore(i)"
+          [mainObj]="history"
+          [isDeleted]="audit.deleted"
+        >
+          <response-history-display
+            [currentResponse]="audit"
+            #responseHistory
+            [prevResponse]="
+              history.audits[i + 1] && !history.audits[i + 1].deleted
+                ? history.audits[i + 1]
+                : null
+            "
+            [response_type]="history.response_type"
+            [grid_id]="history.grid_id"
+            [grid_version]="history.grid_version"
+            *ngIf="!audit.deleted"
+            (copyGridDataEmitter)="copyGridData()"
+            aria-label="Response history"
+          ></response-history-display>
+        </dv-qa-info-tab>
+        <ng-container
+          *ngTemplateOutlet="
+            sourceInputInfo;
+            context: { revision: audit, prevRevision: history.audits[i + 1] }
+          "
+          #auditDetails
+        ></ng-container>
+        <dv-divider horizontalMargin="mini" *ngIf="!last"></dv-divider>
+      </div>
+    </div>
+  </div>
+
+  <ng-template
+    #sourceInputInfo
+    let-revision="revision"
+    let-prevRevision="prevRevision"
+  >
+    <div
+      class="source-info"
+      *ngIf="
+        revision.response_source === responseSource.AutoFill &&
+        !revision.deleted &&
+        !(
+          (currUser.isInvestor && revision?.is_submitted_by_investor) ||
+          prevRevision?.is_submitted_by_investor
+        )
+      "
+    >
+      <div
+        class="source-heading clickable"
+        (click)="revision.showSourceResponse = !revision.showSourceResponse"
+      >
+        Source History
+        <span
+          appIcon
+          name="chevron-down"
+          [style.margin-top.px]="3"
+          *ngIf="revision.showSourceResponse"
+        ></span>
+        <span
+          appIcon
+          name="chevron-right"
+          [style.margin-top.px]="3"
+          *ngIf="!revision.showSourceResponse"
+        ></span>
+      </div>
+      <ng-container *ngIf="revision.showSourceResponse">
+        <span class="source-field-wrapper"
+          ><span class="source-field">Entity Name: </span>
+          <b> {{ revision.base_response_entity_name }}</b>
+        </span>
+        <span class="source-field-wrapper"
+          ><span class="source-field">Associated Firm: </span>
+          <b> {{ revision.base_response_associated_firm }}</b>
+        </span>
+        <span class="source-field-wrapper"
+          ><span class="source-field">Last Updated By: </span>
+          <b> {{ revision.base_response_created_by }}</b>
+        </span>
+        <span class="source-field-wrapper"
+          ><span class="source-field">Last Updated At: </span>
+          <b> {{ revision.base_response_created_at + "Z" | dvDate }}</b>
+        </span>
+        <span
+          class="source-field-wrapper"
+          *ngIf="!currUser.isInvestor && firmPref.enable_es_autofill"
+          ><span class="source-field">% Similarity Match: </span>
+          <b> {{ revision.es_matching_score }}%</b>
+        </span>
+      </ng-container>
+    </div>
+  </ng-template>
+
+  <app-empty-state
+    *ngIf="isEmpty"
+    message="No revisions found"
+    aria-hidden="true"
+  ></app-empty-state>
+</side-panel-wrapper>

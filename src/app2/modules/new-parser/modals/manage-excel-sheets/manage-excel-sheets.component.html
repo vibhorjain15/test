@@ -1,0 +1,48 @@
+<app-modal
+  [title]="titleMap[type]"
+  [firstButtonLabel]="'Save'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="templateRef"
+>
+</app-modal>
+<ng-template #templateRef>
+  <div class="row clearfix">
+    <div col="12">
+      <table class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Sheets</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of sheetsData; let sheet_id = index">
+            <td>
+              <dv-checkbox
+                *ngIf="type == 'apply_style'"
+                [disabled]="
+                  entry.sheet_no === selectedSheetNo || !entry.is_active
+                "
+                [id]="sheet_id"
+                [(ngModel)]="entry.apply_style"
+                [ariaLabel]="entry.sheet_name"
+              >
+              </dv-checkbox>
+              <dv-checkbox
+                *ngIf="type != 'apply_style'"
+                [disabled]="
+                  entry.sheet_no === selectedSheetNo || entry.is_disabled
+                "
+                [id]="sheet_id"
+                [(ngModel)]="entry.is_active"
+                [ariaLabel]="entry.sheet_name"
+              >
+              </dv-checkbox>
+            </td>
+            <td class="break-spaces">{{ entry.sheet_name }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>

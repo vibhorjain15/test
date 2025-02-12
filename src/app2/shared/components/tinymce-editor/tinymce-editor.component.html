@@ -1,0 +1,24 @@
+<!-- plugins: [
+              'advlist autolink lists link image charmap print preview anchor',
+              'searchreplace visualblocks code fullscreen',
+              'insertdatetime media table paste code help wordcount'
+            ], -->
+<div #tinyMceComponent>
+  <editor
+    (ngModelChange)="handleChange($event)"
+    [(ngModel)]="value"
+    [init]="tinyMceInit"
+    [disabled]="disabled"
+    *ngIf="!isLite"
+    [id]="id"
+  ></editor>
+
+  <div *ngIf="isLite" tabindex="0" class="lite-tinyMce">
+    <div
+      [innerHtml]="value || tinyMceInit.placeholder | cleanHtml | dvSafeHtml"
+      class="space-exactly"
+      [ngClass]="{ placeholder: !value }"
+    ></div>
+  </div>
+</div>
+<div tippyTooltip></div>

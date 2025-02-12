@@ -1,0 +1,5 @@
+<div>
+  <span class="text text-warning" [class.text-warning]="showWarningColor">
+    {{ label | date : (isFull ? "MMMM d, y" : "mediumDate") }}
+  </span>
+</div>

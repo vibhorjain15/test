@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>color_2</title>
+    <g id="color_2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(2.000000, 3.000000)" fill="#C2C2C2" fill-rule="nonzero">
+            <polygon id="Path" points="13.4 0 13.4 1.4 2.66453526e-15 1.4 2.66453526e-15 0"></polygon>
+            <polygon id="Path" points="20.4 12 20.4 13.4 3.55271368e-15 13.4 3.55271368e-15 12"></polygon>
+            <polygon id="Path" points="20.4 16 20.4 17.4 3.55271368e-15 17.4 3.55271368e-15 16"></polygon>
+            <polygon id="Path" points="20.4 4 20.4 5.4 3.55271368e-15 5.4 3.55271368e-15 4"></polygon>
+            <polygon id="Path" points="7.4 8 7.4 9.4 1.77635684e-15 9.4 1.77635684e-15 8"></polygon>
+        </g>
+        <path d="M12,10.7692308 L18.7692308,4 L20,5.23076923 L13.2307692,12 L20,18.7692308 L18.7692308,20 L12,13.2307692 L5.23076923,20 L4,18.7692308 L10.7692308,12 L4,5.23076923 L5.23076923,4 L12,10.7692308 Z" id="Rectangle-Copy-13" fill="#FF0000"></path>
+    </g>
+</svg>

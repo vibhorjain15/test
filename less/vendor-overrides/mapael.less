@@ -1,0 +1,12 @@
+.mapTooltip {
+  .opacity(@tooltip-opacity);
+
+  position: fixed;
+  display:none; // js toggles the display
+  background-color: @tooltip-bg;
+  border-radius: @border-radius-base;;
+  padding: 3px 8px;
+  z-index: 1000;
+  max-width: @tooltip-max-width;
+  color:@tooltip-color;
+}

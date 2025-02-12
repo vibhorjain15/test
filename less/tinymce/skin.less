@@ -1,0 +1,42 @@
+@import '../../bower_components/bootstrap/less/mixins.less';
+@import (inline) "../vendor/tinymce-dv/skin.min.css";
+
+.mce-toolbar.mce-container {
+  .clearfix();
+  height: 26px;
+
+  .mce-container-body {
+    float: left;
+    position: absolute;
+  }
+
+  .mce-btn-group {
+    margin: 0;
+
+    .mce-btn {
+      border-radius: 0;
+      border-top: none;
+      border-bottom: none;
+    }
+
+    .mce-last {
+      border-right: none;
+    }
+
+    &:first-child {
+      .mce-first {
+        border-left: none;
+      }
+    }
+
+    &:last-child {
+      .mce-last {
+        border-right: 1px solid #ccc;
+      }
+    }
+  }
+}
+
+.mce-textbox:focus, .mce-textbox.mce-focus {
+  .box-shadow(none);
+}

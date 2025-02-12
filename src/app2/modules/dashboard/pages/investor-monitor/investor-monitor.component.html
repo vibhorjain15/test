@@ -1,0 +1,307 @@
+<div class="row clearfix">
+  <!-- First row with the title section and graphs   -->
+  <div col="12">
+    <!-- Activity title and graphs column -->
+    <div class="row">
+      <!-- Title row -->
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-body text-muted">
+            <h4 class="inline-block text-primary">MONITOR DASHBOARD</h4>
+
+            <div *ngIf="!is_freeSubscription" class="pull-right w-160">
+              <div class="dropdown" dropdown>
+                <button
+                  id="button-basic"
+                  dropdownToggle
+                  type="button"
+                  block
+                  size="sm"
+                  appButton
+                  btnType="default"
+                  class="space-on-top dropdown-toggle btn-sm btn-block btn btn-default"
+                  aria-controls="dropdown-basic"
+                >
+                  Switch View <span class="caret"></span>
+                </button>
+                <ul
+                  id="dropdown-basic"
+                  *dropdownMenu
+                  class="dropdown-menu"
+                  role="menu"
+                  aria-labelledby="button-basic"
+                >
+                  <li role="menuitem" *ngFor="let type of dashFilterMap">
+                    <a
+                      class="dropdown-item"
+                      role="button"
+                      tabindex="0"
+                      (click)="toggleDashboard(type)"
+                    >
+                      <span [ngClass]="{ 'text-orange': dashTypes == type }">
+                        <span
+                          appIcon
+                          name="settings"
+                          class="space-on-right"
+                        ></span>
+                        Switch to {{ type }}
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div
+              col="6"
+              class="w-280 max-w-400 pull-right cell space-on-top range-picker"
+            >
+              <app-date-range-picker
+                [customDate]="dateRangeRatingScheme"
+                *ngIf="customDateFilter"
+                (change)="onChange($event)"
+                (clearDateFilter)="onClearDateFilter()"
+              ></app-date-range-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <!-- Due Diligience Donught Chart -->
+      <div col="4">
+        <app-diligence-by-status
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+          heading="Diligence by Status"
+        ></app-diligence-by-status>
+      </div>
+
+      <div col="4">
+        <app-recent-documents
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+          heading="Recent Documents"
+        ></app-recent-documents>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+              <div class="panel-heading">
+                <h5 class="panel-title text-uppercase">Recent Documents</h5>
+              </div>
+
+              <div class="panel-body dash-recent-documents">
+
+                  <table class="table table-borderless documents-table" data-ng-show="vm.docs && vm.docs.length">
+                      <tr>
+                          <th>Document</th>
+                          <th class="text-center">Last Updated</th>
+                      </tr>
+
+                      <tr class="document-item" ng-repeat="doc in vm.docs" ui-sref="app.content.document.detail({documentId: doc.id})">
+                          <td>
+                              <attachment-icon filename="doc.file_name"
+                                               class="file-attachment-icon align-middle" size="lg"></attachment-icon>
+                              <span uib-tooltip="{{doc.name}}"
+                                 class="link-disguise align-middle">
+                                  {{doc.name | limitTo: 27}}
+                              </span>
+                          </td>
+                          <td class="text-center">{{doc.as_of_date | dvDate}}</td>
+                      </tr>
+                  </table>
+
+                  <div class="padded-xl" *ngIf="vm.docs && !vm.docs.length">
+                      <empty-state icon-name="file"
+                                   message="No documents available"></empty-state>
+                  </div>
+
+                  <spinner broad-spinner spinner-height='324' data-ng-hide="vm.docs"></spinner>
+
+                  <div *ngIf="vm.docs && vm.docs.length">
+                      <a ui-sref="app.content.documents" class="pull-left space-on-left-xxl">View All</a>
+                  </div>
+              </div>
+          </div> -->
+      </div>
+
+      <div col="4">
+        <app-recent-sec-adv-updates
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+        ></app-recent-sec-adv-updates>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">Recent SEC ADV Updates</h5>
+            </div>
+
+              <div class="panel-body dash-sec-updates">
+
+                  <table class="table table-borderless sec-table" data-ng-show="vm.recent_filings && vm.recent_filings.length">
+                      <tr>
+                          <th>Firm Name</th>
+                          <th class="text-center"># of changes</th>
+                      </tr>
+
+                      <tr class="document-item" ng-repeat="filing in vm.recent_filings track by $index" ui-sref="app.form_adv.firm.snapshot({firmCRD: filing.firmCRD})">
+                          <td>
+                              <span uib-tooltip="{{filing.businessName}}"
+                                    class="link-disguise align-middle">
+                                  {{filing.businessName | limitTo: 27}}
+                              </span>
+                          </td>
+                          <td class="text-center">{{filing.changeCount}}</td>
+                      </tr>
+                  </table>
+
+                  <div class="padded-xl" *ngIf="vm.recent_filings && !vm.recent_filings.length">
+                      <empty-state icon-name="institution"
+                                   message="No recent SEC updates available"
+                                   action="vm.goToTrackingPage()"
+                                   action-label="Start Tracking"></empty-state>
+                  </div>
+
+                  <spinner broad-spinner spinner-height='324' data-ng-hide="vm.recent_filings"></spinner>
+
+                  <div *ngIf="vm.recent_filings && vm.recent_filings.length">
+                      <a ui-sref="app.form_adv.regulatory_monitor.explore" class="pull-left space-on-left-xxl">View All</a>
+                  </div>
+              </div>
+          </div> -->
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="6" *ngIf="!is_freeSubscription">
+        <app-recent-diligences
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+          heading="Recent Diligences"
+        ></app-recent-diligences>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">Recent Diligences</h5>
+            </div>
+            <div class="panel-body">
+              <div donut-chart config="vm.strategyDonutChartConfig"></div>
+            </div>
+          </div> -->
+        <app-recent-flags-scores-rating
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+        ></app-recent-flags-scores-rating>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">Recent Flags / Scores / Ratings</h5>
+            </div>
+            <div class="panel-body">
+              <dv-grid grid-resource="vm.flags_scores" *ngIf="vm.flags_scores && vm.initGridSection"
+                grid-name="'investor-recent-flags-scores'"></dv-grid>
+            </div>
+          </div> -->
+      </div>
+
+      <div col="6" *ngIf="!is_freeSubscription">
+        <app-important-full-calendar
+          *ngIf="isAllDataLoaded"
+          [isManger]="false"
+          [dateRange]="dateRangeRatingScheme"
+        ></app-important-full-calendar>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">Important Dates!!</h5>
+              <div class="panel-controls">
+                <div class="panel-controls-wrapper">
+                  <a class="panel-control" data-ng-click="vm.addEvent()" uib-tooltip="Add New Event">
+                    <icon name="plus"></icon>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="panel-body">
+              <spinner broad-spinner spinner-height='400' *ngIf="vm.loadingCalendar"></spinner>
+              <div full-calendar calendar-events="vm.calendar_events" id="calendar" *ngIf="!vm.loadingCalendar">
+              </div>
+            </div>
+          </div> -->
+        <app-recent-notes
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+        ></app-recent-notes>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">Recent Notes</h5>
+            </div>
+            <div class="panel-body dash-notes-panel">
+              <div class="full-width full-height">
+                <div class="">
+                  <empty-state icon-name="notepad" message="No notes available" *ngIf="vm.notes && !vm.notes.length">
+                  </empty-state>
+
+                  <spinner broad-spinner spinner-height='400' data-ng-hide="vm.notes"></spinner>
+
+                  <ul class="list-unstyled due-diligence-history notes-activity" data-ng-show="vm.notes.length">
+                    <li class="clickable" data-ng-repeat="note in vm.notes track by $index"
+                      data-ng-click="vm.redirectToDetail(note)">
+                      <div class="dv-table">
+                        <div class="cell padded icon-wrapper text-center">
+                          <icon name="phone" data-ng-show="note.type == 'PhoneCall'" size="lg"
+                            uib-tooltip="Phone or conference call" class="text-muted"></icon>
+                          <icon name="coffee" data-ng-show="note.type == 'Coffee'" size="lg" uib-tooltip="Coffee meeting"
+                            class="text-muted"></icon>
+                          <icon name="meeting" data-ng-show="note.type == 'Meeting' || note.type == 'Conference'"
+                            uib-tooltip="Onsite / conference" class="text-muted"></icon>
+                          <icon name="thumbs-o-down" size="lg" data-ng-show="note.type == 'NotApproved'"
+                            uib-tooltip="Non Approval Reasons" class="text-muted"></icon>
+                          <icon name="pencil" data-ng-show="note.type == 'General' && note.entity_type != 'Attachment'"
+                            uib-tooltip="General notes" class="text-muted"></icon>
+                          <icon name="file" size="lg" data-ng-show="note.entity_type == 'Attachment'"
+                            uib-tooltip="Document review notes" class="text-muted"></icon>
+                          <icon name="institution" data-ng-show="note.type == 'FormADV'"
+                            uib-tooltip="FormADV review notes" class="text-muted"></icon>
+                          <icon name="ban" size="lg" data-ng-show="note.type == 'Declined'"
+                            uib-tooltip="Reason for Declining DD Invitation" class="text-muted"></icon>
+                          <icon name="thunder" size="lg" data-ng-show="note.type == 'Invitation'"
+                            uib-tooltip="Event trigger for due-diligence" class="text-muted"></icon>
+                        </div>
+
+                        <div class="cell align-middle">
+                          <small class="text-muted">
+                            <span>{{note.first_name}} {{note.last_name}}</span>
+                            <span>added</span>
+                            <span>{{note.updated_at|dvDate}}</span>
+                            <span>for</span>
+                            <span>{{note.entity_name}}</span>
+                          </small>
+
+                          <p class="clear-margin-bottom space-on-top responsive-image"><span
+                              ng-bind-html="note.text | cleanhtml"></span></p>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div> -->
+      </div>
+    </div>
+
+    <!-- Graphs Rows -->
+
+    <!-- User Attention and Circles row  -->
+
+    <!--<div class="row clearfix">
+        <div col="12">
+          <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">May we have your Attention Please !!</h5>
+            </div>
+            <div class="panel-body">
+              <div id="circular-attentions" class="clear-margin"></div>
+            </div>
+          </div>
+        </div>
+      </div>-->
+
+    <!-- Important Dates and Live Diligence Tracker -->
+  </div>
+</div>

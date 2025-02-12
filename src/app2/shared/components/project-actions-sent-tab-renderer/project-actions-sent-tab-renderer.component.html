@@ -1,0 +1,28 @@
+<div *ngIf="!params.node.group && params.data.status == 'Sent'">
+  <dv-button
+    btnType="primary"
+    size="sm"
+    btnClass="space-on-left"
+    (onClick)="updateStatus(params.data, 'remind')"
+    [loader]="remind_loading"
+  >
+    Remind
+  </dv-button>
+  <dv-button
+    btnType="default"
+    size="sm"
+    btnClass="space-on-left"
+    (onClick)="updateStatus(params.data, 'withdraw')"
+    [loader]="withdraw_loading"
+  >
+    Withdraw
+  </dv-button>
+  <dv-button
+    btnType="default"
+    size="sm"
+    btnClass="space-on-left"
+    (onClick)="addSubscribersSentAction(params.data)"
+  >
+    Manage Details
+  </dv-button>
+</div>

@@ -1,0 +1,4 @@
+<ui-grid-cell-contents class="text-center">
+  <span data-ng-hide="row.entity.templateInfo.is_draft">{{row.entity.usageCount}}</span>
+  <span data-ng-show="row.entity.templateInfo.is_draft" class="label label-primary text-uppercase">DRAFT</span>
+</ui-grid-cell-contents>

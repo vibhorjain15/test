@@ -1,0 +1,16 @@
+.tag-wrapper {
+  border-radius: 4px;
+}
+.default {
+  background-color: #f1f1f1;
+  color: #555555;
+}
+.in-progress {
+  background-color: #f57c00;
+  color: white;
+}
+
+.label-default {
+  padding: 2px 8px !important;
+  /* font-size: 12px !important; */
+}

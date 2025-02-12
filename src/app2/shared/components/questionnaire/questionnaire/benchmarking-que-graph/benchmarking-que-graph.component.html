@@ -1,0 +1,39 @@
+<p *ngIf="total_count">
+  <small> <strong>Total Responses: </strong>{{ total_count }} </small>
+</p>
+<!-- <app-spinner *ngIf="!aggregations.length"></app-spinner>-->
+<div class="panel-body">
+  <div #chartContainer id="chart_{{ chart_index }}"></div>
+</div>
+<div
+  class="dd-sidebar-panel dv-sidebar-panel sidebar-lg"
+  [ngClass]="{ in: displaySidebarPanel }"
+>
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5 class="panel-title">
+        <b class="js-sidebar-title">{{ sidebarTitle }}</b>
+        <a
+          class="pull-right clickable link-disguise"
+          (click)="displaySidebarPanel = false"
+          clickable
+        >
+          <span appIcon name="close" size="lg"></span>
+        </a>
+      </h5>
+    </div>
+    <div
+      class="panel-body js-sidebar-content-container"
+      *ngIf="displaySidebarPanel"
+    >
+      <div class="panel-body">
+        <app-dv-grid
+          [rowData]="documents"
+          [name]="gridName"
+          [onRowSelected]="onRowSelected"
+          [noRowsTemplate]="!documents ? 'Loading...' : 'No results found'"
+        ></app-dv-grid>
+      </div>
+    </div>
+  </div>
+</div>

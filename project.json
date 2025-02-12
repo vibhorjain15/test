@@ -1,0 +1,158 @@
+{
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "name": "DV_MVC_REST",
+  "projectType": "application",
+  "generators": {
+    "@schematics/angular:application": {
+      "strict": false
+    }
+  },
+  "sourceRoot": "src",
+  "prefix": "app",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "outputPath": "dist",
+        "index": "src/index.html",
+        "main": "src/main.ts",
+        "polyfills": "src/polyfills.ts",
+        "tsConfig": "tsconfig.app.json",
+        "assets": [
+          "src/favicon.ico",
+          "src/assets",
+          "src/i18n",
+          "src/Web.config",
+          "src/supported_formulas.html",
+          "src/e-front-terms-and-conditions.html",
+          {
+            "glob": "**/*",
+            "input": "src/vendor/tinymce",
+            "output": "/tinymce/"
+          },
+          {
+            "glob": "**/*",
+            "input": "src/vendor/dv_img_selector",
+            "output": "/tinymce/plugins/dv_img_selector"
+          },
+          {
+            "glob": "**/*",
+            "input": "src/vendor/flite",
+            "output": "/tinymce/plugins/flite"
+          }
+        ],
+        "styles": [
+          "src/app2/css/app.min.css",
+          "src/app2/css/loader.css",
+          {
+            "input": "less/icomoon/style.less",
+            "inject": true,
+            "bundleName": "icomoon"
+          },
+          "node_modules/sweetalert2/dist/sweetalert2.min.css",
+          "node_modules/handsontable/dist/handsontable.full.css",
+          "node_modules/cropperjs/dist/cropper.css",
+          "node_modules/handsontable-multi-select/dist/css/handsontable-multi-select.css",
+          {
+            "input": "src/app2/shared/components/editor/plugins/dv-footnote/styles/footnote-styles.css",
+            "bundleName": "footnote-styles"
+          },
+          {
+            "input": "node_modules/ckeditor5/dist/ckeditor5.css",
+            "bundleName": "ckeditor5"
+          },
+          {
+            "input": "node_modules/ckeditor5-premium-features/dist/ckeditor5-premium-features.css",
+            "bundleName": "ckeditor5-premium-features"
+          },
+          {
+            "input": "src/app2/shared/components/editor/plugins/dv-fullscreen/theme/fullscreen.css",
+            "bundleName": "ckeditor-fullscreen-styles"
+          },
+          "src/styles.css",
+          "node_modules/ngx-toastr/toastr.css",
+          "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+          "./node_modules/ngx-ui-switch/ui-switch.component.css",
+          "node_modules/ag-grid-community/styles/ag-grid.css",
+          "node_modules/ag-grid-community/styles/ag-theme-alpine.css",
+          "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
+        ],
+        "scripts": [
+          "src/loader.js",
+          "src/vendor/session/sessionStorageTabs.js",
+          "src/vendor/flite/js/flite-interface.js",
+          "node_modules/numbro/dist/numbro.min.js"
+        ],
+        "webWorkerTsConfig": "tsconfig.worker.json"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "buildOptimizer": true,
+          "aot": true,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "25mb",
+              "maximumError": "25mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "src/environments/environment.ts",
+              "with": "src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "development",
+      "outputs": [
+        "{options.outputPath}"
+      ]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "DV_MVC_REST:build:production"
+        },
+        "development": {
+          "browserTarget": "DV_MVC_REST:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "main": "src/test.ts",
+        "polyfills": "src/polyfills.ts",
+        "tsConfig": "tsconfig.spec.json",
+        "karmaConfig": "karma.conf.js",
+        "assets": [
+          "src/favicon.ico",
+          "src/assets"
+        ],
+        "styles": [
+          "src/styles.css"
+        ],
+        "scripts": [],
+        "webWorkerTsConfig": "tsconfig.worker.json"
+      }
+    }
+  }
+}

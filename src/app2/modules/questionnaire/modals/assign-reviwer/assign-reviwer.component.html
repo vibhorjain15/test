@@ -1,0 +1,523 @@
+<app-modal
+  [title]="
+    type !== 'Question' && type !== 'Rating'
+      ? 'Assign Reviewer' + firstButtonLabel
+      : 'Update Reviewer' + firstButtonLabel
+  "
+  [firstButtonLabel]="
+    type === 'Question' || type === 'Rating'
+      ? 'Update Reviewer' + firstButtonLabel
+      : !handleShowSaveDefCheck
+      ? 'Assign Reviewer' + firstButtonLabel
+      : ''
+  "
+  [secondButtonLabel]="secondButtonLabel"
+  [secondButtonType]="handleShowSaveDefCheck ? 'primary' : 'default'"
+  (onSecondClick)="assignReviewerModal()"
+  [isSecondaryLoading]="starting_review_second"
+  (onFirstClick)="submit()"
+  [initialTemplate]="assignReview"
+  [isFirstButtonDisabled]="
+    (reviewStarted &&
+      (selectedButton == assignReviewerConstants.Newly_Assign
+        ? !newReviewForm?.valid
+        : selectedButton !== assignReviewerConstants.definition &&
+          !copyForm?.valid)) ||
+    starting_review_second
+  "
+  [isSecondButtonDisabled]="starting_review || deleteButtonDisabled"
+  [secondButtonTooltip]="
+    deleteButtonDisabled
+      ? 'Reviewers have left unresolved track changes. These must be resolved before deleting all reviewers.'
+      : ''
+  "
+  [isLoading]="starting_review"
+></app-modal>
+
+<ng-template #assignReview>
+  <div
+    [ngClass]="{
+      'review-main':
+        (selectedButton == assignReviewerConstants.Newly_Assign ||
+          selectedButton == assignReviewerConstants.definition) &&
+        filterId != 'all' &&
+        (type == 'Project' || type == 'Section')
+    }"
+  >
+    <div
+      class="cat-list"
+      *ngIf="
+        (selectedButton == assignReviewerConstants.Newly_Assign ||
+          selectedButton == assignReviewerConstants.definition) &&
+        filterId == 'select' &&
+        (type == 'Project' || type == 'Section')
+      "
+    >
+      <dv-category-accordion-list
+        [categoryData]="categoryCopy"
+        [isCheckbox]="true"
+        [showQuestionCount]="true"
+      ></dv-category-accordion-list>
+    </div>
+
+    <div class="assign-reviewer">
+      <ng-container *ngIf="type === 'Question' || type === 'QuestionAdd'">
+        <helper-text *ngIf="type === 'Question'"
+          >Already approved/completed steps cannot be edited</helper-text
+        >
+        <dv-label label="Question" type="bold" class="space-on-top"></dv-label>
+        <span class="space-on-bottom-lg" [innerHtml]="question.text"></span>
+      </ng-container>
+      <helper-text
+        *ngIf="
+          (selectedButton == assignReviewerConstants.Newly_Assign ||
+            selectedButton == assignReviewerConstants.definition) &&
+          (type === 'Project' || type === 'Section')
+        "
+      >
+        Assign {{ freeUser ? "a" : "" }} reviewer<span *ngIf="!freeUser"
+          >(s)</span
+        >
+        to
+        <span *ngIf="type == 'Rating'"> this rating</span>
+        <span *ngIf="type == 'Project' || type === 'Section'">
+          all responses
+        </span>
+        <span *ngIf="type === 'Project'">
+          or selected categories and sub-categories
+          <span
+            *ngIf="
+              !freeUser &&
+              selectedButton == assignReviewerConstants.Newly_Assign &&
+              type === 'Project'
+            "
+          >
+            and save these selections as a new review definition for
+            reuse.</span
+          >
+          <span
+            *ngIf="
+              !freeUser && selectedButton == assignReviewerConstants.definition
+            "
+          >
+            by selecting an existing review definition.</span
+          >
+        </span>
+        <span *ngIf="type === 'Section'">or the selected sub-categories</span>
+      </helper-text>
+      <helper-text
+        *ngIf="selectedButton == assignReviewerConstants.Copy_Reviewer"
+      >
+        Filter the source projects by entities and a date range, then select a
+        project to copy reviewer{{ firstButtonLabel }} from.
+      </helper-text>
+
+      <div class="ar-tabs" *ngIf="type == 'Project'">
+        <qa-button-tabs
+          iconName="add-user-4"
+          class="tabs-width"
+          [iconColor]="
+            selectedButton == assignReviewerConstants.Newly_Assign
+              ? 'orange'
+              : 'default'
+          "
+          [color]="
+            selectedButton == assignReviewerConstants.Newly_Assign
+              ? 'primary'
+              : 'default'
+          "
+          [label]="assignReviewerConstants.Newly_Assign"
+          (onClick)="toggleButton($event)"
+        ></qa-button-tabs>
+        <qa-button-tabs
+          iconName="clock-o"
+          tooltip="Copy reviewers from an existing project"
+          class="tabs-width"
+          [iconColor]="
+            selectedButton == assignReviewerConstants.Copy_Reviewer
+              ? 'orange'
+              : 'default'
+          "
+          [color]="
+            selectedButton == assignReviewerConstants.Copy_Reviewer
+              ? 'primary'
+              : 'default'
+          "
+          [label]="assignReviewerConstants.Copy_Reviewer"
+          (onClick)="toggleButton($event)"
+        ></qa-button-tabs>
+        <qa-button-tabs
+          iconName="bars"
+          [disabled]="freeUser"
+          [tooltip]="
+            'Apply pre-saved review assignments to this project.' +
+            (freeUser ? ' Available with a premium subscription' : '')
+          "
+          class="tabs-width"
+          [iconColor]="
+            selectedButton == assignReviewerConstants.definition
+              ? 'orange'
+              : 'default'
+          "
+          [color]="
+            selectedButton == assignReviewerConstants.definition
+              ? 'primary'
+              : 'default'
+          "
+          [label]="assignReviewerConstants.definition"
+          (onClick)="toggleButton($event)"
+        ></qa-button-tabs>
+      </div>
+      <app-spinner *ngIf="loading"></app-spinner>
+      <div class="review-form" *ngIf="!loading">
+        <form
+          #newReview="ngForm"
+          class="fields"
+          *ngIf="selectedButton !== assignReviewerConstants.Copy_Reviewer"
+          autocomplete="off"
+        >
+          <ng-container>
+            <div
+              [ngClass]="{
+                definitions:
+                  selectedButton === assignReviewerConstants.definition
+              }"
+              *ngIf="type == 'Project'"
+            >
+              <dv-form-element
+                label="Assign to"
+                [elementCol]="
+                  selectedButton === assignReviewerConstants.definition ? 12 : 6
+                "
+                labelPosition="top"
+                [style.width]="
+                  selectedButton === assignReviewerConstants.definition
+                    ? 100 + '%'
+                    : ''
+                "
+                [for]="'filterList'"
+              >
+                <dv-select
+                  [list]="filterList"
+                  [id]="'filterList'"
+                  name="filter"
+                  [searchable]="false"
+                  [(ngModel)]="filterId"
+                  (onSelectChange)="handleFilterChange($event)"
+                >
+                </dv-select>
+              </dv-form-element>
+
+              <dv-form-element
+                label="Select Definition"
+                elementCol="12"
+                *ngIf="selectedButton == assignReviewerConstants.definition"
+                labelPosition="top"
+                [style.width]="100 + '%'"
+                [for]="'definition'"
+              >
+                <dv-select
+                  [list]="definitions"
+                  name="definition"
+                  [id]="'definition'"
+                  bindValue=""
+                  (onSelectChange)="handleDefinitionChange($event)"
+                >
+                </dv-select>
+              </dv-form-element>
+            </div>
+
+            <dv-form-element
+              label="Apply to"
+              elementCol="6"
+              labelPosition="top"
+              [isRequired]="reviewStarted"
+              infoText="'All Responses' will overwrite all review assignments, excluding responses that have been approved by existing reviewer{{
+                firstButtonLabel
+              }}."
+              *ngIf="type == 'Project' || type === 'Section'"
+              [for]="'Qfilter'"
+            >
+              <dv-select
+                [list]="diligenceFilters"
+                [(ngModel)]="selected_filter"
+                bindLabel="display_name"
+                [searchable]="false"
+                name="Qfilter"
+                [id]="'Qfilter'"
+              ></dv-select>
+            </dv-form-element>
+          </ng-container>
+
+          <ng-container
+            *ngIf="
+              selectedButton == assignReviewerConstants.Newly_Assign ||
+              selectedButton == assignReviewerConstants.definition
+            "
+          >
+            <review-definition-steps-multiple
+              type="modal"
+              [level]="type"
+              *ngIf="
+                team_role_list.length &&
+                (selectedButton != assignReviewerConstants.definition ||
+                  (!fetchDefinition && selectedDefinition))
+              "
+              [steps]="
+                selectedButton == assignReviewerConstants.Newly_Assign
+                  ? newDefinition.steps
+                  : selectedDefinition.steps
+              "
+              [teamRoleList]="team_role_list"
+              [diligence]="diligence"
+              (mouseover)="showUpdateButton()"
+              (handleAllStepReady)="handleUpdateStep()"
+              #steps
+            ></review-definition-steps-multiple>
+            <app-spinner
+              *ngIf="!team_role_list.length || fetchDefinition"
+            ></app-spinner>
+          </ng-container>
+        </form>
+
+        <ng-container
+          *ngIf="selectedButton == assignReviewerConstants.Copy_Reviewer"
+        >
+          <div class="text-center" *ngIf="loading">
+            <app-spinner></app-spinner>
+          </div>
+          <form #copyForm="ngForm" *ngIf="!loading" autocomplete="off">
+            <div class="fields">
+              <dv-form-element
+                label="Select Entity Type"
+                elementCol="12"
+                labelPosition="top"
+                for="'entity'"
+              >
+                <dv-select
+                  [list]="entity_types"
+                  [ngModel]="getEntityTypeObject()"
+                  name="entity"
+                  id="'entity'"
+                  [searchable]="false"
+                  bindValue=""
+                  (onSelectChange)="handleEntityTypeChange($event)"
+                >
+                </dv-select>
+              </dv-form-element>
+
+              <div *ngIf="secondLoader" class="text-center">
+                <app-spinner></app-spinner>
+              </div>
+
+              <ng-container *ngIf="!secondLoader">
+                <dv-form-element
+                  [label]="entityLabel"
+                  elementCol="12"
+                  labelPosition="top"
+                >
+                  <span *ngIf="entity_type == keywordConstants.Strategy">
+                    <dv-select
+                      [(ngModel)]="entity_id"
+                      (onSelectChange)="onEntityChanged($event)"
+                      [list]="strategiesList"
+                      name="strategy"
+                      bindValue=""
+                      [ngModel]="getEntityObject(strategiesList, entity_id)"
+                      placeholder="Select a strategy"
+                    ></dv-select>
+                  </span>
+                  <span *ngIf="entity_type == keywordConstants.Firm">
+                    <dv-select
+                      (onSelectChange)="onEntityChanged($event)"
+                      [list]="firm_list"
+                      name="firm"
+                      bindValue=""
+                      [ngModel]="getEntityObject(firm_list, entity_id)"
+                      placeholder="Select a Firm"
+                    ></dv-select>
+                  </span>
+                  <span *ngIf="entity_type == keywordConstants.Product">
+                    <dv-select
+                      (onSelectChange)="onEntityChanged($event)"
+                      [ngModel]="getEntityObject(fund_list, entity_id)"
+                      [list]="fund_list"
+                      name="fund"
+                      bindValue=""
+                      placeholder="Select a product"
+                    ></dv-select>
+                  </span>
+                  <span *ngIf="entity_type == keywordConstants.Vehicle">
+                    <dv-select
+                      (onSelectChange)="onEntityChanged($event)"
+                      [list]="vehiclesList"
+                      [ngModel]="getEntityObject(vehiclesList, entity_id)"
+                      placeholder="Select a vehicle"
+                      name="vehicle"
+                      bindValue=""
+                    ></dv-select>
+                  </span>
+
+                  <span *ngIf="entity_type == keywordConstants.MyFirm">
+                    <label class="label label-default">{{
+                      user.currentUser.firmInfo.display_name
+                    }}</label>
+                  </span>
+                </dv-form-element>
+
+                <dv-form-element
+                  label="Date Range"
+                  elementCol="12"
+                  infoText="Select a date range to filter the source projects"
+                  labelPosition="top"
+                  *ngIf="customDateFilter"
+                  [for]="'date-range'"
+                >
+                  <app-date-range-picker
+                    [id]="'date-range'"
+                    [customDate]="
+                      customDateFilter.range ? customDateFilter : null
+                    "
+                    (change)="handleRangeDate($event)"
+                    [maxDate]="maxDate"
+                    [minDate]="minDate"
+                    placement="top"
+                  ></app-date-range-picker>
+                </dv-form-element>
+
+                <dv-form-element
+                  label="Select Source Project"
+                  infoText="Copy reviewer{{
+                    firstButtonLabel
+                  }} from this project"
+                  elementCol="12"
+                  labelPosition="top"
+                  [isRequired]="reviewStarted"
+                >
+                  <dv-select
+                    [list]="diligences"
+                    [(ngModel)]="source_diligence"
+                    name="sourceDiligence"
+                    bindValue=""
+                    bindLabel="name"
+                    [required]="reviewStarted"
+                    (onSelectChange)="getVerifiers($event)"
+                  >
+                  </dv-select>
+                </dv-form-element>
+
+                <div *ngIf="source_diligence">
+                  <label
+                    >Reviewers from
+                    <span class="text-underline">{{
+                      source_diligence.name
+                    }}</span></label
+                  >
+                  <div class="list-group-item space-on-top">
+                    <div
+                      *ngIf="
+                        !loadingVerifiers && verifiersForProject.length > 0
+                      "
+                    >
+                      <span
+                        class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                        *ngFor="let verifier of verifiersForProject"
+                      >
+                        <small>{{ verifier.fullName }}</small>
+                      </span>
+                    </div>
+                    <app-empty-state
+                      *ngIf="
+                        !loadingVerifiers && verifiersForProject.length == 0
+                      "
+                      message="No reviewer{{ firstButtonLabel }} found"
+                    ></app-empty-state>
+                    <div *ngIf="loadingVerifiers" class="text-center">
+                      <app-spinner></app-spinner>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </form>
+        </ng-container>
+      </div>
+
+      <ng-container
+        *ngIf="
+          (selectedButton == assignReviewerConstants.Newly_Assign ||
+            (selectedButton == assignReviewerConstants.definition &&
+              selectedDefinition)) &&
+          !loading &&
+          team_role_list.length
+        "
+      >
+        <div class="add-reviewr">
+          <dv-button
+            btnType="default"
+            (onClick)="handleAddStep()"
+            fontSizeType="medium"
+            leftIcon="plus"
+            [disabled]="freeUser || !steps?.checkValid(false)"
+            [tooltipText]="
+              freeUser
+                ? 'Add multiple step reviews with a premium subscription'
+                : ''
+            "
+          >
+            <span class="font-size-14"
+              >Add Step
+              {{ (steps?.getActiveSteps() ?? 0) + 1 }}
+            </span>
+          </dv-button>
+        </div>
+
+        <div
+          class="save-def-check"
+          *ngIf="
+            !freeUser &&
+            (selectedButton == assignReviewerConstants.Newly_Assign ||
+              selectedButton == assignReviewerConstants.definition) &&
+            type === 'Project'
+          "
+        >
+          <dv-link
+            name="Save Definition"
+            color="primary"
+            [icon]="handleShowSaveDefCheck ? 'chevron-up' : 'chevron-down'"
+            (onClick)="handleShowSaveDef($event)"
+          ></dv-link>
+        </div>
+        <div
+          class="save-definition"
+          *ngIf="
+            !freeUser &&
+            (selectedButton == assignReviewerConstants.Newly_Assign ||
+              selectedButton == assignReviewerConstants.definition) &&
+            type === 'Project' &&
+            handleShowSaveDefCheck
+          "
+        >
+          <dv-form-element
+            label="Save as Definition"
+            elementCol="12"
+            labelCol="6"
+            labelPosition="left"
+            [centerAligned]="true"
+          >
+            <div class="save-def">
+              <input
+                type="text"
+                class="form-control"
+                [required]="true"
+                placeholder="Enter a name"
+                [(ngModel)]="newDefName"
+                #defName="ngModel"
+              />
+            </div>
+          </dv-form-element>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

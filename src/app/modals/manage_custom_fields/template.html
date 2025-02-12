@@ -1,0 +1,20 @@
+<div class="form-horizontal">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        Manage Custom Field
+  
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+  
+    <div class="modal-body">
+        <field-selection custom-url="vm.customUrl" fieldselection-form="vm.fieldselectionForm" on-close="vm.cancel()" disabled="false" fields="vm.customFields"></field-selection>
+    </div>
+
+    <div class="modal-footer">
+        <button btn-type="primary" button-loader="vm.saving" ng-disabled="vm.saving" data-ng-click="vm.saveCustomFields()">Save</button>
+        <button btn-type="default"
+data-ng-click="vm.cancel()">Cancel</button>
+      </div>
+</div>

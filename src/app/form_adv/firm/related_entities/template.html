@@ -1,0 +1,30 @@
+<div data-ng-if="vm.Utils.isAngular()" >
+<ng2-related-entities></ng2-related-entities>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <spinner data-ng-hide="vm.formadv_firm"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel"
+           data-ng-show="vm.formadv_firm">
+        <div class="bordered-right cell">
+          <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+            {{::vm.formadv_firm.businessName}}
+          </h4>
+
+          <small class="text-muted">
+            Latest Filing: {{::vm.formadv_firm.filingDate|date}}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <dv-grid grid-resource="vm.resource" grid-name="'formadv-related-entities'"></dv-grid>
+    </div>
+  </div>
+</div>
+

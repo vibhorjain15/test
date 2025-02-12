@@ -1,0 +1,17 @@
+<div *ngIf="params.data && !params.node.group">
+  <span class="label" [ngClass]="{
+      'label-success-light': params.data.status === 'success',
+      'label-danger-light': params.data.status === 'failed'
+    }" [adaptivePosition]="false"
+    [tooltip]="
+      params.data.status === 'success'
+        ? 'You are all set!'
+        : 'Click file name to review errors and re-upload the file'
+    " container="body">{{ params.data.status | titlecase }}</span>
+</div>
+
+<div *ngIf="params.node.group">
+  <span>
+    {{ params.value }}
+  </span>
+</div>

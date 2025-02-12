@@ -1,0 +1,22 @@
+<ul class="context-menu-list context-menu-rootMenuData" *ngIf="isOpen" style="width: 233px; z-index: 2147483645;" [style.left.px]="posX" [style.top.px]="posY">
+  <li class="context-menu-item" *ngFor="let menu of visibleItems" (mouseenter)="menu.show = true"
+    (mouseleave)="menu.show = false" (click)="itemSelect(menu)" [ngClass]="{
+      'context-menu-submenu': menu.visibleSubmenuItems?.length > 0,
+      'context-menu-visible context-menu-hover': menu.show
+    }">
+    <span>
+      {{ menu.label }}
+    </span>
+    <ul *ngIf="menu.visibleSubmenuItems?.length > 0" class="context-menu-list"
+      style="width: 196px; z-index: 2147483646; top: -9.18068px;" [style.left.px]="subMenuPosX">
+      <li class="context-menu-item" *ngFor="let subMenu of menu.visibleSubmenuItems"
+        (mouseenter)="subMenu.hover = true" (mouseleave)="subMenu.hover = false" [ngClass]="{
+          'context-menu-hover': subMenu.hover
+        }" (click)="itemSelect(subMenu)">
+        <span>
+          {{ subMenu.label }}
+        </span>
+      </li>
+    </ul>
+  </li>
+</ul>

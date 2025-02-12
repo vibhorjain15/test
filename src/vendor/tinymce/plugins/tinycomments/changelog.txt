@@ -1,0 +1,16 @@
+Version 2.4.0 (2021-05-04)
+  [ADDED] Added new resolve conversation functionality #TINY-6782
+  [ADDED] New translation strings #TINY-7323
+Version 2.3.0 (2020-11-18)
+  [ADDED] Added optional `onError` and `onSuccess` callbacks to the `tinycomments_create` callback #TINY-6324
+  [BUG] Fixed nested and overlapping comments breaking content #TINY-6324
+  [BUG] Fixed long comments getting cut off #TINY-6345
+  [BUG] Fixed visible scrollbar in textarea when writing a comment #TINY-6345
+Version 2.2.0 (2020-09-29)
+  [FEATURE] Added translations #TINY-6374
+  [BUG] Fixed the editor `referrer_policy` setting not working when loading additional resources #TINY-5087
+  [BUG] Fixed elements incorrectly left in the dom when the editor was removed #TINY-6122
+Version 2.1.4 (2020-05-21)
+  [BUG] Fixed missing icons for the show/add comment menu items #TINY-5990
+Version 2.1.3 (2020-03-25)
+  [BUG] Fixed comments causing the document scroll position to change #TC-343

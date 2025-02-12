@@ -1,0 +1,25 @@
+<div class="panel instruction-container">
+  <button class="btn btn-transparent close-btn" (click)="closeInstructions()">
+    <span appIcon name="times"></span>
+  </button>
+  <div class="tabs">
+    <div
+      class="tab"
+      [ngClass]="{ 'tab-active': currentTab == tab.id }"
+      *ngFor="let tab of tabsList"
+    >
+      <div class="tab-label" (click)="switchTab(tab)">
+        {{ tab.name }}
+      </div>
+      <div class="tab-indicator" *ngIf="currentTab == tab.id"></div>
+    </div>
+  </div>
+  <div class="tab-content">
+    <div *ngIf="currentTab == 1">
+      <div [innerHtml]="tabsList[0].instructions | trustHtml"></div>
+    </div>
+    <div *ngIf="currentTab == 2">
+      <div [innerHtml]="tabsList[1].instructions | trustHtml"></div>
+    </div>
+  </div>
+</div>

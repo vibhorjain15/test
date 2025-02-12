@@ -1,0 +1,80 @@
+<app-modal
+  [title]="'Select Word file'"
+  firstButtonLabel="Import"
+  (onFirstClick)="handleImport()"
+  [isLoading]="uploading"
+  [initialTemplate]="qaUploader"
+></app-modal>
+
+<ng-template #qaUploader>
+  <div class="upload-main">
+    <app-spinner class="text-center" *ngIf="loading"></app-spinner>
+    <ng-container *ngIf="!loading">
+      <dv-uploader
+        [isMultiple]="false"
+        (onFileUpload)="handleFileUpload($event)"
+        dragLabel="Drag & Drop your bulk upload Word here"
+        [accept]="accepted"
+      ></dv-uploader>
+      <div class="upload-qa-form">
+        <dv-form-element
+          label="Entity Type"
+          [for]="'EntitySelector'"
+          [isRequired]="true"
+        >
+          <dv-select
+            [list]="entity_types"
+            bindValue=""
+            name="EntitySelector"
+            [id]="'EntitySelector'"
+            required
+            [(ngModel)]="selectedEntityObj"
+            (onSelectChange)="handleEntityChange($event)"
+          ></dv-select>
+        </dv-form-element>
+
+        <dv-form-element [label]="selectedEntityObj.name" [isRequired]="true">
+          <label
+            *ngIf="selectedEntityObj.value === EntityConstants.MyFirm"
+            class="label label-default"
+            for="entity"
+            >{{ currUser.firmInfo.display_name }}</label
+          >
+
+          <dv-select
+            [id]="'entity'"
+            [list]="funds"
+            required
+            name="funds"
+            [aria-label]="'funds'"
+            [(ngModel)]="entity_id"
+            *ngIf="selectedEntityObj.value === EntityConstants.Product"
+          >
+          </dv-select>
+
+          <dv-select
+            [id]="'entity'"
+            [list]="strategies"
+            required
+            name="strategies"
+            [(ngModel)]="entity_id"
+            *ngIf="selectedEntityObj.value === EntityConstants.Strategy"
+            [aria-label]="'strategies'"
+          >
+          </dv-select>
+
+          <dv-select
+            [id]="'entity'"
+            [list]="vehicles"
+            required
+            name="strategies"
+            [aria-label]="'vehicles'"
+            [(ngModel)]="entity_id"
+            *ngIf="selectedEntityObj.value === EntityConstants.Vehicle"
+          >
+          </dv-select>
+        </dv-form-element>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

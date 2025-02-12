@@ -1,0 +1,100 @@
+<div
+  class="panel panel-default"
+  role="region"
+  aria-labelledby="reportName"
+  *ngIf="report"
+>
+  <app-spinner
+    [broadSpinner]="true"
+    [spinnerHeight]="100"
+    *ngIf="loading"
+  ></app-spinner>
+  <div class="panel-heading" *ngIf="!loading">
+    <h5 id="reportName" class="panel-title">{{ report.name }}</h5>
+    <div class="panel-controls">
+      <div
+        class="panel-controls-wrapper"
+        *ngIf="report.entity_type == 'Report'"
+      >
+        <a
+          class="panel-control"
+          tooltip="Download Report"
+          container="body"
+          placement="top"
+          (click)="downloadReport(report.id)"
+        >
+          <span appIcon name="download3"></span>
+        </a>
+        <a
+          class="panel-control"
+          tooltip="Email this report"
+          container="body"
+          placement="top"
+          (click)="emailReport(report)"
+        >
+          <span appIcon name="mail"></span>
+        </a>
+        <a
+          class="panel-control btndel"
+          tooltip="Delete this report"
+          container="body"
+          placement="top"
+          (click)="deleteNewReport(report.id)"
+        >
+          <span appIcon name="trashcan" class="dvi text-danger"></span>
+        </a>
+      </div>
+      <div
+        class="panel-controls-wrapper"
+        *ngIf="report.entity_type != 'Report'"
+      >
+        <a
+          class="panel-control"
+          tooltip="Edit this report design"
+          container="body"
+          placement="top"
+          (click)="preview(report.id, 'edit')"
+        >
+          <span appIcon name="pencil"></span>
+        </a>
+        <a
+          class="panel-control"
+          tooltip="Preview this report"
+          container="body"
+          (click)="preview(report.id, 'preview')"
+        >
+          <span appIcon name="eye"></span>
+        </a>
+        <a
+          class="panel-control"
+          tooltip="Delete Report"
+          container="body"
+          (click)="deleteNewReport(report.id)"
+        >
+          <span appIcon name="trashcan" class="dvi text-danger"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  *ngIf="report"
+  class="word_view"
+  [ngClass]="{
+    'word-portrait': report.orientation == 'Portrait',
+    'word-landscape': report.orientation != 'Portrait'
+  }"
+  role="document"
+  aria-label="Report Preview"
+>
+  <div
+    *ngIf="report.entity_type == 'Report' && report.definition"
+    class="justify-center"
+  >
+    <div
+      [innerHtml]="report.definition | dvSafeHtml"
+      class="overflow-auto-relative zoomClass overflow-clip-firefox"
+      [style.width.pt]="602"
+    ></div>
+  </div>
+</div>

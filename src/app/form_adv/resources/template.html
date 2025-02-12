@@ -1,0 +1,27 @@
+<div class="row clearfix form-adv-threshold">
+  <div col="12">
+
+  <div col="6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h5 class="panel-title">Important Resources</h5>
+      </div>
+
+      <div class="list-group">
+        <a class="list-group-item"
+           ng-href="{{resource.link}}"
+           target="_blank"
+           data-ng-repeat="resource in vm.resources">
+          <p>{{resource.name}}</p>
+
+          <span class="clearfix text-muted">
+            <small class="pull-left">
+              {{resource.desc}}
+            </small>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+</div>

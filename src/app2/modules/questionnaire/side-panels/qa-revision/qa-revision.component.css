@@ -1,0 +1,49 @@
+.revisions {
+  display: flex;
+  flex-direction: column;
+}
+.last-revisions {
+  padding-bottom: 13px;
+}
+.hide-note-content ::ng-deep .note-content {
+  background: none;
+  border: none;
+}
+.revisions {
+  display: flex;
+  flex-direction: column;
+}
+.gridClass {
+  overflow: auto !important;
+}
+.source-info {
+  display: flex;
+  padding: 4px 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #ecf7f9;
+}
+.source-field-wrapper {
+  display: flex;
+  gap: 5px;
+}
+.source-field {
+  font-weight: 400;
+}
+.source-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+}
+.source-heading {
+  font-weight: 600;
+  justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}

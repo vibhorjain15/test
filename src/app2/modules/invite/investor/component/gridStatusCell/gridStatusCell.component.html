@@ -1,0 +1,12 @@
+<div *ngIf="params.value && !params.node.group">
+  <span
+    class="label inline-block align-middle"
+    diligenceStatus
+    [status]="params.value"
+  >
+    <small>{{ params.value }}</small>
+  </span>
+</div>
+<div *ngIf="params.node.group">
+  <span>{{ params.value }}</span>
+</div>

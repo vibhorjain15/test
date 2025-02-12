@@ -1,0 +1,45 @@
+<form name="search_questions" autocomplete="off">
+  <div
+    class="input-group space-on-right-lg"
+    [ngClass]="{
+      'search-questions': statusFilter === 'Search' && searchText.length
+    }"
+  >
+    <input
+      type="text"
+      class="form-control"
+      [placeholder]="placeholder"
+      required
+      [(ngModel)]="searchTextNew"
+      (ngModelChange)="onChange($event)"
+      name="searchTextNew"
+    />
+    <span class="input-group-btn">
+      <button
+        appButton
+        btnType="transparent"
+        class="danger clear-text"
+        (click)="resetFilter()"
+        type="button"
+        *ngIf="searchText.length"
+      >
+        <span appIcon name="close" class="space-on-right"></span>Clear
+      </button>
+      <button
+        class="btn btn-default primary"
+        submit-style-override
+        [style.height.px]="34"
+        type="submit"
+        (click)="searchDocuments()"
+        aria-label="Search Documents"
+      >
+        <span
+          aria-hidden="true"
+          appIcon
+          name="search"
+          class="text-primary"
+        ></span>
+      </button>
+    </span>
+  </div>
+</form>

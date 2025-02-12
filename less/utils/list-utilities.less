@@ -1,0 +1,115 @@
+.list-with-icons {
+  .dvi {
+    .text-muted();
+  }
+}
+
+ul.chat-bubbles {
+  .make-bubble-variant(@bg-color) {
+    .bubble-message {
+      background-color: @bg-color;
+      border: 1px solid darken(@bg-color, 8%);
+    }
+  }
+
+  > li {
+    .clearfix();
+
+    .bubble {
+      margin-bottom: 10px;
+      clear: both;
+
+      .bubbler { // because it sounds funny :P
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
+
+      .bubbler, .bubble-meta {
+        .text-muted();
+        font-size: 10px;
+      }
+
+      .bubble-message {
+        padding: 7px;
+        border-radius: 5px;
+      }
+
+      &.bubble-primary {
+        .make-bubble-variant(lighten(@brand-primary, 50%));
+      }
+
+      &.bubble-default {
+        .make-bubble-variant(white);
+      }
+
+      .bubble-meta {
+        margin-top: 3px;
+      }
+    }
+  }
+}
+
+ul.list-bordered-bottom {
+  li {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      margin-bottom: auto;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+}
+
+.list-group {
+  &.clear-border {
+    border-radius: 0;
+
+    .list-group-item {
+      border-left: none;
+      border-right: none;
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.list-group-item.ui-sortable-selected {
+  z-index: 2; // Place active items above their siblings for proper border styling
+  color: @list-group-active-color;
+  background-color: @list-group-active-bg;
+  border-color: @list-group-active-border;
+
+  // Force color to inherit for custom content
+  .list-group-item-heading,
+  .list-group-item-heading > small,
+  .list-group-item-heading > .small {
+    color: inherit;
+  }
+  .list-group-item-text {
+    color: @list-group-active-text-color;
+  }
+}
+
+.navbar-align-center{
+  float: right;
+  position: relative;
+  left: -50%;
+  text-align: left;
+
+  ul.nav.navbar-nav{
+    list-style: none;
+    position: relative;
+    left: 50%;
+  }
+}
+
+

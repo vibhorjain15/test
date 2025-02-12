@@ -1,0 +1,27 @@
+<div class="panel panel-default qa-panel">
+  <div class="panel-heading">
+    <div class="clearfix">
+      <div class="pull-left header-component">
+        <b>{{::vm.section.attributes.name}}</b>
+      </div>
+
+      <div class="header-component pull-right">
+        <small class="text-muted">
+          <i>
+            <ng-pluralize count="::vm.section.questions.length"
+                          when="{'one': '1 question', 'other': '{} questions'}"></ng-pluralize>
+          </i>
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <form class="form-horizontal">
+    <div data-ng-repeat="sequence in vm.section.sequences track by sequence.cid"
+         class="qa-response-sequence">
+      <form-adv-response data-ng-repeat="response in ::sequence.responses"
+                         response="response">
+      </form-adv-response>
+    </div>
+  </form>
+</div>

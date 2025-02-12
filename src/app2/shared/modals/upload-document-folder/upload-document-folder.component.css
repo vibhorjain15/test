@@ -1,0 +1,61 @@
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.search-icon {
+  position: absolute;
+  right: 17px;
+  top: 8px;
+  color: #9a9a9a;
+  font-size: 17px;
+}
+.file-upload-show {
+  display: flex;
+  border: 1px dashed #ccc;
+  background: #fff;
+  padding: 15px;
+  gap: 5px;
+  flex-direction: column;
+  border-top: none;
+}
+.document-name-wrapper {
+  background: #f5f7fa 0% 0% no-repeat padding-box;
+  border-radius: 2px;
+  height: 30px;
+}
+
+.document-name {
+  display: flex;
+  padding: 7px 10px;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 4px;
+  background: #eaf7fa;
+  word-break: break-all;
+}
+.folder-selection {
+  display: flex;
+  flex-direction: column;
+  background: #f7f7f7;
+  padding: 15px;
+  flex: 1;
+  margin: -15px -15px -15px 15px;
+  border: #ccc;
+}
+.upload-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.upload-form-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+.folder-upload-grid {
+  padding: 5px;
+}
+input.folder-location.form-control[readonly] {
+  background-color: white !important;
+}

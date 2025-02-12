@@ -1,0 +1,106 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      {{ modalTitle ? modalTitle : "Internal DDQs" }}
+    </h5>
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper" *ngIf="!readonly">
+        <a
+          tooltip="{{
+            isFreeSubscription
+              ? 'Only available in premium subscription'
+              : createNewTooltip
+          }}"
+          container="body"
+          class="panel-control"
+          (click)="openModal()"
+          [ngClass]="{ disabled: isFreeSubscription }"
+        >
+          <span appIcon name="plus"></span> Create New Project
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body" *ngIf="!ddqs || !ddqs?.length">
+    <app-spinner *ngIf="!ddqs" class="justify-center"></app-spinner>
+    <app-empty-state
+      iconName="search"
+      *ngIf="ddqs && !ddqs?.length"
+      [message]="empty_state_message"
+    >
+    </app-empty-state>
+  </div>
+  <ul class="list-group" [ngClass]="{ 'scroll-body': ddqs?.length > 5 }">
+    <li class="list-group-item" *ngFor="let ddq of ddqs">
+      <div class="space-on-bottom-lg">
+        <a
+          class="clickable"
+          [attr.href]="ddq.url"
+        >
+          {{
+            ddqType === "investor"
+              ? ddq.tofirm_name + " - " + ddq.name
+              : ddq.name
+          }}
+        </a>
+        <br />
+        <small class="text-muted" *ngIf="ddq.closed_at">
+          Updated on {{ ddq.closed_at | dvDate }}
+        </small>
+      </div>
+      <div class="space-on-bottom-lg">
+        <dv-progress-bar
+          [value]="ddq.percentage_completed"
+          type="success"
+          suffix="% Complete"
+        ></dv-progress-bar>
+      </div>
+      <div class="clearfix">
+        <div class="pull-right">
+          <button
+            tooltip="Share with Investor"
+            aria-label="Share with Investor"
+            container="body"
+            appButton
+            btnType="default"
+            *ngIf="!readonly && ddq.completed_at && is_manager"
+            (click)="shareDDQ(ddq)"
+            size="xs"
+            class="space-on-right"
+          >
+            <span class="dvi dvi-share"></span>
+          </button>
+          <button
+            tooltip="Create a New Version"
+            aria-label="Create a new version"
+            triggers="mouseenter:mouseleave"
+            container="body"
+            appButton
+            btnType="default"
+            *ngIf="!(readonly || ddqType === 'investor')"
+            (click)="createNewVersion(ddq)"
+            size="xs"
+            class="space-on-right"
+          >
+            <span appIcon name="plus"></span>
+          </button>
+          <button
+            tooltip="Retire this DDQ"
+            aria-label="Retire this DDQ"
+            container="body"
+            appButton
+            btnType="default"
+            *ngIf="!(readonly || ddqType === 'investor')"
+            (click)="retireDDQ(ddq)"
+            class="danger"
+            size="xs"
+            class="space-on-right text-danger"
+          >
+            <span appIcon name="ban"></span>
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <ng-content></ng-content>
+</div>

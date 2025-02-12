@@ -1,0 +1,32 @@
+.entity-selector-button-right-margin {
+  margin-right: 4px;
+}
+
+.entity-select-filter-flex{
+  padding: 15px 15px 0px 15px !important;
+}
+
+.entity-select-filter-flex div {
+    display: inline-block !important;    
+}
+
+.entity-selector-space-left {
+  margin-left: 8px;
+}
+
+.entity-selector-space-left-warning {
+  margin-left: 4px;
+}
+
+.entity-selector-postition-space {
+  position: relative;
+  top: 2px;
+}
+
+.entity-contacts ul {
+  padding-left: 24px !important;
+}
+
+.entity-name {
+  color: var(--text-color);
+}

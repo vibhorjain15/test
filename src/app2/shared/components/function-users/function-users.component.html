@@ -1,0 +1,32 @@
+<div *ngIf="params.data.user_assignment_names.length">
+  <span class="label label-default space-on-right text-uppercase">{{
+    params.data.user_assignment_names[0]
+  }}</span>
+  <span
+    class="label label-default space-on-right text-uppercase"
+    *ngIf="params.data.user_assignment_names.length > 1"
+  >
+    {{ params.data.user_assignment_names[1] }}
+  </span>
+  <span
+    class="label label-default space-on-right text-uppercase"
+    *ngIf="params.data.user_assignment_names.length > 2"
+  >
+    {{ params.data.user_assignment_names[2] }}
+  </span>
+  <span
+    class="label label-default space-on-right text-uppercase"
+    *ngIf="params.data.user_assignment_names.length > 3"
+  >
+    {{ params.data.user_assignment_names[3] }}
+  </span>
+  <span
+    class="link-underline clickable space-on-right"
+    *ngIf="params.data.user_assignment_names.length > 4"
+    [adaptivePosition]="false"
+    [tooltip]="formatUsersTooltip(params.data.user_assignment_names)"
+    container="body"
+  >
+    more
+  </span>
+</div>

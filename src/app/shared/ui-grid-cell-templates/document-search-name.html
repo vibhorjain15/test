@@ -1,0 +1,37 @@
+<ui-grid-cell-contents class="text-left" ng-mouseenter="showPreview=true" ng-mouseleave="showPreview=false">
+    <a data-ng-if="!row.entity.attachment_id"
+       ui-sref="app.content.document.detail({documentId: row.entity.id})"
+       uib-tooltip="{{row.entity.name}}">
+        <span dv-limit-word="row.entity.name" char-limit="30"></span>
+    </a>
+
+    <a data-ng-if="row.entity.attachment_id"
+       ui-sref="app.content.document.detail({documentId: row.entity.attachment_id})"
+       uib-tooltip="{{row.entity.name}}"
+       truncate-text="30">
+        <span dv-limit-word="row.entity.name" char-limit="30"></span>
+    </a>
+
+    <button
+            btn-type="default"
+            size="xs"
+            class="space-on-left-lg"
+            ng-show="showPreview"
+            uib-tooltip="Preview"
+            document-viewer="row.entity">
+        <icon name="eye"></icon>
+    </button>
+
+    <button
+            btn-type="default"
+            size="xs"
+            class="space-on-left"
+            ng-show="showPreview && grid.appScope.vm.showPreviewIcon(row.entity)"
+            uib-popover-template="grid.appScope.vm.searchResultTemplateUrl"
+            popover-class="search-result-popover"
+            popover-placement="right"
+            popover-trigger="mouseenter"
+            popover-title="Search Result">
+        <icon name="search"></icon>
+    </button>
+</ui-grid-cell-contents>

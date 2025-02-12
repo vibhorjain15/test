@@ -1,0 +1,187 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-scorecards></ng2-scorecards>
+</div>
+
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div class="list-group" data-ng-if="vm.loading_prefs">
+  <spinner></spinner>
+</div>
+<div class="panel panel-default" data-ng-show="!vm.loading_prefs">
+    <div class="panel-heading">
+       <h5 class="panel-title">
+          Rating/Score
+       </h5>
+    </div>
+    <div class="panel-body">
+        <div class="row clearfix">
+            <div class="clear-padding-left clear-padding-right text-center">
+                <div class="btn-group space-on-bottom-xxl">
+                  <label class="btn btn-default font-size-12" data-ng-repeat="entity_type in vm.entityTypes" data-ng-class="{'btn-primary': vm.entity_type.name == entity_type.name}" data-ng-click="vm.setEntityType(entity_type)">
+                    <icon name="{{entity_type.icon}}" size="{{entity_type.size}}" class="space-on-right"></icon>
+                    {{entity_type.label}}
+                  </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <form name="vm.scorecard_display_form" class="dv-table dv-table-middle dd-info-panel" data-ng-if="!vm.loading_prefs">
+              <div class="row" col="12">
+                <form-group field-name="Rating Scheme" class="cell w-400 max-w-400">
+                  <label for="rating-scheme-selection"
+                         class="control-label">Select {{vm.headerConstants.RATINGDEFINITION}}</label>
+
+                  <select id="rating-scheme-selection"
+                          class="form-control"
+                          chosen
+                          required
+                          data-ng-model="vm.filters.rating_scheme"
+                          no-results-text="'Could not find any rating schemes'"
+                          data-ng-options="type as type.name for type in vm.rating_types">
+                    <option value=""></option>
+                  </select>
+                </form-group>
+
+                <div class="cell w-320">
+                  <label for="strategy-selection" class="control-label">Select As Of Date Range:</label>
+                  <div>
+                    <dv-daterangepicker ng-model="vm.customDateFilter"
+                            min-date="vm.minDate" max-date="vm.maxDate" apply-method="vm.applyMethod"></dv-daterangepicker>
+                  </div>
+                </div>
+
+                <form-group field-name="Get Latest" class="cell w-180 padded-top-xxl text-center">
+                  <dv-checkbox data-ng-model="vm.filters.fetch_latest" class="inline-block">
+                    <dv-checkbox-label>
+                      <b>Latest Only?</b>
+                    </dv-checkbox-label>
+                  </dv-checkbox>
+                  <icon name="info" class="text-info"
+                    uib-tooltip="View latest project for your selected filters">
+                  </icon>
+                </form-group>
+
+                <div class="cell padded-top-xxl w-320">
+                  <button class="btn btn-default" data-ng-click="vm.filterEntities()" button-loader="vm.loading_entities"
+                    data-ng-class="{'btn-orange':vm.filterApplied}">
+                    <icon name="filter"></icon>
+                    Filter {{vm.entity_type.label}}(s)
+                  </button>
+                  <small data-ng-hide="vm.loading_entities">({{vm.entityList.length}} {{vm.entity_type.label}}(s) selected)</small>
+                </div>
+              </div>
+              <div class="col-md-12 space-on-top-lg space-on-bottom-lg">
+                <a class="link clickable pull-right" data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions">
+                  <icon name="chevron-up" data-ng-show="vm.showAdvanceOptions"></icon>
+                  <icon name="chevron-down" data-ng-show="!vm.showAdvanceOptions"></icon>
+                  {{vm.showAdvanceOptions?'Hide':'Show'}} Advanced Options
+                </a>
+              </div>
+              <div col="12" class="row bordered-top space-on-top-xxl padded-top-xxl" data-ng-if="vm.showAdvanceOptions">
+                <div col="12">
+                  <h4 class="font-size-16">Expand your analysis to include peer group and portfolio averages</h4>
+                </div>
+                <div col="4">
+                  <form-group field-name="Portfolio average" col="12">
+                    <dv-checkbox data-ng-model="vm.filters.include_portfolio" class="inline-block">
+                      <dv-checkbox-label>
+                        <b>Include Portfolio average?</b>
+                      </dv-checkbox-label>
+                    </dv-checkbox>
+                    <icon name="info" class="text-info"
+                      uib-tooltip="Showing average across all {{vm.entity_type.label.toLowerCase() | standardPluralize}} where the selected template was used for rating/score. For average the latest project of each {{vm.entity_type.label.toLowerCase()}} is selected.">
+                    </icon>
+                  </form-group>
+
+                  <form-group field-name="Portfolio average as of date range" col="8" data-ng-if="vm.filters.include_portfolio">
+                    <dv-radio
+                      type="info inline"
+                      data-ng-value="false"
+                      data-ng-model="vm.filters.include_portfolio_as_of_date"
+                      label="{{vm.portfolioDateLabel}}">
+                    </dv-radio>
+
+                    <dv-radio
+                      type="info inline"
+                      class="space-on-top"
+                      data-ng-value="true"
+                      data-ng-model="vm.filters.include_portfolio_as_of_date"
+                      label="Pick a specific as of date">
+                    </dv-radio>
+                  </form-group>
+
+                  <div class="form-group" data-ng-if="vm.filters.include_portfolio_as_of_date" col="6">
+                    <dv-datepicker data-ng-model="vm.filters.as_of_date"
+                            ng-required="true"
+                            id="asofdate">
+                    </dv-datepicker>
+                  </div>
+                </div>
+                <div col="4">
+                  <form-group field-name="Portfolio average" col="12">
+                    <dv-checkbox data-ng-model="vm.filters.include_peer_average" class="inline-block">
+                      <dv-checkbox-label>
+                        <b>Include Peer average?</b>
+                      </dv-checkbox-label>
+                    </dv-checkbox>
+                    <icon name="info" class="text-info"
+                      uib-tooltip="Showing average across all selected peer where the selected template was used for rating/score. Click on the filter to define your peer.">
+                    </icon>
+                  </form-group>
+                  <div class="cell space-on-top-lg" col="2" data-ng-if="vm.filters.include_peer_average">
+                    <button class="btn btn-default" data-ng-click="vm.filterPeerEntities()" button-loader="vm.loading_peer_entities"
+                      data-ng-class="{'btn-orange':vm.filterAppliedPeer}">
+                      <icon name="filter"></icon>
+                      Select Peer Group
+                    </button>
+                    <small data-ng-hide="vm.loading_peer_entities">({{vm.peerEntityList.length}} {{vm.entity_type.label}}(s) selected)</small>
+                  </div>
+                </div>
+                <div col="4">
+                  <form-group field-name="Average" col="12">
+                    <dv-checkbox data-ng-model="vm.filters.include_average" class="inline-block">
+                      <dv-checkbox-label>
+                        <b>Include Average?</b>
+                      </dv-checkbox-label>
+                    </dv-checkbox>
+                    <icon name="info" class="text-info"
+                      uib-tooltip="Showing average across all the projects for the selected {{vm.entity_type.label.toLowerCase()}}(s) shown on heatmap">
+                    </icon>
+                  </form-group>
+                </div>
+              </div>
+              <div class="col-md-12 text-center space-on-top-xxl">
+                <div class="inline-block">
+                      <button class="btn btn-primary" data-ng-disabled="vm.loading_entities"
+                        data-ng-click="vm.getRatingsData()">
+                          <icon name="search"></icon>
+                          Show Results
+                      </button>
+                </div>
+                <div class="inline-block" data-ng-if="!vm.loading_heatmap && vm.diligencesToRefresh.length > 0">
+                      <button class="btn btn-default"
+                          uib-tooltip="Click on this button if you want to recalculate rating/scores for the below diligences."
+                          button-loader="vm.recalculating" data-ng-click="vm.recalculate()">
+                          <icon name="refresh"></icon>
+                          Recalculate
+                      </button>
+                </div>
+              </div>
+
+            </form>
+        </div>
+        <div class="list-group" data-ng-if="vm.loading_heatmap">
+          <spinner broad-spinner spinner-height='60'></spinner>
+        </div>
+        <div class="row clearfix rating-container space-on-top-lg" data-ng-show="!vm.loading_heatmap && vm.heatmapResponse">
+          <div id="chartWidthDiv" class="visibility-hidden"></div>
+          <heatmap-component heatmap-options="vm.heatmap_options"
+            heatmap-response="vm.heatmapResponse"
+            rating-scales="vm.rating_scales"
+            na-color="vm.naValue"
+            display-attr="vm.filters.rating_scheme.rating_scale_mode == vm.ratingConstants.ScoreBand?'score_value':'value'"
+            display-total-attr="vm.filters.rating_scheme.rating_scale_mode == vm.ratingConstants.ScoreBand?'total_score':'total_rating'">
+          </heatmap-component>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,31 @@
+<span data-ng-if="!customFields" class="inline-block">
+</span>
+<span class="ratingDropdown" data-ng-if="reviewEnabled || (customFields && customFields.length > 0)">
+    <button btn-type="transparent" tabindex="-1" 
+        data-ng-click="openCustomFieldsModal(selection.rating)"
+        uib-tooltip="{{selection.rating.attributes.description}}" 
+        data-ng-style="{'color':rating_color}">
+        <icon name="rating" class="font-size-20"></icon>
+        <icon name="customize" class="font-size-12 va-top success-blue showRightNext" data-ng-if="fieldsWithValue.length > 0"></icon>
+    </button>
+</span>
+<span class="ratingDropdown" data-ng-if="!reviewEnabled && (customFields && customFields.length == 0)">
+    <span uib-dropdown auto-close="outsideClick">
+        <a href="" class="dropdown-toggle btn btn-transparent" uib-dropdown-toggle
+        uib-tooltip="{{selection.rating.attributes.description}}" data-ng-style="{'color':rating_color}">
+            <icon name="rating" class="font-size-20"></icon>
+        </a>
+
+        <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+            <li>
+                <a role="button">
+                    <dv-rating data-ng-model="selection.rating.attributes.rating_value"
+                        readonly="readonly"
+                        max="{{ratingScales.length}}"
+                        data-ng-change="recordRating(selection.rating.attributes)"
+                        rating-scales="ratingScales"></dv-rating>
+                </a>
+            </li>
+        </ul>
+    </span>
+</span>

@@ -1,0 +1,47 @@
+<side-panel-wrapper
+  [title]="'Start New Workflow Process'"
+  [isLoading]="buttonLoader"
+  (onCancelClick)="onCancel()"
+  [isFooter]="true"
+  firstButtonLabel="Review Workflow"
+  (onFirstClick)="reviewWorkflow()"
+  [isFirstButtonDisabled]="!selectedWorkflow"
+>
+  &nbsp;
+  <div class="text-center" *ngIf="loading">
+    <app-spinner aria-hidden="true"></app-spinner>
+  </div>
+  <div *ngIf="!loading" class="new-workflow">
+    <ng-container *ngIf="workflow.length">
+      <dv-form-element
+        label="Start Workflow Definition"
+        labelPosition="top"
+        elementCol="12"
+        [isRequired]="true"
+        for="workflow_definition"
+      >
+        <dv-select
+          [id]="'workflow_definition'"
+          [(ngModel)]="selectedWorkflow"
+          placeholder="Select a workflow definition"
+          [list]="workflow"
+        >
+        </dv-select>
+      </dv-form-element>
+    </ng-container>
+    <ng-container *ngIf="!workflow.length">
+      <div>
+        No workflow definitions present,
+        <dv-button
+          btnType="link"
+          (onClick)="redirectToWorkflowDefinitions()"
+          ariaLabel="Click here to add a workflow definition"
+        >
+          click here
+        </dv-button>
+        to add one
+      </div>
+    </ng-container>
+  </div>
+  &nbsp;
+</side-panel-wrapper>

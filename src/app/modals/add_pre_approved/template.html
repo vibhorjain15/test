@@ -1,0 +1,281 @@
+<form name="vm.QaForm" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.editMode?'Edit Pre-approved Question':'Add New Question & Answer'}}
+     <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+      <div class="row clearfix">
+            <div col="12">
+                <div class="modal-body">
+                  <div class="text-center space-on-bottom-lg" data-ng-if="!vm.editMode">
+                    <div class="btn-group">
+                        <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Fund'}" data-ng-click="vm.setEntityType('Fund')"><icon name="fund" class="space-on-right"></icon>Products</label>
+                        <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.entity_type == 'Firm'}" data-ng-click="vm.setEntityType('Firm')"><icon name="institution" class="space-on-right"></icon>Your Firm</label>
+                    </div>
+                  </div>
+                  <form-group field-name="Template">
+                    <label for="Template" class="col-md-4 control-label">
+                      Template
+                    </label>
+
+                    <div class="col-md-7">
+                      <select id="template-selection"
+                              class="form-control"
+                              chosen
+                              ng-required="true"
+                              data-ng-model="vm.formData.template_id"
+                              no-results-text="'Could not find any templates'"
+                              ng-disabled="vm.editMode"
+                              data-placeholder="Filter by Template"
+                              data-ng-options="template.id as template.name for template in vm.templates"
+                              data-ng-change="vm.getSelectedTemplate(vm.formData.template_id)">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                  </form-group>
+                  <form-group field-name="Product" data-ng-if="vm.entity_type == 'Fund'">
+                    <label for="associated-product" class="col-md-4 control-label">
+                      Product
+                    </label>
+
+                    <div class="col-md-7">
+                      <tags-input data-ng-model="vm.formData.associated_entities"
+                                  display-property="name"
+                                  key-property="id"
+                                  ng-disabled="vm.editMode"
+                                  placeholder="Select product"
+                                  add-from-autocomplete-only=true
+                                  id="associated-product"
+                                  replace-spaces-with-dashes="false">
+                          <auto-complete source="vm.filterProducts($query)"
+                                         load-on-focus=true
+                                         load-on-down-arrow=true
+                                         load-on-empty=true
+                                         min-length="1"></auto-complete>
+                      </tags-input>
+                    </div>
+                  </form-group>
+                  <form-group field-name="Firm" data-ng-if="vm.entity_type == 'Firm'">
+                    <label for="Firm" class="col-md-4 control-label">
+                      Firm
+                    </label>
+
+                    <div class="col-md-7">
+                      <p class="control-label pull-left">{{vm.current_firm.name}}</p>
+                    </div>
+                  </form-group>
+                  <form-group field-name="Category">
+                    <label for="category-id" class="col-md-4 control-label">
+                      Category
+                    </label>
+
+                    <div class="col-md-7">
+                      <select id="category-id"
+                              class="form-control"
+                              required
+                              chosen
+                              data-ng-model="vm.formData.parent_section"
+                              create-option-text="'Add New'"
+                              create-option="vm.createOption"
+                              persistent-create-option="true"
+                              skip-no-results="true"
+                              ng-disabled="vm.editMode"
+                              data-ng-options="category as category.name for category in vm.categories"
+                              data-ng-change="vm.getSubCategories(vm.formData.parent_section.id)">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                  </form-group>
+
+                  <form-group field-name="Subcategory">
+                    <label for="subcategory" class="col-md-4 control-label">
+                      Subcategory
+                    </label>
+
+                    <div class="col-md-7">
+                      <select id="subcategory"
+                              class="form-control"
+                              chosen
+                              required
+                              create-option-text="'Add New'"
+                              disable-search="false"
+                              persistent-create-option="true"
+                              skip-no-results="true"
+                              create-option="vm.createSubcategory"
+                              data-ng-model="vm.formData.child_section"
+                              ng-disabled="vm.editMode"
+                              data-ng-options="subcategory as subcategory.name for subcategory in vm.subCategories">
+                        <option value=""></option>
+                      </select>
+                    </div>
+                  </form-group>
+
+
+                  <div data-ng-repeat="question in vm.formData.questions">
+                    <form-group field-name="Question Text">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Question Text
+                      </label>
+
+                      <div class="col-md-7">
+                        <textarea name="question_text" ng-disabled="vm.editMode" rows="3" class="form-control" data-ng-model="question.text" ng-required="true">
+                        </textarea>
+                      </div>
+                    </form-group>
+                    <form-group field-name="Response Type">
+                      <label for="response-type" class="col-md-4 control-label">
+                        Response Type
+                      </label>
+
+                      <div class="col-md-7">
+                        <select id="response-type"
+                                class="form-control"
+                                chosen
+                                data-ng-model="question.responseType"
+                                ng-required="true"
+                                ng-disabled="vm.editMode"
+                                data-ng-change="vm.clearAnswerTextForAll(question)"
+                                data-ng-options="responseType.text as responseType.description for responseType in vm.responseTypes">
+                        </select>
+                      </div>
+                    </form-group>
+                    <form-group field-name="Answer Text" control-selector="dv-datepicker" data-ng-if="question.responseType == 'Date'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+
+                      <div class="col-md-7">
+                        <dv-datepicker ng-required="true" data-ng-model="question.response.dateResponse"
+                                ></dv-datepicker>
+                      </div>
+                    </form-group>
+                    <form-group field-name="Answer Text" data-ng-if="question.responseType == 'Integer'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+                      <div class="col-md-7">
+                        <input ng-required="true" type="number"
+                               data-ng-model="question.response.numericResponseA" ng-pattern="/^[0-9]{1,7}$/"
+                               class="form-control"
+                               />
+                      </div>
+                    </form-group>
+                    <form-group field-name="Answer Text" data-ng-if="question.responseType == 'Percentage' || question.responseType == 'Numeric' || question.responseType == 'Identifier' || question.responseType == 'TextPhone'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+                      <div class="col-md-7">
+                        <input ng-required="true" type="number"
+                               data-ng-model="question.response.numericResponseA"
+                               class="form-control"
+                               />
+                      </div>
+                    </form-group>
+                    <form-group field-name="Answer Text" data-ng-if="question.responseType == 'Text'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+                      <div class="col-md-7">
+                        <input ng-required="true" type="text"
+                               data-ng-model="question.response.textResponse"
+                               class="form-control"
+                               />
+                      </div>
+                    </form-group>
+                    <form-group field-name="Answer Text" data-ng-if="question.responseType == 'TextEmail'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+                      <div class="col-md-7">
+                        <input ng-required="true" type="email"
+                               data-ng-model="question.response.textResponse"
+                               class="form-control"
+                               />
+                      </div>
+                    </form-group>
+                    <form-group field-name="Answer Text" data-ng-if="question.responseType == 'Boolean' || question.responseType == 'BooleanPlus' || question.responseType == 'NoPlus'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+                      <div class="col-md-7">
+                        <select ng-required="true" class="form-control"
+                                chosen
+                                data-ng-model="question.response.booleanResponse">
+                          <option value=""></option>
+                          <option value="true" ng-value="{{true}}">Yes</option>
+                          <option value="false" ng-value="{{false}}">No</option>
+                        </select>
+
+                      </div>
+                    </form-group>
+
+                    <form-group field-name="Answer Text"  data-ng-if="(question.responseType == 'BooleanPlus' && question.response.booleanResponse == true) || (question.responseType == 'NoPlus' && question.response.booleanResponse == false)">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                      </label>
+                      <div class="col-md-7">
+                        <textarea ng-required="true" name="boolean_textarea" rows="3" class="form-control" data-ng-model="question.response.textResponse" ui-tinymce="vm.tinymceOptions">
+                        </textarea>
+                      </div>
+                    </form-group>
+
+                    <form-group field-name="Answer Text" data-ng-if="question.responseType == 'TextMultiLine'">
+                      <label for="attachment-name" class="col-md-4 control-label">
+                        Answer Text
+                      </label>
+                      <div class="col-md-7">
+                        <textarea ng-required="true" name="question_text" rows="3" class="form-control" data-ng-model="question.response.textResponse" ui-tinymce="vm.tinymceOptions">
+                        </textarea>
+                      </div>
+                    </form-group>
+                    <div class="display-none" id="optionsDiv_{{$index+1}}">
+                      <form-group field-name="Help Text">
+                        <label for="attachment-name" class="col-md-4 control-label">
+                          Help Text
+                        </label>
+
+                        <div class="col-md-7">
+                          <textarea name="help_text" rows="3" class="form-control" data-ng-model="question.hint_text">
+                          </textarea>
+                        </div>
+                      </form-group>
+                      <form-group field-name="Question Tags">
+                        <label for="attachment-name" class="col-md-4 control-label">
+                          Tags
+                        </label>
+                        <div class="col-md-7">
+                          <tags-input ng-model="question.tag_ids"
+                                      id="tag"
+                                      add-from-autocomplete-only="true"
+                                      display-property="name"
+                                      min-length="1"
+                                      replace-spaces-with-dashes="false">
+                            <auto-complete source="vm.filterTags($query)"
+                                           load-on-focus=true
+                                           load-on-down-arrow=true
+                                           load-on-empty=true
+                                           min-length="1"></auto-complete>
+                          </tags-input>
+                        </div>
+                      </form-group>
+                    </div>
+                    <form-group >
+                      <label class="col-md-4 control-label">
+                      </label>
+
+                      <div class="col-md-7 text-right">
+                        <a class="link clickable" data-ng-click="vm.toggleAdditionalOptions($index+1)">Additional Options</a>
+                      </div>
+                    </form-group>
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" button-loader="vm.loading">{{vm.editMode?'Update':'Save'}}</button>
+        <button class="btn btn-primary" data-ng-hide="vm.editMode" type="button" button-loader="vm.loadingAddAnother" data-ng-click="vm.submit(true)">Save & Add another</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+      </div>
+  </form>

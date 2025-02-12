@@ -1,0 +1,97 @@
+<app-modal
+  [title]="modalTitle"
+  [initialTemplate]="newFolder"
+  titleIcon="folder"
+  [titleIconColor]="colorTheme.primary"
+  [firstButtonLabel]="mode == 'edit' ? 'Update' : 'Create'"
+  (onFirstClick)="handleSave($event)"
+  [isFirstButtonDisabled]="
+    folderNameError ||
+    isSaving ||
+    !folderName ||
+    (mode == 'edit' && existingFolder?.name?.trim() == folderName?.trim())
+  "
+  [isLoading]="isSaving"
+></app-modal>
+
+<ng-template #newFolder>
+  <document-bread-crumbs [selectionPath]="selectionPath">
+  </document-bread-crumbs>
+  <div class="create-folder-class">
+    <dv-form-element
+      [label]="'Folder Name'"
+      labelPosition="left"
+      [showRightIcon]="false"
+      [errorMessage]="folderErrorMessage"
+      elementCol="9"
+      [customErrorMessage]="folderNameError"
+      [centerAligned]="true"
+      [isRequired]="true"
+      [for]="'name'"
+    >
+      <input
+        type="text"
+        placeholder="Name"
+        id="name"
+        ngModel
+        class="form-control"
+        [(ngModel)]="folderName"
+        (ngModelChange)="handleFolderNameChange($event)"
+        autocomplete="off"
+      />
+    </dv-form-element>
+    <dv-form-element
+      label="Folder Location"
+      labelPosition="left"
+      [showRightIcon]="false"
+      infoText="Destination folder location"
+      elementCol="9"
+      [centerAligned]="true"
+      *ngIf="mode == 'new'"
+      [for]="'folderPath'"
+    >
+      <input
+        id="folderPath"
+        type="text"
+        placeholder="Select Folder Location"
+        class="form-control clickable folder-location"
+        (click)="onFolderViewToggle($event)"
+        [readOnly]="true"
+        [(ngModel)]="folderPath"
+        #folderPathInputElement
+        autocomplete="off"
+      />
+      <span
+        class="searchIcon clickable"
+        appIcon
+        (click)="onFolderViewToggle($event)"
+        [style.color]="colorTheme.primary"
+        name="folder"
+      ></span>
+    </dv-form-element>
+  </div>
+  <div class="folder-selection" *ngIf="folderViewToggle">
+    <dv-form-element
+      label=""
+      labelPosition="top"
+      [showRightIcon]="false"
+      elementCol="12"
+    >
+      <input
+        type="text"
+        placeholder="Search"
+        class="form-control"
+        [(ngModel)]="folderSearch"
+        autocomplete="off"
+      />
+    </dv-form-element>
+    <dv-folder-selection-grid
+      [rowData]="documents"
+      [document_folder_type]="document_folder_type"
+      [filterValue]="folderSearch"
+      class="space-on-top"
+      (emitAllData)="updateRowData($event)"
+      (selectionChange)="updatePath($event)"
+    ></dv-folder-selection-grid>
+  </div>
+</ng-template>

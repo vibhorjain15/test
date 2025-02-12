@@ -1,0 +1,95 @@
+<app-modal
+  [title]="'Generate Presentation Report'"
+  firstButtonLabel="Export"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="generatePresentationReportRef"
+  [isLoading]="isGeneratingReport"
+  [isFirstButtonDisabled]="loading || !templates?.length"
+>
+</app-modal>
+
+<ng-template #generatePresentationReportRef>
+  <form
+    class="form-horizontal"
+    [formGroup]="presentationReportConfigurationForm"
+    *ngIf="!loading"
+    autocomplete="off"
+  >
+    <div class="modal-body">
+      <div
+        col="12"
+        col-type="sm"
+        class="text-center"
+        *ngIf="!templates?.length"
+      >
+        <label for="" class="control-label text-muted">
+          No reporting definition available,
+          <a
+            class="clickable"
+            (click)="redirectToTemplateDefinitions()"
+            tabindex="0"
+            aria-label="Click here to add a reporting definition"
+            role="button"
+            >click here</a
+          >
+          to add one
+        </label>
+      </div>
+      <dv-form-element
+        [modelController]="
+          presentationReportConfigurationForm.get('templateControl')
+        "
+        label="Select Reporting Definition"
+        labelPosition="left"
+        [showRightIcon]="false"
+        [isRequired]="true"
+        labelCol="5"
+        elementCol="7"
+        errorMessage="Reporting Definition is required"
+        *ngIf="templates?.length > 0"
+        aria-label="Select Reporting Definition"
+      >
+        <dv-select
+          [id]="'templateControl'"
+          [contoller]="
+            presentationReportConfigurationForm.get('templateControl')
+          "
+          placeholder="Reporting Definition"
+          [list]="templates"
+          bindLabel="report_definition_name"
+          formControlName="templateControl"
+          (onSelectChange)="handleTemplateValueChange($event)"
+          aria-label="Reporting Definition"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-form-element
+        [modelController]="
+          presentationReportConfigurationForm.get('nameControl')
+        "
+        label="Report Name"
+        labelPosition="left"
+        [showRightIcon]="false"
+        [isRequired]="true"
+        labelCol="5"
+        elementCol="7"
+        errorMessage="Report Name is required"
+        *ngIf="templates?.length > 0"
+        aria-label="Report Name"
+      >
+        <input
+          formControlName="nameControl"
+          type="text"
+          class="form-control"
+          aria-label="Report Name"
+          id="nameControl"
+        />
+      </dv-form-element>
+    </div>
+  </form>
+  <app-spinner
+    broadSpinner="true"
+    spinnerHeight="100"
+    *ngIf="loading"
+  ></app-spinner>
+</ng-template>

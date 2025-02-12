@@ -1,0 +1,16 @@
+.cross {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.form-group {
+  position: relative;
+  width: 145px;
+  margin-bottom: 0;
+}
+
+.dropdown-filter-caret {
+  caret-color: rgba(0, 0, 0, 0);
+}

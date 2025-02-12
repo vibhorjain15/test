@@ -1,0 +1,81 @@
+<div class="dd-qa-form-control">
+  <div class="has-feedback form-group clearfix"
+       data-ng-class="{'has-success': has_response && !error_message}">
+    <label class="control-label col-sm-5th-3">
+      <span>{{::response.question.text}}</span>
+    </label>
+
+    <div class="col-sm-5th-5 form-control-wrapper">
+      <div class="js-control-wrapper"></div>
+
+      <icon name="check"
+            data-ng-mouseenter="display_delete_button = has_response && isEditable"
+            class="form-control-feedback form-control-feedback-success"
+            data-ng-hide="error_message || loading || display_delete_button || mode == 'ro'"></icon>
+      <icon name="warning text-danger"
+            uib-tooltip="{{error_message}}"
+            class="form-control-feedback"
+            data-ng-show="error_message"
+            tooltip-placement="left"></icon>
+      <icon name="hour-glass" class="form-control-feedback text-orange"
+            data-ng-show="loading"></icon>
+      <icon name="times"
+            data-ng-show="display_delete_button"
+            role="button"
+            data-ng-click="clearResponse()"
+            data-ng-mouseleave="display_delete_button = false"
+            uib-tooltip="Delete response"
+            class="form-control-feedback"></icon>
+    </div>
+
+    <div class="col-sm-5th-2 dd-qa-actions">
+      <div class="btn-group" role="group">
+        <!-- not disabling the button using attribute because, when disabled pointer-events are set to none & tooltips wont show -->
+        <!-- Both firms have the same view for follow-up and history -->
+        <button btn-type="default"
+                size="sm"
+                data-ng-class="{'disabled': !has_response}"
+                uib-tooltip="{{response.id ? 'Follow-up' : 'No response available to follow up on'}}"
+                data-ng-click="showFollowUp()"
+                tabindex="-1">
+          <icon name="doubt"></icon>
+          <span class="count-bubble"
+                data-ng-show="response.followUpCount">{{response.followUpCount}}</span>
+        </button>
+
+        <button btn-type="default"
+                size="sm"
+                uib-tooltip="{{response.id ? 'History' : 'No response available to display history'}}"
+                data-ng-click="showHistory()"
+                data-ng-class="{'disabled': !has_response}"
+                tabindex="-1">
+          <icon name="clock-o"></icon>
+        </button>
+      </div>
+
+      <div class="btn-group" role="group">
+        <!-- adding the seperator above as Todos and Notes are private to a firm -->
+        <button btn-type="default"
+                size="sm"
+                uib-tooltip="Add or edit to-dos"
+                data-ng-click="showTodos()"
+                tabindex="-1">
+          <icon name="tasks"></icon>
+          <span class="count-bubble"
+                data-ng-show="response.toDoCount">{{response.toDoCount}}</span>
+        </button>
+
+          <!--data-ng-class="{'active': response.NoteCount}" add once the API returns noteCount-->
+        <button btn-type="default"
+                size="sm"
+                uib-tooltip="Add notes"
+                data-ng-click="showNotes()"
+                tabindex="-1">
+          <icon name="notepad"></icon>
+          <span class="count-bubble"
+                data-ng-show="response.noteCount">{{response.noteCount}}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

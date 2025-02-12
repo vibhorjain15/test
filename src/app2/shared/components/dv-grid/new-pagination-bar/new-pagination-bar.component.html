@@ -1,0 +1,93 @@
+<div class="justify-between mt-10">
+  <div class="page-left">
+    <span
+      appIcon
+      name="double-left-arrow"
+      role="button"
+      (click)="onFirstClicked.emit()"
+      (keydown.enter)="onFirstClicked.emit()"
+      (keydown.space)="onFirstClicked.emit()"
+      role="button"
+      [ngClass]="{ 'ag-disabled': countData?.isFirstPage }"
+      class="icon-min-width"
+      [isDisable]="countData?.isFirstPage"
+      [color]="'newDarkBlue'"
+      aria-label="First Page"
+    ></span>
+    <span
+      appIcon
+      name="single-left-arrow"
+      role="button"
+      (click)="onPrevClicked.emit()"
+      (keydown.enter)="onPrevClicked.emit()"
+      (keydown.space)="onPrevClicked.emit()"
+      role="button"
+      [ngClass]="{ 'ag-disabled': countData?.isFirstPage }"
+      class="icon-min-width"
+      [isDisable]="countData?.isFirstPage"
+      color="newDarkBlue"
+      aria-label="Previous page"
+    ></span>
+
+    <span class="page-count">
+      <span class=""> {{ countData?.currentPage }} </span>
+      <span>of</span>
+      <span class=""> {{ countData?.totalPages }} </span>
+    </span>
+
+    <span
+      appIcon
+      name="single-right-arrow"
+      role="button"
+      (click)="onNextClicked.emit()"
+      (keydown.enter)="onNextClicked.emit()"
+      (keydown.space)="onNextClicked.emit()"
+      role="button"
+      [ngClass]="{ 'ag-disabled': countData?.isLastPage }"
+      class="icon-min-width"
+      [isDisable]="countData?.isLastPage"
+      color="newDarkBlue"
+      aria-label="Next page"
+    ></span>
+    <span
+      appIcon
+      name="double-right-arrow"
+      role="button"
+      (click)="onLastClicked.emit()"
+      (keydown.enter)="onLastClicked.emit()"
+      (keydown.space)="onLastClicked.emit()"
+      role="button"
+      [ngClass]="{ 'ag-disabled': countData?.isLastPage }"
+      class="icon-min-width"
+      [isDisable]="countData?.isLastPage"
+      color="newDarkBlue"
+      aria-label="Last page"
+    ></span>
+  </div>
+  <div class="page-right">
+    <div>
+      <span class="ag-paging-row-summary-panel-number">{{
+        countData?.totalCount
+      }}</span>
+      <span> items</span>
+    </div>
+
+    <div>|</div>
+
+    <div>
+      <span class=""> items per page</span>
+
+      <select
+        (change)="onPageSizeChanged.emit($event.target.value)"
+        id="page-size"
+        class="select-bg-color select"
+        aria-label="First page"
+      >
+        <option value="10" [selected]="gridPageSize == '10'">10</option>
+        <option value="25" [selected]="gridPageSize == '25'">25</option>
+        <option value="50" [selected]="gridPageSize == '50'">50</option>
+        <option value="100" [selected]="gridPageSize == '100'">100</option>
+      </select>
+    </div>
+  </div>
+</div>

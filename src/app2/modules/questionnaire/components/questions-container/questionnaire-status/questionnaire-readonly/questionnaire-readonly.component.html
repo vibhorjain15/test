@@ -1,0 +1,159 @@
+<dv-question-card-group *ngIf="questionData?.length">
+  <ul
+    class="tree"
+    dvScroll
+    [items]="questionData"
+    [scrollToIndex]="requiredQuestionIndex"
+    [uniqueKey]="isSequenceIdInRoute ? 'sequenceQuestionId' : 'id'"
+    (onChange)="handleScrollChange($event)"
+  >
+    <div
+      class="text-center"
+      *ngIf="questionDuplicate[0].index !== questionData[0].index"
+    >
+      <app-spinner></app-spinner>
+    </div>
+    <ng-container
+      *ngTemplateOutlet="
+        Recursion;
+        context: { questions: questionDuplicate, isNested: false }
+      "
+    ></ng-container>
+  </ul>
+
+  <ng-template #Recursion let-questions="questions" let-isNested="isNested">
+    <ng-container *ngIf="isNested">
+      <ng-container *ngFor="let question of questions; let index = index">
+        <ng-container *ngIf="question?.nestedID?.isValid">
+          <li
+            [id]="
+              isSequenceIdInRoute
+                ? question.nestedID.sequenceID + '-' + question.nestedID.id
+                : question.nestedID.id
+            "
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                node;
+                context: {
+                  question: question.nestedID,
+                  index: index,
+                  questionNumber: index,
+                  isNested: true,
+                  questionsLength: questions.length
+                }
+              "
+            ></ng-container>
+          </li>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <ng-container *ngIf="!isNested">
+      <li
+        [id]="isSequenceIdInRoute ? question.sequenceQuestionId : question.id"
+        *ngFor="let question of questions; let index = index"
+      >
+        <ng-container
+          *ngIf="
+            (parentQuestionCount ?? 0 > 0) &&
+            question.sequenceIndex % parentQuestionCount == 0
+          "
+        >
+          <div class="space-on-top-xl space-on-bottom-xl">
+            <dv-label
+              [id]="question.sequenceID"
+              [label]="
+                activeSection?.label +
+                ' (#' +
+                question.sequenceIndex / parentQuestionCount +
+                ')'
+              "
+              type="bold"
+            ></dv-label>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngTemplateOutlet="
+            node;
+            context: {
+              question: question,
+              index: index,
+              questionNumber: parentQuestionCount
+                ? (question.index % parentQuestionCount) + 1
+                : question.index + 1,
+              isNested: false,
+              questionsLength: questions.length
+            }
+          "
+        ></ng-container>
+      </li>
+    </ng-container>
+  </ng-template>
+
+  <ng-template
+    #node
+    let-question="question"
+    let-index="index"
+    let-isNested="isNested"
+    let-questionsLength="questionsLength"
+    let-questionNumber="questionNumber"
+  >
+    <dv-question-card
+      [question]="question"
+      [title]="
+        firmPreferences?.enable_questionnaire_numbering && !isNested
+          ? questionNumber +
+            activeSection?.data?.previous_question_count +
+            '.  ' +
+            question.text
+          : question.text
+      "
+      [isNested]="isNested"
+      [hintText]="question?.hint_text"
+      [assignedUser]="question.selectedUser ?? []"
+      [leftIcons]="question?.icons?.leftIcons"
+      [rightIcons]="question?.icons?.rightIcons"
+      [leftLinks]="question?.icons?.leftLinks"
+      [rightLinks]="question?.icons?.rightLinks"
+      (onIconClick)="handleIconClick($event, question)"
+      (onlinkClick)="handleLinkClick($event, question)"
+      [showLessRightIcons]="isSidePanelOpened"
+      [ngClass]="{
+        'parent-active-question':
+          !isNested && activeQuestion && activeQuestion == question.id,
+        'child-active-question':
+          activeQuestion && activeQuestion == question.id,
+        'parent-question': !isNested,
+        bottomborder: questionsLength - 1 !== index
+      }"
+    >
+      <question-response [question]="question" [isReadOnly]="true">
+      </question-response>
+      <dv-question-comment
+        comment
+        [question]="question"
+        [text]="question?.answer?.attributes?.localTextResponse"
+        *ngIf="question.showComment"
+        [isReadonly]="true"
+      ></dv-question-comment>
+    </dv-question-card>
+
+    <ul *ngIf="question?.nestedQuestions?.length">
+      <ng-container
+        *ngTemplateOutlet="
+          Recursion;
+          context: { questions: question.nestedQuestions, isNested: true }
+        "
+      ></ng-container>
+    </ul>
+  </ng-template>
+  <div
+    class="text-center"
+    *ngIf="
+      questionDuplicate[questionDuplicate.length - 1].index !==
+      questionData[questionData.length - 1].index
+    "
+  >
+    <app-spinner></app-spinner>
+  </div>
+</dv-question-card-group>

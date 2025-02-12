@@ -1,0 +1,233 @@
+<!-- Add class 'ck' to avoid closing ckeditor on outside click -->
+<div class="ck">
+  <side-panel-wrapper
+    [title]="'Review Comments'"
+    [isFooter]="false"
+    [showSeparator]="true"
+    [showAddComment]="true"
+    (onCancelClick)="onCancel()"
+    (onAddNewComment)="addComment()"
+  >
+    <div class="editor-container__sidebar">
+      <div class="more-text space-on-bottom-lg" aria-label="Question Text">
+        <span>
+          <b class="outside-editor-container-heading">Question: </b>
+          <span [innerHTML]="question?.text"></span>
+        </span>
+      </div>
+      <div class="tabs">
+        <button
+          class="tabs__item"
+          [class.active]="tab === 'comments'"
+          (click)="handleTabClick('comments')"
+        >
+          Unresolved
+        </button>
+        <button
+          class="tabs__item"
+          [class.active]="tab === 'comments-archive'"
+          (click)="handleTabClick('comments-archive')"
+        >
+          Resolved
+        </button>
+      </div>
+      <div class="sidebar__container">
+        <div
+          class="sidebar comments__list"
+          [class.active]="tab === 'comments'"
+          #commentsContainer
+        ></div>
+        <div
+          class="sidebar sidebar--archive"
+          [class.active]="tab === 'comments-archive'"
+        >
+          <div class="comments-archive">
+            <div class="comments-archive__list" #commentsArchiveListContainer>
+              <ng-container
+                *ngIf="remoteThreadsLoaded && resolvedCommentThreads.length"
+              >
+                <div
+                  class="ck ck-annotation-wrapper ck-rounded-corners"
+                  [class.ck-annotation-wrapper--active]="
+                    thread && activeThreadId === thread.id
+                  "
+                  tabindex="-1"
+                  *ngFor="let thread of resolvedCommentThreads"
+                  (click)="setActiveThreadId(thread.id)"
+                >
+                  <div
+                    class="ck-thread ck-reset_all-excluded ck-thread--unlinked"
+                    [class.ck-thread--active]="activeThreadId === thread.id"
+                    [attr.data-thread-id]="thread.id"
+                    tabindex="-1"
+                  >
+                    <div class="ck-thread__container">
+                      <div class="ck-thread__header">
+                        <div class="ck-context-wrapper">
+                          <div
+                            class="ck-context ck-context--quotes"
+                            (mouseenter)="showHeaderText($event)"
+                            (mouseleave)="showHeaderText($event)"
+                          >
+                            <span class="ck-context__value">
+                              {{ thread.headerText }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <ul class="ck-thread__comments">
+                        <ng-container
+                          *ngFor="
+                            let comment of thread.comments._items;
+                            first as isFirst;
+                            last as isLast
+                          "
+                        >
+                          <li
+                            class="ck-comment__wrapper"
+                            tabindex="-1"
+                            *ngIf="
+                              isFirst || isLast || activeThreadId === thread.id
+                            "
+                          >
+                            <div
+                              class="ck-comment ck-annotation"
+                              [attr.data-author-id]="comment.author.id"
+                              [attr.data-comment-id]="comment.id"
+                            >
+                              <div
+                                class="ck ck-user ck-user_me ck-comment__user ck-annotation__user"
+                                [attr.data-user-id]="comment.author.id"
+                              >
+                                <!-- <div class="ck ck-user__img"></div> -->
+                                <div class="ck ck-user__name">
+                                  {{ comment.author.initials }}
+                                </div>
+                              </div>
+                              <div class="ck-comment__main ck-annotation__main">
+                                <div
+                                  class="ck-comment__info ck-annotation__info"
+                                >
+                                  <span
+                                    class="ck-comment__info-name ck-annotation__info-name"
+                                  >
+                                    {{ comment.author.name }}
+                                  </span>
+                                  <time
+                                    [attr.datetime]="comment.createdAt"
+                                    class="ck-comment__info-time ck-annotation__info-time"
+                                  >
+                                    <!-- Last Friday 06:35AM -->
+                                    {{ comment.createdAtInWords }}
+                                  </time>
+                                </div>
+                                <div class="ck-annotation__content-wrapper">
+                                  <div
+                                    class="ck-content ck-comment__content ck-annotation__content"
+                                  >
+                                    <p [innerHTML]="comment.content"></p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                          <li
+                            class="ck-thread__comment-count"
+                            *ngIf="
+                              activeThreadId !== thread.id &&
+                              isFirst &&
+                              thread.comments._items.length > 2
+                            "
+                          >
+                            {{ thread.comments._items.length - 2 }} Comment{{
+                              thread.comments._items.length - 2 <= 1 ? "" : "s"
+                            }}
+                          </li>
+                        </ng-container>
+                        <li class="ck-comment__wrapper" tabindex="-1">
+                          <div
+                            class="ck-comment ck-annotation ck-comment--info"
+                            [attr.data-author-id]="thread.resolvedBy.id"
+                            data-comment-id="resolved"
+                          >
+                            <div
+                              class="ck ck-user ck-user_me ck-comment__user ck-annotation__user"
+                              [attr.data-user-id]="thread.resolvedBy.id"
+                            >
+                              <!-- <div class="ck ck-user__img"></div> -->
+                              <div class="ck ck-user__name">
+                                {{ thread.resolvedBy.initials }}
+                              </div>
+                            </div>
+                            <div class="ck-comment__main ck-annotation__main">
+                              <div class="ck-comment__info ck-annotation__info">
+                                <span
+                                  class="ck-comment__info-name ck-annotation__info-name"
+                                >
+                                  {{ thread.resolvedBy.name }}
+                                </span>
+                                <time
+                                  datetime="2024-08-23T06:52:34"
+                                  class="ck-comment__info-time ck-annotation__info-time"
+                                >
+                                  {{ thread.resolvedAtInWords }}
+                                </time>
+                              </div>
+                              <div
+                                class="ck-comment__actions ck-annotation__actions"
+                              ></div>
+                              <div class="ck-annotation__content-wrapper">
+                                <div
+                                  class="ck-content ck-comment__content ck-annotation__content"
+                                >
+                                  Marked as resolved
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div sidePanelFooter class="sidebar__footer">
+      <dv-button
+        [ngClass]="{
+          'hide--resolve-comment-btn': tab === 'comments-archive'
+        }"
+        [disabled]="!isAnyOpenCommentsAvailable || apiCallsInProgress"
+        [loader]="apiCallsInProgress"
+        btnType="default"
+        btnClass="btn-primary-outline width-100-pct"
+        class="flex-grow-1"
+        (onClick)="resolveComments()"
+      >
+        Resolve All Comments
+      </dv-button>
+      <dv-button
+        [disabled]="isPreviousButtonDisabled || apiCallsInProgress"
+        btnType="primary"
+        class="space-on-left"
+        tooltip="Go to previous question"
+        (onClick)="navigateToPreviousQuestion()"
+      >
+        <span appIcon name="chevron-left"></span>
+      </dv-button>
+      <dv-button
+        [disabled]="isNextButtonDisabled || apiCallsInProgress"
+        btnType="primary"
+        class="space-on-left"
+        tooltip="Go to next question"
+        (onClick)="navigateToNextQuestion()"
+      >
+        <span appIcon name="chevron-right"></span>
+      </dv-button>
+    </div>
+  </side-panel-wrapper>
+</div>

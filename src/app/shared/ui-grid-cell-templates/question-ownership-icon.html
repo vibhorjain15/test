@@ -1,0 +1,8 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <span class="text-muted dd-status-icon"
+        enable-tooltip="true"
+        tooltip-placement="right">
+      <icon name="user" uib-tooltip="User question" data-ng-if="row.entity.created_by"></icon>
+      <icon name="secure" uib-tooltip="Platform question" data-ng-if="!row.entity.created_by"></icon>
+  </span>
+</ui-grid-cell-contents>

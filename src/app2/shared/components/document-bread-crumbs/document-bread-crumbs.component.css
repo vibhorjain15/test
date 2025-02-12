@@ -1,0 +1,38 @@
+.dvi.dvi-bold {
+  font-weight: 600;
+}
+
+.p-t-2 {
+  padding-top: 2px;
+}
+.breadcrumb {
+  align-items: center;
+  background-color: transparent;
+  display: flex;
+  font-weight: 600;
+  gap: 10px;
+  overflow: hidden;
+  padding: 5px 0px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.breadcrumb.breadcrumb--overflow::before {
+  bottom: 5px;
+  color: #9a9a9a;
+  content: "...";
+  left: var(--positionFromLeft, 0);
+  background-image: linear-gradient(to right, #fff 14px, transparent 18px);
+  padding-right: 20px;
+  position: absolute;
+}
+
+.breadcrumb .breadcrumb--secondary {
+  color: #9a9a9a;
+}
+
+.breadcrumb-label {
+  font-size: 14px;
+  color: #9a9a9a;
+  font-weight: 400;
+}

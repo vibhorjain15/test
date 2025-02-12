@@ -1,0 +1,218 @@
+<div class="qa-list-container">
+  <div
+    class="qa-list-wrapper"
+    *ngFor="let question of questions; let index = index"
+    role="listitem"
+    aria-labelledby="question_{{ index }}"
+  >
+    <div class="qa-list-left-p">
+      <p>
+        <span
+          id="question_{{ index }}"
+          class="responsive-image"
+          [innerHtml]="question.question_text | cleanHtml"
+          tabindex="0"
+        >
+        </span>
+      </p>
+    </div>
+
+    <div
+      *ngIf="!question.showTags"
+      class="qa-list-right-p label-list customFieldList"
+      role="region"
+      aria-label="Question Tags"
+    >
+      <div
+        class="inline"
+        *ngIf="question[tagType].length > 0 && type !== 'expiryDate'"
+      >
+        <ng-container *ngFor="let tag of question[tagType]; let $index = index">
+          <div
+            class="tags-list"
+            *ngIf="$index < (question[tagLimit] || 2)"
+            tooltip="{{ tag.value }}"
+            role="listitem"
+            aria-labelledby="tag_{{ index }}_{{ $index }}"
+          >
+            <span [innerHtml]="tag.value | limitTo : 20"> </span>
+            <span *ngIf="tag.value.length > 20">...</span>
+            <span class="dropdown manage-bulk-tags-dropdown" dropdown>
+              <a
+                class="dropdown-toggle clickable space-on-left danger text-danger"
+                dropdownToggle
+                tabindex="0"
+              >
+                &times;
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-right"
+                *dropdownMenu
+                role="menu"
+              >
+                <li role="menuitem">
+                  <a
+                    class="text-capitalize"
+                    (click)="
+                      markRemoveFromCurrentQuestion(tag, question, $index)
+                    "
+                    role="button"
+                    tabindex="0"
+                  >
+                    Remove from this question
+                  </a>
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="text-capitalize"
+                    (click)="markRemoveBulk(tag, $index)"
+                    role="button"
+                    tabindex="0"
+                  >
+                    Remove from all questions
+                  </a>
+                </li>
+              </ul>
+            </span>
+          </div>
+        </ng-container>
+      </div>
+
+      <span *ngIf="!question[tagType] || question[tagType].length == 0">
+        {{ noDataLable }}
+      </span>
+      <a
+        class="clickable"
+        (click)="toggleShowAllTags(question)"
+        *ngIf="
+          question[tagType].length > 2 &&
+          question[tagLimit] != question[tagType].length &&
+          type !== 'expiryDate' &&
+          !question.showAllTag
+        "
+        style="color: #136a81; white-space: nowrap"
+        tabindex="0"
+      >
+        + {{ question[tagType].length - 2 }} more
+      </a>
+      <div
+        class="label label-default text-uppercase m-2-0"
+        *ngIf="
+          type !== 'expiryDate' ||
+          (type == 'expiryDate' && !question.expiry_date)
+        "
+      >
+        <small class="word-wrap-with-break-word">
+          <a class="clickable" (click)="handleTagToggle(question)"> + Add </a>
+        </small>
+      </div>
+      <div *ngIf="type == 'expiryDate' && question.expiry_date">
+        {{ question.expiry_date | dvDate : ["isLocaleDate"] }} &nbsp;
+        <span appIcon name="calendar"></span>
+        <a
+          (click)="markRemoveExpiryFromCurrentQuestion(question, index)"
+          class="clickable danger text-danger pull-right"
+          tabindex="0"
+        >
+          <span appIcon name="trashcan"></span>
+        </a>
+      </div>
+    </div>
+    <div *ngIf="question.showTags" class="qa-list-right-p">
+      <ng-container *ngIf="type !== 'expiryDate'">
+        <dv-select
+          [aria-label]="'select team member Name'"
+          [(ngModel)]="question.smeIds"
+          [clearable]="false"
+          (onSelectChange)="onProductChange(question)"
+          [searchable]="true"
+          [multiple]="true"
+          [placeholder]="
+            downloadedDataCopy?.length
+              ? type === 'tags'
+                ? 'Select tags'
+                : 'Select SME\'s'
+              : 'Couldnt find any tag matching :'
+          "
+          [disabled]="!downloadedDataCopy?.length"
+          [list]="downloadedDataCopy"
+        >
+        </dv-select>
+      </ng-container>
+      <ng-container *ngIf="type === 'expiryDate'">
+        <app-date-picker
+          [value]="question.expiry_date"
+          [minDate]="minDate"
+          placeholder="Select a date"
+          *ngIf="!question.expiry_date"
+          (change)="handleExpiryChange($event, question, index)"
+        >
+        </app-date-picker>
+      </ng-container>
+      <a
+        class="hide-add-options-cta space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+        (click)="handleTagToggle(question)"
+        tabindex="0"
+      >
+        &times;
+      </a>
+    </div>
+  </div>
+</div>
+
+<div
+  class="space-on-top-xxl list-bulk-items width-100-pct"
+  *ngIf="type !== 'expiryDate'"
+  role="list"
+  aria-labelledby="bulk_tags_list"
+>
+  <div
+    class="removed-tags-list"
+    *ngFor="let item of markedToRemoveWIthQuestions; let index = index"
+    role="listitem"
+    aria-labelledby="bulk_tag_item_{{ index }}"
+  >
+    <span [id]="'bulk_tag_item_' + index"
+      >{{ item.tag.value }} ({{ item.question.length }})</span
+    >
+    <a
+      class="space-on-left-3"
+      (click)="removeMarkedToRemoveWIthQuestions(index)"
+      role="button"
+      tabindex="0"
+      aria-label="Remove marked to remove with questions"
+    >
+      <span
+        appIcon
+        class="align-middle undo-tag-selected"
+        name="undo"
+        tooltip="Undo"
+        tabindex="0"
+      ></span>
+    </a>
+  </div>
+  <div
+    class="removed-tags-list"
+    *ngFor="let item of markedToRemoveBulk; let index = index"
+    role="listitem"
+    aria-labelledby="bulk_tag_item_{{ index }}"
+  >
+    <span [id]="'bulk_tag_item_' + index"
+      >{{ item.tag.value }} ({{ item.count }})</span
+    >
+    <a
+      class="space-on-left-3"
+      (click)="removedMarkedToRemoveBulk(index)"
+      role="button"
+      aria-label="remove marked to remove in bulk"
+      tabindex="0"
+    >
+      <span
+        appIcon
+        class="align-middle undo-tag-selected"
+        name="undo"
+        tooltip="Undo"
+      ></span>
+    </a>
+  </div>
+</div>

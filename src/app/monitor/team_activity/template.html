@@ -1,0 +1,21 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Team Activity</h5>
+  </div>
+
+  <div class="panel-body">
+    <spinner data-ng-hide="vm.punchcard_data"></spinner>
+
+    <div punchcard="vm.punchcard_data"
+         punchcard-options="vm.punchcard_options"
+         row-header-label="name"
+         col-header-label="audit_date"
+         cell-value-label="count"></div>
+
+    <div data-ng-show="vm.punchcard_data && !vm.punchcard_data.length">
+      <p class="alert alert-info">
+        Hmmm.. seems like folks are on vacation. No Team activity in the past two weeks. Time to get started!
+      </p>
+    </div>
+  </div>
+</div>

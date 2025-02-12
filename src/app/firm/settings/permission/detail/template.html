@@ -1,0 +1,259 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-permission-detail></ng2-permission-detail> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default borderless-top">
+  <div class="panel-body clearfix">
+    <spinner broad-spinner spinner-height='65' data-ng-show="vm.loading"></spinner>
+
+    <div class="dv-table dv-table-middle dd-info-panel">
+      <div class="bordered-right cell">
+        <div class="lh1-5">
+          <strong data-ng-if="vm.$stateParams.entity_type != 'Team'">{{vm.selectedUser.fullName}}</strong>
+          <strong data-ng-if="vm.$stateParams.entity_type == 'Team'">{{vm.current_team.name}}</strong>
+        </div>
+      </div>
+      <div class="cell">
+        <a data-ng-click="vm.goBack()"
+           class="btn btn-transparent">
+          <div><icon name="arrow-back" size="2x"></icon></div>
+          <small>Back</small>
+        </a>
+      </div>
+
+
+      <!-- *** For teams ************************************ -->
+      <div class="cell" data-ng-if="vm.$stateParams.entity_type == 'Team'">
+        <a data-ng-click="vm.editTeam()"
+           class="btn btn-transparent">
+          <div><icon name="pencil" size="2x"></icon></div>
+          <small>Edit Team Name</small>
+        </a>
+      </div>
+      <div class="cell" data-ng-if="vm.$stateParams.entity_type == 'Team'">
+        <a data-ng-click="vm.confirmTeamDeletion()"
+           class="btn btn-transparent">
+          <div><icon name="trashcan" size="2x"></icon></div>
+          <small>Remove Team</small>
+        </a>
+      </div>
+      <!-- *************************************************  -->
+
+
+      <!-- *** For users ************************************ -->
+      <div class="cell" data-ng-if="vm.$stateParams.entity_type != 'Team'">
+        <a data-ng-click="vm.editUser()"
+           class="btn btn-transparent">
+          <div><icon name="pencil" size="2x"></icon></div>
+          <small>Edit User</small>
+        </a>
+      </div>
+      <div class="cell" data-ng-if="vm.$stateParams.entity_type != 'Team'">
+        <a data-ng-click="vm.confirmUserDeletion()"
+           class="btn btn-transparent">
+          <div><icon name="trashcan" size="2x"></icon></div>
+          <small>Remove User</small>
+        </a>
+      </div>
+      <!-- *************************************************  -->
+
+    </div>
+    <div data-ng-if="vm.$stateParams.entity_type != 'Team'">
+      <span ng-repeat="function in vm.selectedUser.functions" class="label label-default label-sm functionsLabel">{{function.function_name}}</span>
+    </div>
+    <div data-ng-if="vm.$stateParams.entity_type == 'Team'">
+      <span ng-repeat="function in vm.current_team.functions" class="label label-default label-sm functionsLabel">{{function.function_name}}</span>
+    </div>
+  </div>
+
+  <div class="panel panel-default permissions-details team_and_user_details_page">
+    <div class="panel-heading">
+      <h5 class="panel-title">{{(vm.$stateParams.entity_type == 'Team')? 'Team Members' : 'Teams'}}</h5>
+        <div class="panel-controls">
+          <div class="panel-controls-wrapper" data-ng-show="vm.$stateParams.entity_type != 'Team' && vm.is_admin">
+              <a id="js-add-team-members" class="panel-control"
+                 uib-tooltip="Add to team"
+                 data-ng-click="vm.addUserToTeam()"
+                 tooltip-placement="left"
+                 data-ng-class="{'disabled-Element': vm.selectedUser.firmwide_role_name.toLowerCase() == vm.USER_ROLES.SECURITYADMIN}">
+                  <icon name="plus"></icon>
+              </a>
+          </div>
+          <div class="panel-controls-wrapper" data-ng-show="vm.$stateParams.entity_type == 'Team' && vm.is_admin">
+              <a id="js-add-team-members" class="panel-control"
+                  data-ng-click="vm.addTeamMembers()"
+                  tooltip-placement="left"
+                  uib-tooltip="Add Team Members">
+                  <icon name="plus"></icon>
+              </a>
+          </div>
+        </div>
+    </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions_team_permissions">
+            <div class="panel-body padded-lg">
+              <h5 class="inline space-on-right-lg">
+                <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+              </h5>
+
+              <a class="btn btn-default danger space-on-right-lg"
+                 uib-tooltip="Delete Selected"
+                 data-ng-hide="vm.bulkRoleEditMode"
+                 data-ng-if="vm.$stateParams.entity_type == 'Team'"
+                 data-ng-click="vm.confirmBulkTeamMemberDeletion()">
+                <strong><icon name="trashcan"></icon>  </strong>
+              </a>
+              <a class="btn btn-default danger space-on-right-lg"
+                 uib-tooltip="Delete Selected"
+                 data-ng-hide="vm.bulkRoleEditMode"
+                 data-ng-if="vm.$stateParams.entity_type != 'Team'"
+                 data-ng-click="vm.confirmBulkUserTeamDeletion()">
+                <strong><icon name="trashcan"></icon>  </strong>
+              </a>
+
+              <a class="btn btn-default success space-on-right-lg"
+                 uib-tooltip="Edit Selected"
+                 data-ng-hide="vm.bulkRoleEditMode"
+                 data-ng-click="vm.editSelectedRoles()">
+                <strong><icon name="pencil"></icon>  </strong>
+              </a>
+
+              <a class="btn btn-default success space-on-right-lg"
+                 uib-tooltip="Cancel Edit"
+                 data-ng-show="vm.bulkRoleEditMode"
+                 data-ng-click="vm.cancelBulkRoleEdit()">
+                <strong><icon name="close"></icon>  </strong>
+              </a>
+              <span data-ng-show="vm.bulkRoleEditMode" class="alias_container" uib-dropdown dropdown-append-to-body>
+                <p class="align-middle clickable space-on-bottom" uib-dropdown-toggle>
+                  Select Role
+                  <span class="caret"></span>
+                </p>
+                <ul class="dropdown-menu"
+                    uib-dropdown-menu
+                    role="menu">
+                    <li role="menuitem"
+                        data-ng-repeat="role in vm.roles">
+                        <a class="clickable" data-ng-click="vm.displayAccessChangeConfirmation(role, 'teams')">
+                            {{role.alias}}
+                        </a>
+                    </li>
+                </ul>
+              </span>
+              <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions(vm.$stateParams.entity_type)">
+                <strong><icon name="close"></icon></strong>
+              </a>
+            </div>
+          </div>
+          <div class="com-sm-12" data-ng-if="vm.$stateParams.entity_type != 'Team'" style="max-height: 300px; overflow-y: auto">
+            <div data-ng-if="vm.allTeamsUserIsIn">
+              <dv-grid grid-resource="vm.allTeamsUserIsIn" name="vm.userInTeamsGrid" grid-name="'user-in-team'"></dv-grid>
+            </div>
+            <spinner data-ng-if="!vm.allTeamsUserIsIn"></spinner>
+          </div>
+          <div class="com-sm-12" data-ng-if="vm.$stateParams.entity_type == 'Team'" style="max-height: 300px; overflow-y: auto">
+            <div data-ng-if="vm.allTeamMembers">
+              <dv-grid grid-resource="vm.allTeamMembers" name="vm.teamMembersGrid" grid-name="'all-teammembers'"></dv-grid>
+            </div>
+            <spinner data-ng-if="!vm.allTeamMembers"></spinner>
+
+          </div>
+
+        </div>
+      </div>
+
+  </div>
+
+  <!-- Nav tabs -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">Permissions</h5>
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper" data-ng-if="vm.is_admin">
+                <a id="js-add-team-members" class="panel-control"
+                   data-ng-click="vm.openNewPermissionDialog()"
+                   tooltip-placement="left"
+                   uib-tooltip="Add New Permissions"
+                   data-ng-class="{'disabled-Element': vm.selectedUser.firmwide_role_name.toLowerCase() == vm.USER_ROLES.SECURITYADMIN}">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a data-target="#funds" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('Fund')">
+               Products
+            </a>
+        </li>
+        <li><a data-target="#firms" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('Firm')">
+             {{vm.is_investor? 'Firms' : 'Investors'}}
+            </a>
+        </li>
+        <li>
+            <a data-target="#diligence" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('DueDiligence')">
+               Projects
+            </a>
+        </li>
+        <li>
+            <a data-target="#templates" role="tab" data-toggle="tab" class="clickable" data-ng-click="vm.getSelectedTabData('Template')">
+               Templates
+            </a>
+        </li>
+      </ul>
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+          <div class="panel-body padded-lg">
+            <h5 class="inline space-on-right-lg">
+              <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+            </h5>
+            <a class="btn btn-default danger space-on-right-lg"
+               uib-tooltip="Delete Selected"
+               data-ng-hide="vm.bulkResourceEditMode"
+               data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+               data-ng-click="vm.confirmBulkResourceDeletion()">
+              <strong><icon name="trashcan"></icon>  </strong>
+            </a>
+            <a class="btn btn-default success space-on-right-lg"
+               uib-tooltip="Edit Selected"
+               data-ng-hide="vm.bulkResourceEditMode"
+               data-ng-if="vm.$stateParams.entity_type == 'Team'"
+               data-ng-class="{'linkDisabled': (vm.totalSelectedRecords > 1000  || vm.freeSubscription)}"
+               data-ng-click="vm.editSelected()">
+              <strong><icon name="pencil"></icon>  </strong>
+            </a>
+            <a class="btn btn-default success space-on-right-lg"
+               uib-tooltip="Cancel Edit"
+               data-ng-show="vm.bulkResourceEditMode"
+               data-ng-click="vm.cancelEdit()">
+              <strong><icon name="close"></icon>  </strong>
+            </a>
+            <span data-ng-show="vm.bulkResourceEditMode" class="alias_container" uib-dropdown dropdown-append-to-body>
+              <p class="align-middle clickable space-on-bottom" uib-dropdown-toggle>
+                Select {{vm.$stateParams.entity_type == 'Team'? 'Visibility' : 'Role'}}
+                <span class="caret"></span>
+              </p>
+              <ul class="dropdown-menu"
+                  uib-dropdown-menu
+                  role="menu">
+                  <li role="menuitem"
+                      data-ng-repeat="visibility in vm.accessList">
+                      <a class="clickable" data-ng-click="vm.displayAccessChangeConfirmation(visibility, 'assignment')">
+                          {{visibility.alias}}
+                      </a>
+                  </li>
+              </ul>
+            </span>
+            <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions(vm.assignments_grid_type)">
+              <strong><icon name="close"></icon></strong>
+            </a>
+          </div>
+        </div>
+        <div data-ng-if="!vm.loading_assignments" class="space-on-top-lg">
+          <dv-grid grid-resource="vm.assignmentResources" name="vm.assignmentsGrid" grid-name="'permission-resource-assignment'"></dv-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

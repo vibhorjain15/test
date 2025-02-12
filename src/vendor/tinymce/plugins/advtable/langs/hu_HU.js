@@ -1,0 +1,21 @@
+tinymce.addI18n("hu_HU", {
+  "Advanced sort...": "Speci\xe1lis rendez\xe9s...",
+  "Advanced Sort": "Speci\xe1lis rendez\xe9s",
+  "Sort table by column ascending": "T\xe1bla rendez\xe9se oszlopok szerint n\xf6vekv\u0151 sorrendben",
+  "Sort table by column descending": "T\xe1bla rendez\xe9se oszlopok szerint cs\xf6kken\u0151 sorrendben",
+  "Sort": "Rendez\xe9s",
+  "Order": "Sorrend",
+  "Sort by": "Rendez\xe9s a k\xf6vetkez\u0151 szerint:",
+  "Ascending": "N\xf6vekv\u0151",
+  "Descending": "Cs\xf6kken\u0151",
+  "Selection": "Kiv\xe1laszt\xe1s",
+  "Table": "T\xe1bl\xe1zat",
+  "Column": "Oszlop",
+  "Row": "Sor",
+  "Column {0}": "Oszlop: {0}",
+  "Row {0}": "Sor: {0}",
+  "Row numbering": "Sorok sz\xe1moz\xe1sa",
+  "None": "Nincs",
+  "Numeric": "Numerikus",
+  "Alpha": "Bet\u0171rend"
+});

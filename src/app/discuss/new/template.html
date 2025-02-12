@@ -1,0 +1,102 @@
+<div class="row clearfix">
+  <div class="padded-right-sm" col="8">
+    <div class="panel">
+      <div class="panel-body">
+        <form data-ng-submit="vm.saveDiscussion()">
+          <div class="form-group">
+            <label for="discussion-title">
+              What would you like to know ?
+            </label>
+
+            <textarea name="title"
+                  id="discussion-title"
+                  cols="30"
+                  rows="2"
+                  msd-elastic="\n"
+                  data-ng-trim="false"
+                  data-ng-model="vm.discussion.text"
+                  class="form-control"></textarea>
+
+            <p class="clear-margin text-right" data-ng-show="vm.discussion.text.length">
+              <small data-ng-class="{'text-info': vm.discussion.text.length <= (vm.max_title_char_length-10), 'text-danger': vm.discussion.text.length > (vm.max_title_char_length-10)}">
+                Remaining characters: {{vm.max_title_char_length - vm.discussion.text.length}}
+              </small>
+            </p>
+          </div>
+
+          <div uib-collapse="vm.is_generic_discussion">
+            <div class="form-group">
+              <label for="category">Category</label>
+              <tags-input ng-model="vm.discussion.categories"
+                          id="category"
+                          display-property="value"
+                          placeholder="{{vm.category_placeholder}}">
+                <auto-complete source="vm.filterCategories($query)"
+                               load-on-focus=true
+                               load-on-empty=true
+                               min-length="1"></auto-complete>
+              </tags-input>
+            </div>
+
+            <div class="form-group">
+              <label for="fund">Fund Type</label>
+              <tags-input ng-model="vm.discussion.fund_types"
+                          id="fund"
+                          display-property="value"
+                          placeholder="{{vm.fund_placeholder}}">
+                <auto-complete source="vm.filterFunds($query)"
+                               load-on-focus=true
+                               load-on-empty=true
+                               min-length="1"></auto-complete>
+              </tags-input>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <dv-checkbox
+              ng-model="vm.is_generic_discussion"
+              label="This is a generic discussion">
+            </dv-checkbox>
+          </div>
+          <div class="form-group">
+            <dv-checkbox
+              ng-model="vm.discussion.author.anonymous"
+              label="Start this discussion anonymously">
+            </dv-checkbox>
+          </div>
+
+          <button type="submit" button-loader="vm.saving_discussion">Start Discussion</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="padded-left-sm" col="4">
+    <div class="panel">
+      <div class="panel-body">
+        <section class="discussion-group">
+          <p class="text-muted clear-margin" data-ng-show="!vm.discussion.text">
+            Start typing to see similar discussions
+          </p>
+
+          <p class="text-muted clear-margin"
+             data-ng-show="!vm.loading_similar_discussions && vm.discussion.text && !vm.similar_discussions.length">
+            No similar discussions found.
+          </p>
+
+          <spinner data-ng-show="vm.loading_similar_discussions"></spinner>
+
+          <div data-ng-show="!vm.loading_similar_discussions && vm.similar_discussions.length">
+            <h5 class="section-title">Similar Discussions</h5>
+            <hr class="hr-sm">
+
+            <a ui-sref="app.discuss.detail({slug: discussion.slug, discussionId: discussion.id})"
+               class="discussion-title link-disguise"
+               data-ng-repeat="discussion in vm.similar_discussions">
+              <span class="word-break-break-all" ng-bind-html="vm.highlight(discussion.text)"></span>
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

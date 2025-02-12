@@ -1,0 +1,108 @@
+<div class="qa-bank-bulk-upload-modal">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+            Manage Functions
+            <p>
+                {{vm.tempUsersList.length}} functions selected
+            </p>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div data-ng-if="vm.addNewQuestionToggle" class="add-new-questions-wrapper">
+            <div class="space-on-bottom-xl">
+                <p class="title-txt">
+                    Add New Functions
+                </p>
+            </div>
+            <div>
+                <textarea data-ng-model="vm.tagsToBeAdded"></textarea>
+            </div>
+            <div class="hint-text">
+                Add a (,) in between to add multiple tags.
+            </div>
+        </div>
+        <div data-ng-if="vm.loadingData">
+            <div class="tab-spinner-div">
+                <spinner></spinner>
+            </div>
+        </div>
+        <div data-ng-if="!vm.loadingData">
+            <div class="qa-list-container" data-ng-if="!vm.addNewQuestionToggle">
+                <div class="qa-list-wrapper" data-ng-repeat="functionObj in vm.tempUsersList">
+                    <div class="qa-list-left-35">
+                        <p>
+                            <span id="function_{{$index}}" class="responsive-image"
+                                ng-bind-html="functionObj.function_name | cleanhtml">
+                            </span>
+                        </p>
+                    </div>
+                    <div data-ng-if="functionObj.showAddTags" class="qa-list-right-65 label-list customFieldList">
+                        <select id="tag" class="form-control" multiple chosen data-ng-model="functionObj.temp_assigned_users"
+                            no-results-text="'Could not find any user matching : '" data-placeholder="Select users"
+                            data-ng-options="team_member as team_member.fullName for team_member in vm.team_members">
+                            <option value=""></option>
+                        </select>
+                        <a class="hide-add-options-cta space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                            data-ng-click="functionObj.showAddTags = false">
+                            &times;
+                        </a>
+                    </div>
+                    <div data-ng-if="!functionObj.showAddTags" class="qa-list-right-65 label-list customFieldList">
+                        <div class="tags-list"
+                            data-ng-repeat="assigned_user in functionObj.user_assigments| limitTo : functionObj.limit_to?functionObj.limit_to : 2"
+                            data-ng-if="functionObj.user_assigments.length > 0" uib-tooltip="{{assigned_user.user_name}}">
+                            <span data-ng-bind="assigned_user.user_name | limitTo: 20">
+                            </span>
+                            <span data-ng-if="assigned_user.user_name.length > 20">...</span>
+                            <span class="inline" uib-dropdown>
+                                <a class="space-on-left clickable link-disguise clickable dropdown-toggle danger text-danger"
+                                    uib-dropdown-toggle>
+                                    &times;
+                                </a>
+                                <ul class="dropdown-menu sort-menu-options left-auto" uib-dropdown-menu role="menu">
+                                    <li>
+                                        <a class="text-capitalize"
+                                            data-ng-click="vm.markRemoveTagFromCurrentQuestion(assigned_user,functionObj,$index)"
+                                            role="button">
+                                            Remove from this user role
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="text-capitalize" data-ng-click="vm.markRemoveAllTagsBulk(assigned_user,$index)"
+                                            role="button">
+                                            Remove from all functions
+                                        </a>
+                                    </li>
+                                </ul>
+                            </span>
+                        </div>
+                        <span data-ng-if="!functionObj.user_assigments || functionObj.user_assigments.length == 0">
+                            No Tag
+                        </span>
+                        <a class="clickable" data-ng-click="functionObj.limit_to = functionObj.user_assigments.length"
+                            data-ng-if="functionObj.user_assigments.length > 2 && functionObj.limit_to != functionObj.user_assigments.length"
+                            style="color: #136A81;white-space: nowrap;">
+                            + {{functionObj.user_assigments.length - 2}} more
+                        </a>
+                        <div class="label label-default text-uppercase m-2-0 space-on-left-2">
+                            <a href>
+                                <small class="word-wrap-with-break-word">
+                                    <a class="clickable" data-ng-click="functionObj.showAddTags = true">
+                                        + Add
+                                    </a>
+                                </small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="space-on-top-xxl">
+            <div style="text-align: right;">
+                <button class="cancel-btn-action" data-ng-click="vm.cancel()">CANCEL</button>
+                <button class="update-btn-action" data-ng-click="vm.updateTagsBulkData()">UPDATE</button>
+            </div>
+        </div>
+    </div>
+</div>

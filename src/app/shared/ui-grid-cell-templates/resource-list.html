@@ -1,0 +1,7 @@
+<ui-grid-cell-contents>
+  <div ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+    <div data-ng-show="row.entity.entity_name">
+      <span class="label label-default space-on-right" uib-tooltip="{{row.entity.entity_name}}">{{row.entity.entity_name}}</span>
+    </div>
+  </div>
+</ui-grid-cell-contents>

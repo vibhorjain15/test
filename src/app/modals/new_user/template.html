@@ -1,0 +1,199 @@
+<ng2-add-new-user data-ng-if="vm.Utils.isAngular()"></ng2-add-new-user>
+<form  data-ng-if="vm.Utils.isAngularJS()" class="form-horizontal" name="vm.new_user_form" novalidate data-ng-submit="vm.submit()">
+  <div class="modal-header" data-ng-hide="vm.fund">
+    <h3 class="modal-title" data-ng-hide="vm.edit_mode">Invite User to {{vm.firm_name}} Team
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+    <h3 class="modal-title" data-ng-show="vm.edit_mode">Edit {{vm.existing_user.name}}
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-header" data-ng-show="vm.fund">
+    <h3 class="modal-title">Add new contact</h3>
+  </div>
+  <div class="modal-body" data-ng-if="vm.showBody">
+    <!-- <div class="text-center">
+      <div class="btn-group">
+          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.user_type == 'Standard'}" data-ng-click="vm.setUserType('Standard')"><icon name="fund" class="space-on-right"></icon>Standard</label>
+          <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.user_type == 'Special'}" data-ng-click="vm.setUserType('Special')"><icon name="institution" class="space-on-right"></icon>Special</label>
+      </div>
+    </div> -->
+
+    <br>
+    <div class="form-group" data-ng-show="vm.fund">
+      <strong>Product:</strong> {{vm.fund.name}}
+    </div>
+
+    <form-group field-name="First Name">
+      <label for="first-name" class="control-label" col ="3" col-type="sm">First Name</label>
+      <div col="8" col-type="sm">
+        <input type="text"
+               id="first-name"
+               data-ng-model="vm.new_user.firstName"
+               placeholder="First Name"
+               required
+               dv-restrict-input="{type: 'validPersonName'}"
+               class="form-control" />
+      </div>
+    </form-group>
+
+    <form-group field-name="Last Name">
+      <label for="last-name" class="control-label" col ="3" col-type="sm">Last Name</label>
+      <div col="8" col-type="sm">
+        <input type="text"
+               id="last-name"
+               placeholder="Last Name"
+               data-ng-model="vm.new_user.lastName"
+               required
+               dv-restrict-input="{type: 'validPersonName'}"
+               class="form-control" />
+      </div>
+    </form-group>
+
+    <form-group field-name="Email">
+      <label for="user-email" class="control-label" col ="3" col-type="sm">Email</label>
+      <div col="8" col-type="sm">
+        <div class="input-group">
+        <span class="input-group-addon">
+          <icon name="mail"></icon>
+        </span>
+
+          <input type="email"
+                 data-ng-disabled="vm.edit_mode"
+                 id="user-email"
+                 data-ng-model="vm.new_user.userName"
+                 placeholder="Email"
+                 ng-required="true"
+                 class="form-control" />
+        </div>
+      </div>
+    </form-group>
+    <form-group field-name="Email">
+      <label for="user-email" class="control-label" col ="3" col-type="sm">User Roles
+        <span class="space-on-top space-on-left">
+            <icon name="info"
+                  tooltip-placement="right"
+                  uib-tooltip="User Roles will allow you to categorise your team members effortlessly. Once team members are added to a user role you can assign tasks/ assignments/workflow easily.">
+            </icon>
+        </span>
+
+      </label>
+      <div col="8" col-type="sm">
+        <tags-input data-ng-model="vm.new_user.functions"
+                    display-property="function_name"
+                    key-property="function_id"
+                    placeholder="Select user roles(s)"
+                    add-from-autocomplete-only=true
+                    id="functions"
+                    min-length="1">
+            <auto-complete source="vm.filterFunctions($query)"
+                           load-on-focus=true
+                           load-on-down-arrow=true
+                           load-on-empty=true
+                           min-length="1"></auto-complete>
+        </tags-input>
+      </div>
+    </form-group>
+    <form-group>
+      <label class="control-label" col ="3" col-type="sm"></label>
+      <div col="8" col-type="sm">
+        <dv-checkbox
+                data-ng-model="vm.new_user.is_key_person"
+                label="Key person?">
+        </dv-checkbox>
+        <span class="space-on-top infoIconEmailTemplate">
+            <icon name="info"
+                  tooltip-placement="right"
+                  uib-tooltip="This contact will be the key employee of the firm like CEO, CTO, COO etc. You can mark all C level managers as a key person.">
+            </icon>
+        </span>
+      </div>
+    </form-group>
+    <form-group ng-if="vm.is_manager">
+      <label class="control-label" col ="3" col-type="sm"></label>
+      <div col="8" col-type="sm">
+        <dv-checkbox
+                data-ng-model="vm.new_user.is_public"
+                label="Visible contact?">
+        </dv-checkbox>
+        <span class="space-on-top infoIconEmailTemplate">
+            <icon name="info"
+                  tooltip-placement="right"
+                  uib-tooltip="This contact would be visible to the investors once you assign it to an entity. To assign this contact to an entity navigate to Monitor > Firm/Product > Associated contacts > Assign Internal Contact">
+            </icon>
+        </span>
+      </div>
+    </form-group>
+    <form-group>
+      <label class="control-label" col ="3" col-type="sm"></label>
+      <div col="8" col-type="sm">
+        <dv-checkbox
+                data-ng-hide="vm.edit_mode"
+                data-ng-disabled="!vm.restrictedExist"
+                data-ng-model="vm.isSpecialUser"
+                data-ng-change="vm.specialRolesClicked(vm.isSpecialUser)"
+                label="Enable firmwide access">
+        </dv-checkbox>
+      </div>
+    </form-group>
+    <form-group field-name="Access Level" data-ng-if="vm.restrictedExist && !vm.edit_mode && !vm.isSpecialUser">
+      <label for="role" class="control-label" col ="3" col-type="sm">Access Level</label>
+      <div col="8" col-type="sm">
+        <p class="space-on-top">
+          <span class="label label-default">Restricted</span>
+        </p>
+        <div class="space-on-top">
+          <a ui-sref="app.settings.access_level_map" target="_blank">View access level configuration</a>
+        </div>
+      </div>
+    </form-group>
+
+    <form-group field-name="Role" data-ng-if="vm.isSpecialUser && !vm.edit_mode" >
+      <label for="role" class="control-label" col ="3" col-type="sm">Access Level</label>
+      <div col="8" col-type="sm">
+        <select id="role"
+                class="form-control"
+                data-ng-required="true"
+                chosen
+                data-ng-model="vm.new_user.firmwide_role"
+                persistent-create-option="true"
+                data-ng-change="vm.setRoleText(vm.new_user.firmwide_role)"
+                skip-no-results="true"
+                data-ng-options="role.id as role.alias for role in vm.roles">
+          <option value=""></option>
+        </select>
+        <div class="space-on-top">
+          <a ui-sref="app.settings.access_level_map" target="_blank">View access level configuration</a>
+        </div>
+      </div>
+    </form-group>
+    <div class="panel panel-info user_role_text_pannel" data-ng-if="vm.isSpecialUser  && !vm.edit_mode">
+      <div class="panel-heading">
+        <span data-ng-bind-html="vm.roleText"></span>
+      </div>
+    </div>
+    <div class="panel panel-info user_role_text_pannel" data-ng-if="!vm.isSpecialUser && !vm.edit_mode && vm.restrictedExist">
+      <div class="panel-heading">This user will have restricted access based on permissions assigned. Click users & teams to assign user to team and assign individual permissions.</div>
+    </div>
+    <div class="form-group space-on-top-lg" data-ng-if="!vm.edit_mode && vm.permissions_enabled">
+      <a class="link clickable pull-right" data-ng-click="vm.showAdvanceOptions = !vm.showAdvanceOptions">
+        Add Team Permissioning
+      </a>
+    </div>
+    <div class="form-group" data-ng-show="vm.showAdvanceOptions" data-ng-if="!vm.edit_mode && vm.permissions_enabled">
+      <team-selection type="'User'" selected-teams="vm.selectedTeams" teamselection-form="vm.teamselectionForm" on-close="vm.cancel()" disabled="!vm.permissions_enabled" teams="vm.teams" access-list="vm.accessList"></team-selection>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving_user"
+            ng-disabled="vm.saving_user_add_another">{{vm.edit_mode? 'Save User' : 'Invite User'}}</button>
+    <button data-ng-hide="vm.edit_mode" button-loader="vm.saving_user_add_another"
+            ng-disabled="vm.saving_user"
+            btn-type="default" data-ng-click="vm.invite_and_add_another()">Invite & add another</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

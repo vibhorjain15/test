@@ -1,0 +1,19 @@
+<span
+  [ngClass]="{
+    'label-disable': type === 'disable',
+    'label-bold': type === 'bold',
+    'text-center': align == 'center',
+    'pull-left': align == 'left',
+    'pull-right': align == 'right'
+  }"
+  [style.font-size]="styleSize"
+  [style.color]="colorTheme[color]"
+  class="dv-label"
+  [tooltip]="truncateLimit ? (label?.length > truncateLimit ? label : '') : ''"
+  [innerHtml]="
+    (truncateLimit ? truncate.transform(label, truncateLimit) : label)
+      | dvSafeHtml
+  "
+  role="text"
+  [attr.aria-label]="label"
+></span>

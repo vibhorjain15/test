@@ -1,0 +1,44 @@
+<div class="wrapper">
+  <div class="icon" #leftArrow (click)="handleFirstClick()">
+    <span appIcon name="angle-left"></span>
+  </div>
+
+  <ul #scrollContent class="tab-box" (scroll)="onScroll()" tabindex="0">
+    <li
+      [id]="filter.isActive ? 'acitve-quick-filter' : 'quick-filter'"
+      *ngFor="let filter of filters"
+      class="tab dv-filter-component"
+      [ngClass]="{
+        'filter-active': filter.isActive,
+        'filter-disable': filter.isDisabled
+      }"
+      [style.color]="filter.isActive"
+      (click)="!filter.isDropdown ? handleFilterClick(filter) : null"
+    >
+      <p
+        *ngIf="!filter.isDropdown"
+        [ngClass]="{ visibility: filter?.isLoading }"
+      >
+        {{ filter.label }}
+      </p>
+      <span
+        *ngIf="filter.isDropdown"
+        [ngClass]="{ visibility: filter?.isLoading }"
+      >
+        <dv-dropdown
+          [label]="filter.label"
+          [dropDownList]="filter.dropdownList"
+          (onDropdownClick)="handleFilterClick($event, filter)"
+          type="default"
+        ></dv-dropdown>
+      </span>
+      <span class="dv-filter-loader" *ngIf="filter?.isLoading">
+        <app-spinner></app-spinner>
+      </span>
+    </li>
+  </ul>
+
+  <div class="icon" #rightArrow (click)="handleLastClick()">
+    <span appIcon name="angle-right"></span>
+  </div>
+</div>

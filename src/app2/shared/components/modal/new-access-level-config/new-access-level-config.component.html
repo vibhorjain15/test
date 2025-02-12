@@ -1,0 +1,178 @@
+<app-modal
+  (onCancelClick)="handleCancelClick($event)"
+  (onFirstClick)="onFirstClick($event)"
+  (onSecondClick)="onBackClick($event)"
+  [firstButtonLabel]="isUpdating ? 'Save Changes' : 'Create Access Level'"
+  [secondButtonLabel]="'Back'"
+  [title]="
+    isUpdating
+      ? 'Edit Access Level Configurations'
+      : 'New Access Level Configurations'
+  "
+  [initialTemplate]="addAccessLevelConfigModal"
+  [isLoading]="updatingAccessLevel || addingNewAccessLevel"
+  cancelButtonLabel="Cancel"
+  [isFirstButtonDisabled]="
+    !(defaultConfigurations && defaultConfigurations.length)
+  "
+>
+  <ng-template #addAccessLevelConfigModal>
+    <form class="form-horizontal" #AccessConfigForm="ngForm" autocomplete="off">
+      <dv-form-element
+        elementCol="4"
+        label="Copy From (optional)"
+        labelPosition="top"
+        *ngIf="!isUpdating"
+        [for]="'copyFromOptionsList'"
+      >
+        <dv-select
+          [list]="copyFromOptionsList"
+          [id]="'copyFromOptionsList'"
+          (onSelectChange)="handleCopyFromSelectionChange($event)"
+          clearable="true"
+          placeholder="Select an access level"
+          bindValue=""
+          bindLabel="alias"
+          [(ngModel)]="copyFrom"
+          [ngModelOptions]="{ standalone: true }"
+        ></dv-select>
+      </dv-form-element>
+      <helper-text>
+        Bulk select certain criteria in all sections with below 'Quick Select'
+      </helper-text>
+      <div class="row clearfix">
+        <div col="12">
+          <span class="control-label space-on-bottom fw-bolder inline-block">
+            Configurations
+          </span>
+        </div>
+      </div>
+      <div class="text-center spinner-display" *ngIf="loading">
+        <app-spinner spinnerHeight="300"></app-spinner>
+      </div>
+      <div *ngIf="!loading">
+        <div class="row clearfix" *ngIf="defaultConfigurations.length">
+          <div col="4" style="margin-top: 7px; margin-left: 40px">
+            <span class="control-label">
+              Quick Select ( Select / Unselect All )
+            </span>
+          </div>
+          <div col="2">
+            <dv-form-element elementCol="12" labelPosition="top">
+              <dv-checkbox
+                label="Create"
+                name="create"
+                (onValChange)="
+                  toggleAllCheckboxWithSameLabel(
+                    $event,
+                    (checkboxLabel = 'Create')
+                  )
+                "
+                [(ngModel)]="create"
+              ></dv-checkbox>
+            </dv-form-element>
+          </div>
+          <div col="2">
+            <dv-form-element elementCol="12" labelPosition="top">
+              <dv-checkbox
+                label="Delete"
+                name="delete"
+                (onValChange)="
+                  toggleAllCheckboxWithSameLabel(
+                    $event,
+                    (checkboxLabel = 'Delete')
+                  )
+                "
+                [(ngModel)]="delete"
+              ></dv-checkbox>
+            </dv-form-element>
+          </div>
+          <div col="2">
+            <dv-form-element elementCol="12" labelPosition="top">
+              <dv-checkbox
+                label="Modify"
+                name="modify"
+                (onValChange)="
+                  toggleAllCheckboxWithSameLabel(
+                    $event,
+                    (checkboxLabel = 'Modify')
+                  )
+                "
+                [(ngModel)]="modify"
+              ></dv-checkbox>
+            </dv-form-element>
+          </div>
+          <div col="2"></div>
+        </div>
+
+        <accordion [closeOthers]="!(modify || create || delete || isUpdating)">
+          <div>
+            <div
+              *ngFor="let config of defaultConfigurations; let i = index"
+              class="space-on-bottom"
+            >
+              <accordion-group
+                class="custom-view-list-accordion-group"
+                [isOpen]="config.isOpen"
+                (isOpenChange)="isOpenChange($event, config)"
+              >
+                <div
+                  class="accordion-header custom-view-group-header"
+                  accordion-heading
+                >
+                  <ng-container>
+                    <span
+                      appIcon
+                      [name]="config.isOpen ? 'chevron-down' : 'chevron-right'"
+                      class="font-size-12 space-on-right"
+                    ></span>
+                  </ng-container>
+
+                  <span [style.margin-left.px]="config.isOpen ? '2' : '5'">
+                    {{ config.parent_group_name }}
+                  </span>
+                </div>
+                <div>
+                  <div
+                    class="row clearfix space-on-bottom-xl"
+                    *ngFor="let child_group of config.child_groups"
+                  >
+                    <div col="4">
+                      <span class="control-label fw-bolder inline-block">
+                        {{ child_group.child_group_name }}
+                      </span>
+                    </div>
+                    <div col="8">
+                      <div class="row clearfix">
+                        <div
+                          col="3"
+                          class="space-on-bottom"
+                          *ngFor="
+                            let action of child_group.actions;
+                            let i = index
+                          "
+                        >
+                          <dv-checkbox
+                            [label]="action.action"
+                            id="
+                          {{ child_group.child_group_name }}_{{
+                              action.action
+                            }}_{{ i }}
+                          "
+                            [(ngModel)]="action.is_allowed"
+                            [ngModelOptions]="{ standalone: true }"
+                            (onValChange)="CheckForConfigUpdate()"
+                          ></dv-checkbox>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </accordion-group>
+            </div>
+          </div>
+        </accordion>
+      </div>
+    </form>
+  </ng-template>
+</app-modal>

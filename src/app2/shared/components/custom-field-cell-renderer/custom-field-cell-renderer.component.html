@@ -1,0 +1,22 @@
+<div>
+  <div *ngIf="text">
+    <span
+      class="label label-default space-on-right"
+      [tooltip]="text"
+      container="body"
+      [adaptivePosition]="false"
+      (click)="$event.stopPropagation()"
+    >
+      <span> {{ text | slice : 0 : 25 }} </span>
+    </span>
+    <span *ngIf="otherTextTooltip.length">and </span>
+    <span
+      class="link-underline clickable space-on-right"
+      *ngIf="otherTextTooltip.length"
+      [tooltip]="otherTextTooltip.toString()"
+      container="body"
+      [adaptivePosition]="false"
+      >{{ otherTextTooltip.length }} more</span
+    >
+  </div>
+</div>

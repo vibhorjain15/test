@@ -1,0 +1,73 @@
+<app-modal
+  [title]="adding_member ? 'Add Members' : 'Edit  Team'"
+  [firstButtonLabel]="adding_member ? 'Add Members' : 'Save Team'"
+  (onFirstClick)="adding_member ? addMembersRow($event) : save($event)"
+  [initialTemplate]="editTeamModalref"
+  [isLoading]="saving_team || adding_new_members"
+></app-modal>
+
+<ng-template #editTeamModalref>
+  <form class="form-horizontal" [formGroup]="editTeamForm" autocomplete="off">
+    <dv-form-element
+      [fieldName]="'name'"
+      [modelController]="editTeamForm.get('name')"
+      label="Team Name"
+      [labelCol]="3"
+      [elementCol]="8"
+    >
+      <input
+        type="text"
+        id="name"
+        name="team_name"
+        formControlName="name"
+        class="form-control"
+        *ngIf="!adding_member"
+      />
+      <p *ngIf="adding_member" class="space-on-top">
+        <span class="label label-default">{{ editTeamForm.value.name }}</span>
+      </p>
+    </dv-form-element>
+    <div *ngIf="adding_member">
+      <dv-form-element
+        [fieldName]="'Role'"
+        [modelController]="editTeamForm.get('role_id')"
+        [showRightIcon]="false"
+        elementCol="16"
+      >
+        <label class="control-label" for="access_level" col="3"
+          >Access Level</label
+        >
+        <div col="8" col-type="sm">
+          <dv-select
+            [id]="'access_level'"
+            [clearable]="false"
+            [searchable]="true"
+            formControlName="role_id"
+            (onSelectChange)="setRoleText()"
+            [list]="roles"
+            [bindLabel]="'alias'"
+            [bindValue]="'id'"
+          >
+          </dv-select>
+          <div class="panel panel-info space-on-top-lg" *ngIf="roleText">
+            <!-- Admin's will have read & write access to all the resources. -->
+            <div class="panel-heading" [innerHTML]="roleText"></div>
+          </div>
+        </div>
+      </dv-form-element>
+      <dv-form-element modelController="" elementCol="16">
+        <span class="control-label fw-bolder" col="3">Members</span>
+        <div col="8">
+          <app-dv-selector-list
+            [name]="resource_list"
+            [entity_type]="'User'"
+            [entities]="team_members"
+            [filter_params]="{}"
+            [displayParams]="teamSelectorDisplayParams"
+            (onChangeEntity)="handleonChangeEntity($event)"
+          ></app-dv-selector-list>
+        </div>
+      </dv-form-element>
+    </div>
+  </form>
+</ng-template>

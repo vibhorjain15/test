@@ -1,0 +1,27 @@
+<form class="form-horizontal" [formGroup]="documentsForm" autocomplete="off">
+  <dv-form-element
+    label="Pre-set document tags for responder uploads"
+    labelPosition="top"
+    [elementCol]="editMode ? '12' : '6'"
+    [modelController]="documentsForm.get('tags')"
+    [showRightIcon]="false"
+    spacing="small"
+    infoText="Add tags now that will automatically be associated with the responder's uploaded documents for this question."
+  >
+    <dv-select
+      [contoller]="documentsForm.get('tags')"
+      [list]="tags"
+      formControlName="tags"
+      [id]="'tags'"
+      [multiple]="true"
+      bindValue=""
+      [loading]="loading"
+      placeholder="Select document tags"
+      (onSelectChange)="handleTagChange($event)"
+    ></dv-select>
+    <div id="tagInstructions" class="sr-only">
+      Add tags now that will automatically be associated with the responder's
+      uploaded documents for this question.
+    </div>
+  </dv-form-element>
+</form>

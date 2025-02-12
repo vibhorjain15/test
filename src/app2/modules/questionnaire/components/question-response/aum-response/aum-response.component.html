@@ -1,0 +1,137 @@
+<app-spinner
+  [broadSpinner]="true"
+  spinnerHeight="65"
+  *ngIf="isTableListLoading"
+  role="status"
+  aria-busy="true"
+></app-spinner>
+<div *ngIf="!isTableListLoading && aumData?.length">
+  <div col="6" class="input-group" role="group" aria-label="AUM Data Selection">
+    <dv-select
+      [list]="aumData"
+      (onSelectChange)="handleSelectChange($event)"
+      [(ngModel)]="dropdownValue"
+      bindLabel="name"
+      bindValue=""
+      [disabled]="isReadOnly"
+      [clearable]="false"
+      [aria-label]="'AUM Data Selection'"
+    ></dv-select>
+  </div>
+  <div *ngIf="dropdownValue">
+    <p class="aumTrSpan space-on-bottom space-on-top">
+      <span
+        ><strong
+          >{{
+            question.responseType === "aumTable" ? "AUM" : "Track Record"
+          }}
+          ({{ dropdownValue.currency_name
+          }}{{
+            question.responseType === "ReturnTable"
+              ? "/" + dropdownValue.profile_type
+              : ""
+          }})</strong
+        ></span
+      >
+    </p>
+    <app-share-class-table
+      [resource]="dropdownValue"
+      [readonly]="true"
+      [shareClass]="{}"
+      [restrictHeight]="true"
+      *ngIf="displayGrid"
+    >
+    </app-share-class-table>
+    <div class="space-on-top-lg" *ngIf="displayGrid && !isReadOnly">
+      <dv-button btnType="default" (onClick)="handleAumClick()">
+        Edit Values
+        <span appIcon name="external-link" customSize="large"></span>
+      </dv-button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isTableListLoading && !aumData?.length">
+  <div>
+    <i class="text-muted" *ngIf="isReadOnly">
+      <small>*No response available*</small>
+    </i>
+  </div>
+  <div class="panel panel-default" *ngIf="!isReadOnly">
+    <div class="panel-body">
+      <div class="aum-wrapper">
+        <span appIcon name="table" customSize="humongous"></span>
+        <dv-divider
+          class="aum-divider-padding"
+          type="vertical"
+          verticalHeight="large"
+        ></dv-divider>
+        <div class="aum-button">
+          <div>
+            <ng-container *ngIf="!isReadOnly">
+              <dv-label [label]="emptyLabel"></dv-label>
+              <dv-button btnType="default" (onClick)="handleAumClick()">
+                Go to profile
+              </dv-button>
+            </ng-container>
+
+            <dv-label
+              *ngIf="isReadOnly"
+              label="No response available"
+              type="disable"
+            ></dv-label>
+          </div>
+          <div *ngIf="!isReadOnly">
+            <div *ngTemplateOutlet="aumModal"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="space-on-top-lg"
+  *ngIf="!diligenceData.isReadOnly && !isTableListLoading && aumData?.length"
+>
+  <div *ngTemplateOutlet="aumModal"></div>
+</div>
+
+<ng-template #aumModal>
+  <span
+    *ngIf="!isPrintPreview"
+    class="upload-aum-tr-btn inline-block space-on-right-xxl"
+  >
+    <a
+      class="clickable text-orange"
+      (click)="openUploadModal()"
+      role="button"
+      aria-label="open Upload Data modal"
+      tabindex="0"
+    >
+      <span>
+        <img
+          src="/assets/images/upload_icon.svg"
+          class="height-30"
+          alt="upload icon for opening upload modal"
+        />
+      </span>
+      Upload
+      {{
+        question.responseType === "aumTable" ? "AUM Data" : "Track Record Data"
+      }}
+    </a>
+  </span>
+</ng-template>
+
+<div
+  *ngIf="
+    !question?.answer?.attributes?.localis_NA &&
+    this.dropdownValue &&
+    !this.dropdownValue?.currency_id
+  "
+  class="text-danger"
+  role="alert"
+>
+  Please specify a currency for the selected item before saving the response
+</div>

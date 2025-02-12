@@ -1,0 +1,11 @@
+.disabled {
+  opacity: 0.5 !important;
+  cursor: no-drop;
+}
+
+.disabled > div:hover {
+  color: black;
+}
+.events {
+  pointer-events: none;
+}

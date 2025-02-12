@@ -1,0 +1,6 @@
+:host ::ng-deep a:hover,
+:host ::ng-deep a:focus,
+:host ::ng-deep a {
+  cursor: text !important;
+  text-decoration: none !important;
+}

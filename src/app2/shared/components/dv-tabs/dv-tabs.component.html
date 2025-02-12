@@ -1,0 +1,81 @@
+<div
+  [ngClass]="{ 'dv-tabs': dynamicContent.children.length > 0 }"
+  aria-label="Navigation Tabs"
+  role="navigation"
+>
+  <div class="panel panel-default tab-bar">
+    <div class="">
+      <div
+        class="wrapper"
+        (keydown.arrowleft)="handleArrowKey('left', $event)"
+        (keydown.arrowright)="handleArrowKey('right', $event)"
+      >
+        <div
+          class="icon"
+          #leftArrow
+          (click)="handleFirstClick()"
+          tabindex="0"
+          role="button"
+          aria-label="Click to scroll left in tabs section"
+          (keydown.enter)="handleFirstClick()"
+          [style.visibility]="showArrows ? 'visible' : 'hidden'"
+        >
+          <span appIcon name="angle-left"></span>
+        </div>
+        <ul
+          #scrollableContent
+          class="tab-box"
+          (scroll)="onScroll()"
+          [ngClass]="{ 'justify-center': justifyCenter }"
+          role="tablist"
+        >
+          <ng-container *ngFor="let item of list; let i = index">
+            <li
+              class="tab dv-tab-component"
+              *ngIf="item.condition"
+              [id]="item.active ? 'active-tab' : 'unactive-tab-' + i"
+              tabindex="{{ item.active ? '0' : '-1' }}"
+              (click)="handleTabClick(item.link, i)"
+              (keydown.enter)="handleTabClick(item.link, i)"
+              [attr.aria-selected]="item.active"
+              role="tab"
+              [attr.aria-label]="item.name + ' Tab'"
+            >
+              <div class="dv-border">
+                <dv-label
+                  [tippyTooltip]="item.tooltip"
+                  container="body"
+                  [adaptivePosition]="false"
+                  class="clickable tab-label"
+                  [label]="item.name"
+                  [type]="item.disabled ? 'disable' : item.active ? 'bold' : ''"
+                  [color]="item.active ? 'primary' : 'default'"
+                  [size]="size"
+                ></dv-label>
+                <diV class="border" *ngIf="item.active"></diV>
+              </div>
+            </li>
+          </ng-container>
+        </ul>
+        <div
+          class="icon"
+          #rightArrow
+          (click)="handleLastClick()"
+          tabindex="0"
+          role="button"
+          aria-label="Click to scroll right in tabs section"
+          (keydown.enter)="handleLastClick()"
+          [style.visibility]="showArrows ? 'visible' : 'hidden'"
+        >
+          <span appIcon name="angle-right"></span>
+        </div>
+      </div>
+      <div class="tab-spinner text-center" *ngIf="loading">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+  </div>
+  <div class="dynamic-content" #dynamicContent>
+    <ng-content> </ng-content>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <span ng-repeat="contact in row.entity.contacts">
+    {{contact.fullName}} <span ng-if="$index<row.entity.contacts.length">, </span>
+  </span>
+  {{vm.test}}
+</ui-grid-cell-contents>

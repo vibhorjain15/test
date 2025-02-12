@@ -1,0 +1,157 @@
+<app-modal
+  [title]="'Work Offline & Sync'"
+  firstButtonLabel=""
+  [isFooter]="isUploadStepDone && excelSyncTransaction?.status == 'success'"
+  [initialTemplate]="excelSyncRef"
+  cancelButtonLabel="Close"
+  [isCancelButton]="
+    isUploadStepDone && excelSyncTransaction?.status == 'success'
+  "
+  (onCancelClick)="handleOnCancelClick($event)"
+  role="dialog"
+  aria-labelledby="Work Offline & Sync"
+>
+  <ng-template #excelSyncRef>
+    <div class="form-horizontal" *ngIf="!isUploadStepDone">
+      <a #downloadLink [hidden]="true"></a>
+      <helper-text>
+        Follow the steps below to fill in responses offline and sync them back
+        to the platform.
+      </helper-text>
+      <span
+        >Step 1: Download the current questionnaire in Excel and fill in the
+        responses offline.</span
+      >
+      <div
+        class="grey-bg space-on-top-lg space-on-bottom-lg padding-10"
+        *ngIf="diligence != null"
+      >
+        <div class="row space-on-top-lg space-on-bottom-lg">
+          <div class="col col-md-4 bold-text">Firm Name</div>
+          <div class="col">
+            {{
+              diligence.investorfirm_name != null &&
+              diligence.investorfirm_name != ""
+                ? diligence.investorfirm_name
+                : diligence.managerfirm_name
+            }}
+          </div>
+        </div>
+        <div class="row space-on-bottom-lg">
+          <div class="col col-md-4 bold-text">Entity Name</div>
+          <div class="col">{{ diligence.entity_name }}</div>
+        </div>
+        <div class="row space-on-bottom-lg">
+          <div class="col col-md-4 bold-text">Questionnaire</div>
+          <div class="col d-flex">{{ diligence.template_name }}</div>
+        </div>
+        <div class="row space-on-bottom-lg" *ngIf="diligence.due_at">
+          <div class="col col-md-4 bold-text">Due Date</div>
+          <div class="col">
+            {{ diligence.due_at | dvDate : ["isLocaleDate"] }}
+          </div>
+        </div>
+      </div>
+      <div class="text-center space-on-top-lg space-on-bottom-lg">
+        <dv-button
+          [btnType]="'orange-fill'"
+          [loader]="isDownloading"
+          class="excel-sync-buttons"
+          (onClick)="download()"
+          ariaLabel="Download Excel file"
+        >
+          Download
+        </dv-button>
+      </div>
+    </div>
+    <div class="form-horizontal space-on-bottom-lg" *ngIf="isUploadStepDone">
+      <div class="text-center text-success space-on-bottom">
+        Successfully uploaded the file
+      </div>
+      <div class="text-center" *ngIf="updatedDiligence">
+        Questionnaire completion: {{ updatedDiligence.percentage_completed }}%
+      </div>
+      <div
+        *ngIf="excelSyncTransaction?.errors?.length > 0"
+        class="space-on-top-lg"
+      >
+        <span class="space-on-top-lg text-danger">Found errors:</span>
+        <ol>
+          <li *ngFor="let error of excelSyncTransaction.errors; let i = index">
+            <span *ngIf="error.Row_no"
+              ><b>Row</b> : {{ error.Row_no }} <br
+            /></span>
+            <span *ngIf="error.Question"
+              ><b>Question</b> : {{ error.Question }} <br
+            /></span>
+            <span *ngIf="error.Error"
+              ><b>Error</b> : {{ error.Error }} <br
+            /></span>
+          </li>
+        </ol>
+      </div>
+      <div
+        class="text-center space-on-top-lg"
+        *ngIf="excelSyncTransaction && !excelSyncTransaction?.errors?.length"
+      >
+        0 errors found
+      </div>
+    </div>
+
+    <div
+      *ngIf="!isUploadStepDone || excelSyncTransaction?.errors?.length"
+      class="excel-divider"
+    ></div>
+
+    <div class="excel-upload">
+      <span *ngIf="!isUploadStepDone"
+        >Step 2: Upload the Excel file to sync and update the responses on the
+        platform.</span
+      >
+
+      <helper-text *ngIf="!isUploadStepDone">
+        Uploading responses for already populated questions will overwrite them
+        with the new responses.
+      </helper-text>
+
+      <span *ngIf="isUploadStepDone && excelSyncTransaction?.errors?.length"
+        >After resolving errors in the file, please re-upload below:</span
+      >
+
+      <div
+        *ngIf="!isUploadStepDone || excelSyncTransaction?.errors?.length"
+        class="excel-upload"
+      >
+        <dv-uploader
+          sizeLimit="50MB"
+          accept=".xls,.xlsx,.xlsm"
+          dragLabel="Drag & Drop your Excel file here (.xlsm)"
+          [isMultiple]="false"
+          [showUploadedFiles]="false"
+          [disabled]="isUploading"
+          (onFileUpload)="onFileUpload($event)"
+          aria-label="Excel file uploader"
+        ></dv-uploader>
+
+        <div *ngFor="let file of files; let index = index">
+          <document-name
+            [document]="file"
+            deleteTooltip="Remove Excel file"
+            (onDeleteDocument)="deleteFile(index)"
+          ></document-name>
+        </div>
+
+        <div class="text-center">
+          <dv-button
+            class="excel-sync-buttons"
+            [loader]="isUploading"
+            (onClick)="addDocumentSubmit()"
+            ariaLabel="Upload Excel file"
+          >
+            Upload
+          </dv-button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-modal>

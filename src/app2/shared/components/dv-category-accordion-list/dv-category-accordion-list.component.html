@@ -1,0 +1,108 @@
+<dv-segment
+  [title]="'Categories'"
+  [isSearch]="false"
+  [isAdd]="false"
+  [style.height.%]="100"
+>
+  <div class="text-center spinner-display" *ngIf="!categoryData?.length">
+    <app-spinner spinnerHeight="300"></app-spinner>
+  </div>
+
+  <ng-container *ngIf="categoryData?.length">
+    <div *ngFor="let data of categoryData; let postion = index">
+      <accordion [isAnimated]="true" [destroyOnHide]="false">
+        <accordion-group
+          [isOpen]="data.isOpen"
+          [panelClass]="isCheckbox && 'category-accordion-list'"
+        >
+          <p
+            class="accordion-header flex-container"
+            accordion-heading
+            type="button"
+            (click)="handleCatClick($event, data)"
+            [tippyTooltip]="data.label"
+            placement="right"
+          >
+            <span class="left-span">
+              <dv-checkbox
+                *ngIf="isCheckbox"
+                [(ngModel)]="data.isCatSelected"
+                (ngModelChange)="handelCatLevelSelection($event, postion)"
+                (click)="handleStopAccordion($event)"
+                [id]="data.id"
+              >
+              </dv-checkbox>
+              <span
+                appIcon
+                class="icon-link"
+                [name]="data.isOpen ? 'caret-down' : 'caret-right'"
+              ></span>
+              <dv-label
+                class="label-margin"
+                label="{{ data.label }}"
+              ></dv-label>
+            </span>
+            <span
+              *ngIf="showQuestionCount"
+              class="count-cicle margin-8 right-span"
+              >{{ data.question_counts | number : "2.0-0" }}</span
+            >
+          </p>
+          <div
+            class="accordion-group"
+            [ngClass]="{
+              'is-active': currentActiveId == subData.id,
+              'is-check-accordion-group': isCheckbox,
+            }"
+            *ngFor="let subData of data.list; let postion = index"
+            (click)="handleSubCatClick(subData)"
+            tabindex="0"
+            [tippyTooltip]="subData.label"
+            placement="right"
+          >
+            <dv-checkbox
+              *ngIf="isCheckbox"
+              [(ngModel)]="subData.isSelected"
+              (ngModelChange)="
+                handelSubCatLevelSelection($event, postion, data, subData)
+              "
+              [label]="subData.label"
+              [id]="subData.id"
+              [ngClass]="{
+                'inline-block width-80-pct': showQuestionCount
+              }"
+            >
+            </dv-checkbox>
+
+            <dv-label
+              label="{{ subData.label }}"
+              *ngIf="!isCheckbox"
+              [color]="currentActiveId == subData.id ? 'primary' : 'default'"
+              [ngClass]="{
+                'inline-block width-80-pct': showQuestionCount
+              }"
+            ></dv-label>
+            <span
+              *ngIf="showQuestionCount"
+              class="count-cicle"
+              [class.active_question_count]="currentActiveId == subData.id"
+              >{{ subData.question_counts | number : "2.0-0" }}</span
+            >
+          </div>
+        </accordion-group>
+        <div
+          class="divider-margin"
+          *ngIf="postion != categoryData.length - 1"
+          aria-hidden="true"
+        >
+          <dv-divider></dv-divider>
+        </div>
+      </accordion>
+    </div>
+
+    <app-empty-state
+      message="No categories and sub-categories found"
+      *ngIf="!categoryData.length"
+    ></app-empty-state>
+  </ng-container>
+</dv-segment>

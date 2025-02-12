@@ -1,0 +1,154 @@
+<app-modal
+  [title]="
+    is_content_selection_mode
+      ? 'Select content for encryption'
+      : 'Select team for encryption'
+  "
+  [firstButtonLabel]="is_content_selection_mode ? 'Next' : 'Encrypt'"
+  (onFirstClick)="handleFirstButtonClick($event)"
+  [initialTemplate]="encryptRef"
+  [isLoading]="is_encrypting"
+  [isFirstButtonDisabled]="
+    selected_category == null ||
+    (is_subcategory_selected && selected_subcategory == null) ||
+    (is_question_selected && !selected_questions?.length) ||
+    loading ||
+    is_questions_loading ||
+    (!is_content_selection_mode && !selected_users_and_functions)
+  "
+>
+</app-modal>
+
+<ng-template #encryptRef>
+  <form
+    class="form-horizontal"
+    [formGroup]="encrypt_options_form"
+    *ngIf="is_content_selection_mode"
+    autocomplete="off"
+  >
+    <app-spinner
+      [broadSpinner]="true"
+      spinnerHeight="80"
+      *ngIf="loading"
+    ></app-spinner>
+    <div *ngIf="!loading">
+      <dv-form-element
+        [fieldName]="'Category'"
+        [showRightIcon]="false"
+        label="Select a Category"
+        labelPosition="top"
+        [elementCol]="12"
+        [modelController]="encrypt_options_form.get('category_control')"
+      >
+        <dv-select
+          [id]="'category_control'"
+          [contoller]="encrypt_options_form.get('category_control')"
+          placeholder="Select a category"
+          [list]="categories"
+          (onSelectChange)="handleCategoryChange($event)"
+          [disabled]="is_questions_loading"
+          aria-label="Category"
+        >
+        </dv-select>
+      </dv-form-element>
+      <dv-checkbox
+        (onValChange)="
+          setFormControlValue('is_subcategory_selected_control', $event)
+        "
+        name="is_subcategory_selected"
+        label="Select individual sub-category"
+        [disabled]="!selected_category || is_questions_loading"
+        aria-label="Select individual sub-category"
+      >
+      </dv-checkbox>
+      <ng-container *ngIf="is_subcategory_selected">
+        <dv-form-element
+          [fieldName]="'Subcategory'"
+          [showRightIcon]="false"
+          label="Select a Sub-Category"
+          labelPosition="top"
+          [elementCol]="12"
+          [modelController]="encrypt_options_form.get('subcategory_control')"
+        >
+          <dv-select
+            [id]="'subcategory_control'"
+            [contoller]="encrypt_options_form.get('subcategory_control')"
+            placeholder="Select a sub-category"
+            [list]="selected_category?.subcategories"
+            (onSelectChange)="handleSubcategoryChange($event)"
+            [disabled]="is_questions_loading"
+            aria-label="Sub-Category"
+          >
+          </dv-select>
+        </dv-form-element>
+        <dv-checkbox
+          name="is_question_selected"
+          label="Select individual questions"
+          (onValChange)="
+            setFormControlValue('is_question_selected_control', $event)
+          "
+          [disabled]="!selected_subcategory || is_questions_loading"
+          class="space-on-bottom-lg"
+          aria-label="Select individual questions"
+        >
+        </dv-checkbox>
+        <ng-container *ngIf="is_question_selected && !is_questions_loading">
+          <dv-checkbox-list
+            [(ngModel)]="questions"
+            [ngModelOptions]="{ standalone: true }"
+            (onValChange)="setSelectedQuestions($event)"
+            [is_pagination_enabled]="true"
+            aria-label="Questions list"
+          ></dv-checkbox-list>
+        </ng-container>
+        <app-spinner
+          [broadSpinner]="true"
+          spinnerHeight="80"
+          *ngIf="is_question_selected && is_questions_loading"
+          aria-label="Loading questions"
+        ></app-spinner>
+      </ng-container>
+    </div>
+  </form>
+  <div *ngIf="!is_content_selection_mode">
+    <div class="panel panel-info" role="alert">
+      <div class="panel-heading">
+        The selected items (questions / sub-categories) will not be visible to
+        selected team members.
+      </div>
+    </div>
+    <div *ngIf="loading" class="text-center">
+      <app-spinner></app-spinner>
+    </div>
+    <form
+      class="form-horizontal"
+      [formGroup]="encrypt_options_form"
+      *ngIf="!loading"
+      autocomplete="off"
+    >
+      <dv-form-element
+        [fieldName]="'Team Members'"
+        [showRightIcon]="false"
+        label="Select team members / user roles"
+        labelPosition="top"
+        [elementCol]="12"
+        [modelController]="encrypt_options_form.get('users_control')"
+        [isRequired]="true"
+        errorMessage="Please select at least one team member or user role"
+      >
+        <dv-select
+          [id]="'users_control'"
+          [contoller]="encrypt_options_form.get('users_control')"
+          placeholder="Select team members / user roles"
+          [list]="user_function_options"
+          [multiple]="true"
+          bindValue=""
+          groupBy="type"
+          (onSelectChange)="handleUsersAndFunctionsChange($event)"
+          aria-label="Team Members / User Roles"
+        >
+        </dv-select>
+      </dv-form-element>
+    </form>
+  </div>
+</ng-template>

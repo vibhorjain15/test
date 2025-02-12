@@ -1,0 +1,37 @@
+<app-modal
+  [title]="edit_mode ? 'Edit Classification' : 'Add Classification'"
+  [firstButtonLabel]="edit_mode ? 'Save Classification' : 'Add Classification'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="AddStrategy"
+  [isLoading]="saving"
+></app-modal>
+
+<ng-template #AddStrategy>
+  <div *ngIf="!edit_mode">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        Please type your classifications in textbox -
+        <strong><b>one classification per line</b></strong>
+      </div>
+    </div>
+
+    <dv-bulk-list-builder-new
+      [idKey]="'id'"
+      [textKey]="'text'"
+      [ngData]="newOptions"
+      [currentLength]="0"
+      [type]="'Classifications'"
+      [valueRequired]="false"
+      [placeHolderText]="'Add multiple classification here'"
+    ></dv-bulk-list-builder-new>
+  </div>
+
+  <div *ngIf="edit_mode">
+    <textarea
+      name="strategy"
+      rows="4"
+      class="form-control"
+      [(ngModel)]="name"
+    ></textarea>
+  </div>
+</ng-template>

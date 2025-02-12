@@ -1,0 +1,44 @@
+<div class="modal-header">
+  <h3 class="modal-title">Update Profile Picture</h3>
+</div>
+
+<div class="modal-body">
+  <div>
+    <div class="user-avatar inline-block align-middle relative"
+         data-ng-class="{'has-icon': !vm.user.basicUserInfo.avatarURL}">
+      <user-avatar></user-avatar>
+
+      <div class="pos-abs text-center stick-bottom stick-left stick-right padded bg-black op-8 text-white"
+           data-ng-show="vm.user.basicUserInfo.avatarURL">
+        <a class="clickable link-unstyled"
+           data-ng-click="vm.removeAvatar()">Remove avatar</a>
+      </div>
+    </div>
+
+    <div class="user-avatar-uploader"
+         ngf-select
+         ngf-drop
+         ngf-change="vm.uploadAvatar($files, $event)"
+         ngf-max-size="'{{::vm.maxFileSize}}'"
+         ngf-accept="'{{::vm.allowed_file_extensions_str}}'"
+         ngf-pattern="'{{::vm.allowed_file_extensions_str}}'">
+      <span>Select File or Drop File</span>
+    </div>
+  </div>
+
+  <div class="space-on-top-lg">
+    <div data-ng-show="vm.file.progress && !vm.file_uploaded">
+      <div>
+        <small>
+          Uploading {{vm.file.name}}
+        </small>
+      </div>
+
+      <uib-progressbar value="vm.file.progress"
+                   type="success"
+                   class="progress-striped active"></uib-progressbar>
+    </div>
+
+    <spinner data-ng-show="vm.removing_avatar"></spinner>
+  </div>
+</div>

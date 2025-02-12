@@ -1,0 +1,36 @@
+export interface DDScheduledType {
+  id: number;
+  name: string;
+  entity_id: number;
+  entity_name: string;
+  entity_type: string;
+  template_id: number;
+  template_name: string;
+  type: string;
+  due_at: Date;
+  status: number;
+  closed_at?: any;
+  completed_at?: any;
+  as_of_date: Date;
+  strategy_name?: any;
+  question_count: number;
+  percentage_completed: number;
+  tofirm_id: number;
+  tofirm_name?: any;
+  fromfirm_id: number;
+  fromfirm_name?: any;
+  created_by: number;
+  created_by_name?: any;
+  scheduled_for: Date;
+  created_at: Date;
+  followup_count: number;
+  view_count: number;
+  acknowledged_at?: any;
+  lastupdated_at?: any;
+  is_internal: boolean;
+  basediligence_id?: any;
+  parent_entity_id?: any;
+  enable_auto_entity_permissions: boolean;
+  linked_duediligence_id?: any;
+  display_name?: any;
+}

@@ -1,0 +1,32 @@
+<div class="tab-main">
+  <div
+    class="panel panel-default tab-bar"
+    [ngClass]="{ 'tab-space': spaceAroundTab, 'no-margin': !spaceAroundTab }"
+  >
+    <div class="panel-body dv-tab">
+      <ng-container *ngFor="let item of items; let i = index">
+        <div
+          class="dv-border"
+          *ngIf="!item?.hidden"
+          (click)="switchTab(item)"
+          [ngClass]="{ 'disabled-tab': item.disabled }"
+        >
+          <span
+            class="clickable tab-label dv-label label-bold"
+            [style.color]="
+              item.active ? '#0071a4' : item.disabled ? '#999' : '#333'
+            "
+            [class.text-bold]="item.active"
+            [tooltip]="item?.tooltip"
+            container="body"
+            [innerHtml]="item.name | dvSafeHtml"
+          ></span>
+          <diV class="border" *ngIf="item.active"></diV>
+        </div>
+      </ng-container>
+      <div class="tab-spinner text-center" *ngIf="loading">
+        <app-spinner></app-spinner>
+      </div>
+    </div>
+  </div>
+</div>

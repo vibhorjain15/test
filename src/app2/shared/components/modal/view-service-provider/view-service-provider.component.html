@@ -1,0 +1,93 @@
+<app-modal
+  [title]="'Service Provider'"
+  [initialTemplate]="ViewProviderref"
+  [isCancelButton]="false"
+></app-modal>
+
+<ng-template #ViewProviderref>
+  <form class="form-horizontal" [formGroup]="viewProForm" autocomplete="off">
+    <dv-form-element
+      [fieldName]="'acs_url'"
+      [modelController]="viewProForm.get('acs_url')"
+      elementCol="16"
+    >
+      <span class="control-label fw-bolder" col="3" col-type="sm"
+        >Assertion consumer service</span
+      >
+      <div col="8" col-type="sm">
+        <div class="sp_details_control">
+          <p id="acs" class="acs_url">
+            {{ viewProForm.value.acs_url }}
+          </p>
+        </div>
+      </div>
+      <div col="1">
+        <button
+          class="btn btn-default space-on-left-lg"
+          tooltip="Copy"
+          ngxClipboard
+          [cbContent]="viewProForm.value.acs_url"
+          (click)="hightLightText('acs')"
+          aria-label="Copy Assertion consumer service"
+        >
+          <span appIcon name="copy"></span>
+        </button>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      [fieldName]="'audience'"
+      [modelController]="viewProForm.get('audience')"
+      elementCol="16"
+    >
+      <span class="control-label fw-bolder" col="3" col-type="sm"
+        >SAML Audience</span
+      >
+      <div col="8" col-type="sm">
+        <div class="sp_details_control">
+          <p id="audience" class="audience">
+            {{ viewProForm.value.audience }}
+          </p>
+        </div>
+      </div>
+      <div col="1">
+        <button
+          class="btn btn-default space-on-left-lg"
+          tooltip="Copy"
+          ngxClipboard
+          [cbContent]="viewProForm.value.audience"
+          (click)="hightLightText('audience')"
+          aria-label="Copy SAML Audience"
+        >
+          <span appIcon name="copy"></span>
+        </button>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      [fieldName]="'logout_url'"
+      [modelController]="viewProForm.get('logout_url')"
+      elementCol="16"
+    >
+      <span class="control-label fw-bolder" col="3" col-type="sm"
+        >Single Logout Service Url</span
+      >
+      <div col="8" col-type="sm">
+        <p id="saml" class="sp_details_control">
+          {{ viewProForm.value.logout_url }}
+        </p>
+      </div>
+      <div col="1">
+        <button
+          class="btn btn-default space-on-left-lg"
+          tooltip="Copy"
+          ngxClipboard
+          [cbContent]="viewProForm.value.logout_url"
+          (click)="hightLightText('saml')"
+          aria-label="Copy Single Logout Service Url"
+        >
+          <span appIcon name="copy"></span>
+        </button>
+      </div>
+    </dv-form-element></form
+></ng-template>

@@ -1,0 +1,353 @@
+<div class="panel panel-default mb-0 border-btm">
+  <div class="panel-heading">
+    <h5 class="panel-title heading-text" id="dynamics-heading">
+      Microsoft Dynamics 365
+    </h5>
+  </div>
+  <app-tab
+    [items]="crmList"
+    [loading]="loading"
+    (switchEvent)="switchTab($event)"
+    role="navigation"
+    aria-label="Microsoft Dynamics 365 tabs"
+  ></app-tab>
+</div>
+
+<div class="panel panel-default sso-profile-page mb-0 border-btm">
+  <div class="panel-body">
+    <app-spinner *ngIf="!isLoaded"></app-spinner>
+    <div *ngIf="isLoaded">
+      <div class="panel-info">
+        <div class="panel-heading border-clr">
+          <app-spinner *ngIf="!countLoaded && currentTab == 3"></app-spinner>
+          <ng-container *ngIf="countLoaded || currentTab != 3">
+            {{
+              currentTab == 2
+                ? "The below grids indicate field mapping and make sure your field data types are similar before you import/sync firms and contacts details."
+                : currentTab == 3
+                ? "Total " +
+                  totalData +
+                  " " +
+                  (entityVal == "investors"
+                    ? "firm"
+                    : entityVal.substring(0, entityVal.length - 1)) +
+                  " record/s synced to DiligenceVault till date" +
+                  (lastSync == "None"
+                    ? ""
+                    : ", last synced on - " + (lastSync | dvDate)) +
+                  "."
+                : currentTab == 1
+                ? "Enter your credentials to configure the Dynamics 365 CRM to DiligenceVault and then check sync settings before you import/sync firms and contacts details."
+                : null
+            }}
+            <span *ngIf="currentTab == 3" role="status">
+              (<a
+                class="cursor"
+                (click)="getDataCount()"
+                aria-label="Refresh Now"
+                role="button"
+                tabindex="0"
+                id="refreshButton"
+                name="refreshButton"
+                title="Refresh Button"
+              >
+                Refresh Now&nbsp;<span
+                  appIcon
+                  name="refresh"
+                  class="align-middle"
+                  aria-hidden="true"
+                  tabindex="-1"
+                ></span> </a
+              >)
+            </span>
+          </ng-container>
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 2 || currentTab == 3" class="row clearfix">
+        <div col="6" class="mt p-0">
+          <label class="entity-label" for="entity-label" col="2"
+            >Entity :</label
+          >
+          <dv-select
+            [list]="entityList"
+            (onSelectChange)="changeView(entityVal)"
+            [(ngModel)]="entityVal"
+            bindLabel="title"
+            bindValue="id"
+            [disabled]="false"
+            [clearable]="false"
+            [searchable]="true"
+            class="p-0 font-small"
+            col="3"
+            [id]="'entity-label'"
+          ></dv-select>
+        </div>
+
+        <div col="6" class="mt txt-end" *ngIf="currentTab == 3">
+          <dv-button
+            (onClick)="openImportingFirms()"
+            ariaLabel="Import {{ entityVal | titlecase }}"
+          >
+            <span appIcon name="refresh" aria-hidden="true"></span> Import
+            {{ entityVal | titlecase }}
+          </dv-button>
+        </div>
+      </div>
+
+      <div
+        class="panel-info space-on-top-lg"
+        *ngIf="currentTab == 3 && entityVal == 'contacts'"
+      >
+        <div class="panel-heading border-clr notes padding-note" role="note">
+          Note: Only the contacts associated to the firms(accounts) can be added
+          to the DiligenceVault.
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 1" class="row clearfix">
+        <div col="12" id="js-firms-profile">
+          <form
+            class="form-horizontal"
+            name="sso_form"
+            [formGroup]="configurationForm"
+            autocomplete="off"
+          >
+            <hr />
+            <dv-form-element
+              class="form-element"
+              label="CRM Client ID"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('client_id')"
+              errorMessage="Please enter CRM Client ID"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="client_id"
+                [value]="configurationForm.get('client_id')?.value"
+                dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                placeholder="Enter a CRM Client ID"
+                maxlength="140"
+                aria-label="Enter CRM Client ID"
+                id="client_id"
+              />
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="CRM Client Secret"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('client_secret')"
+              errorMessage="Please enter CRM Client Secret"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="client_secret"
+                [value]="configurationForm.get('client_secret')?.value"
+                dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                placeholder="Enter a CRM Client Secret"
+                maxlength="140"
+                id="client_secret"
+              />
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="Organization URL"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('crm_url')"
+              errorMessage="{{
+                !configurationForm.get('crm_url').value
+                  ? 'Please enter Organization URL'
+                  : 'Please enter valid URL'
+              }}"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="crm_url"
+                [value]="configurationForm.get('crm_url')?.value"
+                dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                placeholder="Enter an Organization URL"
+                maxlength="140"
+                id="crm_url"
+              />
+            </dv-form-element>
+            <dv-form-element
+              class="form-element"
+              label="Tenant ID"
+              [isRequired]="true"
+              [elementCol]="'8'"
+              [modelController]="configurationForm.get('tenant_id')"
+              errorMessage="Please enter Tenant ID"
+            >
+              <input
+                type="text"
+                class="form-control"
+                formControlName="tenant_id"
+                [value]="configurationForm.get('tenant_id')?.value"
+                dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                placeholder="Enter a Tenant ID"
+                maxlength="140"
+                id="tenant_id"
+              />
+            </dv-form-element>
+            <div
+              class="form-group text-center"
+              [ngStyle]="{
+                'margin-left':
+                  isConfigured == true && isPut == true ? '78px' : '108px'
+              }"
+            >
+              <div col="6">
+                <dv-button
+                  *ngIf="isConfigured && isPut"
+                  [disabled]="configurationForm.invalid"
+                  (onClick)="resetForm()"
+                >
+                  Re-Configure
+                </dv-button>
+                <dv-button
+                  *ngIf="!isPut"
+                  [disabled]="configurationForm.invalid"
+                  [loader]="submitted"
+                  btnClass="configure"
+                  (onClick)="submit(isConfigured, isPut)"
+                  class="space-on-right"
+                >
+                  Configure
+                </dv-button>
+
+                <dv-button
+                  [btnType]="'default'"
+                  btnClass="clear"
+                  *ngIf="!isPut"
+                  class="space-on-left"
+                  (onClick)="cancelEdit(isConfigured)"
+                >
+                  Clear
+                </dv-button>
+              </div>
+              <div col="6" *ngIf="isConfigured && isPut">
+                <span class="icon clr-verified">
+                  <span appIcon name="check-circle"></span> Account Verified
+                </span>
+              </div>
+              <div class="pl-98" col="6" *ngIf="isConfigured && !isPut">
+                <dv-button
+                  [btnType]="'secondary'"
+                  (onClick)="revertForm(isConfigured)"
+                >
+                  Revert to previous
+                </dv-button>
+              </div>
+            </div>
+          </form>
+
+          <hr />
+          <div class="panel-info">
+            <div class="panel-heading border-clr guide notes" role="note">
+              A step by step
+              <a
+                href="https://diligencevault.com/wp-content/uploads/2023/03/Access-Dynamics-365-API-Postman-1.pdf"
+                target="_blank"
+                class="fw-bolder"
+                aria-label="Navigate to Access-Dynamics-365-API-Postman-1.pdf (opens in a new window)"
+                >guide</a
+              >
+              to obtain credentials from Microsoft Dynamics 365.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 2" class="mt">
+        <app-dv-multiheader-table
+          [rowData]="
+            entityVal == 'firms' || entityVal == 'investors'
+              ? firmField
+              : contactField
+          "
+        >
+        </app-dv-multiheader-table>
+        <br />
+        <div class="panel-info">
+          <div class="panel-heading border-clr notes" role="note">
+            Note: <br />
+            1. Fields marked '*' are mandatory fields. <br />
+            2. Fields which are mandatory at DiligenceVault end should be
+            present to successfully add data to the DiligenceVault.
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="currentTab == 3" class="mt">
+        <div class="panel panel-default" *ngIf="show_bulk_actions">
+          <div class="panel-body padded-lg">
+            <h5 class="inline space-on-right-lg">
+              <strong
+                >Selected Records :
+                <span class="badge">{{ totalSelectedRecords }}</span></strong
+              >
+            </h5>
+            <a container="body" *ngIf="!bulkResourceEditMode">
+              <strong>
+                <dv-button
+                  btnType="secondary"
+                  (onClick)="confirmBulkDataAddition()"
+                  ariaLabel="Upload data to DiligenceVault"
+                >
+                  <span appIcon name="file"></span> Upload data to
+                  DiligenceVault
+                </dv-button>
+              </strong>
+            </a>
+            <a
+              tooltip="Close"
+              container="body"
+              class="btn pull-right text-black danger"
+              (click)="closeQuickActions()"
+              role="button"
+              tabindex="0"
+              aria-label="Close Quick panel"
+            >
+              <strong><span appIcon name="close"></span> </strong>
+            </a>
+          </div>
+        </div>
+        <div
+          class="space-on-top-lg"
+          *ngIf="entityVal == 'firms' || entityVal == 'investors'"
+        >
+          <app-dv-grid
+            [rowData]="gridData"
+            [name]="gridNameFirm"
+            (gridReady)="onGridReady($event)"
+            [noRowsTemplate]="
+              !initGridSection ? 'Loading...' : 'No results found'
+            "
+            [onSelectionChanged]="onResourcesSelectionChanged"
+            [onRowSelected]="onResourcesRowSelected"
+            #dataResourcesGrid
+          ></app-dv-grid>
+        </div>
+        <div class="space-on-top-lg" *ngIf="entityVal == 'contacts'">
+          <app-dv-grid
+            [rowData]="gridData"
+            [name]="gridNameContact"
+            (gridReady)="onGridReady($event)"
+            [noRowsTemplate]="
+              !initGridSection ? 'Loading...' : 'No results found'
+            "
+            [onSelectionChanged]="onResourcesSelectionChanged"
+            [onRowSelected]="onResourcesRowSelected"
+            #dataResourcesGrid
+          ></app-dv-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

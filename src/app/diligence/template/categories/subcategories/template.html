@@ -1,0 +1,97 @@
+<div class="col-md-3">
+  <div class="panel panel-default md-panel">
+    <div class="panel-heading">
+      <span data-ng-if="vm.moveEnabled" class="inline-block template-move-checkbox">
+        <dv-checkbox data-ng-model="vm.selectedAllSubcategories" data-ng-change="vm.onSelectAllSubcategories()" uib-tooltip="Select All Subcategories"></dv-checkbox>
+      </span>
+      <h5 class="panel-title inline-block">Subcategories</h5>
+
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+          <a class="panel-control"
+              data-ng-click="vm.toggleMoveMode()"
+              tooltip-placement="left"
+              data-ng-class="{'active-color':vm.moveEnabled}"
+              uib-tooltip="{{vm.moveEnabled?'Click to cancel':'Select Subcategory(s) to move'}}">
+            <icon name="move"></icon>
+          </a>
+          <a class="panel-control activeButton"
+            data-ng-if="vm.moveEnabled && vm.selectedEntities.length > 0"
+            data-ng-click="vm.moveSubcategory()"
+            tooltip-placement="left"
+            uib-tooltip="Move Subcategory">
+            Next
+          </a>
+          <a class="panel-control js-add-subcategory"
+             uib-tooltip="New Sub Category"
+             data-ng-if="!vm.moveEnabled"
+             data-ng-click="vm.openAddSubCategoryDialog()">
+            <icon name="plus"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <spinner data-ng-show="vm.loading">
+      </spinner>
+
+      <ul class="list-group"
+           data-ng-class="{'move-border':vm.moveEnabled}"
+           ui-sortable="sortableOptions"
+           resource="sections"
+           data-ng-if="vm.subcategories.length"
+           data-ng-model="vm.subcategories">
+        <li class="list-group-item clickable"
+           data-ng-click="vm.getQuestions(subcategory)"
+           data-ng-class="{'active': vm.$state.params.subcategoryId == subcategory.id && !vm.moveEnabled}"
+           data-ng-repeat="subcategory in vm.subcategories">
+          <div>
+            <span data-ng-if="!vm.moveEnabled" class="space-on-right align-middle sort-handle">
+              <icon name="th"></icon>
+            </span>
+            <span data-ng-if="vm.moveEnabled" class="inline-block template-move-checkbox">
+              <dv-checkbox data-ng-model="subcategory.selected" data-ng-change="vm.selectSubcategory(subcategory)"></dv-checkbox>
+            </span>
+
+            <span truncate-text="30" uib-tooltip="{{subcategory.name}}">{{subcategory.name}}</span>
+          </div>
+
+          <div class="controls" data-ng-if="!vm.moveEnabled">
+            <span class="control"
+                  data-ng-click="vm.openEditSubCategoryDialog(subcategory,$index)"
+                  role="button"
+                  stop-event-propagation
+                  prevent-default>
+              <icon name="pencil"></icon>
+            </span>
+
+            <span class="control"
+                  data-ng-click="vm.removeCategory(subcategory)"
+                  role="button"
+                  data-ng-class="{'disabled': vm.subcategories.length == 1, 'control-danger': vm.subcategories.length > 1}"
+                  uib-tooltip="{{vm.subcategories.length == 1 ? 'You cannot delete the only subcategory in this category' : ''}}"
+                  stop-event-propagation
+                  prevent-default>
+              <icon name="trashcan"></icon>
+            </span>
+          </div>
+        </li>
+      </ul>
+      <p><i><small data-ng-show="!vm.subcategories.length && !vm.loading">No subcategories found</small></i></p>
+
+    </div>
+  </div>
+</div>
+<div class="col-md-6" data-ng-if="!vm.subcategories.length && !vm.loading">
+  <div class="panel panel-default md-panel">
+    <div class="panel-heading">
+      <h5 class="panel-title">Questions</h5>
+    </div>
+
+    <div class="panel-body">
+      <p><i><small>No questions found</small></i></p>
+    </div>
+  </div>
+</div>
+<ui-view />

@@ -1,0 +1,620 @@
+<div class="row clearfix">
+  <div class="row clearfix">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-body clearfix">
+          <ng-container *ngIf="workflow_status">
+            <div class="dv-table dv-table-middle dd-info-panel full-width">
+              <div class="bordered-right cell">
+                <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+                  <a
+                    role="button"
+                    tabindex="0"
+                    (click)="
+                      redirectToEntity(
+                        workflow_status.entity_id,
+                        workflow_status.entity_type
+                      )
+                    "
+                  >
+                    {{ workflow_status.entity_name }} ({{
+                      workflow_status.name
+                    }})</a
+                  >
+                </h4>
+                <p>
+                  <small class="text-muted">
+                    {{ workflow_status.entity_name }}
+                  </small>
+                </p>
+                <small class="text-muted">
+                  {{ workflow_status?.pct_complete || 0 }}% completed
+                </small>
+              </div>
+
+              <div
+                class="cell text-center bordered-right"
+                *ngIf="
+                  workflow_pending_action_id == 'approval' &&
+                  current_user.id == workflow_pending_user_id
+                "
+              >
+                <dv-button
+                  btnType="transparent"
+                  (onClick)="recordAction('approval')"
+                  [loader]="performing_action"
+                >
+                  <div><span appIcon name="thumbs-o-up" size="2x"></span></div>
+                  <small>Approve</small>
+                </dv-button>
+              </div>
+
+              <div
+                class="cell text-center bordered-right"
+                *ngIf="
+                  workflow_pending_action_id == 'review' &&
+                  current_user.id == workflow_pending_user_id
+                "
+              >
+                <dv-button
+                  btnType="transparent"
+                  (onClick)="recordAction('review')"
+                  [loader]="performing_action"
+                >
+                  <div><span appIcon name="check2" size="2x"></span></div>
+                  <small>Mark as Reviewed</small>
+                </dv-button>
+              </div>
+
+              <div class="cell text-center bordered-right">
+                <dv-button
+                  btnType="transparent"
+                  (onClick)="recordAction('add_note')"
+                  [loader]="performing_action"
+                >
+                  <div class="btn-label">
+                    <div>
+                      <span appIcon name="notepad" size="2x"></span>
+                      <span
+                        class="count-bubble relative align-middle"
+                        *ngIf="workflow_notes.length"
+                        >{{ workflow_notes.length }}</span
+                      >
+                    </div>
+                    <small>Add Note</small>
+                  </div>
+                </dv-button>
+              </div>
+
+              <div class="cell text-center bordered-right">
+                <span dropdown class="dropdown">
+                  <a
+                    class="dropdown-toggle btn btn-transparent"
+                    dropdownToggle
+                    tooltip="Delete Workflow"
+                    container="body"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    role="button"
+                    tabindex="0"
+                  >
+                    <div>
+                      <span appIcon name="ellipsis-h" size="2x"></span>
+                    </div>
+                    <div class="space-on-top-n">
+                      <small>More Actions</small>
+                    </div>
+                  </a>
+
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a
+                        (click)="confirmDeleteWorkflow()"
+                        role="button"
+                        tabindex="0"
+                        class="danger"
+                      >
+                        <span class="space-on-right-lg" name="trashcan"></span
+                        >Delete workflow process
+                      </a>
+                    </li>
+                  </ul>
+                </span>
+              </div>
+
+              <div class="cell text-center">
+                <a class="btn btn-transparent" (click)="navigateToDashboard()">
+                  <div>
+                    <span appIcon name="arrow-back" size="2x"></span>
+                  </div>
+                  <small>Back to all workflows</small>
+                </a>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="!workflow_status">
+            <div class="text-center">
+              <app-spinner
+                [broadSpinner]="true"
+                spinnerHeight="100"
+              ></app-spinner>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body clearfix">
+          <div
+            class="dv-table dv-table-middle dd-info-panel full-width"
+            *ngIf="workflow_status"
+          >
+            <div class="cell text-center bordered-right">
+              <h4 class="clear-margin">Last updated on</h4>
+              <small class="text-muted" *ngIf="workflow_status.updated_at">
+                {{ workflow_status.updated_at | dvDate }}
+              </small>
+              <small class="text-muted" *ngIf="!workflow_status.updated_at">
+                {{ workflow_status.created_at | dvDate }}
+              </small>
+            </div>
+
+            <div class="cell text-center bordered-right">
+              <h4 class="clear-margin">Due on</h4>
+              <small class="text-muted" *ngIf="workflow_status.due_at">
+                {{ workflow_status.due_at | dvDate : ["isLocaleDate"] }}</small
+              >
+            </div>
+
+            <div class="cell text-center bordered-right">
+              <h4 class="clear-margin">Triggered on</h4>
+              <small class="text-muted">
+                {{ workflow_status.created_at | dvDate : ["isLocaleDate"] }}
+              </small>
+            </div>
+
+            <div class="cell text-center">
+              <h4 class="clear-margin">Workflow Owner</h4>
+              <small class="text-muted">
+                {{ workflow_status.owner_name }}
+              </small>
+            </div>
+          </div>
+          <div *ngIf="!workflow_status" class="text-center">
+            <app-spinner broad-spinner spinner-height="100"></app-spinner>
+          </div>
+        </div>
+      </div>
+
+      <div class="row clearfix">
+        <div col="12">
+          <div class="panel panel-default">
+            <div class="panel-body padded-xl">
+              <div col="12" class="clear-horizontal-padding">
+                <div class="space-on-bottom-xl audit-timeline">
+                  <div
+                    col="12"
+                    class="space-on-bottom-lg min-height-70"
+                    *ngIf="workflow_status?.workflow_steps_audit?.length"
+                  >
+                    <div class="stepDesc">
+                      <p>{{ activeStep.description }}</p>
+                    </div>
+
+                    <div class="status-tracker statusTrackerLagend">
+                      <div class="full-width">
+                        <div class="row full-width">
+                          <div class="clear-margin" col="12">
+                            <div class="tracker-container full-width">
+                              <ul class="progress-meter full-width">
+                                <li
+                                  *ngFor="
+                                    let action of [
+                                      'Completed',
+                                      'legend-gap',
+                                      'Pending',
+                                      'legend-gap',
+                                      'Invisible'
+                                    ]
+                                  "
+                                  [ngClass]="{
+                                    'done legend': action == 'Completed',
+                                    'in-progress legend': action == 'Pending',
+                                    'upcoming legend': action == 'Invisible',
+                                    'legend-gap': action == 'legend-gap'
+                                  }"
+                                >
+                                  <div class="single-tracker">
+                                    <div class="bubble-parent">
+                                      <div class="bubble"></div>
+                                    </div>
+                                    <div
+                                      class="description action-owner text-black"
+                                    >
+                                      {{
+                                        action == "Completed"
+                                          ? "Completed"
+                                          : action == "Pending"
+                                          ? "In Progress"
+                                          : action == "Invisible"
+                                          ? "Pending"
+                                          : ""
+                                      }}
+                                    </div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="status-tracker full-width"
+                    *ngIf="workflow_status?.workflow_steps_audit?.length"
+                  >
+                    <div class="padded-lg full-width">
+                      <div class="row full-width">
+                        <br />
+                        <div
+                          col="12"
+                          [ngClass]="{
+                            'overflow-container':
+                              workflow_status.workflow_steps_audit.length > 7
+                          }"
+                        >
+                          <div class="tracker-container full-width">
+                            <ul class="progress-meter full-width">
+                              <li
+                                *ngFor="
+                                  let step of workflow_status.workflow_steps_audit
+                                "
+                                [ngClass]="{
+                                  done: step.status == 'Completed',
+                                  'in-progress': step.status == 'Pending',
+                                  upcoming: step.status == 'Invisible',
+                                  activeStepLi:
+                                    activeStep.workflow_steps_id ==
+                                    step.workflow_steps_id
+                                }"
+                                class="cursor-pointer"
+                                (click)="setActiveStep(step)"
+                              >
+                                <div class="single-tracker">
+                                  <div class="bubble-parent">
+                                    <div class="bubble"></div>
+                                  </div>
+                                  <span
+                                    class="action-item"
+                                    tooltip="{{ step.name }}"
+                                    >{{ step.name | truncate : 30 }}
+                                  </span>
+                                  <div class="border_bottom"></div>
+                                  <div class="description current-status">
+                                    {{
+                                      step.status == "Completed"
+                                        ? step.created_at_new
+                                        : step.status == "Pending"
+                                        ? step.from_now
+                                        : "Pending"
+                                    }}
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ng-container *ngIf="!workflow_status?.workflow_steps_audit">
+                    <div class="text-center">
+                      <app-spinner
+                        [broadSpinner]="true"
+                        spinnerHeight="100"
+                      ></app-spinner>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="activeStep">
+    <div class="panel panel-default ng-scope" *ngIf="activeStep">
+      <div class="panel-body clearfix">
+        <div col="12" class="space-on-bottom-lg col-md-12">
+          <h4 class="space-on-bottom ng-binding">
+            {{ activeStep.name }}
+          </h4>
+        </div>
+        <div *ngIf="!workflow_status?.workflow_steps_audit?.length">
+          <table class="table clear-margin-bottom">
+            <tbody>
+              <tr style="height: 55px">
+                <td class="text-center borderless align-middle">
+                  <span appIcon name="fa-spin"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="container-fluid" *ngIf="activeStep.actions.length">
+          <div class="row clearfix">
+            <div class="col-sm-8 workflowDetailsLeftCol">
+              <div
+                class="row clearfix borderBottom eachActionRow"
+                *ngFor="let action of activeStep.actions"
+                (click)="setActiveAction(action)"
+                [ngClass]="{
+                  activeActionRow:
+                    activeAction.workflow_steps_actions_id ==
+                    action.workflow_steps_actions_id
+                }"
+              >
+                <div class="col-sm-4">
+                  <div class="box1 box box2">
+                    <p [ngClass]="{ dateText: action.status !== 'Completed' }">
+                      Due at {{ action.due_at | dvDate : ["isLocaleDate"] }}
+                    </p>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="box2 box" *ngIf="action.status === 'Completed'">
+                    <p>
+                      {{
+                        action.action_id == "approve"
+                          ? "Approved"
+                          : action.action_id == "review"
+                          ? "Reviewed"
+                          : action.action_id == "add_note"
+                          ? "Notes added"
+                          : action.action_id == "add_note"
+                          ? "Notes added"
+                          : "Completed"
+                      }}
+                      by {{ action.updated_by_name }} on
+                      {{ action.updated_at | dvDate : ["isLocaleDate"] }}
+                    </p>
+                  </div>
+
+                  <div
+                    class="box2 box"
+                    *ngIf="
+                      action.action_id == 'approve' &&
+                      action.status !== 'Completed'
+                    "
+                  >
+                    <dv-button
+                      [disabled]="disableActions(action)"
+                      btnType="transparent"
+                      (onClick)="recordAction('approve', action)"
+                      [loader]="actionButtons.approve"
+                    >
+                      <div>
+                        <span name="thumbs-o-up" appIcon size="2x"></span>
+                      </div>
+                      <small>Approve</small>
+                    </dv-button>
+                  </div>
+
+                  <div
+                    class="box2 box"
+                    *ngIf="
+                      action.action_id == 'review' &&
+                      action.status !== 'Completed'
+                    "
+                  >
+                    <dv-button
+                      [disabled]="disableActions(action)"
+                      btnType="transparent"
+                      (onClick)="recordAction('review', action)"
+                      [loader]="actionButtons.review"
+                    >
+                      <div>
+                        <span name="eye" appIcon size="2x"></span>
+                      </div>
+                      <small>Mark as Reviewed</small>
+                    </dv-button>
+                  </div>
+
+                  <div
+                    class="box2 box"
+                    *ngIf="
+                      action.action_id == 'add_note' &&
+                      action.status !== 'Completed'
+                    "
+                  >
+                    <dv-button
+                      [disabled]="disableActions(action)"
+                      btnType="transparent"
+                      (onClick)="recordAction('add_note', action)"
+                      [loader]="actionButtons.add_note"
+                    >
+                      <div>
+                        <span name="notepad" appIcon size="2x"></span>
+                      </div>
+                      <small>Add Note</small>
+                    </dv-button>
+                  </div>
+
+                  <div
+                    class="box2 box"
+                    *ngIf="
+                      action.action_id == 'complete' &&
+                      action.status !== 'Completed'
+                    "
+                  >
+                    <dv-button
+                      [disabled]="disableActions(action)"
+                      btnType="transparent"
+                      (onClick)="recordAction('complete', action)"
+                      [loader]="actionButtons.complete"
+                    >
+                      <div>
+                        <span name="check2" appIcon size="2x"></span>
+                      </div>
+                      <small>Mark as Completed</small>
+                    </dv-button>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <table class="table border-none actionsTable">
+                    <tbody>
+                      <tr>
+                        <td class="text-right">Checklist</td>
+                        <td>
+                          <dv-progress-bar
+                            [value]="action.percentageCompletion"
+                            type="success"
+                          >
+                          </dv-progress-bar>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-right">Owner</td>
+                        <td>
+                          <div *ngIf="action.is_owner_task">
+                            <small class="w-210 text-muted"
+                              >Assigned to Product Owner</small
+                            >
+                          </div>
+                          <div *ngIf="!action.is_owner_task" class="ownerDiv">
+                            <ng-container *ngIf="action.users.length">
+                              <span
+                                class="label text-uppercase label-default"
+                                *ngFor="let user of action.users"
+                                tooltip="{{ displayUserName(user, 'user') }}"
+                              >
+                                <small>{{ showInitials(user, "user") }}</small>
+                              </span>
+                            </ng-container>
+                            <ng-container *ngIf="action.functions?.length">
+                              <span
+                                class="label text-uppercase label-default"
+                                *ngFor="let function of action.functions"
+                                tooltip="{{
+                                  displayUserName(function, 'function')
+                                }}"
+                              >
+                                <small>{{
+                                  showInitials(function, "function")
+                                }}</small>
+                              </span>
+                            </ng-container>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-right">Status</td>
+                        <td>
+                          <span
+                            [ngClass]="{
+                              'label-warning': action.status === 'Pending',
+                              'label-success': action.status === 'Completed'
+                            }"
+                            class="label label-warning text-uppercase"
+                            [innerHTML]="action.status"
+                          ></span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4 pos-rel">
+              <div class="text-center workfloChecklistDiv">
+                <div class="checklistInnerDiv">
+                  <p class="text-muted" *ngIf="!activeAction.checklist.length">
+                    <br />
+                    <br />
+                    No associated checklist
+                  </p>
+                  <div class="todo-list-container-center">
+                    <ul class="todo-list">
+                      <li
+                        class="todo-list-item"
+                        *ngFor="
+                          let task of activeAction.checklist;
+                          let index = index
+                        "
+                      >
+                        <dv-checkbox
+                          [(ngModel)]="task.is_complete"
+                          (onValChange)="markTaskCompleted(task)"
+                          [label]="task.text"
+                          [disabled]="disableActions(activeAction)"
+                          id="{{ index }}"
+                        >
+                        </dv-checkbox>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!activeStep">
+    <div class="text-center">
+      <app-spinner [broadSpinner]="true" spinnerHeight="100"></app-spinner>
+    </div>
+  </ng-container>
+
+  <div class="row clearfix">
+    <div col="12">
+      <div class="panel panel-default">
+        <div class="panel-body padded-xl">
+          <div *ngIf="loading_notes" class="text-center">
+            <app-spinner [broadSpinner]="true" spinnerHeight="40"></app-spinner>
+          </div>
+
+          <div *ngIf="!loading_notes">
+            <div col="12">
+              <h4 class="space-on-bottom-lg">Notes:</h4>
+            </div>
+            <div *ngFor="let note of workflow_notes; let index = index">
+              <div col="12">
+                <h5>
+                  <div col="1" class="text-center lh1-5">{{ index + 1 }}.</div>
+
+                  <div col="11" class="lh1-5">
+                    <p class="clear-margin responsive-image">
+                      <span [innerHTML]="note.text | cleanHtml">
+                        {{ note.text }}
+                      </span>
+                    </p>
+
+                    <div>
+                      <small class="text-muted"
+                        >On {{ note.updated_at | dvDate }} by
+                        <strong
+                          >{{ note.first_name }} {{ note.last_name }}</strong
+                        >
+                      </small>
+                    </div>
+                  </div>
+                </h5>
+              </div>
+            </div>
+            <div col="12" *ngIf="!workflow_notes.length && !loading_notes">
+              <h5 class="space-on-bottom-lg">No notes available.</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

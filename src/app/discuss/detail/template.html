@@ -1,0 +1,182 @@
+<spinner data-ng-hide="vm.discussion"></spinner>
+
+<div class="row clearfix" data-ng-show="vm.discussion">
+  <div class="padded-right-sm" col="8">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div>
+          <div>
+            <h4>{{vm.discussion.text}}</h4>
+          </div>
+
+          <div class="space-on-bottom-lg">
+            <user-avatar user="vm.discussion.author"
+                         avatar-class="discussion-author-avatar"></user-avatar>
+
+            <div class="inline-block align-middle space-on-left">
+              <div>
+                <span data-ng-if="vm.discussion.author.anonymous">
+                  Anonymous ({{vm.discussion.author.type}})
+                </span>
+                <span data-ng-if="!vm.discussion.author.anonymous">
+                  {{vm.discussion.author.firstName}} {{vm.discussion.author.lastName}}
+                </span>
+              </div>
+
+              <small class="text-muted">started this discussion</small>
+            </div>
+          </div>
+
+          <div>
+            <button btn-type="primary"
+                    size="sm"
+                    class="space-on-right"
+                    data-ng-click="vm.revealAnswerForm()">
+              <icon name="pencil"></icon>
+              Write an Answer
+            </button>
+
+            <discussion-follow discussion="vm.discussion"></discussion-follow>
+          </div>
+        </div>
+
+        <hr class="hr-lighter">
+
+        <div class="clearfix" data-ng-show="vm.hide_answer_form && vm.data_loaded">
+          <h4 class="text-muted space-on-top">
+            <ng-pluralize count="vm.replies.length"
+              when="{'0': 'Be the first one to answer',
+                     '1': '1 Answer',
+                     'other': '{} Answers'}"></ng-pluralize>
+          </h4>
+        </div>
+
+        <div uib-collapse="vm.hide_answer_form">
+          <form data-ng-submit="vm.saveDiscussionReply()">
+            <form-group field-name="Answer">
+              <textarea ui-tinymce="vm.tinymceOptions" id="answer-content" ng-model="vm.new_reply.text"></textarea>
+            </form-group>
+
+            <div class="form-group">
+              <dv-checkbox
+                data-ng-model="vm.new_reply.author.anonymous"
+                label="Answer anonymously">
+              </dv-checkbox>
+            </div>
+
+            <div class="form-group">
+              <button size="sm"
+                      type="submit"
+                      button-loader="vm.saving_discussion_reply">Publish Answer</button>
+
+              <button size="sm" btn-type="default"
+                      data-ng-click="vm.hide_answer_form = !vm.hide_answer_form">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <hr class="hr-lighter">
+
+        <ul class="list-unstyled"
+            infinite-scroll="vm.loadReplies()"
+            infinite-scroll-disabled="vm.is_loading_replies || vm.current_page >= vm.total_pages">
+          <li class="discussion-reply"
+               data-ng-repeat="reply in vm.replies"
+               infinite-scroll="vm.loadReplies()"
+               infinite-scroll-disabled="vm.is_loading_replies || vm.current_page >= vm.total_pages">
+            <div class="space-on-bottom-lg">
+              <user-avatar user="reply.author"
+                           avatar-class="discussion-author-avatar"
+                           avatar-icon-size="1x"></user-avatar>
+
+              <div class="inline-block align-middle">
+                <div>
+                  <span data-ng-if="!reply.author.anonymous">
+                    {{reply.author.firstName}} {{reply.author.lastName}}
+                    <span data-ng-show="reply.author.title">&middot; {{reply.author.title}}</span>
+                  </span>
+
+                  <span data-ng-if="reply.author.anonymous">Anonymous ({{reply.author.type|capitalize}})</span>
+                </div>
+
+                <small class="text-muted">answered {{reply.insertTimeStamp | fromNow}}</small>
+              </div>
+            </div>
+
+            <div>
+              <p class="word-break-break-all" ng-bind-html="reply.text"></p>
+            </div>
+
+            <div class="space-on-top-lg">
+              <discussion-reply-agree reply="reply"></discussion-reply-agree>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <aside class="padded-left-sm" col="4">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <section class="discussion-group">
+          <h5 class="section-title">Discussion Details</h5>
+
+          <ul class="list-unstyled discussion-details">
+            <li>
+              <icon name="eye" size="fw" class="align-middle"></icon>
+              <span class="align-middle">{{vm.discussion.viewCount}} Views</span>
+            </li>
+
+            <li>
+              <icon name="clock-o" size="fw" class="align-middle"></icon>
+              <span class="align-middle">asked {{vm.discussion.insertTimeStamp | fromNow}}</span>
+            </li>
+
+            <li data-ng-show="vm.discussion.categories.length">
+              <span>
+                <icon name="tag" size="fw" class="align-middle"></icon>
+
+                <a ui-sref="app.discuss.explore({category: category})"
+                   class="label label-default align-middle space-on-right"
+                   data-ng-repeat="category in vm.discussion.categories">
+                  {{category}}
+                </a>
+              </span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="discussion-group">
+          <a ui-sref="app.discuss.new" class="btn btn-default btn-block">Start New Discussion</a>
+        </section>
+
+        <section class="discussion-group"
+                 data-ng-hide="vm.top_discussions && !vm.top_discussions.length">
+          <div>
+            <h5 class="section-title">Top 3 Discussions</h5>
+          </div>
+
+          <spinner data-ng-hide="vm.top_discussions"></spinner>
+
+          <a ui-sref="app.discuss.detail({slug: discussion.slug, discussionId: discussion.id})"
+             class="discussion-title link-disguise"
+             data-ng-repeat="discussion in vm.top_discussions">{{discussion.text}}</a>
+        </section>
+
+        <section class="discussion-group"
+                 data-ng-hide="vm.recent_discussions && !vm.recent_discussions.length">
+          <div>
+            <h5 class="section-title">3 Recent Discussions</h5>
+          </div>
+
+          <spinner data-ng-hide="vm.recent_discussions"></spinner>
+
+          <a ui-sref="app.discuss.detail({slug: discussion.slug, id: discussion.id})"
+             class="discussion-title link-disguise"
+             data-ng-repeat="discussion in vm.recent_discussions">{{discussion.text}}</a>
+        </section>
+      </div>
+    </div>
+  </aside>
+</div>

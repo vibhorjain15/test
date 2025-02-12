@@ -1,0 +1,58 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-domain></ng2-domain> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default sso-profile-page">
+  <div class="panel-heading">
+    <h5 class="panel-title">Domains</h5>
+    <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+            <a id="js-add-team-members" class="panel-control"
+               data-ng-click="vm.addNewDomain()"
+               uib-tooltip="Add New Domain">
+                <icon name="plus"></icon>
+            </a>
+        </div>
+    </div>
+  </div>
+  <div class="panel panel-info">
+      <div class="panel-heading">If SSO/SAML is enabled, it will only be enforced for users whose domains match with the one added to this list with "SSO" flag on. Domain of the admin will be automatically added here once you configure SSO. Users will be auto approved if their domains are whitelisted here.</div>
+  </div>
+  <div class="panel-body export-template">
+    <div class="form-group">
+      <input type="text" class="form-control searchDomainInput" placeholder="Search domains" data-ng-model="vm.filterDomains" />
+    </div>
+    <div class="tableContainer">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <td width="65%">Domain</td>
+            <td width="15%" class="text-center"><p uib-tooltip="Check here to auto-enable SSO for all users of this domain">SSO</p></td>
+            <td width="20%" class="text-center"><p uib-tooltip="Check here to enable auto user approval for this domain">Domain Whitelisting</p></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-ng-repeat="domain in vm.domains | filter: vm.filterDomains">
+            <td width="65%">
+              <p class="domainNameP">
+                <span class="clickable space-on-right danger" uib-tooltip="Delete this domain" data-ng-click="vm.confirmDomainDeletion(domain,$index)">
+                    <icon name="trashcan"></icon>
+                </span>
+                <a role="button" href="https://{{domain.domain_name}}" target="_blank">{{domain.domain_name}}</a>
+              </p>
+            </td>
+            <td width="15%" class="text-center">
+              <dv-checkbox
+                data-ng-model="domain.is_sso_enabled"
+                data-ng-change="vm.toggleSSO(domain, $index)">
+              </dv-checkbox>
+            </td>
+            <td width="20%" class="text-center">
+              <dv-checkbox
+                data-ng-model="domain.is_auto_approve_enabled"
+                data-ng-change="vm.toggleWhiteListing(domain, $index)">
+              </dv-checkbox>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

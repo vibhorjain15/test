@@ -1,0 +1,152 @@
+.status-tracker {
+  .progress-meter {
+    padding: 0;
+    list-style-type: none;
+    display: table;
+    width: 100%;
+    margin-bottom: 20px;
+
+    li {
+      position: relative;
+      display: table-cell;
+      padding: 10px 15px;
+      text-align: center;
+      border-bottom-width: 4px;
+      border-bottom-style: solid;
+      font-weight: bold;
+
+      .single-tracker {
+        display: block;
+        position: relative;
+
+        span {
+          text-transform: uppercase;
+        }
+      }
+
+      .bubble-parent{
+        position: relative;
+      }
+
+      .bubble {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: -62px;
+        margin: auto;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+      }
+
+      .description {
+        position: absolute;
+        top: 45px;
+        width: 100%;
+        text-align: center;
+        /*font-weight: normal;*/
+        /*color: @body-font-color;*/
+        line-height: 1.2;
+        font-size: 13px;
+      }
+
+      &.todo {
+        color: @dv-light-gray;
+        border-bottom-color: @dv-light-gray;
+
+        .bubble {
+          background-color: @dv-light-gray;
+        }
+      }
+
+      &.done {
+        color: @dv-green;
+        border-bottom-color: @dv-green;
+
+        .bubble {
+          background-color: @dv-green;
+
+          &:before {
+            content: "\2714";
+            position: relative;
+            top: -2px;
+            color: #fff;
+            font-size: 10px;
+          }
+        }
+      }
+
+      &.current {
+        color: @dv-blue;
+        border-bottom-color: @dv-blue;
+
+        .bubble {
+          border: 3px solid @dv-blue;
+          background-color: #FFF;
+        }
+      }
+
+      &.sub {
+        position: relative;
+
+        .single-tracker {
+          cursor: pointer;
+        }
+
+        .sub-tracks {
+          position: absolute;
+          z-index: 9;
+          top: 45px;
+          left: 0;
+          right: 0;
+          list-style: none;
+          display: flex;
+          padding: 0;
+          background-color: #F0F0F0;
+          box-shadow: 0 1px 4px 1px @dv-light-gray;
+
+          li {
+            &.todo {
+              .bubble {
+                background-color: @dv-light-gray;
+                border: none;
+              }
+            }
+
+            &.current {
+              .bubble {
+                background-color: #FFF;
+              }
+            }
+
+            &.done {
+              .bubble {
+                background-color: @dv-green;
+                border: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.popover-sub {
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      display: block;
+      padding: 10px;
+      color: @dv-dark-gray;
+
+      &.done {
+        color: @dv-green;
+      }
+    }
+  }
+}

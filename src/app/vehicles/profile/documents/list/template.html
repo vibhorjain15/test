@@ -1,0 +1,52 @@
+<div class="panel panel-default bg-sky-blue" data-ng-if="vm.show_bulk_actions">
+  <div class="panel-body padded-lg">
+    <h5 class="inline space-on-right-lg">
+      <strong>Selected Records : <span class="badge">{{vm.totalSelectedRecords}}</span></strong>
+    </h5>
+    <!-- ****************************************************** -->
+    <!-- For premium users -->
+    <a ng-if="!vm.freeSubscription" class="btn btn-default success space-on-right-lg"
+       uib-tooltip="Download All (select up to 1000 documents)"
+       data-ng-disabled="vm.totalSelectedRecords > 1000 || vm.isFreeManager || vm.downoadingDocuments"
+       data-ng-click="vm.downloadAllDocuments()">
+      <strong><span class="dvi dvi-download3"></span>  </strong>
+    </a>
+    <a ng-if="!vm.freeSubscription" class="btn btn-default success space-on-right-lg"
+       uib-tooltip="Move selected document(s)"
+       data-ng-click="vm.moveAllDocumentsOpenDialog()">
+      <strong><span class="dvi dvi-move"></span>  </strong>
+    </a>
+    <a ng-if="!vm.freeSubscription" class="btn btn-default success space-on-right-lg"
+       uib-tooltip="Copy selected document(s)"
+       data-ng-click="vm.copyAllDocumentsOpenDialog()">
+      <strong><span class="dvi dvi-copy"></span>  </strong>
+    </a>
+    <!-- For premium users end-->
+    <!-- ****************************************************** -->
+    <!-- ###########                             ############## -->
+    <!-- ****************************************************** -->
+    <!-- For free users -->
+    <a ng-if="vm.freeSubscription" ui-sref="app.premium" class="btn btn-default success space-on-right-lg"
+       uib-tooltip="This feature is available for premium users. Learn more">
+      <strong><span class="dvi dvi-download3"></span>  </strong>
+    </a>
+    <a ng-if="vm.freeSubscription" ui-sref="app.premium" class="btn btn-default success space-on-right-lg"
+       uib-tooltip="This feature is available for premium users. Learn more">
+      <strong><span class="dvi dvi-move"></span>  </strong>
+    </a>
+    <a ng-if="vm.freeSubscription" ui-sref="app.premium" class="btn btn-default success space-on-right-lg"
+       uib-tooltip="This feature is available for premium users. Learn more">
+      <strong><span class="dvi dvi-copy"></span>  </strong>
+    </a>
+    <!-- For free users end-->
+    <!-- ****************************************************** -->
+    <a class="btn pull-right text-black danger" uib-tooltip="Close" data-ng-click="vm.closeQuickActions()">
+      <strong><icon name="close"></icon></strong>
+    </a>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <dv-grid grid-resource="vm.documents" name="vm.documentsListGrid" grid-name="'vehicle-documents-list'"></dv-grid>
+  </div>
+</div>

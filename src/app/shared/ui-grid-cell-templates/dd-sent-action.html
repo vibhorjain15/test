@@ -1,0 +1,13 @@
+<ui-grid-cell-contents
+  ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div ng-controller="DueDiligenceActionController as vm">
+    <div data-ng-if="row.entity.status == 'Sent'">
+      <button btn-type="primary" size="sm" class="space-on-left" data-ng-click="vm.updateStatus(row.entity, 'remind')"
+        button-loader="vm.action_loaders.remind">Remind</button>
+      <button btn-type="default" data-ng-click="vm.updateStatus(row.entity, 'withdraw')" size="sm"
+        button-loader="vm.action_loaders.withdraw">Withdraw</button>
+      <button btn-type="default" data-ng-click="vm.addSubscribersSentAction(row.entity)" size="sm"
+        button-loader="vm.action_loaders.withdraw">Manage Details</button>
+    </div>
+  </div>
+</ui-grid-cell-contents>

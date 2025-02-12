@@ -1,0 +1,9 @@
+.content-setting {
+  font-size: 13px;
+  position: relative;
+  top: 2px;
+}
+.info-icon {
+  /* vertical-align: super; */
+  font-size: smaller;
+}

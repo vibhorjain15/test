@@ -1,0 +1,80 @@
+<div class="panel panel-default">
+  <div class="panel-body full-height align-middle">
+    <table class="fund-profile-items space-on-top space-on-bottom">
+      <tbody>
+        <tr class="title-row">
+          <td>
+            <h3>
+              <a routerLink="../questionnaire"
+                >{{ diligence.answer_count }}/{{ diligence.question_count }}</a
+              >
+            </h3>
+          </td>
+          <td>
+            <h3>
+              <a routerLink="../documents/list">{{ attachments_count }}</a>
+            </h3>
+          </td>
+          <td *ngIf="!diligence.is_internal">
+            <h3>
+              <a
+                routerLink="../questionnaire"
+                [queryParams]="{
+                  status: 'OpenFollowup'
+                }"
+                [ngClass]="{ 'disabled-link': !followups_count }"
+                >{{ followups_count }}</a
+              >
+            </h3>
+          </td>
+          <td>
+            <a routerLink="../notes">
+              <h3>{{ notes_count }}</h3>
+            </a>
+          </td>
+          <td>
+            <h3>
+              <a
+                routerLink="../questionnaire"
+                [queryParams]="{
+                  status: 'Todo'
+                }"
+                [ngClass]="{
+                  'disabled-link': todos && todos.total == todos.completed
+                }"
+                >{{ todos?.completed }}/{{ todos?.total }}</a
+              >
+            </h3>
+          </td>
+          <td *ngIf="recommendationCounts && issueTrackerDefaultName">
+            <h3>
+              <a routerLink="../recommendations"
+                >{{ recommendationCounts.completed_count }}/{{
+                  recommendationCounts.total_count
+                }}</a
+              >
+            </h3>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <small class="text-uppercase">Answered / Total Questions</small>
+          </td>
+          <td><small class="text-uppercase">Documents</small></td>
+          <td *ngIf="!diligence.is_internal">
+            <small class="text-uppercase">Open Follow-ups</small>
+          </td>
+          <td><small class="text-uppercase">Internal Notes</small></td>
+          <td>
+            <small class="text-uppercase">Completed / All<br />To-dos</small>
+          </td>
+          <td *ngIf="recommendationCounts && issueTrackerDefaultName">
+            <small class="text-uppercase"
+              >Resolved / All<br />{{ issueTrackerDefaultName }}</small
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

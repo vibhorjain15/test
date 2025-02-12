@@ -1,0 +1,407 @@
+<app-modal
+  [title]="title"
+  [initialTemplate]="NewQuestionsref"
+  (onFirstClick)="handleSave($event)"
+  firstButtonLabel="Save"
+  [isLoading]="loading"
+  [subTitle]="subTitle"
+>
+</app-modal>
+
+<ng-template #NewQuestionsref>
+  <div *ngIf="questionList.length" role="alert">
+    <p class="alert alert-warning" aria-live="assertive">
+      <small>
+        <icon appIcon name="warning" size="1x"></icon>
+      </small>
+      You have <strong>{{ questionList.length }}</strong> unsaved questions.
+      Please click Save below to confirm your changes.
+    </p>
+    <br />
+  </div>
+  <form [formGroup]="questionForm" autocomplete="off">
+    <div class="row clearfix">
+      <div
+        class="col-md-8 btn-group space-on-bottom-xxl justify-center"
+        *ngIf="type && !nestedQuestion"
+      >
+        <span
+          class="btn btn-default font-size-12"
+          [ngClass]="{ 'btn-primary': type === 'existing' }"
+          (click)="handleBulkQuestion('existing')"
+          role="button"
+          tabindex="0"
+        >
+          Use Existing Questions
+        </span>
+        <span
+          class="btn btn-default font-size-12"
+          [ngClass]="{ 'btn-primary': type === 'new' }"
+          (click)="handleBulkQuestion('new')"
+          role="button"
+          tabindex="0"
+        >
+          Add New Questions
+        </span>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div *ngIf="type == 'new'" class="col-md-8">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5
+              class="panel-title"
+              [innerHTML]="label"
+              id="questionTypeSelectionLabel"
+            ></h5>
+          </div>
+          <div class="panel-body">
+            <add-question
+              [isSingle]="questionForm?.value?.isSingle"
+              (onAdd)="handleAddClick($event)"
+              (onSelectionChange)="handleMultiChange($event)"
+              [editQuestion]="editQuestion"
+              [nestedQuestion]="nestedQuestion"
+            ></add-question>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="type == 'existing'" class="col-md-8">
+        <div
+          class="text-center spinner-display"
+          *ngIf="loadingExistingQuestions"
+          role="status"
+          aria-label="Loading existing questions..."
+        >
+          <app-spinner spinnerHeight="300"></app-spinner>
+        </div>
+        <helper-text *ngIf="existingQuestions.length">
+          Showing {{ existingQuestions.length }} questions only. You can apply
+          filters to narrow your search.
+        </helper-text>
+        <app-dv-selector-list
+          *ngIf="!loadingExistingQuestions"
+          [name]="'resource_list'"
+          [entity_type]="'question'"
+          [entities]="existingQuestions"
+          [filter_params]="filterParams"
+          [isMultiple]="true"
+          [KeepSelectionAfterOnChange]="true"
+          [isExistingQuestion]="true"
+          [reloading]="processing_data"
+          [displayParams]="QuestionSelectorDisplayParams"
+          (onChangeEntity)="handleSelectionChange($event)"
+          (onSearchChange)="handleSearchChange($event)"
+          [useLocalSearch]="false"
+          (onChangeUnSelectEntity)="handleUnSelection($event)"
+          [placeholder]="'Search by question text'"
+          [filters_section]="filters_section"
+          [canSort]="false"
+          [disabledSearchOnEmptyList]="false"
+        >
+          <div isCustomAction role="toolbar" aria-label="Sort filter">
+            <dv-select
+              [(ngModel)]="currentSortFilterSelected"
+              [appendTo]="'body'"
+              [ngModelOptions]="{ standalone: true }"
+              [error]=""
+              [list]="sortOptions"
+              bindLabel="name"
+              bindValue=""
+              class="dropdown-sm space-on-top-2"
+              (onSelectChange)="selectSortCriteriaFilter($event)"
+            ></dv-select>
+          </div>
+          <div isCustomFilter>
+            <div class="space-on-top-lg">
+              <div class="row">
+                <div col="12" class="no-padding">
+                  <form
+                    class="form-horizontal"
+                    name="custom_search_form"
+                    novalidate
+                    autocomplete="off"
+                  >
+                    <div class="no-padding" col="12">
+                      <div
+                        col="12"
+                        class="no-padding"
+                        *ngFor="let criteria of search_criterias; let i = index"
+                      >
+                        <div col="4" class="padding-right-lg">
+                          <dv-form-element
+                            label="Filters"
+                            labelPosition="top"
+                            elementCol="12"
+                            [showRightIcon]="false"
+                            spacing="small"
+                          >
+                            <div>
+                              <dv-select
+                                [(ngModel)]="criteria.criteria_obj"
+                                [ngModelOptions]="{ standalone: true }"
+                                [appendTo]="'body'"
+                                [error]=""
+                                [list]="allSearchFilterOptions"
+                                bindLabel="filter_label"
+                                bindValue=""
+                                (onSelectChange)="
+                                  selectCriteriaObj(criteria, $event)
+                                "
+                              ></dv-select>
+                            </div>
+                          </dv-form-element>
+                        </div>
+                        <div col="3" class="padding-right-lg">
+                          <dv-form-element
+                            label="Condition"
+                            labelPosition="top"
+                            elementCol="12"
+                            [showRightIcon]="false"
+                            spacing="small"
+                          >
+                            <div>
+                              <dv-select
+                                [(ngModel)]="criteria.condition"
+                                [appendTo]="'body'"
+                                [ngModelOptions]="{ standalone: true }"
+                                [error]=""
+                                [list]="criteria.criteria_obj.search_type"
+                                bindLabel="label"
+                                bindValue=""
+                                (onSelectChange)="
+                                  selectCriteria(criteria, i, $event)
+                                "
+                              ></dv-select>
+                            </div>
+                          </dv-form-element>
+                        </div>
+                        <div col="5">
+                          <dv-form-element
+                            label="Value"
+                            labelPosition="top"
+                            elementCol="11"
+                            [showRightIcon]="false"
+                            spacing="small"
+                            role="textbox"
+                            aria-label="Filter value"
+                          >
+                            <div
+                              *ngIf="
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                FILTER_TYPES.BOOLEAN
+                              "
+                            >
+                              <dv-select
+                                [(ngModel)]="criteria.advance_filter_value"
+                                [ngModelOptions]="{ standalone: true }"
+                                [appendTo]="'body'"
+                                [error]=""
+                                [list]="[{ label: 'yes', value: true }]"
+                                bindLabel="label"
+                                bindValue="value"
+                              ></dv-select>
+                            </div>
+                            <input
+                              *ngIf="
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.NUMBER ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.INT ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.NUMERIC ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.INTEGER
+                              "
+                              type="number"
+                              placeholder="Type a value"
+                              [(ngModel)]="criteria.advance_filter_value"
+                              [ngModelOptions]="{ standalone: true }"
+                              dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                              class="form-control"
+                              aria-label="Filter value"
+                              aria-invalid="{{
+                                criteria.advance_filter_value === null
+                                  ? 'true'
+                                  : 'false'
+                              }}"
+                            />
+                            <input
+                              *ngIf="
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.STRING ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.TEXT ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.PARAGRAPH ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.MULTILINE ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.LINK
+                              "
+                              type="text"
+                              id="value_{{ i }}"
+                              placeholder="Type a value"
+                              [(ngModel)]="criteria.advance_filter_value"
+                              [ngModelOptions]="{ standalone: true }"
+                              dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                              class="form-control"
+                              role="textbox"
+                              aria-label="Filter value"
+                              aria-invalid="{{
+                                criteria.advance_filter_value === null
+                                  ? 'true'
+                                  : 'false'
+                              }}"
+                            />
+                            <div
+                              *ngIf="
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.DYNAMIC ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.RANGE ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.DROPDOWN ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.CHECKBOX ||
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.DROP
+                              "
+                            >
+                              <dv-select
+                                [(ngModel)]="criteria.advance_filter_value"
+                                [ngModelOptions]="{ standalone: true }"
+                                [error]=""
+                                [appendTo]="'body'"
+                                [list]="criteria.criteria_obj.options"
+                                bindLabel="value"
+                                bindValue="id"
+                                [clearable]="true"
+                              ></dv-select>
+                            </div>
+                            <div
+                              col="12"
+                              *ngIf="
+                                criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.DATE &&
+                                criteria.condition == 'between'
+                              "
+                              role="group"
+                            >
+                              <app-date-range-picker
+                                [maxDate]="maxDate"
+                                [customDate]="dateRangeForDirectives"
+                                [(ngModel)]="criteria.advance_filter_value"
+                                [ngModelOptions]="{ standalone: true }"
+                                (change)="onDateRangeChange($event, criteria)"
+                                ngDefaultControl
+                                (clearDateFilter)="onClearDateFilter()"
+                                container="modal-container"
+                              ></app-date-range-picker>
+                            </div>
+                            <div
+                              *ngIf="
+                                (criteria.criteria_obj.filter_type.toLowerCase() ==
+                                  FILTER_TYPES.DATE ||
+                                  criteria.criteria_obj.filter_type.toLowerCase() ==
+                                    FILTER_TYPES.DATETIME) &&
+                                criteria.condition != 'between'
+                              "
+                            >
+                              <app-date-picker
+                                placement="bottom"
+                                [value]="criteria.advance_filter_value"
+                                [(ngModel)]="criteria.advance_filter_value"
+                                [ngModelOptions]="{ standalone: true }"
+                                ngDefaultControl
+                                (change)="onDateChange($event, criteria)"
+                                container="modal-container"
+                              ></app-date-picker>
+                            </div>
+                            <a
+                              [ngStyle]="{ top: '8px', right: '-16px' }"
+                              *ngIf="
+                                criteria?.advance_filter_value?.toString() !=
+                                  '' &&
+                                (criteria.advance_filter_value ||
+                                  criteria?.advance_filter_value?.toString() ==
+                                    '0')
+                              "
+                              (click)="removeCurrentFilter(criteria, i)"
+                              class="clickable clear-filter-btn text-danger space-on-left"
+                              role="button"
+                              tabindex="0"
+                              aria-label="remove current filter"
+                            >
+                              <span appIcon name="times"></span>
+                            </a>
+                          </dv-form-element>
+                        </div>
+                      </div>
+                      <div col="12" class="no-padding">
+                        <div offset="10" col="2" class="no-padding">
+                          <div class="pull-right">
+                            <dv-button
+                              class="space-on-right minwidth"
+                              (onClick)="addNewCriteria()"
+                              btnType="default"
+                              [tooltipText]="'Add criteria'"
+                            >
+                              <span appIcon name="plus"></span>
+                            </dv-button>
+                          </div>
+                          <div
+                            class="space-on-bottom-lg space-on-top-lg pull-right text-right"
+                            style="width: 300px"
+                          >
+                            <dv-button
+                              class="space-on-right minwidth"
+                              (onClick)="searchByFilters()"
+                              btnType="primary"
+                            >
+                              Start Searching
+                            </dv-button>
+                            <dv-button
+                              class="space-on-right minwidth"
+                              (onClick)="resetFilters()"
+                              btnType="default"
+                            >
+                              Reset & Search
+                            </dv-button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </app-dv-selector-list>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title" id="modalTitle">Preview of questions</h5>
+          </div>
+          <div class="panel-body preview-overflow-x-auto">
+            <preview-question
+              (onDelete)="handleDeleteClick($event)"
+              (onEdit)="handleEditClick($event)"
+              [questions]="questionList"
+              [parentQuestionType]="
+                nestedQuestion?.responseType ??
+                nestedQuestion?.attributes?.responseType
+              "
+            ></preview-question>
+            <app-empty-state
+              iconName="document-question"
+              message="Hola! Select questions from the left panel, you can preview them here. You can also add multiple questions & save all at once using the save button at the bottom right"
+              *ngIf="!questionList.length"
+            ></app-empty-state>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,97 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-ip-configurations></ng2-ip-configurations> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default relative">
+    <div class="panel-heading">
+        <h5 class="panel-title">IP Address Whitelisting</h5>
+        <div class="panel-controls">
+            <div class="panel-controls-wrapper">
+                <a class="panel-control"
+                   data-ng-click="vm.addIPConfig()"
+                   uib-tooltip="Add new whitelisting">
+                    <icon name="plus"></icon>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <spinner broad-spinner spinner-height='100' data-ng-show="!vm.ip_configurations"></spinner>
+        <div class="space-on-top-lg" col="6" offset="3" data-ng-show="vm.ip_configurations && !vm.ip_configurations.length">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <empty-state message="IP whitelisting not activated"
+                                 action="vm.addIPConfig()"
+                                 action-label="Add IP Whitelisting"></empty-state>
+                </div>
+            </div>
+        </div>
+        <span data-ng-if="vm.ip_configurations && vm.ip_configurations.length">
+            <div class="form-horizontal">
+                <div col="12" class="space-on-top-xl padded-bottom-xl bordered-bottom">
+                    <div col="3" class="pa-lr-lg">
+                        <div col="12">
+                            <label class="control-label" offset="1">Whitelist Name</label>
+                        </div>
+                    </div>
+                    <div col="3" class="pa-lr-lg text-center">
+                        <label class="control-label">Start IP</label>
+                    </div>
+                    <div col="3" class="pa-lr-lg text-center">
+                        <label class="control-label">End IP</label>
+                    </div>
+                    <div col="2" class="pa-lr-lg text-center">
+                        <label class="control-label"># of IPs included</label>
+                    </div>
+                    <div col="1" class="pa-lr-lg text-center">
+                    </div>
+                </div>
+            </div>
+            <div col="12" class="pa-tb-lg bordered-right bordered-bottom bordered-left threshold-item"
+                 data-ng-repeat="configuration in vm.ip_configurations track by $index" data-ng-class="{'active bg-light-gray-panel': configuration.hoverState}" ng-mouseover="configuration.hoverState = true;" ng-mouseleave="configuration.hoverState = false;">
+                <div col="3">
+                    <div col="12">
+                        <h5 class="text-center inline-block lh1-7" col="1"><span class="space-on-right-lg">{{$index+1}}.</span></h5>
+                        <h5 class="inline-block padding-right-xl lh1-7" col="11"><span class="space-on-right-lg">{{configuration.name}}</span></h5>
+                    </div>
+                </div>
+                <div col="3" class="text-center">
+                    <h5>{{configuration.start_ip}}</h5>
+                </div>
+                <div col="3" class="text-center">
+                    <h5>{{configuration.end_ip}}</h5>
+                </div>
+                <div col="2" class="text-center">
+                    <h5 class="text-info">{{configuration.number_of_IPs | number}}</h5>
+                </div>
+                <div col="1" class="space-on-top-3">
+                    <span data-ng-if="configuration.hoverState">
+                        <!--<button class="space-on-top-xm space-on-right-sm btn-sm btn btn-default"
+                            uib-tooltip="Edit IP Whitelisting"
+                            data-ng-click="vm.editIP(rule, $index)"
+                            type="button">
+                            <icon name="pencil"></icon>
+                            </button>-->
+                        <button class="space-on-top-xm btn-sm btn btn-default danger"
+                                uib-tooltip="Remove this IP whitelisting"
+                                data-ng-click="vm.confirmRemoveIP(configuration, $index)"
+                                type="button">
+                            <icon name="trashcan"></icon>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div col="12" class="space-on-top-xxl space-on-bottom clear-padding-right">
+                <div class="pull-left" data-ng-if="vm.currentIP">
+                    <small class="text-muted">Your current IP Address: {{vm.currentIP}}</small>
+                </div>
+                <div class="pull-right">
+                    <button btn-type="primary"
+                            size="sm"
+                            uib-tooltip="Add new whitelisting"
+                            data-ng-click="vm.addIPConfig()">
+                        <icon name="plus"></icon>
+                        <h5 class="space-on-left clear-margin-top clear-margin-bottom inline-block">Add IP Whitelisting</h5>
+                    </button>
+                </div>
+            </div>
+        </span>
+    </div>
+</div>

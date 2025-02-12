@@ -1,0 +1,3 @@
+::ng-deep .modal-open .ng-isolate-scope {
+  z-index: 10000 !important;
+}

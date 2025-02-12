@@ -1,0 +1,152 @@
+<app-modal
+  [title]="edit_mode ? 'Editing Task' : 'Add New Task'"
+  [firstButtonLabel]="edit_mode ? 'Update Task' : 'Add Task'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="taskRef"
+  [isLoading]="loading"
+>
+</app-modal>
+
+<ng-template #taskRef>
+  <form class="form-horizontal" [formGroup]="taskForm" autocomplete="off">
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-sm-10">
+          <dv-form-element
+            [fieldName]="'Task Text'"
+            [showRightIcon]="false"
+            [label]="'Enter Task'"
+            [labelCol]="4"
+            [modelController]="taskForm.get('text')"
+            [errorMessage]="
+              taskForm.get('text').errors?.required
+                ? 'Task Text is required'
+                : 'Please enter valid task name'
+            "
+            [isRequired]="true"
+          >
+            <textarea
+              formControlName="text"
+              id="text"
+              placeholder="Enter Task Text"
+              class="form-control"
+              name="new-task-section"
+              rows="3"
+              autocomplete="off"
+            ></textarea>
+          </dv-form-element>
+        </div>
+        <div class="col-sm-10">
+          <dv-form-element
+            [fieldName]="'Assigned to'"
+            [showRightIcon]="false"
+            [label]="'Assigned To'"
+            [labelCol]="4"
+            [for]="'assigned_to'"
+          >
+            <app-dv-subscriber-selection
+              [id]="'assigned_to'"
+              [selection]="assigned_to_user"
+              (selectionChanged)="actionChanged($event)"
+              [functions]="functions"
+              [singleMode]="true"
+            >
+            </app-dv-subscriber-selection>
+          </dv-form-element>
+        </div>
+
+        <div class="col-sm-10 space-on-right-lg">
+          <dv-form-element
+            [modelController]="taskForm.get('type')"
+            [fieldName]="'Type'"
+            [showRightIcon]="false"
+            [label]="'Type'"
+            [fieldName]="'Type'"
+            [labelCol]="4"
+            [errorMessage]="'Type is required'"
+          >
+            <dv-select
+              [list]="task_types"
+              [loading]="taskTypeLoading"
+              formControlName="type"
+              [id]="'type'"
+              [bindLabel]="'value'"
+              [bindValue]="'id'"
+              [disabled]="false"
+              [clearable]="false"
+              [searchable]="true"
+              [placeholder]="'--Select--'"
+            ></dv-select>
+          </dv-form-element>
+        </div>
+
+        <div class="col-md-10">
+          <dv-form-element
+            [modelController]="taskForm.get('due_date')"
+            [fieldName]="'Due at'"
+            [showRightIcon]="false"
+            [label]="'Due Date'"
+            [labelCol]="4"
+            [isRequired]="true"
+            [for]="'due_date'"
+          >
+            <app-date-picker
+              [id]="'due_date'"
+              [minDate]="minDate"
+              [value]="taskForm.get('due_date').value"
+              (change)="setDateValue($event)"
+            >
+            </app-date-picker>
+          </dv-form-element>
+        </div>
+
+        <div class="col-md-10">
+          <dv-form-element
+            [modelController]="taskForm.get('frequency')"
+            [fieldName]="'Frequency'"
+            [showRightIcon]="false"
+            [elementCol]="0"
+          >
+            <label
+              for="frequency"
+              class="dv-table control-label clear-vertical-padding"
+              col="4"
+              col-type="sm"
+            >
+              <div class="cell">Repeat Frequency (optional)</div>
+              <div class="cell">
+                <span
+                  appIcon
+                  name="info"
+                  class="text-info space-on-left"
+                  [tooltip]="
+                    'Select frequency for a recurring task. A new task will be created at a pre-defined frequency'
+                  "
+                  container="body"
+                  placement="top"
+                >
+                </span>
+              </div>
+            </label>
+            <div col="8" col-type="sm">
+              <dv-select
+                [id]="'frequency'"
+                [list]="frequencies"
+                [loading]="frequencyListLoading"
+                formControlName="frequency"
+                labelForId="frequency"
+                [bindLabel]="'value'"
+                [bindValue]="'id'"
+                [disabled]="false"
+                [clearable]="false"
+                [searchable]="true"
+                [placeholder]="'--Select--'"
+                [aria-label]="'frequency'"
+              ></dv-select>
+            </div>
+          </dv-form-element>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

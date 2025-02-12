@@ -1,0 +1,62 @@
+<app-modal
+  title="Review of the count of fields"
+  [isLoading]="isLoading"
+  [initialTemplate]="previewMappedCountModalRef"
+  [subTitle]="subTitle"
+  [footerTemplate]="footerRef"
+  [isCustomFooter]="true"
+  #modal
+>
+  <ng-template #previewMappedCountModalRef>
+    <div
+      id="modal-content"
+      *ngFor="let type of types; let i = index"
+      class="space-on-bottom"
+    >
+      <div
+        *ngIf="type.sheet.columnHeaders?.length"
+        class="space-on-bottom wrapper"
+        [class.border-bottom]="i !== types?.length - 1"
+      >
+        <dv-label
+          [label]="i + 1 + '. ' + type.panelName"
+          type="bold"
+          size="heading"
+        ></dv-label>
+        <div class="space-on-left-xxl">
+          <dv-label
+            [label]="
+              type.sheet.mappedCount +
+              ' out of ' +
+              type.sheet.columnHeaders?.length
+            "
+            type="bold"
+            color="primary"
+            size="heading"
+          ></dv-label>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #footerRef>
+    <div class="pull-left">
+      <dv-label
+        [label]="'Total Mapped Fields: ' + totalMappedCount"
+        type="bold"
+        size="heading"
+      ></dv-label>
+    </div>
+    <div class="pull-right">
+      <dv-button btnType="default" (onClick)="closeModal()">
+        {{ cancelButtonText }}
+      </dv-button>
+      <dv-button
+        btnType="primary"
+        (onClick)="onFirstClick()"
+        class="space-on-left"
+      >
+        Upload
+      </dv-button>
+    </div>
+  </ng-template>
+</app-modal>

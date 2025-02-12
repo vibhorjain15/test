@@ -1,0 +1,22 @@
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Templates</h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          data-ng-click="vm.createNewTemplate()"
+          uib-tooltip="Create New Template"
+        >
+          <icon name="plus"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <dv-grid grid-resource="vm.templates" grid-name="'templates'"></dv-grid>
+  </div>
+</div>
+
+<ng2-template-grid data-ng-if="vm.Utils.isAngular()"></ng2-template-grid>

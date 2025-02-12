@@ -1,0 +1,140 @@
+<div class="container-panel panel panel-default space-on-bottom-xxl">
+  <div class="panel-heading">
+  <span>
+    <icon name="overview" class="space-on-right align-middle"></icon>
+    <span class="align-middle">
+      Customize Summary Panel
+    </span>
+  </span>
+  </div>
+
+  <div class="panel-body rb-fund-overview-settings">
+
+    <div class="row">
+      <div class="form-group" col="7">
+        <label uib-tooltip="Keep this empty if you don't want a title for this section">Title (Optional)</label>
+
+        <div>
+          <input type="text"
+                 class="form-control"
+                 focus-me="true"
+                 select-all-text
+                 data-ng-model-options="{ debounce: { 'default': 300 } }"
+                 data-ng-model="component.options.title">
+        </div>
+      </div>
+
+      <div col="5">
+        <rb-component-width></rb-component-width>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select Template</label>
+
+      <div>
+        <select class="form-control"
+                chosen
+                data-ng-change="templateChanged()"
+                data-ng-model="templateId"
+                data-ng-options="template.templateInfo.id as template.templateInfo.name for template in templatesList">
+          <option value=""></option>
+        </select>
+      </div>
+    </div>
+
+    <div data-ng-if="selectedInfoModelIdx != -1 && component.options.templateId">
+      <form novalidate>
+        <div class="panel panel-default relative">
+          <div class="panel-body">
+
+            <div class="row space-on-bottom-xl" data-ng-if="component.options.templateId">
+              <div col="6">
+                <form-group field-name="Icon" tooltip-placement="left" control-selector="ui-select">
+                  <label>Select Icon</label>
+
+                  <div class="col-md-12">
+                    <ui-select ng-model="selectedInfoModel.icon" on-select="updateInfoList('icon', selectedInfoModelIdx, true)" theme="bootstrap" title="Choose Icon" ng-required="true">
+                      <ui-select-match placeholder="Select Icon">
+                        <div class="relative">
+                          <i class="dvi space-on-right va-baseline" data-ng-class="'dvi-' + $select.selected.icon"></i>
+                          <span class="text-capitalize va-text-bottom" ng-bind-html="$select.selected.name"></span>
+                        </div>
+                      </ui-select-match>
+                      <ui-select-choices repeat="icon.icon as icon in iconList | filter: $select.search">
+                        <div class="relative">
+                          <icon class="space-on-right" name="{{icon.icon}}"></icon>
+                          <span class="text-capitalize" ng-bind-html="icon.name | highlight: $select.search"></span>
+                        </div>
+                      </ui-select-choices>
+                    </ui-select>
+                  </div>
+                </form-group>
+              </div>
+
+              <div col="6">
+                <form-group field-name="Label" tooltip-placement="right">
+                  <label>Define Label</label>
+
+                  <div class="col-md-12">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Label text"
+                           required
+                           data-ng-change="updateInfoList('label', selectedInfoModelIdx, true)"
+                           data-ng-model-options="{ debounce: { 'default': 300 } }"
+                           data-ng-model="selectedInfoModel.label">
+                  </div>
+                </form-group>
+              </div>
+            </div>
+
+            <div class="row space-on-bottom-xl">
+              <div col="12">
+                <form-group field-name="Question" tooltip-placement="left" data-ng-if="questionsList.length">
+                  <label>Select Question</label>
+
+                  <div class="col-md-12">
+                    <select class="form-control"
+                            chosen required
+                            data-ng-change="updateInfoList('question', selectedInfoModelIdx, true)"
+                            data-ng-model="selectedInfoModel.questionId"
+                            data-ng-options="question.id as question.text for question in questionsList">
+                      <option value=""></option>
+                    </select>
+                  </div>
+                </form-group>
+              </div>
+            </div>
+
+            <div class="form-group pull-right">
+              <!--<button btn-type="default"
+                      data-ng-if="(selectedInfoModel.icon && selectedInfoModel.label && selectedInfoModel.questionId)"
+                      data-ng-click="resetInfoModel()">
+                Close
+              </button>-->
+              <button btn-type="default"
+                      data-ng-if="!(selectedInfoModel.icon && selectedInfoModel.label && selectedInfoModel.questionId)"
+                      data-ng-click="resetInfoModel(true)">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-group" data-ng-if="templateId">
+      <button btn-type="primary" data-ng-click="addInfoModel()" data-ng-if="infoList.length < 6" data-ng-hide="(selectedInfoModelIdx != -1 && component.options.templateId) && !(selectedInfoModel.icon && selectedInfoModel.label && selectedInfoModel.questionId)">
+        <icon name="plus"></icon>
+        Add {{infoList.length < 1 ? 'New' : 'Another'}} Component
+      </button>
+    </div>
+
+    <div class="form-group" data-ng-if="infoList.length >= 6">
+      <p class="text-warning">
+        Maximum of 6 components are allowed.
+      </p>
+    </div>
+  </div>
+</div>

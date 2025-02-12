@@ -1,0 +1,95 @@
+export interface Review {
+  id: number;
+  entity_id: number;
+  entity_type: string;
+  response_audit_id: number;
+  review_id: number;
+  review_step_id: number;
+  review_step_order: number;
+  assigned_to_user_id: number;
+  assigned_to_function_id?: any;
+  assigned_by: number;
+  assigned_at: string;
+  completed_by: number;
+  completed_at: string;
+  status: string;
+  action_type?: any;
+  note?: any;
+}
+
+export interface Audit {
+  id: number;
+  response_id: number;
+  section_id: number;
+  question_id: number;
+  created_by: number;
+  created_at: string;
+  sequence_id: number;
+  text_value?: any;
+  dateResponse?: any;
+  numericResponseA?: any;
+  numericResponseB?: any;
+  booleanResponse: boolean;
+  textResponse: any;
+  listValueID;
+  response_source?: any;
+  dueDiligence_id: number;
+  returnTable_Id?: any;
+  aumTable_Id?: any;
+  is_na: boolean;
+  is_wip: boolean;
+  score?: any;
+  review_status: string;
+  review: Review;
+  grid_responses?: any;
+  selected_options?: any;
+  audits?: any;
+  responseDisplay?: any;
+  followup_id: number;
+}
+
+export interface ReviewHistory {
+  id: number;
+  section_id: number;
+  question_id: number;
+  created_by: number;
+  created_at: string;
+  sequence_id: number;
+  text_value?: any;
+  dateTime_value?: any;
+  numeric_value_a?: any;
+  numeric_value_b?: any;
+  bool_value: boolean;
+  response_source?: any;
+  dueDiligence_id: number;
+  deleted: boolean;
+  is_active?: any;
+  returnTable_Id?: any;
+  aumTable_Id?: any;
+  is_na: boolean;
+  is_wip: boolean;
+  score?: any;
+  review_status: string;
+  selected_choices_str?: any;
+  selected_choices: any[];
+  response_type: string;
+  rules: any[];
+  rating_mapping?: any;
+  grid_responses?: any;
+  selected_options?: any;
+  audits: Audit[];
+  section_name: string;
+  parent_section_id: number;
+  parent_section_name: string;
+  question_text: string;
+  grid_id: number;
+  grid_version?: any;
+  responseDisplay?: any;
+  showDetails?: boolean;
+  review: Review;
+  created_by_id?: number;
+  textResponse: string;
+  listValueID: any;
+  showFollowupLabel: boolean;
+  is_submitted: boolean;
+}

@@ -1,0 +1,52 @@
+<form class="form-horizontal" name="vm.workflow_step_form" novalidate>
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Manage Workflow Step(s)
+
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div data-ng-if="!vm.useStepBuilder">
+            <form-group field-name="Step Name">
+                <label for="stepname" class="control-label" col="2">Name</label>
+
+                <div col="8" col-type="sm">
+                    <input type="text" class="form-control" id="name" name="name"
+                        dv-restrict-input="{type: 'avoidFirstSplCharacter'}" data-ng-model="vm.step.name" required>
+                </div>
+            </form-group>
+
+            <form-group field-name="Step Description">
+                <label for="stepdescription" class="control-label" col="2">Description</label>
+
+                <div col="8" col-type="sm">
+                    <textarea data-ng-model="vm.step.description"
+                        class="form-control"></textarea>
+                </div>
+            </form-group>
+        </div>
+        <div data-ng-if="!vm.edit_mode && vm.useStepBuilder">
+            <p class="alert alert-info">Please type your steps in textbox - <b>one step per line</b></p>
+            <form-group field-name="Bulk Steps Addition">
+                <dv-bulk-list-builder id-key="'workflow_id'" text-key="'name'" ng-model="vm.steps" current-length="vm.allSteps.length" main-id="vm.workflowId" type="'Step'" value-required="vm.useStepBuilder"></dv-bulk-list-builder>
+                <!-- <dv-step-builder ng-model="vm.steps" current-length="vm.allSteps.length" workflow-id="vm.workflowId" value-required="vm.useStepBuilder"></dv-step-builder> -->
+            </form-group>
+        </div>
+        <div data-ng-if="!vm.edit_mode">
+            <dv-checkbox
+                data-ng-model="vm.useStepBuilder">
+                <dv-checkbox-label>
+                    <span>Use step builder instead</span>
+                </dv-checkbox-label>
+            </dv-checkbox>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary"
+            button-loader="vm.saving" data-ng-click="vm.save()">{{vm.edit_mode ? 'Update Step' : vm.useStepBuilder?'Add Steps':'Add Step'}}</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,126 @@
+<side-panel-wrapper
+  [title]="'View Rules'"
+  [isLoading]="buttonLoader"
+  (onCancelClick)="onCancel()"
+  [isFooter]="false"
+>
+  <div>
+    <div class="notes-helper">
+      <helper-text class="helper-text">
+        These rules are internal to your team and are not visible externally
+      </helper-text>
+    </div>
+
+    <div
+      class="more-text view-rules-title-margin"
+      role="region"
+      aria-label="Question Text"
+    >
+      <span>
+        <b class="note-container-heading">Question: </b>
+        <span [innerHTML]="question?.text"></span>
+      </span>
+    </div>
+
+    <app-spinner
+      class="space-on-top-lg"
+      [broadSpinner]="true"
+      spinnerHeight="80"
+      *ngIf="loading"
+    ></app-spinner>
+
+    <div *ngIf="!loading" aria-live="polite" role="list">
+      <div
+        *ngFor="let rule of ruleList"
+        role="listitem"
+        aria-label="Rule Container"
+      >
+        <dv-divider horizontalMargin="none" aria-hidden="true"></dv-divider>
+        <div
+          class="view-rule-container"
+          role="region"
+          aria-label="Rule Content"
+        >
+          <span
+            *ngIf="rule.isActive"
+            appIcon
+            name="check-circle"
+            [ngStyle]="{ color: ColorTheme.green }"
+            size="lg"
+            tooltip="This rule has been applied"
+            role="status"
+            aria-label="Rule Applied"
+          ></span>
+          <span
+            *ngIf="!rule.isActive"
+            appIcon
+            name="remove"
+            [ngStyle]="{ color: ColorTheme.grey }"
+            size="lg"
+            tooltip="This rule has not been applied"
+            role="status"
+            aria-label="Rule Not Applied"
+          ></span>
+          <div aria-label="Rule Conditions">
+            <div *ngFor="let condition of rule.conditionTexts; let i = index">
+              <span *ngIf="i == 0">If</span> {{ condition }}
+              <div
+                class="text-center space-on-top space-on-bottom"
+                *ngIf="i != rule.conditionTexts.length - 1"
+              >
+                <span class="label label-default">{{ rule.operator }}</span>
+              </div>
+            </div>
+            <div
+              class="view-rule-container-tags space-on-top-lg"
+              *ngIf="rule.isFlagActive || rule.isScoreActive || rule.isNARating"
+            >
+              <span *ngIf="rule.isFlagActive">
+                <span class="space-on-right text-muted italic">Flag</span>
+                <span
+                  appIcon
+                  name="flag"
+                  color="red"
+                  role="status"
+                  tooltip="The response was flagged by this rule"
+                  class="space-on-right-xxl"
+                  size="lg"
+                  aria-label="The response was flagged by this rule"
+                ></span>
+              </span>
+              <span
+                class="space-on-right text-muted italic"
+                *ngIf="rule.isScoreActive"
+                >{{ isScoreband ? "Score" : "Rating" }}</span
+              >
+              <dv-rating
+                [value]="rule.score"
+                [readonly]="true"
+                [max]="ratingScales.length"
+                [ratingScales]="ratingScales"
+                *ngIf="rule.isScoreActive && !isScoreband"
+                tooltip="The rating was assigned to the response by this rule"
+                class="rating-scale"
+              ></dv-rating>
+              <dv-rating-chip
+                [color]="getColorCode(rule.score)"
+                *ngIf="rule.isScoreActive && isScoreband"
+                [label]="rule.score"
+                textColor="white"
+                tooltip="The score was assigned to the response by this rule"
+              >
+              </dv-rating-chip>
+              <span *ngIf="rule.isNARating"
+                ><small class="text-muted">*Excluded from rating*</small></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-empty-state
+        message="No rules available for this question."
+        *ngIf="!ruleList.length"
+      ></app-empty-state>
+    </div>
+  </div>
+</side-panel-wrapper>

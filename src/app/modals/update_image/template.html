@@ -1,0 +1,56 @@
+<form name="vm.document_update_form" data-ng-submit="vm.submit()" class="form-horizontal">
+  <div class="modal-header">
+    <h3 class="modal-title">Upload New Image
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="row clearfix">
+      <div col="6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Cropping Area
+          </div>
+
+          <div class="panel-body overflow-y-scroll">
+            <label class="image-box text-muted text-center clickable" for="select-image" data-ng-if="!vm.imageDataURI">
+              <icon name="image" size="4x"></icon>
+              <p>
+                <strong>Click to select image file</strong>
+              </p>
+              <input type="file" id="select-image" accept="image/*" file-input-change="vm.fileChangeCallback">
+            </label>
+
+            <div data-ng-if="vm.imageDataURI" class="image-cropper" data-ng-init="vm.initCropper('cropImg')">
+              <div id="mainImgContainer">
+                <img id="cropImg" data-ng-src="{{vm.imageDataURI}}" >
+              </div>
+            </div>
+
+            <span class="italic text-muted" data-ng-if="vm.imageDataURI">Image cannot be smaller than 100px &times; 100px</span>
+          </div>
+        </div>
+      </div>
+
+      <div col="6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            Preview
+          </div>
+          <div class="panel-body preview-panel">
+            <div class="imgPreview"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.savingImage">Update</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

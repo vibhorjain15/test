@@ -1,0 +1,27 @@
+.btndel {
+  border-radius: unset !important;
+  height: 39px !important;
+  background-color: #e8e8e8 !important;
+  border-left: 1px solid #ddd;
+}
+.btn {
+  font-size: 11px;
+}
+.overflow-clip-firefox {
+  overflow: clip; /*this works in firefox only*/
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .zoomClass {
+    zoom: 0.7;
+  }
+}
+@media screen and (min-width: 1024px) and (max-width: 1350px) {
+  .zoomClass {
+    zoom: 0.8;
+  }
+}
+@media screen and (min-width: 1350px) {
+  .zoomClass {
+    zoom: 1;
+  }
+}

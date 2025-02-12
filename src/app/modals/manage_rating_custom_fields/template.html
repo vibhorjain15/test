@@ -1,0 +1,88 @@
+<div class="form-horizontal">
+    <div class="modal-header">
+      <h3 class="modal-title">
+        Manage Rating
+  
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+  
+    <div class="modal-body rating-custom-fields-review">
+      <div data-ng-if="vm.rating" class="bordered-bottom padded-lg">
+        <div class="inline-block" data-ng-if="vm.rating.mode == vm.ratingConstants.Absolute">
+          <dv-rating data-ng-model="vm.rating.attributes.rating_value"
+                          readonly="!vm.checkConditionsForDisplayingReview('editable')"
+                          max="{{vm.ratingScales.length}}"
+                          uib-tooltip="{{vm.rating.attributes.description}}"
+                          rating-scales="vm.ratingScales"></dv-rating>
+        </div>
+        <div class="inline-block" data-ng-if="vm.rating.mode == vm.ratingConstants.ScoreBand">
+            <dd-editable-only-score
+                total="100"
+                keep-watcher-on="true"
+                readonly="!vm.checkConditionsForDisplayingReview('editable')"
+                na-value="vm.naValue"
+                rating-scale="vm.ratingScales"
+                score="vm.rating.attributes.score_value"></dd-editable-only-score>
+        </div>
+        <div class="verify-controls inline-block" data-ng-if="vm.enableReview">
+          <span data-ng-if="vm.checkConditionsForDisplayingReview('edit')" uib-tooltip="{{vm.response.attributes.is_WIP?'Response is draft':'Edit Response'}}" tooltip-placement="auto top">
+              <button btn-type="transparent"
+                      data-ng-click="vm.editResponse()">
+                  <icon name="pencil" class="font-size-18"></icon>
+              </button>
+          </span>
+          <span data-ng-if="vm.checkConditionsForDisplayingReview('accept')" uib-tooltip="Accept" tooltip-placement="auto top">
+              <button btn-type="transparent"
+                      data-ng-click="vm.verifyRequest()">
+                  <icon name="check2" class="font-size-18"></icon>
+              </button>
+          </span>
+          <span data-ng-if="vm.checkConditionsForDisplayingReview('sendForVerify')" uib-tooltip="{{vm.response.attributes.is_WIP ? 'Response is marked as draft' : 'Send for Review'}}" tooltip-placement="auto top">
+              <button btn-type="transparent"
+                      data-ng-click="vm.reviewAgain()">
+                  <icon name="arrow-back" class="font-size-18"></icon>
+              </button>
+          </span>
+          <span data-ng-if="vm.checkConditionsForDisplayingReview('addverifier') || vm.checkConditionsForDisplayingReview('updateverifier')"
+                  uib-tooltip="{{vm.rating.verifier?'Assigned to '+vm.Utils.getAssignedToName(vm.rating.verifier):'Add Reviewer'}}" tooltip-placement="auto top">
+              <button btn-type="transparent"
+                      tabindex="-1"
+                      data-ng-class="{'qa-na-active': vm.reviewButtonShow['updateverifier'],'disabled':!vm.rating.attributes[vm.value_attr]}"
+                      data-ng-click="vm.openVerifierModal()">
+                  <icon class="font-size-18" name="user-check"></icon>
+              </button>
+          </span>
+          <span data-ng-if="vm.checkConditionsForDisplayingReview('decline')" uib-tooltip="{{vm.response.attributes.is_WIP?'Response is marked as draft':isReadonlyEditable?'Send back to author':'Reject Request'}}" tooltip-placement="auto top">
+              <button btn-type="transparent"
+                      data-ng-click="vm.rejectRating()">
+                  <icon name="mail-forward" class="font-size-18"></icon>
+              </button>
+          </span>
+        </div>
+      </div>
+      <field-selection custom-url="'investment_rating.types'" fieldselection-form="vm.fieldselectionForm" on-close="vm.cancel()" disabled="false" fields="vm.customFields" readonly="!vm.checkConditionsForDisplayingReview('editable')" enable-tracking="vm.enable_tracking"></field-selection>
+
+        <div class="space-on-top text-right">
+            <small class="text-success" data-ng-if="(vm.rating.attributes.rating_status == vm.responseStatus.REVIEWSUCCESS) && vm.rating.verifier.attributes.is_complete">
+                Last Reviewed by {{vm.rating.verifier.attributes.completed_by_name}} on {{vm.rating.verifier.attributes.completed_at | date}}
+            </small>
+            <span class="label label-danger" uib-tooltip="Revision requested by {{vm.rating.verifier.attributes.completed_by_name}} on {{vm.rating.verifier.attributes.completed_at | date}}" tooltip-placement="auto top" ng-if="(vm.rating.attributes.rating_status == vm.responseStatus.REVIEWFAILED) && vm.rating.verifier.attributes.is_complete">REVISION REQUESTED</span>
+            <span data-ng-if="vm.checkConditionsForDisplayingReview('undo')">
+                <span class="label label-default clickable" uib-tooltip="Undo Review" data-ng-click="vm.undoVerification()">
+                    <icon name="undo"></icon>
+                    {{vm.getRemainingTime(vm.rating.timeDiff)}}
+                </span>
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button btn-type="primary" button-loader="vm.saving" ng-disabled="vm.saving || vm.loading_custom_fields || vm.readonly" data-ng-click="vm.saveCustomFields()">Save</button>
+        <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+      </div>
+</div>

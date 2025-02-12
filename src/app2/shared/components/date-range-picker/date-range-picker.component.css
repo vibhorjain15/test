@@ -1,0 +1,15 @@
+.date-picker-range-icon {
+  position: relative;
+  right: 2em;
+  top: 0.1em;
+  font-size: 1.2em;
+  pointer-events: none;
+}
+
+.range-picker-border-radius {
+  border-radius: 4px;
+}
+
+.datepicker-group > .form-control {
+  background: #fff !important;
+}

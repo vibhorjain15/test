@@ -1,0 +1,3 @@
+:host ::ng-deep dv-checkbox label {
+  margin: 0 !important;
+}

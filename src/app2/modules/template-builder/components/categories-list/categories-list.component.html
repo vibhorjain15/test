@@ -1,0 +1,168 @@
+<dv-segment
+  [title]="title"
+  (onSearchChange)="handleSearchChange($event)"
+  [actionIconsList]="actionIconsList"
+  [actionButtonsList]="actionButtonsList"
+  (handleIconClick)="handleActionIconClick($event)"
+>
+  <div class="text-center spinner-display" *ngIf="loading">
+    <app-spinner spinnerHeight="300"></app-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngFor="let data of categoryData; let postion = index" dvListBox>
+      <dv-move-row
+        [iconList]="data.categoryIcons"
+        [isActive]="activeSubCat == data.id"
+        [title]="data.label | searchHighlight : search"
+        (onRowClick)="handleParentRowClick(data)"
+        (onIconClick)="handleIconClick($event, 'catagory', data)"
+        [elemPosition]="postion"
+        [list]="categoryData"
+        id="category"
+        DvDragDrop
+        (returnUpdatedList)="handleUpdateList($event, postion)"
+        [showIconsAlways]="true"
+      ></dv-move-row>
+      <hr />
+      <a class="add-sub" *ngIf="data.list.length == 0">
+        <span
+          appIcon
+          class="icon-link"
+          name="plus"
+          tooltip="Add Sub-category"
+          container="body"
+        ></span>
+        <span (click)="handleAddSubCatClick($event, data)">
+          Add Sub-category
+        </span>
+      </a>
+      <accordion
+        *ngIf="data.list.length > 0"
+        [isAnimated]="true"
+        [destroyOnHide]="false"
+      >
+        <accordion-group [isOpen]="openMap[data.id]" panelClass="customClass">
+          <a
+            class="accordion-header"
+            accordion-heading
+            type="button"
+            (click)="handleOnClick($event, data)"
+          >
+            <div *ngIf="!data.isMultiSelect">
+              <span
+                *ngIf="data.isOpen"
+                appIcon
+                class="icon-link"
+                name="chevron-down"
+                aria-hidden="true"
+              ></span>
+              <span
+                *ngIf="!data.isOpen"
+                appIcon
+                class="icon-link"
+                name="chevron-up"
+                aria-hidden="true"
+              ></span>
+
+              <span> Sub-categories ({{ data.list.length }})</span>
+            </div>
+            <dv-checkbox
+              *ngIf="data.isMultiSelect"
+              [(ngModel)]="data.isAllSelect"
+              name="customize_intro"
+              [label]="'Sub-categories ' + '(' + data.list.length + ')'"
+              [id]="data.id"
+              (onValChange)="handleAllSelect($event, data)"
+              ariaLabel="Select all Sub-categories"
+            >
+            </dv-checkbox>
+            <div class="icon-wrapper">
+              <span
+                *ngIf="!data.isMultiSelect"
+                appIcon
+                class="icon-link move-icon-size"
+                name="move"
+                tooltip="Select Sub-category(s) to move"
+                container="body"
+                (click)="handleMoveClick($event, data)"
+              ></span>
+              <span
+                *ngIf="data.isMultiSelect"
+                appIcon
+                container="body"
+                class="icon-link close-icon-size"
+                name="close"
+                (click)="handleMoveClick($event, data)"
+                tooltip="Click to Cancel"
+              ></span>
+              <span
+                *ngIf="!data.isMultiSelect"
+                appIcon
+                class="icon-link"
+                (click)="handleAddClick($event, data)"
+                name="plus"
+                tooltip="New Sub-category"
+                container="body"
+              ></span>
+              <span
+                *ngIf="data.isMultiSelect"
+                class="icon-link"
+                [class.disable]="!data.activeNext"
+                (click)="handleMoveSelectedClick($event, data)"
+                >Move</span
+              >
+            </div>
+          </a>
+          <ng-container *ngIf="!data.isMultiSelect">
+            <div
+              *ngFor="let subData of data.list; let postion = index"
+              [elemPosition]="postion"
+              [list]="data.list"
+              [id]="data.label + data.id"
+              DvDragDrop
+              (returnUpdatedList)="
+                handleUpdateSubList($event, data.id, postion)
+              "
+            >
+              <dv-move-row
+                [iconList]="data.subCategoryIcons"
+                [isActive]="activeRow == subData.id"
+                [title]="
+                  subData.label + ' \(' + subData.question_counts + '\)'
+                    | searchHighlight : search
+                "
+                (onRowClick)="handleRowClick(subData)"
+                (onIconClick)="
+                  handleIconClick($event, 'sub-catagory', data, subData)
+                "
+                [showIconsAlways]="true"
+              ></dv-move-row>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="data.isMultiSelect">
+            <dv-checkbox-group>
+              <div *ngFor="let subData of data.list; let postion = index">
+                <dv-checkbox
+                  [(ngModel)]="subData.isSelected"
+                  name="customize_intro"
+                  labelClass="break-all"
+                  [label]="subData.label"
+                  [id]="subData.id"
+                  (onValChange)="handleCatCheckbox($event, subData, data)"
+                  [ariaLabel]="subData.label"
+                >
+                </dv-checkbox>
+              </div>
+            </dv-checkbox-group>
+          </ng-container>
+        </accordion-group>
+      </accordion>
+    </div>
+    <div *ngIf="!categoryData.length" class="space-on-top">
+      <app-empty-state
+        message="No categories and sub-categories found"
+      ></app-empty-state>
+    </div>
+  </ng-container>
+</dv-segment>

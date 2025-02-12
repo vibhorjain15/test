@@ -1,0 +1,9 @@
+<div class="notification-panel-wrapper" *ngIf="canShow">
+  <div class="left">
+    <span appIcon [name]="icon" color="Notification-Orange" customSize="huge"> </span>
+    <span [innerHTML]="text | dvSafeHtml"> </span>
+  </div>
+  <div class="right clickable">
+    <span appIcon name="close" size="lg" (click)="handleOnClose()"></span>
+  </div>
+</div>

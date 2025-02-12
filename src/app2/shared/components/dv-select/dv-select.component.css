@@ -1,0 +1,56 @@
+:host ::ng-deep .has-error .ng-select-container {
+  border-color: #cd3333;
+}
+:host ::ng-deep .has-error ng-dropdown-panel {
+  border-top-color: #e6e6e6;
+  border-color: #cd3333;
+}
+
+:host ::ng-deep .has-success .ng-select-container {
+  border-color: #43c59e;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+:host ::ng-deep .has-success ng-dropdown-panel {
+  border-color: rgb(136, 204, 222);
+  border-top-color: #e6e6e6;
+}
+
+:host ::ng-deep .ng-select .ng-select-container {
+  cursor: pointer;
+}
+
+/* fixed color contrast issue known issue selected value color could not determined */
+:host
+  ::ng-deep
+  .ng-select-container.ng-has-value
+  > .ng-value-container
+  > .ng-value
+  > .padding-5 {
+  position: relative;
+  z-index: 1000;
+}
+
+:host
+  ::ng-deep
+  .ng-select
+  .ng-select-container
+  .ng-value-container
+  .ng-input
+  > input {
+  cursor: inherit;
+}
+
+.premium-icon {
+  margin-left: auto;
+}
+
+.item-class {
+  display: flex;
+  align-items: center;
+}
+
+.white-space-normal {
+  white-space: normal;
+  word-break: break-all;
+}

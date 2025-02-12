@@ -1,0 +1,80 @@
+<app-modal
+  (onCancelClick)="handleCancelClick($event)"
+  (onFirstClick)="proceedToConfigure($event)"
+  (onSecondClick)="updateAccessLevel($event)"
+  [firstButtonLabel]="
+    isUpdating ? 'Edit Configurations' : 'Proceed To Configure'
+  "
+  [secondButtonLabel]="isUpdating ? 'Save Changes' : ''"
+  [title]="
+    isUpdating
+      ? 'Edit Access Level Description'
+      : 'New Access Level Description'
+  "
+  [initialTemplate]="AccessLevelDescriptionModal"
+  [isFirstButtonDisabled]="loading"
+  [isSecondaryLoading]="updatingAccessLevel || addingNewAccessLevel"
+  cancelButtonLabel="Cancel"
+>
+  <ng-template #AccessLevelDescriptionModal>
+    <form class="form-horizontal" [formGroup]="accessForm" autocomplete="off">
+      <div class="text-center spinner-display" *ngIf="loading">
+        <app-spinner spinnerHeight="300"></app-spinner>
+      </div>
+      <div *ngIf="!loading">
+        <dv-form-element
+          label="Name"
+          elementCol="5"
+          labelPosition="top"
+          isRequired="true"
+          [modelController]="accessForm.get('name')"
+          [showRightIcon]="false"
+          [errorMessage]="
+            accessForm.get('name').touched &&
+            accessForm.get('name').errors?.maxlength
+              ? 'Name can not be more than 100 characters long'
+              : accessForm.get('name').touched &&
+                accessForm.get('name').errors?.pattern
+              ? 'Only alphabets, letters, and spaces in between are allowed.'
+              : accessForm.get('name').touched &&
+                accessForm.get('name').errors?.required
+              ? 'Name is required'
+              : ''
+          "
+        >
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            required
+            id="name"
+          />
+        </dv-form-element>
+        <dv-form-element
+          elementCol="12"
+          label="Description"
+          labelPosition="top"
+          isRequired="true"
+          [modelController]="accessForm.get('description')"
+          [showRightIcon]="false"
+          [errorMessage]="
+            accessForm.get('description')?.errors?.required
+              ? getErrorMessage('description', 'Description')
+              : accessForm?.get('description')?.errors?.containsHtml
+              ? getErrorMessage('description', 'Description')
+              : null
+          "
+        >
+          <textarea
+            type="text"
+            class="form-control"
+            formControlName="description"
+            rows="4"
+            required
+            id="Description"
+          ></textarea>
+        </dv-form-element>
+      </div>
+    </form>
+  </ng-template>
+</app-modal>

@@ -1,0 +1,550 @@
+<dv-segment [isSearch]="false" [isAdd]="false">
+  <div
+    class="question-wrapper"
+    [class.question-wrapper-mobile-css]="
+      device.isMobileDevice || device.isTabletDevice
+    "
+  >
+    <div class="diligence-text-center" *ngIf="!diligenceData">
+      <app-spinner spinnerHeight="300"></app-spinner>
+    </div>
+    <ng-container *ngIf="diligenceData">
+      <div
+        class="question-left-wrapper"
+        [class.question-left-wrapper-mobile-css]="
+          device.isMobileDevice || device.isTabletDevice
+        "
+      >
+        <div class="label-group">
+          <dv-label
+            size="big"
+            [tooltip]="
+              related_diligences.length > 0
+                ? 'select ' +
+                  related_diligences.length +
+                  ' related questionnaire'
+                : diligenceName
+            "
+            [label]="diligenceName"
+            class="more-text"
+            [adaptivePosition]="false"
+          >
+          </dv-label>
+          <dv-label
+            align="left"
+            color="disabled"
+            label="Last updated {{ diligence.last_updated_at | dvDate }}"
+          >
+          </dv-label>
+        </div>
+        <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+
+        <div class="label-group">
+          <span class="align-middle display-block">Status</span>
+          <span diligenceStatus [status]="diligence.status"></span>
+        </div>
+
+        <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+
+        <div class="label-group">
+          <dv-label label="As of Date" color="disabled"> </dv-label>
+          <dv-label
+            label="{{ diligence.as_of_date | dvDate : ['isLocaleDate'] }}"
+            size="large"
+            color="success"
+          >
+          </dv-label>
+        </div>
+      </div>
+      <div
+        *ngIf="!isSearch"
+        class="question-icon-wrapper"
+        [class.question-icon-wrapper-mobile-css]="
+          device.isMobileDevice || device.isTabletDevice
+        "
+      >
+        <ng-container *ngIf="selectedDisclaimer?.id > 0">
+          <dv-logo-label
+            (onClick)="handleViewDisclaimer()"
+            icon="disclaimer"
+            label="View Disclaimer "
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !(
+              diligence.entity_type == 'Fund' &&
+              diligence.linked_duediligence_id
+            ) &&
+            diligence.entity_type != 'Strategy' &&
+            related_diligences.length > 0
+          "
+        >
+          <dv-logo-label
+            (onClick)="handleRelatedProjects()"
+            icon="vehicle-car"
+            label="View Vehicle Projects "
+            [count]="related_diligences.length"
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            ((diligence.entity_type == 'Fund' &&
+              diligence.linked_duediligence_id) ||
+              diligence.entity_type == 'Strategy') &&
+            related_diligences.length > 0
+          "
+        >
+          <dv-logo-label
+            (onClick)="handleRelatedProjects()"
+            icon="fund"
+            label="View Product Projects "
+            [count]="related_diligences.length"
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !diligence.notVisible &&
+            !diligence.isLocked &&
+            !diligence.isReadOnly &&
+            wipCount > 0
+          "
+        >
+          <dv-dropdown
+            type="default"
+            (onDropdownClick)="wipDropDownClick($event)"
+            [toggleDropDown]="toggleWIP"
+            [dropDownList]="wipList"
+            tooltip="Finalize draft responses"
+            [adaptivePosition]="false"
+            container="body"
+            iconName="under-construction-2"
+            (onDropdownToggle)="toggleWIP = $event"
+            iconSize="large"
+            [isIconLabel]="true"
+            dropdownPlacement="bottom"
+            [hoverTransform]="true"
+          >
+            <span dropdownLabelContent class="label-custom"
+              >Finalize Drafts</span
+            >
+          </dv-dropdown>
+
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !diligence.notVisible &&
+            !(diligence.isLocked || diligence.isReadOnly)
+          "
+        >
+          <dv-logo-label
+            (onClick)="
+              handleAutoFillDropDownClick({
+                name: 'responses',
+                key: 'responses'
+              })
+            "
+            icon="auto-fill"
+            *ngIf="
+              (diligence?.diligence_type != 'dd_review' &&
+                !autoFillHistory?.length) ||
+              autoFillList.length === 1
+            "
+            label="Auto-Fill "
+            iconColor="primary"
+            previewLabel="Open Auto-Fill settings to populate matching responses"
+            [isLoading]="checkingEsStatus"
+            [isEnabled]="
+              {
+                Started: true,
+                Followup: true,
+                ExtensionRequested: true,
+                InReview: true
+              }[diligence.status]
+            "
+          >
+          </dv-logo-label>
+
+          <dv-dropdown
+            type="default"
+            (onDropdownClick)="handleAutoFillDropDownClick($event)"
+            [dropDownList]="autoFillList"
+            iconName="auto-fill"
+            iconSize="large"
+            *ngIf="
+              (diligence?.diligence_type == 'dd_review' ||
+                autoFillHistory?.length) &&
+              autoFillList.length > 1
+            "
+            [isIconLabel]="true"
+            tooltip="Open Auto-fill settings to populate matching responses"
+            [style.color]="'#126b82'"
+            [adaptivePosition]="false"
+            container="body"
+            dropdownPlacement="bottom"
+            [hoverTransform]="true"
+          >
+            <span dropdownLabelContent class="label-custom">Auto-Fill</span>
+          </dv-dropdown>
+
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !diligence.notVisible &&
+            diligence.status !== diligenceStatusConstant.Scheduled
+          "
+        >
+          <dv-dropdown
+            type="default"
+            (onDropdownClick)="handleExportDropdownOptionClick($event)"
+            [dropDownList]="exportDropdownList"
+            iconName="document-download"
+            iconSize="large"
+            [isIconLabel]="true"
+            *ngIf="
+              !diligence.isReadOnly &&
+              !diligence.isLocked &&
+              diligence.status !== diligenceStatusConstant.InReview
+            "
+            tooltip="Export or Sync"
+            [style.color]="'#126b82'"
+            [adaptivePosition]="false"
+            container="body"
+            dropdownPlacement="bottom"
+            [hoverTransform]="true"
+          >
+            <span dropdownLabelContent class="label-custom">
+              Export / Sync</span
+            >
+          </dv-dropdown>
+
+          <dv-logo-label
+            (onClick)="
+              handleExportDropdownOptionClick({ key: 'exportOptions' })
+            "
+            icon="document-download"
+            label="Export"
+            iconColor="primary"
+            *ngIf="
+              diligence.isReadOnly ||
+              diligence.isLocked ||
+              diligence.status === diligenceStatusConstant.InReview
+            "
+            previewLabel="Export"
+            iconType="icon"
+          >
+          </dv-logo-label>
+
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            diligence.review_allowed &&
+            !diligence.isLocked &&
+            canStartReview &&
+            {
+              Started: true,
+              Completed: true,
+              ExtensionRequested: true,
+              Followup: true,
+              PendingRestart: true
+            }[diligence.status] &&
+            !diligence.alwaysOpen
+          "
+        >
+          <!-- In older version two check are added for investor and manager -->
+          <dv-logo-label
+            (onClick)="handleReviewClick()"
+            icon="analytics2"
+            label="Start Review "
+            [isEnabled]="counterMap['AnsweredTotal']"
+            [type]="counterMap['AnsweredTotal'] ? 'button' : 'normal'"
+            [iconColor]="counterMap['AnsweredTotal'] ? 'default' : 'disabled'"
+            [tooltip]="
+              counterMap['AnsweredTotal']
+                ? 'Start review process'
+                : 'No response added for review'
+            "
+            [adaptivePosition]="false"
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            options.mode == 'investor' &&
+            diligence.recalculation_needed &&
+            (diligence.status === 'Approved' ||
+              diligence.status === 'NotApproved' ||
+              diligence.status === 'Completed' ||
+              diligence.status === 'Evaluation' ||
+              diligence.diligence_type === 'dd_profile' ||
+              diligence.diligence_type == 'dd_review')
+          "
+        >
+          <dv-logo-label
+            (onClick)="reloadRatings()"
+            icon="refresh"
+            label="Recalculate Ratings"
+            iconType="icon"
+            [isLoading]="recalculating_scores"
+          >
+            <app-spinner *ngIf="recalculating_scores"></app-spinner>
+          </dv-logo-label>
+
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            counterMap &&
+            (((options.mode == 'manager' ||
+              (diligence.is_internal && options.mode == 'investor')) &&
+              !diligence.alwaysOpen &&
+              {
+                Started: true,
+                ExtensionRequested: true,
+                Followup: true,
+                InReview: true
+              }[diligence.status] &&
+              (!canStartReview || diligence.status == 'InReview')) ||
+              openRevisions)
+          "
+        >
+          <questionnaire-submit-button
+            [diligence]="diligence"
+            [countMap]="counterMap"
+            [isReadonly]="is_readonly"
+            [relatedDiligences]="related_diligences"
+            [user]="currentuser"
+            [submittingRevisions]="openRevisions"
+            (onBulkSubmitRevisions)="reInitializeData()"
+          >
+          </questionnaire-submit-button>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="diligence.isLocked && !diligence.hasReadOnlyAccess"
+        >
+          <dv-logo-label
+            icon="secure"
+            label="Closed Project "
+            previewLabel="You cannot edit a closed project"
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !openRevisions &&
+            options.mode == 'manager' &&
+            diligence.isReadOnly &&
+            !diligence.isLocked &&
+            !diligence.is_internal
+          "
+        >
+          <dv-logo-label
+            icon="readonly"
+            iconColor="primary"
+            label="Submitted to Requestor. "
+            previewLabel="To make edits, please go to the summary tab and click Restart or Request restart"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container *ngIf="diligence.hasReadOnlyAccess">
+          <dv-logo-label
+            icon="readonly"
+            label="Read Only View "
+            previewLabel="You have readonly access"
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !(
+              !canFinishDD &&
+              !canApprovedDD &&
+              diligence.is_internal &&
+              diligence.alwaysOpen
+            ) && canApprovedDD
+          "
+        >
+          <dv-logo-label
+            icon="thumbs-o-up"
+            label="Approve "
+            (onClick)="openConfirmationModal('Approved')"
+            *ngIf="!approvalLoader['Approved']"
+            [previewLabel]="
+              counterMap['TotalReviewPending'] > 0
+                ? counterMap['TotalReviewPending'] +
+                  ' review(s) are open. Please close these before approving'
+                : is_manager
+                ? 'Approve this project. Once approved, no changes will be allowed'
+                : 'Accept this project. Once approved, no changes will be allowed'
+            "
+            [isEnabled]="
+              !counterMap['TotalReviewPending'] > 0 &&
+              !approvalLoader['NotApproved']
+            "
+            iconType="icon"
+            [type]="
+              !counterMap['TotalReviewPending'] > 0 &&
+              !approvalLoader['NotApproved']
+                ? 'button'
+                : 'normal'
+            "
+            [iconColor]="
+              !counterMap['TotalReviewPending'] > 0 &&
+              !approvalLoader['NotApproved']
+                ? 'default'
+                : 'disabled'
+            "
+          >
+          </dv-logo-label>
+          <app-spinner *ngIf="approvalLoader['Approved']"></app-spinner>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            !(
+              !canFinishDD &&
+              !canApprovedDD &&
+              diligence.is_internal &&
+              diligence.alwaysOpen
+            ) && canApprovedDD
+          "
+        >
+          <dv-logo-label
+            icon="thumbs-o-down"
+            class="col-6"
+            label="Not Approve "
+            (onClick)="openConfirmationModal('NotApproved')"
+            *ngIf="!approvalLoader['NotApproved']"
+            [isEnabled]="
+              !counterMap['TotalReviewPending'] > 0 &&
+              !approvalLoader['Approved']
+            "
+            [previewLabel]="
+              counterMap['TotalReviewPending'] > 0
+                ? counterMap['TotalReviewPending'] +
+                  ' review(s) are open. Please close these before rejecting'
+                : is_manager
+                ? 'Mark as not approved'
+                : 'Mark as not approved, and document reasons for your decision'
+            "
+            iconType="icon"
+            [type]="
+              !counterMap['TotalReviewPending'] > 0 &&
+              !approvalLoader['Approved']
+                ? 'button'
+                : 'normal'
+            "
+            [iconColor]="
+              !counterMap['TotalReviewPending'] > 0 &&
+              !approvalLoader['Approved']
+                ? 'default'
+                : 'disabled'
+            "
+          >
+          </dv-logo-label>
+          <app-spinner *ngIf="approvalLoader['NotApproved']"></app-spinner>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container *ngIf="diligence && !diligence.notVisible">
+          <dv-logo-label
+            (onClick)="handleQuestionSearchClick()"
+            icon="search"
+            label="Search "
+            SizeType="massive"
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            (diligence.entity_type == Fund ||
+              diligence.entity_type == Vehicle) &&
+            diligence.linked_duediligence_id &&
+            related_diligences.length == 0 &&
+            diligence.linked_duediligence_id
+          "
+        >
+          <dv-logo-label
+            (onClick)="handleGotoMainProject()"
+            icon="arrow-back"
+            label="Back to Main Project "
+            iconType="icon"
+          >
+          </dv-logo-label>
+          <dv-divider verticalHeight="small" type="vertical"></dv-divider>
+        </ng-container>
+
+        <ng-container
+          *ngIf="
+            options.mode == 'manager' ||
+            (options.mode == 'investor' && !diligence.notVisible)
+          "
+        >
+          <dv-dropdown
+            type="default"
+            (onDropdownClick)="dropDownClick($event)"
+            [dropDownList]="list"
+            iconName="ellipsis-h"
+            [isIconLabel]="true"
+            iconSize="large"
+            dropdownPlacement="right"
+            tippyTooltip="Filter | Preview | Export"
+            [hoverTransform]="true"
+          >
+            <span dropdownLabelContent class="label-custom">More</span>
+          </dv-dropdown>
+        </ng-container>
+      </div>
+
+      <div *ngIf="isSearch" class="search-com-wrapper">
+        <question-search
+          (onClick)="handleQuestionSearchClick()"
+        ></question-search>
+
+        <dv-logo-label
+          (onClick)="handleOnCancelSearch()"
+          icon="close"
+          [label]="'Cancel'"
+          [tippyTooltip]="'Clear search and refresh'"
+          class="space-on-left-lg"
+          ariaLabel="'Cancel action'"
+        >
+        </dv-logo-label>
+      </div>
+    </ng-container>
+  </div>
+</dv-segment>

@@ -1,0 +1,36 @@
+<div>
+
+    <div class="add-contact-popover-close-btn">
+        <a class="space-on-left clickable link-disguise" data-ng-click="vm.closePopOver()">×</a>
+    </div>
+
+    <div class="input-box t-a-right">
+        <form novalidate data-ng-submit="vm.addNewContactEmail()" name="vm.add_new_contact_form">
+            <form-group field-name="Email">
+                <input type="email" id="email" style="display: inline-block;vertical-align: bottom;"
+                    data-ng-model="vm.newContactEmail" placeholder="contact@yourfirm.com" class="form-control"
+                    required />
+            </form-group>
+            <button type="submit"  class="btn btn-sm btn-primary btn-loader space-on-top space-on-bottom" btn-type="submit"
+                button-loader="vm.saving_contact">Add New
+                Contact</button>
+        </form>
+    </div>
+
+    <div class="input-box" data-ng-if="vm.team_members.length">
+        <input type="text" class="form-control" placeholder="Search by name" ng-model="vm.textFilter" />
+    </div>
+
+    <div class="dv-sent-to-contact-selector-list space-on-top" id="dv-sent-to-contact-selector"
+        data-ng-if="vm.team_members.length">
+        <ul class="list-unstyled">
+            <li role="menuitem" data-ng-repeat="user in vm.team_members | filter: {joinedName : vm.textFilter}"
+                data-ng-if="vm.showMember(user)" data-ng-click="vm.select(user)" class="dv-contact-list-item">
+                <a class="recipient-name" uib-tooltip="Assign to {{user.firstName}} {{user.lastName}}">
+                    <span class="space-on-left">{{::user.firstName}} {{::user.lastName}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</div>

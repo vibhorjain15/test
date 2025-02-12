@@ -1,0 +1,30 @@
+<div class="controls-wrapper">
+  <dv-button
+    btnType="default"
+    btnClass="grid-action-button"
+    class="space-on-right"
+    (onClick)="edit()"
+    [tooltip]="'Edit user role'"
+    triggers="mouseenter:mouseleave"
+    container="body"
+    [adaptivePosition]="false"
+    *ngIf="params.data.user_assigments.length > 0"
+    aria-label="Edit user role"
+  >
+    <span appIcon name="pencil"></span>
+  </dv-button>
+  <dv-button
+    btnType="default"
+    btnClass="grid-action-button" 
+    class="space-on-right"
+    [tooltip]="'Remove user role'"
+    triggers="mouseenter:mouseleave"
+    [adaptivePosition]="false"
+    container="body"
+    (onClick)="delete()"
+    *ngIf="params.data.user_assigments.length > 0"
+    aria-label="Remove user role"
+  >
+    <span appIcon name="trashcan"></span>
+  </dv-button>
+</div>

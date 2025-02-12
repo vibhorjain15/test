@@ -1,0 +1,143 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Document Types</h5>
+  </div>
+  <div class="panel-info">
+    <div class="panel-heading">
+      Manage document types under this section. You can use system types or
+      create custom document types that are relevant to your organisation.
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      [broadSpinner]="true"
+      [spinnerHeight]="60"
+      *ngIf="loading_tags"
+    ></app-spinner>
+    <div *ngIf="!loading_tags">
+      <div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">System Types</h5>
+          </div>
+          <div class="panel-body">
+            <div class="label-list">
+              <span
+                class="label label-default text-uppercase space-on-right"
+                *ngFor="let tag of system_tags"
+                tabindex="0"
+                [attr.aria-label]="tag.name"
+                role="text"
+              >
+                <small
+                  tooltip="This is a system generated type"
+                  container="body"
+                  >{{ tag.name }}</small
+                >
+              </span>
+            </div>
+            <helper-text *ngIf="!system_tags.length">
+              <p class="text-center">
+                To enable system types go to Firm settings > Preferences > Firm
+                Preferences
+              </p>
+            </helper-text>
+          </div>
+        </div>
+        <div class="panel panel-default space-on-top-xxl">
+          <div class="panel-heading">
+            <h5 class="panel-title">Custom Types</h5>
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a
+                  class="panel-control"
+                  placement="left"
+                  popoverTitle="Add types"
+                  [popover]="popTemplate"
+                  #pop="bs-popover"
+                  tooltip="Add new custom type"
+                  (onHidden)="onHidden()"
+                  container="body"
+                  clickable
+                >
+                  <span appIcon name="plus" aria-hidden="true"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="label-list">
+              <span *ngIf="custom_tags.length">
+                <span
+                  class="label label-default text-uppercase space-on-right"
+                  *ngFor="let tag of custom_tags"
+                  [attr.aria-label]="tag.name"
+                  role="text"
+                >
+                  <small>{{ tag.name }}</small>
+                  <a
+                    tooltip="Remove type"
+                    container="body"
+                    class="space-on-left clickable link-disguise"
+                    *ngIf="is_admin"
+                    (click)="displayTagRemovalConfirmation(tag)"
+                    [attr.aria-label]="'Remove ' + tag.name + ' Type'"
+                    clickable
+                  >
+                    &times;
+                  </a>
+                </span>
+              </span>
+            </div>
+            <helper-text *ngIf="!custom_tags.length" class="text-center">
+              No custom types available.
+            </helper-text>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #popTemplate>
+  <form novalidate (ngSubmit)="saveTags()" autocomplete="off">
+    <div class="form-group">
+      <tag-input
+        name="Tags"
+        [(ngModel)]="new_tag_params.list"
+        placeholder="Enter types separated by comma"
+        secondaryPlaceholder="Enter types separated by comma"
+        separatorKeys="[',']"
+        [errorMessages]="errorMessages"
+        [validators]="validators"
+        theme="minimal"
+        (ngModelChange)="handleTagsInput($event)"
+      >
+      </tag-input>
+      <small
+        class="text-danger"
+        *ngIf="showError && !new_tag_params.list.length"
+      >
+        Please enter at least one type
+      </small>
+    </div>
+    <div class="form-group">
+      <dv-button
+        [loader]="saving_tags"
+        [btnClass]="'minWidth'"
+        [btnType]="'primary'"
+        (onClick)="saveTags()"
+        ariaLabel="Save Types"
+      >
+        Save
+      </dv-button>
+      <dv-button
+        [btnClass]="'space-on-left'"
+        [btnType]="'default'"
+        (onClick)="onCancel()"
+        ariaLabel="Cancel"
+      >
+        Cancel
+      </dv-button>
+    </div>
+  </form>
+</ng-template>

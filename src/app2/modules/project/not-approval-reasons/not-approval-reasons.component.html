@@ -1,0 +1,110 @@
+<div class="panel panel-default">
+  <div class="panel-body clearfix">
+    <app-spinner
+      *ngIf="!diligence"
+      aria-live="polite"
+      aria-busy="true"
+    ></app-spinner>
+
+    <div class="dv-table dv-table-middle dd-info-panel" *ngIf="diligence">
+      <div class="bordered-right cell" role="cell">
+        <h4 class="clear-margin" id="diligence-heading">
+          {{ diligence.entity_name }}
+        </h4>
+        <small class="text-muted"
+          >Decision on {{ note?.updated_at | dvDate }}</small
+        >
+      </div>
+
+      <div class="cell">
+        <a
+          (click)="redirectToSummary()"
+          class="btn btn-transparent"
+          role="button"
+          tabindex="0"
+        >
+          <div><span appIcon name="arrow-back" size="2x"></span></div>
+          <small>Back to Summary</small>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-spinner
+  *ngIf="!dataIsLoaded"
+  aria-live="polite"
+  aria-busy="true"
+></app-spinner>
+
+<div class="panel panel-default" *ngIf="dataIsLoaded">
+  <div class="panel-body">
+    <div *ngIf="note">
+      <span id="approval-heading" class="fw-bolder">
+        Reasons for not approving this due diligence (Submitted by
+        {{ note.first_name }} {{ note.last_name }})
+      </span>
+      <ul class="space-on-top-lg clear-margin-bottom" tabindex="0">
+        <li *ngFor="let reason of reasons">{{ reason }}</li>
+      </ul>
+    </div>
+
+    <form *ngIf="!note" autocomplete="off">
+      <div class="row">
+        <div col="6">
+          <span class="control-label fw-bolder" id="reason-heading"
+            >Investment Reasons for Not Approving</span
+          >
+
+          <div
+            *ngFor="let reason of investment_reasons"
+            class="space-on-bottom-lg"
+          >
+            <ui-switch
+              [(ngModel)]="reason.selected"
+              [ngModelOptions]="{ standalone: true }"
+              class="align-middle"
+              size="small"
+              [title]="reason.value"
+              UiSwitchButton
+            ></ui-switch>
+            <span class="align-middle">{{ reason.value }}</span>
+          </div>
+        </div>
+
+        <div col="6">
+          <span class="fw-bolder">Business Reasons for Not Approving</span>
+
+          <div
+            *ngFor="let reason of business_reasons"
+            class="space-on-bottom-lg"
+            role="group"
+          >
+            <ui-switch
+              [(ngModel)]="reason.selected"
+              [ngModelOptions]="{ standalone: true }"
+              class="align-middle"
+              size="small"
+              [title]="reason.value"
+              UiSwitchButton
+            ></ui-switch>
+            <span class="align-middle">{{ reason.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div>
+        <dv-button
+          [btnType]="'primary'"
+          [loader]="saving"
+          (onClick)="submit()"
+          ariaLabel="Confirm"
+        >
+          Confirm
+        </dv-button>
+      </div>
+    </form>
+  </div>
+</div>

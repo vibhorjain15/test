@@ -1,0 +1,20 @@
+<div
+  class="qa-button-main"
+  [ngClass]="{
+    primary: color == 'primary' && !disabled,
+    default: color == 'default' || disabled,
+    disabled: disabled
+  }"
+  (click)="handleButtonSelect()"
+  [attr.aria-label]="label"
+>
+  <dv-logo-label
+    [label]="label"
+    [icon]="iconName"
+    [iconColor]="iconColor"
+    [type]="disabled ? 'normal' : 'button'"
+    (onClick)="handleButtonSelect()"
+    [isEnabled]="!disabled"
+  >
+  </dv-logo-label>
+</div>

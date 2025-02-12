@@ -1,0 +1,14 @@
+.share-accept-confidential-checkbox {
+  display: flex;
+  justify-content: center;
+}
+.EmailTemBottom
+{
+  margin-bottom: 110px;
+}
+::ng-deep .request-confidential-checkbox .panel-info{
+  display: inline-block;
+}
+::ng-deep .request-confidential-checkbox .panel-heading{
+  padding: 8px 20px 0px 20px !important;
+}

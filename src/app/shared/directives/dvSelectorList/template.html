@@ -1,0 +1,161 @@
+<div class="row clearfix">
+    <div class="panel panel-default dd-multiselect">
+        <div class="panel-heading">
+            <div class="row clearfix">
+                <div col="9">
+                    <div class="input-group-rename-this-class-when-filters-are-enabled">
+                        <input type="text" data-ng-model="vm.filters.name" class="form-control"
+                            data-ng-disabled="!vm.entitiesBackup || vm.entitiesBackup.length == 0"
+                            data-ng-model-options="{'debounce': 500}" data-ng-change="vm.applyFilters()"
+                            placeholder="Search {{vm.entity_type | standardPluralize}} by name" />
+                    </div>
+
+                </div>
+
+                <div col="3">
+                    <div>
+
+                        <button btn-type="default" class="space-on-top-2" size="sm"
+                            data-ng-if="vm.Utils.getObjectLength(vm.filter_params) > 0"
+                            data-ng-disabled="!vm.entitiesBackup || vm.entitiesBackup.length == 0"
+                            uib-tooltip="{{vm.filters_section.show ? 'Hide' : 'Apply' }} Filters"
+                            data-ng-click="vm.toggleFiltersSection()">
+                            <icon name="filter" data-ng-class="{'text-orange': vm.filters_section.show}"></icon>
+                        </button>
+
+                        <button btn-type="default" size="sm" data-ng-hide="vm.selectedAll"
+                            data-ng-disabled="!vm.entities || vm.entities.length == 0"
+                            class="space-on-top-2 space-on-left" data-ng-click="vm.selectAll()">
+                            <span class="align-middle">Select All</span>
+                        </button>
+                        <button btn-type="default" size="sm" data-ng-show="vm.selectedAll"
+                            data-ng-disabled="!vm.entities || vm.entities.length == 0"
+                            class="space-on-top-2 space-on-left" data-ng-click="vm.unSelectAll()">
+                            <span class="align-middle">Unselect All</span>
+                        </button>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="panel-body padded-top-lg bg-sky-blue" data-ng-if="vm.filters_section.show">
+            <div class="row clearfix">
+                <div class="pull-right space-on-right-xl space-on-top-lg">
+                    <span>
+                        <strong>
+                            Filters
+                        </strong>
+                    </span>
+                    <a role="button" class="link-disguise space-on-left" uib-tooltip="Clear Filters"
+                        data-ng-click="vm.resetFilters()">
+                        <u>Clear</u>
+                    </a>
+                </div>
+                <div col="9" data-ng-if="vm.filter_params['section_id']" class="space-on-top">
+                    <div class="form-group clear-margin-bottom padded-left-sm padding-right-lg">
+                        <!--<label class="tag-label" for="tags">Tags</label>-->
+
+                        <div>
+                            <select id="tags" class="form-control" chosen allow-single-deselect="true"
+                                data-ng-change="vm.applyFilters()" data-ng-model="vm.filters.section_id"
+                                data-placeholder="Filter by section" data-ng-disabled="vm.is_loading_funds"
+                                data-ng-options="section.sectionID as section.section_name for section in vm.sectionFilterSource">
+                                <option value="">Select a section</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div col="9" data-ng-if="vm.filter_params['tag_id']" class="space-on-top space-on-bottom">
+                    <div class="form-group clear-margin-bottom padded-left-sm padding-right-lg">
+                        <!--<label class="tag-label" for="tags">Tags</label>-->
+
+                        <div>
+                            <select id="tags" class="form-control" chosen allow-single-deselect="true"
+                                data-ng-change="vm.applyFilters()" data-ng-model="vm.filters.tag_id"
+                                data-placeholder="Filter by Tags" data-ng-disabled="vm.is_loading_funds"
+                                data-ng-options="tag.id as tag.name for tag in vm.tags">
+                                <option value="">Select a {{vm.entity_type}} Tag</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div col="9" data-ng-if="vm.filter_params['relationship_status_id']" class="space-on-top space-on-bottom">
+                    <div class="form-group clear-margin-bottom padded-left-sm padding-right-lg">
+                        <div>
+                            <select id="{{vm.entity_sub_type}}" class="form-control" chosen
+                                data-ng-change="vm.applyFilters()" allow-single-deselect="true"
+                                data-ng-model="vm.filters.relationship_status_id" data-placeholder="Filter by Strategy"
+                                data-ng-disabled="vm.is_loading_funds"
+                                data-ng-options="statusTag.id as statusTag.name for statusTag in vm.statusTags">
+                                <option value="">Select a Status</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div col="9" data-ng-if="vm.filter_params['strategyID']" class="space-on-top space-on-bottom">
+                    <div class="form-group clear-margin-bottom padded-left-sm padding-right-lg">
+                        <div>
+                            <select id="{{vm.entity_type}}" class="form-control" chosen
+                                data-ng-change="vm.applyFilters()" allow-single-deselect="true"
+                                data-ng-model="vm.filters.strategyID" data-placeholder="Filter by Strategy"
+                                data-ng-disabled="vm.is_loading_funds"
+                                data-ng-options="strategy.id as strategy.name for strategy in vm.strategies">
+                                <option value="">Select a {{vm.entity_type}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="entity-list">
+                <div class="list-group">
+                    <div>
+                        <empty-state data-ng-if="!vm.loading_entities && (!vm.entities || vm.entities.length == 0)" message="No {{vm.entity_type | standardPluralize}} found">
+                        </empty-state>
+                        <!-- <spinner data-ng-if="vm.loading_entities"></spinner> -->
+                        <div class="list-group-item"
+                            data-ng-repeat="entity in vm.entitiesInPage | orderBy: vm.displayParams.name">
+                            <div class="row clearfix">
+                                <span class="space-on-right inline-block">
+                                    <icon name="plus-circle" data-ng-show="!entity.is_selected"
+                                        data-ng-click="vm.selectEntity(entity)" size="lg" class="text-primary"
+                                        role="button"></icon>
+                                    <icon name="check" data-ng-show="entity.is_selected"
+                                        data-ng-click="vm.unSelectEntity(entity)" size="lg" class="text-success"
+                                        role="button"></icon>
+                                </span>
+                                <span data-ng-bind-html="entity[vm.displayParams.name] | cleanhtml"></span>
+                                <span data-ng-if="vm.badgeLabel && entity[vm.badgeLabel.label]" class="space-on-left badge {{vm.badgeLabel.class}}">
+                                    {{vm.badgeLabel.text}}
+                                </span>
+                                <span class="pull-right clickable" ng-show="vm.displayParams.showQuestionTags"><a ng-click="vm.viewQuestionTags(entity)">View Question Tags</a></span>
+                            </div>
+                        </div>
+
+                        <div class="list-group-item" data-ng-if="vm.loading_entities">
+                            <div class="row clearfix">
+                                <div>
+                                    <spinner broad-spinner spinner-height='20'></spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <uib-pagination total-items="vm.entities.length"
+                            data-ng-model="vm.current_page"
+                            class="pagination-sm clear-margin"
+                            max-size="5"
+                            boundary-links="true"
+                            data-ng-change="vm.loadNextPage()">
+            </uib-pagination>
+        </div>
+    </div>
+</div>

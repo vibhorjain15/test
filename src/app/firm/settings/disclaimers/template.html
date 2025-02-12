@@ -1,0 +1,35 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-disclaimers></ng2-disclaimers> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Firm Disclaimers</h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control"
+           data-ng-click="vm.addDisclaimer()"
+           uib-tooltip="Add New Disclaimer">
+          <icon name="plus"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div>
+      <div class="text-center">
+        <div class="btn-group">
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.disclaimers_type == 'active'}" data-ng-click="vm.setDisclaimerType('active')">Active</label>
+            <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.disclaimers_type == 'inactive'}" data-ng-click="vm.setDisclaimerType('inactive')">Inactive</label>
+        </div>
+      </div>
+    <br>
+
+    <div data-ng-if="vm.renderGrid && !vm.loading">
+      <dv-grid grid-resource="vm.disclaimers" grid-name="'disclaimers-list'"></dv-grid>
+    </div>
+    <div class="text-center" data-ng-if="vm.loading && !vm.renderGrid">
+      <spinner></spinner>
+    </div>
+    </div>
+  </div>
+</div>

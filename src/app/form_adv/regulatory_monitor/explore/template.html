@@ -1,0 +1,206 @@
+<div data-ng-if="vm.Utils.isAngular()" >
+<ng2-explor-track>
+</ng2-explor-track>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+<div class="panel panefault">
+  <div class="panel-body clear-padded-bottom" data-ng-if="vm.is_collapsed">
+    <div class="row clearfix relative">
+        <div col="12">
+            <div class="panel panel-default bg-sky-blue clear-margin-bottom">
+                <div class="panel-body padded-lg">
+                    <div col="4">
+                        <div>
+                            <a data-ng-click="vm.openBulkModal()"
+                               class="btn btn-default"><strong>Upload CRDs in Bulk</strong></a>
+                        </div>
+                    </div>
+
+                    <div col="8" authorized-view hidden-from="FreeSubscription, SmartSubscription, FormADVSubscription">
+                        <div col="9">
+                              <span class="space-on-top pull-right" data-ng-if="vm.activeTeamMember_name">
+                                  Showing firms tracked by <b><u>{{vm.activeTeamMember_name}}</u></b>
+                                  <icon name="times-circle-o" class="space-on-left clickable space-on-right-lg"
+                                        uib-tooltip="Clear selection"
+                                        data-ng-click="vm.clearTeamMember()"></icon>
+                              </span>
+                        </div>
+                        <div col="3">
+                            <span class="dropdown" uib-dropdown>
+                              <button btn-type="default"
+                                      block
+                                      size="sm"
+                                      class="space-on-top-2 dropdown-toggle" uib-dropdown-toggle>Filter By <span class="caret space-on-left"></span></button>
+                              <ul class="dropdown-menu" uib-dropdown-menu>
+                                  <li data-ng-repeat="user in vm.teamMembers">
+                                      <a class="clickable font-size-12"
+                                         data-ng-click="vm.filterByTeamMember(user)"
+                                         role="menuitem">
+                                          <span data-ng-class="{'text-orange': vm.activeTeamMember_id == user.id}">{{user.fullName}}</span>
+                                          <icon name="times-circle-o" class="space-on-left"
+                                                uib-tooltip="Clear selection"
+                                                data-ng-click="vm.clearTeamMember()"
+                                                data-ng-show="vm.activeTeamMember_id == user.id"></icon>
+                                      </a>
+                                  </li>
+                              </ul>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="panel panel-default report-panel js-search-panel search-string-panel space-on-bottom-xl"
+         authorized-view
+         hidden-from="FreeSubscription, SmartSubscription, FullSubscription, ProductiveSubscription, FormADVSubscription, FormADVAnalyticsSubscription">
+      <div class="panel-heading clearfix">
+        <div class="content-wrapper">
+          <div class="content-block">
+            <strong><icon name="bank" class="space-on-right"></icon>Explore Firms & Filings</strong>
+          </div>
+
+          <div class="pull-right clickable" data-ng-if="vm.is_collapsed">
+            <a data-ng-click="vm.toggleSearchPanel()">Search with Filters</a>
+          </div>
+
+          <div class="pull-right space-on-top clickable"
+               uib-tooltip="Hide Search with Filters"
+               data-ng-if="!vm.is_collapsed"
+               data-ng-click="vm.toggleSearchPanel()">
+            <icon name="chevron-up"></icon>
+          </div>
+        </div>
+      </div>
+
+      <form class="form-horizontal" name="vm.search_filings_form" novalidate>
+          <div class="panel-body">
+              <div col="12" class="space-on-bottom-lg">
+                <div offset="1" col="11" class="">
+                  <label class="control-label clear-margin-bottom inline-block space-on-right">Firms / filings matching</label>
+                  <select class="form-control inline-block w-80"
+                          required
+                          [(ngModel)]="global_ternary_operator">
+                    <option value="or">ANY</option>
+                    <option value="and">ALL</option>
+                  </select>
+                  <label class="control-label clear-margin-bottom inline-block space-on-left">of the following criteria</label>
+                </div>
+              </div>
+
+              <div col="12" class="space-on-top-xl" data-ng-repeat="criteria in vm.search_criterias">
+                <div col="1" class="pa-lr-lg">
+                  <label class="control-label" data-ng-if="$index==0">&nbsp;</label>
+                  <h5 class="text-right clear-margin-bottom text-uppercase" data-ng-if="$index>0">{{vm.global_ternary_operator}}</h5>
+                </div>
+                <div col="6" class="pa-lr-lg">
+                    <form-group field-name="Criteria">
+                          <label for="criteria_{{$index}}" class="control-label text-capitalize" data-ng-show="$index==0">Criteria</label>
+                          <select class="form-control"
+                                  id="criteria_{{$index}}"
+                                  name="criteria_{{$index}}"
+                                  chosen
+                                  required
+                                  data-ng-model="criteria.criteria_obj"
+                                  data-placeholder="Select a criteria"
+                                  data-ng-change="vm.selectCriteria(criteria, $index)"
+                                  data-ng-options="option as option.label for option in vm.criteria_options">
+                            <option value=""></option>
+                          </select>
+                    </form-group>
+                </div>
+
+                <div col="4" class="pa-lr-lg">
+
+                <form-group field-name="Value" data-ng-if="!criteria.criteria_obj.value">
+                    <label for="value_{{$index}}" class="control-label" data-ng-show="$index==0">Value</label>
+                    <input type="text"
+                               id="value_{{$index}}"
+                               data-ng-model="criteria.value"
+                               required
+                               placeholder="Type a value"
+                               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                               class="form-control" />
+                </form-group>
+
+
+                 <form-group field-name="Value" data-ng-if="criteria.criteria_obj.value == 'keyword_match'">
+                    <label for="value_{{$index}}" class="control-label" data-ng-show="$index==0">Value</label>
+                    <input type="text"
+                           id="value_{{$index}}"
+                           name="value_{{$index}}"
+                           data-ng-model="criteria.value"
+                           required
+                           placeholder="Type a value"
+                           dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                           class="form-control" />
+                  </form-group>
+
+                  <form-group field-name="Value" data-ng-if="criteria.criteria_obj.value == 'not_updated_since'" control-selector="dv-datepicker">
+                    <label for="value_{{$index}}" class="control-label" data-ng-show="$index==0">Value</label>
+                    <dv-datepicker data-ng-model="criteria.value" id="value_{{$index}}" name="value_{{$index}}"
+                                   ng-required="true"></dv-datepicker>
+                  </form-group>
+                </div>
+              </div>
+
+              <div col="12" class="space-on-top-xxl">
+
+                <div offset="9" col="2" class="">
+                  <div class="pull-right">
+                    <button btn-type="default"
+                            size="sm"
+                            class="space-on-right"
+                            uib-tooltip="Add Criteria"
+                            data-ng-click="vm.addNewCriteria()">
+                      <icon name="plus"></icon>
+                    </button>
+
+                    <button btn-type="default"
+                            data-ng-disabled="vm.search_criterias.length<2"
+                            size="sm"
+                            uib-tooltip="Remove Criteria"
+                            data-ng-click="vm.removeCriteria()">
+                      <icon name="minus"></icon>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+              <div col="12" class="space-on-bottom-xl">
+                <div offset="1" col="6" class="">
+                  <button type="submit" btn-type="primary" class="space-on-right-lg" data-ng-click="vm.searchFilings()">
+                    <icon name="search" class="space-on-right"></icon>
+                    Start Searching
+                  </button>
+
+                  <button btn-type="default" data-ng-click="vm.resetQuestionFiltersData()">
+                    <icon name="refresh" class="space-on-right"></icon>
+                    Reset Filters
+                  </button>
+
+                  <button btn-type="default" data-ng-click="vm.downloadSearchResultsToExcel()">
+                    <icon name="external-link" class="space-on-right"></icon>
+                    Export To Excel
+                  </button>
+                </div>
+              </div>
+
+          </div>
+      </form>
+    </div>
+
+    <div data-ng-if="!vm.loading_grid">
+        <dv-grid grid-resource="vm.resource" grid-name="'formadv-regulatory-monitor-explore'"></dv-grid>
+    </div>
+
+    <spinner broad-spinner spinner-height='560' data-ng-if="vm.loading_grid"></spinner>
+
+  </div>
+</div>
+
+</div>

@@ -1,0 +1,26 @@
+<div class="report-builder" ng-class="rb_controller.type">
+  <report-builder-header
+    data-ng-if="!rb_controller.readonly">
+  </report-builder-header>
+
+  <div class="report-builder-body">
+    <div class="row clearfix">
+      <div col="2" class="hidden">
+        <report-page-thumbnails></report-page-thumbnails>
+      </div>
+
+      <div data-ng-class="{'col-md-12': rb_controller.readonly, 'col-md-7': !rb_controller.readonly}">
+        <report-canvas data-ng-model="rb_controller.pages">
+        </report-canvas>
+      </div>
+
+      <div col="5" class="parent-report-component-options"
+           data-ng-if="!rb_controller.readonly">
+        <div dv-affix-scrollable dynamic-watch="rb_controller.component_options_controller" offset-top="50">
+          <report-component-options></report-component-options>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

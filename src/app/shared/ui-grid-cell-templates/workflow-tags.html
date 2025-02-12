@@ -1,0 +1,5 @@
+<ui-grid-cell-contents>
+    <div data-ng-hide="row.entity.tag_name =='0'">
+        <span class="label label-default space-on-right" data-ng-repeat="tag in row.entity.tag_ids">{{tag}}</span>
+    </div>
+</ui-grid-cell-contents>

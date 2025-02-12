@@ -1,0 +1,17 @@
+<ui-grid-cell-contents data-ng-if="!row.groupHeader">
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          data-ng-click="grid.appScope.vm.editRole(row.entity)"
+          uib-tooltip="Edit Role">
+    <icon name="pencil"></icon>
+  </button>
+  <button btn-type="default"
+          size="sm"
+          class="space-on-right"
+          uib-tooltip="Remove this user"
+          ng-click="grid.appScope.vm.removeTeamConfirm(row.entity)">
+    <icon name="trashcan"></icon>
+  </button>
+
+</ui-grid-cell-contents>

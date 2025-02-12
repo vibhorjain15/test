@@ -1,0 +1,271 @@
+.rating-level {
+  cursor: pointer;
+
+  &.level-off {
+    color: #f0f0f0;
+  }
+
+  &.level-on {
+    color: @brand-primary;
+  }
+}
+
+.dv-rating.readonly {
+  .rating-level {
+    cursor: inherit;
+  }
+}
+
+.rating-table {
+  .parent-table {
+    background: @link-hover-color;
+    color: #fff;
+  }
+
+  .ratingCellTable {
+    td {
+      font-size: 14px;
+      word-wrap: break-word;
+      position: relative;
+    }
+    td {
+      .ratingName {
+        // margin-right: 10px;
+      }
+    }
+  }
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .weitage {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .checkIcon {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    text-align: center;
+    font-size: 18px;
+  }
+  .descriptionText {
+    position: absolute;
+    bottom: 0;
+  }
+  .colorScaleTd {
+    padding: 20px;
+    text-align: center;
+  }
+}
+.descTable {
+  table {
+    table-layout: fixed;
+    border: none;
+  }
+  table {
+    tr {
+      td {
+        border-top: none !important;
+      }
+    }
+  }
+  td {
+    text-align: left;
+  }
+  td {
+    div {
+      padding: 5px;
+      clear: both;
+      border-top: 1px solid #eee;
+    }
+    div {
+      span {
+        width: 49%;
+        float: left;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+.rating-palegreen {
+  background: #daf7a6;
+}
+.rating-darkgreen {
+  background: #5ec80a;
+}
+.rating-yellow {
+  background: #f7fba6;
+}
+.inline-table-td {
+  display: inline-block;
+}
+.rating-table-heading {
+  padding: 5px;
+  text-align: center;
+}
+
+.rating-selection-list {
+  .rating-scroll-view {
+    height: 12em;
+    overflow-y: scroll;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 0;
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      li {
+        cursor: pointer;
+        &:hover {
+          background-color: #f5f5f5;
+        }
+
+        .item {
+          padding: 5px;
+          margin: 0;
+
+          .text {
+            padding: 10px;
+          }
+
+          .controls {
+            width: 20px;
+            .control {
+              opacity: 0.3;
+              &:hover {
+                color: #16a1ab;
+                opacity: 1;
+              }
+            }
+
+            .control-danger {
+              opacity: 0.3;
+              &:hover {
+                color: #d75c5c;
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+
+      li.active-selection {
+        background-color: #126b82;
+        .item {
+          color: #fff;
+          .controls {
+            .control {
+              opacity: 0.3;
+              &:hover {
+                color: #fff;
+                opacity: 1;
+              }
+            }
+
+            .control-danger {
+              opacity: 0.3;
+              &:hover {
+                color: #d75c5c;
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+
+      li.active-selection.edit-type {
+        background-color: #fff;
+        span {
+          .ratingText {
+            color: #000000;
+          }
+        }
+      }
+    }
+  }
+}
+
+.rating-form-border {
+  padding: 20px;
+  background-color: #ededf2;
+
+  .rating-type-header {
+    padding-left: 10px;
+    padding-bottom: 10px;
+    margin: 0;
+  }
+
+  .ratingBox {
+    .itemName {
+      width: 60%;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+
+    .edit-scale {
+      width: 10%;
+      float: right;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+
+    .exceedingError {
+      padding-left: 5px;
+      padding-right: 5px;
+      float: right;
+      width: 10%;
+    }
+
+    .percentage {
+      padding-left: 5px;
+      padding-right: 5px;
+      width: 20%;
+      float: right;
+    }
+  }
+}
+
+.rating-container {
+  .dd-score-display {
+    text-decoration: none !important;
+    cursor: pointer;
+    border-left: 1px solid #ddd;
+    padding: 0 12px;
+    display: table-cell;
+    font-size: 12px;
+    vertical-align: middle;
+    height: auto;
+    width: auto;
+    line-height: 15px;
+    border-radius: 3px;
+    padding: 5px 10px;
+
+    &.good-score {
+      background-color: #37b28e !important;
+      color: white !important;
+    }
+
+    &.ok-score {
+      background-color: #ffcc00 !important;
+      color: black !important;
+    }
+  }
+}
+
+.dd-score-display.total-score {
+  background-color: #126b82 !important;
+  color: white !important;
+}
+
+.empty-rating {
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  background-color: #fafafa;
+  padding: 5px 10px;
+}

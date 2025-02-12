@@ -1,0 +1,196 @@
+<app-modal
+  [title]="'Manage Permission'"
+  firstButtonLabel="Save"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="ManagePermissionref"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="disableFirstButton"
+></app-modal>
+
+<ng-template #ManagePermissionref>
+  <form
+    class="form-horizontal space-on-left space-on-right"
+    [formGroup]="permissionForm"
+    autocomplete="off"
+  >
+    <dv-form-element
+      fieldName="permission_type"
+      [modelController]="permissionForm.get('permission_type')"
+      [showRightIcon]="false"
+      label="Permission Mode"
+      labelPosition="top"
+      elementCol="12"
+    >
+      <dv-select
+        [id]="'permission_type'"
+        [list]="permissionTypes"
+        formControlName="permission_type"
+        (onSelectChange)="onPermissionTypeChange($event)"
+      ></dv-select>
+      <div *ngIf="permissionTypeHelpText" class="space-on-top-lg">
+        <helper-text [innerHtml]="permissionTypeHelpText"></helper-text>
+      </div>
+    </dv-form-element>
+
+    <ng-container *ngIf="!hideAssignmentDetails">
+      <dv-form-element
+        [showRightIcon]="false"
+        label="Assigned To"
+        labelPosition="top"
+        elementCol="12"
+        [for]="'showAssignmentDetailsInEditMode'"
+        *ngIf="(!edit_mode || showAssignmentDetailsInEditMode) && !tabType"
+      >
+        <dv-select
+          [id]="'showAssignmentDetailsInEditMode'"
+          [list]="assignedToTypes"
+          [(ngModel)]="selectionType"
+          [ngModelOptions]="{ standalone: true }"
+          (onSelectChange)="setSelectionType($event)"
+        ></dv-select>
+      </dv-form-element>
+
+      <div *ngIf="selectionType != 'person'">
+        <dv-form-element
+          [fieldName]="'team'"
+          [modelController]="permissionForm.get('team')"
+          [showRightIcon]="false"
+          label="Team"
+          labelPosition="top"
+          elementCol="12"
+          errorId="teamSelectionError"
+        >
+          <dv-select
+            *ngIf="(!edit_mode || showAssignmentDetailsInEditMode) && !tabType"
+            [contoller]="permissionForm.get('team')"
+            [error]=""
+            [list]="allTeams"
+            bindLabel="display"
+            bindValue="value"
+            [multiple]="true"
+            formControlName="team"
+            placeholder="Please select team"
+            [id]="'team'"
+          ></dv-select>
+          <p
+            id="teamSelectionError"
+            *ngIf="edit_mode && !showAssignmentDetailsInEditMode"
+            class="space-on-top"
+          >
+            <span class="label label-default">
+              {{ resource_data.assigned_to_name }}
+            </span>
+          </p>
+          <p *ngIf="tabType" id="teamSelectionError" class="space-on-top">
+            <span class="label label-default">{{ tabType.name }}</span>
+          </p>
+        </dv-form-element>
+      </div>
+
+      <div *ngIf="selectionType == 'person'">
+        <dv-form-element
+          [fieldName]="'user'"
+          [modelController]="permissionForm.get('user')"
+          elementCol="12"
+          [showRightIcon]="false"
+          label="User"
+          labelPosition="top"
+          errorId="userError"
+        >
+          <dv-select
+            [id]="'user'"
+            *ngIf="(!edit_mode || showAssignmentDetailsInEditMode) && !tabType"
+            [contoller]="permissionForm.get('user')"
+            [error]=""
+            bindLabel="display"
+            bindValue="value"
+            [multiple]="true"
+            formControlName="user"
+            placeholder="Please select user"
+            [list]="allUsers"
+          ></dv-select>
+          <p
+            id="userError"
+            *ngIf="edit_mode && !showAssignmentDetailsInEditMode"
+            class="space-on-top"
+          >
+            <span class="label label-default">{{
+              resource_data.assigned_to_name
+            }}</span>
+          </p>
+          <p *ngIf="tabType" id="userError" class="space-on-top">
+            <span class="label label-default">{{ tabType.name }}</span>
+          </p>
+        </dv-form-element>
+      </div>
+    </ng-container>
+
+    <div class="space-on-bottom">
+      <add-team-permissions
+        [resources]="resource_data"
+        [permission_entity_type]="tabType ? tabType.entity_type : null"
+        [editMode]="edit_mode"
+        (onChangeResources)="handleOnChangeResources($event)"
+        (onResourceTypeChanged)="handleResourceTypeChange($event)"
+        (onAllowUnderlyingEntitiesOptionChange)="
+          setAllowUnderlyingEntitiesOption($event)
+        "
+      ></add-team-permissions>
+    </div>
+
+    <dv-form-element
+      [fieldName]="'visibility'"
+      [modelController]="permissionForm.get('visibility')"
+      *ngIf="selectionType != 'person' && !hideAssignmentDetails"
+      [showRightIcon]="false"
+      label="Visibility"
+      labelPosition="top"
+      elementCol="12"
+      errorId="visibilityError"
+    >
+      <dv-select
+        [id]="'visibility'"
+        [list]="allPermission"
+        formControlName="visibility"
+        bindLabel="alias"
+        bindValue="name"
+        (onSelectChange)="handleVisibility($event)"
+      ></dv-select>
+      <div
+        class="panel panel-info space-on-top-lg"
+        id="visibilityError"
+        *ngIf="permissionForm.value.visibility"
+      >
+        <div class="panel-heading">
+          {{ permissionDescription }}
+        </div>
+      </div>
+    </dv-form-element>
+
+    <dv-form-element
+      [fieldName]="'role'"
+      [modelController]="permissionForm.get('role')"
+      *ngIf="selectionType == 'person' || hideAssignmentDetails"
+      [showRightIcon]="false"
+      label="Access Level"
+      labelPosition="top"
+      elementCol="12"
+    >
+      <dv-select
+        [list]="allRoles"
+        [disabled]="resource_data?.is_default && hideAssignmentDetails"
+        formControlName="role"
+        bindLabel="alias"
+        bindValue="id"
+        [id]="'role'"
+        (onSelectChange)="handleRole($event)"
+      ></dv-select>
+      <div
+        class="panel panel-info space-on-top-lg"
+        *ngIf="permissionForm.value.role"
+      >
+        <div class="panel-heading" [innerHTML]="roleDescription"></div>
+      </div>
+    </dv-form-element>
+  </form>
+</ng-template>

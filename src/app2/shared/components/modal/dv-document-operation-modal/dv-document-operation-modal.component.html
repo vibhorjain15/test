@@ -1,0 +1,131 @@
+<app-modal
+  [title]="modalTitle"
+  [isCustomFooter]="true"
+  [initialTemplate]="modalBody"
+  [footerTemplate]="modalFooter"
+  (onCancelClick)="handleOnCancelClick()"
+></app-modal>
+<ng-template #modalBody>
+  <document-bread-crumbs
+    [selectionPath]="selectionPath"
+  ></document-bread-crumbs>
+  <div *ngIf="!isAddNewFolderEnabled">
+    <dv-form-element
+      label="Folder Location"
+      labelPosition="left"
+      [showRightIcon]="false"
+      infoText="Destination folder location"
+      elementCol="9"
+      [centerAligned]="true"
+    >
+      <input
+        type="text"
+        placeholder="Select Folder Location"
+        class="form-control clickable folder-location"
+        (click)="onFolderViewToggle($event)"
+        [readOnly]="true"
+        [(ngModel)]="folderPath"
+        #folderPathInputElement
+      />
+      <span
+        class="searchIcon clickable"
+        appIcon
+        (click)="onFolderViewToggle($event)"
+        [style.color]="colorTheme.primary"
+        name="folder"
+      ></span>
+    </dv-form-element>
+    <div
+      class="folder-selection display-flex space-on-bottom-xl"
+      *ngIf="folderViewToggle"
+    >
+      <input
+        type="text"
+        placeholder="Search"
+        class="form-control flex-grow-1 space-on-right-lg"
+        [(ngModel)]="filterValue"
+      />
+      <dv-button
+        btnType="default"
+        btnClass="btn-primary-outline"
+        (onClick)="createNewFolder()"
+      >
+        <span appIcon name="new-folder" class="space-on-right"></span>
+        New Folder
+      </dv-button>
+    </div>
+  </div>
+  <dv-folder-selection-grid
+    [class.display-none]="isAddNewFolderEnabled || !folderViewToggle"
+    [rowData]="rowData"
+    [document_folder_type]="documentFolderType"
+    (emitAllData)="updateRowData($event)"
+    [filterValue]="filterValue"
+    (gridReady)="onGridReady($event)"
+    (selectionChange)="updatePath($event)"
+  ></dv-folder-selection-grid>
+  <div *ngIf="isAddNewFolderEnabled" class="new-folder-container">
+    <div>
+      <div class="icon-container icon-container-rounded bg-accent-primary">
+        <span
+          appIcon
+          name="folder"
+          customSize="huge"
+          class="text-primary"
+        ></span>
+      </div>
+    </div>
+    <div>
+      <dv-form-element
+        label="Folder Name"
+        labelPosition="top"
+        elementCol="12"
+        [showRightIcon]="false"
+        [customErrorMessage]="newFolderErrorMessage"
+      >
+        <input
+          type="text"
+          placeholder="Name"
+          class="form-control"
+          [(ngModel)]="newFolderName"
+          (ngModelChange)="handleFolderNameChange($event)"
+        />
+      </dv-form-element>
+    </div>
+  </div>
+</ng-template>
+<ng-template #modalFooter>
+  <ng-container *ngIf="!isAddNewFolderEnabled">
+    <dv-button
+      btnType="primary"
+      [loader]="isOperationInProgress"
+      (onClick)="moveOrCopyToDestination()"
+    >
+      {{ operationType === "move" ? "Move" : "Copy" }}
+    </dv-button>
+    <dv-button
+      btnType="default"
+      class="space-on-left-lg"
+      (onClick)="handleOnCancelClick()"
+    >
+      Cancel
+    </dv-button>
+  </ng-container>
+  <ng-container *ngIf="isAddNewFolderEnabled">
+    <dv-button
+      btnType="primary"
+      [disabled]="newFolderErrorMessage || !newFolderName"
+      [loader]="isOperationInProgress"
+      (onClick)="createAndApplyOperation()"
+    >
+      Create & {{ operationType === "move" ? "Move" : "Copy" }}
+    </dv-button>
+    <dv-button
+      btnType="default"
+      class="space-on-left-lg"
+      (onClick)="handleOnCancelClick('newFolder')"
+    >
+      Back
+    </dv-button>
+  </ng-container>
+</ng-template>

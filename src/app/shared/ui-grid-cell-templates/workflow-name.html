@@ -1,0 +1,13 @@
+<ui-grid-cell-contents class="text-left">
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <a ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)"
+    ui-sref="app.firm.settings.workflows.detail.edit({workflowId: row.entity.id})"
+     uib-tooltip="{{row.entity.name}}"
+     tooltip-placement="right">
+    {{row.entity.name}}
+  </a>
+</ui-grid-cell-contents>
+

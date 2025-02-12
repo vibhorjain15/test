@@ -1,0 +1,74 @@
+<form class="form-horizontal" name="vm.documentForm" novalidate data-ng-submit="vm.submit()">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            Choose Existing Attachment
+
+            <a class="pull-right clickable link-disguise link-unstyled" data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <label class="text-muted">Search:</label>
+                    <div class="searchTextDiv">
+                        <input type="text" data-ng-model="vm.searchtext" class="form-control"
+                            placeholder="Seach by name">
+                        <icon data-ng-if="vm.searchtext.length >= 4" class="closeIcon" name="close"
+                            data-ng-click="vm.searchtext = ''"></icon>
+                    </div>
+                </div>
+                <div class="col-md-6" data-ng-if="vm.customDateFilter">
+                    <label class="text-muted">As of date:</label>
+                    <dv-daterangepicker ng-model="vm.customDateFilter" min-date="vm.minDate" max-date="vm.maxDate"
+                        apply-method="vm.applyMethod"></dv-daterangepicker>
+                </div>
+            </div>
+            <div class="row">
+                <div class="pd-10">
+                    <label class="control-label">Assign Documents</label>
+                </div>
+                <div class="col-md-12">
+                    <div data-ng-show="vm.loading" class="text-center">
+                        <spinner></spinner>
+                    </div>
+                    <ul class="list-group dd-attachments-selector overflow-x-hidden m-h-300">
+                        <empty-state data-ng-if="vm.attachments && vm.attachments.length == 0"
+                            message="No documents available. Once a document is attached, you can reuse it across investor requests">
+                        </empty-state>
+                        <li class="list-group-item clearfix"
+                            data-ng-repeat="attachment in vm.attachments | filter: {name: vm.searchtext}">
+                            <div class="pull-left">
+                                <!-- <attachment-icon filename="attachment.name"></attachment-icon> -->
+                                <a document-viewer="attachment">
+                                    {{attachment.name}}
+                                </a>
+                                <small class="text-muted"><i>{{attachment.as_of_date | date}}</i></small>
+                            </div>
+
+                            <div class="pull-right">
+                                <icon name="check" size="lg" data-ng-show="attachment.assigned"
+                                    uib-tooltip="Unassign Document" data-ng-click="vm.removeAttachment(attachment)"
+                                    class="text-success clickable"></icon>
+
+                                <button btn-type="default" size="sm" button-loader="attachment.being_assigned"
+                                    uib-tooltip="{{vm.entityId ? 'Assign Document' : 'Please select associated ' +vm.entityType}}"
+                                    data-ng-click="vm.assignAttachment(attachment)" data-ng-hide="attachment.assigned"
+                                    class="btn-attachment-selector">
+                                    <icon name="plus"></icon>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.savingDocument">{{vm.edit_mode ? 'Update Document' : 'Add
+            Document'}}</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

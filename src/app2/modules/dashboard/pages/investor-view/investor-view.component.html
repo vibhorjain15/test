@@ -1,0 +1,6 @@
+<div *ngIf="dashType != 'Monitor'">
+  <app-investor-activity [dashTypes]="dashType"></app-investor-activity>
+</div>
+<div *ngIf="dashType == 'Monitor'">
+  <app-investor-monitor [dashTypes]="dashType"></app-investor-monitor>
+</div>

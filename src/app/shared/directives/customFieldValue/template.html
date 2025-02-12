@@ -1,0 +1,43 @@
+<span>
+<div ng-if="vm.field && (vm.field.type == 'text')" col="12">
+  <input id="{{vm.field.alias}}" name="{{vm.field.alias}}" type="text" placeholder="{{vm.field.description}}" class="form-control" ng-model="vm.field.value" required>
+</div>
+<div ng-if="vm.field && vm.field.type == 'int'" col="12">
+  <input id="{{vm.field.alias}}" name="{{vm.field.alias}}" type="number" placeholder="{{vm.field.description}}" class="form-control" ng-model="vm.field.value" required>
+</div>
+<div ng-if="vm.field && vm.field.type == 'dropdown'" col="12">
+  <select id="{{vm.field.alias}}" name="{{vm.field.alias}}" class="form-control" chosen data-ng-model="vm.field.value"
+      data-ng-options="option as option for option in vm.field.options"
+      required
+      data-ng-disabled="vm.field.disabled">
+      <option value=""></option>
+  </select>
+</div>
+<div ng-if="vm.field && vm.field.type == 'checkbox'" col="12">
+  <dv-checkbox id="{{vm.field.alias}}" name="{{vm.field.alias}}"
+          required
+          data-ng-model="vm.field.value"
+          label="{{vm.field.description}}">
+  </dv-checkbox>
+</div>
+<div ng-if="vm.field && vm.field.type == 'numeric'" col="12">
+  <input type="text"
+        class="form-control"
+        id="{{vm.field.alias}}" name="{{vm.field.alias}}"
+        data-ng-model-options="{ debounce: { 'default': 500 } }"
+        dv-decimal-input
+        allow-negative="true"
+        decimal-upto="2"
+        allow-decimal="true"
+        required
+        data-ng-model="vm.field.value"/>
+</div>
+<div ng-if="vm.field && vm.field.type == 'link'">
+  <span col="6">
+    <input required type="text" placeholder="{{vm.field.description}}" class="form-control" ng-model="vm.field.value[0].url">
+  </span>
+  <span col="6">
+    <input required type="text" placeholder="Enter link title" class="form-control col-md-4" ng-model="vm.field.value[0].value">
+  </span>
+</div>
+</span>

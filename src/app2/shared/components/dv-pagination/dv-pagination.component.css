@@ -1,0 +1,25 @@
+.dv-pagination-bar {
+  display: flex;
+  gap: 20px;
+  min-width: 450px;
+  justify-content: end;
+  /* margin-top: 20px; */
+  border: 2px solid #eee;
+  padding: 10px;
+  border-radius: 0px 0px 6px 6px;
+  align-items: center;
+}
+.dv-pageSize {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.pagination-summary {
+}
+
+.pagination-nav {
+  display: flex;
+  /* gap: 10px;
+   */
+  align-items: center;
+}

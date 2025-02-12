@@ -1,0 +1,110 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title" id="downloads-heading">Download Audits</h5>
+  </div>
+  <div class="panel-body">
+    <div
+      class="display-flex align-items-center justify-space-between space-on-bottom-lg"
+    >
+      <div class="w-200"></div>
+      <div class="btn-group" role="group">
+        <span
+          class="btn btn-default font-size-12"
+          [ngClass]="{ 'btn-primary': selectedTab === VIEWTABS.ALL }"
+          (click)="setSelectedTab(VIEWTABS.ALL)"
+          aria-label="Show all downloads"
+          tabindex="0"
+          role="button"
+          >All</span
+        >
+        <span
+          class="btn btn-default font-size-12"
+          [ngClass]="{ 'btn-primary': selectedTab === VIEWTABS.ACTIVE }"
+          (click)="setSelectedTab(VIEWTABS.ACTIVE)"
+          aria-label="Show active downloads"
+          tabindex="0"
+          role="button"
+          >Active</span
+        >
+        <span
+          class="btn btn-default font-size-12"
+          [ngClass]="{ 'btn-primary': selectedTab === VIEWTABS.EXPIRED }"
+          (click)="setSelectedTab(VIEWTABS.EXPIRED)"
+          aria-label="Show expired downloads"
+          tabindex="0"
+          role="button"
+          >Expired</span
+        >
+      </div>
+      <div
+        class=""
+        *ngIf="customDateFilter"
+        [hidden]="selectedTab == VIEWTABS.ACTIVE"
+      >
+        <label class="space-on-right" for="requestedOnActive"
+          >Requested on
+        </label>
+        <app-date-range-picker
+          class="bordered-right w-280 cell va-middle space-on-top-2"
+          [customDate]="dateRangeOthers"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          containerClass="range-picker-grid-placement"
+          (change)="onDateRangeChange($event)"
+          (clearDateFilter)="onClearDateFilter()"
+          [id]="'requestedOnActive'"
+        ></app-date-range-picker>
+      </div>
+      <div
+        class=""
+        *ngIf="customDateFilterActive"
+        [hidden]="
+          selectedTab == VIEWTABS.ALL || selectedTab == VIEWTABS.EXPIRED
+        "
+      >
+        <label class="space-on-right" for="requestedOnAllExpired"
+          >Requested on</label
+        >
+        <app-date-range-picker
+          class="bordered-right w-280 cell va-middle space-on-top-2"
+          [customDate]="dateRangeActive"
+          [minDate]="minDateActive"
+          [maxDate]="maxDate"
+          [showRanges]="false"
+          containerClass="range-picker-grid-placement"
+          (change)="onActiveDateRangeChange($event)"
+          [id]="'requestedOnAllExpired'"
+        ></app-date-range-picker>
+      </div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading" *ngIf="selectedTab == VIEWTABS.ALL">
+        In this section, you'll find a list of downloads requested by users of
+        your firm, including both active and expired downloads.
+      </div>
+      <div class="panel-heading" *ngIf="selectedTab == VIEWTABS.ACTIVE">
+        In this section, you'll find a list of downloads requested by users of
+        your firm that are currently active. These downloads can be accessed and
+        downloaded for up to 15 days from the date they were requested.
+      </div>
+      <div class="panel-heading" *ngIf="selectedTab == VIEWTABS.EXPIRED">
+        In this section, you'll find a list of direct downloads and downloads
+        requested by users of your firm that were once active but have since
+        expired. Expired downloads can no longer be accessed.
+      </div>
+    </div>
+    <div class="text-center" role="status">
+      <app-spinner *ngIf="!render_grid"></app-spinner>
+    </div>
+    <div class="space-on-top-lg" *ngIf="render_grid">
+      <app-dv-grid
+        [rowData]="myDownloadData"
+        [name]="gridName"
+        [noRowsTemplate]="!initGridSection ? 'Loading...' : 'No results found'"
+        [filterData]="filterData"
+        [customFilterInitValue]="customFilterInitValue"
+        (onLoadView)="loadView($event)"
+      ></app-dv-grid>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div id="rc-{{$index}}" class="report-component relative"
+     data-ng-class="{'active': vm.active, readonly: readonly, 'text-component': (!readonly && (vm.component.type == 'text' || vm.component.type == 'notes'))}">
+  <div class="pos-abs stick-right padded component-controls full-width" data-ng-if="!readonly">
+    <div class="pull-right">
+        <button btn-type="default"
+                size="sm"
+                class="btn-round js-sort-handle movable"
+                uib-tooltip="Move this section">
+            <icon name="grid"></icon>
+        </button>
+
+        <button btn-type="default"
+                size="sm"
+                class="btn-round js-edit-button rw-edit-button"
+                data-ng-click="vm.editComponent($event)"
+                uib-tooltip="Edit this section">
+            <icon name="pencil"></icon>
+        </button>
+
+        <button btn-type="default"
+                size="sm"
+                class="btn-round rw-delete-button"
+                data-ng-click="vm.removeComponent($event)"
+                uib-tooltip="Delete this section">
+            <icon name="trashcan"></icon>
+        </button>
+    </div>
+
+  </div>
+  <div class="js-content"></div>
+</div>

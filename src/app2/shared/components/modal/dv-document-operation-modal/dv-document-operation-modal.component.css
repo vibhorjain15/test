@@ -1,0 +1,36 @@
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.new-folder-container {
+  display: grid;
+  column-gap: 18px;
+  grid-template-columns: 45px auto;
+}
+
+.icon-container {
+  align-items: center;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-container.icon-container-rounded {
+  border-radius: 4px;
+}
+
+.bg-accent-primary {
+  background-color: #1890af26;
+}
+
+input.folder-location.form-control[readonly] {
+  background-color: white !important;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 17px;
+  top: 8px;
+  color: #9a9a9a;
+  font-size: 17px;
+}

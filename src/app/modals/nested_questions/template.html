@@ -1,0 +1,35 @@
+<form class="form-horizontal">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      Configure Nested Question Logic
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <p class="alert alert-info">Hover over a node to add conditional questions or remove the conditional question</p>
+
+    <spinner data-ng-show="vm.loading_questions"></spinner>
+
+    <div nested-questions
+         on-add="vm.revealAddQuestionPanel(question)"
+         on-remove="vm.promptUserForQuestionRemoval(question)"
+         name="vm.chart"
+         tree="vm.tree"
+         class="nestedQuestionsSVGWrapper"></div>
+
+    <div class="template-question-builder-container" slide-toggle="vm.slide_toggle" style="bottom:auto;">
+      <template-question-builder on-cancel="vm.hideAddQuestionPanel()"
+                                 allow-rules
+                                 on-save="vm.updateTree(vm.parentNode.question.id)"
+                                 template-id="vm.templateId"
+                                 sub-category-id="vm.subCategoryId"
+                                 parent-question-id="vm.parentNode.question.id"
+                                 parent-question="vm.parentNode.question"
+                                 data-ng-if="vm.slide_toggle"
+                                 on-error="vm.close()"></template-question-builder>
+    </div>
+  </div>
+</form>

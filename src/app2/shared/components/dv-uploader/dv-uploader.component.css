@@ -1,0 +1,13 @@
+:host ::ng-deep div.ngx-file-drop__drop-zone {
+  border: none;
+}
+
+.file-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dd-doc-drop-panel {
+  border: 1px dashed #ccc;
+  background: #fff;
+}

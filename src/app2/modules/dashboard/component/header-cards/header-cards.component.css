@@ -1,0 +1,68 @@
+.card-wrapper {
+  cursor: pointer;
+
+  border-radius: 4px;
+
+  background: #fff;
+  border: 1px solid white;
+  /* Light shadow - 1 */
+  box-shadow: 0px 2px 10px 0px rgba(102, 102, 102, 0.2);
+
+  display: flex;
+  height: 56px;
+  min-width: 130px;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.card-wrapper .for-icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.card-wrapper .for-data {
+  display: flex;
+  gap: 3px;
+  flex-direction: column;
+}
+.card-wrapper .for-data .title-wrapper .title {
+  font-size: 16px;
+  font-weight: 600;
+}
+.card-wrapper .for-data .description {
+  color: #666666;
+  font-size: 12px;
+  /* font-weight: 600; */
+}
+.card-wrapper .for-data .title-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  line-height: 16px;
+}
+
+.header-color-update {
+  border: 1px solid var(--Border-Active-Stroke, #0ca6ed);
+}
+
+.color-update-badge {
+  background-color: #0071a4 !important;
+  color: white !important;
+}
+
+
+
+*:focus-visible {
+  outline: 2px solid #0ca6ed !important; /* A blue outline similar to the browser default */
+  outline-offset: 2px; /* Space between the outline and the element */
+  border-radius: 4px; /* Optional: make the outline rounded */
+  box-shadow: 0 0 5px rgba(0, 0, 255, 0.5); /* Optional: add a blue glow effect */
+}
+
+/* Optional: Reset the default focus outline when an element is clicked with the mouse */
+*:focus {
+  outline: none;
+}

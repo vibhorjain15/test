@@ -1,0 +1,49 @@
+<rb-component-width></rb-component-width>
+
+<div class="form-group">
+  <label>Chart Title</label>
+
+  <div>
+    <input type="text"
+           class="form-control"
+           focus-me="true"
+           select-all-text
+           data-ng-model-options="{ debounce: { 'default': 300 } }"
+           data-ng-model="component.options.title">
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Chart Type</label>
+
+  <div>
+    <select class="form-control"
+            chosen
+            data-ng-model="component.options.type"
+            data-ng-options="type.value as type.label for type in performance_chart_types">
+      <option value=""></option>
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+    <label>Color</label>
+
+    <div>
+      <ui-select ng-model="component.options.color_one" theme="bootstrap" title="Choose color">
+        <ui-select-match placeholder="Select color">
+          <div class="relative">
+            <div class="selected-color-box" ng-style="{'background-color': $select.selected.label}"></div>
+            <span class="selected-color-text" ng-bind-html="$select.selected.value"></span>
+          </div>
+        </ui-select-match>
+        <ui-select-choices repeat="color.value as color in colorMap | filter: $select.search">
+          <div class="relative">
+            <div class="select-color-box" ng-style="{'background-color': color.value}"></div>
+            <span class="select-color-text" ng-bind-html="color.label | highlight: $select.search"></span>
+          </div>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+</div>
+

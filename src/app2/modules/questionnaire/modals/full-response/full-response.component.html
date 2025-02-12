@@ -1,0 +1,144 @@
+<app-modal
+  [title]="'More info about the response'"
+  firstButtonLabel="Copy Response"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="fullResponseRef"
+>
+  <ng-template #fullResponseRef>
+    <div class="form-horizontal full-response-form">
+      <dv-form-element
+        label="Template"
+        labelPosition="top"
+        elementCol="12"
+        aria-label="Template"
+      >
+        <div class="word-break-break-word pre-wrap label label-default">
+          {{ qaItem.associatedTemplate }}
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        label="Associated Firm"
+        labelPosition="top"
+        elementCol="12"
+        *ngIf="qaItem.associatedInvestor"
+        aria-label="Associated Firm"
+      >
+        <div class="word-break-break-word pre-wrap label label-default">
+          {{ qaItem.associatedInvestor }}
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        labelPosition="top"
+        [label]="'Associated Entity'"
+        elementCol="12"
+        aria-label="Associated Entity"
+      >
+        <div class="word-break-break-word pre-wrap label label-default">
+          {{ qaItem.associatedEntity }}
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        label="Expiry Date"
+        labelPosition="top"
+        elementCol="12"
+        aria-label="Expiry Date"
+      >
+        <div class="word-break-break-word pre-wrap label label-default">
+          {{
+            qaItem.expiryDate
+              ? (qaItem.expiryDate | dvDate : ["isLocaleDate"])
+              : "N/A"
+          }}
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        labelPosition="top"
+        label="Approved"
+        elementCol="12"
+        *ngIf="qaItem.isPreApprovedContent"
+        aria-label="Approved"
+      >
+        <div class="word-break-break-word pre-wrap">
+          {{ qaItem.isVerified ? "Approved" : "Not Approved" }}
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        label="Tags"
+        labelPosition="top"
+        elementCol="12"
+        aria-label="Tags"
+      >
+        <div
+          *ngIf="qaItem.tagsText?.length; else notApplicableTag"
+          class="word-break-break-word pre-wrap space-on-bottom"
+        >
+          <div
+            class="word-break-break-word pre-wrap label label-default space-on-right"
+            *ngFor="let tag of qaItem.tagsText"
+            [innerHtml]="tag"
+            aria-label="Tag"
+          ></div>
+        </div>
+        <ng-template #notApplicableTag class="label label-default"
+          ><div class="label label-default" aria-label="Not applicable">
+            N/A
+          </div></ng-template
+        >
+      </dv-form-element>
+      <dv-form-element
+        label="Added By"
+        labelPosition="top"
+        elementCol="12"
+        aria-label="Added By"
+      >
+        <div class="word-break-break-word pre-wrap label label-default">
+          {{ qaItem.createdBy
+          }}<span *ngIf="qaItem.createdAt" class="meta">
+            {{ qaItem.createdAt | dvDate }}</span
+          >
+        </div>
+      </dv-form-element>
+      <dv-form-element
+        label="Question"
+        labelPosition="top"
+        elementCol="12"
+        labelCol="12"
+        aria-label="Question"
+      >
+        <div
+          [innerHtml]="qaItem.questionText"
+          class="word-break-break-word pre-wrap"
+        ></div>
+      </dv-form-element>
+      <dv-form-element
+        label="Response"
+        labelPosition="top"
+        elementCol="12"
+        labelCol="12"
+        aria-label="Response"
+      >
+        <div
+          [innerHtml]="qaItem.responseText"
+          *ngIf="
+            qaItem.responseType != ResponseType.Grid &&
+            qaItem.responseType != ResponseType.DynamicGrid
+          "
+          class="word-break-break-word pre-wrap"
+        ></div>
+        <plain-grid
+          [rowHeaders]="qaItem.gridData?.rowHeaders"
+          [colHeaders]="qaItem.gridData?.colHeaders"
+          [data]="qaItem.gridData?.tableData"
+          [enableHeaders]="true"
+          *ngIf="
+            (qaItem.responseType == ResponseType.Grid ||
+              qaItem.responseType == ResponseType.DynamicGrid) &&
+            qaItem.gridData?.rowHeaders &&
+            qaItem.gridData?.colHeaders
+          "
+          aria-label="Grid Response"
+        ></plain-grid>
+      </dv-form-element>
+    </div>
+  </ng-template>
+</app-modal>

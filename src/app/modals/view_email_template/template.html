@@ -1,0 +1,17 @@
+<div>
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.name? vm.name : 'Email Template'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+  <div class="modal-body">
+
+    <div class="padding-10">
+      <div data-ng-if="vm.email_text" class="view_email_template_wrapper">
+          <span class="word-break-break-all" data-ng-bind-html="vm.email_text"></span>
+      </div>
+    </div>
+  </div>
+</div>

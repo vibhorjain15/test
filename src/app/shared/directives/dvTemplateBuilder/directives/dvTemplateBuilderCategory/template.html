@@ -1,0 +1,49 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">
+      <dv-transparent-input
+        data-ng-model="vm.category.name"
+        data-ng-model-options="{'debounce': 500}"
+        data-ng-change="vm.saveCategory()">
+      </dv-transparent-input>
+    </h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a class="panel-control"
+           data-ng-click="vm.moveUp(vm.category, $index)"
+           uib-tooltip="Move up"
+           data-ng-hide="$first">
+          <icon name="chevron-up"></icon>
+        </a>
+        <a class="panel-control"
+           data-ng-click="vm.moveDown(vm.category, $index)"
+           uib-tooltip="Move down"
+           data-ng-hide="$last">
+          <icon name="chevron-down"></icon>
+        </a>
+        <a class="panel-control"
+           button-loader="vm.adding_subcategory"
+           data-ng-click="vm.addNewSubcategory(vm.category)"
+           uib-tooltip="New Subcategory">
+          <icon name="plus"></icon>
+        </a>
+
+        <a class="panel-control danger"
+           data-ng-click="vm.confirmSectionRemoval(vm.category)"
+           uib-tooltip="Delete  ">
+          <icon name="trashcan"></icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <spinner data-ng-hide="vm.category.subcategories.length"></spinner>
+
+    <dv-template-builder-subcategory
+      data-ng-repeat="subcategory in vm.category.subcategories"
+      subcategory="subcategory">
+    </dv-template-builder-subcategory>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="row clearfix" role="group" aria-label="Report Templates">
+  <div col="4">
+    <dv-segment
+      [title]="title"
+      [isSearch]="true"
+      (onSearchChange)="handleSearchChange($event)"
+      [actionIconsList]="actionIconsList"
+      [actionButtonsList]="actionButtonsList"
+      (handleIconClick)="handleActionIconClick($event)"
+    >
+      <div class="panel-body" *ngIf="!templates">
+        <app-spinner aria-hidden="true"></app-spinner>
+      </div>
+
+      <div class="panel-body" *ngIf="templates?.length == 0">
+        <app-empty-state
+          message="You don't have any report design"
+          (action)="redirectToNewTemplate()"
+          actionLabel="Create a new report design"
+        ></app-empty-state>
+      </div>
+
+      <div class="list-group" style="margin-top: 10px">
+        <ng-container *ngFor="let template of templates">
+          <div
+            class="list-group-item"
+            [ngClass]="{ 'active-row': selectedTempId === template.id }"
+          >
+            <a
+              scrollToTop
+              class="clickable"
+              (click)="redirectToTemplate(template)"
+              [ngClass]="{ active: selectedTempId === template.id }"
+              clickable
+            >
+              {{ template.name }}
+            </a>
+          </div>
+        </ng-container>
+      </div>
+    </dv-segment>
+  </div>
+
+  <div col="8" aria-live="polite">
+    <router-outlet></router-outlet>
+    <app-spinner
+      *ngIf="selectedTempId == -1 && templates?.length"
+    ></app-spinner>
+    <div
+      class="panel-body clear-padding-top"
+      *ngIf="selectedTempId == -1 && !templates?.length"
+    >
+      <app-empty-state
+        message="You don't have any report design"
+        actionLabel="Create a new report design"
+        (action)="redirectToNewTemplate()"
+      ></app-empty-state>
+    </div>
+  </div>
+</div>

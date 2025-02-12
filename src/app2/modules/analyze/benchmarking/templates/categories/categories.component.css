@@ -1,0 +1,11 @@
+.text-ellipsis {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+::ng-deep.list-group-item.active {
+  z-index: 0;
+  color: #fff;
+  background-color: #126b82;
+  border-color: #126b82;
+}

@@ -1,0 +1,272 @@
+<ng-container *ngIf="loading">
+  <div class="text-center spinner-display">
+    <app-spinner spinnerHeight="300"></app-spinner>
+  </div>
+</ng-container>
+<ng-container *ngIf="!loading">
+  <form class="form-horizontal" [formGroup]="questionForm" autocomplete="off">
+    <dv-form-element
+      label="Subject"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+      [isRequired]="true"
+      [modelController]="questionForm.get('subject')"
+    >
+      <input
+        type="text"
+        formControlName="subject"
+        placeholder="Example : A query related to the question"
+        class="form-control"
+        aria-label="Subject input"
+        autocomplete="off"
+        id="subject"
+      />
+      <div
+        *ngIf="
+          questionForm.get('subject').touched &&
+          questionForm.get('subject').errors?.maxlength
+        "
+        class="text-danger"
+        aria-live="assertive"
+      >
+        Subject can not be more than 200 characters long
+      </div>
+      <div
+        *ngIf="
+          questionForm.get('subject').touched &&
+          questionForm.get('subject').errors?.required
+        "
+        class="text-danger"
+        aria-live="assertive"
+      >
+        Subject is required
+      </div>
+      <div
+        *ngIf="
+          questionForm.get('subject').touched &&
+          questionForm.get('subject').errors?.containsHtml
+        "
+        class="text-danger"
+        aria-live="assertive"
+      >
+        {{ errorMessageMap.containsHtml | interpolate : "Subject" }}
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      spacing="small"
+      [modelController]="questionForm.get('description')"
+      labelPosition="top"
+      [isRequired]="true"
+      label="Description"
+      [showRightIcon]="false"
+      elementCol="12"
+      errorMessage="Description is required"
+    >
+      <textarea
+        name=""
+        class="form-control"
+        placeholder="Write a description to elaborate the issue"
+        id=""
+        cols="30"
+        rows="3"
+        formControlName="description"
+        aria-label="Description textarea"
+        id="description"
+      ></textarea>
+    </dv-form-element>
+    <dv-form-element
+      *ngIf="isExternalRecommendationAllowed"
+      spacing="small"
+      [modelController]="questionForm.get('isExternal')"
+      [showRightIcon]="false"
+    >
+      <dv-checkbox
+        class="inline-block"
+        label="{{
+          questionForm.get('isExternal').value ? 'Marked' : 'Mark'
+        }} as external"
+        [ariaLabel]="
+          questionForm.get('isExternal').value
+            ? 'Marked as external'
+            : 'Mark as external'
+        "
+        formControlName="isExternal"
+        (onValChange)="handleisExternalChange($event)"
+      >
+      </dv-checkbox>
+      <span
+        appIcon
+        name="info"
+        class="space-on-left external-icon"
+        [tooltip]="isExternalToolTip"
+      >
+      </span>
+    </dv-form-element>
+    <dv-form-element
+      label="Priority"
+      labelPosition="top"
+      elementCol="12"
+      [showRightIcon]="false"
+      [isRequired]="true"
+      spacing="small"
+      errorMessage="Priority is required"
+      [for]="'Priority'"
+    >
+      <div class="space-on-bottom-xl">
+        <dv-select
+          [id]="'Priority'"
+          [contoller]="questionForm.get('priority')"
+          [disabled]="disableInputs?.priority"
+          [error]="'Priority is required'"
+          [list]="priorities"
+          bindLabel="name"
+          bindValue=""
+          formControlName="priority"
+          (onSelectChange)="handleChange($event)"
+          [aria-label]="'Priority select'"
+        ></dv-select>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      label="Resolution Date"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+      errorMessage="Resolution Date is required"
+      [modelController]="questionForm.get('dueDate')"
+    >
+      <div class="space-on-bottom-xl">
+        <app-date-picker
+          [id]="'dueDate'"
+          [value]="questionForm.get('dueDate').value"
+          placeholder="Select date"
+          formControlName="dueDate"
+          ngDefaultControl
+          [disabled]="disableInputs?.dueDate"
+          [minDate]="minDate"
+          clearable="true"
+          (change)="handleDueDateValue($event)"
+          [aria-label]="'Resolution date picker'"
+        ></app-date-picker>
+        <div class="space-on-top-sm" *ngIf="suggestedDate">
+          <small>
+            Suggested resolution date is:
+            <a class="clickable" (click)="setSuggestedDueDate(30)" tabindex="0">
+              {{ suggestedDate | dvDate }}
+            </a>
+          </small>
+        </div>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      label="Reported By"
+      labelPosition="top"
+      elementCol="12"
+      [showRightIcon]="false"
+      [isRequired]="true"
+      [modelController]="questionForm.get('initiatedBy')"
+      spacing="small"
+    >
+      <div class="space-on-bottom-xl">
+        <dv-select
+          [id]="'initiatedBy'"
+          [disabled]="disableInputs?.initiatedBy"
+          [contoller]="questionForm.get('initiatedBy')"
+          [error]="'Recommendation initiator is required'"
+          bindLabel="fullName"
+          bindValue=""
+          [list]="reported_by_list"
+          formControlName="initiatedBy"
+          (onSelectChange)="handleInitiatedByChange($event)"
+          [aria-label]="'Reported by select'"
+        ></dv-select>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      label="Assign To"
+      labelPosition="top"
+      elementCol="12"
+      [showRightIcon]="false"
+      [isRequired]="true"
+      spacing="small"
+      [modelController]="questionForm.get('assignTo')"
+    >
+      <div class="space-on-bottom-xl">
+        <dv-select
+          [id]="'assignTo'"
+          [contoller]="questionForm.get('assignTo')"
+          [disabled]="disableInputs?.assignTo"
+          [error]="'Assign To is required'"
+          [list]="users"
+          bindLabel="fullName"
+          [placeholder]="
+            users?.length ? 'Search and select' : 'No contacts available'
+          "
+          bindValue=""
+          formControlName="assignTo"
+          (onSelectChange)="handleAssignUserChange($event)"
+          [aria-label]="'Assign to select'"
+        ></dv-select>
+      </div>
+    </dv-form-element>
+    <dv-form-element
+      label="Add Tags"
+      labelPosition="top"
+      elementCol="12"
+      spacing="small"
+      [showRightIcon]="false"
+      [modelController]="questionForm.get('tags')"
+    >
+      <div class="space-on-bottom-xl">
+        <p class="alert alert-info" *ngIf="!tags?.length">
+          No tags available.
+          <span *ngIf="!currentUser?.isAdmin"
+            >Please get in touch with your admin to set these tags.</span
+          >
+          <span *ngIf="currentUser?.isAdmin"
+            ><a (click)="goToTags()">Click here</a> to add one.</span
+          >
+        </p>
+        <dv-select
+          [id]="'tags'"
+          *ngIf="tags?.length"
+          [contoller]="questionForm.get('tags')"
+          [error]=""
+          [disabled]="disableInputs?.tags"
+          [multiple]="true"
+          [list]="tags"
+          bindLabel="name"
+          bindValue=""
+          [placeholder]="'Select tags'"
+          formControlName="tags"
+          (onSelectChange)="handleTagsChange($event)"
+          [aria-label]="'Add tags dropdown'"
+        ></dv-select>
+      </div>
+    </dv-form-element>
+    <dv-form-element elementCol="12" spacing="small">
+      <div class="text-center">
+        <dv-button
+          [disabled]="btnLoader"
+          btnClass="btn btn-primary"
+          (onClick)="handleSaveClick()"
+          [loader]="btnLoader"
+          [ariaLabel]="editingRecommendation ? 'Save' : 'Create and Assign'"
+        >
+          {{ editingRecommendation ? "Save" : "Create and Assign" }}
+        </dv-button>
+        <button
+          type="button"
+          class="btn btn-default space-on-left"
+          (click)="handleOnCancelClick()"
+          aria-label="Cancel"
+        >
+          Cancel
+        </button>
+      </div>
+    </dv-form-element>
+  </form>
+</ng-container>

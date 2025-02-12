@@ -1,0 +1,29 @@
+.scrollUpButton {
+  cursor: pointer;
+  justify-content: center;
+  display: flex;
+  border-radius: 100px;
+  background-color: white;
+  color: #126b82;
+  border: 2px solid;
+  bottom: 66px;
+  height: 55px;
+  margin-left: 90%;
+  z-index: 99;
+  backface-visibility: hidden;
+  width: 55px;
+  align-items: center;
+  transform: translateY(100px);
+  transition: all 0.5s ease;
+  opacity: 0;
+}
+
+.arrowicon {
+  font-size: 34px;
+  margin-bottom: 7px;
+}
+
+.showButton {
+  opacity: 1;
+  transform: translateY(0);
+}

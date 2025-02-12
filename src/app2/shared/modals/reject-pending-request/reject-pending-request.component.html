@@ -1,0 +1,29 @@
+<app-modal
+  [title]="
+    'Are you sure you want to not approve this request and pass your feedback to the author. Document reasons for your decision.'
+  "
+  [firstButtonLabel]="'Yes'"
+  (onFirstClick)="submit()"
+  (onSecondClick)="closeModal()"
+  [initialTemplate]="rejectPendingRequests"
+  [isCancelButton]="false"
+  [secondButtonLabel]="'No'"
+  [isFirstButtonDisabled]="rejectPendingRequestForm.invalid"
+  [footerAlignment]="'center'"
+>
+</app-modal>
+
+<ng-template #rejectPendingRequests>
+  <form
+    class="form-horizontal"
+    [formGroup]="rejectPendingRequestForm"
+    autocomplete="off"
+  >
+    <div class="space-on-bottom">
+      <dv-editor
+        [configObj]="tinyMceInit"
+        (onChange)="handleEditorTextChange($event)"
+      ></dv-editor>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,7 @@
+<ui-grid-cell-contents>
+  <dv-checkbox
+    data-ng-if="grid.options.data.length"
+    data-ng-model="grid.appScope.vm.select_all"
+    dv-click="grid.appScope.vm.toggleAllItemsSelection(grid, grid.appScope.vm.select_all)">
+  </dv-checkbox>
+</ui-grid-cell-contents>

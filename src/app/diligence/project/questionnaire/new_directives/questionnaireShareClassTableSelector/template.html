@@ -1,0 +1,97 @@
+<spinner
+  data-ng-hide="vm.share_class_tables || (vm.readonly && vm.no_response)"
+>
+</spinner>
+
+<p data-ng-show="vm.readonly && vm.no_response">
+  <i class="text-muted">
+    <small>*No Response Available*</small>
+  </i>
+</p>
+
+<div data-ng-show="vm.share_class_tables.length > 0">
+  <div class="row clearfix" data-ng-if="!vm.readonly">
+    <div col="6">
+      <select
+        class="form-control"
+        chosen
+        data-ng-options="share_class as share_class.name for share_class in vm.share_classes"
+        data-ng-change="vm.onChange()"
+        data-ng-model="vm.selected_share_class"
+      >
+        <option value="">--Select {{vm.share_classes.name}}--</option>
+      </select>
+    </div>
+  </div>
+  <div data-ng-show="vm.selected_share_class">
+    <p class="margin-bottom-0 aumTrSpan">
+      <span data-ng-switch="vm.selected_share_class.type">
+        <strong data-ng-switch-when="track_record">Track Record</strong>
+        <strong data-ng-switch-when="aum">AUM</strong>
+        <strong data-ng-switch-when="aum"
+          >({{vm.selected_share_class.currency_name}})</strong
+        >
+        <strong data-ng-switch-when="track_record"
+          >({{vm.selected_share_class.currency_name}}/{{vm.selected_share_class.profile_type}})</strong
+        >
+      </span>
+    </p>
+  </div>
+  <div class="js-share-class-table-container space-on-top-lg"></div>
+</div>
+
+<div
+  data-ng-show="vm.share_class_tables && !vm.share_class_tables.length && !vm.readonly"
+  class="row clearfix"
+>
+  <div col="6">
+    <span>
+      <empty-state
+        icon-name="table"
+        message="No track record available. Please visit this entity’s profile page to add track record."
+        data-ng-show="vm.share_class_table_type == 'track_record'"
+        action="vm.gotoEntityProfile()"
+        action-label="View Profile"
+      ></empty-state>
+
+      <empty-state
+        icon-name="table"
+        message="No AUM history available. Please visit this entity’s profile page to add AUM history."
+        data-ng-show="vm.share_class_table_type == 'aum'"
+        action="vm.gotoEntityProfile()"
+        action-label="View Profile"
+      ></empty-state>
+    </span>
+  </div>
+</div>
+
+<div
+  class="space-on-top-lg"
+  data-ng-show="!vm.readonly && vm.selected_share_class"
+>
+  <a
+    data-ng-click="vm.gotoEntityProfile()"
+    target="_blank"
+    class="btn btn-default"
+  >
+    <span class="align-middle">Edit Values</span>
+    <icon name="external-link" class="align-middle space-on-left"></icon>
+  </a>
+</div>
+
+<div
+  class="space-on-top-lg"
+  data-ng-show="!vm.readonly && (vm.share_class_table_type == 'track_record' || vm.share_class_table_type == 'aum')"
+>
+  <span
+    class="upload-aum-tr-btn inline-block space-on-top-lg space-on-right-xxl"
+  >
+    <a class="clickable text-orange" data-ng-click="vm.openUploadModal()">
+      <span>
+        <img src="/assets/images/upload_icon.svg" class="height-30" />
+      </span>
+      Upload {{vm.share_class_table_type == 'aum' ? 'AUM Data' : 'Track Record
+      Data'}}
+    </a>
+  </span>
+</div>

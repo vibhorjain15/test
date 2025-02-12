@@ -1,0 +1,535 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-qa-bank></ng2-qa-bank> </div>
+
+
+<section  data-ng-if="vm.Utils.isAngularJS()" class="q-a-bank-list-view-page" data-ng-if="vm.pageLoadingStarted">
+   <!-- <h2 class="space-on">Question / Answer Bank</h2> -->
+   <div>
+      <div>
+         <div class="panel panel-default">
+            <div class="panel-body">
+               <div role="tabpanel" class="relative">
+                  <div class="panel panel-info" data-ng-if="!vm.loadingData">
+                     <div class="panel-heading">
+                        <span>Any new data added will auto-refresh in 5 minutes. <span data-ng-if="vm.lastRefreshedAt && !vm.loadingData">Data was last updated {{vm.lastRefreshedAt | fromNow}}. </span></span>
+                        (<a data-ng-click="vm.checkIfQADataUpdated()">Refresh Now&nbsp;<icon name="refresh" class="align-middle"></icon></a>)
+                     </div>
+                   </div>
+                  <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+                     <li data-ng-class="{'active': vm.activeView == 'all'}">
+                        <a data-ng-click="vm.setActiveView('all');vm.clearGridState()">
+                           <span class="align-middle">
+                              <icon name="message" class="align-middle"></icon>
+                              &nbsp;&nbsp;All <span
+                                 data-ng-if="vm.activeView == 'all' && !vm.loadingData">({{vm.questionsTotalCount}})</span>
+                           </span>
+                        </a>
+                     </li>
+                     <li data-ng-class="{'active': vm.activeView == 'preapproved'}">
+                        <a data-ng-if="!vm.is_freeSubscription" data-ng-click="vm.setActiveView('preapproved');vm.clearGridState()">
+                           <span class="align-middle">
+                              <icon name="check-circle" class="align-middle"></icon>
+                              Pre-approved Content <span
+                                 data-ng-if="vm.activeView == 'preapproved' && !vm.loadingData">({{vm.questionsTotalCount}})</span>
+                           </span>
+                        </a>
+                        <a data-ng-if="vm.is_freeSubscription" ui-sref="app.premium">
+                           <span class="align-middle">
+                              <icon name="check-circle" class="align-middle"></icon>
+                              Pre-approved Content <span
+                                 data-ng-if="vm.activeView == 'preapproved' && !vm.loadingData">({{vm.questionsTotalCount}})</span>
+                           </span>
+                        </a>
+                     </li>
+                     <div class="pull-right">
+                        <div class="inline-block w-320 space-on-right"
+                           style="vertical-align: top;padding: 2px 0 0;">
+                           <div class="transparent-input-group input-group advance-search-input-group">
+                              <span class="input-icon">
+                                 <icon name="search"></icon>
+                              </span>
+                              <input type="text" data-ng-model="vm.filters.name"
+                                 class="form-control input-question-search input"
+                                 data-ng-model-options="{'debounce': 500}" data-ng-change="vm.applyFilters()"
+                                 placeholder="Search by keyword" />
+                              <a data-ng-if="vm.filters.name" data-ng-click="vm.clearNameFilter()"
+                                 class="cancel-btn-clear-search-text">
+                                 <icon name="close"></icon>
+                              </a>
+                              <span class="input-group-btn">
+                                 <button class="btn btn-default dropdown-toggle w-95" data-toggle="dropdown"
+                                    btn-type="default">
+                                    {{vm.searchByKeyValue}}&nbsp;<span class="caret"></span>
+                                 </button>
+                                 <ul class="dropdown-menu" role="menu">
+                                    <li>
+                                       <a data-ng-click="vm.changeSearchByKeyValue('Question')" role="button">
+                                          Question
+                                       </a>
+                                    </li>
+                                    <li>
+                                       <a data-ng-click="vm.changeSearchByKeyValue('Answer')" role="button">
+                                          Answer
+                                       </a>
+                                    </li>
+                                 </ul>
+                              </span>
+                           </div>
+                        </div>
+                        <div class="inline-block align-top">
+                           <button btn-type="default" data-ng-if="vm.filters_data_loaded"
+                              class="space-on-top-2 space-on-right" uib-tooltip="Apply Filters"
+                              data-ng-click="vm.toggleFiltersSection()">
+                              <icon name="filter" data-ng-class="{'text-orange': vm.filterApplied}"></icon>
+                           </button>
+                           <button btn-type="default" class="space-on-top-2 space-on-right"
+                              uib-tooltip="Clear Filters" data-ng-click="vm.resetFiltersData(true)">
+                              <icon name="refresh"></icon>
+                           </button>
+                           <div class="inline-block align-center">
+                             <!-- ************************************* -->
+                             <!-- For premium users -->
+                             <button ng-if="!vm.is_freeSubscription" class="btn-primary-no-focus btn-sm" btn-type="primary" data-ng-click="vm.uploadQaFile()">
+                                <icon name="file"></icon>
+                                <span>Import Pre-approved Content</span>
+                             </button>
+                              <button ng-if="!vm.is_freeSubscription" class="btn-default-no-focus btn-sm" btn-type="default" data-ng-click="vm.addNewQuestion()">
+                                 <icon name="plus"></icon>
+                                 <span>Add a Pre-approved Q/A</span>
+                              </button>
+                              <!-- For premium users end-->
+                              <!-- ************************************* --
+                              <!-- ************************************* -->
+                              <!-- For Free users -->
+                              <a ng-if="vm.is_freeSubscription" class="btn btn-primary btn-sm route-link-disabled space-on-top" ui-sref="app.premium" uib-tooltip="This feature is available for premium users. Learn more" tooltip-placement="left">
+                                 <icon name="file"></icon>
+                                 <span>Import Pre-approved Content</span>
+                              </a>
+                               <a ng-if="vm.is_freeSubscription" class="btn btn-default btn-sm route-link-disabled space-on-top" ui-sref="app.premium" uib-tooltip="This feature is available for premium users. Learn more" tooltip-placement="left">
+                                  <icon name="plus"></icon>
+                                  <span>Add a Pre-approved Q/A</span>
+                               </a>
+                               <!-- For Free users end-->
+                               <!-- ************************************* -->
+
+                           </div>
+                        </div>
+                     </div>
+                  </ul>
+                  <div class="tab-content" data-ng-if="!vm.loadingData">
+                     <div class="space-on-top-lg">
+                        <div class="top-widgets-wrapper" data-ng-if="vm.questionsList.length > 0">
+                           <div class="top-widgets-wrapper-left-container inline-block">
+                              <div class="inline-block align-top">
+                                 <button data-ng-if="vm.checkIfAllSelected() == 'none-selected'" btn-type="default"
+                                    size="sm" data-ng-click="vm.clickedSelectAllQuestions()" class="space-on-right-xxl">
+                                    <input type="checkbox" name="select-all" id="select-all"
+                                       data-ng-checked="vm.checkIfAllSelected() == 'all-selected'">
+                                    <span style="color: #76A8B5;font-weight: bold;padding-top: 2px;"
+                                       class="align-top space-on-left-2"
+                                       data-ng-if="vm.getSelectedQuestionsCount() > 0">{{vm.getSelectedQuestionsCount()}}
+                                       Selected</span>
+                                 </button>
+                                 <button data-ng-if="vm.checkIfAllSelected() == 'few-selected'" btn-type="default"
+                                    size="sm" data-ng-click="vm.clickedUnSelectAllQuestions()"
+                                    class="space-on-right-xxl">
+                                    <icon style="color: #2196F3;" class="font-size-17" name="minus-square1" size="1x">
+                                    </icon>
+                                    <span data-ng-if="vm.getSelectedQuestionsCount() > 0"
+                                       style="color: #76A8B5;font-weight: bold;padding-top: 2px;"
+                                       class="align-top space-on-left-2">{{vm.getSelectedQuestionsCount()}}
+                                       Selected</span>
+                                 </button>
+                                 <button data-ng-if="vm.checkIfAllSelected() == 'all-selected'" btn-type="default"
+                                    size="sm" data-ng-click="vm.clickedUnSelectAllQuestions()"
+                                    class="space-on-right-xxl">
+                                    <input type="checkbox" name="select-all" id="select-all"
+                                       data-ng-checked="vm.checkIfAllSelected() == 'all-selected'">
+                                    <span data-ng-if="vm.getSelectedQuestionsCount() > 0"
+                                       style="color: #76A8B5;font-weight: bold;padding-top: 2px;"
+                                       class="align-top space-on-left-2">{{vm.getSelectedQuestionsCount()}}
+                                       Selected</span>
+                                 </button>
+                                 <button data-ng-if="vm.getSelectedQuestionsCount() > 0" btn-type="default" size="sm"
+                                    class="space-on-right-xxl" data-ng-click="vm.deactivateBulkResponse()"
+                                    uib-tooltip="Deactivate all selected response">
+                                    <p class="m-2-0">
+                                       <icon name="ban"></icon>
+                                    </p>
+                                 </button>
+                              </div>
+                              <div class="inline-block align-top">
+                                 <div data-ng-if="vm.getSelectedQuestionsCount() > 0">
+                                    <span class="inline" uib-dropdown>
+                                       <button btn-type="default" size="sm" class="dropdown-toggle clickable"
+                                          uib-dropdown-toggle>
+                                          <p class="m-2-0">
+                                             Bulk Update &nbsp;
+                                             <span class="caret"></span>
+                                          </p>
+                                       </button>
+                                       <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                          <li>
+                                             <a data-ng-click="vm.addRemoveTagsBulk()" role="button">
+                                                Manage Tags
+                                             </a>
+                                          </li>
+                                          <li>
+                                             <a data-ng-click="vm.assignSMEBulk()" role="button">
+                                                Manage SME
+                                             </a>
+                                          </li>
+                                          <li>
+                                             <a data-ng-click="vm.changeExpiryDateBulk()" role="button">
+                                                Manage Expiry Date
+                                             </a>
+                                          </li>
+                                       </ul>
+                                    </span>
+                                 </div>
+                              </div>
+                           </div>
+                           <div class="top-widgets-wrapper-right-container inline-block pull-right">
+                              <div class="inline-block align-top space-on-right-xxl">
+                                <span class="inline" uib-dropdown>
+                                   <button  btn-type="default" size="sm" class="dropdown-toggle clickable" ng-class="{'dateFilterActive': vm.dateFilterApplied}" uib-dropdown-toggle>
+                                      <p class="m-2-0">Filter By : Expiry Date</p>
+                                   </button>
+
+                                  <ul class="dropdown-menu expiry-content-ul" uib-dropdown-menu role="menu">
+                                      <li class="expiry-content-li" ng-click="vm.filterByExpiryDate('five')">
+                                        In 5 Days
+                                      </li>
+                                      <li class="expiry-content-li" ng-click="vm.filterByExpiryDate('ten')">
+                                        In 10 Days
+                                      </li>
+                                      <li class="expiry-content-li" ng-click="vm.filterByExpiryDate('thirty')">
+                                        In 30 Days
+                                      </li>
+                                      <hr class="seprator">
+                                      <li class="expiry-content-li" ng-click="vm.filterByExpiryDate('all')">
+                                        All Expired Responses
+                                      </li>
+                                      <!-- <li class="expiry-content-li clear-li" ng-click="vm.filterByExpiryDate('clear')">
+                                        Clear All
+                                      </li> -->
+                                  </ul>
+                                </span>
+                                 <span class="inline" uib-dropdown>
+                                    <button btn-type="default" size="sm" class="dropdown-toggle clickable"
+                                       uib-dropdown-toggle>
+                                       <p class="m-2-0">
+                                          ↑↓ Sort By {{vm.currentSortFilterSelected == 'expiry_date_sort'?': Expiry
+                                          Date':vm.currentSortFilterSelected == 'response_date_sort'?': Response
+                                          Date':''}}
+                                       </p>
+                                    </button>
+                                    <ul class="dropdown-menu sort-menu-options" uib-dropdown-menu role="menu" data-ng-click="$event.stopPropagation();">
+                                       <li>
+                                          <select class="form-control" id="criteria_sort_filter"
+                                             name="criteria_sort_filter" chosen data-placeholder="Select a filter"
+                                             data-ng-model="vm.currentSortFilterSelected"
+                                             data-ng-change="vm.selectSortCriteriaFilter()" style="width: 200px;">
+                                             <option value=""></option>
+                                             <option value="expiry_date_sort">
+                                                <span>
+                                                   Expiry date
+                                                </span>
+                                             </option>
+                                             <option value="response_date_sort">
+                                                <span>
+                                                   Response date
+                                                </span>
+                                             </option>
+                                          </select>
+                                          <div class="space-on-top-xl">
+                                             <p>
+                                                <a class="sort-menu-options-a-d clickable"
+                                                   data-ng-class="{'active':vm.currentSortFilterOptionSelected == 'Ascending'}"
+                                                   data-ng-click="vm.selectSortCriteriaFilterOption('Ascending')">↑&nbsp;&nbsp;
+                                                   Ascending</a>
+                                                &nbsp;&nbsp;
+                                                <a class="sort-menu-options-a-d clickable"
+                                                   data-ng-class="{'active':vm.currentSortFilterOptionSelected == 'Descending'}"
+                                                   data-ng-click="vm.selectSortCriteriaFilterOption('Descending')">↓&nbsp;&nbsp;
+                                                   Descending</a>
+                                             </p>
+                                          </div>
+                                       </li>
+                                    </ul>
+                                 </span>
+                              </div>
+                              <div  class="expand-all-slider-qa-bank inline-block align-top">
+                                 <label class="switch">
+                                    <input type="checkbox" data-ng-model="vm.showAnswers" data-ng-change="vm.toggleShowAnswers()">
+                                    <span class="slider round"></span>
+                                 </label>
+                                 <span class="expand-all-txt">Expand All</span>
+                              </div>
+                              <div class="qa-bank-q-nav">
+                                 <button btn-type="transparent">
+                                    {{vm.start_point + 1}}-<span
+                                       data-ng-if="vm.end_point < vm.questionsTotalCount">{{vm.end_point}}</span><span
+                                       data-ng-if="vm.end_point >= vm.questionsTotalCount">{{vm.questionsTotalCount}}</span>
+                                    of {{vm.questionsTotalCount}}
+                                 </button>
+                                 <button btn-type="transparent" data-ng-click="vm.goToPrevious()"
+                                    ng-disabled="vm.start_point == 0">
+                                    <icon name="chevron-left" class="align-middle space-on-right"></icon>
+                                 </button>
+                                 <button btn-type="transparent" data-ng-click="vm.goToNext()"
+                                    ng-disabled="vm.end_point >= vm.questionsTotalCount">
+                                    <icon name="chevron-right" class="align-middle space-on-right"></icon>
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="label-list space-on-bottom-lg space-on-left"
+                           data-ng-if="vm.filterApplied || vm.viewSimilarQuestionsVisible || vm.dateFilterApplied">
+                           <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                              data-ng-repeat="criterion in vm.search_criterias"
+                              data-ng-if="criterion.advance_filter_value || (criterion.advance_filter_value == false && criterion.criteria_obj.filter_type == 'bool') || criterion.advance_filter_value === 0">
+                              <small>{{vm.displayFilter(criterion)}}</small>
+                              <a class="space-on-left clickable link-disguise"
+                                 data-ng-click="vm.removeFilterCriterion($index)">&times;</a>
+                           </span>
+                           <span class="btn btn-primary-outline text-uppercase space-on-right space-on-top"
+                              data-ng-if="vm.viewSimilarQuestionsVisible">
+                              <small>Filter : View Similar Question</small>
+                              <a class="space-on-left clickable link-disguise"
+                                 data-ng-click="vm.removeViewSimilarQuestionFilter()">&times;</a>
+                           </span>
+                           <span data-ng-if="vm.dateFilterApplied" class="btn btn-primary-outline text-uppercase space-on-right space-on-top">
+                              <small>{{vm.selectedDateRange}}</small>
+                              <a class="space-on-left clickable link-disguise"
+                                 data-ng-click="vm.removeDatesFilter()">&times;</a>
+                           </span>
+                        </div>
+                        <div class="question-answer-container" data-ng-if="vm.questionsList.length > 0">
+                           <div class="question-answer-wrapper space-on-top-lg clickable"
+                              data-ng-repeat="question in vm.questionsList" data-ng-click="vm.toggleAnswerForQuestion(question)" ng-class="vm.getContainerClass(question)">
+                              <div class="question-wrapper">
+                                 <button data-ng-click="$event.stopPropagation()" btn-type="default" size="sm"
+                                    class="space-on-right-lg pull-right dropdown-toggle clickable" uib-dropdown-toggle
+                                    uib-dropdown>
+                                    <icon name="dots-three-vertical" uib-tooltip="More options"></icon>
+                                    <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                                       <li>
+                                          <a data-ng-click="vm.displayNotesController(question);$event.stopPropagation();" role="button">
+                                             View notes
+                                          </a>
+                                       </li>
+                                       <li>
+                                          <a ui-sref="app.diligence.project.questionnaire.category({diligenceId: question.duediligence_id , 'categoryId': question.parent_section_id,'#':'child_section_'+question.child_section_id})"
+                                             role="button">
+                                             View project
+                                          </a>
+                                       </li>
+                                       <li>
+                                          <a data-ng-click="vm.getViewSimilarQuestionsData(question)" role="button">
+                                             View similar questions
+                                          </a>
+                                       </li>
+                                    </ul>
+                                 </button>
+                                 <button
+                                    data-ng-if="question.is_active && !question.response_is_na && question.response_type != 'Grid' && question.response_type != 'DynamicGrid' && question.response_type != 'Attachment' && question.response_type != 'Dropdown' && question.response_type != 'CheckBox' && (vm.showAnswers || question.showAnswer)"
+                                    btn-type="default" size="sm" class="space-on-right-lg pull-right"
+                                    uib-tooltip="Copy this Answer" ngclipboard
+                                    data-clipboard-target="#question-response_{{$index}}"
+                                    data-ng-click="vm.copyResponse();$event.stopPropagation()">
+                                    <icon name="copy"></icon>
+                                 </button>
+                                 <button
+                                    data-ng-if="question.diligence_type == -1 && question.is_active && !question.response_is_na && question.response_type != 'Grid' && question.response_type != 'DynamicGrid' && question.response_type != 'Attachment' && question.response_type != 'Dropdown' && question.response_type != 'CheckBox' && question.response_type != 'BooleanPlus' && question.response_type != 'NoPlus' && question.response_type !='Bookends'"
+                                    btn-type="default" size="sm" class="space-on-right-lg pull-right" uib-tooltip="Edit"
+                                    data-ng-click="vm.editPreapprovedQuestion(question);$event.stopPropagation()">
+                                    <icon name="pencil"></icon>
+                                 </button>
+                                 <p>
+                                    <span data-ng-if="!question.is_active"
+                                       uib-tooltip="This response has been marked as inactive">
+                                       <input class="clickable" type="checkbox" name="question_{{question.question_id}}"
+                                          id="question_{{question.question_id}}" data-ng-model="question.isSelected"
+                                          disabled>
+                                    </span>
+                                    <input class="clickable" type="checkbox" name="question_{{question.question_id}}"
+                                       id="question_{{question.question_id}}" data-ng-model="question.isSelected"
+                                       data-ng-if="question.is_active" data-ng-click="$event.stopPropagation()">
+                                    <span class="space-on-left text-bold" >
+                                       <span data-ng-bind-html="question.question_text | cleanhtml"></span>
+                                    </span>
+                                    <icon
+                                       data-ng-if="question.diligence_type == -1 && vm.activeView != 'preapproved' && !question.is_verified"
+                                       name="check-circle" class="align-middle font-size-14"
+                                       uib-tooltip="Pre-approved, not verified"></icon>
+                                    <icon data-ng-if="question.diligence_type == -1 && question.is_verified"
+                                       uib-tooltip="Pre-approved, verified" name="check-circle"
+                                       class="align-middle font-size-14 text-success clickable" ></icon>
+                                 </p>
+                              </div>
+
+                              <div class="answer-wrapper" data-ng-if="vm.showAnswers || question.showAnswer">
+                                 <div >
+                                    <div dv-show-more show-more-height='250'
+                                       data-ng-if="question.response_text != null && !question.response_is_na && question.response_type != 'Grid' && question.response_type != 'DynamicGrid' && question.response_type != 'Attachment' && question.response_type != 'Dropdown' && question.response_type != 'CheckBox'">
+                                       <p class="clear-padding-left clear-padding-right">
+                                          <span data-ng-if="question.response_type != 'Date'" id="question-response_{{$index}}" class="responsive-image"
+                                             ng-bind-html="question.response_text | cleanhtml | trusthtml">
+                                          </span>
+                                          <span data-ng-if="question.response_type == 'Date'" id="question-response_{{$index}}" class="responsive-image"
+                                             ng-bind-html="question.response_text | date">
+                                          </span>
+                                       </p>
+                                    </div>
+                                    <div
+                                       data-ng-if="question.response_text != null && question.response_type == 'Dropdown' || question.response_type == 'CheckBox'">
+                                       <p class="clear-padding-left clear-padding-right">
+                                          <span id="question-response_{{$index}}" class="responsive-image"
+                                             data-ng-repeat="option in question.checkbox_response">
+                                             {{option.response}}<span data-ng-hide="$last">,</span>
+                                          </span>
+                                       </p>
+                                    </div>
+                                    <div data-ng-if="question.response_is_na">
+                                       <i class="text-info">
+                                          <small>*This question has been marked as N/A*</small>
+                                       </i>
+                                    </div>
+                                    <div data-ng-if="!question.response_is_na && question.response_text == null">
+                                       <i class="text-info">
+                                          <small>*No response available*</small>
+                                       </i>
+                                    </div>
+                                    <dv-file-uploader data-ng-if="question.response_text != null && question.response_type == 'Attachment'"
+                                       label="Upload Attachment" attachments="question.attachment_response" readonly>
+                                    </dv-file-uploader>
+                                    <div
+                                       data-ng-if="question.response_text != null && (question.response_type == 'DynamicGrid' || question.response_type == 'Grid')">
+                                       <div data-ng-if="(question.grid_response | json) != '{}'"
+                                          class="dvTable ng-scope">
+                                          <table class="table table-bordered table-condensed">
+                                             <tbody>
+                                                <tr>
+                                                   <th></th>
+                                                   <th
+                                                      data-ng-repeat="column in question.grid_response.Columns | orderBy:'order' track by $index">
+                                                      {{column.name}}</th>
+                                                </tr>
+                                                <tr
+                                                   data-ng-repeat="row in question.grid_response.Rows | orderBy:'order' track by $index">
+                                                   <td><b>{{row.name}}</b></td>
+                                                   <td data-ng-repeat="response in row.responses track by $index">
+                                                      {{response}}</td>
+                                                </tr>
+                                             </tbody>
+                                          </table>
+                                       </div>
+                                    </div>
+                                    <div data-ng-if="question.comments.length > 0">
+                                       <p class="clear-padding-left clear-padding-right">
+                                          <span>
+                                             (<span data-ng-bind-html="(question.comments[0].comment_text  | cleanhtml | trusthtml)"></span>)
+                                          </span>
+                                       </p>
+                                    </div>
+                                 </div>
+                                 <div class="text-align-right">
+                                    <button data-ng-if="question.is_active" btn-type="default" size="sm"
+                                       class="space-on-right-lg" uib-tooltip="Deactivate this response"
+                                       data-ng-click="vm.deactivateResponse(question, $index)">
+                                       <icon name="ban"></icon>
+                                    </button>
+                                    <button data-ng-if="!question.is_active" btn-type="default" size="sm"
+                                       class="danger text-danger space-on-right-lg"
+                                       uib-tooltip="This response has been marked as inactive">
+                                       <icon name="ban"></icon>
+                                    </button>
+                                 </div>
+                              </div>
+                              <div class="question-info-wrapper space-on-right-lg clickable" >
+                                 <div class="text-align-right">
+                                    <span data-ng-if="!question.tags || question.tags.length == 0">
+                                       No Tags |
+                                    </span>
+                                    <span data-ng-if="question.tags && question.tags.length > 0">
+                                       Tag(s):
+                                       <span class="space-on-left-2"
+                                          data-ng-repeat="tag in question.tags | limitTo : question.limitTo?question.limitTo : 2">{{tag.value}}
+                                          <span ng-hide="$last">,</span> </span> <a class="clickable"
+                                          data-ng-click="question.limitTo = question.tags.length"
+                                          data-ng-if="question.tags.length > 2 && question.limitTo != question.tags.length"
+                                          style="color: #136A81;white-space: nowrap;">
+                                          + {{question.tags.length - 2}} more
+                                       </a> |
+                                    </span>
+                                    <span data-ng-if="question.associated_entity">
+                                       {{question.associated_entity_type ==
+                                       'Fund'?'Product':question.associated_entity_type}}:
+                                       {{question.associated_entity}} |
+                                    </span>
+                                    <span data-ng-if="question.question_sme && question.question_sme.length > 0">
+                                       SME(s):
+                                       <span class="space-on-left-2"
+                                          data-ng-repeat="sme in question.question_sme | limitTo : question.limitToSme?question.limitToSme : 2">{{sme.value}}
+                                          <span ng-hide="$last">,</span> </span> <a class="clickable"
+                                          data-ng-click="question.limitToSme = question.question_sme.length"
+                                          data-ng-if="question.question_sme.length > 2 && question.limitToSme != question.question_sme.length"
+                                          style="color: #136A81;white-space: nowrap;">
+                                          + {{question.question_sme.length - 2}} more
+                                       </a> |
+                                    </span>
+                                    <span data-ng-if="question.expiry_date">
+                                       Expiry date: {{question.expiry_date|date}} |
+                                    </span>
+                                    <span>
+                                       Response date: {{question.response_created_at|date}}
+                                    </span>
+                                 </div>
+                                 <div class="inline-block width-100-pct" data-ng-if="question.is_verified">
+                                    <p class="space-on-top-lg last-verified text-align-right">
+                                       <span style="color: #136A81;">
+                                          Last reviewed by {{question.verified_by_name}} on {{question.verified_at |
+                                          date}}
+                                       </span>
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="row clearfix space-on-top-xl" data-ng-if="vm.questionsList.length == 0">
+                           <div col="6" offset="3">
+                              <empty-state data-ng-if="!vm.loadingMoreData" icon-name="smile-o" message="No {{vm.searchByKeyValue.toLowerCase()}}s matched your filter criteria."
+                                 action="vm.resetFiltersData(true)" action-label="Click to Reset"></empty-state>
+                              <spinner data-ng-if="vm.loadingMoreData"></spinner>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div data-ng-if="vm.loadingData">
+                     <div class="tab-spinner-div">
+                        <spinner></spinner>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+
+<div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg" data-ng-class="{'in': vm.displaySidebarPanel}"
+   data-ng-show="vm.displaySidebarPanel">
+   <div class="panel panel-primary">
+      <div class="panel-heading text-center">
+         <h5>
+            <b>{{vm.sidebarTitle}}</b>
+            <a class="pull-right clickable link-disguise" data-ng-click="vm.displaySidebarPanel = false">
+               <icon name="close" size="lg"></icon>
+            </a>
+         </h5>
+      </div>
+      <div class="panel-body">
+         <ng-include src="vm.sidebarTemplate"></ng-include>
+      </div>
+   </div>
+</div>

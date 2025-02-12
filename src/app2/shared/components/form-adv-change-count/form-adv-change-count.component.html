@@ -1,0 +1,10 @@
+<div *ngIf="params.data">
+    <a (click)="navigateToUrl(params.data.firmCRD);" [adaptivePosition]="false" tooltip="Compare the changes across filings" container="body"
+        *ngIf="params.data[field]  > 0">
+        <span humanize="compactInteger" [humanizeInput]="params.data[field]">
+        </span>
+    </a>
+    <span *ngIf="params.data[field]  == 0" class="label label-success">
+        No Changes
+    </span>
+</div>

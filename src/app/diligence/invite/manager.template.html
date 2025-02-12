@@ -1,0 +1,93 @@
+<spinner data-ng-hide="vm.is_data_loaded"></spinner>
+
+<form-wizard name="new-request-investor"
+             display-footer="true"
+             on-finish="vm.sendDueDiligenceRequest()"
+             data-ng-show="vm.is_data_loaded">
+  <wizard-step step-title="'Investor'"
+               step-content-header-title="'Select investor(s) on the left hand panel, using search and filters to narrow your search. Don\'t see what you want? Add a new one to the list.'"
+               can-exit="vm.canProceedToFundStep">
+
+    <div class="row clearfix">
+      <div col="12">
+        <p class="alert alert-danger"
+           data-ng-show="vm.display_investor_selection_error">
+          Please select at least one investor to proceed
+        </p>
+
+        <dd-investor-selector selection="vm.selected_investors"
+                              select-all-investors="vm.request.all_investor_flag">
+        </dd-investor-selector>
+      </div>
+    </div>
+  </wizard-step>
+
+  <wizard-step step-title="vm.entity_type"
+               step-content-header-title="'Select '+vm.entity_type+' on the left hand panel, using search and filters to narrow your search. Don’t see the '+vm.entity_type+' you want? Add a new one to the list.'"
+               can-exit="vm.canProceedToReviewStep">
+    <div class="row clearfix">
+      <div col="12">
+        <p class="alert alert-danger"
+           data-ng-show="vm.display_entity_selection_error">
+          Please select at least one product to proceed
+        </p>
+
+        <dd-fund-selector selection="vm.selected_entities"
+                          select-all-entities="vm.request.all_entity_flag">
+        </dd-fund-selector>
+      </div>
+    </div>
+
+  </wizard-step>
+
+  <wizard-step step-title="'Review'"
+               step-content-header-title="'Please review your request'"
+               next-button-label="Send Request"
+               next-button-type="orange">
+
+    <div class="row clearfix">
+      <div col="6" offset="3">
+        <form name="vm.project_name_form">
+          <form-group field-name="Project Name"
+                      tooltip-placement="left">
+            <label>Project Name</label>
+            <input type="text"
+                   data-ng-model="vm.project_name"
+                   required
+                   focus-me="true"
+                   dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                   placeholder="Project Name"
+                   class="form-control" />
+          </form-group>
+        </form>
+
+        <hr>
+
+        <dl class="dl-horizontal clear-margin-bottom">
+          <dt>Investors</dt>
+          <dd data-ng-hide="vm.request.all_investor_flag">
+            <ul>
+              <li data-ng-repeat="investor in vm.selected_investors">{{investor.name}}</li>
+            </ul>
+          </dd>
+          <dd data-ng-show="vm.request.all_investor_flag">This request is for all active investors</dd>
+        </dl>
+
+        <dl class="dl-horizontal clear-margin-bottom">
+          <dt>Product Name</dt>
+          <dd data-ng-hide="vm.request.all_entity_flag">
+            <ul>
+              <li data-ng-repeat="fund in vm.selected_entities">{{fund.name}}</li>
+            </ul>
+          </dd>
+          <dd data-ng-show="vm.request.all_entity_flag">This request is for all {{vm.entity_type | standardPluralize}}</dd>
+        </dl>
+
+        <dv-checkbox
+          data-ng-model="vm.accept_confidential_agreement"
+          label="I certify that this request is being sent to a prequalified investor as per our firm's regulatory and compliance standards.">
+        </dv-checkbox>
+      </div>
+    </div>
+  </wizard-step>
+</form-wizard>

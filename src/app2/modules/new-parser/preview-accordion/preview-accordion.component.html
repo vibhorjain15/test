@@ -1,0 +1,224 @@
+<accordion
+  *ngFor="let section of sections; trackBy: section; let sectionIndex = index"
+  [isAnimated]="true"
+  [closeOthers]="true"
+>
+  <accordion-group
+    [isOpen]="section.isOpen"
+    (isOpenChange)="toggleAccordion($event, section)"
+  >
+    <div accordion-heading>
+      <h4 class="panel-title pos-rel">
+        <a role="button" tabindex="0" class="link-unstyled">
+          <span class="space-on-left section_text">
+            <strong>{{ section.text }} &nbsp;</strong>
+          </span>
+        </a>
+        <span class="indicating-icons">
+          <span
+            appIcon
+            [name]="section.isOpen ? 'chevron-up' : 'chevron-down'"
+          ></span>
+        </span>
+      </h4>
+      <ng-container>
+        <span class="questionCount">{{ getCount(section) }}</span>
+      </ng-container>
+    </div>
+    <accordion
+      *ngFor="
+        let subSection of section.subSections;
+        let subSectionIndex = index
+      "
+      [closeOthers]="true"
+      [isAnimated]="true"
+    >
+      <accordion-group
+        [isOpen]="subSection.isOpen"
+        (isOpenChange)="toggleAccordion($event, subSection)"
+      >
+        <div accordion-heading>
+          <h4 class="panel-title pos-rel">
+            <a role="button" tabindex="0" class="link-unstyled">
+              <span class="space-on-left subSection_text">
+                <strong>{{ subSection.text }} &nbsp;</strong>
+              </span>
+            </a>
+            <span class="indicating-icons">
+              <span
+                appIcon
+                [name]="subSection.isOpen ? 'chevron-up' : 'chevron-down'"
+              ></span>
+            </span>
+          </h4>
+        </div>
+        <div>
+          <div *ngIf="subSection.instructions" class="row panel panel-info">
+            <div class="panel-heading borderless instructions-text">
+              <dv-show-more maxHeight="150" [text]="subSection.instructions">
+              </dv-show-more>
+            </div>
+          </div>
+          <table class="table">
+            <tbody>
+              <tr
+                *ngFor="
+                  let question of subSection.questions;
+                  let question_index = index
+                "
+                [ngClass]="{ 'dupes-row': false }"
+              >
+                <td width="4%" class="text-center">
+                  <dv-checkbox
+                    [(ngModel)]="question.is_selected"
+                    [name]="
+                      'question_' +
+                      sectionIndex +
+                      '_' +
+                      subSectionIndex +
+                      '_' +
+                      question_index
+                    "
+                    [id]="
+                      'question_' +
+                      sectionIndex +
+                      '_' +
+                      subSectionIndex +
+                      '_' +
+                      question_index
+                    "
+                    (onValChange)="
+                      valildateQuestionSelection(question, subSection, section)
+                    "
+                  ></dv-checkbox>
+                </td>
+                <!-- <td width="4%" class="QaEditContainer" *ngIf="isQAflow"> -->
+                <td width="4%" class="QaEditContainer">
+                  <ng-container *ngIf="!question.editable">
+                    <button
+                      class="btn btn-xs btn-default editResButton"
+                      tooltip="Edit Response"
+                      (click)="question.editable = !question.editable"
+                    >
+                      <span appIcon name="pencil"></span>
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="question.editable">
+                    <button
+                      class="btn btn-xs btn-default editResButton"
+                      tooltip="Save Changes"
+                      (click)="question.editable = !question.editable"
+                    >
+                      <span appIcon name="check"></span>
+                    </button>
+                  </ng-container>
+                </td>
+                <td width="92%">
+                  <div class="row clearfix">
+                    <div class="col-sm-9 white-space-normal">
+                      <div
+                        *ngIf="question.responseTypeDesc != 'Grid'"
+                        class="parserTextQ"
+                      >
+                        <p>{{ question.text }}</p>
+                      </div>
+                      <div
+                        *ngIf="question.responseTypeDesc == 'Grid'"
+                        class="gridPreview"
+                      >
+                        <p>{{ question.text }}</p>
+                        <div
+                          *ngIf="question.html"
+                          [innerHtml]="question.html | trustHtml"
+                          class="space-on-top-lg"
+                        ></div>
+                      </div>
+                      <div
+                        *ngIf="question.instructions"
+                        class="row panel panel-info"
+                      >
+                        <div class="panel-heading borderless instructions-text">
+                          <dv-show-more
+                            maxHeight="150"
+                            [text]="question.instructions"
+                          >
+                          </dv-show-more>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <dv-select
+                        *ngIf="
+                          !isQaFlow &&
+                          !['Grid', 'DynamicGrid'].includes(
+                            question.responseType
+                          )
+                        "
+                        [list]="responseTypes"
+                        [ngModel]="question.responseTypeDesc"
+                        (onSelectChange)="changeResponseType($event, question)"
+                        bindLabel="description"
+                        bindValue=""
+                        [disabled]="!!question.responseHTML"
+                        [clearable]="false"
+                        [searchable]="false"
+                        appendTo="body"
+                        [ngModelOptions]="{ standalone: true }"
+                        [tippyTooltip]="
+                          !!question.responseHTML
+                            ? 'All marked responses will be imported as paragraph text.'
+                            : ''
+                        "
+                      >
+                      </dv-select>
+                      <dv-select
+                        *ngIf="
+                          !isQaFlow &&
+                          ['Grid', 'DynamicGrid'].includes(
+                            question.responseType
+                          )
+                        "
+                        [list]="gridResponseTypes"
+                        [ngModel]="question.responseTypeInt"
+                        bindLabel="description"
+                        bindValue="id"
+                        [disabled]="true"
+                        [clearable]="false"
+                        [searchable]="false"
+                        appendTo="body"
+                        [ngModelOptions]="{ standalone: true }"
+                        [tippyTooltip]="
+                          !!question.responseHTML
+                            ? 'All marked responses will be imported as paragraph text.'
+                            : ''
+                        "
+                      >
+                      </dv-select>
+                    </div>
+                  </div>
+                  <div
+                    class="space-on-top res_container"
+                    (mouseenter)="question.hoverState = true"
+                    (mouseleave)="question.hoverState = false"
+                  >
+                    <dv-editor
+                      *ngIf="question.editable"
+                      [isTinyMceEditor]="false"
+                      [configObj]="tinymceOptions"
+                      [value]="question.responseHTML || ''"
+                      (onChange)="handleEditorTextChange($event, question)"
+                    ></dv-editor>
+                    <div
+                      *ngIf="
+                        !question.editable && question.responseHTML?.length
+                      "
+                      [innerHtml]="question.responseHTML | dvSafeHtml"
+                    ></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </accordion-group> </accordion></accordion-group
+></accordion>

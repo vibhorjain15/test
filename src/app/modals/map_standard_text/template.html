@@ -1,0 +1,175 @@
+<form name="vm.add_report_template_form" data-ng-submit="vm.submit()" class="form-horizontal" novalidate>
+    <div class="modal-header">
+      <h3 class="modal-title">Add Smart Text Tags
+        <a class="pull-right clickable link-disguise link-unstyled"
+           data-ng-click="vm.cancel()">&times;</a>
+      </h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row clearfix">
+        <div class="text-center space-on-bottom-lg">
+          <div class="btn-group">
+            <label class="btn btn-default" data-ng-class="{'btn-primary': vm.active_tab == 'projectTags'}" data-ng-click="vm.setActiveTab('projectTags')">Project Tags</label>
+            <label class="btn btn-default" data-ng-class="{'btn-primary': vm.active_tab == 'mappedQuestionTags'}" data-ng-click="vm.setActiveTab('mappedQuestionTags')">Mapped Question Tags</label>
+            <label class="btn btn-default" data-ng-class="{'btn-primary': vm.active_tab == 'questionTags'}" data-ng-click="vm.setActiveTab('questionTags')">Question Tags</label>
+            <label class="btn btn-default" data-ng-class="{'btn-primary': vm.active_tab == 'customTags'}" data-ng-click="vm.setActiveTab('customTags')">Custom Tags</label>
+          </div>
+        </div>
+        <div class="panel panel-info">
+              <div class="panel-heading">{{vm.tabHelpText}}</div>
+        </div>
+      </div>
+      <div class="row clearfix space-on-top-lg space-on-bottom-lg">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <input type="text" class="form-control" ng-model="vm.searchText" placeholder="{{vm.placeholderText}}">
+            <a ng-show="vm.searchText && vm.searchText.length >= 3" data-ng-click="vm.clearFilters()" class="clickable closeBtnMapText"><icon name="close"></icon></a>
+          </div>
+        </div>
+        <div class="col-sm-3 text-right">
+
+          <button data-ng-show="vm.active_tab == 'customTags'" btn-type="primary"
+            data-ng-click="vm.addWidget()">
+            Add
+          </button>
+        </div>
+      </div>
+      <div ng-if="vm.loading" class="text-center">
+        <spinner></spinner>
+      </div>
+      <div ng-if="vm.active_tab == 'mappedQuestionTags' && !vm.loading">
+        <table class="table table-condensed table-striped" style="width: 100%" data-ng-show="vm.allMappedQuestions.length">
+          <tbody>
+            <tr ng-repeat="tag in vm.allMappedQuestions | filter: vm.searchText">
+              <td>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy tags"
+                        ngclipboard data-clipboard-target="#tagsKey{{$index}}"
+                        data-ng-click="vm.copyTags(tag.copyKey)">
+                    <icon name="plus"></icon>
+                </button>
+                {{tag.mapped_question_text}}
+                <div style="height:0; opacity: 0" id="tagsKey{{$index}}">
+                  <span>{{tag.copyKey}}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center"  ng-if="!vm.allMappedQuestions.length">
+          <p class="text-muted space-on-top">No mapped question tags found. Click here <a ng-click="vm.goToTemplateView()" class="clickable">here</a> to add mapped question</p>
+        </div>
+      </div>
+      <div ng-if="vm.active_tab == 'customTags' && !vm.loading">
+        <div class="row clearfix">
+            <div col="12" ng-repeat="entry in vm.customTagsArr | filter: vm.searchText" class="checkbox_row">
+                <form-group field-name="Name">
+                    <div for="document-name" class="col-md-1">
+                      <button btn-type="default"
+                              size="sm"
+                              class="space-on-right-lg"
+                              uib-tooltip="Use this"
+                              data-ng-click="vm.useSelectedWidget($index)">
+                          <icon name="plus"></icon>
+                      </button>
+                    </div>
+                    <div class="col-sm-4">
+                      {{entry.name}}
+                    </div>
+                    <div class="col-md-4">
+                      <div ng-if="entry.type == 'dropdown'">
+                        <select name="diligencevault_owner"
+                                id="diligencevault-owner"
+                                class="form-control"
+                                chosen
+                                data-ng-options="option as option for option in entry.type_options"
+                                data-ng-model="entry.selectValue"
+                                ng-show="entry.type == 'dropdown'">
+                            <option value="">--Select--</option>
+                        </select>
+                      </div>
+                      <div ng-if="entry.type == 'date'">
+                        <dv-datepicker data-ng-model="entry.selectValue"
+                                       ng-required="true"
+                                       id="due-date"
+                                       ></dv-datepicker>
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="standardized_action_row">
+                        <a class="btn btn-default danger" uib-tooltip="Delete" data-ng-click="vm.deleteWidget(entry, $index)">
+                            <strong><icon name="trashcan"></icon></strong>
+                        </a>
+                        <a class="btn btn-default" uib-tooltip="Edit" data-ng-click="vm.editWidget(entry)">
+                            <strong><icon name="pencil"></icon></strong>
+                        </a>
+                      </div>
+                    </div>
+                </form-group>
+            </div>
+        </div>
+        <div class="text-center"  ng-if="!vm.customTagsArr.length">
+          <p class="text-muted space-on-top">Click Add to Insert Custom Tags.</p>
+        </div>
+      </div>
+      <div ng-if="vm.active_tab == 'projectTags' && !vm.loading">
+        <table class="table table-condensed table-striped" style="width: 100%" data-ng-show="vm.projectTagsArr.length">
+          <tbody>
+            <tr ng-repeat="tag in vm.projectTagsArr | filter: vm.searchText">
+              <td>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy tags"
+                        ngclipboard data-clipboard-target="#tagsKey{{$index}}"
+                        data-ng-click="vm.copyTags(tag.copyKey)">
+                    <icon name="plus"></icon>
+                </button>
+                {{tag.item1}}
+                <div style="height:0; opacity: 0" id="tagsKey{{$index}}">
+                  <span>{{tag.copyKey}}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center"  ng-if="!vm.projectTagsArr || !vm.projectTagsArr.length">
+          <p class="text-muted space-on-top">No Project Tags Found. </p>
+        </div>
+      </div>
+      <div ng-if="vm.active_tab == 'questionTags' && !vm.loading">
+        <table class="table table-condensed table-striped" style="width: 100%" data-ng-show="vm.projectTagsArr.length">
+          <tbody>
+            <tr ng-repeat="tag in vm.normalQuestionTags | filter: vm.searchText" ng-hide="vm.question && vm.question.id == tag.id">
+              <td>
+                <button btn-type="default"
+                        size="sm"
+                        class="space-on-right-lg"
+                        uib-tooltip="Copy tags"
+                        ngclipboard data-clipboard-target="#tagsKey{{$index}}"
+                        data-ng-click="vm.copyTags(tag.copyKey)">
+                    <icon name="plus"></icon>
+                </button>
+                {{tag.text}}
+                <div style="height:0; opacity: 0" id="tagsKey{{$index}}">
+                  <span>{{tag.copyKey}}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center"  ng-if="!vm.projectTagsArr || !vm.projectTagsArr.length">
+          <p class="text-muted space-on-top">No Question Tags Found. </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+        <!-- <button type="submit" button-loader="vm.loading">Save</button> -->
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,38 @@
+<div role="tabpanel">
+  <ul class="nav nav-tabs" dv-nav-tabs-dropdown role="tablist">
+    <li ui-sref-active="active">
+      <a ui-sref="app.form_adv.firm.snapshot">
+        Snapshot
+      </a>
+    </li>
+    <li ui-sref-active="active">
+      <a ui-sref="app.form_adv.firm.potential_flags">
+        Potential Flags
+      </a>
+    </li>
+    <li ui-sref-active="active">
+      <a ui-sref="app.form_adv.firm.private_funds">
+        Private Funds
+      </a>
+    </li>
+    <li ui-sref-active="active">
+      <a ui-sref="app.form_adv.firm.related_entities">
+        Owners / Affiliates
+      </a>
+    </li>
+    <!--<li ui-sref-active="active">
+      <a ui-sref="app.form_adv.firm.questionnaire">
+        Latest Filing
+      </a>
+    </li>-->
+    <li  data-ng-class="{'active': $state.$current.name == 'app.form_adv.firm.filings_history' || $state.$current.name == 'app.form_adv.firm.question_history'}">
+      <a ui-sref="app.form_adv.firm.filings_history">
+        History
+      </a>
+    </li>
+  </ul>
+  
+  <div class="tab-content">
+    <ui-view />
+  </div> 
+</div>

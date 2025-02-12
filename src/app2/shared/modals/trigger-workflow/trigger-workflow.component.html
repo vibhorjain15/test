@@ -1,0 +1,45 @@
+<app-modal
+  [title]="'Start New Workflow Process'"
+  [firstButtonLabel]="'Review Workflow'"
+  (onFirstClick)="save($event)"
+  [initialTemplate]="workflowRef"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="!workflowForm.valid"
+>
+</app-modal>
+
+<ng-template #workflowRef>
+  <form class="form-horizontal" [formGroup]="workflowForm" autocomplete="off">
+    <!-- <div class="modal-body"> -->
+
+    <dv-form-element
+      [fieldName]="'Workflow'"
+      [showRightIcon]="false"
+      [label]="'Select Workflow Definition'"
+      [labelCol]="4"
+      [for]="'workflow_id'"
+    >
+      <dv-select
+        [list]="workflows"
+        formControlName="workflow_id"
+        bindLabel="name"
+        bindValue="id"
+        [clearable]="false"
+        [searchable]="true"
+        [placeholder]="'Select a workflow definition'"
+        [id]="'workflow_id'"
+      ></dv-select>
+
+      <div col="7" col-type="sm" *ngIf="workflows && !workflows.length">
+        No workflow definitions present,
+        <a class="clickable" (click)="redirectToWorkflowDefinitions()"
+          >click here</a
+        >
+        to add one
+      </div>
+    </dv-form-element>
+    <div col="7" col-type="sm" *ngIf="!workflows">
+      <app-spinner [broadSpinner]="true" spinnerHeight="25"></app-spinner>
+    </div>
+  </form>
+</ng-template>

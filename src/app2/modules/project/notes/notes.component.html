@@ -1,0 +1,202 @@
+<div class="row clearfix">
+  <div class="col-md-12">
+    <div
+      class="panel panel-default"
+      role="region"
+      aria-labelledby="diligence-heading"
+    >
+      <div class="panel-body clearfix">
+        <app-spinner
+          [broadSpinner]="true"
+          [spinnerHeight]="40"
+          *ngIf="!diligence"
+          aria-live="polite"
+          aria-busy="true"
+        ></app-spinner>
+
+        <div class="dv-table dv-table-middle dd-info-panel" *ngIf="diligence">
+          <div class="bordered-right cell">
+            <h4
+              class="clear-margin max-w-320 lh1-5 word-break-break-all"
+              id="diligence-heading"
+            >
+              {{ diligence.entity_name }}
+            </h4>
+            <div>
+              <small class="text-muted" *ngIf="diligence.last_updated_at">
+                Last updated
+                {{ diligence.last_updated_at | dvDate }}
+              </small>
+            </div>
+          </div>
+
+          <div class="text-center cell">
+            <span class="align-middle display-block">Status</span>
+            <span diligenceStatus [status]="diligence.status"></span>
+          </div>
+
+          <div class="cell" *ngIf="note_count">
+            Showing {{ note_count }} Internal Note(s)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dv-notes-list-panel">
+      <app-spinner
+        [broadSpinner]="true"
+        [spinnerHeight]="40"
+        *ngIf="!grouped_notes"
+        aria-live="polite"
+        aria-busy="true"
+      ></app-spinner>
+
+      <div
+        class="panel panel-default"
+        *ngIf="grouped_notes && !grouped_notes.length"
+        role="region"
+        aria-labelledby="empty-state-heading"
+      >
+        <div class="panel-body">
+          <div col="6" offset="3">
+            <app-empty-state
+              iconName="compare"
+              message="No notes associated with the questions for this due diligence"
+              (action)="redirectToSummary()"
+              actionLabel="Back to Summary"
+              id="empty-state-heading"
+            ></app-empty-state>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngFor="let group of grouped_notes; let mainIndex = index"
+        class="panel panel-default"
+        role="region"
+      >
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <dv-link
+              (onClick)="handleCatClick(group)"
+              color="primary"
+              name="<a>{{ group.notes[0].parent_section_name }}</a> > "
+            ></dv-link>
+            <dv-link
+              (onClick)="handleSubCatClick(group)"
+              color="primary"
+              name="<a>{{ group.notes[0].section_name }}</a>"
+            ></dv-link>
+            <dv-link
+              (onClick)="handleQuestionRedirect(group)"
+              color="primary"
+              *ngIf="group.notes[0].question_text"
+              name=" > <a>{{ group.notes[0].question_text }}</a>"
+            ></dv-link>
+          </h5>
+        </div>
+
+        <div class="panel-body has-notes-form">
+          <ul
+            class="list-unstyled clear-margin-bottom list-bordered-bottom"
+            role="list"
+          >
+            <li
+              *ngFor="let note of group.notes; let $index = index"
+              role="listitem"
+            >
+              <div class="media">
+                <div class="media-left padded-top">
+                  <span class="circled-initials">{{
+                    group.notes.length - $index
+                  }}</span>
+                </div>
+                <div class="media-body">
+                  <p class="space-on-bottom">
+                    <small class="text-muted">
+                      {{ note.first_name }} {{ note.last_name }} added on
+                      {{
+                        note.updated_at + "Z"
+                          | dvDate : ["dvDateTime", "isLocaleDate"]
+                      }}
+                    </small>
+                    <span
+                      class="pull-right space-on-right-xxl"
+                      *ngIf="
+                        !note.editing && note.can_edit && !diligence?.isLocked
+                      "
+                    >
+                      <small
+                        class="text-muted v-align-text-top space-on-right"
+                        tooltip="Edit this note"
+                      >
+                        <a
+                          class="link-disguise clickable"
+                          (click)="editNote(note)"
+                          role="button"
+                          tabindex="0"
+                        >
+                          edit
+                        </a>
+                      </small>
+                      <small
+                        class="text-muted v-align-text-top"
+                        tooltip="Delete this note"
+                      >
+                        <a
+                          class="link-disguise clickable"
+                          (click)="deleteNote(note)"
+                          role="button"
+                          tabindex="0"
+                        >
+                          delete
+                        </a>
+                      </small>
+                    </span>
+                  </p>
+
+                  <p class="clear-margin wordBreak" *ngIf="!note.editing">
+                    <span [innerHtml]="note.text | cleanHtml"></span>
+                  </p>
+
+                  <div *ngIf="note.editing" class="padded-right-sm">
+                    <dv-editor
+                      [isMentions]="true"
+                      [value]="note.text"
+                      [id]="mainIndex + '-' + $index"
+                      [configObj]="configObj"
+                      [literVersion]="true"
+                      (onChange)="handleEditorTextChange(note, $event)"
+                      tabindex="0"
+                      aria-label="Edit Note"
+                    ></dv-editor>
+                    <div class="space-on-top">
+                      <dv-button
+                        btnType="primary"
+                        size="sm"
+                        [loader]="note.updating_note"
+                        [disabled]="!note.text"
+                        class="space-on-right"
+                        (onClick)="updateNote(note)"
+                      >
+                        Update
+                      </dv-button>
+                      <dv-button
+                        btnType="default"
+                        size="sm"
+                        [disabled]="note.updating_note"
+                        (onClick)="cancel(note)"
+                      >
+                        Cancel
+                      </dv-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

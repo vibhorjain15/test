@@ -1,0 +1,204 @@
+<div
+  class="team-member-section team-member-display-inline"
+  dropdown
+  container="body"
+>
+  <div
+    class="dropdown-toggle clickable"
+    dropdownToggle
+    tabindex="0"
+    aria-haspopup="true"
+    role="button"
+    [attr.aria-expanded]="is_open ? 'true' : 'false'"
+    aria-label="Assign to a team member/user role"
+  >
+    <span *ngIf="selection?.length || functionSelection?.length">
+      <span
+        class="circled-initials"
+        *ngIf="
+          selection.length === 1 &&
+          (!functionSelection || functionSelection.length === 0)
+        "
+        tooltip="Assigned to {{ selection[0].firstName }} {{
+          selection[0].lastName
+        }}"
+      >
+        {{ selection[0].firstName | getFirstLetter
+        }}{{ selection[0].lastName | getFirstLetter }}
+      </span>
+      <span
+        class="circled-initials"
+        *ngIf="
+          functionSelection.length === 1 &&
+          (!selection || selection.length === 0)
+        "
+        tooltip="Assigned to {{ functionSelection[0].function_name }}"
+      >
+        {{ functionSelection[0].function_name | getFirstLetter }}
+      </span>
+      <span
+        *ngIf="selection.length + functionSelection.length > 1"
+        tooltip="{{ formatTooltip(selection, functionSelection) }}"
+      >
+        <span
+          appIcon
+          name="user"
+          class="font-size-18 text-primary align-middle space-on-left space-on-right-n-8"
+        ></span>
+        <span class="count-bubble relative align-middle">{{
+          selection.length + functionSelection.length
+        }}</span>
+      </span>
+    </span>
+    <span
+      class="btn-sm btn btn-transparent"
+      *ngIf="!(selection?.length || functionSelection?.length)"
+      tippyTooltip="Assign to a team member/user role"
+    >
+      <a class="panel-control">
+        <span appIcon name="add-user-4" class="font-size-16"></span>
+      </a>
+    </span>
+  </div>
+  <div
+    *dropdownMenu
+    class="menu team-member-list dropdown-menu"
+    [ngClass]="{
+      'dropdown-menu-right': dropdownPlacement === 'right',
+      'dropdown-menu-left': dropdownPlacement === 'left'
+    }"
+    role="menu"
+  >
+    <div class="input-box">
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Search by team member/user role"
+        [(ngModel)]="textFilter"
+        name="textFilter"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+    <ul
+      class="list-unstyled"
+      *ngIf="selection?.length || functionSelection?.length"
+      role="menu"
+      tabindex="0"
+    >
+      <li role="menuitem" *ngFor="let selection of selection" tabindex="0">
+        <a class="clickable">
+          <app-user-avatar
+            [user]="selection"
+            [avatarImgClass]="'img-circle user-avatar-xs'"
+            [avatarIconSize]="'1x'"
+          ></app-user-avatar>
+          <span class="space-on-left"
+            >{{ selection.firstName }} {{ selection.lastName }}</span
+          >
+        </a>
+        <a
+          role="button"
+          tabindex="0"
+          aria-label="clear selection"
+          (click)="clearSelection($event, selection, 'user')"
+          *ngIf="clear_selection_allowed"
+          tooltip="Unassign"
+          container="body"
+          class="space-on-left link-disguise align-middle text-muted"
+        >
+          <span appIcon name="times-circle-o"></span>
+        </a>
+      </li>
+      <li role="menuitem" *ngFor="let fSelection of functionSelection">
+        <a class="clickable">
+          <span
+            appIcon
+            name="function"
+            class="img-circle user-avatar-xs"
+            size="1x"
+          ></span>
+          <span class="space-on-left">{{ fSelection.function_name }}</span>
+        </a>
+        <a
+          role="button"
+          tabindex="0"
+          aria-label="Unassign"
+          (click)="clearSelection($event, fSelection, 'function')"
+          *ngIf="clear_selection_allowed"
+          tooltip="Unassign"
+          container="body"
+          class="space-on-left link-disguise align-middle text-muted"
+        >
+          <span appIcon name="times-circle-o"></span>
+        </a>
+      </li>
+    </ul>
+    <hr
+      *ngIf="selection?.length || functionSelection?.length"
+      class="space-on-top space-on-bottom"
+    />
+    <ul class="list-unstyled" role="menu" tabindex="0">
+      <span class="space-on-left fw-bolder space-on-bottom">User Roles:</span>
+      <li
+        *ngFor="
+          let function of functions | filterBy : { function_name: textFilter }
+        "
+        (click)="select(function, 'function')"
+        tabindex="0"
+        role="menuitem"
+      >
+        <ng-container *ngIf="showFunction(function)">
+          <a
+            class="clickable"
+            tooltip="Assign to {{ function.function_name }}"
+            container="body"
+          >
+            <span
+              appIcon
+              name="function"
+              class="img-circle user-avatar-xs"
+              size="1x"
+            ></span>
+            <span class="space-on-left">{{ function.function_name }}</span>
+          </a>
+        </ng-container>
+      </li>
+      <span
+        *ngIf="!functions?.length"
+        class="display-block pa-lr-xl space-on-bottom"
+      >
+        No user roles available for the entity associated to this project
+      </span>
+      <span class="space-on-left fw-bolder space-on-bottom"
+        >Suggested Users:</span
+      >
+      <ng-container
+        *ngFor="
+          let user of team_members | filterBy : { joinedName: textFilter }
+        "
+      >
+        <li
+          *ngIf="showMember(user)"
+          role="menuitem"
+          (click)="select(user, 'user')"
+          tabindex="0"
+        >
+          <a
+            class="clickable"
+            tooltip="Assign to {{ user.firstName }} {{ user.lastName }}"
+            container="body"
+          >
+            <app-user-avatar
+              [user]="user"
+              avatarImgClass="img-circle user-avatar-xs"
+              avatarIconSize="1x"
+            ></app-user-avatar>
+            <span class="space-on-left"
+              >{{ user.firstName }} {{ user.lastName }}</span
+            >
+          </a>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</div>

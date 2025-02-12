@@ -1,0 +1,12 @@
+<side-panel-wrapper
+  [title]="'Edit Question'"
+  [isFooter]="false"
+  (onCancelClick)="handleOnCancelClick()"
+>
+  <edit-question
+    [question]="question"
+    (onSave)="handleOnSave()"
+    (onCancel)="handleOnCancel($event)"
+  >
+  </edit-question>
+</side-panel-wrapper>

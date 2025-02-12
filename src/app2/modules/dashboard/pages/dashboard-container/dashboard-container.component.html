@@ -1,0 +1,6 @@
+<div *ngIf="is_investor">
+<app-investor-view></app-investor-view>
+</div>
+<div *ngIf="!is_investor">
+  <manager-dashboard></manager-dashboard>
+</div>

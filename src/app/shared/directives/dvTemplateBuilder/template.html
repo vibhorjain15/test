@@ -1,0 +1,63 @@
+<div class="space-on-bottom-lg">
+  <spinner data-ng-hide="vm.template"></spinner>
+
+  <div class="row clearfix" data-ng-show="vm.template">
+    <div col="2" class="text-right">
+      <strong>Template Name</strong>
+    </div>
+
+    <div col="5">
+      <dv-transparent-input
+        data-ng-model="vm.template.templateInfo.name"
+        data-ng-change="vm.saveTemplate()"
+        data-ng-model-options="{'debounce': 500 }">
+      </dv-transparent-input>
+    </div>
+  </div>
+</div>
+
+<div class="row clearfix">
+  <div col="7">
+    <spinner data-ng-hide="vm.categories.length"></spinner>
+
+    <dv-template-builder-category
+      is-parent-category
+      category="category"
+      data-ng-repeat="category in vm.categories">
+    </dv-template-builder-category>
+
+    <button btn-type="primary"
+            button-loader="vm.adding_category"
+            data-ng-click="vm.addNewCategory()">
+      Add New Category
+    </button>
+  </div>
+
+  <div col="5">
+    <div class="panel panel-default" dv-affix>
+      <div class="panel-heading">
+        <h5 class="panel-title">Questions</h5>
+      </div>
+
+      <div class="panel-body" data-ng-hide="vm.questions">
+        <spinner></spinner>
+      </div>
+      
+
+      <div class="list-group js-questions-container fixed-height-panel fixed-height-300"
+           ui-sortable="vm.sortableOptions"
+           data-ng-model="vm.questions">
+
+        <div class="list-group-item" data-ng-hide="vm.questions.length">
+          <empty-state message="Want to remove some questions? I am waiting with an empty state. Please drag them back.">
+          </empty-state>
+        </div>   
+        <div class="list-group-item movable"
+             ui-sortable-selectable
+             data-ng-repeat="question in vm.questions">
+          <span>{{question.text}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<form name="vm.strategy_form"
+      data-ng-submit="vm.save()"
+      class="form-horizontal" novalidate>
+  <div class="modal-header">
+    <h3 class="modal-title">{{vm.edit_mode? 'Edit' :  'Add'}} Classification
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <div class="panel panel-info" data-ng-if="!vm.edit_mode">
+      <div class="panel-heading">Please type your classifications in textbox - <strong><b>one classification per line</b></strong></div>
+    </div>
+    <form-group field-name="Strategy" data-ng-if="!vm.edit_mode">
+        <div class="col-sm-12" >
+          <form-group field-name="Bulk category Addition">
+              <dv-bulk-list-builder ng-model="vm.strategyObj" id-key="'id'" text-key="'name'" current-length="vm.existingStrategies.length" type="'Classification'" value-required="true"></dv-bulk-list-builder>
+          </form-group>
+        </div>
+    </form-group>
+    <form-group field-name="Strategy" data-ng-if="vm.edit_mode">
+        <div class="col-sm-12" >
+          <textarea name="strategy" rows="4" class="form-control" data-ng-model="vm.strategyEditObj.name"></textarea>
+        </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit"
+            button-loader="vm.saving">{{vm.edit_mode? 'Save Classification': 'Add Classification'}}</button>
+    <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

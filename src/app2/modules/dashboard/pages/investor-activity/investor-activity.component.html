@@ -1,0 +1,157 @@
+<dash-tab
+  *ngIf="dashTypes == 'my-work'"
+  (onTabChange)="handleTabChange($event)"
+  (onDateChange)="onDateRangeChange($event)"
+></dash-tab>
+
+<my-work [dateRange]="dateRange" *ngIf="dashTypes == 'my-work'"></my-work>
+<div *ngIf="dashTypes == 'Activity'" class="row clearfix">
+  <!-- First row with the title section and graphs   -->
+  <div col="12">
+    <!-- Activity title and graphs column -->
+    <div class="row">
+      <!-- Title row -->
+      <div col="12">
+        <div class="panel panel-default">
+          <div class="panel-body text-muted">
+            <h4 class="inline-block text-primary">ACTIVITY DASHBOARD</h4>
+
+            <div class="pull-right w-160">
+              <div class="dropdown" dropdown>
+                <button
+                  id="button-basic"
+                  dropdownToggle
+                  type="button"
+                  block
+                  size="sm"
+                  appButton
+                  btnType="default"
+                  class="space-on-top dropdown-toggle btn-sm btn-block btn btn-default"
+                  aria-controls="dropdown-basic"
+                >
+                  Switch View <span class="caret"></span>
+                </button>
+                <ul
+                  id="dropdown-basic"
+                  *dropdownMenu
+                  class="dropdown-menu"
+                  role="menu"
+                  aria-labelledby="button-basic"
+                >
+                  <li role="menuitem" *ngFor="let type of dashFilterMap">
+                    <a
+                      class="dropdown-item"
+                      role="button"
+                      tabindex="0"
+                      (click)="toggleDashboard(type)"
+                    >
+                      <span [ngClass]="{ 'text-orange': dashTypes == type }">
+                        <span
+                          appIcon
+                          name="settings"
+                          class="space-on-right"
+                        ></span>
+                        Switch to {{ type }}
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div
+              col="6"
+              class="w-260 pull-right cell space-on-top"
+            >
+              <app-date-range-picker
+                *ngIf="customDateFilter"
+                [customDate]="dateRangeRatingScheme"
+                (change)="onChange($event)"
+                (clearDateFilter)="onClearDateFilter()"
+                [ariaLabel]="'Select Dates'"
+              ></app-date-range-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <app-spinner [broadSpinner]="true" *ngIf="!isAllDataLoaded"></app-spinner>
+    </div>
+    <div class="clearfix">
+      <app-team-activity
+        *ngIf="isAllDataLoaded"
+        [punchcard]="punchcard_data"
+        [punchcard-options]="punchcard_options"
+        rowHeaderLabel="name"
+        colHeaderLabel="audit_date"
+        cellValueLabel="count"
+        heading="Team Activity"
+        [dateRange]="dateRangeRatingScheme"
+      ></app-team-activity>
+    </div>
+
+    <!-- Due Diligience Donught Chart -->
+    <div col="6">
+      <app-my-actions
+        *ngIf="isAllDataLoaded"
+        [dateRange]="dateRangeRatingScheme"
+        heading="MY ACTIONS"
+      >
+      </app-my-actions>
+    </div>
+    <!-- Diligence / Tasks -->
+
+    <div col="6" *ngIf="isAllDataLoaded">
+      <div class="panel panel-default dashboard-panel-old dash-activity-panel">
+        <div class="panel-heading">
+          <h5 class="panel-title text-uppercase">Diligence Activity</h5>
+        </div>
+        <div class="panel-body dash-dd-history-panel">
+          <app-diligence-activity
+            *ngIf="dd_activities.length > 0"
+            [dateRange]="dateRangeRatingScheme"
+          >
+          </app-diligence-activity>
+          <div *ngIf="dd_activities.length == 0">
+            <p
+              class="alert alert-info"
+              authorized-view
+              hiddenFrom="FreeSubscription, FormADVSubscription, FormADVAnalyticsSubscription"
+            >
+              No due diligence activity yet. Get started by clicking on 'New' in
+              the top navigation.
+            </p>
+            <p
+              class="alert alert-info"
+              authorized-view
+              accessibleTo="FreeSubscription, FormADVSubscription, FormADVAnalyticsSubscription"
+            >
+              No due diligence activity yet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row clearfix">
+      <div col="12">
+        <app-workflow-process
+          *ngIf="isAllDataLoaded"
+          [dateRange]="dateRangeRatingScheme"
+          heading="Workflow Process"
+        >
+        </app-workflow-process>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="12">
+        <dv-recommendations
+          *ngIf="entity_id && isAllDataLoaded"
+          [dateRangeFilter]="dateRangeRatingScheme"
+          [isDashboard]="true"
+          [showHeaderUpperCase]="true"
+        ></dv-recommendations>
+      </div>
+    </div>
+  </div>
+</div>

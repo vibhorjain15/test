@@ -1,0 +1,357 @@
+<ng-container *ngFor="let question of questions; let index = index">
+  <dv-form-element
+    spacing="medium"
+    [label]="question.label"
+    [infoText]="question.hintText"
+    [infoTextPlacement]="'left'"
+    [adaptivePosition]="false"
+    [iconClass]="'text-primary space-on-left'"
+    labelPosition="top"
+    elementCol="0"
+  >
+    <div class="preview-response">
+      <div
+        *ngIf="
+          question.type === 'TextEmail' ||
+          question.type === 'Numeric' ||
+          question.type === 'Integer' ||
+          question.type === 'Percentage' ||
+          question.type === 'TextPhone' ||
+          question.type === 'Text' ||
+          question.type === 'Identifier'
+        "
+        class="preview-flex"
+      >
+        <input
+          type="text"
+          class="form-control"
+          [placeholder]="placeholder[question.type]"
+          readonly="true"
+          disabled
+        />
+      </div>
+
+      <div *ngIf="question.type === 'TextMultiLine'">
+        <textarea
+          class="form-control"
+          readonly="true"
+          [placeholder]="placeholder[question.type]"
+          disabled
+        ></textarea>
+      </div>
+      <div
+        class="well well-sm clear-margin space-on-top-lg"
+        *ngIf="
+          question.type === 'Boolean' ||
+          question.type === 'BooleanPlus' ||
+          question.type === 'NoPlus'
+        "
+      >
+        <dv-radio
+          type="info inline"
+          label="Yes"
+          [checkedVal]="type == 'BooleanPlus'"
+          disabled="true"
+          name="option"
+          valueName="Yes"
+          [(ngModel)]="question.radioValue"
+        >
+        </dv-radio>
+        <dv-radio
+          type="info inline"
+          label="No"
+          class="space-on-left"
+          [checkedVal]="question.type === 'NoPlus'"
+          disabled="true"
+          name="option"
+          [valueName]="'No'"
+          [(ngModel)]="question.radioValue"
+        >
+        </dv-radio>
+        <div *ngIf="question.type !== 'Boolean'" class="space-on-top">
+          <textarea
+            class="form-control"
+            readonly="true"
+            placeholder="Their explanation"
+            disabled
+            rows="1"
+          ></textarea>
+        </div>
+      </div>
+
+      <div
+        class="input-group datepicker-group"
+        *ngIf="question.type === 'Date'"
+      >
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Their selected date"
+          readonly="true"
+          disabled
+        />
+
+        <span class="input-group-btn">
+          <button class="btn btn-button" disabled aria-label="calendar">
+            <span appIcon name="calendar"></span>
+          </button>
+        </span>
+      </div>
+
+      <div
+        class="input-group datepicker-group"
+        *ngIf="question.type === 'Dropdown'"
+      >
+        <dv-select
+          [error]=""
+          [appendTo]="'body'"
+          [list]="question.previewOptions.options"
+          [aria-label]="'question previewOptions options'"
+          bindLabel="text"
+          bindValue=""
+        ></dv-select>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg row clearfix"
+        *ngIf="question.type === 'Bookends'"
+      >
+        <div class="col-md-6">
+          <input
+            type="number"
+            class="form-control field-preview"
+            readonly="true"
+            placeholder="Min value"
+          />
+        </div>
+
+        <div class="col-md-6">
+          <input
+            type="number"
+            class="form-control field-preview"
+            readonly="true"
+            placeholder="Max Value"
+            autocomplete="off"
+          />
+        </div>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg input-group datepicker-group"
+        *ngIf="question.type === 'CheckBox'"
+      >
+        <ng-container *ngFor="let data of question.previewOptions.options">
+          <dv-checkbox [disabled]="true" [label]="data.text" [id]="data.id">
+          </dv-checkbox>
+        </ng-container>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg"
+        *ngIf="question.type === 'ReturnTable'"
+      >
+        <table class="table table-bordered clear-margin">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Jan-Mar</th>
+              <th>Apr-Jun</th>
+              <th>Jul-Sep</th>
+              <th>Oct-Dec</th>
+              <th class="bg-light-gray">YTD</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="bg-light-gray">2020</td>
+              <td>3.5%</td>
+              <td>1.2%</td>
+              <td class="text-danger">(6.6%)</td>
+              <td>9.2%</td>
+              <td class="bg-light-gray">6.83%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg"
+        *ngIf="question.type === 'DynamicGrid'"
+      >
+        <table class="table table-bordered clear-margin">
+          <thead>
+            <tr>
+              <th></th>
+              <th *ngFor="let data of question.previewOptions.columns">
+                {{ data.text }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td *ngFor="let data of question.previewOptions.columns"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg"
+        *ngIf="question.type === 'Grid'"
+      >
+        <table class="table table-bordered clear-margin">
+          <thead>
+            <tr>
+              <th></th>
+              <th *ngFor="let data of columns; trackBy: trackBy">
+                {{ data.text }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of rows; trackBy: trackBy">
+              <td>{{ data.text }}</td>
+              <td *ngFor="let data of columns; trackBy: trackBy"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg"
+        *ngIf="question.type === 'aumTable'"
+      >
+        <table class="table table-bordered clear-margin">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Jan-Mar</th>
+              <th>Apr-Jun</th>
+              <th>Jul-Sep</th>
+              <th>Oct-Dec</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2020</td>
+              <td>2,510</td>
+              <td>2,700</td>
+              <td>2,640</td>
+              <td>3,300</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="well well-sm clear-margin space-on-top-lg"
+        *ngIf="question.type === 'Attachment'"
+      >
+        <div class="text-center">
+          <button class="btn btn-default">
+            <span appIcon name="upload" class="align-middle"></span>
+            Upload File
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-icon">
+        <span
+          dvListBox
+          *ngIf="editable"
+          appIcon
+          (click)="handleEditClick(index)"
+          tooltip="Edit"
+          name="pencil"
+          container="body"
+          tabindex="0"
+        ></span>
+        <span
+          dvListBox
+          appIcon
+          (click)="handleDeleteClick(index)"
+          tooltip="Delete"
+          name="trashcan"
+          class="text-danger"
+          container="body"
+          tabindex="0"
+        ></span>
+      </div>
+    </div>
+
+    <div>
+      <small class="text-info" *ngIf="question.isMandatory">
+        <i> This is a mandatory question. </i>
+      </small>
+    </div>
+    <div>
+      <small
+        class="text-info"
+        *ngIf="question.condition && question.conditionalValue"
+      >
+        <i>
+          This question is revealed when response
+          {{ question.condition.display_symbol }}
+          <span *ngIf="parentQuestionType === 'Date'">{{
+            question.conditionalValue | dvDate : ["isLocaleDate"]
+          }}</span>
+          <span
+            *ngIf="
+              parentQuestionType === 'Dropdown' ||
+              parentQuestionType === 'CheckBox' ||
+              parentQuestionType === 'Boolean' ||
+              parentQuestionType === 'BooleanPlus' ||
+              parentQuestionType === 'NoPlus'
+            "
+            >{{ question.conditionalValue.value }}</span
+          >
+          <span
+            *ngIf="
+              ![
+                'Date',
+                'Dropdown',
+                'Checkbox',
+                'Boolean',
+                'BooleanPlus',
+                'NoPlus'
+              ].includes(parentQuestionType)
+            "
+          >
+            {{ question.conditionalValue }}
+          </span>
+        </i>
+      </small>
+    </div>
+  </dv-form-element>
+  <helper-text
+    *ngIf="question.type === 'CheckBox' || question.type === 'Dropdown'"
+  >
+    Other and None are system options. Please do not repeat those while adding
+    your options.
+  </helper-text>
+
+  <helper-text *ngIf="question.type === 'DynamicGrid'">
+    Please add column headers and the user can add customized rows based on
+    their data requirement.
+  </helper-text>
+
+  <ng-container
+    *ngIf="
+      question.type === responseType.Attachment &&
+      question.previewOptions?.predefined_document_tags?.length
+    "
+  >
+    <div>
+      <p>Pre-set document tags</p>
+    </div>
+    <div class="label-list space-on-bottom-lg">
+      <span
+        class="label label-default text-uppercase space-on-right"
+        *ngFor="let tag of question.previewOptions.predefined_document_tags"
+      >
+        <small>{{ tag.name }}</small>
+      </span>
+    </div>
+  </ng-container>
+</ng-container>

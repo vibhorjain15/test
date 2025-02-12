@@ -1,0 +1,75 @@
+.analyze-rating--container {
+  display: flex;
+  gap: 15px;
+}
+.analyze-rating--container .analyze-rating--left-container {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 371px;
+  width: 371px;
+}
+.analyze-rating--left-container .left-container--body {
+  flex: 1;
+  padding: 15px;
+}
+.analyze-rating--left-container .left-container--footer {
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+.analyze-rating--container .analyze-rating--right-container {
+  flex: 1;
+  overflow: auto;
+}
+
+.advance-option--container {
+  background-color: #ecf7f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 10px;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition: grid-template-rows 200ms, opacity 200ms, visibility 200ms;
+}
+.advance-option--container > div {
+  overflow: hidden;
+}
+.advance-option--container.active {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+}
+
+.padding-top-7 {
+  padding-top: 7px;
+}
+
+:host ::ng-deep .advance-option--active {
+  border: 1px solid #1890af;
+  color: #137a95;
+  background: #ecf7f9;
+}
+
+:host ::ng-deep .width-radio > div {
+  width: 100%;
+}
+
+::ng-deep .is-invalid .ng-select-container {
+  border-color: #cd3333;
+}
+
+.ml-4 {
+  margin-left: 4px;
+}
+
+::ng-deep .analyze-rating--container .btn-primary {
+  background-color: var(--primary) !important;
+}
+::ng-deep .scorecard-row .padding-left {
+  padding-left: 5px !important;
+}

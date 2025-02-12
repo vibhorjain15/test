@@ -1,0 +1,200 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-filings-history></ng2-filings-history>
+</div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="clearfix">
+
+  <div class="panel panel-default">
+    <div class="panel-body" data-ng-if="!vm.formadv_firm">
+      <spinner></spinner>
+    </div>
+
+    <div class="panel-body" data-ng-if="vm.formadv_firm">
+      <div class="dv-table dv-table-middle dd-info-panel">
+      <div class="cell bordered-right">
+        <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+          {{::vm.formadv_firm.businessName}}
+        </h4>
+        <small class="text-muted">
+          (CRD #: {{::vm.formadv_firm.id}})
+        </small>
+      </div>
+      <div class="cell bordered-right"
+           authorized-view
+           hidden-from="FreeSubscription">
+          <div class="space-on-top space-on-left-lg">
+
+            <div col="12" class="clear-padding-left clear-padding-right text-center">
+            <div class="btn-group space-on-bottom-sm">
+                <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': !vm.has_threshold}" data-ng-click="vm.toggleMaterialChanges()">ALL CHANGES</label>
+                <label class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.has_threshold}" data-ng-click="vm.toggleMaterialChanges()">MATERIAL ONLY</label>
+            </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="cell bordered-right"
+             data-ng-if="vm.formadv_firm.brochure_date">
+          <a class="btn btn-transparent"
+             target="_blank"
+             ng-href="{{vm.formadv_firm.brochure_url}}"
+             uib-tooltip="as of {{::vm.formadv_firm.brochure_date|date}}">
+            <span class="inline-block relative">
+              <icon name="file-pdf-o" size="2x"></icon>
+            </span>
+            <div>
+              <small>Part 2 Brochure</small>
+            </div>
+          </a>
+        </div>
+
+        <div class="cell bordered-right"
+             data-ng-if="!vm.formadv_firm.brochure_date">
+          <button disabled btn-type="transparent">
+            <span class="inline-block relative">
+              <icon name="file-pdf-o" size="2x"></icon>
+            </span>
+            <div>
+              <small>No Part 2 Brochure</small>
+            </div>
+          </button>
+        </div>
+
+        <div class="cell bordered-right">
+          <a data-ng-click="vm.displayNotesController()"
+             class="btn btn-transparent">
+             <div><icon name="notepad" size="2x"></icon></div>
+             <small>View/Add Notes</small>
+          </a>
+        </div>
+        <div class="cell bordered-right"
+           authorized-view
+           hidden-from="FreeSubscription">
+              <button btn-type="transparent"
+                      data-ng-click="vm.edit_timeline = true;" data-ng-disabled="vm.edit_timeline">
+                  <div><icon name="pencil" size="2x"></icon></div>
+                  <small>Change Dates</small>
+              </button>
+        </div>
+
+        <div class="cell">
+          <span uib-dropdown>
+            <a href="" class="dropdown-toggle btn btn-transparent"
+              uib-dropdown-toggle
+              uib-tooltip="Start a Workflow / Export / Go to SEC's Website">
+               <div><icon name="ellipsis-h" size="2x"></icon></div>
+               <div class="space-on-top-n"><small>More Actions</small></div>
+            </a>
+
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+              <li>
+                  <a data-ng-click="vm.downloadExcel(vm.formadv_firm.id)"
+                    authorized-view
+                    hidden-from="FreeSubscription" data-ng-class="{'btn disabled': !vm.formadv_questions.length}"
+                    uib-tooltip="{{!vm.formadv_questions.length ? 'No data available to export' : ''}}"
+                    data-ng-disabled="!vm.formadv_questions.length" role="button">
+                      <icon name="file-excel" class="space-on-right-lg"></icon>Excel export & email</a>
+              </li>
+              <li>
+                <a data-ng-click="vm.triggerWorkflow()" role="button"><icon name="cogs" class="space-on-right-lg"></icon>Start workflow process</a>
+              </li>
+              <li class="divider js-delete-button" authorized-view hidden-from="FreeSubscription"></li>
+              <li>
+                  <a target="_blank"
+                     ng-href="https://adviserinfo.sec.gov/firm/summary/{{vm.formadv_firm.firmCRD}}"
+                     class="btn btn-transparent">
+                      <icon name="external-link" class="space-on-right-lg"></icon>View on SEC's website
+                  </a>
+              </li>
+            </ul>
+          </span>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" ng-if="vm.filings && vm.filings.length">
+  <div class="panel-body"
+       data-ng-class="{'edit-timeline': (vm.edit_timeline)}">
+      <h5 data-ng-show="vm.edit_timeline" class="pull-left space-on-left-lg clear-margin-top space-on-bottom text-primary text-uppercase"><b>Select Dates</b></h5>
+    <div class="status-tracker full-width padded-lg">
+        <div class="full-width">
+            <div class="row">
+                <div col="12" data-ng-class="{'overflow-container': (vm.filings.length>8)}">
+                    <div class="tracker-container full-width">
+                        <ul class="progress-meter full-width space-on-bottom-xxxl" data-ng-if="!vm.edit_timeline">
+                            <li class="datepicker-inactive" ng-repeat="filing in vm.filings | orderBy: $index"
+                                data-ng-class="{'datepicker-active': (filing.filingDate == vm.dateRange.start_at || filing.filingDate == vm.dateRange.end_at), 'datepicker-inactive': !(filing.filingDate == vm.dateRange.start_at || filing.filingDate == vm.dateRange.end_at)}">
+                                <div class="single-tracker">
+                                    <div class="bubble-parent">
+                                        <div class="bubble"></div>
+                                    </div>
+                                    <span>{{ filing.filingDate }}</span>
+                                    <div class="description">Changes: {{ filing.changeCount }}</div>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul class="progress-meter full-width" data-ng-if="vm.edit_timeline">
+                            <li class="datepicker-inactive" ng-repeat="filing in vm.filings | orderBy: $index"
+                                data-ng-class="{'datepicker-active': (filing.filingDate == vm.editDateRange[0] || filing.filingDate == vm.editDateRange[1]), 'datepicker-inactive': !(filing.filingDate == vm.editDateRange[0] || filing.filingDate == vm.editDateRange[1])}">
+                                <div class="single-tracker">
+                                    <div class="bubble-parent">
+                                        <div class="bubble" data-ng-click="vm.selectCustomDates(filing)"></div>
+                                    </div>
+                                    <span>{{ filing.filingDate }}</span>
+                                    <div class="description">Changes: {{ filing.changeCount }}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="pull-right space-on-top-xxl" data-ng-if="vm.edit_timeline">
+                    <button btn-type="primary" class="space-on-right"
+                            data-ng-click="vm.getFilingData()">Get filings data</button>
+                    <button btn-type="default"
+                            data-ng-click="vm.edit_timeline = false;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<spinner data-ng-show="!vm.filings"></spinner>
+
+  <div col="6" offset="3"
+       authorized-view
+       hidden-from="InstitutionalSubscription, ProductiveSubscription, FormADVSubscription, FormADVAnalyticsSubscription, SmartSubscription, FullSubscription">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <empty-state icon-name="ban"
+                     message="This analysis is available for premium subscribers of ADV Module. To learn more, or to unlock this analysis, please get in touch with us at subscriptions@diligencevault.com"
+                     action="vm.returnToList()"
+                    action-label="Back to list"></empty-state>
+      </div>
+    </div>
+  </div>
+
+  <div id="history-table" col="12" class="clear-padding-left" authorized-view hidden-from="FreeSubscription"
+       infinite-scroll="vm.loadFormAdvQuestions()"
+       infinite-scroll-disabled="vm.is_loading || vm.current_page >= vm.total_pages || !vm.dateRange.set">
+        <formadv-filing-comparison data-ng-repeat="question in vm.formadv_questions"
+                                   question="question"
+                                   id="formadv-comparison-section-{{question.id}}"
+                                   firm-crd="vm.firmCRD"
+                                   date-range="vm.dateRange"
+                                   thresholds="vm.thresholds"
+                                   threshold_types="vm.thresholdTypes"
+                                   changes-visible-inline></formadv-filing-comparison>
+
+      <empty-state message="No history found"
+                       data-ng-show="vm.filings && vm.formadv_questions && !vm.formadv_questions.length && !vm.is_loading"></empty-state>
+
+      <div class="panel panel-default" data-ng-show="vm.formadv_questions && vm.formadv_questions.length>0 && vm.current_page == vm.total_pages">
+          <div class="panel-body text-center">
+              No more changes to show
+          </div>
+      </div>
+  </div>
+
+
+</div>

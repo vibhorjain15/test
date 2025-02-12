@@ -1,0 +1,315 @@
+<app-modal
+  [title]="modalTitle"
+  [initialTemplate]="uploadDocuments"
+  [titleIcon]="uploadType === 'file' ? 'file-doc-grid' : 'folder'"
+  [titleIconColor]="colorTheme.primary"
+  firstButtonLabel="Upload"
+  [isLoading]="savingDocument"
+  [isFirstButtonDisabled]="!uploadFolderForm.valid || savingDocument"
+  (onFirstClick)="submit()"
+  [isAngularJs]="isAngularJs"
+  #modal
+>
+</app-modal>
+<ng-template #uploadDocuments>
+  <div [ngClass]="{ 'upload-wrapper': folderViewToggle }">
+    <div class="upload-form-wrapper">
+      <div
+        *ngIf="showUploadTypeToggler"
+        class="display-flex justify-center space-on-bottom-lg"
+      >
+        <div class="btn-group">
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': uploadType === 'file' }"
+            (click)="handleViewChange('file')"
+            >Document
+          </span>
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': uploadType === 'folder' }"
+            (click)="handleViewChange('folder')"
+            >Folder
+          </span>
+        </div>
+      </div>
+      <helper-text
+        *ngIf="uploadType === 'folder'"
+        showMoreLabel="Show More"
+        showLessLabel="Show Less"
+        helperTextThemeVersion="v1"
+        [innerHtml]="visibleHelperText"
+        [secondaryText]="hiddenHelperText"
+      ></helper-text>
+      <document-bread-crumbs
+        [selectionPath]="selectionPath"
+        *ngIf="!currentUser.isFreeSubscription"
+      >
+      </document-bread-crumbs>
+      <div class="upload-form" [formGroup]="uploadFolderForm">
+        <dv-form-element
+          fieldName="entityType"
+          *ngIf="!entity_id && !isQuestionnaireUpload"
+          [modelController]="uploadFolderForm.get('entityType')"
+          fieldName="entityType"
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          [label]="'Entity Type'"
+          [showRightIcon]="false"
+          [isRequired]="true"
+          [centerAligned]="true"
+        >
+          <dv-select
+            formControlName="entityType"
+            [id]="'entityType'"
+            bindLabel="name"
+            bindValue="id"
+            [placeholder]="'Select Entity Type'"
+            (onSelectChange)="onEntityTypeChange($event)"
+            [list]="entityTypes"
+          >
+          </dv-select>
+        </dv-form-element>
+
+        <dv-form-element
+          [fieldName]="'entityId'"
+          [modelController]="uploadFolderForm.get('entityId')"
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          *ngIf="!entity_id && !isQuestionnaireUpload"
+          [label]="'Associated Entities'"
+          errorMessage="Associated entity is required"
+          [isRequired]="true"
+          [showRightIcon]="false"
+          [centerAligned]="true"
+        >
+          <dv-select
+            bindValue="id"
+            *ngIf="
+              uploadFolderForm.get('entityType').value !=
+              keyWordConstants.MyFirm
+            "
+            [multiple]="true"
+            bindLabel="display_name"
+            formControlName="entityId"
+            [id]="'entityId'"
+            placeholder="Select Entities"
+            [list]="currentEntityTypeList"
+            [loading]="entitiesLoading"
+          >
+          </dv-select>
+
+          <span
+            *ngIf="
+              uploadFolderForm.get('entityType').value ===
+              keyWordConstants.MyFirm
+            "
+            class="label label-default fw-bolder"
+            >{{ currentUser.firmInfo.display_name }}</span
+          >
+        </dv-form-element>
+
+        <dv-form-element
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          *ngIf="!uploadMultiple"
+          [label]="'Document Name'"
+          [showRightIcon]="false"
+          [modelController]="uploadFolderForm.get('file_name')"
+          [errorMessage]="
+            uploadFolderForm.get('file_name')?.errors?.required
+              ? 'Document name is required'
+              : uploadFolderForm.get('file_name')?.errors?.pattern
+              ? 'Please provide a valid document name'
+              : uploadFolderForm.get('file_name')?.errors?.maxLength
+              ? 'Document name must not exceed 255 characters'
+              : null
+          "
+          [centerAligned]="true"
+          [isRequired]="true"
+        >
+          <input
+            type="text"
+            formControlName="file_name"
+            id="file_name"
+            class="form-control"
+            placeholder="Enter Document Name"
+          />
+        </dv-form-element>
+
+        <dv-form-element
+          [modelController]="uploadFolderForm.get('tags')"
+          fieldName="name"
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          [label]="'Document Types'"
+          [showRightIcon]="false"
+          [centerAligned]="true"
+        >
+          <dv-select
+            [multiple]="true"
+            bindValue="id"
+            bindLabel="name"
+            formControlName="tags"
+            [id]="'tags'"
+            placeholder="Select Document Types"
+            [list]="tagList"
+          >
+          </dv-select>
+        </dv-form-element>
+        <dv-form-element
+          fieldName="as_of_date"
+          [modelController]="uploadFolderForm.get('as_of_date')"
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          [label]="'As of Date'"
+          [isRequired]="true"
+          [showRightIcon]="false"
+          [centerAligned]="true"
+        >
+          <app-date-picker
+            [id]="'as_of_date'"
+            [value]="uploadFolderForm.get('as_of_date').value || null"
+            [maxDate]="maxAsOfDate"
+            [placeholder]="'Pick a Date'"
+            (change)="asOfDateChange($event)"
+          >
+          </app-date-picker>
+        </dv-form-element>
+        <dv-form-element
+          [label]="
+            (uploadType === 'file' ? 'Document' : 'Folder') + ' Location'
+          "
+          labelPosition="left"
+          *ngIf="!currentUser.isFreeSubscription"
+          [showRightIcon]="false"
+          [infoText]="
+            'Destination ' +
+            (uploadType === 'file' ? 'document' : 'folder') +
+            ' location'
+          "
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          [centerAligned]="true"
+        >
+          <input
+            type="text"
+            placeholder="Select a Folder"
+            class="form-control clickable folder-location"
+            (click)="onFolderViewToggle($event)"
+            [readOnly]="true"
+            formControlName="folder_location"
+            id="folder_location"
+            #folderPathInputElement
+          />
+          <span
+            class="search-icon clickable"
+            appIcon
+            (click)="onFolderViewToggle($event)"
+            [style.color]="colorTheme.primary"
+            name="folder"
+          ></span>
+        </dv-form-element>
+        <dv-form-element
+          fieldName="name"
+          [elementCol]="folderViewToggle ? 8 : 9"
+          [labelCol]="folderViewToggle ? 4 : 3"
+          [label]="
+            'Select ' + (uploadType === 'file' ? 'Document(s)' : 'Folder(s)')
+          "
+          [isRequired]="flow == 'add'"
+          [showRightIcon]="false"
+        >
+          <dv-uploader
+            [sizeLimit]="maxFileSize"
+            [accept]="allowed_file_extensions_str"
+            [dragLabel]="dvUploaderLabel"
+            [isMultiple]="uploadMultiple"
+            [showUploadedFiles]="false"
+            [directory]="uploadType !== 'file'"
+            (onFileUpload)="handleOnFileDrop($event)"
+            [buttonLabel]="
+              uploadType !== 'file' ? 'Select Folder(s)' : 'Select Document(s)'
+            "
+          ></dv-uploader>
+          <div
+            class="file-upload-show"
+            *ngIf="uploadFolderForm.get('folders').value?.length"
+          >
+            <ng-container *ngIf="uploadType === 'file'">
+              <div
+                *ngFor="let file of files; let index = index"
+                class="document-name"
+              >
+                <span>{{ file.name }}</span>
+                <span
+                  appIcon
+                  name="close"
+                  class="clickable"
+                  (click)="deleteFile(index)"
+                ></span>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="uploadType === 'folder'">
+              <div
+                *ngFor="
+                  let folder of folderMapper | keyvalue;
+                  let index = index
+                "
+                class="document-name"
+              >
+                <span>{{ folder.key }} ({{ folder.value.length }})</span>
+                <span
+                  appIcon
+                  name="close"
+                  class="clickable"
+                  (click)="deleteFile(folder.key, true)"
+                ></span>
+              </div>
+            </ng-container>
+          </div>
+          <dv-checkbox
+            [(ngModel)]="uploadMultiple"
+            label="Upload Multiple Documents"
+            [disabled]="files?.length"
+            [tippyTooltip]="
+              files?.length ? 'Please remove uploaded documents to change' : ''
+            "
+            [ngModelOptions]="{ standalone: true }"
+            (onValChange)="toggleNameControl($event)"
+            *ngIf="uploadType === 'file'"
+          >
+          </dv-checkbox>
+        </dv-form-element>
+      </div>
+    </div>
+
+    <div class="folder-selection" *ngIf="folderViewToggle">
+      <dv-form-element
+        label="Select Folder Location"
+        labelPosition="top"
+        [showRightIcon]="false"
+        elementCol="12"
+        for="search"
+      >
+        <input
+          type="text"
+          placeholder="Search"
+          id="Search"
+          class="form-control"
+          [(ngModel)]="folderSearch"
+        />
+      </dv-form-element>
+      <dv-folder-selection-grid
+        [rowData]="documents"
+        [entity_id]="entity_id"
+        [entity_type]="entity_type"
+        [selectedFolderId]="selectedFolderId"
+        (emitAllData)="updateRowData($event)"
+        [filterValue]="folderSearch"
+        class="space-on-top folder-upload-grid"
+        (selectionChange)="updatePath($event)"
+      ></dv-folder-selection-grid>
+    </div>
+  </div>
+</ng-template>

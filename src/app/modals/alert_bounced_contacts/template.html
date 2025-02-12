@@ -1,0 +1,72 @@
+<div class="modal-header">
+  <h3 class="modal-title">
+    Some of the contacts you have selected have bounced in the past.
+  </h3>
+</div>
+
+<div class="modal-body">
+  <div data-ng-if="vm.bouncedEntities.length > 0">
+    <p>
+      <span class="text-bold">Estimated {{vm.entityType.toLowerCase() | standardPluralize}}</span>
+      <icon name="info" class="text-info"
+        uib-tooltip="Total number of {{vm.entityType.toLowerCase() | standardPluralize}} from the selected entities that would be receiving the email.">
+      </icon>
+    </p>
+    <p class="font-size-16">
+      <span class="font-size-30">
+        {{vm.numberWithCommas(vm.allEntities.length - vm.bouncedEntities.length)}}
+      </span>
+      out of
+      <span class="font-size-25">{{vm.numberWithCommas(vm.allEntities.length)}}</span>
+    </p>
+    <p>
+      This request would not be sent out to {{vm.numberWithCommas(vm.bouncedEntities.length)}} <span data-ng-if="vm.bouncedEntities.length > 1">{{vm.entityType.toLowerCase() | standardPluralize}}</span><span data-ng-if="vm.bouncedEntities.length <= 1">{{vm.entityType.toLowerCase()}}</span> as it has contacts that have bounced in the past or has no contact.
+    </p>
+    <p data-ng-show="!vm.showBouncedEntitiesList">
+      <a data-ng-click="vm.learnMoreEntities()" class="clickable">
+        Learn more
+      </a>
+    </p>
+    <div data-ng-show="vm.showBouncedEntitiesList" class="hide-close-icon">
+      <select class="form-control" chosen multiple data-ng-model="vm.bouncedEntities"
+        data-ng-options="entity.id as entity.name for entity in vm.bouncedEntitiesList" disabled>
+        <option value=""></option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <p>
+      <span class="text-bold">Estimated recipients</span>
+      <icon name="info" class="text-info"
+        uib-tooltip="Total number of contacts from the selected entities that would be receiving the email.">
+      </icon>
+    </p>
+    <p class="font-size-16">
+      <span class="font-size-30">
+        {{vm.numberWithCommas(vm.allContacts.length - vm.bouncedContacts.length)}}
+      </span>
+      out of
+      <span class="font-size-25">{{vm.numberWithCommas(vm.allContacts.length)}}</span>
+    </p>
+    <p>
+      {{vm.numberWithCommas(vm.bouncedContacts.length)}} recipients won't be included in this email send.
+    </p>
+    <p data-ng-show="!vm.showBouncedContactsList">
+      <a data-ng-click="vm.learnMore()" class="clickable">
+        Learn more
+      </a>
+    </p>
+    <div data-ng-show="vm.showBouncedContactsList" class="hide-close-icon">
+      <select class="form-control" chosen multiple data-ng-model="vm.bouncedContacts"
+        data-ng-options="contact.id as contact.email for contact in vm.bouncedContactsList" disabled>
+        <option value=""></option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="submit" data-ng-click="vm.userClickedOk()">Okay</button>
+
+  <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+</div>

@@ -1,0 +1,151 @@
+<ng2-due-diligence-list data-ng-if="vm.Utils.isAngular()"></ng2-due-diligence-list>
+<div data-ng-show="vm.Utils.isAngularJS()">
+<div class="panel panel-default compareTopPannel" data-ng-if="vm.due_diligences.length == 0">
+  <div class="panel-body">
+    <spinner data-ng-show="vm.loading_prefs"></spinner>
+    <div class="dv-table full-width dd-info-panel" data-ng-if="!vm.loading_prefs">
+      <div class="cell bordered-right" col="3" data-ng-hide="vm.is_manager">
+        <label for="template-selection" class="control-label">Select a Template</label>
+        <select id="template-selection"
+                class="form-control"
+                chosen
+                data-ng-model="vm.filters.template_id"
+                no-results-text="'Could not find any templates'"
+                data-placeholder="Filter by Template"
+                data-ng-options="template.id as template.name for template in vm.templates"
+                data-ng-change="vm.setTemplateName(vm.filters.template_id)">
+          <option value=""></option>
+        </select>
+      </div>
+      <div col="3" class="cell bordered-right">
+
+        <!-- <label for="strategy-selection" class="control-label">{{(vm.entity_type == 'Product' ? 'Strategy' : 'Type')}}</label> -->
+         <label for="strategy-selection" class="control-label">Select a classification</label>
+        <select id="strategy-selection"
+                class="form-control"
+                name="{{vm.entity_sub_type}}"
+                chosen
+                data-ng-model="vm.filters.strategy_id"
+                data-ng-options="strategy.id as strategy.name for strategy in vm.strategies">
+          <option value="">All classifications</option>
+        </select>
+      </div>
+      <div col="3" class="cell">
+        <label for="strategy-selection" class="control-label">Select dates:</label>
+        <div>
+          <dv-daterangepicker ng-model="vm.customDateFilter"
+            min-date="vm.minDate" max-date="vm.maxDate"></dv-daterangepicker>
+        </div>
+      </div>
+
+      <div col="3" class="cell">
+        <label for="strategy-selection" class="control-label visiblity-hidden">---</label>
+        <div>
+          <button class="btn btn-default primary" uib-tooltip="Find matching projects" submit-style-override type="submit" data-ng-click="vm.searchWithFilters()">
+            <icon name="search" class="text-primary"></icon>
+          </button>
+          <!--
+          <button btn-type="primary" data-ng-click="vm.searchWithFilters()">
+            Find matching projects
+          </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default" data-ng-if="vm.due_diligences.length > 0">
+  <div class="panel-body pd-13">
+    <div class="dv-table dv-table-middle full-width dd-info-panel">
+      <div class="cell bordered-right text-center" col="6">
+        <i data-ng-if="vm.due_diligences.length" class="text-muted"><small>You are viewing {{vm.due_diligences.length}} projects matching {{vm.selectedTemplateName}}</small></i>
+      </div>
+      <div class="cell bordered-right text-center" col="3">
+        <a data-ng-click="vm.saveSelections()" ui-sref="app.analyze.compare.due_diligences({ ids: vm.selectedIds(), template_id: vm.filters.template_id})"
+           uib-tooltip="{{vm.selectedDueDiligences.length < 2 ? 'Select at least 2 due diligences to compare' : 'Compare selected due diligences'}}"
+           data-ng-class="{'disabled': vm.selectedDueDiligences.length < 2, 'btn-transparent-cta': vm.selectedDueDiligences.length >= 2}"
+           class="btn btn-transparent">
+          <div><icon name="compare" size="2x"></icon></div>
+          <small>Compare</small>
+        </a>
+      </div>
+
+      <div class="cell text-center" col="3">
+        <button btn-type="transparent" data-ng-click="vm.clearFiters()">
+          <div>
+            <icon name="refresh"
+                  size="2x"
+                  uib-tooltip="Reset the filters, or options for comparison"></icon>
+          </div>
+          <small>Reset Selection/ Filters</small>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<spinner data-ng-show="vm.isLoading"></spinner>
+<div class="panel panel-default compareListContainer" data-ng-show="(vm.showPannel && vm.due_diligences.length > 0 && !vm.isLoading)" id="itemsContainer" >
+  <div class="panel-body">
+    <ul class="list-unstyled compare-dd-selection clearfix space-on-top-lg"
+        max-selectable="vm.max_comparisons"
+        tiles-adjuster="vm.tilesRendered"
+        tile-selector="li"
+        data-ng-hide="vm.isLoading"
+        on-max-selection-reached="vm.notifyMaxTemplateSelection()"
+        selectable-list="vm.selectedDueDiligences">
+      <li data-ng-repeat="diligence in vm.due_diligences track by $index"
+          on-render="vm.tilesRendered = true"
+          id="select_li_{{$index}}"
+          data-ng-init="vm.existInSelectedDDs(diligence.id, $index)"
+          option="diligence">
+        <div class="panel panel-default panel-selectable" >
+          <div class="panel-body">
+            <b truncate-text="25" uib-tooltip="{{diligence.entity_name}}">{{diligence.entity_name}}</b>
+            <br>
+            <small>{{diligence.created_at | date:'longDate'}}</small>
+            <br><br>
+            <span truncate-text="25" uib-tooltip="{{diligence.project_name}}" class="text-uppercase text-muted">
+              {{diligence.project_name}}
+            </span>
+            <br><br>
+            <small>
+              <b>Flags : {{diligence.total_flags}}
+              <icon class="align-middle space-on-left" name="flag"
+                    uib-tooltip="{{diligence.total_flags ? diligence.total_flags + ' flag(s) have been set': 'No flag set'}}"
+                    data-ng-class="{'dd-no-flag-set': !diligence.total_flags, 'text-danger': diligence.total_flags}"></icon>
+              </b>
+            </small>
+            <br><br>
+            <small data-ng-if="vm.rating_scales && vm.naValue">
+              <b>Score:
+                <dd-rated-score score="diligence.aggregate_score"
+                              keep-watcher-on="true"
+                              rating-scale="vm.rating_scales"
+                              na-value="vm.naValue"
+                              total="100"
+                              show-total="vm.ratingScheme.primary_rating_scale_mode == 'ScoreBand'"
+                              rating-value="diligence.aggregate_rating"
+                              use-rating-value="true"
+                              ></dd-rated-score>
+              </b>
+
+            </small>
+            <br><br>
+            <small>{{diligence.answer_count}}/{{diligence.question_count}} Questions Answered</small>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="panel panel-default" data-ng-if="(vm.showPannel && vm.due_diligences.length == 0 && !vm.isLoading)">
+  <div class="panel-body">
+    <div class="text-center text-muted">
+      <small><i>*No match found*</i></small>
+    </div>
+  </div>
+</div>
+
+</div>

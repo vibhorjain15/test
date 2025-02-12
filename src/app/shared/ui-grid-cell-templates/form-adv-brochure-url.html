@@ -1,0 +1,10 @@
+<ui-grid-cell-contents>
+  <a href="{{row.entity.brochure_url}}" target="_blank"
+     data-ng-show="row.entity.brochure_url">
+    <icon name="file-pdf-o"></icon>
+  </a>
+
+  <span data-ng-show="!row.entity.brochure_url" class="label label-success">
+    No document found
+  </span>
+</ui-grid-cell-contents>

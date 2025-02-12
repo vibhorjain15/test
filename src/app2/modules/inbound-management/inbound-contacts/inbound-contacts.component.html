@@ -1,0 +1,21 @@
+<div *ngIf="params.data">
+  <div *ngIf="params.data.contacts.length">
+    <span class="label label-default space-on-right text-uppercase"
+      >{{ params.data.contacts[0].name }}
+    </span>
+    <span
+      *ngIf="params.data.contacts.length > 1"
+      class="label label-default space-on-right text-uppercase"
+      >{{ params.data.contacts[1].name }}
+    </span>
+    <span
+      *ngIf="params.data.contacts.length > 2"
+      class="link-underline clickable space-on-right"
+      [adaptivePosition]="false"
+      [tooltip]="formatUsersTooltip()"
+      container="body"
+    >
+      + {{ params.data.contacts.length - 2 }} more
+    </span>
+  </div>
+</div>

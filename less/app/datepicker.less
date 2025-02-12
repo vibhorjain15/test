@@ -1,0 +1,45 @@
+.datepickerMini{
+    display: inline-block;
+    height: 1.5em;
+    cursor: pointer;
+  
+    .calendar-icon{
+      font-size: 1.5em;
+    }
+  
+    .calendar-icon.has-value{
+      color: #487FAD;
+    }
+
+    .uib-datepicker-popup.dropdown-menu {
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, 10%) !important;
+    }
+}
+  
+.datepicker-hasvalue{
+    .datepickerMini{
+        .calendar-icon{
+            color: @brand-primary;
+        }
+    }
+}
+
+.disabled-datepicker{
+    .datepickerMini{
+        cursor:not-allowed;
+        .button-calendar{
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+}
+
+.expired-datepicker{
+    .datepickerMini{
+        .calendar-icon{
+            color: @brand-danger;
+        }
+    }
+}

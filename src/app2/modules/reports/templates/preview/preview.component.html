@@ -1,0 +1,96 @@
+<app-spinner *ngIf="!template" aria-hidden="true"></app-spinner>
+<div class="panel panel-default" *ngIf="template">
+  <div class="panel-heading">
+    <h5 class="panel-title">{{ template?.name }}</h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper" *ngIf="!template.is_new_report">
+        <a
+          class="panel-control"
+          clickable
+          (click)="handlenotNewReportEdit()"
+          tooltip="Edit this report design"
+          container="body"
+          placement="top"
+        >
+          <span appIcon name="pencil" aria-hidden="true"></span>
+        </a>
+        <a
+          class="panel-control"
+          clickable
+          (click)="handlenotNewReportView()"
+          tooltip="Preview this report design"
+          container="body"
+          placement="top"
+        >
+          <span appIcon name="eye" aria-hidden="true"></span>
+        </a>
+        <a
+          class="panel-control"
+          clickable
+          container="body"
+          placement="top"
+          (click)="deleteCurrentTemplate(template)"
+          tooltip="Delete this report design"
+        >
+          <span
+            appIcon
+            name="trashcan"
+            class="dvi text-danger"
+            aria-hidden="true"
+          ></span>
+        </a>
+      </div>
+      <div class="panel-controls-wrapper" *ngIf="template.is_new_report">
+        <a
+          class="panel-control"
+          container="body"
+          placement="top"
+          clickable
+          (click)="editNewTemplate()"
+          tooltip="Edit this report design"
+        >
+          <span appIcon name="pencil" aria-hidden="true"></span>
+        </a>
+        <a
+          class="panel-control"
+          clickable
+          (click)="downloadReport()"
+          tooltip="Download"
+          container="body"
+          placement="top"
+        >
+          <strong><icon class="dvi dvi-download3"></icon></strong>
+        </a>
+        <a
+          class="panel-control btndel"
+          clickable
+          container="body"
+          placement="top"
+          (click)="deleteCurrentTemplate(template)"
+          tooltip="Delete this report design"
+        >
+          <span
+            appIcon
+            name="trashcan"
+            class="dvi text-danger"
+            aria-hidden="true"
+          ></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid" *ngIf="template?.is_new_report">
+  <div class="row clearfix">
+    <div class="word_view justify-center">
+      <div
+        *ngIf="template.definition"
+        [innerHtml]="template.definition | dvSafeHtml"
+        class="overflow-auto-relative zoomClass overflow-clip-firefox"
+        [style.width.pt]="602"
+        aria-live="polite"
+      ></div>
+    </div>
+  </div>
+</div>

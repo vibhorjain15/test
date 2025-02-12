@@ -1,0 +1,32 @@
+<div
+  class="panel panel-default relative"
+  role="region"
+  aria-labelledby="presentationReports"
+>
+  <div class="panel-heading">
+    <h5 id="presentationReports" class="panel-title">Presentation Reports</h5>
+
+    <div class="panel-controls">
+      <div class="panel-controls-wrapper">
+        <a
+          class="panel-control"
+          (click)="handleClick($event)"
+          tooltip="Create New Report"
+          role="button"
+          aria-label="Create New Report"
+          clickable
+        >
+          <span appIcon name="plus"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-dv-grid
+      [noRowsTemplate]="loading_data ? 'loading...' : 'No results found'"
+      [rowData]="reports"
+      name="report_list"
+      [onCellClicked]="onRowSelected"
+    ></app-dv-grid>
+  </div>
+</div>

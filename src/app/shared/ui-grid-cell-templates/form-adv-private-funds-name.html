@@ -1,0 +1,8 @@
+<ui-grid-cell-contents>
+  <!-- only show if subscription is ADV, else tooltip-->	
+  <a ui-sref="app.form_adv.private_fund({firmCRD: row.entity.firmCRD, sequence_id: row.entity.sequence_id})"
+     uib-tooltip="{{row.entity.name}}"
+     tooltip-placement="right">
+    {{row.entity.name}}
+  </a>
+</ui-grid-cell-contents>

@@ -1,0 +1,27 @@
+<div class="sidebar-popup">
+  <div class="panel panel-primary">
+    <div class="panel-heading clickable"
+         data-ng-click="toggleMinimize()">
+      <h5 class="panel-title">
+        {{title}}
+      </h5>
+
+      <div class="panel-controls">
+        <div class="panel-controls-wrapper">
+          <a class="panel-control">
+            <icon name="chevron-down" data-ng-hide="minimised"></icon>
+            <icon name="chevron-up" data-ng-show="minimised"></icon>
+          </a>
+
+          <a class="panel-control">
+            <icon name="close" data-ng-click="dismiss($event)"></icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div ng-transclude
+         class="sidebar-popup-content"
+         data-ng-hide="minimised"></div>
+  </div>
+</div>

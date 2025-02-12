@@ -1,0 +1,9 @@
+.separator {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.min-width-75-pct {
+  min-width: 75% !important;
+}

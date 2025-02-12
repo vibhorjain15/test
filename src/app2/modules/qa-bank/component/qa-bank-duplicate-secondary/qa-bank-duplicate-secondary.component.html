@@ -1,0 +1,132 @@
+<helper-text
+  showMoreLabel="Actions to manage duplicates"
+  [innerHtml]="
+    '<b>Get started with quick instructions:</b><ul><li>Exact duplicates have the same questions and responses, and semi duplicates have the same questions.</li><li>You can choose any of the duplicates to be the Primary Q/A by clicking \'Make Primary\'.</li><li>Archiving Q/As will deactivate them and move them into your Archive.</li></ul>'
+  "
+  [secondaryText]="
+    '<ul><li>Actions you can perform to manage duplicates:</li><ul><li>Archive: This will deactivate all of the selected Q/As and move them into your Archive, excluding them from Auto-fill, Q/A Search, and Suggested Responses. The Primary Q/A will remain in your Library.</li><li>Merge & Archive: This will copy all of the tags and SMEs from the selected Q/As and add them to the Primary Q/A. Then, it will archive the selected Q/As, excluding them from Auto-fill, Q/A Search, and Suggested Responses.</li><li>Mark as Not Duplicates: This will mark the selected Q/As as not duplicates and it will not consider them as duplicates again. The Q/As will still be available for Auto-fill, Q/A Search, and Suggested Responses.</li></ul></ul></ul>'
+  "
+>
+</helper-text>
+
+<div
+  class="duplicate-secondary q-a-bank-list-view-page"
+  role="region"
+  aria-label="Duplicate Secondary"
+>
+  <div class="primary-label">
+    <dv-label label="Primary Q/A" type="bold" [align]="'left'"></dv-label>
+
+    <dv-button
+      btnType="default"
+      class="space-on-bottom"
+      (onClick)="handleBack()"
+      >Back</dv-button
+    >
+  </div>
+
+  <div class="question-answer-container" role="list">
+    <question-container
+      type="duplicatesSecondary"
+      [question]="primaryQuestion"
+      [deactivateButton]="false"
+      [isCheckBox]="false"
+      role="listitem"
+      tabindex="0"
+    ></question-container>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <dv-tabs
+      [list]="list"
+      (onTabClick)="handleTabChange($event)"
+      size="large"
+    ></dv-tabs>
+  </div>
+
+  <div class="actions" role="toolbar" aria-label="Actions">
+    <div class="qa-checkbox-wrapper">
+      <dv-checkbox
+        [id]="'all-selected'"
+        [ngModel]="selectedFrequency == 'all-selected'"
+        (onValChange)="
+          selectedFrequency == 'none-selected' ||
+          selectedFrequency == 'few-selected'
+            ? clickedSelectAllQuestions()
+            : clickedUnSelectAllQuestions()
+        "
+        [indeterminate]="selectedFrequency == 'few-selected'"
+        [label]="selectedCount ? selectedCount + ' Selected' : ''"
+      ></dv-checkbox>
+    </div>
+
+    <dv-button
+      btnType="default"
+      [disabled]="!selectedCount"
+      (onClick)="handleDeactivate()"
+      tooltip="Archive the selected Q/As."
+    >
+      Archive
+    </dv-button>
+    <dv-button
+      btnType="default"
+      [disabled]="!selectedCount"
+      (onClick)="handleMerge()"
+      tooltip="Merge the tags and SMEs from the selected Q/As with the Primary Q/A."
+    >
+      Merge & Archive
+    </dv-button>
+    <dv-button
+      btnType="default"
+      [disabled]="!selectedCount"
+      (onClick)="handleNotDuplicates()"
+      tooltip="Mark the selected Q/As as not duplicates."
+    >
+      Mark as Not Duplicates
+    </dv-button>
+  </div>
+
+  <div class="qa-bank-questions" role="list" tabindex="0">
+    <ng-container *ngIf="list[0].active">
+      <question-container
+        *ngFor="let question of exact_duplicate; let i = index"
+        type="duplicatesSecondary"
+        [question]="question"
+        [index]="i"
+        [deactivateButton]="false"
+        (selectedChange)="handleSelection()"
+        (onActionButtonClick)="handleActionButton($event)"
+        [rightIconList]="question.rightIcons"
+        role="listitem"
+        tabindex="0"
+      ></question-container>
+      <div class="empty">
+        <app-empty-state
+          message="No duplicates found."
+          *ngIf="!exact_duplicate.length"
+        ></app-empty-state>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="list[1].active">
+      <question-container
+        *ngFor="let question of semi_duplicates; let i = index"
+        type="duplicatesSecondary"
+        [question]="question"
+        [index]="i"
+        [deactivateButton]="false"
+        (selectedChange)="handleSelection()"
+        (onActionButtonClick)="handleActionButton($event)"
+        [rightIconList]="question.rightIcons"
+        role="listitem"
+        aria-labelledby="question_semi_{{ i }}"
+        tabindex="0"
+      ></question-container>
+      <div class="empty">
+        <app-empty-state
+          message="No duplicates found."
+          *ngIf="!semi_duplicates.length"
+        ></app-empty-state>
+      </div>
+    </ng-container>
+  </div>
+</div>

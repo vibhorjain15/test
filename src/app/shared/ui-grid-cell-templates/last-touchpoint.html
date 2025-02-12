@@ -1,0 +1,4 @@
+<ui-grid-cell-contents ng-if="!row.groupHeader && (!col.grouping || col.grouping.groupPriority === undefined || col.grouping.groupPriority === null)">
+  <div data-ng-hide="!row.entity.lastTouchPoint">{{ row.entity.lastTouchPoint | fromNow}}</div>
+  <div data-ng-hide="row.entity.lastTouchPoint">None</div>
+</ui-grid-cell-contents>

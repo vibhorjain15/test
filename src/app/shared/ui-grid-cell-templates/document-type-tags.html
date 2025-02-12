@@ -1,0 +1,11 @@
+<ui-grid-cell-contents>
+  <div data-ng-show="row.entity.tag_labels.length">
+    <span class="label label-default space-on-right text-uppercase">{{row.entity.tag_labels[0]}}</span>
+    <span data-ng-show="row.entity.tag_labels.length > 1"> and {{row.entity.tag_labels.length - 1}} </span>
+    <span class="link-underline clickable space-on-right"
+          data-ng-show="row.entity.tag_labels.length > 1"
+          uib-tooltip="{{grid.appScope.vm.formatTagsTooltip(row.entity.tag_labels)}}">
+      more
+    </span>
+  </div>
+</ui-grid-cell-contents>

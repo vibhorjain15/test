@@ -1,0 +1,180 @@
+<div class="panel panel-default borderless-top">
+  <div class="panel-body clearfix">
+    <spinner broad-spinner spinner-height='65' data-ng-show="vm.fetching_responses"></spinner>
+
+    <div class="dv-table dv-table-middle dd-info-panel" data-ng-hide="vm.fetching_responses || !vm.response_count">
+      <div class="bordered-right cell">
+        <div class="lh1-5">
+          <strong>{{::vm.question_text}}</strong>
+        </div>
+
+        <small class="text-muted">
+          Showing
+          <ng-pluralize count="vm.response_count"
+                        when="{'1': '1 response',
+                               'other': '{} responses'}"></ng-pluralize>
+          for this question
+        </small>
+      </div>
+
+      <div class="cell bordered-right">
+        <span class="align-middle">
+          <span data-ng-show="vm.assigned_tags.length">
+            <span class="label-list">
+              <span class="label label-default space-on-right text-uppercase"
+                    data-ng-repeat="tag in vm.assigned_tags">
+                {{tag.name}}
+              </span>
+            </span>
+          </span>
+
+          <div data-ng-show="vm.assigned_tags.length">
+                <a class="clickable" data-ng-click="vm.displayTagsController()">
+                  <small>Edit</small>
+                </a>
+              </div>
+
+              <a class="clickable btn btn-transparent"
+                 data-ng-click="vm.displayTagsController()"
+                 data-ng-show="vm.assigned_tags && !vm.assigned_tags.length"
+                 uib-tooltip="Assign Tags">
+                <div><icon name="tag" size="2x"></icon></div>
+                <small>Why not add a tag?</small>
+              </a>
+        </span>
+      </div>
+
+      <div class="cell">
+        <a data-ng-if="!vm.showNewQAView" 
+           class="btn btn-transparent">
+          <div><icon name="arrow-back" size="2x"></icon></div>
+          <small>Back to all questions</small>
+        </a>
+        <a data-ng-if="vm.showNewQAView" ui-sref="app.content.questions({loadPrevious:true})"
+           class="btn btn-transparent">
+          <div><icon name="arrow-back" size="2x"></icon></div>
+          <small>Back to all questions</small>
+        </a>
+      </div>
+    </div>
+
+    <div data-ng-show="!vm.fetching_responses && !vm.response_count">
+        Question unavailable
+    </div>
+  </div>
+</div>
+
+<div data-ng-if="vm.grouped_questions.length">
+    <div class="panel panel-default" data-ng-repeat="group in vm.grouped_questions" data-ng-class="{'qa-question-inactive': group.questions[0].is_inactive}">
+        <div class="panel-body">
+            <button btn-type="default"
+                    size="sm"
+                    data-ng-disabled="vm.checkExpiryDate(group.questions[0].expired_at)"
+                    data-ng-if="!group.questions[0].is_inactive"
+                    uib-tooltip="Deactivate this response"
+                    data-ng-click="vm.deactivateResponse(group, $index)"
+                    class="pull-right"
+                    size="sm">
+                <icon name="ban"></icon>
+            </button>
+            <!-- For coping, use the data-clipboard-target to reference the dom object instead of directly passing it data -->
+            <button btn-type="default"
+                    size="sm"
+                    class="space-on-right-lg pull-right"
+                    data-ng-if="!group.questions[0].is_inactive"
+                    uib-tooltip="Copy this response"
+                    ngclipboard data-clipboard-target="#question-response_{{$index}}"
+                    data-ng-click="vm.copyResponse()">
+                <icon name="copy"></icon>
+            </button>
+
+            <span class="text-danger pull-right padded-lg" data-ng-if="group.questions[0].is_inactive"><icon name="ban" uib-tooltip="This response has been marked as inactive"></icon></span>
+
+            <p col="10" class="clear-padding-left clear-padding-right">
+              <span id="question-response_{{$index}}" class="responsive-image" ng-bind-html="group.response | cleanhtml | trusthtml"></span>
+            </p>
+
+            <ul class="list-unstyled list-bordered-bottom clear-both">
+                <li data-ng-repeat="question in group.questions">
+                    <div>
+                      <small class="text-muted">
+                          <strong data-ng-if="question.is_verified"><icon name="check-circle" size="1x"></icon></strong>
+                          <strong>{{question.created_by_name}}</strong>
+                          responded {{question.created_at | fromNow}} | <span data-ng-if="question.fundName">ENTITY NAME</span> <strong>{{question.entity_name}} | </strong> <span data-ng-if="question.investor_name">{{question.type == 'dd_profile'?'PROFILE NAME':'INVESTOR'}}</span> <strong>{{question.investor_name}}</strong><span data-ng-if="!vm.is_freeSubscription && question.expiry_date"> | EXPIRES ON</span> <strong>{{question.expiry_date}}</strong>
+                          <a ui-sref="app.diligence.project.questionnaire.category({diligenceId: question.duediligence_id , 'categoryId': question.parentsection_id,'#':'child_section_'+question.section_id})">View Project</a>
+
+                          <button data-ng-if="question.type == 'dd_profile' && vm.responseTypeNotExcluded(question.response)"
+                                  btn-type="transparent"
+                                  size="sm"
+                                  uib-tooltip="Edit Question"
+                                  tabindex="-1"
+                                  data-ng-click="vm.editPreapprovedQuestion(question)">
+                              <icon name="pencil"></icon>
+                          </button>
+                          <button btn-type="transparent"
+                                  size="sm"
+                                  class="qa-response-control-notes"
+                                  uib-tooltip="Add internal notes visible only to your firm"
+                                  tabindex="-1"
+                                  data-ng-click="vm.displayNotesController(question, $parent.$index, $index)">
+                              <icon name="notepad"></icon>
+                              <span class="count-bubble relative align-middle"
+                                    data-ng-show="question.note_count > 0">{{question.note_count}}</span>
+                          </button>
+                      </small>
+                      <p data-ng-if="!vm.is_freeSubscription && question.type == 'dd_profile'">
+                        <small class="text-muted text-uppercase align-middle">Subject Matter Expert:</small>
+                        <span class="btn btn-primary-outline btn-xs text-uppercase space-on-right space-on-top"
+                          data-ng-repeat="sme in question.subject_matter_experts">
+                          <small>{{sme}}</small>
+                        </span>
+                        <small class="text-muted" data-ng-if="!question.subject_matter_experts">No SME found</small>
+                      </p>
+                      <p data-ng-if="!vm.is_freeSubscription && question.expired_at">
+                        <small class="text-muted text-uppercase align-middle" data-ng-class="vm.getExpiryClass(question.expired_at).class" uib-tooltip="{{question.expired_at | date}}">{{vm.getExpiryClass(question.expired_at).text}} {{question.expired_at | fromNow }}</small>
+                      </p>
+                    </div>
+                    <div class="pull-right">
+                      <small class="text-success" data-ng-if="!vm.is_freeSubscription && question.response.response_status == vm.responseStatus.REVIEWSUCCESS && question.task.is_complete">
+                        Last Verified by {{question.task.completed_by_name}} on {{question.task.completed_at | date}}
+                      </small>
+                      <small class="label label-danger"
+                        uib-tooltip="Revision requested by {{question.task.completed_by_name}} on {{question.task.completed_at | date}}"
+                        tooltip-placement="auto top"
+                        data-ng-if="!vm.is_freeSubscription && question.response.response_status == vm.responseStatus.REVIEWFAILED && question.task.is_complete">
+                        REVISION REQUESTED
+                      </small>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<div class="panel panel-default" data-ng-if="vm.fetching_responses || !vm.grouped_questions.length">
+    <div class="panel-body clearfix">
+        <spinner broad-spinner spinner-height='65' data-ng-show="vm.fetching_responses"></spinner>
+        <div data-ng-if="!vm.grouped_questions.length && !vm.fetching_responses">
+            No responses available for this question!
+        </div>
+    </div>
+</div>
+
+<div class="dd-sidebar-panel dv-sidebar-panel sidebar-lg" data-ng-class="{'in': vm.displaySidebarPanel}" data-ng-show="vm.displaySidebarPanel">
+  <div class="panel panel-primary">
+    <div class="panel-heading text-center">
+      <h5>
+        <b>{{vm.sidebarTitle}}</b>
+        <a class="pull-right clickable link-disguise"
+           data-ng-click="vm.displaySidebarPanel = false">
+          <icon name="close" size="lg"></icon>
+        </a>
+      </h5>
+    </div>
+
+    <div class="panel-body">
+      <ng-include src="vm.sidebarTemplate"></ng-include>
+    </div>
+  </div>
+</div>

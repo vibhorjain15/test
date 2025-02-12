@@ -1,0 +1,10 @@
+.spinner-display {
+  height: 400px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .rule-meta-info {
+  margin-bottom: 5px;
+}

@@ -1,0 +1,41 @@
+.tag-wrapper {
+  border-radius: 4px;
+}
+.default {
+  background-color: #dfdfdf;
+  color: #333333;
+}
+.in-progress {
+  background-color: #f57c00;
+  color: white;
+}
+.question {
+  border: 1px solid #126b82;
+  background-color: #157e9803;
+  color: #126b82;
+}
+.project {
+  border: 1px solid  var(--dark-orange);
+  background-color: #f57b0008;
+  color: var(--dark-orange);
+}
+.firm {
+  border: 1px solid #f9a54e;
+  background-color: #f0ac4e00;
+  color: #f9a54e;
+}
+.strategy {
+  border: 1px solid #ab9c9c;
+  background-color: transparent;
+  color: var(--dark-grey);
+}
+.product {
+  border: 1px solid #43c59e;
+  background-color: #43c59e01;
+  color: #43c59e;
+}
+.vehicle {
+  border: 1px solid #5bc0de;
+  background-color: #5bc0de06;
+  color: #5bc0de;
+}

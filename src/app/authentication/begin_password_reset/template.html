@@ -1,0 +1,43 @@
+<ng2-forget-password></ng2-forget-password>
+ <!-- <div class="container">
+  <div class="row clearfix">
+    <div class="authentication-form-wrapper">
+      <div class="logo-wrapper">
+        <img src="/assets/images/logo.png" alt="logo" class="logo">
+      </div>
+
+      <form novalidate name="vm.password_reset_form" data-ng-submit="vm.submit(vm.userName)">
+        <div class="{{vm.type}}" data-ng-show="vm.messageShown">
+          <p ng-repeat="message in vm.alertMessage">
+            {{message}}<span data-ng-hide="$last">.</span>
+          </p>
+        </div>
+
+
+        <h4 class="desc">Find your DiligenceVault account</h4>
+
+        <form-group field-name="Email" validate-on="keydown">
+          <input type="email"
+                 class="form-control"
+                 id="email"
+                 data-ng-model="vm.userName"
+                 name="userName"
+                 placeholder="Enter your Email Address"
+                 required>
+        </form-group>
+
+        <div class="captcha recaptchaContainer space-on-bottom-xl">
+          <div vc-recaptcha key="vm.siteKey" ng-model="vm.myRecaptchaResponse" required uib-tooltip="{{vm.myRecaptchaResponse == null?'Captcha Required':''}}"
+            tooltip-is-open="vm.password_reset_form.$submitted" tooltip-placement="right"
+            tooltip-trigger="none"></div>
+        </div>
+
+        <div>
+          <button type="submit" data-ng-disabled="vm.password_reset_form.$invalid" block="true" button-loader="vm.loading">
+            Reset Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> -->

@@ -1,0 +1,8 @@
+<ui-grid-cell-contents>
+  <!-- only show if subscription is ADVAnalytics, else tooltip-->	
+  <a ui-sref="app.form_adv.service_provider({unique_name: row.entity.normalized_name, type: row.entity.type})"
+     uib-tooltip="{{row.entity.normalized_name}}"
+     tooltip-placement="right">
+    {{row.entity.normalized_name}}
+  </a>
+</ui-grid-cell-contents>

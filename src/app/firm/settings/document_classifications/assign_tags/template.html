@@ -1,0 +1,29 @@
+<form novalidate
+      name="vm.document_tag_grouping_form"
+      data-ng-submit="vm.saveAssignment()">
+  
+  <form-group field-name="Document Group"
+              data-ng-if="vm.document_types.length">
+
+    <select id="document-tag"
+            class="form-control"
+            chosen multiple
+            data-ng-model="vm.document_tags"
+            data-ng-disabled="!vm.document_types"
+            data-placeholder-text-multiple="'Select Document Tags'"
+            data-ng-options="status.id as status.name for status in vm.document_types">
+      <option value=""></option>
+    </select>
+  </form-group>
+
+  <div class="form group">
+    <button type="submit"
+            button-loader="vm.saving_tags">Save Grouping</button>
+
+    <p class="text-muted space-on-top-lg">
+      <small>
+        <i>This helps to group documents for easier tracking.</i>
+      </small>
+    </p>
+  </div>
+</form>

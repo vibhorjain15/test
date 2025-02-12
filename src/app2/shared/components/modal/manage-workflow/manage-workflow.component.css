@@ -1,0 +1,10 @@
+.active {
+  color: var(--primary);
+}
+.text-muted {
+  color: #777;
+}
+
+.manage-workflow-document-type-pl {
+  padding-left: 6.4rem;
+}

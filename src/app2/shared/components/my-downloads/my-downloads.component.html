@@ -1,0 +1,115 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">My Downloads</h5>
+  </div>
+  <div class="panel-body">
+    <div
+      class="space-on-bottom-lg display-flex align-items-center justify-space-between"
+    >
+      <div *ngIf="customDateFilter" class="w-200"></div>
+      <div class="">
+        <div class="btn-group">
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': selectedTab === VIEW_TABS.ACTIVE }"
+            (click)="setSelectedTab(VIEW_TABS.ACTIVE)"
+            >Active</span
+          >
+          <span
+            class="btn btn-default font-size-12"
+            [ngClass]="{ 'btn-primary': selectedTab === VIEW_TABS.EXPIRED }"
+            (click)="setSelectedTab(VIEW_TABS.EXPIRED)"
+            >Expired</span
+          >
+        </div>
+      </div>
+      <!-- Expired tab date picker -->
+      <div class="pull-right" [hidden]="selectedTab !== VIEW_TABS.EXPIRED">
+        <label class="space-on-right" for="Requestedon">Requested on</label>
+        <app-date-range-picker
+          class="bordered-right w-280 cell va-middle space-on-top-2"
+          *ngIf="customDateFilter"
+          [customDate]="dateRange"
+          [minDate]="minDate"
+          [maxDate]="maxDate"
+          containerClass="range-picker-grid-placement"
+          (change)="onDateRangeChange($event)"
+          (clearDateFilter)="onClearDateFilter()"
+          [id]="'Requestedon'"
+        ></app-date-range-picker>
+      </div>
+      <!-- Expired tab date picker -->
+      <!-- Active tab date picker -->
+      <div class="pull-right" [hidden]="selectedTab === VIEW_TABS.EXPIRED">
+        <label for="Requestedon">Requested on</label>
+        <app-date-range-picker
+          class="bordered-right w-320 cell va-middle space-on-top-2"
+          [customDate]="dateRangeActive"
+          [minDate]="minActiveDate"
+          [maxDate]="maxActiveDate"
+          [showRanges]="false"
+          containerClass="range-picker-grid-placement"
+          (change)="onActiveDateRangeChange($event)"
+          (clearDateFilter)="onClearDateFilter()"
+          [id]="'Requestedon'"
+          *ngIf="dateRangeActive"
+        ></app-date-range-picker>
+        <!--  Active tab date picker -->
+      </div>
+    </div>
+    <div
+      class="panel panel-info"
+      *ngIf="!isWebTokenActive && selectedTab == VIEW_TABS.ACTIVE"
+    >
+      <div class="panel-heading">
+        To update the list of download(s) click on
+        <a (click)="refreshWebToken()"
+          >(Refresh now <span appIcon name="refresh"></span>)</a
+        >
+      </div>
+    </div>
+    <div class="panel panel-info">
+      <div class="panel-heading" *ngIf="selectedTab == VIEW_TABS.ACTIVE">
+        In this section, you'll find a list of downloads that are currently
+        active. These downloads can be accessed and downloaded for up to 15 days
+        from the date they were requested.
+      </div>
+      <div class="panel-heading" *ngIf="selectedTab == VIEW_TABS.EXPIRED">
+        In this section, you'll find a list of direct downloads and downloads
+        that were once active but have since expired. Expired downloads are no
+        longer accessible. To download them again, please make a new download
+        request.
+      </div>
+    </div>
+    <div
+      class="panel panel-info"
+      *ngIf="
+        selectedTab == VIEW_TABS.ACTIVE && tobeExpired && tobeExpired.length > 0
+      "
+    >
+      <div class="panel-heading" *ngIf="mode == MODES.ALL">
+        {{ tobeExpired.length }} file(s) are about to expire. Click
+        <a (click)="viewDownloads('ToBeExpired')">here</a> to view.
+      </div>
+      <div class="panel-heading" *ngIf="mode == MODES.TOBEEXPIRED">
+        Download the {{ tobeExpired.length }} file(s) that are about to expire
+        soon. Click <a (click)="viewDownloads('All')">here</a> to view all
+        files.
+      </div>
+    </div>
+    <div class="text-center">
+      <app-spinner *ngIf="!initGridSection"></app-spinner>
+    </div>
+    <div class="space-on-top-lg" *ngIf="initGridSection">
+      <app-dv-grid
+        [rowData]="myDownloadData"
+        [name]="gridName"
+        [noRowsTemplate]="!initGridSection ? 'Loading...' : 'No results found'"
+        [rowClass]="expireGridRowClass"
+        [filterData]="filterData"
+        [customFilterInitValue]="customFilterInitValue"
+        (onLoadView)="loadView($event)"
+      ></app-dv-grid>
+    </div>
+  </div>
+</div>

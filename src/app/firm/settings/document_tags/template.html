@@ -1,0 +1,76 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-document-types></ng2-document-types> </div>
+<div data-ng-if="vm.Utils.isAngularJS()" class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title">Document Types</h5>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">Manage document tags under this section. You can use system tags or create custom document tags that are relevant to your organisation.</div>
+  </div>
+  <div class="panel-body">
+    <spinner  broad-spinner spinner-height='60' data-ng-if="vm.loading_tags"></spinner>
+
+    <div data-ng-if="!vm.loading_tags">
+
+      <div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h5 class="panel-title">System Tags</h5>
+          </div>
+
+          <div class="panel-body">
+            <div class="label-list">
+              <span class="label label-default text-uppercase space-on-right"
+                    data-ng-repeat="tag in vm.system_tags">
+                <small uib-tooltip="This is a system generated tag">{{tag.name}}</small>
+              </span>
+              <p class="alert alert-info text-center" data-ng-if="!vm.system_tags.length">
+                To enable system tags go to Firm settings > Preferences > Firm Preferences
+              </p>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="panel panel-default space-on-top-xxl">
+          <div class="panel-heading">
+            <h5 class="panel-title">Custom Tags</h5>
+
+            <div class="panel-controls">
+              <div class="panel-controls-wrapper">
+                <a class="panel-control"
+                   uib-popover-template="vm.addCustomTagsUrl"
+                   popover-placement="left"
+                   data-ng-click="vm.initiateTagAddition()"
+                   popover-is-open="vm.isPopoverOpen"
+                   popover-title="Add tags"
+                   uib-tooltip="Add new custom tag">
+                  <icon name="plus"></icon>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="label-list">
+              <span class="label label-default text-uppercase space-on-right"
+                    data-ng-repeat="tag in vm.custom_tags" data-ng-if="vm.custom_tags.length">
+                <small>{{tag.name}}</small>
+
+                <a class="space-on-left clickable link-disguise"
+                   data-ng-if="vm.is_admin"
+                   uib-tooltip="Remove tag"
+                   data-ng-click="vm.displayTagRemovalConfirmation(tag)">&times;</a>
+              </span>
+
+              <p class="alert alert-info text-center" data-ng-if="!vm.custom_tags.length">
+                No custom tags available.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

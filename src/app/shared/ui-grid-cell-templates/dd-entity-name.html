@@ -1,0 +1,16 @@
+<ui-grid-cell-contents class="text-left unstyledLink">
+
+  <div ng-if="row.groupHeader && col.grouping.groupPriority === row.treeLevel"
+    class="ui-grid-cell-contents" title="TOOLTIP" uib-tooltip="{{COL_FIELD CUSTOM_FILTERS}}">
+    {{COL_FIELD CUSTOM_FILTERS}}
+  </div>
+  <p>
+    <!-- <span class="internal_dd_icon" uib-tooltip="Internal DDQ / Project" tooltip-placement="top" data-ng-class="{'visiblity-hidden': !row.entity.is_internal}"></span> -->
+    <a
+       uib-tooltip="{{row.entity.entity_name}}"
+       tooltip-placement="top">
+      {{row.entity.entity_name}}
+    </a>
+  </p>
+
+</ui-grid-cell-contents>

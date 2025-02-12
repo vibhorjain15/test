@@ -1,0 +1,185 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <b>
+      {{
+        view === "duplicatesMain"
+          ? "Find Duplicate Q/As"
+          : "Manage Duplicate Q/As"
+      }}
+    </b>
+  </div>
+  <div class="panel-body clear-padding">
+    <div
+      class="q-a-bank-list-view-page qa-duplicate-wrapper"
+      *ngIf="view === 'duplicatesMain' && !loading"
+    >
+      <helper-text
+        showMoreLabel="How to manage duplicates"
+        [innerHtml]="
+          '<b>Get started with quick instructions:</b><ul><li>There are two types of duplicate Q/As: <ul><li>Exact duplicates have the same questions and responses</li><li>Semi-duplicates have the same questions</li></ul></li><li>By default, approved and most recent responses are shown below and are your \'Primary Q/As\'.</li></ul>'
+        "
+        [secondaryText]="
+          '<b>To manage duplicates in bulk:</b><ul><li>Once you find duplicates for an entity, you can quickly archive all exact duplicates in bulk by using the ‘Bulk Archive Exact Duplicates’ button located at the top right side.<ul><li>Q/As that are approved or have the most recent response will be kept.</li></ul></li></ul><b>To manage duplicates one at a time:</b><ul><li>Select a Q/A below by clicking the orange count of duplicates to temporarily mark it as your Primary Q/A and move to the next step to view and manage its duplicates.</li><li>In the next step you can archive, merge tags & SMEs, and select a different Q/A as your Primary.</li></ul>'
+        "
+      >
+      </helper-text>
+      <div class="header-wrapper">
+        <dv-segment [isSearch]="false" [isAdd]="false">
+          <div class="duplicate-entries-header">
+            <div class="entity-detail">
+              <div class="entity-type">
+                <dv-form-element
+                  label="Select Entity Type"
+                  labelPosition="top"
+                  elementCol="12"
+                  [for]="'entityTypeSelected'"
+                >
+                  <dv-select
+                    [list]="entity_types"
+                    bindValue="value"
+                    [ngModel]="entityTypeSelected"
+                    (onSelectChange)="handleEntityChange($event)"
+                    [id]="'entityTypeSelected'"
+                  ></dv-select>
+                </dv-form-element>
+              </div>
+              <div class="entity-name">
+                <dv-form-element
+                  label="Select Entity Name"
+                  labelPosition="top"
+                  elementCol="12"
+                  [for]="'entityIdSelected'"
+                >
+                  <dv-select
+                    [list]="entity_names"
+                    *ngIf="entityTypeSelected !== keywordConstants.MyFirm"
+                    [(ngModel)]="entityIdSelected"
+                    (onSelectChange)="handleEntityNameChange($event)"
+                    [loading]="entity_loading"
+                    [id]="'entityIdSelected'"
+                    [aria-label]="'Select Entity Name'"
+                  ></dv-select>
+
+                  <span
+                    *ngIf="entityTypeSelected == keywordConstants.MyFirm"
+                    class="label my-firm-label"
+                    >{{ currUser.firmInfo.display_name }}</span
+                  >
+                </dv-form-element>
+              </div>
+            </div>
+            <div class="actions">
+              <dv-logo-label
+                label="Find Duplicates"
+                class="duplicate-logo"
+                icon="search"
+                [isEnabled]="entityIdSelected"
+                [iconColor]="entityIdSelected ? 'default' : 'disabled'"
+                [hoverTransform]="true"
+                (onClick)="handleFindDuplicates()"
+              >
+              </dv-logo-label>
+              <dv-logo-label
+                label="Reset Selection"
+                class="duplicate-logo"
+                icon="refresh"
+                [isEnabled]="entityIdSelected"
+                (onClick)="handleResetSelection()"
+                [hoverTransform]="true"
+                [iconColor]="entityIdSelected ? 'default' : 'disabled'"
+              >
+              </dv-logo-label>
+              <dv-logo-label
+                label="Bulk Archive Exact Duplicates"
+                icon="trashcan"
+                class="duplicate-logo"
+                [isEnabled]="duplicates?.length"
+                [hoverTransform]="true"
+                (onClick)="handleDeleteDuplicates()"
+                tooltip="Bulk archive all exact duplicate Q/As for the selected entity. This will keep the most recent Q/A as your Primary."
+                [iconColor]="duplicates?.length ? 'default' : 'disabled'"
+                [isLoading]="removeAllDuplicateLoader"
+              >
+              </dv-logo-label>
+              <dv-logo-label
+                label="Go Back"
+                class="duplicate-logo"
+                icon="arrow-back"
+                [hoverTransform]="true"
+                (onClick)="handleGoBack()"
+              >
+              </dv-logo-label>
+            </div>
+          </div>
+        </dv-segment>
+      </div>
+
+      <div
+        *ngIf="duplicates && duplicates?.length !== 0 && !loading"
+        class="question-wrapper"
+      >
+        <div class="qa-bank-nav">
+          <div btnType="transparent">
+            {{ start_point + 1 }}-{{
+              end_point < questionsTotalCount ? end_point : questionsTotalCount
+            }}
+            of
+            {{ questionsTotalCount }}
+          </div>
+          <dv-button
+            btnType="transparent"
+            (onClick)="goToPrevious()"
+            [disabled]="start_point == 0"
+            ariaLabel="Go to previous"
+          >
+            <span
+              appIcon
+              name="chevron-left"
+              class="align-middle space-on-right"
+            ></span>
+          </dv-button>
+          <dv-button
+            btnType="transparent"
+            (onClick)="goToNext()"
+            [disabled]="end_point >= questionsTotalCount"
+            ariaLabel="Go to next"
+          >
+            <span
+              appIcon
+              name="chevron-right"
+              class="align-middle space-on-right"
+            ></span>
+          </dv-button>
+        </div>
+
+        <div class="qa-bank-questions">
+          <question-container
+            *ngFor="let question of questionList; let i = index"
+            [type]="view"
+            [question]="question"
+            [index]="i"
+            [deactivateButton]="false"
+            [isCheckBox]="false"
+            (onDuplicateClick)="
+              handleChangeView('duplicatesSecondary', question)
+            "
+          ></question-container>
+        </div>
+      </div>
+      <div class="loaderState">
+        <app-empty-state
+          message="No duplicates found."
+          *ngIf="duplicates && duplicates.length == 0 && !loading"
+        ></app-empty-state>
+        <app-spinner *ngIf="loading"></app-spinner>
+      </div>
+    </div>
+    <qa-bank-duplicate-secondary
+      *ngIf="view === 'duplicatesSecondary'"
+      [primaryQuestion]="primaryQuestion"
+      (onViewChange)="handleChangeView('duplicatesMain')"
+      [duplicates]="duplicates"
+      (manageDuplicates)="manageDuplicates($event)"
+    ></qa-bank-duplicate-secondary>
+  </div>
+</div>

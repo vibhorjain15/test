@@ -1,0 +1,43 @@
+.main-container {
+  display: flex;
+}
+
+.left-container {
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 600px;
+}
+
+.resize-handle {
+  flex: 0 0 5px;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resize-handle > div {
+  transform: rotate(90deg);
+  color: #bfbfbf;
+  width: 6px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+.resize-handle-color {
+  background-color: rgba(56, 145, 166, 0.1);
+}
+.resize-handle:hover {
+  background-color: rgba(56, 145, 166, 0.1) !important;
+}
+
+.right-container {
+  flex: 1 1 50vw;
+}
+
+.disableSelection {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Standard */
+}

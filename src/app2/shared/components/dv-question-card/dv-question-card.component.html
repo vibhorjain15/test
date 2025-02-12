@@ -1,0 +1,309 @@
+<div
+  [ngClass]="{
+  'manual-validation-required': leftIcons?.name === 'warning',
+  'neg-margin': leftIcons?.name === 'warning' && !isNested,
+}"
+>
+  <div class="question-card-container">
+    <div class="question-card-head-wrapper space-on-right">
+      <div class="header-left">
+        <dv-icon-group *ngIf="leftIcons" class="left-icon">
+          <span
+            [tooltip]="leftIcons?.tooltip"
+            container="body"
+            class="space-on-right"
+            [color]="leftIcons?.color"
+            [isDisable]="leftIcons?.disabled"
+            appIcon
+            [name]="leftIcons?.name"
+          ></span>
+        </dv-icon-group>
+        <dv-label size="large" [label]="title" type="bold"></dv-label>
+        <span
+          *ngIf="isConditionalQuestion"
+          class="badge badge-success cursor-default font-size-10 v-align-text-top space-on-left min-width-unset space-on-top-2"
+          [tooltip]="tooltipMessage.ConditionalQuestion"
+          >Conditional</span
+        >
+        <span
+          *ngIf="leftIcons?.key === 'tableValidation'"
+          class="secondary-text-color font-size-12"
+        >
+          Click to
+          <dv-link
+            [color]="leftIcons.color"
+            name="validate"
+            [linkClass]="
+              leftIcons?.disabled
+                ? 'link-underline disabled-Element'
+                : 'link-underline'
+            "
+            (onClick)="handleIconClick(leftIcons)"
+          ></dv-link>
+          response
+        </span>
+      </div>
+      <div class="header-right">
+        <dv-icon-group>
+          <ng-container *ngFor="let icon of rightIcons">
+            <span
+              *ngIf="
+                icon.key != 'assign' &&
+                icon.key != 'na' &&
+                icon.key != 'calendar' &&
+                icon.key != 'rating' &&
+                !icon.isSvg
+              "
+              [ngClass]="{
+                'icon-hover': !icon.disabled && !icon.noHoverEffect
+              }"
+              container="body"
+              placement="left"
+              [tooltip]="icon.tooltip"
+              class="clickable"
+              [color]="icon.color"
+              [isDisable]="icon.disabled"
+              appIcon
+              [name]="icon.name"
+              [customSize]="icon.size ?? ''"
+              [keepColorWithDisableMode]="icon.keepColorWithDisableMode"
+              (click)="handleIconClick(icon)"
+            >
+              <span
+                *ngIf="icon?.count"
+                class="count-bubble relative align-middle"
+                [ngStyle]="
+                  icon.countColor && { 'background-color': icon.countColor }
+                "
+                >{{ icon.count }}
+                <span
+                  *ngIf="icon?.showProgressDot"
+                  class="red-bubble relative align-middle"
+                ></span>
+              </span>
+              <span
+                *ngIf="icon?.countIcon"
+                class="count-icon-bubble relative align-middle"
+                appIcon
+                [name]="icon.countIcon"
+                customSize="tiny"
+              ></span>
+            </span>
+            <span
+              *ngIf="icon.key == 'calendar'"
+              [ngClass]="{
+                'icon-wrapper': icon.disabled
+              }"
+            >
+              <span
+                *ngIf="icon.key == 'calendar'"
+                appIcon
+                container="body"
+                [ngClass]="{
+                  'icon-hover': !icon.disabled,
+                  'icon-date': icon.disabled
+                }"
+                [isDisable]="icon.disabled"
+                [bsConfig]="config"
+                class="clickable"
+                [tooltip]="icon.tooltip"
+                [color]="icon.color"
+                [name]="icon.name"
+                [minDate]="minDate"
+                bsDatepicker
+                #dp="bsDatepicker"
+                (bsValueChange)="onDateChange($event, icon, dp)"
+              ></span>
+            </span>
+
+            <ng-container *ngIf="icon.key == 'assign'">
+              <app-dv-team-member-selector
+                (onChange)="handleSubscriber($event, icon)"
+                dropdownPlacement="right"
+                [selection]="assignedUser.users ?? []"
+                [functionSelection]="assignedUser.assignedFunctions ?? []"
+                [functions]="assignedUser.functions"
+                class="dv-card"
+              >
+              </app-dv-team-member-selector>
+            </ng-container>
+            <ng-container *ngIf="icon.key == 'rating'">
+              <app-editable-only-score
+                container="body"
+                [tooltip]="icon.tooltip"
+                *ngIf="icon.isScoreband"
+                [total]="100"
+                [readonly]="icon.disabled"
+                [type]="icon.type"
+                [naScaleObj]="icon.naScaleObj"
+                [ratingScale]="icon.rating"
+                [reviewEnabled]="icon.reviewEnabled"
+                [score]="icon.name"
+                [isNARating]="icon.isNARating"
+                (onChange)="handleRatingChange($event, icon)"
+                (onIconClick)="handleRatingIconClick(icon)"
+              >
+              </app-editable-only-score>
+
+              <dv-rating-dropdown
+                container="body"
+                class="rating-dropdown"
+                *ngIf="!icon.isScoreband"
+                [color]="icon.color"
+                [isQuestion]="true"
+                [tooltip]="icon.tooltip"
+                [showDropDown]="!icon.isNotDropDown"
+                [score]="icon.name"
+                [ratingScales]="icon.rating"
+                [readonly]="icon.readonly"
+                [isDisabled]="icon.disabled"
+                [isNARating]="icon.isNARating"
+                (onClick)="handleOnRatingClick(icon)"
+                (onChange)="handleRatingChange($event, icon)"
+              >
+              </dv-rating-dropdown>
+            </ng-container>
+
+            <img
+              *ngIf="icon.isSvg"
+              [src]="icon.path"
+              container="body"
+              placement="left"
+              [tooltip]="icon.tooltip"
+              class="clickable"
+              [class]="icon.class"
+              [color]="icon.color"
+              [isDisable]="icon.disabled"
+              (click)="handleIconClick(icon)"
+            />
+            <ng-container *ngIf="icon.key == 'na'">
+              <ng-container *ngIf="icon.canShowDropdown">
+                <dv-dropdown
+                  type="default"
+                  (onDropdownClick)="naDropDownClick($event, icon)"
+                  [dropDownList]="icon.list"
+                  [tooltip]="icon.tooltip"
+                  [adaptivePosition]="true"
+                  container="body"
+                  iconSize="small"
+                  [iconName]="icon.name"
+                  [isIconLabel]="true"
+                  dropdownPlacement="right"
+                >
+                </dv-dropdown
+              ></ng-container>
+              <ng-container *ngIf="!icon.canShowDropdown">
+                <span
+                  [ngClass]="{ 'icon-hover': !icon.disabled }"
+                  container="body"
+                  placement="left"
+                  [tooltip]="icon.tooltip"
+                  class="clickable"
+                  [color]="icon.color"
+                  [isDisable]="icon.disabled"
+                  appIcon
+                  [name]="icon.name"
+                  [customSize]="icon.size ?? ''"
+                  (click)="handleIconClick(icon)"
+                ></span>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+          <dv-dropdown
+            container="body"
+            class="rating-dropdown"
+            *ngIf="rightIconsDropdown.length"
+            type="default"
+            tooltip="More"
+            (onDropdownClick)="handleDropDownClick($event)"
+            [dropDownList]="rightIconsDropdown"
+            iconName="ellipsis-h"
+            iconSize="medium"
+            dropdownPlacement="right"
+          ></dv-dropdown>
+        </dv-icon-group>
+      </div>
+    </div>
+    <div
+      *ngIf="hintText"
+      class="panel panel-info js-header-text clear-margin space-on-bottom-lg hintText"
+    >
+      <div class="panel-heading borderless">
+        <dv-show-more [text]="hintText"> </dv-show-more>
+      </div>
+    </div>
+    <div
+      class="block"
+      [ngClass]="{
+        'space-on-bottom-xxxl': leftIcons?.key === 'tableValidation'
+      }"
+    >
+      <ng-content> </ng-content>
+    </div>
+  </div>
+
+  <div class="question-card-footer-wrapper">
+    <div [style.display]="'flex'" [style.min-width]="leftLinks?.length * 25">
+      <dv-link-group>
+        <ng-container *ngFor="let link of leftLinks">
+          <dv-link
+            [icon]="link?.icon"
+            [color]="link?.color ? link?.color : 'primary'"
+            [name]="link.name"
+            (onClick)="handleLinkClick(link)"
+            [size]="link.size ?? 'large'"
+            [tippyTooltip]="link.tooltip"
+            [ngClass]="{ 'new-link-wrapper': link.key === 'revision' }"
+          ></dv-link>
+        </ng-container>
+      </dv-link-group>
+    </div>
+    <div class="right-links">
+      <ng-container *ngFor="let link of rightLinks">
+        <div class="right-link" (click)="handleLinkClick(link)">
+          <span
+            appIcon
+            [name]="link.icon"
+            [class]="link.class"
+            [tippyTooltip]="link.iconToolTip"
+            *ngIf="link.icon"
+            [style.color]="ColorTheme[link.color]"
+          ></span>
+          <dv-link
+            *ngIf="link.key !== 'undo' && link.name"
+            [color]="link.color"
+            [class]="link.class"
+            [size]="link.size ?? 'large'"
+            [name]="link.name"
+            (onClick)="handleLinkClick(link)"
+            [type]="link.type ? link.type : 'default'"
+            [tooltip]="link?.tooltip"
+            container="body"
+          ></dv-link>
+        </div>
+
+        <div *ngIf="link.key == 'undo'">
+          <dv-link
+            [tooltip]="link?.tooltip"
+            [color]="link.color"
+            [name]="link.name"
+          ></dv-link>
+          &nbsp;
+          <span
+            class="label label-default clickable"
+            [tooltip]="link.tooltip"
+            container="body"
+            (click)="undoVerification(link, 'undo', 'notSection')"
+          >
+            <span appIcon name="undo"></span>
+            {{ time }} seconds left
+          </span>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="block">
+    <ng-content select="[comment]"> </ng-content>
+  </div>
+</div>

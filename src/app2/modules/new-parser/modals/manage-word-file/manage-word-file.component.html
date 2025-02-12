@@ -1,0 +1,16 @@
+<app-modal
+  [title]="'Change Word file'"
+  [firstButtonLabel]="'Import and close'"
+  (onFirstClick)="submit($event)"
+  [initialTemplate]="templateRef"
+  [isLoading]="saving_template"
+>
+</app-modal>
+<ng-template #templateRef>
+  <dv-uploader
+    [accept]="allowed_file_extensions_str"
+    dragLabel="Drag & Drop your file here"
+    [isMultiple]="false"
+    (onFileUpload)="files = $event"
+  ></dv-uploader>
+</ng-template>

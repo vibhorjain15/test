@@ -1,0 +1,36 @@
+<span [tippyTooltip]="previewLabel">
+  <button
+    class="b1"
+    (click)="onClickButton($event)"
+    (keydown.enter)="onClickButton($event)"
+    [disabled]="!isEnabled"
+    [style.color]="colorTheme[iconColor]"
+    [ngClass]="{
+      'normal-label': type == 'normal',
+      'button-label': type == 'button',
+      'hover-transform': hoverTransform && isEnabled,
+      'flex-column-reverse': labelPosition == 'top'
+    }"
+    [attr.aria-label]="ariaLabel || previewLabel || label || iconLabel"
+  >
+    <ng-container *ngIf="!isLoading">
+      <ng-content> </ng-content>
+
+      <span
+        *ngIf="!icon && !tempRefrence"
+        style="height: 100%"
+        [innerHtml]="iconLabel"
+      ></span>
+      <span *ngIf="icon" appIcon [name]="icon" [style.font-size]="iconSize"
+        ><span *ngIf="count" class="count-bubble relative align-middle">{{
+          count
+        }}</span></span
+      >
+      <span class="label-custom" [innerHtml]="label"></span>
+    </ng-container>
+
+    <ng-container *ngIf="isLoading">
+      <app-spinner></app-spinner>
+    </ng-container>
+  </button>
+</span>

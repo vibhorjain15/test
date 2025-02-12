@@ -1,0 +1,93 @@
+<app-modal
+  [title]="'Project information'"
+  [firstButtonLabel]="showFirstButton ? 'Don\'t show again' : ''"
+  cancelButtonLabel="Close"
+  [initialTemplate]="template"
+  (onFirstClick)="handleDontShowAgain($event)"
+  [isFirstButtonDisabled]="false"
+  [isLoading]="buttonLoad"
+>
+  <ng-template #template>
+    <div class="main" *ngIf="!loading">
+      <div class="project-info">
+        <div class="label-group">
+          <dv-label size="big" type="bold" [label]="diligence.entity_name">
+          </dv-label>
+          <dv-label type="disable" [label]="diligence.template_name">
+          </dv-label>
+        </div>
+        <div class="status">
+          <div class="label-group text-center">
+            <span class="align-middle display-block">Status</span>
+            <span diligenceStatus [status]="diligence.status"></span>
+          </div>
+          <dv-divider verticalHeight="large" type="vertical"></dv-divider>
+          <div class="label-group">
+            <dv-label label="As of Date" type="disable"> </dv-label>
+            <dv-label
+              label="{{ diligence.as_of_date | dvDate : ['isLocaleDate'] }}"
+              type="default"
+              color="success"
+              size="heading"
+            >
+            </dv-label>
+          </div>
+          <ng-container *ngIf="is_due && showDueDate">
+            <dv-divider verticalHeight="large" type="vertical"></dv-divider>
+            <div class="label-group">
+              <dv-label label="Due Date" type="disable"> </dv-label>
+              <dv-label
+                label="{{ diligence.due_at | dvDate : ['isLocaleDate'] }}"
+                type="default"
+                color="success"
+                size="heading"
+              >
+              </dv-label>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="dottedBorder">
+        <dv-info
+          *ngIf="templateData"
+          [template]="templateData"
+          [templateMetaData]="templateMetaData"
+          [isProject]="true"
+          type="questionInfo"
+        ></dv-info>
+      </div>
+      <div class="ti-desc">
+        <dv-label type="bold" label="Project description"></dv-label>
+        <helper-text
+          class="main-desc"
+          *ngIf="description"
+          [innerHtml]="description"
+        >
+        </helper-text>
+        <app-empty-state
+          message="This project has no description"
+          *ngIf="!description"
+        ></app-empty-state>
+      </div>
+      <div class="pull-left">
+        <helper-text *ngIf="isAdmin"
+          ><strong>Note:</strong> Super and Business Admins can disable this
+          pop-up under
+          <a (click)="navigateToFirmPref()"
+            >Firm Settings > Firm Preferences > Questionnaire Defaults</a
+          >.</helper-text
+        >
+        <helper-text *ngIf="!isAdmin"
+          ><strong>Note:</strong> Super and Business Admins can disable this
+          pop-up under Firm Settings > Firm Preferences > Questionnaire
+          Defaults. Please find your Admins under
+          <a (click)="navigateToMyAdmins()">My Settings > My Admins</a
+          >.</helper-text
+        >
+      </div>
+    </div>
+    <div class="text-center">
+      <app-spinner *ngIf="loading"></app-spinner>
+    </div>
+  </ng-template>
+</app-modal>

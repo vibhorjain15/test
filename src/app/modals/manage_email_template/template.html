@@ -1,0 +1,60 @@
+<form class="form-horizontal" name="vm.email_templates_form" novalidate data-ng-submit="vm.save()">
+  <div class="modal-header">
+    <h3 class="modal-title">
+      {{vm.edit_mode ? 'Editing Email Template' : 'Add New Email Template'}}
+
+      <a class="pull-right clickable link-disguise link-unstyled"
+         data-ng-click="vm.cancel()">&times;</a>
+    </h3>
+  </div>
+
+  <div class="modal-body">
+    <form-group field-name="Name">
+      <label for="street-name-1" class="control-label" col="3" col-type="sm">Name</label>
+
+      <div col="9" col-type="sm">
+        <input type="text"
+               class="form-control"
+               id="name"
+               name="name"
+               dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+               data-ng-model="vm.params.name"
+               required>
+      </div>
+    </form-group>
+
+    <form-group field-name="Content">
+      <label for="disclaimer-text" class="control-label" col="3" col-type="sm">Content</label>
+
+      <div col="9" col-type="sm">
+       <textarea id="content"
+            ui-tinymce="vm.tinymceOptions"
+            data-ng-model="vm.params.content"
+            class="form-control"
+            required></textarea>
+      </div>
+    </form-group>
+
+    <form-group field-name="is default template" >
+      <label class="control-label" col="3" col-type="sm"></label>
+
+      <div col="9" col-type="sm" data-ng-if="!vm.this_is_default_template">
+        <dv-checkbox
+                data-ng-model="vm.make_it_default"
+                label="Make this default">
+        </dv-checkbox>
+      </div>
+      <div col="9" col-type="sm" data-ng-if="vm.this_is_default_template">
+        <small class="text-muted">
+          <i>This is default template</i>
+        </small>
+      </div>
+    </form-group>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" button-loader="vm.saving">{{vm.edit_mode ? 'Update Template' : 'Add Template'}}</button>
+    <button btn-type="default"
+                data-ng-click="vm.cancel()">Cancel</button>
+  </div>
+</form>

@@ -1,0 +1,10 @@
+<dash-tab
+  (onDateChange)="onDateRangeChange($event)"
+  *ngIf="dashType == 'my-work'"
+></dash-tab>
+
+<my-work [dateRange]="dateRange" *ngIf="dashType == 'my-work'"></my-work>
+<app-manager-view
+  [dateRange]="dateRange"
+  *ngIf="dashType != 'my-work'"
+></app-manager-view>

@@ -1,0 +1,135 @@
+<div>
+  <dv-checkbox
+    [isBold]="true"
+    [(ngModel)]="showFilterBasedSelection"
+    (ngModelChange)="handleFilterChange()"
+    [ngModelOptions]="{ standalone: true }"
+    [label]="checkboxLabel"
+  >
+  </dv-checkbox>
+  <app-spinner *ngIf="showFilterBasedSelection && loader"></app-spinner>
+
+  <div
+    class="row space-on-bottom-lg"
+    *ngIf="showFilterBasedSelection && !loader"
+  >
+    <div
+      col="12"
+      class="inline-block space-on-bottom-lg"
+      *ngFor="let list of entitySearchMap | keyvalue; let $index = index"
+    >
+      <div col="6">
+        <span
+          class="btn btn-primary-outline text-uppercase space-on-right"
+          col="10"
+        >
+          <div
+            container="body"
+            class="overflow-ellipsis"
+            tooltip="{{ displayFilter(list.value.filter) }}"
+          >
+            {{ displayFilter(list.value.filter) }}
+          </div>
+        </span>
+        <span col="1">
+          <a
+            class="badge clickable va-sub"
+            container="body"
+            placement="right"
+            (click)="viewSelectedEntities(list.value, list.key)"
+            >{{ list.value.selectedLength }}</a
+          >
+        </span>
+      </div>
+      <div col="6" class="inline-block">
+        <span
+          *ngIf="globalTernaryOperator == FILTER_TERNARY_OPERATORS.OR"
+          placement="right"
+          tooltip-placement="right"
+        >
+          <dv-select
+            [list]="templates"
+            (onSelectChange)="onSelectChange($event, 'template', list)"
+            [(ngModel)]="allFilterTemplateId[list.key]"
+            [maxSelectedItems]="maxSelectedTemplates"
+            [multiple]="true"
+            [disabled]="list.value.selectedLength == 0"
+            [searchable]="true"
+            name="template"
+            [id]="'template_' + $index"
+            placeholder="Select one or more templates"
+            [aria-label]="displayFilter(list.value.filter)"
+          ></dv-select>
+        </span>
+        <span
+          *ngIf="
+            globalTernaryOperator == FILTER_TERNARY_OPERATORS.AND && $index == 0
+          "
+          placement="right"
+        >
+          <dv-select
+            [list]="templates"
+            (onSelectChange)="onSelectChange($event, 'template', list)"
+            [(ngModel)]="allFilterTemplateId[list.key]"
+            [maxSelectedItems]="maxSelectedTemplates"
+            [multiple]="true"
+            bindLabel="name"
+            bindValue="id"
+            [disabled]="list.value.selectedLength == 0"
+            [clearable]="false"
+            [searchable]="true"
+            name="template"
+            [id]="'template__' + $index"
+            placeholder="Select one or more templates"
+          ></dv-select>
+        </span>
+      </div>
+    </div>
+    <div
+      col="12"
+      class="inline-block space-on-bottom-lg"
+      *ngIf="
+        unfilteredSelectedEntities && unfilteredSelectedEntities?.data?.length
+      "
+    >
+      <div col="6">
+        <span
+          class="btn btn-primary-outline text-uppercase space-on-right overflow-ellipsis"
+          col="10"
+        >
+          <small>Unfiltered Items</small>
+        </span>
+        <span col="1">
+          <a
+            class="badge clickable va-sub"
+            (click)="
+              viewSelectedEntities(
+                unfilteredSelectedEntities,
+                'Unfiltered',
+                true
+              )
+            "
+            >{{ unfilteredSelectedEntities.data.length }}</a
+          >
+        </span>
+      </div>
+      <div col="6" class="inline-block" placement="right">
+        <dv-select
+          [multiple]="true"
+          [maxSelectedItems]="maxSelectedTemplates"
+          [list]="templates"
+          (onSelectChange)="onSelectChange($event, 'un-filter', unFilterList)"
+          [(ngModel)]="unfilteredSelectedEntities.template_id"
+          bindLabel="name"
+          [bindValue]="null"
+          [disabled]="false"
+          [clearable]="false"
+          [searchable]="true"
+          placeholder="Select one or more templates"
+          name="template"
+          [id]="'template___' + $index"
+        ></dv-select>
+      </div>
+    </div>
+  </div>
+</div>

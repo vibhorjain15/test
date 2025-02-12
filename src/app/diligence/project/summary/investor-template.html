@@ -1,0 +1,253 @@
+<div data-ng-if="vm.Utils.isAngular()">
+  <ng2-project-summary></ng2-project-summary>
+</div>
+
+<div class="row clearfix" data-ng-if="vm.Utils.isAngularJS()">
+  <div class="col-md-12">
+    <div class="panel panel-default borderless-top">
+      <div class="panel-body clearfix">
+        <div class="dv-table dv-table-middle dd-info-panel">
+          <div class="bordered-right cell col-sm-3">
+            <h4 class="clear-margin max-w-320 lh1-5 word-break-break-all">
+              {{::vm.diligence.entity_name?vm.diligence.entity_name:vm.diligence.name}}
+              <button btn-type="transparent"
+                      data-ng-click="vm.openUpdateDiligenceModal()"
+                      data-ng-show="vm.current_user.firmInfo.id == vm.diligence.fromfirm_id"
+                      uib-tooltip="Edit project info">
+                      <small>
+                        <icon name="pencil" size="1x">
+                      </small>
+              </button>
+            </h4>
+            <span class="text-capitalize" data-ng-show="vm.current_user.firmInfo.id == vm.diligence.fromfirm_id && vm.diligence.entity_name && vm.diligence.entity_id != -1">
+              {{vm.diligence.name}}
+            </span>
+          </div>
+
+          <div class="bordered-right text-center cell">
+            <span class="align-middle">Status:</span>
+            <span diligence-status="vm.diligence.status"></span>
+
+            <div data-ng-show="vm.diligence.status == 'NotApproved'">
+              <a ui-sref="^.not_approval_reasons"
+                 class="link-disguise">
+                <small>See Reasons</small>
+              </a>
+            </div>
+          </div>
+
+          <div class="cell text-center bordered-right" data-ng-if="vm.diligence.review_allowed && !vm.diligence.isLocked && vm.canStartReview && ({'Started': true, 'PendingRestart':true, 'Completed':true})[vm.diligence.status] && !vm.diligence.alwaysOpen">
+            <button btn-type="transparent" data-ng-click="vm.openConfirmationforVerifier()">
+              <div>
+                <icon name="analytics2" size="2x"></icon>
+              </div>
+              <small>Start Review</small>
+            </button>
+          </div>
+
+          <div data-ng-hide="vm.diligence.alwaysOpen" class="cell clear-padding-right">
+            <div data-ng-if="vm.canFinishDD">
+              <questionnaire-submit-button
+                diligence="vm.diligence"
+                pct-complete="vm.pct_complete"
+                related-diligences="vm.related_diligences">
+              </questionnaire-submit-button>
+            </div>
+          </div>
+
+          <div data-ng-if="vm.diligence.is_internal && (vm.diligence.status == 'Approved' || vm.diligence.status == 'Completed' || vm.diligence.status == 'NotApproved')" class="cell clear-padding-right">
+            <button btn-type="transparent"
+                    data-ng-click="vm.changeDDStatus('Restarted')">
+              <div><icon name="close" size="2x"></icon></div>
+              <small><strong>Restart</strong></small>
+            </button>
+          </div>
+
+          <div data-ng-if="!vm.diligence.is_internal && (vm.is_admin || vm.isFirmOwner) && (vm.diligence.status == 'Approved' || vm.diligence.status == 'NotApproved')" class="cell clear-padding-right">
+            <button btn-type="transparent"
+                    data-ng-click="vm.changeDDStatus('Restarted')">
+              <div><icon name="close" size="2x"></icon></div>
+              <small><strong>Restart</strong></small>
+            </button>
+          </div>
+
+          <div data-ng-show="vm.diligence.status == 'PendingRestart'"
+               class="cell clear-padding-right">
+            <button btn-type="transparent"
+                    class="btn-transparent-cta"
+                    button-loader="vm.restarting_dd"
+                    data-ng-if="vm.diligence.status == 'PendingRestart'"
+                    data-ng-click="vm.changeDDStatus('RestartApproved')">
+              <div><icon name="close" size="2x"></icon></div>
+              <small>Approve Restart</small>
+            </button>
+          </div>
+
+          <div data-ng-show="vm.diligence.status == 'ExtensionRequested'"
+               class="cell clear-padding-right">
+            <button btn-type="transparent"
+                    class="btn-transparent-cta"
+                    data-ng-if="vm.diligence.status == 'ExtensionRequested'"
+                    data-ng-click="vm.displayExtensionModal()">
+              <div><icon name="clock-o" size="2x"></icon></div>
+              <small>View Extension Request</small>
+            </button>
+          </div>
+
+          <div data-ng-hide="!vm.canFinishDD && !vm.canApproveDD && vm.diligence.is_internal && vm.diligence.alwaysOpen"
+               class="cell clear-padding-right">
+            <div data-ng-if="vm.canApproveDD">
+              <button btn-type="transparent"
+                      uib-tooltip="Accept this project. You will not be make any more edits, attach documents or change ratings"
+                      button-loader="vm.approving_dd"
+                      data-ng-click="vm.exitAndChangeStatus('Approved')">
+                <div><icon name="thumbs-o-up" size="2x"></icon></div>
+                <small>Approve</small>
+              </button>
+
+              <button btn-type="transparent"
+                      uib-tooltip="Pass on this manager. Document reasons for your decision"
+                      button-loader="vm.disapproving_dd"
+                      data-ng-click="vm.exitAndChangeStatus('NotApproved')">
+                  <div><icon name="thumbs-o-down" size="2x"></icon></div>
+                  <small>Not Approve</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="cell bordered-right">
+            <span uib-dropdown>
+              <a href="" class="dropdown-toggle btn btn-transparent"
+                  uib-dropdown-toggle
+                  uib-tooltip="View history, start workflow and more">
+                   <div><icon name="ellipsis-h" size="2x"></icon></div>
+                   <div class="space-on-top-n"><small>More Actions</small></div>
+
+              </a>
+
+              <ul class="dropdown-menu" uib-dropdown-menu role="menu">
+                  <li data-ng-if="vm.diligence.status != 'ExtensionRequested' && !(vm.diligence.isLocked || vm.diligence.isCompleted) && vm.diligence.is_internal"
+                      uib-tooltip="Edit due date">
+                      <a data-ng-click="vm.displayDuedateExtensionModal()"
+                         role="button"><icon name="calendar" class="space-on-right-lg"></icon>Edit Due Date</a>
+                  </li>
+                  <li class="divider js-delete-button"
+                    data-ng-if="vm.diligence.status != 'ExtensionRequested' && !(vm.diligence.isLocked || vm.diligence.isCompleted) && vm.diligence.is_internal">
+                  </li>
+                  <li>
+                      <a data-ng-click="vm.triggerWorkflow()" uib-tooltip="{{(vm.diligence.isLocked || vm.is_freeSubscription) ? 'Upgrade your subscription to start using workflow' : 'Trigger Workflow Process'}}" data-ng-class="{'disabledAnchor' : (vm.diligence.isLocked || vm.is_freeSubscription)}" role="button"><icon name="cogs" class="space-on-right-lg"></icon>Start Workflow Process</a>
+                  </li>
+                  <li data-ng-if="vm.diligence.review_allowed && !(vm.diligence.isLocked) && !(({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && !vm.diligence.alwaysOpen && !(vm.diligence.review_mandatory && vm.canStartReview)">
+                    <a data-ng-click="vm.toggleReviewButton()" role="button"><icon name="analytics2" class="space-on-right-lg"></icon>{{vm.canStartReview?'Disable':'Enable'}} Review Workflow</a>
+                  </li>
+                  <li data-ng-if="!(vm.diligence.isLocked) && (({'InReview': true, 'Evaluation': true})[vm.diligence.status]) && !vm.diligence.alwaysOpen && vm.reviewStartedForUser">
+                    <a data-ng-click="vm.openCopyVerifierModal()" role="button"><icon name="add-user-2" class="space-on-right-lg"></icon>Assign Reviewers</a>
+                  </li>
+
+                  <li class="divider js-delete-button" data-ng-show="vm.diligenceIds && !(vm.diligence.isLocked)"></li>
+                  <li data-ng-show="vm.diligenceIds">
+                      <a data-ng-click="vm.viewHistory()" role="button"><icon name="history" class="space-on-right-lg"></icon>View History
+                      </a>
+                  </li>
+              </ul>
+            </span>
+          </div>
+
+          <div class="cell">
+            <a ui-sref="app.diligence.projects.activity({type: 'in-progress'})"
+               class="btn btn-transparent">
+              <div><icon name="arrow-back" size="2x"></icon></div>
+              <small>Back to all projects</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <spinner data-ng-if="!vm.diligence"></spinner>
+        <div class="row">
+          <div col="4">
+            <dv-project-info data-ng-if="vm.diligence" diligence="vm.diligence" is-investor="vm.isInvestor" entity-type="vm.entity_type" is-due="vm.is_due"></dv-project-info>
+            <dv-custom-fields data-ng-if="vm.diligence" entity-type="'Diligence'" entity-id="vm.diligenceId" custom-fields="vm.customFields" on-add="vm.manageCustomfield()"></dv-custom-fields>
+            <dv-subscribers data-ng-if="vm.diligence" entity-type="'Duediligence'" entity-id="vm.diligenceId" functions="vm.functions" show-header="true"></dv-subscribers>
+            <dv-audit data-ng-if="vm.diligence" entity-id="vm.diligenceId"></dv-audit>
+          </div>
+
+          <div col="8">
+            <dv-project-stats data-ng-if="vm.diligence" diligence="vm.diligence"></dv-project-stats>
+
+            <div class="panel panel-default" ng-if="vm.diligence && !vm.diligence.is_internal">
+              <div class="panel-heading">
+                <span>
+                  <span class="align-middle">
+                   Conversations between You and <span data-ng-if="vm.DVEntityDisplayName">{{vm.DVEntityDisplayName}}</span>
+                  </span>
+                </span>
+              </div>
+              <div class="panel-body full-width full-height">
+                <ul class="list-unstyled chat-bubbles">
+                    <li data-ng-repeat="response in vm.conversations track by response.id">
+                      <div class="bubble"
+                           id="followup-response-{{response.id}}"
+                           data-ng-class="{'bubble-primary': response.firm_id == vm.current_user.firmInfo.id, 'bubble-default': response.firm_id != vm.current_user.firmInfo.id, 'pull-right': response.created_by == vm.current_user.id, 'pull-left': response.created_by != vm.current_user.id}">
+                        <div class="bubbler">
+                          <span data-ng-show="response.created_by == vm.current_user.id">You</span>
+
+                          <span data-ng-hide="response.created_by == vm.current_user.id">
+                            {{::response.first_name}} {{::response.last_name}} ({{::response.firm_name}})
+                          </span>
+                        </div>
+
+                        <div class="bubble-message" uib-tooltip="{{vm.formatDateTimeFormat(response.updated_at)}}">
+                          <span class="pre-wrap">{{::response.text}}</span>
+
+                          <div class="bubble-meta clearfix">
+                            <span class="pull-right">
+                               {{::response.updated_at | fromNow}}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <form novalidate
+                        name="vm.followup_form"
+                        class="sidebar-form fixed-bottom"
+                        data-ng-hide="(vm.diligence.isLocked)"
+                        data-ng-submit="vm.saveFollowupResponse()">
+                    <form-group field-name="Response" validate-on="submit">
+                      <textarea placeholder="Enter response here"
+                                class="form-control"
+                                msd-elastic="\n"
+                                data-ng-model="vm.new_followup_response.text"
+                                required
+                                style="min-height:50px;"></textarea>
+                    </form-group>
+
+                    <button type="submit"
+                            button-loader="vm.saving_followup_response">
+                        Follow up <span data-ng-if="vm.DVEntityDisplayName">with {{vm.DVEntityDisplayName}}</span>
+                    </button>
+                    <button btn-type="danger"
+                            uib-tooltip="To unlock and enable managers to update responses"
+                            data-ng-if="vm.diligence.status == 'Completed'"
+                            data-ng-hide="vm.diligence.diligence_type == 'shared_profile'"
+                            ng-click="vm.showRequestRevisionAlert()">
+                      Request Revision
+                    </button>
+
+                  </form>
+              </div>
+            </div>
+            <ng2-mapped-entities [diligence-id]="vm.diligenceId" data-ng-if="vm.diligence && vm.diligence.diligence_type == 'dd_review'"></ng2-mapped-entities>
+            <dv-related-diligences refresh-linked-projects="vm.getRelatedDiligences()" data-ng-if="vm.related_diligences.length > 0 && vm.diligence && (vm.diligence.entity_type == 'Strategy' || vm.diligence.entity_type == 'Fund' || vm.diligence.entity_type == 'Vehicle')" related-diligences="vm.related_diligences"></dv-related-diligences>
+            <dv-workflows data-ng-if="vm.diligence" entity-type="'Duediligence'" entity-id="vm.diligence.id" entity-name="vm.diligence.entity_name" disable-insert="vm.diligence.isLocked || vm.is_freeSubscription"></dv-workflows>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

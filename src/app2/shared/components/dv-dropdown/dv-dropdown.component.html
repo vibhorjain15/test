@@ -1,0 +1,136 @@
+<span
+  dropdown
+  [container]="container"
+  [ngClass]="{
+    'class-primary': type == 'primary',
+    disabled: disabled,
+    showCursorIfDisabled: showCursorIfDisabled
+  }"
+  (isOpenChange)="isToggled($event)"
+  [isOpen]="toggleDropDown"
+  [autoClose]="autoClose"
+  [dropup]="dropup"
+  [isDisabled]="disabled"
+>
+  <span
+    class="align-middle clickable dropdown-toggle dropdown"
+    [ngClass]="{
+      'icon-logo-label': isIconLabel,
+      'space-on-bottom': !isIconLabel && !customButton,
+      'width-dropdown': inheritWidth, 
+      'hover-transform' : hoverTransform && !disabled
+    }"
+    dropdownToggle
+    role="button"
+    tabindex="0"
+    aria-haspopup="true"
+    [attr.aria-expanded]="toggleDropDown"
+    aria-label="toggle dropdown"
+    (keydown.enter)="toggleDropDown = !toggleDropDown"
+    (keydown.space)="toggleDropDown = !toggleDropDown"
+  >
+    <ng-container *ngIf="label || iconName">
+      {{ label }}
+      <span
+        appIcon
+        *ngIf="iconName"
+        [name]="iconName"
+        [color]="iconColor"
+        [tooltip]="inpToolTip"
+        [style.fontSize.px]="size"
+        [class]="iconClass"
+      ></span>
+    </ng-container>
+    <ng-content select="[dropdownLabelContent]"></ng-content>
+  </span>
+  <ul
+    *dropdownMenu
+    class="dropdown-menu"
+    [class]="customClass"
+    [ngClass]="{
+      'dropdown-menu-right': dropdownPlacement === 'right',
+      'dropdown-menu-left': dropdownPlacement === 'left',
+      'max-height-300': scrollable
+    }"
+    role="menu"
+  >
+    <ng-container *ngFor="let list of dropDownList">
+      <li
+        role="menuitem"
+        *ngIf="list.key !== 'divider'"
+        [autoFocus]="list.focus"
+      >
+        <a
+          [style.color]="ColorTheme[list?.color]"
+          [tippyTooltip]="list?.tooltip"
+          [class]="' dropdown-a ' + list?.class"
+          [ngClass]="{
+            'is-empty': list?.isEmpty,
+            disabled: list?.disabled,
+            dropdownHover: list.isOpen && list?.children,
+            'active-class': list.isActive
+          }"
+          [attr.href]="list.isLink ? list.link : null"
+          (click)="handleDropdownClick($event, list)"
+          (mouseover)="
+            !list?.children ? closeAllDropdown() : handleChildToggle(true, list)
+          "
+          tabindex="0"
+          role="button"
+        >
+          <span
+            (click)="handleIconClick($event, list)"
+            *ngIf="list?.leftIcon"
+            appIcon
+            [name]="list?.leftIcon"
+            [class]="list.leftIconClass"
+            class="space-on-right-lg"
+            customSize="big"
+          ></span>
+          <span *ngIf="!list.children">
+            {{ list.label }}
+            <span *ngIf="list.count !== null && list.count !== undefined"
+              >({{ list.count }})</span
+            >
+          </span>
+          <span *ngIf="list.children" class="dropdown-children-class">
+            <dv-dropdown
+              [dropDownList]="list.children"
+              [label]="list.label"
+              type="default"
+              [dropdownPlacement]="list.placement"
+              [style.width]="'inherit'"
+              [dropdownPlacement]="list.placement"
+              [isChild]="true"
+              [inheritWidth]="true"
+              [toggleDropDown]="list.isOpen"
+              (onDropdownToggle)="handleChildToggle($event, list)"
+              (onDropdownClick)="handleChildDropdown($event, list)"
+            ></dv-dropdown>
+            <span
+              appIcon
+              name="caret-right"
+              [style.margin-bottom.px]="1"
+              (click)="handleClick(list)"
+            ></span>
+          </span>
+          <span
+            [tippyTooltip]="list?.rightIconTooltip"
+            (click)="handleIconClick($event, list)"
+            *ngIf="list?.rightIcon"
+            appIcon
+            [name]="list?.rightIcon"
+            [class]="list.key"
+            class="space-on-right-lg"
+            [ngClass]="{ 'space-on-left-lg': list?.leftIcon }"
+          ></span>
+        </a>
+      </li>
+      <li
+        *ngIf="list.key === 'divider'"
+        class="dropdown-divider-new"
+        aria-hidden="true"
+      ></li>
+    </ng-container>
+  </ul>
+</span>

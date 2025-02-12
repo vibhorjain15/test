@@ -1,0 +1,61 @@
+<app-modal
+  title="{{
+    entity == 'firms'
+      ? 'Importing firms'
+      : entity == 'investors'
+      ? 'Importing investor firms'
+      : 'Importing contacts'
+  }}"
+  [initialTemplate]="template"
+  [isFirstButtonDisabled]="
+    !importingForm.value.selected_date_range &&
+    importingForm.value.import_all_acc_firm === 'specificDate'
+  "
+  firstButtonLabel="Import"
+  [isLoading]="loader"
+  (onFirstClick)="onImport($event)"
+>
+  <ng-template #template>
+    <form
+      class="form-horizontal"
+      name="sso_form"
+      [formGroup]="importingForm"
+      aria-label="Import Form"
+      autocomplete="off"
+    >
+      <dv-radio
+        style="padding: 0 12px"
+        class="form-control"
+        formControlName="import_all_acc_firm"
+        groupName="import_all_acc_firm"
+        valueName="allDates"
+        label="{{
+          entity == 'firms'
+            ? 'Import all firm details'
+            : entity == 'investors'
+            ? 'Import all investor firm details'
+            : 'Import all contact details'
+        }}"
+      ></dv-radio>
+      <br />
+      <dv-radio
+        style="padding: 0 12px"
+        class="form-control"
+        formControlName="import_all_acc_firm"
+        groupName="import_all_acc_firm"
+        valueName="specificDate"
+        label="Select specific date range to import"
+      ></dv-radio>
+      <br />
+      <app-date-range-picker
+        *ngIf="importingForm.value.import_all_acc_firm === 'specificDate'"
+        [maxDate]="maxDate"
+        [value]="importingForm.value.selected_date_range"
+        [customDate]="dateRangeForDirectives"
+        (change)="onChange($event)"
+        (clearDateFilter)="onClearDateFilter()"
+      >
+      </app-date-range-picker>
+    </form>
+  </ng-template>
+</app-modal>

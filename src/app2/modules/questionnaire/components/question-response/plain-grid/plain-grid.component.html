@@ -1,0 +1,47 @@
+<div [ngClass]="{ 'plain-grid-class': !isPrintPreview }" class="overflow-auto">
+  <table class="table table-bordered table-condensed">
+    <thead *ngIf="colHeaders?.length > 0">
+      <tr *ngIf="enableHeaders" role="row">
+        <th
+          *ngIf="rowHeaders?.length > 0"
+          class="row-headers-css"
+          (click)="handleCellClick(null, null)"
+        ></th>
+        <th
+          *ngFor="let header of colHeaders; let colIndex = index"
+          (keydown.enter)="handleCellClick(null, colIndex)"
+        >
+          <div [innerHtml]="header | dvSafeHtml"></div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data; let rowIndex = index" role="row">
+        <td
+          *ngIf="rowHeaders?.length > rowIndex && enableHeaders"
+          class="row-headers-css"
+          (click)="handleCellClick(null, null)"
+          [innerHtml]="rowHeaders[rowIndex] | dvSafeHtml"
+        ></td>
+        <ng-container *ngIf="!trackChange">
+          <td
+            *ngFor="let cell of row; let colIndex = index"
+            (click)="handleCellClick(rowIndex, colIndex)"
+            class="row"
+          >
+            <span [innerHTML]="cell | dvSafeHtml" class="space-exactly"></span>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="trackChange">
+          <td
+            *ngFor="let cell of row; let colIndex = index"
+            htmlDiff
+            (click)="handleCellClick(rowIndex, colIndex)"
+            [previous]="cell.previous"
+            [current]="cell.current"
+          ></td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+</div>

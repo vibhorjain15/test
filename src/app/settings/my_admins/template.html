@@ -1,0 +1,40 @@
+<div data-ng-if="vm.Utils.isAngular()"> <ng2-my-admins></ng2-my-admins> </div>
+<div data-ng-if="vm.Utils.isAngularJS()">
+  <div class="panel panel-default borderless-top">
+    <div class="panel-body clearfix">
+      <spinner broad-spinner spinner-height='65' data-ng-show="vm.loading"></spinner>
+
+      <div class="dv-table dv-table-middle dd-info-panel">
+        <div class="bordered-right cell">
+          <div class="lh1-5">
+            <strong>{{vm.current_user.fullName}}</strong>
+          </div>
+        </div>
+        <div class="cell">
+          <a data-ng-click="vm.goBack()"
+             class="btn btn-transparent">
+            <div><icon name="arrow-back" size="2x"></icon></div>
+            <small>Back</small>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav tabs -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h5 class="panel-title">My Admins</h5>
+    </div>
+    <div class="panel-body">
+      <div class="panel panel-info">
+        <div class="panel-heading">To view access level configuration (<a ui-sref="app.settings.access_level_map" target="_blank">click here</a>)</div>
+      </div>
+      <div data-ng-if="vm.myAdminsData" class="space-on-top-lg">
+        <dv-grid grid-resource="vm.myAdminsData" grid-name="'my-admins'"></dv-grid>
+      </div>
+    </div>
+  </div>
+
+</div>

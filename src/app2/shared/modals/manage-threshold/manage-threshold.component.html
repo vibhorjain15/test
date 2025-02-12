@@ -1,0 +1,332 @@
+<app-modal
+  [title]="editMode ? 'Editing Threshold' : 'Add New Threshold'"
+  [firstButtonLabel]="editMode ? 'Update Threshold' : 'Add Threshold'"
+  [secondButtonLabel]="
+    editMode ? 'Update & Add Another' : 'Create & Add Another'
+  "
+  (onFirstClick)="save($event)"
+  (onSecondClick)="save($event, true)"
+  [initialTemplate]="thresholdModalRef"
+  [isLoading]="loading"
+  [isSecondaryLoading]="secondaryLoading"
+>
+</app-modal>
+
+<ng-template #thresholdModalRef>
+  <form class="form-horizontal" [formGroup]="thresholdForm" autocomplete="off">
+    <div class="modal-body">
+      <dv-form-element
+        [fieldName]="'type'"
+        [modelController]="thresholdForm.get('type')"
+        class="space-on-top space-on-bottom-xxl"
+        [showRightIcon]="false"
+        label="Type"
+        [labelCol]="3"
+        [elementCol]="7"
+        [errorMessage]="
+          thresholdForm.get('type').touched &&
+          thresholdForm.get('type').errors?.required
+            ? 'Type is Required'
+            : ''
+        "
+      >
+        <dv-select
+          name="type"
+          formControlName="type"
+          [id]="'type'"
+          (onSelectChange)="typeChanged()"
+          [clearable]="false"
+          [list]="types"
+          [bindValue]="'id'"
+          [bindLabel]="'text'"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'question_id'"
+        [modelController]="thresholdForm.get('question_id')"
+        class="space-on-top space-on-bottom-xxl"
+        [showRightIcon]="false"
+        [labelCol]="3"
+        [isRequired]="true"
+        label="Question"
+        [elementCol]="7"
+        [errorMessage]="
+          thresholdForm.get('question_id').touched &&
+          thresholdForm.get('question_id').errors?.required
+            ? 'Question is Required'
+            : ''
+        "
+      >
+        <dv-select
+          name="question"
+          formControlName="question_id"
+          [id]="'question_id'"
+          (onSelectChange)="questionChanged()"
+          [clearable]="false"
+          placeholder="Select an Option"
+          [list]="questions"
+          [bindLabel]="'displayText'"
+          [bindValue]="'id'"
+        >
+        </dv-select>
+
+        <div
+          class="clear-margin-bottom space-on-top-xl"
+          *ngIf="selectedQuestion.displayText"
+        >
+          <helper-text>
+            {{ selectedQuestion.displayText }}
+          </helper-text>
+        </div>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'question_id'"
+        class="space-on-top space-on-bottom-xxl"
+        *ngIf="selectedQuestion.section_name"
+        [showRightIcon]="false"
+        [labelCol]="3"
+        [elementCol]="7"
+        label="Section"
+      >
+        <div class="space-on-top-2 space-on-left-3">
+          {{ selectedQuestion.section_name }}
+        </div>
+      </dv-form-element>
+
+      <dv-form-element
+        [fieldName]="'operator_id'"
+        [modelController]="thresholdForm.get('operator_id')"
+        class="space-on-bottom-xxl"
+        [showRightIcon]="false"
+        label="Condition"
+        [labelCol]="3"
+        [elementCol]="7"
+        [errorMessage]="
+          thresholdForm.get('operator_id').touched &&
+          thresholdForm.get('operator_id').errors?.required
+            ? 'Condition  is Required'
+            : ''
+        "
+      >
+        <dv-select
+          name="condition"
+          formControlName="operator_id"
+          [id]="'operator_id'"
+          (onSelectChange)="operatorChanged()"
+          [clearable]="false"
+          [list]="questionConditions"
+        >
+        </dv-select>
+      </dv-form-element>
+
+      <div class="space-on-bottom-lg">
+        <div
+          class="space-on-top"
+          *ngIf="thresholdForm.get('operator_id').value !== 'ac'"
+        >
+          <dv-form-element
+            *ngIf="
+              !selectedQuestion.response_type ||
+              selectedQuestion.response_type == 'Dropdown' ||
+              selectedQuestion.response_type == 'CheckBox'
+            "
+            label="Value"
+            elementCol="7"
+            labelPosition="left"
+            [modelController]="thresholdForm.get('threshold_value')"
+          >
+            <input
+              id="threshold_value"
+              type="text"
+              formControlName="threshold_value"
+              placeholder="Enter a value"
+              class="form-control"
+              name="custom-view-name"
+              autocomplete="off"
+            />
+            <div
+              class="danger"
+              *ngIf="
+                thresholdForm.get('threshold_value').touched &&
+                thresholdForm.get('threshold_value').errors?.required
+              "
+            >
+              Value is required
+            </div>
+            <div
+              class="danger"
+              *ngIf="
+                thresholdForm.get('threshold_value').touched &&
+                thresholdForm.get('threshold_value').errors?.pattern
+              "
+            >
+              {{
+                errorMessageMap.avoidFirstSplCharacter | interpolate : "Value"
+              }}
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [fieldName]="'value'"
+            [modelController]="thresholdForm.get('threshold_value')"
+            *ngIf="selectedQuestion.response_type == 'Date'"
+            [showRightIcon]="false"
+            [label]="'Value'"
+            [errorMessage]="
+              thresholdForm.get('threshold_value').touched &&
+              thresholdForm.get('threshold_value').errors?.required
+                ? 'Value  is Required'
+                : ''
+            "
+            [for]="'threshold_value'"
+          >
+            <app-date-picker
+              [id]="'threshold_value'"
+              [maxDate]="maxDate"
+              formControlName="threshold_value"
+              ngDefaultControl
+              (change)="setDateValue($event)"
+            ></app-date-picker>
+          </dv-form-element>
+
+          <dv-form-element
+            *ngIf="
+              selectedQuestion.response_type == 'Integer' ||
+              selectedQuestion.response_type == 'Percentage' ||
+              selectedQuestion.response_type == 'Numeric'
+            "
+            label="Value"
+            elementCol="7"
+            labelPosition="left"
+            [modelController]="thresholdForm.get('threshold_value')"
+          >
+            <input
+              id="threshold_value"
+              formControlName="threshold_value"
+              placeholder="Enter a value"
+              class="form-control"
+              name="custom-view-name"
+            />
+            <div
+              class="danger"
+              *ngIf="
+                thresholdForm.get('threshold_value').touched &&
+                thresholdForm.get('threshold_value').errors?.required
+              "
+            >
+              Value is required
+            </div>
+            <div
+              class="danger"
+              *ngIf="
+                thresholdForm.get('threshold_value').touched &&
+                thresholdForm.get('threshold_value').errors?.pattern
+              "
+            >
+              {{
+                errorMessageMap.avoidFirstSplCharacter | interpolate : "Value"
+              }}
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            *ngIf="
+              selectedQuestion.response_type == 'TextEmail' ||
+              selectedQuestion.response_type == 'Text' ||
+              selectedQuestion.response_type == 'TextMultiLine' ||
+              selectedQuestion.response_type == 'TextPhone'
+            "
+            label="Value"
+            elementCol="7"
+            labelPosition="left"
+            [modelController]="thresholdForm.get('threshold_value')"
+          >
+            <input
+              id="threshold_value"
+              formControlName="threshold_value"
+              placeholder="Enter a value"
+              class="form-control"
+              name="custom-view-name"
+            />
+            <div
+              class="danger"
+              *ngIf="
+                thresholdForm.get('threshold_value').touched &&
+                thresholdForm.get('threshold_value').errors?.required
+              "
+            >
+              Value is required
+            </div>
+            <div
+              class="danger"
+              *ngIf="
+                thresholdForm.get('threshold_value').touched &&
+                thresholdForm.get('threshold_value').errors?.pattern
+              "
+            >
+              {{
+                errorMessageMap.avoidFirstSplCharacter | interpolate : "Value"
+              }}
+            </div>
+          </dv-form-element>
+
+          <dv-form-element
+            [fieldName]="'value'"
+            [modelController]="thresholdForm.get('threshold_value')"
+            [showRightIcon]="false"
+            *ngIf="
+              selectedQuestion.response_type == 'Boolean' ||
+              selectedQuestion.response_type == 'BooleanPlus' ||
+              selectedQuestion.response_type == 'NoPlus'
+            "
+            [labelCol]="3"
+            [elementCol]="7"
+            [label]="'Value'"
+            [errorMessage]="
+              thresholdForm.get('threshold_value').touched &&
+              thresholdForm.get('threshold_value').errors?.required
+                ? 'Value is Required'
+                : ''
+            "
+          >
+            <dv-select
+              [id]="'threshold_value'"
+              name="value"
+              formControlName="threshold_value"
+              placeholder="SelectValue"
+              [clearable]="false"
+              [list]="boolean_value_options"
+              [bindValue]="'value'"
+              [bindLabel]="'label'"
+            >
+            </dv-select>
+          </dv-form-element>
+        </div>
+
+        <div
+          class="space-on-top"
+          *ngIf="thresholdForm.get('operator_id').value == 'ac'"
+        >
+          <dv-form-element
+            label="Value"
+            elementCol="7"
+            labelPosition="left"
+            [for]="'operator_id_value'"
+          >
+            <input
+              id="operator_id_value"
+              placeholder="Value Not Required"
+              class="form-control"
+              name="value"
+              [disabled]="true"
+              autocomplete="off"
+            />
+          </dv-form-element>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

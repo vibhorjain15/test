@@ -1,0 +1,60 @@
+<app-modal
+  [showHeader]="false"
+  [isFooter]="false"
+  [initialTemplate]="releaseNoteModalTemplate"
+></app-modal>
+<ng-template #releaseNoteModalTemplate>
+  <div class="release-note-modal-control">
+    <dv-button
+      btnType="default"
+      (onClick)="closeModal()"
+      ariaLabel="Close Release Notes Modal"
+    >
+      <span aria-hidden="true">&times;</span>
+    </dv-button>
+  </div>
+  <div *ngIf="release" class="release-note-detail-container">
+    <h2 class="release-note-detail-header">
+      {{ release.title }}
+    </h2>
+    <div class="release-note-detail-summary">
+      <span [innerHTML]="release.description | dvSafeHtml"></span>
+    </div>
+    <div *ngIf="release.canShowCarousel" class="space-on-top-xxxl">
+      <app-carousel [contents]="release.carouselDetails"></app-carousel>
+    </div>
+    <div *ngIf="release.video_url" class="space-on-top-xxxl">
+      <div class="space-on-bottom-xl">
+        <span> Please refer to the video below: </span>
+      </div>
+      <app-video-player [videoSrc]="release.video_url"></app-video-player>
+    </div>
+    <div *ngIf="release.faq_url" class="space-on-top-xl">
+      <a
+        [href]="release.faq_url"
+        target="_blank"
+        aria-label="click here to know more. (opens in a new window)"
+        rel="noopener noreferrer"
+      >
+        Click here
+      </a>
+      <span> to know more </span>
+    </div>
+  </div>
+  <div class="release-note-footer border-top space-on-top-xxl bold-text">
+    <div class="space-on-top-xl font-size-18">
+      <span>
+        Have more questions?
+        <a
+          href="https://dvault.atlassian.net/servicedesk/customer/portal/2/group/2/create/19"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-orange"
+          aria-label="Have more questions? Submit a request. (opens in a new window)"
+        >
+          Submit a request
+        </a>
+      </span>
+    </div>
+  </div>
+</ng-template>

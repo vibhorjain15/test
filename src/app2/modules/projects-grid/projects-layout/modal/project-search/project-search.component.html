@@ -1,0 +1,552 @@
+<app-modal
+  [title]="'Advanced Filtering'"
+  [firstButtonLabel]="'Start Searching'"
+  [initialTemplate]="manageProjectSearch"
+  (onFirstClick)="searchByFilters()"
+  [isCancelButton]="false"
+  [secondButtonLabel]="'Cancel'"
+  (onSecondClick)="cancel()"
+>
+</app-modal>
+
+<ng-template #manageProjectSearch>
+  <div class="row">
+    <div class="project-filter-segment">
+      <div col="12">
+        <div col="10" class="">
+          <span
+            class="control-label clea\r-margin-bottom inline-block space-on-right fw-bolder"
+          >
+            <span class="text-capitalize"> Projects </span>
+            matching
+          </span>
+          <dv-select
+            [(ngModel)]="globalTernaryOperator"
+            [list]="logicConditionOptions"
+            name="globalTernaryOperator"
+            class="inline-block w-80 project-filter-operator"
+            [aria-label]="'Logical and or condition for projects matching'"
+          >
+          </dv-select>
+          <span
+            class="control-label clear-margin-bottom inline-block space-on-left fw-bolder"
+            >of the selected criteria</span
+          >
+        </div>
+        <div col="" class="">
+          <div class="pull-right">
+            <dv-button
+              size="sm"
+              btnType="default"
+              class="space-on-right"
+              tippyTooltip="Clear Filters"
+              ariaLabel="Clear Filters"
+              (onClick)="clearFilters()"
+            >
+              <span appIcon name="refresh"></span>
+            </dv-button>
+          </div>
+        </div>
+      </div>
+      <form
+        class="form-horizontal"
+        [formGroup]="projectFilterForm"
+        novalidate
+        autocomplete="off"
+      >
+        <div class="space-on-bottom-lg" col="12">
+          <div col="1" class="padding-right-lg"></div>
+          <div col="4" class="padding-right-lg">
+            <span
+              class="control-label text-capitalize text-muted fw-bolder inline-block"
+              >Filters</span
+            >
+          </div>
+          <div col="2" class="padding-right-lg">
+            <span
+              class="control-label text-capitalize text-muted fw-bolder inline-block"
+              >Condition</span
+            >
+          </div>
+
+          <div col="3" class="padding-right-lg">
+            <span
+              class="control-label text-capitalize text-muted fw-bolder inline-block"
+              >Value</span
+            >
+          </div>
+          <div col="3" class="padding-right-lg"></div>
+        </div>
+
+        <div formArrayName="filters">
+          <div
+            *ngFor="let item of filters.controls; let i = index"
+            [formGroupName]="i"
+          >
+            <div class="space-on-bottom-xl" col="12">
+              <div col="1" class="padding-right-lg operator-center">
+                <span
+                  *ngIf="i !== 0"
+                  class="text-right control-label clear-margin-bottom text-uppercase text-muted fw-bolder"
+                  [for]="'filter_name_' + i"
+                >
+                  {{ globalTernaryOperator }}</span
+                >
+              </div>
+              <div col="4" class="padding-right-lg">
+                <dv-select
+                  formControlName="filter_name"
+                  [id]="'filter_name_' + i"
+                  [list]="
+                    customFiltersData.search_filters_response.custom_filters
+                  "
+                  name="globalTernaryOperator"
+                  bindLabel="filter_name"
+                  bindValue=""
+                  [disabled]="item.get('isDefault').value"
+                >
+                </dv-select>
+              </div>
+              <div col="2" class="padding-right-lg">
+                <dv-select
+                  formControlName="operations"
+                  [list]="
+                    filtersCopyMap[
+                      item.get('filter_key').value +
+                        '-' +
+                        item.get('response_type').value
+                    ].operations
+                  "
+                  bindLabel="label"
+                  bindValue="value"
+                  name="globalTernaryOperator"
+                  [aria-label]="'global Ternary Operator'"
+                >
+                </dv-select>
+              </div>
+
+              <div col="3" class="padding-right-lg">
+                <ng-container
+                  *ngIf="
+                    item.get('type').value == FILTER_TYPES.DYNAMIC ||
+                    item.get('type').value == FILTER_TYPES.RANGE ||
+                    item.get('type').value == FILTER_TYPES.DROPDOWN ||
+                    item.get('type').value == FILTER_TYPES.CHECKBOX ||
+                    item.get('type').value == FILTER_TYPES.DROP
+                  "
+                >
+                  <dv-select
+                    formControlName="filter_value"
+                    placeholder="Select an option"
+                    [aria-label]="'Select an option'"
+                    [list]="
+                      filtersCopyMap[
+                        item.get('filter_key').value +
+                          '-' +
+                          item.get('response_type').value
+                      ].options
+                    "
+                    bindLabel="value"
+                    bindValue="id"
+                    name="globalTernaryOperator"
+                  >
+                  </dv-select>
+                </ng-container>
+                <ng-container
+                  *ngIf="
+                    item.get('type').value == FILTER_TYPES.STRING ||
+                    item.get('type').value == FILTER_TYPES.TEXT ||
+                    item.get('type').value == FILTER_TYPES.PARAGRAPH ||
+                    item.get('type').value == FILTER_TYPES.MULTILINE ||
+                    item.get('type').value == FILTER_TYPES.LINK ||
+                    item.get('type').value == ''
+                  "
+                >
+                  <input
+                    type="text"
+                    id="value_{{ i }}"
+                    name="value_{{ i }}"
+                    placeholder="Type a value"
+                    dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                    class="form-control"
+                    formControlName="filter_value"
+                    autocomplete="off"
+                  />
+                </ng-container>
+                <ng-container
+                  *ngIf="
+                    item.get('type').value == FILTER_TYPES.NUMBER ||
+                    item.get('type').value == FILTER_TYPES.INT ||
+                    item.get('type').value == FILTER_TYPES.NUMERIC ||
+                    item.get('type').value == FILTER_TYPES.INTEGER
+                  "
+                >
+                  <input
+                    type="number"
+                    placeholder="Type a value"
+                    name="value_{{ i }}"
+                    id="value_{{ i }}"
+                    formControlName="filter_value"
+                    class="form-control"
+                    autocomplete="off"
+                  />
+                </ng-container>
+                <ng-container
+                  *ngIf="item.get('type').value == FILTER_TYPES.DATE"
+                >
+                  <app-date-picker
+                    placeholder="Select a date"
+                    class="project-filter-date-picker"
+                    [value]="item.get('filter_value').value"
+                    ngDefaultControl
+                    (change)="setDateValue($event, item, index)"
+                  >
+                  </app-date-picker>
+                </ng-container>
+                <ng-container
+                  *ngIf="item.get('type').value == FILTER_TYPES.DATETIME"
+                >
+                  <app-date-time-picker
+                    class="project-filter-date-picker"
+                    [name]="'datetimefilter_' + i"
+                    [id]="'datetimefilter_' + i"
+                    [value]="item.get('filter_value').value"
+                    (change)="setDateTimeValue($event, item, index)"
+                  >
+                  </app-date-time-picker>
+                </ng-container>
+              </div>
+              <div col="2" class="padding-right-lg">
+                <dv-button
+                  *ngIf="filters.controls.length > 1"
+                  size="sm"
+                  btnType="default"
+                  class="space-on-right-lg"
+                  tooltipText="Remove Criteria"
+                  (onClick)="removeItem(i)"
+                >
+                  <span appIcon name="minus"></span>
+                </dv-button>
+                <dv-button
+                  *ngIf="i == filters.controls.length - 1"
+                  size="sm"
+                  btnType="primary"
+                  class="space-on-right"
+                  tooltipText="Add Criteria"
+                  (onClick)="addItem()"
+                >
+                  <span appIcon name="plus"></span>
+                </dv-button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="project-filter-switch" *ngIf="!isEntityFilter">
+      <ui-switch
+        size="small"
+        class="align-middle"
+        [ngModelOptions]="{ standalone: true }"
+        [(ngModel)]="isEntityFilter"
+        (change)="handleEntityFilterToggle($event)"
+        [disabled]="loadingEntity"
+        UiSwitchButton
+        title="Filter by Entity Fields"
+      ></ui-switch>
+      <span class="align-middle space-on-left-lg entity-setting fw-bolder"
+        >Filter by Entity Fields
+      </span>
+      <span
+        appIcon
+        name="info"
+        [tooltip]="tooltipTemplate"
+        container="body"
+        placement="right"
+        class="space-on-left info-icon"
+      ></span>
+    </div>
+
+    <ng-container *ngIf="isEntityFilter">
+      <span
+        class="control-label project-filter-center text-capitalize text-muted space-on-bottom"
+        >AND</span
+      >
+
+      <div class="project-filter-segment">
+        <div class="project-filter-switch">
+          <ui-switch
+            size="small"
+            class="align-middle"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="isEntityFilter"
+            (change)="handleEntityFilterToggle($event)"
+            UiSwitchButton
+            title="Filter by Entity Fields"
+          ></ui-switch>
+          <span class="align-middle space-on-left-lg entity-setting fw-bolder"
+            >Filter by Entity Fields
+          </span>
+
+          <span
+            appIcon
+            name="info"
+            [tooltip]="tooltipTemplate"
+            placement="right"
+            container="body"
+            class="space-on-left info-icon"
+          ></span>
+        </div>
+
+        <div col="12">
+          <div col="10" class="space-on-bottom-lg space-on-top-xl">
+            <dv-select
+              [(ngModel)]="entityOptionSelection"
+              (ngModelChange)="handleEntityOptionSelection($event)"
+              [list]="entityOtions"
+              name="globalTernaryOperator"
+              [aria-label]="'global Ternary Operator'"
+              class="inline-block w-150 space-on-right project-filter-operator"
+            >
+            </dv-select>
+            <span
+              class="control-label clea\r-margin-bottom inline-block space-on-right fw-bolder"
+            >
+              matching
+            </span>
+            <dv-select
+              [(ngModel)]="entityTernaryOperator"
+              [list]="logicConditionOptions"
+              name="globalTernaryOperator"
+              [aria-label]="'global Ternary Operator'"
+              class="inline-block w-80 project-filter-operator"
+            >
+            </dv-select>
+            <span
+              class="control-label clear-margin-bottom inline-block space-on-left fw-bolder"
+              >of the selected criteria</span
+            >
+          </div>
+          <div col="" class="space-on-bottom-lg space-on-top-lg">
+            <div class="pull-right">
+              <dv-button
+                size="sm"
+                btnType="default"
+                class="space-on-right"
+                tippyTooltip="Clear filters"
+                ariaLabel="Clear Filters"
+                (onClick)="clearEntityFilters()"
+              >
+                <span appIcon name="refresh"></span>
+              </dv-button>
+            </div>
+          </div>
+        </div>
+        <form
+          class="form-horizontal"
+          [formGroup]="projectFilterForm"
+          novalidate
+          autocomplete="off"
+        >
+          <div class="space-on-bottom-lg" col="12">
+            <div col="1" class="padding-right-lg"></div>
+            <div col="4" class="padding-right-lg">
+              <span
+                class="control-label text-capitalize text-muted inline-block fw-bolder"
+                >Filters</span
+              >
+            </div>
+            <div col="2" class="padding-right-lg">
+              <span
+                class="control-label text-capitalize text-muted inline-block fw-bolder"
+                >Condition</span
+              >
+            </div>
+
+            <div col="3" class="padding-right-lg">
+              <span
+                class="control-label text-capitalize text-muted inline-block fw-bolder"
+                >Value</span
+              >
+            </div>
+            <div col="3" class="padding-right-lg"></div>
+          </div>
+
+          <div formArrayName="entityFilters">
+            <div
+              *ngFor="let item of entityFilters.controls; let i = index"
+              [formGroupName]="i"
+            >
+              <div class="space-on-bottom-xl" col="12">
+                <div col="1" class="padding-right-lg operator-center">
+                  <span
+                    *ngIf="i !== 0"
+                    class="text-right control-label clear-margin-bottom text-uppercase text-muted fw-bolder"
+                    [for]="'globalTernaryOperator_' + i"
+                  >
+                    {{ entityTernaryOperator }}</span
+                  >
+                </div>
+                <div col="4" class="padding-right-lg">
+                  <dv-select
+                    formControlName="filter_name"
+                    [list]="
+                      entityFiltersMap[entityOptionSelection].custom_filters
+                    "
+                    [name]="'globalTernaryOperator_' + i"
+                    [id]="'globalTernaryOperator_' + i"
+                    bindLabel="filter_name"
+                    bindValue=""
+                    [disabled]="item.get('isDefault').value"
+                  >
+                  </dv-select>
+                </div>
+                <div col="2" class="padding-right-lg">
+                  <dv-select
+                    formControlName="operations"
+                    [list]="
+                      filtersCopyMap[
+                        item.get('filter_key').value +
+                          '-' +
+                          item.get('response_type').value
+                      ]?.operations
+                    "
+                    bindLabel="label"
+                    bindValue="value"
+                    name="globalTernaryOperator"
+                  >
+                  </dv-select>
+                </div>
+
+                <div col="3" class="padding-right-lg">
+                  <ng-container
+                    *ngIf="
+                      item.get('type').value == FILTER_TYPES.DYNAMIC ||
+                      item.get('type').value == FILTER_TYPES.RANGE ||
+                      item.get('type').value == FILTER_TYPES.DROPDOWN ||
+                      item.get('type').value == FILTER_TYPES.CHECKBOX ||
+                      item.get('type').value == FILTER_TYPES.DROP
+                    "
+                  >
+                    <dv-select
+                      formControlName="filter_value"
+                      placeholder="Select an option"
+                      [list]="
+                        filtersCopyMap[
+                          item.get('filter_key').value +
+                            '-' +
+                            item.get('response_type').value
+                        ].options
+                      "
+                      bindLabel="value"
+                      bindValue="id"
+                      name="globalTernaryOperator"
+                      [aria-label]="'global Ternary Operator'"
+                    >
+                    </dv-select>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="
+                      item.get('type').value == FILTER_TYPES.STRING ||
+                      item.get('type').value == FILTER_TYPES.TEXT ||
+                      item.get('type').value == FILTER_TYPES.PARAGRAPH ||
+                      item.get('type').value == FILTER_TYPES.MULTILINE ||
+                      item.get('type').value == FILTER_TYPES.LINK ||
+                      item.get('type').value == ''
+                    "
+                  >
+                    <input
+                      type="text"
+                      [id]="'value_' + i"
+                      [name]="'value_' + i"
+                      placeholder="Type a value"
+                      dv-restrict-input="{type: 'avoidFirstSplCharacter'}"
+                      class="form-control"
+                      formControlName="filter_value"
+                      autocomplete="off"
+                    />
+                  </ng-container>
+                  <ng-container
+                    *ngIf="
+                      item.get('type').value == FILTER_TYPES.NUMBER ||
+                      item.get('type').value == FILTER_TYPES.INT ||
+                      item.get('type').value == FILTER_TYPES.NUMERIC ||
+                      item.get('type').value == FILTER_TYPES.INTEGER
+                    "
+                  >
+                    <input
+                      type="number"
+                      [id]="'value_' + i"
+                      [name]="'value_' + i"
+                      placeholder="Type a value"
+                      formControlName="filter_value"
+                      placeholder="Type a value"
+                      class="form-control"
+                      autocomplete="off"
+                    />
+                  </ng-container>
+                  <ng-container
+                    *ngIf="item.get('type').value == FILTER_TYPES.DATE"
+                  >
+                    <app-date-picker
+                      placeholder="Select a date"
+                      [value]="item.get('filter_value').value"
+                      ngDefaultControl
+                      (change)="setDateValue($event, item, index)"
+                      class="project-filter-date-picker"
+                      [id]="'value_' + i"
+                      [name]="'value_' + i"
+                    >
+                    </app-date-picker>
+                  </ng-container>
+                  <ng-container
+                    *ngIf="item.get('type').value == FILTER_TYPES.DATETIME"
+                  >
+                    <app-date-time-picker
+                      class="project-filter-date-picker"
+                      name="datetimefilter_{{ i }}"
+                      [value]="item.get('filter_value').value"
+                      (change)="setDateTimeValue($event, item, index)"
+                      [id]="'value_' + i"
+                      [name]="'value_' + i"
+                    >
+                    </app-date-time-picker>
+                  </ng-container>
+                </div>
+                <div col="2" class="padding-right-lg">
+                  <dv-button
+                    *ngIf="entityFilters.controls.length > 1"
+                    size="sm"
+                    btnType="default"
+                    class="space-on-right-lg"
+                    tooltipText="Remove Criteria"
+                    (onClick)="removeItem(i, true)"
+                  >
+                    <span appIcon name="minus"></span>
+                  </dv-button>
+                  <dv-button
+                    *ngIf="i == entityFilters.controls.length - 1"
+                    size="sm"
+                    btnType="primary"
+                    class="space-on-right"
+                    tooltipText="Add Criteria"
+                    (onClick)="addItem(true)"
+                  >
+                    <span appIcon name="plus"></span>
+                  </dv-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #tooltipTemplate
+  >Enable to filter projects by entity fields.
+  <br />
+  Note: Only a single entity type can be used for filtering.</ng-template
+>

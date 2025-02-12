@@ -1,0 +1,185 @@
+<div
+  col="12"
+  class="workflow-panel"
+  id="workflow-preview"
+  role="region"
+  aria-label="Workflow Preview"
+>
+  <app-spinner
+    *ngIf="!workflow || loading_workflow"
+    aria-hidden="true"
+  ></app-spinner>
+  <app-empty-state
+    message="There are no steps added for this workflow"
+    *ngIf="!loading_workflow && !has_steps"
+  ></app-empty-state>
+  <table
+    class="table table-borderless clear-margin-bottom workflow-preview-table"
+    *ngIf="!loading_workflow && has_steps"
+    role="table"
+    aria-label="Workflow Steps Table"
+  >
+    <thead>
+      <tr role="row">
+        <th class="text-center" width="15%" role="columnheader">
+          Workflow Steps
+        </th>
+        <th class="text-center" width="20%" role="columnheader">
+          Actions for the Step
+        </th>
+        <th class="text-center" width="15%" role="columnheader">Due Date</th>
+        <th class="text-center" width="25%" role="columnheader">Owner</th>
+        <th class="text-center" width="25%" role="columnheader">Checklist</th>
+      </tr>
+    </thead>
+    <tbody
+      class="borderless"
+      *ngFor="
+        let step of workflow?.steps;
+        let stepIndex = index;
+        trackBy: trackByIndex
+      "
+    >
+      <tr
+        *ngFor="
+          let action of step.actions;
+          let $index = index;
+          trackBy: trackByIndex
+        "
+        role="row"
+      >
+        <td
+          [ngClass]="{
+            'vertical-border-td': stepIndex !== workflow?.steps.length - 1,
+            relative: $index === 0 && stepIndex === workflow?.steps.length - 1
+          }"
+          role="cell"
+        >
+          <div *ngIf="$index === 0" class="wordflow-step-action">
+            {{ action.name }}
+            <span
+              [tooltip]="action.description"
+              container="body"
+              appIcon
+              name="info"
+              class="space-on-left"
+              [ngClass]="{ disableField: !action.description }"
+              [attr.aria-label]="action.description"
+            >
+            </span>
+          </div>
+        </td>
+        <td role="cell">
+          <button
+            [tooltip]="action?.action_id"
+            container="body"
+            class="btn btn-sm btn-default"
+            aria-label="Action Button"
+          >
+            <span
+              appIcon
+              name="notepad"
+              *ngIf="action?.action_id == 'add_note'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="thumbs-up"
+              *ngIf="action?.action_id == 'approve'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="thumbs-down"
+              *ngIf="action?.action_id == 'non_approval'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="star"
+              *ngIf="action?.action_id == 'rate'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="mail"
+              *ngIf="action?.action_id == 'alert'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="file-pdf-o"
+              *ngIf="action?.action_id == 'extract_data'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="eye"
+              *ngIf="action?.action_id == 'review'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="check2"
+              *ngIf="action?.action_id == 'complete'"
+              aria-hidden="true"
+            ></span>
+            <span
+              appIcon
+              name="hour-glass"
+              *ngIf="!action?.action_id"
+              aria-hidden="true"
+            ></span>
+          </button>
+        </td>
+        <td role="cell">
+          <input
+            type="text"
+            class="form-control"
+            [value]="action?.due_at | date : 'dd-MMMM-YYYY'"
+            disabled
+            aria-label="Due Date"
+          />
+        </td>
+        <td role="cell">
+          <div *ngIf="action.is_owner_task">
+            <small class="w-210 text-muted">Assigned to Process Owner</small>
+          </div>
+          <div *ngIf="!action.is_owner_task" class="ownerDiv">
+            <span
+              class="label text-uppercase label-default"
+              *ngFor="let user of action.users"
+              [tooltip]="displayUserName(user, 'user')"
+            >
+              <small>{{ showInitials(user, "user") }}</small>
+            </span>
+            <span
+              class="label text-uppercase label-default"
+              *ngFor="let function of action.functions"
+              [tooltip]="displayUserName(function, 'function')"
+            >
+              <small>{{ showInitials(function, "function") }}</small>
+            </span>
+          </div>
+        </td>
+        <td role="cell">
+          <div>
+            <ul
+              *ngIf="action.checklist.length"
+              class="todo-list"
+              aria-label="Checklist"
+            >
+              <li *ngFor="let todo of action.checklist" class="todo-list-item">
+                <ng-container *ngIf="todo.is_active">
+                  <small [tooltip]="todo.text" container="body">{{
+                    todo.text
+                  }}</small>
+                </ng-container>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

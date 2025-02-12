@@ -1,0 +1,88 @@
+<span
+  dropdown
+  container="body"
+  (isOpenChange)="isToggled($event)"
+  [isOpen]="toggleDropDown"
+  class="rating-dropdown"
+  *ngIf="showDropDown"
+>
+  <span
+    class="align-middle clickable space-on-bottom dropdown-toggle dropdown-link"
+    *ngIf="isDisabled"
+  >
+    <span
+      appIcon
+      name="rating"
+      *ngIf="!score"
+      [isDisable]="isDisabled"
+      [color]="color"
+      [tooltip]="tooltip"
+      [keepColorWithDisableMode]="isNARating"
+    ></span>
+    <span
+      appIcon
+      name="rating"
+      *ngIf="score"
+      [color]="color"
+      [tooltip]="tooltip"
+      [keepColorWithDisableMode]="true"
+    ></span>
+  </span>
+  <span
+    class="align-middle clickable space-on-bottom dropdown-toggle dropdown-link"
+    *ngIf="!isDisabled"
+    dropdownToggle
+    role="button"
+    tabindex="0"
+    aria-label="rating-dropdown"
+  >
+    <span
+      appIcon
+      name="rating"
+      [isDisable]="isDisabled"
+      [color]="color"
+      [tooltip]="tooltip"
+      [keepColorWithDisableMode]="score || isNARating"
+    ></span>
+  </span>
+  <ng-container>
+    <ul
+      *dropdownMenu
+      class="dropdown-menu"
+      [ngClass]="{ 'dropdown-menu-right': isQuestion }"
+      role="menu"
+      style="min-width: 250px; padding: 5px"
+    >
+      <dv-rating
+        [value]="score"
+        [readonly]="readonly"
+        [max]="ratingScales.length"
+        [ratingScales]="ratingScales"
+        (onChange)="onRatingChange($event)"
+      ></dv-rating>
+    </ul>
+  </ng-container>
+</span>
+
+<span
+  container="body"
+  class="rating-dropdown"
+  (click)="handleOnClick()"
+  *ngIf="!showDropDown"
+>
+  <span class="align-middle clickable space-on-bottom">
+    <span
+      appIcon
+      name="rating"
+      [isDisable]="isDisabled"
+      [color]="color"
+      [tooltip]="tooltip"
+      [keepColorWithDisableMode]="score || isNARating"
+    ></span>
+    <span
+      appIcon
+      name="customize"
+      class="font-size-10 va-top success-blue showRightNext"
+    ></span>
+  </span>
+</span>

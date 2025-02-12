@@ -1,0 +1,100 @@
+<app-modal
+  [title]="modalTitle"
+  firstButtonLabel="Delete all auto-filled responses"
+  (onFirstClick)="deleteAll($event)"
+  [initialTemplate]="history"
+  [isLoading]="loading"
+  [isFirstButtonDisabled]="disablePrimaryButton || loader"
+  firstButtonType="danger"
+  #modal
+></app-modal>
+
+<ng-template #history>
+  <app-empty-state
+    *ngIf="!autofillHistory.length && !loader"
+    message="No history available"
+  ></app-empty-state>
+
+  <app-spinner *ngIf="loader" class="justify-center"></app-spinner>
+
+  <ng-container *ngIf="autofillHistory.length && !loader">
+    <ng-container
+      *ngFor="
+        let history of autofillHistory;
+        let last = last;
+        let index = index
+      "
+      class="history-grid"
+    >
+      <div class="history-grid">
+        <span class="space-on-top-lg flex-icon"
+          >#{{ autofillHistory.length - index }}</span
+        >
+        <div class="flex-content">
+          From {{ history.source_entity_name_prefix }}
+          <span class="entity-history">{{ history.source_entity_name }}</span>
+          <p class="history-sub-text" *ngIf="history.removed_at">
+            Deleted auto-filled responses
+          </p>
+          <p class="history-sub-text" *ngIf="!history.removed_at">
+            Auto-filled {{ history.total_count }} response(s)
+            <span *ngIf="history.total_count !== history.responses_count"
+              >({{ history.total_count - history.responses_count }} with manual
+              edits)</span
+            >
+          </p>
+        </div>
+        <div *ngIf="history.removed_at" class="flex-content">
+          <span
+            ><strong>{{ history.removed_by_name }}</strong></span
+          >
+          <p class="history-sub-text">
+            {{ history.removed_at + "Z" | dvDate : ["dvDateTime"] }}
+          </p>
+        </div>
+        <div *ngIf="!history.removed_at" class="flex-content">
+          <span
+            ><strong>{{ history.created_by_name }}</strong></span
+          >
+          <p class="history-sub-text">
+            {{ history.created_at + "Z" | dvDate : ["dvDateTime"] }}
+          </p>
+        </div>
+        <dv-button
+          btnType="default"
+          btnClass="flex-icon"
+          class="space-on-right-lg"
+          (onClick)="history.showDetail = !history.showDetail"
+          tooltipText="Show detailed settings"
+        >
+          <span
+            appIcon
+            [name]="history.showDetail ? 'chevron-up' : 'chevron-down'"
+          ></span>
+        </dv-button>
+        <dv-button
+          btnType="default"
+          btnClass="danger flex-icon"
+          (onClick)="undoAutofill(history)"
+          [tippyTooltip]="'Delete'"
+          [disabled]="history.removed_at || !history.responses_count"
+          ariaLabel="Undo autofill for history item {{
+            autofillHistory.length - index
+          }}"
+        >
+          <span appIcon name="trashcan"> </span>
+        </dv-button>
+      </div>
+
+      <div *ngIf="history.showDetail" class="history-detail-wrapper">
+        <autofill-history-detail
+          [style.width.%]="100"
+          [history]="history"
+        ></autofill-history-detail>
+      </div>
+      <div *ngIf="!last">
+        <dv-divider horizontalMargin="mini"></dv-divider>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-template>

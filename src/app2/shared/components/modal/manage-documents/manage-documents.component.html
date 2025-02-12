@@ -1,0 +1,43 @@
+<app-modal
+  title="Add New Document"
+  [initialTemplate]="manageDocumentsRef"
+  [isFooter]="false"
+  #modal
+></app-modal>
+
+<ng-template #manageDocumentsRef>
+  <div class="text-center" *ngIf="isFile">
+    <br />
+    <div class="btn-group">
+      <dv-button
+        btnClass="btn btn-default font-size-12"
+        [btnType]="sourceType == 'existing' ? 'primary' : 'default'"
+        (onClick)="setSourceType('existing')"
+      >
+        Use Existing
+      </dv-button>
+      <dv-button
+        btnClass="btn btn-default font-size-12"
+        [btnType]="sourceType == 'new' ? 'primary' : 'default'"
+        (onClick)="setSourceType('new')"
+      >
+        New Upload
+      </dv-button>
+    </div>
+  </div>
+
+  <div>
+    <existing-documents
+      *ngIf="sourceType === 'existing' && isFile"
+      [showHeader]="false"
+      (onSuccess)="bulkAssignDocuments($event)"
+    ></existing-documents>
+    <new-documents
+      *ngIf="sourceType === 'new'"
+      [showHeader]="false"
+      [isFile]="isFile"
+      [parentAttachmentHierarchyId]="parentAttachmentHierarchyId"
+      (onSuccess)="bulkAssignDocuments($event)"
+    ></new-documents>
+  </div>
+</ng-template>

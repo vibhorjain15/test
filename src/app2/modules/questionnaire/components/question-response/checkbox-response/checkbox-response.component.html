@@ -1,0 +1,37 @@
+<ng-container *ngIf="!isNotApplicable">
+  <ng-container *ngFor="let option of options">
+    <dv-checkbox
+      [(ngModel)]="checkboxValues[option.id]"
+      (onValChange)="handleChange()"
+      [label]="option.value"
+      [id]="question.sequenceID + '-' + option.id"
+      [disabled]="isReadOnly"
+    >
+    </dv-checkbox>
+  </ng-container>
+
+  <textarea
+    class="form-control space-on-top"
+    [(ngModel)]="otherValues"
+    (ngModelChange)="handleChange(booleanValue, $event)"
+    [disabled]="isReadOnly"
+    name=""
+    id=""
+    cols="30"
+    rows="5"
+    *ngIf="otherOptionId >= 0 && isOtherOptionSelected"
+    aria-label="Other Option"
+  ></textarea>
+  <div
+    *ngIf="otherOptionId >= 0 && isOtherOptionSelected && !otherValues"
+    class="text-danger"
+    role="alert"
+    aria-live="assertive"
+  >
+    {{ otherTextError }}
+  </div>
+</ng-container>
+
+<p *ngIf="isNotApplicable" class="text-muted">
+  <i class="text-info">* This question is marked as Not Applicable *</i>
+</p>

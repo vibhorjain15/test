@@ -1,0 +1,45 @@
+<ul class="list-unstyled due-diligence-history" tabindex="0">
+  <li
+    class="clickable"
+    *ngFor="let diligence of activityDatasource"
+    (click)="redirectToPage(diligence.id)"
+  >
+    <div class="dv-table">
+      <div class="cell padded icon-wrapper text-center">
+        <span
+          diligenceTypeIcon
+          [diligence-type-icon]="diligence.diligence_type"
+          icon-size="lg"
+          [tooltip]="tooltip_map[diligence.diligence_type]"
+          container="body"
+        ></span>
+      </div>
+
+      <div class="cell padded align-middle">
+        <div>
+          <small class="text-muted">
+            <span
+              >{{ diligence.status_user.firstName }}
+              {{ diligence.status_user.lastName }}</span
+            >
+            <span class="padded">updated</span>
+            <span>diligence on {{ diligence.entity_name }}</span>
+            <small *ngIf="diligence.is_internal"
+              ><i>(marked as private)</i></small
+            >
+          </small>
+        </div>
+        <div>
+          <small class="text-muted padded-right-sm"
+            >on {{ diligence.status_date | dvDate }} to</small
+          >
+          <span
+            class="align-middle"
+            diligenceStatus
+            [status]="diligence.status"
+          ></span>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

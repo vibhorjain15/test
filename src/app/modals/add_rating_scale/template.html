@@ -1,0 +1,38 @@
+<form name="vm.add_rating_scale_form" data-ng-submit="vm.submit()" class="form-horizontal">
+    <div class="modal-header">
+        <h3 class="modal-title">Manage Scores/Rating Scale
+            <a class="pull-right clickable link-disguise link-unstyled"
+                data-ng-click="vm.cancel()">&times;</a>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="row clearfix">
+            <div col="12">
+                <form-group field-name="Scores/Rating Name">
+                    <label col="4" for="scale_name" class="control-label">Name</label>
+                    <div col="6">
+                        <input type="text" name="scale_name" maxlength="50" data-ng-model="vm.editing_rating_scale.name" class="form-control" placeholder="Example: Out of 5" required />
+                    </div>
+                </form-group>
+                <div class="text-center" data-ng-if="!vm.edit">
+                    <div class="btn-group">
+                        <button class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.editing_rating_scale.scale_mode == vm.ratingConstants.ScoreBand}" data-ng-click="vm.setScaleMode(vm.ratingConstants.ScoreBand)">ScoreBand</button>
+                        <button class="btn btn-default font-size-12" data-ng-class="{'btn-primary': vm.editing_rating_scale.scale_mode == vm.ratingConstants.Absolute}" data-ng-click="vm.setScaleMode(vm.ratingConstants.Absolute)">Absolute</button>
+                    </div>
+                </div>
+                <div class="text-center space-on-top-lg" data-ng-if="!vm.edit">
+                    <div class="alert alert-info" data-ng-if="vm.editing_rating_scale.scale_mode == vm.ratingConstants.ScoreBand">
+                        Use this to set minimum and maximum score ranges
+                    </div>
+                    <div class="alert alert-info" data-ng-if="vm.editing_rating_scale.scale_mode == vm.ratingConstants.Absolute">
+                        Use this to create rating scale
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" button-loader="vm.updating_rating_type">{{vm.edit?'Update':'Save'}}</button>
+        <button btn-type="default" data-ng-click="vm.cancel()">Cancel</button>
+    </div>
+</form>

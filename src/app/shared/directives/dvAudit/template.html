@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span>
+      <span class="align-middle">
+       Audit Trail
+      </span>
+    </span>
+  </div>
+  <div class="panel-body" data-ng-if="vm.audit.length">
+    <ul class="list-unstyled list-bordered-bottom">
+      <li data-ng-repeat="audit in vm.audit">
+        <small class="text-muted">
+          <strong>
+          {{audit.userInfo.firstName}} {{audit.userInfo.lastName}} ({{audit.userInfo.firmInfo.name}}):
+          </strong>
+        </small>
+
+        <span diligence-status="audit.auditStatus"></span>
+        <span class="word-break-break-all" ng-bind-html="audit.text"></span>
+        <small class="text-muted">{{audit.activityTimeStamp|fromNow}}</small>
+      </li>
+    </ul>
+  </div>
+
+  <div class="panel-body" data-ng-hide="vm.audit.length">
+      <small class="text-muted">No Audit History Found</small>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<form novalidate
+      name="vm.commentForm"
+      data-ng-if="vm.showEditMode()"
+      data-ng-submit="vm.saveComment()"
+      data-ng-mouseenter="showCommentControl = true"
+      data-ng-mouseleave="showCommentControl = false">
+  <div class="relative">
+    <div class="comment-controls" data-ng-show="showCommentControl">
+      <button btn-type="transparent"
+              class="danger"
+              size="sm"
+              uib-tooltip="Delete Comment"
+              data-ng-show="vm.newComment.text.length"
+              ng-click="vm.deleteComment()"><icon name="trashcan"></icon>
+      </button>
+      <button btn-type="transparent"
+              class="warning"
+              size="sm"
+              uib-tooltip="Close Comment"
+              data-ng-show="!vm.newComment.text.length"
+              ng-click="vm.closeCommentBox()"><icon name="close"></icon>
+      </button>
+    </div>
+    <form-group field-name="Response" validate-on="submit">
+        <textarea ng-model="vm.newComment.text"
+                  ui-tinymce="vm.tinymceOptions"
+                  data-ng-model-options="{ debounce: 300 }"
+                  data-ng-change="vm.updateComment()"></textarea>
+    </form-group>
+  </div>
+</form>

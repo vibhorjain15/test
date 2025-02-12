@@ -1,0 +1,37 @@
+.side-panel-footer {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+.flex {
+  display: flex;
+}
+.align_items_center {
+  align-items: center;
+}
+.side-panel-footer > * {
+  margin-left: 5px;
+}
+.panel {
+  border-radius: 5px;
+}
+.panel-default > .panel-heading {
+  border-color: transparent;
+  background-color: transparent;
+}
+.panel.panel-default .panel-controls .panel-control {
+  background-color: transparent;
+  border: 0;
+  padding: 10px 12px;
+}
+.panel-heading {
+  padding: 10px 15px 0 15px;
+}
+.panel-body {
+  padding: 10px 15px 15px 15px;
+}
+
+.external-icon {
+  position: relative;
+  top: 2px;
+}

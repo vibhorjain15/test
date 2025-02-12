@@ -1,0 +1,142 @@
+<div class="main-header-wrape" role="banner">
+  <template-header [title]="title" *ngIf="isLoaded">
+    <div class="data-container" role="presentation">
+      <div class="left-part" role="navigation">
+        <dv-logo-label
+          [tooltip]="
+            templateStatus === 'Draft'
+              ? 'Templates in draft state can\'t be used for new request. Activate template once changes are final.'
+              : ''
+          "
+          label="Status"
+          type="normal"
+          labelPosition="top"
+          role="region"
+          aria-label="Template Status: {{ templateStatus }}"
+        >
+          <dv-status-tag
+            [label]="templateStatus"
+            [type]="tagType"
+            aria-live="polite"
+          ></dv-status-tag>
+        </dv-logo-label>
+        <dv-divider type="vertical" role="separator"></dv-divider>
+        <dv-logo-label
+          [iconLabel]="frequencyTemp"
+          label="Frequency"
+          type="normal"
+          labelPosition="top"
+          role="region"
+          aria-label="Frequency: {{ frequencyTemp }}"
+        ></dv-logo-label>
+        <dv-divider type="vertical" role="separator"></dv-divider>
+        <dv-logo-label
+          [iconLabel]="totalQuestion"
+          [label]="totalQuestion > 1 ? 'Questions' : 'Question'"
+          type="normal"
+          labelPosition="top"
+          role="region"
+          aria-label="Total Questions: {{ totalQuestion }}"
+        ></dv-logo-label>
+      </div>
+      <div class="right-part" [style.width.px]="width" role="navigation">
+        <dv-logo-label
+          icon="arrow-back"
+          label="Back"
+          previewLabel="Go back"
+          (onClick)="handleBack()"
+        ></dv-logo-label>
+        <div
+          [tooltip]="tipContent"
+          container="body"
+          *ngIf="currentMode == 'edit' || currentMode == 'preview'"
+        >
+          <dv-button
+            [btnType]="'transparent'"
+            [btnClass]="'dropdown-toggle'"
+            (onClick)="handleMore()"
+          >
+            <div><span appIcon name="ellipsis-h" size="2x"></span></div>
+            <div class="space-on-top-n">More</div>
+          </dv-button>
+          <dv-dropdown
+            type="default"
+            (onDropdownClick)="dropDownClick($event)"
+            (onDropdownToggle)="toggleMoreDropDown = $event"
+            [toggleDropDown]="toggleMoreDropDown"
+            [dropDownList]="moreList"
+            dropdownPlacement="right"
+          ></dv-dropdown>
+        </div>
+        <dv-logo-label
+          *ngIf="currentMode == 'preview'"
+          icon="print"
+          label="Print Preview"
+          (onClick)="handlePrint()"
+        ></dv-logo-label>
+        <dv-logo-label
+          *ngIf="currentMode == 'print'"
+          icon="print"
+          label="Print"
+          previewLabel="Print"
+          (onClick)="printSection()"
+        ></dv-logo-label>
+        <dv-logo-label
+          *ngIf="templateStatus == 'Draft' && currentMode != 'print'"
+          icon="check"
+          label="Activate"
+          iconColor="orange"
+          [previewLabel]="previewLabelTooltip"
+          (onClick)="onActivate()"
+        ></dv-logo-label>
+        <dv-logo-label
+          *ngIf="currentMode == 'edit' && !isManager"
+          icon="flag"
+          label="Set Flag / Score"
+          [isEnabled]=""
+          (onClick)="onScore()"
+        ></dv-logo-label>
+        <dv-logo-label
+          *ngIf="
+            templateStatus == 'Active' &&
+            currentMode != 'score' &&
+            currentMode != 'print'
+          "
+          icon="briefcase"
+          [label]="RequestButtonLabel"
+          [previewLabel]="RequestButtonTooltip"
+          (onClick)="handleNewRequest()"
+        ></dv-logo-label>
+
+        <dv-logo-label
+          *ngIf="
+            currentMode == 'preview' && !templateData.templateInfo?.isSystem
+          "
+          icon="pencil"
+          label="Edit"
+          [isEnabled]="!(questionLoading | async)"
+          previewLabel="Edit template structure"
+          (onClick)="onEdit()"
+          [isLoading]="isLoading"
+        ></dv-logo-label>
+        <dv-logo-label
+          *ngIf="currentMode != 'preview'"
+          icon="eye"
+          label="Preview"
+          [isEnabled]="true"
+          (onClick)="onPreview()"
+        ></dv-logo-label>
+      </div>
+    </div>
+  </template-header>
+</div>
+<ng-template #tipContent>
+  <ng-container *ngIf="isManager">
+    Add notes, download<span *ngIf="!templateData.templateInfo?.isSystem"
+      >, or delete</span
+    >.
+  </ng-container>
+  <ng-container *ngIf="isInvestor">
+    Set flags/scores and more template actions.
+  </ng-container>
+</ng-template>

@@ -1,0 +1,201 @@
+<ng2-manager-view data-ng-if="vm.Utils.isAngular()"> </ng2-manager-view>
+<div class="row" data-ng-if="vm.Utils.isAngularJS()">
+  <!-- First row with the title section and graphs   -->
+  <div class="col-sm-12">
+    <!-- Activity title and graphs column -->
+    <div class="row clearfix">
+      <!-- Title row -->
+      <div col="8">
+        <div class="panel panel-default">
+          <div class="panel-body text-muted">
+            <div class="space-on-top" col="5">
+              My, you've been ACTIVE! Platform Activity from
+            </div>
+            <div col="6" data-ng-if="vm.customDateFilter">
+              <dv-daterangepicker ng-model="vm.customDateFilter" apply-method="vm.applyMethod"></dv-daterangepicker>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Docs Columns  -->
+      <div col="4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <p class="text-uppercase">Are your Docs up to date ?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphs Rows -->
+    <div class="row clearfix">
+      <div col="4">
+        <div class="panel panel-default dashboard-panel-old">
+          <div class="panel-heading">
+            <h5 class="panel-title text-uppercase">DD Count by Status</h5>
+            <span class="chart-total" data-ng-show="vm.dash_live_total">
+              <div class="chart-total-count">{{vm.dash_live_total}}</div>
+              <small>Total</small>
+            </span>
+          </div>
+          <div class="panel-body">
+            <div donut-chart config="vm.diligenceDonutChartConfig"></div>
+          </div>
+        </div>
+        <!-- <div class="panel panel-default dashboard-panel-old">
+          <div class="panel-heading">
+            <h5 class="panel-title text-uppercase">{{vm.dash_live_title}}</h5>
+            <span class="chart-total" data-ng-show="vm.doc_live_total">
+              <div class="chart-total-count">{{vm.doc_live_total}}</div>
+              <small>Total</small>
+            </span>
+          </div>
+          <div class="panel-body">
+            <div donut-chart config="vm.diligenceDonutChartConfig">
+            </div>
+            <div class="text-center space-on-top-lg">
+              <form>
+                <span class="space-on-right">{{vm.switch_on}}</span>
+                <switch id="enabled"
+                        name="enabled"
+                        ng-model="vm.enabled"
+                        on=""
+                        off=""
+                        class="green align-middle"></switch>
+                <span class="space-on-left">{{vm.switch_off}}</span>
+              </form>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <!-- Docs Columns  -->
+      <div col="4">
+        <div class="panel panel-default dashboard-panel-old">
+          <div class="panel-heading">
+            <h5 class="panel-title text-uppercase">Diligences by Entities</h5>
+          </div>
+          <div class="panel-body">
+            <div donut-chart config="vm.strategyDonutChartConfig"></div>
+          </div>
+        </div>
+      </div>
+
+      <div col="4">
+        <div class="panel panel-default dashboard-panel-old">
+          <div class="panel-heading">
+            <h5 class="panel-title text-uppercase">Doc Tracker</h5>
+          </div>
+          <div class="panel-body dash-recent-documents">
+            <table class="table table-borderless documents-table" data-ng-show="vm.docs && vm.docs.length">
+              <tr>
+                <th>Document</th>
+                <th class="text-center">Last Updated</th>
+              </tr>
+
+              <tr
+                class="document-item"
+                ng-repeat="doc in vm.docs"
+                ui-sref="app.content.document.detail({documentId: doc.id})"
+              >
+                <td>
+                  <attachment-icon filename="doc.file_name" class="file-attachment-icon align-middle"
+                    size="lg"></attachment-icon>
+                  <span uib-tooltip="{{doc.name}}" class="link-disguise align-middle">
+                    {{doc.name | limitTo: 27}}
+                  </span>
+                </td>
+                <td class="text-center">{{doc.as_of_date | date}}</td>
+              </tr>
+            </table>
+
+            <div class="padded-xl" data-ng-if="vm.docs && !vm.docs.length">
+              <empty-state icon-name="file" message="No documents available"></empty-state>
+            </div>
+
+            <spinner broad-spinner spinner-height="324" data-ng-hide="vm.docs"></spinner>
+
+            <div data-ng-if="vm.docs && vm.docs.length">
+              <a
+                ui-sref="app.content.documents"
+                class="pull-left space-on-left-xxl"
+                >View All</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clearfix">
+      <div class="panel panel-default dashboard-panel-old">
+        <div class="panel-heading">
+          <h5 class="panel-title text-uppercase">Team Activity</h5>
+        </div>
+
+        <div class="panel-body">
+          <spinner data-ng-show="vm.loading_punchcard"></spinner>
+
+          <div data-ng-if="!vm.loading_punchcard">
+            <div punchcard="vm.punchcard_data" punchcard-options="vm.punchcard_options" row-header-label="name"
+              col-header-label="audit_date" cell-value-label="count" class="overflow-x-scroll"
+              data-ng-class="{'overflow-y-scroll':vm.punchcard_data.length > 10}"></div>
+          </div>
+
+          <div data-ng-show="vm.punchcard_data && !vm.punchcard_data.length">
+            <p class="alert alert-info">
+              Hmmm.. seems like folks are on vacation. No Team activity in the
+              past two weeks. Time to get started!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Important Dates and Live Diligence Tracker -->
+
+    <div class="row clearfix">
+      <!--  -->
+      <div col="6">
+        <div class="panel panel-default dashboard-panel-old">
+          <div class="panel-heading">
+            <h5 class="panel-title text-uppercase">Important Dates !!</h5>
+          </div>
+
+          <div class="panel-body">
+            <div full-calendar calendar-events="vm.calendar_events" id="calendar"></div>
+          </div>
+        </div>
+      </div>
+      <!--  -->
+      <div col="6">
+        <div class="row clearfix">
+          <div class="panel panel-default dashboard-panel-old">
+            <div class="panel-heading">
+              <h5 class="panel-title text-uppercase">MY ACTIONS</h5>
+            </div>
+            <div class="panel-body">
+              <dv-grid grid-resource="vm.my_actions" data-ng-if="vm.my_actions && vm.initGridSection"
+                grid-name="'manager-my-actions'"></dv-grid>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row clearfix">
+      <div col="12">
+        <div class="panel panel-default dashboard-panel-old">
+          <div class="panel-heading">
+            <h5 class="panel-title text-uppercase">Workflow Process</h5>
+          </div>
+
+          <div class="panel-body">
+            <dv-grid grid-resource="vm.workflow_statuses" data-ng-if="vm.workflow_statuses && vm.initGridSection"
+              grid-name="'manager-dash-workflow-process'"></dv-grid>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-panel-old" data-ng-if="vm.customDateFilter">
+      <ng2-recommendations show-header-upper-case="true" [date-range-filter]="vm.customDateFilter"></ng2-recommendations>
+    </div>
+  </div>
+</div>

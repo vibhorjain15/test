@@ -1,0 +1,15 @@
+<div class="question-wrapper" role="list" aria-label="Questions">
+  <ng-container *ngFor="let question of questionList; let i = index">
+    <question-container
+      [question]="question"
+      [index]="i"
+      (selectedChange)="handleSelection()"
+      [rightIconList]="question.rightIcons"
+      (onActionButtonClick)="handleRightIconClick($event)"
+      role="listitem"
+      [attr.tabindex]="i === 0 ? 0 : -1"
+      [attr.aria-posinset]="i + 1"
+      [attr.aria-setsize]="questionList.length"
+    ></question-container>
+  </ng-container>
+</div>

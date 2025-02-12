@@ -1,0 +1,107 @@
+/* Span (dv-label) CSS */
+
+.label-disable {
+  opacity: 0.5;
+}
+
+.label-bold {
+  font-weight: bold;
+}
+
+.dv-label {
+  word-break: break-word;
+}
+
+.mb-0 {
+  margin-bottom: 0px;
+}
+
+.border-btm {
+  border-bottom: 0;
+}
+
+.heading-text {
+  font-weight: bold;
+  font-size: inherit;
+}
+
+.font-small {
+  font-size: small;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.border-clr {
+  border: 1px solid #bce8f1;
+}
+
+.mt {
+  margin-top: 10px;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.clr-verified {
+  color: green;
+}
+
+.txt-end {
+  text-align: end;
+}
+
+.form-control-disable {
+  background: #eee;
+}
+
+.ag-header-cell-label {
+  justify-content: center;
+}
+
+.notes {
+  background: white;
+  border: none;
+ 
+}
+
+.guide {
+  background: white;
+  border: none;
+  color: black;
+}
+
+.padding-note {
+  padding: 10px 5px !important;
+}
+
+.input-pwd {
+  display: initial;
+}
+
+.pwd-icon {
+  right: 0px;
+  position: absolute;
+  padding: 10px 40px;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.hide {
+  display: none;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.pl-95 {
+  padding-left: 95px;
+}
+
+.entity-label {
+  padding-top: 8px;
+  width: 13%;
+}

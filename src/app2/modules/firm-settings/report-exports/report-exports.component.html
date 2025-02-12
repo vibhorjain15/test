@@ -1,0 +1,89 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h5 class="panel-title" id="exportOptionsTitle">Export Options</h5>
+  </div>
+  <div class="panel-info">
+    <div
+      class="panel-heading"
+      role="text"
+      aria-label="To add more reports, kindly contact support@diligencevault.com"
+    >
+      To add more reports, kindly contact
+      <a
+        class="link-disguise link-underline font-bold"
+        href="mailto:support@diligencevault.com"
+        target="_blank"
+      >
+        support@diligencevault.com
+      </a>
+    </div>
+  </div>
+  <div class="panel-body">
+    <app-spinner
+      *ngIf="loadingExportOptions"
+      aria-label="Loading export options"
+    ></app-spinner>
+    <div *ngIf="!loadingExportOptions && excelReports.length">
+      <div col="12" class="space-on-top-xl bordered-bottom">
+        <div col="3" class="space-on-bottom-lg">
+          <span class="control-label fw-bolder" role="text">Report Name</span>
+        </div>
+        <div col="7" class="pa-lr-lg">
+          <span class="control-label fw-bolder" role="text">Information</span>
+        </div>
+        <div col="2" class="pa-lr-lg text-center">
+          <span class="control-label fw-bolder" role="text">Download</span>
+        </div>
+      </div>
+      <div
+        col="12"
+        *ngFor="let report of excelReports"
+        role="list"
+        tabindex="0"
+      >
+        <div class="space-on-top-xl" role="listitem">
+          <div
+            col="3"
+            class="pa-lr-lg"
+            role="text"
+            [attr.aria-label]="'Report Name ' + report.report_name"
+          >
+            {{ report.report_name }}
+          </div>
+          <div
+            col="7"
+            class="pa-lr-lg padding-right-xl"
+            role="text"
+            [attr.aria-label]="'Information ' + report.info_text"
+          >
+            {{ report.info_text }}
+          </div>
+          <div col="2" class="pa-lr-lg text-center space-on-top-n">
+            <span
+              tooltip="Report will be mailed to linked email address."
+              container="body"
+              appIcon
+              name="mail"
+              size="2x"
+              class="clickable"
+              (click)="generateReportLink(report.id)"
+              clickable
+            ></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      col="4"
+      offset="4"
+      class="panel-body"
+      *ngIf="!loadingExportOptions && !excelReports.length"
+    >
+      <app-empty-state
+        [iconName]="'mail'"
+        message="No reports to be downloaded"
+        aria-label="No reports available to download"
+      ></app-empty-state>
+    </div>
+  </div>
+</div>

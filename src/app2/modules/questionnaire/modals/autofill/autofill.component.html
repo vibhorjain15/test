@@ -1,0 +1,232 @@
+<app-modal
+  [title]="'Auto-fill'"
+  firstButtonLabel="Auto-fill as Drafts"
+  (onFirstClick)="handleAutoFill($event, true)"
+  firstButtonType="secondary"
+  firstButtonTooltip="Auto-fill and save responses as drafts"
+  secondButtonLabel="Auto-fill"
+  secondButtonType="primary"
+  (onSecondClick)="handleAutoFill($event, false)"
+  leftActionButtonLabel="History"
+  (onLeftActionClick)="showAutofillHistory()"
+  [initialTemplate]="autoFill"
+  [isLoading]="isSecondButtonLoading"
+  [isSecondaryLoading]="loader"
+  [isFirstButtonDisabled]="
+    (selectedButton != AutoFill.Most_Recent &&
+      selectedButton != AutoFill.From_Mapped_Responses &&
+      !selected_entity_id &&
+      !selected_project_id) ||
+    (type == 'rating' && !selected_project_id) ||
+    loader
+  "
+  [isSecondButtonDisabled]="
+    (selectedButton != AutoFill.Most_Recent &&
+      selectedButton != AutoFill.From_Mapped_Responses &&
+      !selected_entity_id &&
+      !selected_project_id) ||
+    (type == 'rating' && !selected_project_id) ||
+    isSecondButtonLoading
+  "
+>
+  <ng-template #autoFill>
+    <dv-button-radio-group
+      class="justify-center space-on-bottom-lg"
+      [items]="tabTypes"
+      [(ngModel)]="selectedTab"
+      [disabled]="loading_data"
+      *ngIf="currUser.isFreeManager"
+    ></dv-button-radio-group>
+
+    <helper-text>
+      Auto-fill will populate responses on the basis of an exact question match
+      from a previous project.
+    </helper-text>
+
+    <div [ngClass]="{ 'af-main': filterObj.id == 'select' }">
+      <div class="cat-list" *ngIf="filterObj.id == 'select'">
+        <dv-category-accordion-list
+          [categoryData]="categoryCopy"
+          [isCheckbox]="true"
+        ></dv-category-accordion-list>
+      </div>
+
+      <div [ngClass]="{ 'af-content': filterObj.id == 'select' }">
+        <div *ngIf="type == 'response'" class="af-response">
+          <dv-tabs
+            [list]="standardTabLabels"
+            (onTabClick)="onButtonClick($event)"
+            size="large"
+            [justifyCenter]="true"
+          ></dv-tabs>
+
+          <dv-form-element
+            label="Auto-fill"
+            elementCol="12"
+            labelPosition="top"
+            [for]="'filter'"
+          >
+            <dv-select
+              [list]="filterList"
+              name="filter"
+              [id]="'filter'"
+              bindValue=""
+              [ngModel]="filterObj"
+              [disabled]="selectedButton === AutoFill.From_Mapped_Responses"
+              (onSelectChange)="handleFilterChange($event)"
+            >
+            </dv-select>
+          </dv-form-element>
+
+          <div
+            *ngIf="selectedButton == AutoFill.Most_Recent"
+            class="d-flex flex-direction-column space-on-top-lg space-on-bottom"
+          >
+            <dv-divider horizontalMargin="mini"></dv-divider>
+            <dv-form-element
+              label="Entity Settings"
+              elementCol="12"
+              labelPosition="top"
+              elementClass="d-flex"
+              infoText="Enable this toggle if you want to only populate responses from projects associated with the same entity and same requestor."
+              [for]="'entity settings'"
+            >
+              <ui-switch
+                size="small"
+                class="align-middle"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="onlyEntity"
+                tabindex="0"
+                aria-label="Only include responses associated to entity"
+                title="Enable this toggle if you want to only populate responses from projects associated with the same entity and same requestor."
+                UiSwitchButton
+              ></ui-switch>
+              <span class="align-middle space-on-left-lg entity-setting"
+                >Only include responses associated to
+                <strong>{{
+                  diligence.entity_id === currUser.firmInfo.id &&
+                  diligence.entity_type === keywordConstants.Firm
+                    ? "My Firm"
+                    : diligence.entity_name
+                }}</strong>
+              </span>
+            </dv-form-element>
+            <dv-divider horizontalMargin="mini"></dv-divider>
+          </div>
+
+          <div *ngIf="selectedButton == AutoFill.From_Diligence_Project">
+            <dv-divider horizontalMargin="mini"></dv-divider>
+            <autofill-project-selection
+              [diligence]="diligence"
+              [user]="currUser"
+              #diligenceProjectSelection
+              (onProjectSelected)="selected_project_id = $event"
+              role="region"
+              aria-label="Project selection"
+            ></autofill-project-selection>
+          </div>
+
+          <div
+            class="af-project-selection"
+            *ngIf="selectedButton == AutoFill.From_a_Product"
+          >
+            <dv-form-element
+              label="Select a Product"
+              labelPosition="top"
+              elementCol="12"
+              [for]="'Product'"
+            >
+              <dv-select
+                [list]="fund_products"
+                bindLabel="display_name"
+                bindValue=""
+                (onSelectChange)="selected_entity_id = $event.id"
+                [aria-label]="'Select a Product'"
+                [id]="'Product'"
+              ></dv-select>
+            </dv-form-element>
+          </div>
+          <div
+            class="af-project-selection"
+            *ngIf="selectedButton == AutoFill.From_a_Strategy"
+          >
+            <dv-form-element
+              label="Select a Strategy"
+              labelPosition="top"
+              elementCol="12"
+              [for]="'strategy'"
+            >
+              <dv-select
+                [list]="strategies"
+                bindLabel="display_name"
+                bindValue=""
+                (onSelectChange)="selected_entity_id = $event.id"
+                [aria-label]="'Select a Strategy'"
+                [id]="'strategy'"
+              ></dv-select>
+            </dv-form-element>
+          </div>
+          <div
+            class="af-project-selection"
+            *ngIf="selectedButton == AutoFill.From_a_Vehicle"
+          >
+            <dv-form-element
+              label="Select a Vehicle"
+              labelPosition="top"
+              elementCol="12"
+              [for]="'vehicle'"
+            >
+              <dv-select
+                [list]="vehicles"
+                bindLabel="display_name"
+                bindValue=""
+                (onSelectChange)="selected_entity_id = $event.id"
+                [aria-label]="'Select a Vehicle'"
+                [id]="'vehicle'"
+              ></dv-select>
+            </dv-form-element>
+          </div>
+
+          <div class="space-on-top-lg">
+            <autofill-preview
+              [diligence]="diligence"
+              [selectedButton]="selectedButton"
+              fromType="db"
+              [selectedTab]="selectedTab"
+              [previewData]="previewData"
+              [selectedEntity]="selected_entity_id"
+              [selectedProject]="selected_project_id"
+              [loading]="previewLoading"
+              [showMatchText]="false"
+              (onAutoFillPreviewClick)="getAutofillPreviewCounts()"
+              *ngIf="selectedButton !== AutoFill.From_Mapped_Responses"
+              aria-label="Auto-fill preview"
+            ></autofill-preview>
+          </div>
+        </div>
+
+        <div *ngIf="type == 'rating'">
+          <helper-text>
+            Responses need to be added/auto-filled before ratings/scores
+          </helper-text>
+          &nbsp;
+          <dv-form-element
+            label="Select an Analyst Evaluation Project"
+            labelPosition="top"
+            elementCol="12"
+            [for]="'related_diligences'"
+          >
+            <dv-select
+              [list]="related_diligences"
+              [id]="'related_diligences'"
+              bindValue=""
+              (onSelectChange)="selected_project_id = $event.id"
+              [aria-label]="'Select an Analyst Evaluation Project'"
+            ></dv-select>
+          </dv-form-element>
+          &nbsp;
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</app-modal>
