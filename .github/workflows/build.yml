@@ -53,6 +53,7 @@ jobs:
         run: |
           dir=$(pwd)
           ls -lrt
+          sudo chmod +x $dir/build.sh
           sudo npm install -g bower && sudo $dir/build.sh
 
       # Cache Nx build
